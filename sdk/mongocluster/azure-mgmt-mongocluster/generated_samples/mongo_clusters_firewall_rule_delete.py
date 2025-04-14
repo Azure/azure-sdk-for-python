@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2024-07-01/MongoClusters_FirewallRuleDelete.json
+# x-ms-original-file: 2024-10-01-preview/MongoClusters_FirewallRuleDelete.json
 if __name__ == "__main__":
     main()

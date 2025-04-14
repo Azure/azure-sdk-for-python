@@ -24,8 +24,7 @@ class TestFaceSessionAsync(FaceSessionClientTestBaseAsync):
                 "deviceCorrelationId": "str",
                 "deviceCorrelationIdSetInClient": bool,
                 "enableSessionImage": bool,
-                "livenessSingleModalModel": "str",
-                "sendResultsToClient": bool,
+                "livenessModelVersion": "str",
             },
         )
 
@@ -56,19 +55,20 @@ class TestFaceSessionAsync(FaceSessionClientTestBaseAsync):
 
     @FaceSessionPreparer()
     @recorded_by_proxy_async
-    async def test_get_liveness_sessions(self, facesession_endpoint):
+    async def test_create_liveness_with_verify_session(self, facesession_endpoint):
         client = self.create_async_client(endpoint=facesession_endpoint)
-        response = await client.get_liveness_sessions()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy_async
-    async def test_get_liveness_session_audit_entries(self, facesession_endpoint):
-        client = self.create_async_client(endpoint=facesession_endpoint)
-        response = await client.get_liveness_session_audit_entries(
-            session_id="str",
+        response = await client.create_liveness_with_verify_session(
+            body={
+                "livenessOperationMode": "str",
+                "verifyImage": "filetype",
+                "authTokenTimeToLiveInSeconds": 0,
+                "deviceCorrelationId": "str",
+                "deviceCorrelationIdSetInClient": bool,
+                "enableSessionImage": bool,
+                "livenessModelVersion": "str",
+                "returnVerifyImageHash": bool,
+                "verifyConfidenceThreshold": 0.0,
+            },
         )
 
         # please add some check logic here by yourself
@@ -90,26 +90,6 @@ class TestFaceSessionAsync(FaceSessionClientTestBaseAsync):
     async def test_get_liveness_with_verify_session_result(self, facesession_endpoint):
         client = self.create_async_client(endpoint=facesession_endpoint)
         response = await client.get_liveness_with_verify_session_result(
-            session_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy_async
-    async def test_get_liveness_with_verify_sessions(self, facesession_endpoint):
-        client = self.create_async_client(endpoint=facesession_endpoint)
-        response = await client.get_liveness_with_verify_sessions()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy_async
-    async def test_get_liveness_with_verify_session_audit_entries(self, facesession_endpoint):
-        client = self.create_async_client(endpoint=facesession_endpoint)
-        response = await client.get_liveness_with_verify_session_audit_entries(
             session_id="str",
         )
 

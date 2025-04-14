@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -46,6 +47,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 async def dev_box_restart_stop_start_async():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
@@ -67,35 +69,37 @@ async def dev_box_restart_stop_start_async():
             print("List of dev boxes: ")
             for dev_box in dev_boxes:
                 print(f"{dev_box.name}")
-    
+
             # Select first dev box in the list
             target_dev_box = dev_boxes[0]
         else:
             raise ValueError("Missing Dev Box - please create one before running the example.")
-    
+
         # Get the target dev box properties
         project_name = target_dev_box.project_name
         user = target_dev_box.user
         dev_box_name = target_dev_box.name
-    
+
         # Stop dev box if it's running
         if target_dev_box.power_state == PowerState.Running:
             stop_poller = await client.begin_stop_dev_box(project_name, user, dev_box_name)
             stop_result = await stop_poller.result()
             print(f"Stopping dev box completed with status {stop_result.status}")
-    
+
         # At this point we should have a stopped dev box . Let's start it
         start_poller = await client.begin_start_dev_box(project_name, user, dev_box_name)
         start_result = await start_poller.result()
         print(f"Starting dev box completed with status {start_result.status}")
-    
+
         # Restart the dev box
         restart_poller = await client.begin_restart_dev_box(project_name, user, dev_box_name)
         restart_result = await restart_poller.result()
         print(f"Done restarting the dev box with status {start_result.status}")
 
+
 async def main():
     await dev_box_restart_stop_start_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

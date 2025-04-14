@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,21 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -33,6 +19,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -47,19 +35,19 @@ from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_deidentification_cancel_job_request,
-    build_deidentification_create_job_request,
-    build_deidentification_deidentify_request,
+    build_deidentification_deidentify_documents_request,
+    build_deidentification_deidentify_text_request,
     build_deidentification_delete_job_request,
     build_deidentification_get_job_request,
-    build_deidentification_list_job_documents_request,
-    build_deidentification_list_jobs_request,
+    build_deidentification_list_job_documents_internal_request,
+    build_deidentification_list_jobs_internal_request,
 )
 from .._vendor import DeidentificationClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -78,53 +66,8 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationJob. The DeidentificationJob is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationJob
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -144,7 +87,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -157,7 +100,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -176,10 +122,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         return deserialized  # type: ignore
 
-    async def _create_job_initial(
+    async def _deidentify_documents_initial(
         self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -200,7 +146,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deidentification_create_job_request(
+        _request = build_deidentification_deidentify_documents_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -209,7 +155,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -221,30 +167,20 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            await response.read()  # Load the body in memory and close the socket
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -252,7 +188,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def begin_create_job(
+    async def begin_deidentify_documents(
         self, name: str, resource: _models.DeidentificationJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
@@ -271,97 +207,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
 
     @overload
-    async def begin_create_job(
+    async def begin_deidentify_documents(
         self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
@@ -380,55 +229,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
 
     @overload
-    async def begin_create_job(
+    async def begin_deidentify_documents(
         self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
@@ -447,55 +251,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
 
     @distributed_trace_async
-    async def begin_create_job(
+    async def begin_deidentify_documents(
         self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
@@ -512,93 +271,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -609,7 +281,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_job_initial(
+            raw_result = await self._deidentify_documents_initial(
                 name=name,
                 resource=resource,
                 content_type=content_type,
@@ -637,7 +309,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -661,7 +333,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         )
 
     @distributed_trace
-    def list_jobs(
+    def _list_jobs_internal(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DeidentificationJob"]:
         """List de-identification jobs.
@@ -675,51 +347,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -727,7 +354,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.DeidentificationJob]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -738,7 +365,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deidentification_list_jobs_request(
+                _request = build_deidentification_list_jobs_internal_request(
                     maxpagesize=maxpagesize,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
@@ -746,7 +373,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -764,7 +393,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -772,7 +403,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeidentificationJob], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DeidentificationJob], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -795,9 +426,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_job_documents(
+    def _list_job_documents_internal(
         self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DocumentDetails"]:
+    ) -> AsyncIterable["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         Resource list operation template.
@@ -807,47 +438,18 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :keyword continuation_token_parameter: Token to continue a previous query. Default value is
          None.
         :paramtype continuation_token_parameter: str
-        :return: An iterator like instance of DocumentDetails
+        :return: An iterator like instance of DeidentificationDocumentDetails
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.health.deidentification.models.DocumentDetails]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.health.deidentification.models.DeidentificationDocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "input": {
-                        "etag": "str",
-                        "path": "str"
-                    },
-                    "status": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "output": {
-                        "etag": "str",
-                        "path": "str"
-                    }
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DocumentDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DeidentificationDocumentDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -858,7 +460,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deidentification_list_job_documents_request(
+                _request = build_deidentification_list_job_documents_internal_request(
                     name=name,
                     maxpagesize=maxpagesize,
                     continuation_token_parameter=continuation_token_parameter,
@@ -867,7 +469,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -885,7 +489,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -893,7 +499,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DeidentificationDocumentDetails], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -931,53 +537,8 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationJob. The DeidentificationJob is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationJob
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastUpdatedAt": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "sourceLocation": {
-                        "location": "str",
-                        "prefix": "str",
-                        "extensions": [
-                            "str"
-                        ]
-                    },
-                    "status": "str",
-                    "targetLocation": {
-                        "location": "str",
-                        "prefix": "str"
-                    },
-                    "dataType": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...
-                        },
-                        "target": "str"
-                    },
-                    "operation": "str",
-                    "redactionFormat": "str",
-                    "startedAt": "2020-02-20 00:00:00",
-                    "summary": {
-                        "bytesProcessed": 0,
-                        "canceled": 0,
-                        "failed": 0,
-                        "successful": 0,
-                        "total": 0
-                    }
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -997,7 +558,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1010,7 +571,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1030,7 +594,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_job(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete_job(self, name: str, **kwargs: Any) -> None:
         """Delete a de-identification job.
 
         Removes the record of the job from the service. Does not delete any documents.
@@ -1041,7 +605,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1061,7 +625,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1085,7 +649,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    async def deidentify(
+    async def deidentify_text(
         self, body: _models.DeidentificationContent, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
@@ -1100,47 +664,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "inputText": "str",
-                    "dataType": "str",
-                    "operation": "str",
-                    "redactionFormat": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "outputText": "str",
-                    "taggerResult": {
-                        "entities": [
-                            {
-                                "category": "str",
-                                "length": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "offset": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "confidenceScore": 0.0,
-                                "text": "str"
-                            }
-                        ],
-                        "etag": "str",
-                        "path": "str"
-                    }
-                }
         """
 
     @overload
-    async def deidentify(
+    async def deidentify_text(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
@@ -1155,39 +682,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "outputText": "str",
-                    "taggerResult": {
-                        "entities": [
-                            {
-                                "category": "str",
-                                "length": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "offset": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "confidenceScore": 0.0,
-                                "text": "str"
-                            }
-                        ],
-                        "etag": "str",
-                        "path": "str"
-                    }
-                }
         """
 
     @overload
-    async def deidentify(
+    async def deidentify_text(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
@@ -1202,39 +700,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "outputText": "str",
-                    "taggerResult": {
-                        "entities": [
-                            {
-                                "category": "str",
-                                "length": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "offset": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "confidenceScore": 0.0,
-                                "text": "str"
-                            }
-                        ],
-                        "etag": "str",
-                        "path": "str"
-                    }
-                }
         """
 
     @distributed_trace_async
-    async def deidentify(
+    async def deidentify_text(
         self, body: Union[_models.DeidentificationContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
@@ -1247,45 +716,8 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "inputText": "str",
-                    "dataType": "str",
-                    "operation": "str",
-                    "redactionFormat": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "outputText": "str",
-                    "taggerResult": {
-                        "entities": [
-                            {
-                                "category": "str",
-                                "length": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "offset": {
-                                    "codePoint": 0,
-                                    "utf16": 0,
-                                    "utf8": 0
-                                },
-                                "confidenceScore": 0.0,
-                                "text": "str"
-                            }
-                        ],
-                        "etag": "str",
-                        "path": "str"
-                    }
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1306,7 +738,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deidentification_deidentify_request(
+        _request = build_deidentification_deidentify_text_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1314,7 +746,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1327,9 +759,17 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1337,6 +777,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             deserialized = _deserialize(_models.DeidentificationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore

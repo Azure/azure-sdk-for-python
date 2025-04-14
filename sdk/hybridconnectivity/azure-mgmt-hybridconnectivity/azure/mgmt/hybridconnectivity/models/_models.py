@@ -416,6 +416,10 @@ class GenerateAwsTemplateRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class GenerateAwsTemplateResponse(_model_base.Model):
+    """The HybridConnectivity post operation response."""
+
+
 class IngressGatewayResource(_model_base.Model):
     """The ingress gateway access credentials.
 

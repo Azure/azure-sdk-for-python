@@ -125,3 +125,13 @@ class TestDevOpsInfrastructureMgmtPoolsOperations(AzureMgmtRecordedTestCase):
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_pools_check_name_availability(self, resource_group):
+        response = self.client.pools.check_name_availability(
+            body={"name": "str", "type": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
