@@ -15,12 +15,10 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         assert client is not None
 
         content = DeidentificationContent(
-            input_text="Hello, my name is John Smith.",
-            operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
+            input_text="Hello, my name is John Smith.", operation=DeidentificationOperationType.SURROGATE
         )
 
-        result: DeidentificationResult = client.deidentify(content)
+        result: DeidentificationResult = client.deidentify_text(content)
 
         assert result is not None
         assert result.output_text is not None
