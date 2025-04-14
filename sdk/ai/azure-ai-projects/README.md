@@ -789,10 +789,17 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth, default_parameters=["format"]
+    name="get_weather",
+    spec=openapi_weather,
+    description="Retrieve weather information for a location",
+    auth=auth,
+    default_parameters=["format"],
 )
 openapi_tool.add_definition(
-    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth,
+    name="get_countries",
+    spec=openapi_countries,
+    description="Retrieve a list of countries",
+    auth=auth,
 )
 
 # Create agent with OpenApi tool and process assistant run
