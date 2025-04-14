@@ -542,12 +542,11 @@ class PhoneNumbersClient:
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
         :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
-     not provided.
+         not provided.
         :paramtype agree_to_not_resell: bool
         :return: A poller to wait on the purchase operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
-
         reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(
             agree_to_not_resell=agree_to_not_resell)
         polling_interval = kwargs.pop(
