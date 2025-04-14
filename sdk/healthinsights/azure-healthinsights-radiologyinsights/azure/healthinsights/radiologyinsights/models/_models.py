@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 class RadiologyInsightsInference(_model_base.Model):
     """An inference made by the Radiology Insights model regarding a patient.
 
-
     * AgeMismatch
     * SexMismatch
     * LateralityDiscrepancy
@@ -42,7 +41,6 @@ class RadiologyInsightsInference(_model_base.Model):
     GuidanceInference, LateralityDiscrepancyInference, LimitedOrderDiscrepancyInference,
     QualityMeasureInference, RadiologyProcedureInference, ScoringAndAssessmentInference,
     SexMismatchInference
-
 
     :ivar kind: Discriminator property for RadiologyInsightsInference. Required. Known values are:
      "ageMismatch", "lateralityDiscrepancy", "sexMismatch", "completeOrderDiscrepancy",
@@ -62,7 +60,9 @@ class RadiologyInsightsInference(_model_base.Model):
      \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\", \"followupRecommendation\",
      \"followupCommunication\", \"radiologyProcedure\", \"scoringAndAssessment\", \"guidance\", and
      \"qualityMeasure\"."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -88,14 +88,13 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
     """A notification for age mismatch is displayed when the age mentioned in a document for a
     specific patient does not match the age specified in the patient information.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Age mismatch inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.AGE_MISMATCH
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Age mismatch inference type"""
 
     @overload
@@ -126,9 +125,11 @@ class Element(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique id for inter-element referencing."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -154,7 +155,6 @@ class Annotation(Element):
     """A text note which also  contains information about who made the statement and when
     Based on `FHIR Annotation <https://www.hl7.org/fhir/R4/datatypes.html#Annotation>`_.
 
-
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
     :ivar extension: Additional Content defined by implementations.
@@ -167,11 +167,13 @@ class Annotation(Element):
     :vartype text: str
     """
 
-    author_string: Optional[str] = rest_field(name="authorString")
+    author_string: Optional[str] = rest_field(
+        name="authorString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Individual responsible for the annotation."""
-    time: Optional[str] = rest_field()
+    time: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """When the annotation was made."""
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The annotation - text content (as markdown). Required."""
 
     @overload
@@ -199,16 +201,15 @@ class Annotation(Element):
 class AssessmentValueRange(_model_base.Model):
     """A range of values.
 
-
     :ivar minimum: The minimum value. Required.
     :vartype minimum: str
     :ivar maximum: The maximum value. Required.
     :vartype maximum: str
     """
 
-    minimum: str = rest_field()
+    minimum: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The minimum value. Required."""
-    maximum: str = rest_field()
+    maximum: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum value. Required."""
 
     @overload
@@ -240,9 +241,9 @@ class CodeableConcept(Element):
     :vartype text: str
     """
 
-    coding: Optional[List["_models.Coding"]] = rest_field()
+    coding: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Code defined by a terminology system."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Plain text representation of the concept."""
 
     @overload
@@ -282,13 +283,13 @@ class Coding(Element):
     :vartype display: str
     """
 
-    system: Optional[str] = rest_field()
+    system: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identity of the terminology system."""
-    version: Optional[str] = rest_field()
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Version of the system - if relevant."""
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Symbol in syntax defined by the system."""
-    display: Optional[str] = rest_field()
+    display: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Representation defined by the system."""
 
     @overload
@@ -318,7 +319,6 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Complete order discrepancy inference type
@@ -336,15 +336,19 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Complete order discrepancy inference type"""
-    order_type: "_models.CodeableConcept" = rest_field(name="orderType")
+    order_type: "_models.CodeableConcept" = rest_field(
+        name="orderType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
      Required."""
-    missing_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="missingBodyParts")
+    missing_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="missingBodyParts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of missing body parts required by a complete order : SNOMED CT codes."""
     missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
-        name="missingBodyPartMeasurements"
+        name="missingBodyPartMeasurements", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of missing body parts that require measurement by a complete order : SNOMED CT codes."""
 
@@ -372,16 +376,15 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
 class CriticalResult(_model_base.Model):
     """Critical Result consists of two properties.
 
-
     :ivar description: Description : medical problem. Required.
     :vartype description: str
     :ivar finding: Finding linked to the critical result.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     """
 
-    description: str = rest_field()
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description : medical problem. Required."""
-    finding: Optional["_models.Observation"] = rest_field()
+    finding: Optional["_models.Observation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Finding linked to the critical result."""
 
     @overload
@@ -407,7 +410,6 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
     """Critical results refer to findings of utmost importance that may require timely attention due
     to their potential impact on patient care.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Critical finding inference type
@@ -417,9 +419,9 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
     :vartype result: ~azure.healthinsights.radiologyinsights.models.CriticalResult
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.CRITICAL_RESULT] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.CRITICAL_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Critical finding inference type"""
-    result: "_models.CriticalResult" = rest_field()
+    result: "_models.CriticalResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The complete Critical Result, as outlined below, will be reused for the recommendation.
      Required."""
 
@@ -452,9 +454,13 @@ class DocumentAdministrativeMetadata(_model_base.Model):
     :vartype encounter_id: str
     """
 
-    ordered_procedures: Optional[List["_models.OrderedProcedure"]] = rest_field(name="orderedProcedures")
+    ordered_procedures: Optional[List["_models.OrderedProcedure"]] = rest_field(
+        name="orderedProcedures", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of procedure information associated with the document."""
-    encounter_id: Optional[str] = rest_field(name="encounterId")
+    encounter_id: Optional[str] = rest_field(
+        name="encounterId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to the encounter associated with the document."""
 
     @overload
@@ -485,9 +491,9 @@ class DocumentAuthor(_model_base.Model):
     :vartype full_name: str
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """author id."""
-    full_name: Optional[str] = rest_field(name="fullName")
+    full_name: Optional[str] = rest_field(name="fullName", visibility=["read", "create", "update", "delete", "query"])
     """Text representation of the full name."""
 
     @overload
@@ -512,7 +518,6 @@ class DocumentAuthor(_model_base.Model):
 class DocumentContent(_model_base.Model):
     """The content of the patient document.
 
-
     :ivar source_type: The type of the content's source.
      In case the source type is 'inline', the content is given as a string (for instance, text).
      In case the source type is 'reference', the content is given as a URI. Required. Known values
@@ -524,12 +529,14 @@ class DocumentContent(_model_base.Model):
     :vartype value: str
     """
 
-    source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(name="sourceType")
+    source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(
+        name="sourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the content's source.
      In case the source type is 'inline', the content is given as a string (for instance, text).
      In case the source type is 'reference', the content is given as a URI. Required. Known values
      are: \"inline\" and \"reference\"."""
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the document, given either inline (as a string) or as a reference (URI).
      Required."""
 
@@ -555,8 +562,8 @@ class DocumentContent(_model_base.Model):
 class Resource(_model_base.Model):
     """Resource is the ancestor of DomainResource from which most resources are derived. Bundle,
     Parameters, and Binary extend Resource directly.
-    Based on [FHIR Resource](https://www.hl7.org/fhir/r4/resource.html.
-
+    Based on [FHIR Resource](`https://www.hl7.org/fhir/r4/resource.html
+    <https://www.hl7.org/fhir/r4/resource.html>`_.
 
     :ivar resource_type: The type of resource. Required.
     :vartype resource_type: str
@@ -570,15 +577,17 @@ class Resource(_model_base.Model):
     :vartype language: str
     """
 
-    resource_type: str = rest_field(name="resourceType")
+    resource_type: str = rest_field(name="resourceType", visibility=["read", "create", "update", "delete", "query"])
     """The type of resource. Required."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource Id."""
-    meta: Optional["_models.Meta"] = rest_field()
+    meta: Optional["_models.Meta"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata about the resource."""
-    implicit_rules: Optional[str] = rest_field(name="implicitRules")
+    implicit_rules: Optional[str] = rest_field(
+        name="implicitRules", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A set of rules under which this content was created."""
-    language: Optional[str] = rest_field()
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Language of the resource content."""
 
     @overload
@@ -610,7 +619,6 @@ class DomainResource(Resource):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     Condition, Observation, ResearchStudy
 
-
     :ivar id: Resource Id.
     :vartype id: str
     :ivar meta: Metadata about the resource.
@@ -635,13 +643,19 @@ class DomainResource(Resource):
     __mapping__: Dict[str, _model_base.Model] = {}
     resource_type: str = rest_discriminator(name="resourceType")
     """Discriminator property for DomainResource. Required. Default value is None."""
-    text: Optional["_models.Narrative"] = rest_field()
+    text: Optional["_models.Narrative"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text summary of the resource, for human interpretation."""
-    contained: Optional[List["_models.Resource"]] = rest_field()
+    contained: Optional[List["_models.Resource"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contained, inline Resources."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
-    modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
+    modifier_extension: Optional[List["_models.Extension"]] = rest_field(
+        name="modifierExtension", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extensions that cannot be ignored."""
 
     @overload
@@ -674,7 +688,6 @@ class Extension(Element):
     """Base for all elements
     Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
-
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
     :ivar value_quantity: Value as Quantity.
@@ -703,31 +716,55 @@ class Extension(Element):
     :vartype value_reference: ~azure.healthinsights.radiologyinsights.models.Reference
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Source of the definition for the extension code - a logical name or a URL. Required."""
-    value_quantity: Optional["_models.Quantity"] = rest_field(name="valueQuantity")
+    value_quantity: Optional["_models.Quantity"] = rest_field(
+        name="valueQuantity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Quantity."""
-    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(name="valueCodeableConcept")
+    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(
+        name="valueCodeableConcept", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as CodeableConcept."""
-    value_string: Optional[str] = rest_field(name="valueString")
+    value_string: Optional[str] = rest_field(
+        name="valueString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as string."""
-    value_boolean: Optional[bool] = rest_field(name="valueBoolean")
+    value_boolean: Optional[bool] = rest_field(
+        name="valueBoolean", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as boolean."""
-    value_integer: Optional[int] = rest_field(name="valueInteger")
+    value_integer: Optional[int] = rest_field(
+        name="valueInteger", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as integer."""
-    value_range: Optional["_models.Range"] = rest_field(name="valueRange")
+    value_range: Optional["_models.Range"] = rest_field(
+        name="valueRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Range."""
-    value_ratio: Optional["_models.Ratio"] = rest_field(name="valueRatio")
+    value_ratio: Optional["_models.Ratio"] = rest_field(
+        name="valueRatio", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Ratio."""
-    value_sampled_data: Optional["_models.SampledData"] = rest_field(name="valueSampledData")
+    value_sampled_data: Optional["_models.SampledData"] = rest_field(
+        name="valueSampledData", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as SampledData."""
-    value_time: Optional[datetime.time] = rest_field(name="valueTime")
+    value_time: Optional[datetime.time] = rest_field(
+        name="valueTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as time (hh:mm:ss)."""
-    value_date_time: Optional[str] = rest_field(name="valueDateTime")
+    value_date_time: Optional[str] = rest_field(
+        name="valueDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as dateTime."""
-    value_period: Optional["_models.Period"] = rest_field(name="valuePeriod")
+    value_period: Optional["_models.Period"] = rest_field(
+        name="valuePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Period."""
-    value_reference: Optional["_models.Reference"] = rest_field(name="valueReference")
+    value_reference: Optional["_models.Reference"] = rest_field(
+        name="valueReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as reference."""
 
     @overload
@@ -764,7 +801,6 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     """Findings in a radiology report typically describe abnormalities, lesions, or other notable
     observations related to the anatomy or pathology of the imaged area.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Finding inference type
@@ -774,9 +810,9 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FINDING] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FINDING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Finding inference type"""
-    finding: "_models.Observation" = rest_field()
+    finding: "_models.Observation" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Finding data : contains extensions, fields and components linked with the finding. Required."""
 
     @overload
@@ -808,7 +844,9 @@ class FindingOptions(_model_base.Model):
     :vartype provide_focused_sentence_evidence: bool
     """
 
-    provide_focused_sentence_evidence: Optional[bool] = rest_field(name="provideFocusedSentenceEvidence")
+    provide_focused_sentence_evidence: Optional[bool] = rest_field(
+        name="provideFocusedSentenceEvidence", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If this is true, provide the sentence that contains the first token of the finding's clinical
      indicator (i.e. the medical problem), if there is one. This sentence is provided as an
      extension with url 'ci_sentence', next to the token evidence. Default is false."""
@@ -835,7 +873,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Followup Communication inference type
@@ -849,13 +886,19 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     :vartype was_acknowledged: bool
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Followup Communication inference type"""
-    communicated_at: Optional[List[datetime.datetime]] = rest_field(name="communicatedAt", format="rfc3339")
+    communicated_at: Optional[List[datetime.datetime]] = rest_field(
+        name="communicatedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Communication date and time."""
-    recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = rest_field()
+    recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Recipient of the communication."""
-    was_acknowledged: bool = rest_field(name="wasAcknowledged")
+    was_acknowledged: bool = rest_field(
+        name="wasAcknowledged", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Communication was acknowledged. Required."""
 
     @overload
@@ -882,7 +925,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
 class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
-
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -916,30 +958,38 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
      ~azure.healthinsights.radiologyinsights.models.ProcedureRecommendation
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Recommendation inference type"""
-    effective_at: Optional[str] = rest_field(name="effectiveAt")
+    effective_at: Optional[str] = rest_field(
+        name="effectiveAt", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Date and time are displayed when the procedure is recommended to be done at a specific point in
      time."""
-    effective_period: Optional["_models.Period"] = rest_field(name="effectivePeriod")
+    effective_period: Optional["_models.Period"] = rest_field(
+        name="effectivePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The period is shown if a specific period is mentioned, with a start and end date-time."""
-    findings: Optional[List["_models.RecommendationFinding"]] = rest_field()
+    findings: Optional[List["_models.RecommendationFinding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Findings related to the recommendation."""
-    is_conditional: bool = rest_field(name="isConditional")
+    is_conditional: bool = rest_field(name="isConditional", visibility=["read", "create", "update", "delete", "query"])
     """The conditional value indicates whether or not the sentence containing the recommendation
      includes a conditional statement. Keywords for conditional statements include 'if', 'when',
      'unless', and so on. Required."""
-    is_option: bool = rest_field(name="isOption")
+    is_option: bool = rest_field(name="isOption", visibility=["read", "create", "update", "delete", "query"])
     """The option value indicates whether or not the sentence containing the recommendation includes
      an optional statement. Keywords for optional statements include 'recommend', 'consider', and so
      on. Required."""
-    is_guideline: bool = rest_field(name="isGuideline")
+    is_guideline: bool = rest_field(name="isGuideline", visibility=["read", "create", "update", "delete", "query"])
     """The guideline value indicates whether or not the recommendation is part of a guideline section
      that compiles all recommendations applicable to various findings. Required."""
-    is_hedging: bool = rest_field(name="isHedging")
+    is_hedging: bool = rest_field(name="isHedging", visibility=["read", "create", "update", "delete", "query"])
     """Hedging refers to ambiguous, vague or imprecise language within the sentence of the
      recommendation. Keywords for hedging are 'can be','may be',and so on. Required."""
-    recommended_procedure: "_models.ProcedureRecommendation" = rest_field(name="recommendedProcedure")
+    recommended_procedure: "_models.ProcedureRecommendation" = rest_field(
+        name="recommendedProcedure", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The procedure recommendation can be a generic procedure or an imaging procedure. Required."""
 
     @overload
@@ -984,14 +1034,18 @@ class FollowupRecommendationOptions(_model_base.Model):
     """
 
     include_recommendations_with_no_specified_modality: Optional[bool] = rest_field(
-        name="includeRecommendationsWithNoSpecifiedModality"
+        name="includeRecommendationsWithNoSpecifiedModality", visibility=["read", "create", "update", "delete", "query"]
     )
     """Include/Exclude follow-up recommendations without a specific radiology procedure. Default is
      false."""
-    include_recommendations_in_references: Optional[bool] = rest_field(name="includeRecommendationsInReferences")
+    include_recommendations_in_references: Optional[bool] = rest_field(
+        name="includeRecommendationsInReferences", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Include/Exclude follow-up recommendations in references to a guideline or article. Default is
      false."""
-    provide_focused_sentence_evidence: Optional[bool] = rest_field(name="provideFocusedSentenceEvidence")
+    provide_focused_sentence_evidence: Optional[bool] = rest_field(
+        name="provideFocusedSentenceEvidence", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If this is true, provide one or more sentences as evidence for the recommendation, next to the
      token evidence. The start and end positions of these sentences will be put in an extension with
      url 'modality_sentences'. Default is false."""
@@ -1022,7 +1076,6 @@ class ProcedureRecommendation(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GenericProcedureRecommendation, ImagingProcedureRecommendation
 
-
     :ivar kind: Discriminator property for ProcedureRecommendation. Required. Default value is
      None.
     :vartype kind: str
@@ -1033,7 +1086,9 @@ class ProcedureRecommendation(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for ProcedureRecommendation. Required. Default value is None."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -1058,7 +1113,6 @@ class ProcedureRecommendation(_model_base.Model):
 class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
     """Generic procedure information.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : generic. Required. Default value is
@@ -1071,11 +1125,11 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
     :vartype description: str
     """
 
-    kind: Literal["genericProcedureRecommendation"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal["genericProcedureRecommendation"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Procedure type : generic. Required. Default value is \"genericProcedureRecommendation\"."""
-    code: "_models.CodeableConcept" = rest_field()
+    code: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Procedure modality : SNOMED CT code. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Procedure description : MANAGEMENT PROCEDURE (PROCEDURE) or CONSULTATION (PROCEDURE) based on
      SNOMED CT."""
 
@@ -1104,7 +1158,6 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
     can possibly propose appropriate follow-up recommendations, based upon established,
     evidence-based best practices i.e. ACR guidelines.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Guidance inference type
@@ -1129,25 +1182,29 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
     :vartype missing_guidance_information: list[str]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.GUIDANCE] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.GUIDANCE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Guidance inference type"""
-    finding: "_models.FindingInference" = rest_field()
+    finding: "_models.FindingInference" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The finding associated with the guidance. Required."""
-    identifier: "_models.CodeableConcept" = rest_field()
+    identifier: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The guidance identifier, as a concept. Required."""
     present_guidance_information: Optional[List["_models.PresentGuidanceInformation"]] = rest_field(
-        name="presentGuidanceInformation"
+        name="presentGuidanceInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """presentGuidanceInformation lists each item of the structured information (e.g. laterality) and
      corresponding details (left, right, bilateral) that is present in the document."""
-    ranking: Union[str, "_models.GuidanceRankingType"] = rest_field()
+    ranking: Union[str, "_models.GuidanceRankingType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """See doc of GuidanceRankingType. Required. Known values are: \"high\" and \"low\"."""
     recommendation_proposals: Optional[List["_models.FollowupRecommendationInference"]] = rest_field(
-        name="recommendationProposals"
+        name="recommendationProposals", visibility=["read", "create", "update", "delete", "query"]
     )
     """The proposed follow-up recommendations, if any. If this is filled, missingGuidanceInformation
      cannot be filled (and vice versa)."""
-    missing_guidance_information: Optional[List[str]] = rest_field(name="missingGuidanceInformation")
+    missing_guidance_information: Optional[List[str]] = rest_field(
+        name="missingGuidanceInformation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains all missing items that are needed to determine follow-up."""
 
     @overload
@@ -1177,14 +1234,15 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
 class GuidanceOptions(_model_base.Model):
     """Guidance options.
 
-
     :ivar show_guidance_in_history: If this is true, also show guidances from a clinical history
      section i.e. if the first token of the associated finding's clinical indicator is in this
      section. Default is false. Required.
     :vartype show_guidance_in_history: bool
     """
 
-    show_guidance_in_history: bool = rest_field(name="showGuidanceInHistory")
+    show_guidance_in_history: bool = rest_field(
+        name="showGuidanceInHistory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If this is true, also show guidances from a clinical history section i.e. if the first token of
      the associated finding's clinical indicator is in this section. Default is false. Required."""
 
@@ -1209,13 +1267,11 @@ class GuidanceOptions(_model_base.Model):
 class HealthInsightsErrorResponse(_model_base.Model):
     """A response containing error details.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar error: The error object. Required.
     :vartype error: ~azure.core.ODataV4Format
     """
 
-    error: ODataV4Format = rest_field()
+    error: ODataV4Format = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object. Required."""
 
     @overload
@@ -1254,17 +1310,17 @@ class Identifier(Element):
     :vartype assigner: ~azure.healthinsights.radiologyinsights.models.Reference
     """
 
-    use: Optional[str] = rest_field()
+    use: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """usual | official | temp | secondary | old (If known)."""
-    type: Optional["_models.CodeableConcept"] = rest_field()
+    type: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of identifier."""
-    system: Optional[str] = rest_field()
+    system: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The namespace for the identifier value."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value that is unique."""
-    period: Optional["_models.Period"] = rest_field()
+    period: Optional["_models.Period"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Time period when id is/was valid for use."""
-    assigner: Optional["_models.Reference"] = rest_field()
+    assigner: Optional["_models.Reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Organization that issued id (may be just text)."""
 
     @overload
@@ -1293,7 +1349,6 @@ class Identifier(Element):
 class ImagingProcedure(_model_base.Model):
     """Imaging procedure.
 
-
     :ivar modality: Modality : SNOMED CT code. Required.
     :vartype modality: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
     :ivar anatomy: Anatomy : SNOMED CT code. Required.
@@ -1306,15 +1361,21 @@ class ImagingProcedure(_model_base.Model):
     :vartype view: ~azure.healthinsights.radiologyinsights.models.RadiologyCodeWithTypes
     """
 
-    modality: "_models.CodeableConcept" = rest_field()
+    modality: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Modality : SNOMED CT code. Required."""
-    anatomy: "_models.CodeableConcept" = rest_field()
+    anatomy: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Anatomy : SNOMED CT code. Required."""
-    laterality: Optional["_models.CodeableConcept"] = rest_field()
+    laterality: Optional["_models.CodeableConcept"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Laterality : SNOMED CT code."""
-    contrast: Optional["_models.RadiologyCodeWithTypes"] = rest_field()
+    contrast: Optional["_models.RadiologyCodeWithTypes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contrast : see RadiologyCodeWithTypes (below)."""
-    view: Optional["_models.RadiologyCodeWithTypes"] = rest_field()
+    view: Optional["_models.RadiologyCodeWithTypes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """View : see RadiologyCodeWithTypes (below)."""
 
     @overload
@@ -1342,7 +1403,6 @@ class ImagingProcedure(_model_base.Model):
 class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
     """Imaging procedures.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : imaging. Required. Default value is
@@ -1355,11 +1415,15 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
      list[~azure.healthinsights.radiologyinsights.models.ImagingProcedure]
     """
 
-    kind: Literal["imagingProcedureRecommendation"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal["imagingProcedureRecommendation"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Procedure type : imaging. Required. Default value is \"imagingProcedureRecommendation\"."""
-    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(name="procedureCodes")
+    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="procedureCodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """LOINC codes for the procedure."""
-    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(name="imagingProcedures")
+    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(
+        name="imagingProcedures", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Imaging procedures. Required."""
 
     @overload
@@ -1387,7 +1451,6 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Laterality discrepancy inference type
@@ -1402,11 +1465,15 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
      ~azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Laterality discrepancy inference type"""
-    laterality_indication: Optional["_models.CodeableConcept"] = rest_field(name="lateralityIndication")
+    laterality_indication: Optional["_models.CodeableConcept"] = rest_field(
+        name="lateralityIndication", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Laterality indication : SNOMED CT code for laterality qualifier value."""
-    discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"] = rest_field(name="discrepancyType")
+    discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"] = rest_field(
+        name="discrepancyType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mismatch type : orderLateralityMismatch, textLateralityContradiction, textLateralityMissing.
      Required. Known values are: \"orderLateralityMismatch\", \"textLateralityContradiction\", and
      \"textLateralityMissing\"."""
@@ -1435,7 +1502,6 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Limited order discrepancy inference type
@@ -1452,15 +1518,19 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Limited order discrepancy inference type"""
-    order_type: "_models.CodeableConcept" = rest_field(name="orderType")
+    order_type: "_models.CodeableConcept" = rest_field(
+        name="orderType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
      Required."""
-    present_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="presentBodyParts")
+    present_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="presentBodyParts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of body parts found in the document : SNOMED CT codes."""
     present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
-        name="presentBodyPartMeasurements"
+        name="presentBodyPartMeasurements", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of body parts that are measured according to the document : SNOMED CT codes."""
 
@@ -1513,24 +1583,26 @@ class Meta(_model_base.Model):
     :vartype tag: list[~azure.healthinsights.radiologyinsights.models.Coding]
     """
 
-    version_id: Optional[str] = rest_field(name="versionId")
+    version_id: Optional[str] = rest_field(name="versionId", visibility=["read", "create", "update", "delete", "query"])
     """The version specific identifier, as it appears in the version portion of the URL. This value
      changes when the resource is created, updated, or deleted."""
-    last_updated: Optional[str] = rest_field(name="lastUpdated")
+    last_updated: Optional[str] = rest_field(
+        name="lastUpdated", visibility=["read", "create", "update", "delete", "query"]
+    )
     """When the resource last changed - e.g. when the version changed."""
-    source: Optional[str] = rest_field()
+    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A uri that identifies the source system of the resource. This provides a minimal amount of
      Provenance information that can be used to track or differentiate the source of information in
      the resource. The source may identify another FHIR server, document, message, database, etc."""
-    profile: Optional[List[str]] = rest_field()
+    profile: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of profiles (references to `StructureDefinition
      <https://www.hl7.org/fhir/structuredefinition.html>`_ resources) that this resource claims to
      conform to. The URL is a reference to `StructureDefinition.url
      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_."""
-    security: Optional[List["_models.Coding"]] = rest_field()
+    security: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Security labels applied to this resource. These tags connect specific resources to the overall
      security policy and infrastructure."""
-    tag: Optional[List["_models.Coding"]] = rest_field()
+    tag: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags applied to this resource. Tags are intended to be used to identify and relate resources to
      process and workflow, and applications are not required to consider the tags when interpreting
      the meaning of a resource."""
@@ -1564,7 +1636,6 @@ class Narrative(Element):
     represent the content of the resource to a human.
     Based on `FHIR Narrative <https://www.hl7.org/fhir/R4/narrative.html#Narrative>`_.
 
-
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
     :ivar extension: Additional Content defined by implementations.
@@ -1575,9 +1646,9 @@ class Narrative(Element):
     :vartype div: str
     """
 
-    status: str = rest_field()
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """generated, extensions, additional, empty. Required."""
-    div: str = rest_field()
+    div: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """xhtml. Required."""
 
     @overload
@@ -1604,7 +1675,6 @@ class Narrative(Element):
 class Observation(DomainResource, discriminator="Observation"):
     """Detailed information about observations
     Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
-
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1690,69 +1760,117 @@ class Observation(DomainResource, discriminator="Observation"):
     :vartype component: list[~azure.healthinsights.radiologyinsights.models.ObservationComponent]
     """
 
-    resource_type: Literal["Observation"] = rest_discriminator(name="resourceType")  # type: ignore
+    resource_type: Literal["Observation"] = rest_discriminator(name="resourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """resourceType. Required. Default value is \"Observation\"."""
-    identifier: Optional[List["_models.Identifier"]] = rest_field()
+    identifier: Optional[List["_models.Identifier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Business Identifier for observation."""
-    status: Union[str, "_models.ObservationStatusCodeType"] = rest_field()
+    status: Union[str, "_models.ObservationStatusCodeType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """registered | preliminary | final | amended +. Required. Known values are: \"registered\",
      \"preliminary\", \"final\", \"amended\", \"corrected\", \"cancelled\", \"entered-in-error\",
      and \"unknown\"."""
-    category: Optional[List["_models.CodeableConcept"]] = rest_field()
+    category: Optional[List["_models.CodeableConcept"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Classification of  type of observation."""
-    code: "_models.CodeableConcept" = rest_field()
+    code: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of observation (code / type). Required."""
-    subject: Optional["_models.Reference"] = rest_field()
+    subject: Optional["_models.Reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Who and/or what the observation is about."""
-    encounter: Optional["_models.Reference"] = rest_field()
+    encounter: Optional["_models.Reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Healthcare event during which this observation is made."""
-    effective_date_time: Optional[str] = rest_field(name="effectiveDateTime")
+    effective_date_time: Optional[str] = rest_field(
+        name="effectiveDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Clinically relevant time/time-period for observation."""
-    effective_period: Optional["_models.Period"] = rest_field(name="effectivePeriod")
+    effective_period: Optional["_models.Period"] = rest_field(
+        name="effectivePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Clinically relevant time/time-period for observation."""
-    effective_instant: Optional[str] = rest_field(name="effectiveInstant")
+    effective_instant: Optional[str] = rest_field(
+        name="effectiveInstant", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Clinically relevant time/time-period for observation."""
-    issued: Optional[str] = rest_field()
+    issued: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Date/Time this version was made available."""
-    value_quantity: Optional["_models.Quantity"] = rest_field(name="valueQuantity")
+    value_quantity: Optional["_models.Quantity"] = rest_field(
+        name="valueQuantity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(name="valueCodeableConcept")
+    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(
+        name="valueCodeableConcept", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_string: Optional[str] = rest_field(name="valueString")
+    value_string: Optional[str] = rest_field(
+        name="valueString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_boolean: Optional[bool] = rest_field(name="valueBoolean")
+    value_boolean: Optional[bool] = rest_field(
+        name="valueBoolean", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_integer: Optional[int] = rest_field(name="valueInteger")
+    value_integer: Optional[int] = rest_field(
+        name="valueInteger", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_range: Optional["_models.Range"] = rest_field(name="valueRange")
+    value_range: Optional["_models.Range"] = rest_field(
+        name="valueRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_ratio: Optional["_models.Ratio"] = rest_field(name="valueRatio")
+    value_ratio: Optional["_models.Ratio"] = rest_field(
+        name="valueRatio", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_sampled_data: Optional["_models.SampledData"] = rest_field(name="valueSampledData")
+    value_sampled_data: Optional["_models.SampledData"] = rest_field(
+        name="valueSampledData", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_time: Optional[datetime.time] = rest_field(name="valueTime")
+    value_time: Optional[datetime.time] = rest_field(
+        name="valueTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_date_time: Optional[str] = rest_field(name="valueDateTime")
+    value_date_time: Optional[str] = rest_field(
+        name="valueDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    value_period: Optional["_models.Period"] = rest_field(name="valuePeriod")
+    value_period: Optional["_models.Period"] = rest_field(
+        name="valuePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Actual result."""
-    data_absent_reason: Optional["_models.CodeableConcept"] = rest_field(name="dataAbsentReason")
+    data_absent_reason: Optional["_models.CodeableConcept"] = rest_field(
+        name="dataAbsentReason", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Why the result is missing."""
-    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field()
+    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """High, low, normal, etc."""
-    note: Optional[List["_models.Annotation"]] = rest_field()
+    note: Optional[List["_models.Annotation"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Comments about the observation."""
-    body_site: Optional["_models.CodeableConcept"] = rest_field(name="bodySite")
+    body_site: Optional["_models.CodeableConcept"] = rest_field(
+        name="bodySite", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Observed body part."""
-    method: Optional["_models.CodeableConcept"] = rest_field()
+    method: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """How it was done."""
-    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(name="referenceRange")
+    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(
+        name="referenceRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Provides guide for interpretation."""
-    has_member: Optional[List["_models.Reference"]] = rest_field(name="hasMember")
+    has_member: Optional[List["_models.Reference"]] = rest_field(
+        name="hasMember", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Related resource that belongs to the Observation group."""
-    derived_from: Optional[List["_models.Reference"]] = rest_field(name="derivedFrom")
+    derived_from: Optional[List["_models.Reference"]] = rest_field(
+        name="derivedFrom", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Related measurements the observation is made from."""
-    component: Optional[List["_models.ObservationComponent"]] = rest_field()
+    component: Optional[List["_models.ObservationComponent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Component results."""
 
     @overload
@@ -1814,7 +1932,6 @@ class ObservationComponent(Element):
     """Component results
     Based on `FHIR Observation.component <https://www.hl7.org/fhir/R4/observation.html>`_.
 
-
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
     :ivar extension: Additional Content defined by implementations.
@@ -1854,37 +1971,67 @@ class ObservationComponent(Element):
      list[~azure.healthinsights.radiologyinsights.models.ObservationReferenceRange]
     """
 
-    code: "_models.CodeableConcept" = rest_field()
+    code: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of component observation (code / type). Required."""
-    value_quantity: Optional["_models.Quantity"] = rest_field(name="valueQuantity")
+    value_quantity: Optional["_models.Quantity"] = rest_field(
+        name="valueQuantity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Quantity."""
-    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(name="valueCodeableConcept")
+    value_codeable_concept: Optional["_models.CodeableConcept"] = rest_field(
+        name="valueCodeableConcept", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as CodeableConcept."""
-    value_string: Optional[str] = rest_field(name="valueString")
+    value_string: Optional[str] = rest_field(
+        name="valueString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as string."""
-    value_boolean: Optional[bool] = rest_field(name="valueBoolean")
+    value_boolean: Optional[bool] = rest_field(
+        name="valueBoolean", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as boolean."""
-    value_integer: Optional[int] = rest_field(name="valueInteger")
+    value_integer: Optional[int] = rest_field(
+        name="valueInteger", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as integer."""
-    value_range: Optional["_models.Range"] = rest_field(name="valueRange")
+    value_range: Optional["_models.Range"] = rest_field(
+        name="valueRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Range."""
-    value_ratio: Optional["_models.Ratio"] = rest_field(name="valueRatio")
+    value_ratio: Optional["_models.Ratio"] = rest_field(
+        name="valueRatio", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Ratio."""
-    value_sampled_data: Optional["_models.SampledData"] = rest_field(name="valueSampledData")
+    value_sampled_data: Optional["_models.SampledData"] = rest_field(
+        name="valueSampledData", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as SampledData."""
-    value_time: Optional[datetime.time] = rest_field(name="valueTime")
+    value_time: Optional[datetime.time] = rest_field(
+        name="valueTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as time (hh:mm:ss)."""
-    value_date_time: Optional[str] = rest_field(name="valueDateTime")
+    value_date_time: Optional[str] = rest_field(
+        name="valueDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as dateTime."""
-    value_period: Optional["_models.Period"] = rest_field(name="valuePeriod")
+    value_period: Optional["_models.Period"] = rest_field(
+        name="valuePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as Period."""
-    value_reference: Optional["_models.Reference"] = rest_field(name="valueReference")
+    value_reference: Optional["_models.Reference"] = rest_field(
+        name="valueReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Value as reference."""
-    data_absent_reason: Optional["_models.CodeableConcept"] = rest_field(name="dataAbsentReason")
+    data_absent_reason: Optional["_models.CodeableConcept"] = rest_field(
+        name="dataAbsentReason", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Why the component result is missing."""
-    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field()
+    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """High, low, normal, etc."""
-    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(name="referenceRange")
+    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(
+        name="referenceRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Provides guide for interpretation of component result."""
 
     @overload
@@ -1940,17 +2087,19 @@ class ObservationReferenceRange(_model_base.Model):
     :vartype text: str
     """
 
-    low: Optional["_models.Quantity"] = rest_field()
+    low: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Low Range, if relevant."""
-    high: Optional["_models.Quantity"] = rest_field()
+    high: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """High Range, if relevant."""
-    type: Optional["_models.CodeableConcept"] = rest_field()
+    type: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reference range qualifier."""
-    applies_to: Optional[List["_models.CodeableConcept"]] = rest_field(name="appliesTo")
+    applies_to: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="appliesTo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference range population."""
-    age: Optional["_models.Range"] = rest_field()
+    age: Optional["_models.Range"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Applicable age range, if relevant."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text based reference range in an observation."""
 
     @overload
@@ -1987,11 +2136,13 @@ class OrderedProcedure(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    code: Optional["_models.CodeableConcept"] = rest_field()
+    code: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Procedure code."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Procedure description."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -2026,11 +2177,17 @@ class PatientDetails(_model_base.Model):
     :vartype clinical_info: list[~azure.healthinsights.radiologyinsights.models.Resource]
     """
 
-    sex: Optional[Union[str, "_models.PatientSex"]] = rest_field()
+    sex: Optional[Union[str, "_models.PatientSex"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The patient's sex. Known values are: \"female\", \"male\", and \"unspecified\"."""
-    birth_date: Optional[datetime.date] = rest_field(name="birthDate")
+    birth_date: Optional[datetime.date] = rest_field(
+        name="birthDate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The patient's date of birth."""
-    clinical_info: Optional[List["_models.Resource"]] = rest_field(name="clinicalInfo")
+    clinical_info: Optional[List["_models.Resource"]] = rest_field(
+        name="clinicalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Known clinical information for the patient, structured."""
 
     @overload
@@ -2056,7 +2213,6 @@ class PatientDetails(_model_base.Model):
 class PatientDocument(_model_base.Model):
     """A clinical document related to a patient. Document here is in the wide sense - not just a text
     document (note).
-
 
     :ivar type: The type of the patient document, such as 'note' (text document) or 'fhirBundle'
      (FHIR JSON document). Required. Known values are: "note", "fhirBundle", "dicom", and
@@ -2086,30 +2242,38 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.radiologyinsights.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field()
+    type: Union[str, "_models.DocumentType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON
      document). Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and
      \"genomicSequencing\"."""
-    clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
+    clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(
+        name="clinicalType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the clinical document. Known values are: \"consultation\", \"dischargeSummary\",
      \"historyAndPhysical\", \"radiologyReport\", \"procedure\", \"progress\", \"laboratory\", and
      \"pathologyReport\"."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A given identifier for the document. Has to be unique across all documents for a single
      patient. Required."""
-    language: Optional[str] = rest_field()
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A 2 letter ISO 639-1 representation of the language of the document."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The date and time when the document was created."""
-    authors: Optional[List["_models.DocumentAuthor"]] = rest_field()
+    authors: Optional[List["_models.DocumentAuthor"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Document author(s)."""
-    specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = rest_field(name="specialtyType")
+    specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = rest_field(
+        name="specialtyType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """specialty type the document. Known values are: \"pathology\" and \"radiology\"."""
     administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = rest_field(
-        name="administrativeMetadata"
+        name="administrativeMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """Administrative metadata for the document."""
-    content: "_models.DocumentContent" = rest_field()
+    content: "_models.DocumentContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the patient document. Required."""
 
     @overload
@@ -2141,25 +2305,26 @@ class PatientDocument(_model_base.Model):
 class PatientEncounter(_model_base.Model):
     """visit/encounter information.
 
-
     :ivar id: The id of the visit. Required.
     :vartype id: str
     :ivar period: Time period of the visit.
-     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end
-     to indicate the discharge time.
+     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
+     indicate the discharge time.
     :vartype period: ~azure.healthinsights.radiologyinsights.models.TimePeriod
     :ivar class_property: The class of the encounter. Known values are: "inpatient", "ambulatory",
      "observation", "emergency", "virtual", and "healthHome".
     :vartype class_property: str or ~azure.healthinsights.radiologyinsights.models.EncounterClass
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The id of the visit. Required."""
-    period: Optional["_models.TimePeriod"] = rest_field()
+    period: Optional["_models.TimePeriod"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Time period of the visit.
      In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
      indicate the discharge time."""
-    class_property: Optional[Union[str, "_models.EncounterClass"]] = rest_field(name="class")
+    class_property: Optional[Union[str, "_models.EncounterClass"]] = rest_field(
+        name="class", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The class of the encounter. Known values are: \"inpatient\", \"ambulatory\", \"observation\",
      \"emergency\", \"virtual\", and \"healthHome\"."""
 
@@ -2186,7 +2351,6 @@ class PatientEncounter(_model_base.Model):
 class PatientRecord(_model_base.Model):
     """A patient record, including their clinical information and data.
 
-
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
      request. Required.
     :vartype id: str
@@ -2200,15 +2364,19 @@ class PatientRecord(_model_base.Model):
      list[~azure.healthinsights.radiologyinsights.models.PatientDocument]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A given identifier for the patient. Has to be unique across all patients in a single request.
      Required."""
-    details: Optional["_models.PatientDetails"] = rest_field()
+    details: Optional["_models.PatientDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Patient structured information, including demographics and known structured clinical
      information."""
-    encounters: Optional[List["_models.PatientEncounter"]] = rest_field()
+    encounters: Optional[List["_models.PatientEncounter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Patient encounters/visits."""
-    patient_documents: Optional[List["_models.PatientDocument"]] = rest_field(name="patientDocuments")
+    patient_documents: Optional[List["_models.PatientDocument"]] = rest_field(
+        name="patientDocuments", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Patient unstructured clinical data, given as documents."""
 
     @overload
@@ -2242,9 +2410,9 @@ class Period(Element):
     :vartype end: str
     """
 
-    start: Optional[str] = rest_field()
+    start: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Starting time with inclusive boundary."""
-    end: Optional[str] = rest_field()
+    end: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """End time with inclusive boundary, if not ongoing."""
 
     @overload
@@ -2270,7 +2438,6 @@ class PresentGuidanceInformation(_model_base.Model):
     """An item of the structured information (e.g. laterality or size) and one or more corresponding
     details (e.g. left or size-value).
 
-
     :ivar present_guidance_item: The item of the structured information. Required.
     :vartype present_guidance_item: str
     :ivar sizes: A list of size values, if the item is about size.
@@ -2284,15 +2451,25 @@ class PresentGuidanceInformation(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    present_guidance_item: str = rest_field(name="presentGuidanceItem")
+    present_guidance_item: str = rest_field(
+        name="presentGuidanceItem", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The item of the structured information. Required."""
-    sizes: Optional[List["_models.Observation"]] = rest_field()
+    sizes: Optional[List["_models.Observation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of size values, if the item is about size."""
-    maximum_diameter_as_in_text: Optional["_models.Quantity"] = rest_field(name="maximumDiameterAsInText")
+    maximum_diameter_as_in_text: Optional["_models.Quantity"] = rest_field(
+        name="maximumDiameterAsInText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum diameter value, if the item is about the maximum diameter."""
-    present_guidance_values: Optional[List[str]] = rest_field(name="presentGuidanceValues")
+    present_guidance_values: Optional[List[str]] = rest_field(
+        name="presentGuidanceValues", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of item values that are mentioned in the report."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -2321,7 +2498,6 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
     """A QualityMeasure inference captures the  MIPS ('measure based incentive payment system')
     quality measure criteria in the document that are used to measure the data completeness.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Guidance measure inference type
@@ -2338,15 +2514,21 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
     :vartype quality_criteria: list[str]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.QUALITY_MEASURE] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.QUALITY_MEASURE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Guidance measure inference type"""
-    quality_measure_denominator: str = rest_field(name="qualityMeasureDenominator")
+    quality_measure_denominator: str = rest_field(
+        name="qualityMeasureDenominator", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The denominator, which identifies the QualityMeasure kind. Required."""
-    compliance_type: Union[str, "_models.QualityMeasureComplianceType"] = rest_field(name="complianceType")
+    compliance_type: Union[str, "_models.QualityMeasureComplianceType"] = rest_field(
+        name="complianceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ComplianceType indicates whether the document is compliant for the specified QualityMeasure
      or not, or if exceptions apply. Required. Known values are: \"notEligible\",
      \"performanceNotMet\", \"performanceMet\", and \"denominatorException\"."""
-    quality_criteria: Optional[List[str]] = rest_field(name="qualityCriteria")
+    quality_criteria: Optional[List[str]] = rest_field(
+        name="qualityCriteria", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of quality criteria identified in the document, if any."""
 
     @overload
@@ -2373,14 +2555,15 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
 class QualityMeasureOptions(_model_base.Model):
     """Quality Measure Options.
 
-
     :ivar measure_types: Id(s) of the MIPS measures that need to be evaluated in the document.
      Required.
     :vartype measure_types: list[str or
      ~azure.healthinsights.radiologyinsights.models.QualityMeasureType]
     """
 
-    measure_types: List[Union[str, "_models.QualityMeasureType"]] = rest_field(name="measureTypes")
+    measure_types: List[Union[str, "_models.QualityMeasureType"]] = rest_field(
+        name="measureTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Id(s) of the MIPS measures that need to be evaluated in the document. Required."""
 
     @overload
@@ -2417,15 +2600,15 @@ class Quantity(Element):
     :vartype code: str
     """
 
-    value: Optional[float] = rest_field()
+    value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Numerical value (with implicit precision)."""
-    comparator: Optional[str] = rest_field()
+    comparator: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """< | <= | >= | > - how to understand the value."""
-    unit: Optional[str] = rest_field()
+    unit: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unit representation."""
-    system: Optional[str] = rest_field()
+    system: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """System that defines coded unit form."""
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Coded form of the unit."""
 
     @overload
@@ -2453,7 +2636,6 @@ class Quantity(Element):
 class RadiologyCodeWithTypes(_model_base.Model):
     """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
-
     :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
      in the case of contrast, and in the case of views, it denotes the number of views. Required.
     :vartype code: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
@@ -2463,10 +2645,10 @@ class RadiologyCodeWithTypes(_model_base.Model):
     :vartype types: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    code: "_models.CodeableConcept" = rest_field()
+    code: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SNOMED CT code indicates whether imaging was conducted with or without contrast in the case
      of contrast, and in the case of views, it denotes the number of views. Required."""
-    types: List["_models.CodeableConcept"] = rest_field()
+    types: List["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The collection of types will indicate the contrast substance used in the case of contrast and,
      in the case of views, it will specify the types of views, such as lateral and frontal, etc.
      Required."""
@@ -2493,7 +2675,6 @@ class RadiologyCodeWithTypes(_model_base.Model):
 class RadiologyInsightsData(_model_base.Model):
     """Contains the list of patients, and configuration data.
 
-
     :ivar patients: The list of patients, including their clinical information and data. Required.
     :vartype patients: list[~azure.healthinsights.radiologyinsights.models.PatientRecord]
     :ivar configuration: Configuration affecting the Radiology Insights model's inference.
@@ -2501,9 +2682,11 @@ class RadiologyInsightsData(_model_base.Model):
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsModelConfiguration
     """
 
-    patients: List["_models.PatientRecord"] = rest_field()
+    patients: List["_models.PatientRecord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of patients, including their clinical information and data. Required."""
-    configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = rest_field()
+    configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Configuration affecting the Radiology Insights model's inference."""
 
     @overload
@@ -2541,14 +2724,20 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
     """
 
     followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = rest_field(
-        name="followupRecommendationOptions"
+        name="followupRecommendationOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Follow-up recommendation options."""
-    finding_options: Optional["_models.FindingOptions"] = rest_field(name="findingOptions")
+    finding_options: Optional["_models.FindingOptions"] = rest_field(
+        name="findingOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Finding options."""
-    guidance_options: Optional["_models.GuidanceOptions"] = rest_field(name="guidanceOptions")
+    guidance_options: Optional["_models.GuidanceOptions"] = rest_field(
+        name="guidanceOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Guidance options."""
-    quality_measure_options: Optional["_models.QualityMeasureOptions"] = rest_field(name="qualityMeasureOptions")
+    quality_measure_options: Optional["_models.QualityMeasureOptions"] = rest_field(
+        name="qualityMeasureOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """QualityMeasureOptions."""
 
     @overload
@@ -2576,7 +2765,6 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
-
     :ivar patient_results: Results for the patients given in the request. Required.
     :vartype patient_results:
      list[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsPatientResult]
@@ -2585,9 +2773,11 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
     :vartype model_version: str
     """
 
-    patient_results: List["_models.RadiologyInsightsPatientResult"] = rest_field(name="patientResults")
+    patient_results: List["_models.RadiologyInsightsPatientResult"] = rest_field(
+        name="patientResults", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Results for the patients given in the request. Required."""
-    model_version: str = rest_field(name="modelVersion")
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """The version of the model used for inference, expressed as the model date. Required."""
 
     @overload
@@ -2611,9 +2801,6 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
 
 class RadiologyInsightsJob(_model_base.Model):
     """Response for the Radiology Insights request.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar job_data: The request data for the operation.
     :vartype job_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
@@ -2693,19 +2880,23 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
     :vartype locale: str
     """
 
-    verbose: Optional[bool] = rest_field()
+    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An indication whether the model should produce verbose output."""
-    include_evidence: Optional[bool] = rest_field(name="includeEvidence")
+    include_evidence: Optional[bool] = rest_field(
+        name="includeEvidence", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An indication whether the model's output should include evidence for the inferences."""
     inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(
-        name="inferenceTypes"
+        name="inferenceTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """This is a list of inference types to be inferred for the current request. It could be used if
      only part of the Radiology Insights inferences are required. If this list is omitted or empty,
      the model will return all the inference types."""
-    inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = rest_field(name="inferenceOptions")
+    inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = rest_field(
+        name="inferenceOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Options regarding follow up recommendation inferences and finding inferences."""
-    locale: Optional[str] = rest_field()
+    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Local for the model to use. If not specified, the model will use the default locale."""
 
     @overload
@@ -2733,7 +2924,6 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
 class RadiologyInsightsPatientResult(_model_base.Model):
     """Results of the model's work for a single patient.
 
-
     :ivar patient_id: Identifier given for the patient in the request. Required.
     :vartype patient_id: str
     :ivar inferences: The model's inferences for the given patient. Required.
@@ -2741,9 +2931,11 @@ class RadiologyInsightsPatientResult(_model_base.Model):
      list[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInference]
     """
 
-    patient_id: str = rest_field(name="patientId")
+    patient_id: str = rest_field(name="patientId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier given for the patient in the request. Required."""
-    inferences: List["_models.RadiologyInsightsInference"] = rest_field()
+    inferences: List["_models.RadiologyInsightsInference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The model's inferences for the given patient. Required."""
 
     @overload
@@ -2769,7 +2961,6 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
     extracted from the document information and text.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Radiology Procedure inference type
@@ -2784,13 +2975,19 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     :vartype ordered_procedure: ~azure.healthinsights.radiologyinsights.models.OrderedProcedure
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Radiology Procedure inference type"""
-    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(name="procedureCodes")
+    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="procedureCodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """LOINC codes for the procedure."""
-    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(name="imagingProcedures")
+    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(
+        name="imagingProcedures", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Imaging procedures. Required."""
-    ordered_procedure: "_models.OrderedProcedure" = rest_field(name="orderedProcedure")
+    ordered_procedure: "_models.OrderedProcedure" = rest_field(
+        name="orderedProcedure", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Ordered procedure information from the document information or text. Required."""
 
     @overload
@@ -2824,9 +3021,9 @@ class Range(Element):
     :vartype high: ~azure.healthinsights.radiologyinsights.models.Quantity
     """
 
-    low: Optional["_models.Quantity"] = rest_field()
+    low: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Low limit."""
-    high: Optional["_models.Quantity"] = rest_field()
+    high: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """High limit."""
 
     @overload
@@ -2858,9 +3055,9 @@ class Ratio(Element):
     :vartype denominator: ~azure.healthinsights.radiologyinsights.models.Quantity
     """
 
-    numerator: Optional["_models.Quantity"] = rest_field()
+    numerator: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Numerator value."""
-    denominator: Optional["_models.Quantity"] = rest_field()
+    denominator: Optional["_models.Quantity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Denominator value."""
 
     @overload
@@ -2885,7 +3082,6 @@ class Ratio(Element):
 class RecommendationFinding(_model_base.Model):
     """Finding reference for recommendation.
 
-
     :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     :ivar critical_finding: Critical result linked to a recommendation.
@@ -2898,16 +3094,20 @@ class RecommendationFinding(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    finding: Optional["_models.Observation"] = rest_field()
+    finding: Optional["_models.Observation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Finding linked to a recommendation."""
-    critical_finding: Optional["_models.CriticalResult"] = rest_field(name="criticalFinding")
+    critical_finding: Optional["_models.CriticalResult"] = rest_field(
+        name="criticalFinding", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Critical result linked to a recommendation."""
     recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"] = rest_field(
-        name="recommendationFindingStatus"
+        name="recommendationFindingStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
+    extension: Optional[List["_models.Extension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional Content defined by implementations."""
 
     @overload
@@ -2945,13 +3145,13 @@ class Reference(Element):
     :vartype display: str
     """
 
-    reference: Optional[str] = rest_field()
+    reference: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Literal reference, Relative, internal or absolute URL."""
-    type: Optional[str] = rest_field()
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type the reference refers to (e.g. \"Patient\")."""
-    identifier: Optional["_models.Identifier"] = rest_field()
+    identifier: Optional["_models.Identifier"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Logical reference, when literal reference is not known."""
-    display: Optional[str] = rest_field()
+    display: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text alternative for the resource."""
 
     @overload
@@ -2979,7 +3179,6 @@ class SampledData(Element):
     """A series of measurements taken by a device
     Based on `FHIR SampledData <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
-
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar period: Number of milliseconds between samples. Required.
@@ -2996,19 +3195,23 @@ class SampledData(Element):
     :vartype data: str
     """
 
-    origin: "_models.Quantity" = rest_field()
+    origin: "_models.Quantity" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Zero value and units. Required."""
-    period: float = rest_field()
+    period: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of milliseconds between samples. Required."""
-    factor: Optional[float] = rest_field()
+    factor: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Multiply data by this before adding to origin."""
-    lower_limit: Optional[float] = rest_field(name="lowerLimit")
+    lower_limit: Optional[float] = rest_field(
+        name="lowerLimit", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Lower limit of detection."""
-    upper_limit: Optional[float] = rest_field(name="upperLimit")
+    upper_limit: Optional[float] = rest_field(
+        name="upperLimit", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upper limit of detection."""
-    dimensions: int = rest_field()
+    dimensions: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of sample points at each time point. Required."""
-    data: Optional[str] = rest_field()
+    data: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Decimal values with spaces, or \"E\" | \"U\" | \"L\"."""
 
     @overload
@@ -3039,7 +3242,6 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
     """Identifies and highlights Risk, Scoring, Assessment and Classifications and correspondent
     values dictated in a report, e.g. 'BIRADS 5'.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Scoring and assessment inference type
@@ -3064,9 +3266,11 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
     :vartype range_value: ~azure.healthinsights.radiologyinsights.models.AssessmentValueRange
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
+    kind: Literal[RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Scoring and assessment inference type"""
-    category: Union[str, "_models.ScoringAndAssessmentCategoryType"] = rest_field()
+    category: Union[str, "_models.ScoringAndAssessmentCategoryType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Category, e.g. BIRADS. Required. Known values are: \"BIRADS\", \"C-RADS COLONIC FINDINGS\",
      \"CAD-RADS\", \"LI-RADS\", \"LUNG-RADS\", \"NI-RADS\", \"O-RADS\", \"PI-RADS\", \"TI-RADS\",
      \"C-RADS EXTRACOLONIC FINDINGS\", \"LIFETIME BREAST CANCER RISK\", \"ASCVD RISK\", \"MODIFIED
@@ -3077,11 +3281,17 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
      CT SCORE\", \"KELLGREN-LAWRENCE GRADING SCALE\", \"TONNIS CLASSIFICATION\", \"CALCIUM SCORE
      (UNSPECIFIED)\", \"10 YEAR CHD RISK (OBSERVED AGE)\", \"10 YEAR CHD RISK (ARTERIAL AGE)\", and
      \"FRAX SCORE\"."""
-    category_description: str = rest_field(name="categoryDescription")
+    category_description: str = rest_field(
+        name="categoryDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The expansion of the category (which is an abbreviation.). Required."""
-    single_value: Optional[str] = rest_field(name="singleValue")
+    single_value: Optional[str] = rest_field(
+        name="singleValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The value. If the value is a range, use field valueRange."""
-    range_value: Optional["_models.AssessmentValueRange"] = rest_field(name="rangeValue")
+    range_value: Optional["_models.AssessmentValueRange"] = rest_field(
+        name="rangeValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The range."""
 
     @overload
@@ -3112,7 +3322,6 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
     document are either inconsistent or do not match the gender specified in the patient
     information.
 
-
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Sex mismatch inference type
@@ -3121,9 +3330,11 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
     :vartype sex_indication: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.SEX_MISMATCH] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.SEX_MISMATCH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Inference type. Required. Sex mismatch inference type"""
-    sex_indication: "_models.CodeableConcept" = rest_field(name="sexIndication")
+    sex_indication: "_models.CodeableConcept" = rest_field(
+        name="sexIndication", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Sex indication : SNOMED CT code for gender finding. Required."""
 
     @overload
@@ -3154,9 +3365,13 @@ class TimePeriod(_model_base.Model):
     :vartype end: ~datetime.datetime
     """
 
-    start: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    start: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Starting time with inclusive boundary."""
-    end: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    end: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """End time with inclusive boundary, if not ongoing."""
 
     @overload

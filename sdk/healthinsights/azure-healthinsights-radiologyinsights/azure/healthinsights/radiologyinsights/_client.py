@@ -27,7 +27,8 @@ class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):
     """RadiologyInsightsClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://westus2.api.cognitive.microsoft.com). Required.
+     `https://westus2.api.cognitive.microsoft.com <https://westus2.api.cognitive.microsoft.com>`_).
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
