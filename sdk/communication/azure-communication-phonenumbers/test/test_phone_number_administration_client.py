@@ -549,7 +549,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         # The phone number can be reserved, but not purchased without agreement to not resell
         phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id, phone_numbers=[phone_number])
+        reservation = PhoneNumbersReservation(reservation_id)
+        reservation.add_phone_number(phone_number)
         created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
@@ -582,7 +583,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
 
         phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id, phone_numbers=[phone_number])
+        reservation = PhoneNumbersReservation(reservation_id)
+        reservation.add_phone_number(phone_number)
         created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
