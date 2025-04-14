@@ -171,8 +171,8 @@ class SecurityDomainClient(KeyVaultClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        polling_method = (
-            AsyncSecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
+        polling_method = AsyncSecurityDomainUploadPollingMethod(
+            lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay
         )
         return await super()._begin_upload(
             security_domain,
