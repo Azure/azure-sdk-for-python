@@ -34,38 +34,42 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents character swapping, a technique for rearranging characters in text."""
 
 
-class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The authentication type used by the connection."""
-
-    API_KEY = "ApiKey"
-    """API Key authentication"""
-    ENTRA_ID = "AAD"
-    """Entra ID authentication (formerly known as AAD)"""
-    SAS = "SAS"
-    """Shared Access Signature (SAS) authentication"""
-    CUSTOM = "CustomKeys"
-    """Custom authentication"""
-    NONE = "None"
-    """No authentication"""
-
-
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI Service"""
     AZURE_BLOB_STORAGE = "AzureBlob"
-    """Azure Blob Storage"""
+    """Azure Blob Storage, with specified container"""
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    """Azure Blob Storage, with container not specified (used by Assistants)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
     COSMOS_DB = "CosmosDB"
     """CosmosDB"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    APPLICATION_CONFIGURATION = "AppConfig"
+    """Application Configuration"""
     APPLICATION_INSIGHTS = "AppInsights"
     """Application Insights"""
     CUSTOM = "CustomKeys"
     """Custom Keys"""
+
+
+class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The credential type used by the connection."""
+
+    API_KEY = "ApiKey"
+    """API Key credential"""
+    ENTRA_ID = "AAD"
+    """Entra ID credential (formerly known as AAD)"""
+    SAS = "SAS"
+    """Shared Access Signature (SAS) credential"""
+    CUSTOM = "CustomKeys"
+    """Custom credential"""
+    NONE = "None"
+    """No credential"""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,19 +117,6 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
     """Temporary Blob Reference is the only supported type."""
-
-
-class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Repeatability Result header options."""
-
-    ACCEPTED = "accepted"
-    """If the request was accepted and the server guarantees that the server state reflects a single
-    execution of the operation."""
-    REJECTED = "rejected"
-    """If the request was rejected because the combination of Repeatability-First-Sent and
-    Repeatability-Request-ID were invalid
-    or because the Repeatability-First-Sent value was outside the range of values held by the
-    server."""
 
 
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
