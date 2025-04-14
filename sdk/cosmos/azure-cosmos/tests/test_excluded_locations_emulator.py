@@ -46,7 +46,7 @@ def delete_all_items_by_partition_key_test_data() -> List[str]:
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
 
-def _get_location(
+def get_location(
         initialized_objects: Mapping[str, Any],
         url_to_locations: Mapping[str, str] = URL_TO_LOCATIONS) -> str:
     # get Request URL
@@ -112,7 +112,7 @@ class TestExcludedLocations:
                 container.delete_all_items_by_partition_key(id_value, excluded_locations=request_excluded_locations)
 
             # Verify endpoint locations
-            actual_location = _get_location(initialized_objects)
+            actual_location = get_location(initialized_objects)
             if multiple_write_locations:
                 assert actual_location == expected_location
             else:
