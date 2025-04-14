@@ -100,10 +100,6 @@ def capture_pyrit_messages():
                     logger.info(f"[{record.name}] {msg}")
                 else:
                     logger.debug(f"[{record.name}] {msg}")
-                
-                # If DEBUG environment variable is set, also print to console
-                if os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y"):
-                    print(f"[{record.levelname}] [{record.name}] {msg}")
         
         # Add the forwarder to PyRIT logger
         forwarder = LogForwarder()
