@@ -4,9 +4,9 @@
 # ------------------------------------
 
 import datetime
-from typing import Iterable
 import uuid
 from azure.communication.phonenumbers._generated.models import ReservationStatus, AvailablePhoneNumber
+
 
 class PhoneNumbersReservation:
     """Represents a reservation for phone numbers. A reservation is a temporary hold on phone numbers
@@ -32,7 +32,7 @@ class PhoneNumbersReservation:
      "expired".
     :vartype status: str or ~azure.communication.phonenumbers.ReservationStatus
     """
-    
+
     def __init__(self, id: str, **kwargs):
         """Initialize a PhoneNumbersReservation object.
 
@@ -42,19 +42,21 @@ class PhoneNumbersReservation:
         """
         if id is None:
             raise ValueError("Parameter 'id' is required.")
-            
+
         try:
             uuid.UUID(id)
-        except ValueError:
-            raise ValueError("The reservation id must be in valid GUID format")
-        
+        except ValueError as exc:
+            raise ValueError(
+                "The reservation id must be in valid GUID format") from exc
+
         self.id = id
 
-        # These properties are not intended to be set by the user, but they are used when mapping from the generated model.
+        # These properties are not intended to be set by the user,
+        # but they are used when mapping from the generated model.
         self.expires_at = kwargs.get("expires_at", None)
         self.status = kwargs.get("status", None)
-        self.phone_numbers = kwargs.get("phone_numbers", dict())
-        
+        self.phone_numbers = kwargs.get("phone_numbers", {})
+
     def add_phone_number(self, available_phone_number: AvailablePhoneNumber):
         """Adds a phone number to the reservation. 
 
@@ -62,10 +64,15 @@ class PhoneNumbersReservation:
         :type available_phone_number: ~azure.communication.phonenumbers.AvailablePhoneNumber
         """
         if not isinstance(available_phone_number, AvailablePhoneNumber):
-            raise ValueError("The phone number must be an instance of AvailablePhoneNumber")
-        
-        phone_number_id = available_phone_number.id if available_phone_number.id else available_phone_number.phone_number
-        
+            raise ValueError(
+                "The phone number must be an instance of AvailablePhoneNumber")
+
+        phone_number_id = None
+        if available_phone_number.id:
+            phone_number_id = available_phone_number.id
+        else:
+            phone_number_id = available_phone_number.phone_number
+
         if phone_number_id is None:
             raise ValueError("The phone number id is required.")
 
