@@ -15,7 +15,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import load_pem_x509_certificate
 
-from .test_security_domain import _public_rsa_key_to_jwk
+from test_security_domain import _public_rsa_key_to_jwk
 from _shared.async_test_case import KeyVaultTestCase
 from _async_test_case import ClientPreparer
 from utils import Utils
