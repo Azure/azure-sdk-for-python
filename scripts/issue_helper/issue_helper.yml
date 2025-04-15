@@ -25,7 +25,7 @@ variables:
   - group: SDK Release Helper
 
 jobs:
-- job: IssueHelper 3.9
+- job: IssueHelper
   displayName: IssueHelper Python
   timeoutInMinutes: 30
   strategy:
