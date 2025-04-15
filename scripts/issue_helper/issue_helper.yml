@@ -25,8 +25,8 @@ variables:
   - group: SDK Release Helper
 
 jobs:
-- job: IssueHelper
-  displayName: IssueHelper Python 3.9
+- job: IssueHelper 3.9
+  displayName: IssueHelper Python
   timeoutInMinutes: 30
   strategy:
     maxParallel: 3
