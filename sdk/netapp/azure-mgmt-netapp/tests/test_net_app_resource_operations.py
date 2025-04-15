@@ -1,5 +1,6 @@
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 import setup
+import pytest
 import azure.mgmt.netapp.models
 
 
