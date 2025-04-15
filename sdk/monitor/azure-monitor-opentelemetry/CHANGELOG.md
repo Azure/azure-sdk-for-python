@@ -2,14 +2,10 @@
 
 ## 1.6.8 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Pin OTel before breaking change.
-    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+    ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
 
 ### Other Changes
 
