@@ -1,6 +1,6 @@
 # Release History
 
-## 5.15.0 (2025-04-09)
+## 5.15.0 (2025-04-15)
 
 ### Features Added
 
@@ -10,7 +10,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
-- Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker is used per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
+- Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
 
 ### Other Changes
 
