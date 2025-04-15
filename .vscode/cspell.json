@@ -1362,6 +1362,13 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects-onedp/**",
+      "words": [
+        "aiservices",
+        "azureai",
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
         "ctxt",
