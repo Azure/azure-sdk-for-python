@@ -63,14 +63,6 @@
     },
     {
       "WindowsConfig": {
-        "Windows2022_38_long": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.8",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
-        },
         "Windows2022_310_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
