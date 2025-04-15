@@ -9,6 +9,7 @@ from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSet
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
+
 class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(
         self,
