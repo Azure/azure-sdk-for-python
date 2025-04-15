@@ -1,4 +1,4 @@
-# Azure AI Project client library tests for Python
+# Azure AI Assistants client library tests for Python
 
 The instructions below are for running tests locally, on a Windows machine, against the live service using a local build of the client library.
 
@@ -17,7 +17,7 @@ The instructions below are for running tests locally, on a Windows machine, agai
     ```
 - Install the resulting wheel (update version `1.0.0b5` to the current one):
     ```bash
-    pip install dist\azure_ai_projects-1.0.0b5-py3-none-any.whl --user --force-reinstall
+    pip install dist\azure_ai_assistants-1.0.0b5-py3-none-any.whl --user --force-reinstall
     ```
 
 ## Log in to Azure
@@ -28,7 +28,7 @@ az login
 
 ## Setup up environment variables
 
-Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Foundry projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
+Edit the file `azure_ai_assistants_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Foundry projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
 
 ## Configure test proxy
 
@@ -47,12 +47,6 @@ To run all tests, type:
 
 ```bash
 pytest
-```
-
-To run tests in a particular folder (`tests\connections` for example):
-
-```bash
-pytest tests\connections
 ```
 
 ## Additional information

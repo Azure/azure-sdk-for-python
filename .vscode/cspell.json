@@ -1363,6 +1363,14 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-assistants/**",
+      "words": [
+        "GENAI",
+        "fspath",
+        "wttr"
+      ]
+    }
+    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
         "ctxt",

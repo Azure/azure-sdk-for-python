@@ -19,7 +19,7 @@ USAGE:
     1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the 
+    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, as found in the 
        "Connected resources" tab in your Azure AI Foundry project.
 """
 
@@ -35,7 +35,7 @@ assistants_client = AssistantsClient(
 )
 
 # [START create_assistant_with_bing_grounding_tool]
-conn_id = os.environ["AZURE_BING_CONECTION_ID"]
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
 print(conn_id)
 

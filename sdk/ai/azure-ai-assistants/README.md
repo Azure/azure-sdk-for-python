@@ -60,7 +60,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-- Python 3.8 or later.
+- Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
 - The project connection string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
@@ -115,9 +115,9 @@ assistant_client = AssistantsClient(
 
 ## Examples
 
-#### Create Assistant
+### Create Assistant
 
-Before creating an Assistant, you need to set up Azure resources to deploy your model. [Create a New Assistant Quickstart](https://learn.microsoft.com/azure/ai-services/assistants/quickstart?pivots=programming-language-python-azure) details selecting and deploying your Assistant Setup.
+Before creating an Assistant, you need to set up Azure resources to deploy your model. [Create a New Assistant Quickstart](https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure) details selecting and deploying your Assistant Setup.
 
 Here is an example of how to create an Assistant:
 <!-- SNIPPET:sample_assistants_basics.create_assistant -->
@@ -177,7 +177,7 @@ assistant = assistants_client.create_assistant(
 
 In the following sections, we show you sample code in either `toolset` or combination of `tools` and `tool_resources`.
 
-#### Create Assistant with File Search
+### Create Assistant with File Search
 
 To perform file search by an Assistant, we first need to upload a file, create a vector store, and associate the file to the vector store. Here is an example:
 
@@ -204,7 +204,7 @@ assistant = assistants_client.create_assistant(
 
 <!-- END SNIPPET -->
 
-#### Create Assistant with Enterprise File Search
+### Create Assistant with Enterprise File Search
 
 We can upload file to Azure as it is shown in the example, or use the existing Azure blob storage. In the code below we demonstrate how this can be achieved. First we upload file to azure and create `VectorStoreDataSource`, which then is used to create vector store. This vector store is then given to the `FileSearchTool` constructor.
 
@@ -256,7 +256,7 @@ file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 <!-- END SNIPPET -->
 
-#### Create Assistant with Code Interpreter
+### Create Assistant with Code Interpreter
 
 Here is an example to upload a file and use it for code interpreter by an Assistant:
 
@@ -282,7 +282,7 @@ assistant = assistants_client.create_assistant(
 
 <!-- END SNIPPET -->
 
-#### Create Assistant with Bing Grounding
+### Create Assistant with Bing Grounding
 
 To enable your Assistant to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
 
@@ -291,7 +291,7 @@ Here is an example:
 <!-- SNIPPET:sample_assistants_bing_grounding.create_assistant_with_bing_grounding_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONECTION_ID"]
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
 print(conn_id)
 
@@ -311,9 +311,9 @@ with assistants_client:
 
 <!-- END SNIPPET -->
 
-#### Create Assistant with Azure AI Search
+### Create Assistant with Azure AI Search
 
-Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Assistant with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/assistants/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
+Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Assistant with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
 
 Here is an example to integrate Azure AI Search:
 
@@ -370,18 +370,18 @@ for message in messages.data:
 
 <!-- END SNIPPET -->
 
-#### Create Assistant with Function Call
+### Create Assistant with Function Call
 
 You can enhance your Assistants by defining callback functions as function tools. These can be provided to `create_assistant` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
 - `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
 - `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_assistant`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
 
-For more details about calling functions by code, refer to [`sample_assistants_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/sample_assistants_stream_eventhandler_with_functions.py) and [`sample_assistants_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/sample_assistants_functions.py).
+For more details about calling functions by code, refer to [`sample_assistants_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_assistants_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/sample_assistants_functions.py).
 
 For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/FunctionTool.md)
 
-Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/user_functions.py) in `toolset`:
+Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_functions.py) in `toolset`:
 <!-- SNIPPET:sample_assistants_stream_eventhandler_with_toolset.create_assistant_with_function_tool -->
 
 ```python
@@ -399,7 +399,7 @@ assistant = assistants_client.create_assistant(
 
 <!-- END SNIPPET -->
 
-For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/async_samples/user_async_functions.py):
+For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
 
 ```python
 from azure.ai.projects.aio import AIProjectClient
@@ -423,7 +423,7 @@ assistant = await assistants_client.create_assistant(
 
 <!-- END SNIPPET -->
 
-#### Create Assistant With Azure Function Call
+### Create Assistant With Azure Function Call
 
 The AI assistant leverages Azure Functions triggered asynchronously via Azure Storage Queues. To enable the assistant to perform Azure Function calls, you must set up the corresponding `AzureFunctionTool`, specifying input and output queues as well as parameter definitions.
 
@@ -585,7 +585,7 @@ Ensure your Azure AI Project identity has the following storage account permissi
 With the above steps complete, your Azure Function integration with your AI Assistant is ready for use.
 
 
-#### Create Assistant With Logic Apps
+### Create Assistant With Logic Apps
 
 Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
 
@@ -631,7 +631,7 @@ functions_to_use: Set = {
 After this the functions can be incorporated normally into code using `FunctionTool`.
 
 
-#### Create Assistant With OpenAPI
+### Create Assistant With OpenAPI
 
 OpenAPI specifications describe REST operations against a specific endpoint. Assistants SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
 
@@ -670,7 +670,7 @@ with assistants_client:
 
 <!-- END SNIPPET -->
 
-#### Create an Assistant with Fabric
+### Create an Assistant with Fabric
 
 To enable your Assistant to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
 
@@ -700,7 +700,7 @@ with assistants_client:
 <!-- END SNIPPET -->
 
 
-#### Create Thread
+### Create Thread
 
 For each session or conversation, a thread is required.   Here is an example:
 
@@ -712,7 +712,7 @@ thread = assistants_client.create_thread()
 
 <!-- END SNIPPET -->
 
-#### Create Thread with Tool Resource
+### Create Thread with Tool Resource
 
 In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector store and upload a file, enable an Assistant for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
 
@@ -743,7 +743,7 @@ thread = assistants_client.create_thread(tool_resources=file_search.resources)
 ```
 
 <!-- END SNIPPET -->
-#### Create Message
+### Create Message
 
 To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
 
@@ -755,7 +755,7 @@ message = assistants_client.create_message(thread_id=thread.id, role="user", con
 
 <!-- END SNIPPET -->
 
-#### Create Message with File Search Attachment
+### Create Message with File Search Attachment
 
 To attach a file to a message for content searching, you use `MessageAttachment` and `FileSearchTool`:
 
@@ -770,7 +770,7 @@ message = assistants_client.create_message(
 
 <!-- END SNIPPET -->
 
-#### Create Message with Code Interpreter Attachment
+### Create Message with Code Interpreter Attachment
 
 To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_assistant` call or the file attachment cannot be opened for code interpreter.
 
@@ -824,11 +824,11 @@ message = assistants_client.create_message(
 
 <!-- END SNIPPET -->
 
-#### Create Run, Run_and_Process, or Stream
+### Create Run, Run_and_Process, or Stream
 
 To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
 
-`create_run` requests the Assistant to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_assistants_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/sample_assistants_functions.py).
+`create_run` requests the Assistant to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_assistants_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
 Here is an example of `create_run` and poll until the run is completed:
 
@@ -942,7 +942,7 @@ with assistants_client.create_stream(
 
 <!-- END SNIPPET -->
 
-As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/assistants/sample_assistants_stream_with_base_override_eventhandler.py).
+As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
 
 ```
 Note: Multiple streaming processes may be chained behind the scenes.
@@ -953,7 +953,7 @@ Consequently, when you iterate over the streaming using a for loop similar to th
 ```
 
 
-#### Retrieve Message
+### Retrieve Message
 
 To retrieve messages from assistants, use the following example:
 
@@ -1035,7 +1035,7 @@ async def save_file_content(client, file_id: str, file_name: str, target_dir: Op
             file.write(chunk)
 ```
 
-#### Teardown
+### Teardown
 
 To remove resources after completing tasks, use the following functions:
 
@@ -1056,11 +1056,11 @@ print("Deleted assistant")
 
 <!-- END SNIPPET -->
 
-### Tracing
+## Tracing
 
 You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your Assistants, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Assistant.
 
-#### Installation
+### Installation
 
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
@@ -1077,7 +1077,7 @@ To connect to Aspire Dashboard or another OpenTelemetry compatible backend, inst
 pip install opentelemetry-exporter-otlp
 ```
 
-#### How to enable tracing
+### How to enable tracing
 
 Here is a code sample that shows how to enable Azure Monitor tracing:
 
@@ -1110,7 +1110,7 @@ from azure.ai.assistants.telemetry import enable_telemetry
 
 enable_telemetry(destination=sys.stdout)
 ```
-#### How to trace your own functions
+### How to trace your own functions
 
 The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
 
