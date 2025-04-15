@@ -52,7 +52,6 @@ with AIProjectClient(
     print("Create an evaluation")
     # evaluation = Evaluation(
     #     display_name="Sample Evaluation",
-    #     # Support format is : azureai://accounts/ilmatfdp492025-resource/projects/ilmatfdp492025/data/eval-4-11/versions/1
     #     data=InputDataset(id="azureml://locations/centraluseuap/workspaces/abc/data/abc/versions/11"),
     #     evaluators={
     #         "relevance": EvaluatorConfiguration(
