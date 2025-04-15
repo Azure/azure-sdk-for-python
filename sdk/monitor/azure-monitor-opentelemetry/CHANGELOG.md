@@ -13,8 +13,7 @@
 
 ### Bugs Fixed
 
-- Adapt to OpenTelemetry dependency resolver change.
-    ([#40463](https://github.com/Azure/azure-sdk-for-python/pull/40463))
+### Other Changes
 
 ## 1.6.6 (2025-04-07)
 
