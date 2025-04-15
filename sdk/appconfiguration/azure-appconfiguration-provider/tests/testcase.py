@@ -9,9 +9,6 @@ from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSet
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
-import logging
-logging.basicConfig(filename='c:/temp/log.log', level=logging.DEBUG)
-
 class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(
         self,
