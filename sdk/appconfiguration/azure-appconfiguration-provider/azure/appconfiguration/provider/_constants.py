@@ -32,6 +32,6 @@ PERCENTAGE_FILTER_KEY = "PRCNT"  # cspell:disable-line
 TIME_WINDOW_FILTER_KEY = "TIME"
 TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
 
-# Mime profies
+# Mime profiles
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
