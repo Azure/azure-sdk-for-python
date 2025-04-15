@@ -43,21 +43,18 @@ jobs:
       matrix:
         Python_310_Linux (AzureCloud):
           PythonVersion: '3.10'
-          Pool: $(LINUXPOOL)
-          OSVmImage: $(LINUXVMIMAGE)
         ${{ if eq(parameters.Daily, true) }}:
           Python_39_Linux (AzureCloud):
             PythonVersion: '3.9'
-            Pool: $(LINUXPOOL)
-            OSVmImage: $(LINUXVMIMAGE)
 
     pool:
-      name: $(Pool)
-      image: $(OSVmImage)
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
       os: linux
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
+      - template: /eng/pipelines/templates/variables/image.yml
       - name: requirements
         ${{ if eq(parameters.Daily, true) }}:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -81,19 +78,16 @@ jobs:
         matrix:
             Python_310_Windows (AzureCloud):
               PythonVersion: '3.10'
-              Pool: $(LINUXPOOL)
-              OSVmImage: $(LINUXVMIMAGE)
             Python_39_Windows (AzureCloud):
               PythonVersion: '3.9'
-              Pool: $(LINUXPOOL)
-              OSVmImage: $(LINUXVMIMAGE)
 
       pool:
-        name: $(Pool)
-        image: $(OSVmImage)
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
+        - template: /eng/pipelines/templates/variables/image.yml
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -115,20 +109,17 @@ jobs:
         matrix:
             Python_310_Mac (AzureCloud):
               PythonVersion: '3.10'
-              Pool: $(MACPOOL)
-              OSVmImage: $(MACVMIMAGE)
             Python_39_Mac (AzureCloud):
               PythonVersion: '3.9'
-              Pool: $(MACPOOL)
-              OSVmImage: $(MACVMIMAGE)
 
       pool:
-        name: $(Pool)
-        vmImage: $(OSVmImage)
+        name: $(MACPOOL)
+        vmImage: $(MACVMIMAGE)
         os: macOS
 
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
+        - template: /eng/pipelines/templates/variables/image.yml
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
