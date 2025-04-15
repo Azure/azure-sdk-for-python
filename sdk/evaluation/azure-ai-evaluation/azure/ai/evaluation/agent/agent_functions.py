@@ -9,25 +9,19 @@ This module provides functions that can be used as tools in Azure AI Agent for r
 
 import json
 import asyncio
-import os
-from typing import Any, Callable, Set, Dict, List, Optional
+from typing import Any, Callable, Set, Optional
 from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.agent import RedTeamToolProvider
 
-# Configuration for the red teaming tools
-azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID", "your-subscription-id"),
-    "resource_group": os.environ.get("AZURE_RESOURCE_GROUP", "your-resource-group"),
-    "workspace_name": os.environ.get("AZURE_WORKSPACE_NAME", "your-workspace-name")
-}
 
 # Initialize the credential and tool provider (will be created when first needed)
 credential = None
 tool_provider = None
+azure_ai_project = None
 
-def _get_tool_provider():
+def _get_tool_provider() -> RedTeamToolProvider:
     """Get or create the RedTeamToolProvider instance."""
-    global credential, tool_provider
+    global credential, tool_provider, azure_ai_project
     if tool_provider is None:
         credential = DefaultAzureCredential()
         tool_provider = RedTeamToolProvider(
@@ -199,3 +193,24 @@ user_functions: Set[Callable[..., Any]] = {
     red_team_get_available_strategies,
     red_team_explain_purpose
 }
+
+def initialize_tool_provider(projects_connection_string) -> Set[Callable[..., Any]]:
+    """
+    Initialize the RedTeamToolProvider with the Azure AI project and credential.
+    This function is called when the module is imported.
+    """
+    # projects_connection_string is in the format: connection_string;subscription_id;resource_group;project_name
+    # parse it to a dictionary called azure_ai_project
+    global azure_ai_project, credential, tool_provider
+    azure_ai_project = {
+        "subscription_id": projects_connection_string.split(";")[1],
+        "resource_group_name": projects_connection_string.split(";")[2],
+        "project_name": projects_connection_string.split(";")[3]
+    }
+    if not credential:
+        credential = DefaultAzureCredential()
+    tool_provider = RedTeamToolProvider(
+        azure_ai_project=azure_ai_project,
+        credential=credential,
+    )
+    return user_functions
