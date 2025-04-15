@@ -35,6 +35,10 @@ jobs:
         versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
+    - task: NodeTool@0
+      displayName: Install Node.js
+      inputs:
+        versionSpec: 22.x
     - bash: |
         python scripts/dev_setup.py -p azure-core
         cd ..
