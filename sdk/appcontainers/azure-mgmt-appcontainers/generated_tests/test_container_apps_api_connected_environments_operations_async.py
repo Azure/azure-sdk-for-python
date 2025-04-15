@@ -21,9 +21,9 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_connected_environments_list_by_subscription(self, resource_group):
         response = self.client.connected_environments.list_by_subscription(
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_connected_environments_list_by_resource_group(self, resource_group):
         response = self.client.connected_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_connected_environments_get(self, resource_group):
         response = await self.client.connected_environments.get(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_connected_environments_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.connected_environments.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -90,7 +90,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-08-02-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,12 +99,12 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_connected_environments_begin_delete(self, resource_group):
         response = await (
             await self.client.connected_environments.begin_delete(
                 resource_group_name=resource_group.name,
                 connected_environment_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -113,11 +113,11 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_connected_environments_update(self, resource_group):
         response = await self.client.connected_environments.update(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -125,12 +125,12 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_name_availability(self, resource_group):
+    async def test_connected_environments_check_name_availability(self, resource_group):
         response = await self.client.connected_environments.check_name_availability(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             check_name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

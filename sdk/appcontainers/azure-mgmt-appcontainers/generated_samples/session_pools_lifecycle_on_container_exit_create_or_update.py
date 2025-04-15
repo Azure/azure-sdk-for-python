@@ -15,7 +15,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
     pip install azure-identity
     pip install azure-mgmt-appcontainers
 # USAGE
-    python session_pools_create_or_update.py
+    python session_pools_lifecycle_on_container_exit_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -34,6 +34,7 @@ def main():
         resource_group_name="rg",
         session_pool_name="testsessionpool",
         session_pool_envelope={
+            "identity": {"type": "SystemAssigned"},
             "location": "East US",
             "properties": {
                 "containerType": "CustomContainer",
@@ -48,9 +49,16 @@ def main():
                         }
                     ],
                     "ingress": {"targetPort": 80},
+                    "registryCredentials": {
+                        "identity": "/subscriptions/7a497526-bb8d-4816-9795-db1418a1f977/resourcegroups/test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testSP",
+                        "server": "test.azurecr.io",
+                    },
                 },
-                "dynamicPoolConfiguration": {"cooldownPeriodInSeconds": 600, "executionType": "Timed"},
+                "dynamicPoolConfiguration": {
+                    "lifecycleConfiguration": {"lifecycleType": "OnContainerExit", "maxAlivePeriodInSeconds": 86400}
+                },
                 "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
+                "managedIdentitySettings": [{"identity": "system", "lifecycle": "Main"}],
                 "poolManagementType": "Dynamic",
                 "scaleConfiguration": {"maxConcurrentSessions": 500, "readySessionInstances": 100},
                 "sessionNetworkConfiguration": {"status": "EgressEnabled"},
@@ -60,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-08-02-preview/examples/SessionPools_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/SessionPools_LifecycleOnContainerExit_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
