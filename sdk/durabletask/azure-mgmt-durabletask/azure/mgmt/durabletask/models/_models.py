@@ -225,6 +225,128 @@ class ProxyResource(Resource):
     """
 
 
+class RetentionPolicy(ProxyResource):
+    """A retention policy resource belonging to the scheduler.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.RetentionPolicyProperties
+    """
+
+    properties: Optional["_models.RetentionPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RetentionPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RetentionPolicyDetails(_model_base.Model):
+    """The properties of a retention policy.
+
+    :ivar retention_period_in_days: The retention period in days after which the orchestration will
+     be purged automatically. Required.
+    :vartype retention_period_in_days: int
+    :ivar orchestration_state: The orchestration state to which this policy applies. If omitted,
+     the policy applies to all purgeable orchestration states. Known values are: "Completed",
+     "Failed", "Terminated", and "Canceled".
+    :vartype orchestration_state: str or ~azure.mgmt.durabletask.models.PurgeableOrchestrationState
+    """
+
+    retention_period_in_days: int = rest_field(
+        name="retentionPeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retention period in days after which the orchestration will be purged automatically.
+     Required."""
+    orchestration_state: Optional[Union[str, "_models.PurgeableOrchestrationState"]] = rest_field(
+        name="orchestrationState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The orchestration state to which this policy applies. If omitted, the policy applies to all
+     purgeable orchestration states. Known values are: \"Completed\", \"Failed\", \"Terminated\",
+     and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retention_period_in_days: int,
+        orchestration_state: Optional[Union[str, "_models.PurgeableOrchestrationState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RetentionPolicyProperties(_model_base.Model):
+    """The retention policy settings for the resource.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
+    :ivar retention_policies: The orchestration retention policies.
+    :vartype retention_policies: list[~azure.mgmt.durabletask.models.RetentionPolicyDetails]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+    retention_policies: Optional[List["_models.RetentionPolicyDetails"]] = rest_field(
+        name="retentionPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The orchestration retention policies."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retention_policies: Optional[List["_models.RetentionPolicyDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
