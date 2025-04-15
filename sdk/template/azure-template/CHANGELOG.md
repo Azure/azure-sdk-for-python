@@ -1,6 +1,14 @@
 # Release History
 
-[comment]: # (Change log guidance: https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance)
+## 0.0.18b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
 
 ## 0.0.18b3 (Unreleased)
 
