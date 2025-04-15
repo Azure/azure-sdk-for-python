@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Pin OTel before breaking change.
+    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+
 ### Other Changes
 
 ## 1.6.7 (2025-04-10)
