@@ -753,7 +753,7 @@ class RedTeam():
             log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
             self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
-                        raise
+            raise
 
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
