@@ -16,7 +16,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity azure-ai-ml aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 import asyncio
 import os

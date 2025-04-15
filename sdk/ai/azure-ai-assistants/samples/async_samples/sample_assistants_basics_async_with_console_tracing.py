@@ -22,7 +22,7 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
+    * PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
