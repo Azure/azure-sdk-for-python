@@ -207,7 +207,7 @@ class RedTeam():
         self,
         redteam_output: RedTeamResult,
         eval_run: EvalRun,
-        data_only: bool = False,
+        _skip_evals: bool = False,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
@@ -215,13 +215,13 @@ class RedTeam():
         :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
-        :param data_only: Whether to log only data without evaluation results
-        :type data_only: bool
+        :param _skip_evals: Whether to log only data without evaluation results
+        :type _skip_evals: bool
         :return: The URL to the run in Azure AI Studio, if available
         :rtype: Optional[str]
         """
-        self.logger.debug(f"Logging results to MLFlow, data_only={data_only}")
-        artifact_name = "instance_results.json" if not data_only else "instance_data.json"
+        self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
+        artifact_name = "instance_results.json" if not _skip_evals else "instance_data.json"
 
         # If we have a scan output directory, save the results there first
         if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
@@ -229,8 +229,8 @@ class RedTeam():
             self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
             
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                if data_only:
-                    # In data_only mode, we write the conversations in conversation/messages format
+                if _skip_evals:
+                    # In _skip_evals mode, we write the conversations in conversation/messages format
                     f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
                 elif redteam_output.scan_result:
                     json.dump(redteam_output.scan_result, f)
@@ -249,7 +249,7 @@ class RedTeam():
                 f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not data_only and redteam_output.scan_result:
+            if not _skip_evals and redteam_output.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     f.write(self._to_scorecard(redteam_output.scan_result))
@@ -262,7 +262,7 @@ class RedTeam():
             with tempfile.TemporaryDirectory() as tmpdir:
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
+                    if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
                     elif redteam_output.scan_result:
                         redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
@@ -309,7 +309,7 @@ class RedTeam():
             with tempfile.TemporaryDirectory() as tmpdir:
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
+                    if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
                     elif redteam_output.scan_result:
                         json.dump(redteam_output.scan_result, f)
@@ -753,7 +753,7 @@ class RedTeam():
             log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
             self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
-            raise
+                        raise
 
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
@@ -1370,9 +1370,10 @@ class RedTeam():
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
             scan_name: Optional[str] = None,
-            data_only: bool = False, 
+            data_only: bool = False, # TODO: remove this param
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
+            _skip_evals: bool = False,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
@@ -1423,7 +1424,7 @@ class RedTeam():
                     scan_name=scan_name,
                     risk_category=risk_category,
                     strategy=strategy,
-                    data_only=data_only,
+                    data_only=_skip_evals,
                     data_path=data_path,
                     output_path=output_path,
                 )
@@ -1644,241 +1645,236 @@ class RedTeam():
                 attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
                 self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
             
-        with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
+        if data_only:
+            self.ai_studio_url = None
+            eval_run = {}
+        else:
+            eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
-
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
             self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
-            
-            log_subsection_header(self.logger, "Setting up scan configuration")
-            flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-            self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
-            self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
-            
-            orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
-            self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
-            
-            # Calculate total tasks: #risk_categories * #converters * #orchestrators
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
-            # Show task count for user awareness
-            print(f"📋 Planning {self.total_tasks} total tasks")
-            self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
-            
-            # Initialize our tracking dictionary early with empty structures
-            # This ensures we have a place to store results even if tasks fail
-            self.red_team_info = {}
-            for strategy in flattened_attack_strategies:
-                strategy_name = self._get_strategy_name(strategy)
-                self.red_team_info[strategy_name] = {}
-                for risk_category in self.risk_categories:
-                    self.red_team_info[strategy_name][risk_category.value] = {
-                        "data_file": "",
-                        "evaluation_result_file": "",
-                        "evaluation_result": None,
-                        "status": TASK_STATUS["PENDING"]
-                    }
-            
-            self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
-            
-            # More visible progress bar with additional status
-            progress_bar = tqdm(
-                total=self.total_tasks,
-                desc="Scanning: ",
-                ncols=100,
-                unit="scan",
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-            )
-            progress_bar.set_postfix({"current": "initializing"})
-            progress_bar_lock = asyncio.Lock()
-            
-            # Process all API calls sequentially to respect dependencies between objectives
-            log_section_header(self.logger, "Fetching attack objectives")
-            
-            # Log the objective source mode
-            if using_custom_objectives:
-                self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-                print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-            else:
-                self.logger.info("Using attack objectives from Azure RAI service")
-                print("📚 Using attack objectives from Azure RAI service")
-            
-            # Dictionary to store all objectives
-            all_objectives = {}
-            
-            # First fetch baseline objectives for all risk categories
-            # This is important as other strategies depend on baseline objectives
-            self.logger.info("Fetching baseline objectives for all risk categories")
+        
+        log_subsection_header(self.logger, "Setting up scan configuration")
+        flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
+        self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
+        self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+        
+        orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
+        self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
+        
+        # Calculate total tasks: #risk_categories * #converters * #orchestrators
+        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
+        # Show task count for user awareness
+        print(f"📋 Planning {self.total_tasks} total tasks")
+        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
+        
+        # Initialize our tracking dictionary early with empty structures
+        # This ensures we have a place to store results even if tasks fail
+        self.red_team_info = {}
+        for strategy in flattened_attack_strategies:
+            strategy_name = self._get_strategy_name(strategy)
+            self.red_team_info[strategy_name] = {}
             for risk_category in self.risk_categories:
-                progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
-                self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
-                baseline_objectives = await self._get_attack_objectives(
+                self.red_team_info[strategy_name][risk_category.value] = {
+                    "data_file": "",
+                    "evaluation_result_file": "",
+                    "evaluation_result": None,
+                    "status": TASK_STATUS["PENDING"]
+                }
+        
+        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
+        
+        # More visible progress bar with additional status
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning: ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+        progress_bar_lock = asyncio.Lock()
+        
+        # Process all API calls sequentially to respect dependencies between objectives
+        log_section_header(self.logger, "Fetching attack objectives")
+        
+        # Log the objective source mode
+        if using_custom_objectives:
+            self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+            print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+        else:
+            self.logger.info("Using attack objectives from Azure RAI service")
+            print("📚 Using attack objectives from Azure RAI service")
+        
+        # Dictionary to store all objectives
+        all_objectives = {}
+        
+        # First fetch baseline objectives for all risk categories
+        # This is important as other strategies depend on baseline objectives
+        self.logger.info("Fetching baseline objectives for all risk categories")
+        for risk_category in self.risk_categories:
+            progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
+            self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
+            baseline_objectives = await self._get_attack_objectives(
+                risk_category=risk_category,
+                application_scenario=application_scenario,
+                strategy="baseline"
+            )
+            if "baseline" not in all_objectives:
+                all_objectives["baseline"] = {}
+            all_objectives["baseline"][risk_category.value] = baseline_objectives
+            print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
+        
+        # Then fetch objectives for other strategies
+        self.logger.info("Fetching objectives for non-baseline strategies")
+        strategy_count = len(flattened_attack_strategies)
+        for i, strategy in enumerate(flattened_attack_strategies):
+            strategy_name = self._get_strategy_name(strategy)
+            if strategy_name == "baseline":
+                continue  # Already fetched
+                
+            print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            all_objectives[strategy_name] = {}
+            
+            for risk_category in self.risk_categories:
+                progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
+                self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
+                objectives = await self._get_attack_objectives(
                     risk_category=risk_category,
                     application_scenario=application_scenario,
-                    strategy="baseline"
+                    strategy=strategy_name
                 )
-                if "baseline" not in all_objectives:
-                    all_objectives["baseline"] = {}
-                all_objectives["baseline"][risk_category.value] = baseline_objectives
-                print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
-            
-            # Then fetch objectives for other strategies
-            self.logger.info("Fetching objectives for non-baseline strategies")
-            strategy_count = len(flattened_attack_strategies)
-            for i, strategy in enumerate(flattened_attack_strategies):
-                strategy_name = self._get_strategy_name(strategy)
-                if strategy_name == "baseline":
-                    continue  # Already fetched
-                    
-                print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
-                all_objectives[strategy_name] = {}
+                all_objectives[strategy_name][risk_category.value] = objectives
                 
-                for risk_category in self.risk_categories:
-                    progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
-                    self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    objectives = await self._get_attack_objectives(
-                        risk_category=risk_category,
-                        application_scenario=application_scenario,
-                        strategy=strategy_name
-                    )
-                    all_objectives[strategy_name][risk_category.value] = objectives
-                    
+        
+        self.logger.info("Completed fetching all attack objectives")
+        
+        log_section_header(self.logger, "Starting orchestrator processing")
+        
+        # Create all tasks for parallel processing
+        orchestrator_tasks = []
+        combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
+        
+        for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
+            strategy_name = self._get_strategy_name(strategy)
+            objectives = all_objectives[strategy_name][risk_category.value]
             
-            self.logger.info("Completed fetching all attack objectives")
+            if not objectives:
+                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
+                print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+                async with progress_bar_lock:
+                    progress_bar.update(1)
+                continue
             
-            log_section_header(self.logger, "Starting orchestrator processing")
-            # Removed console output
+            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
             
-            # Create all tasks for parallel processing
-            orchestrator_tasks = []
-            combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
-            
-            for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
-                strategy_name = self._get_strategy_name(strategy)
-                objectives = all_objectives[strategy_name][risk_category.value]
-                
-                if not objectives:
-                    self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                    print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
-                    self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
-                    async with progress_bar_lock:
-                        progress_bar.update(1)
-                    continue
-                
-                self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
-                
-                orchestrator_tasks.append(
-                    self._process_attack(
-                        target=target,
-                        call_orchestrator=call_orchestrator,
-                        all_prompts=objectives,
-                        strategy=strategy,
-                        progress_bar=progress_bar,
-                        progress_bar_lock=progress_bar_lock,
-                        scan_name=scan_name,
-                        data_only=data_only,
-                        output_path=output_path,
-                        risk_category=risk_category,
-                        timeout=timeout
-                    )
+            orchestrator_tasks.append(
+                self._process_attack(
+                    target=target,
+                    call_orchestrator=call_orchestrator,
+                    all_prompts=objectives,
+                    strategy=strategy,
+                    progress_bar=progress_bar,
+                    progress_bar_lock=progress_bar_lock,
+                    scan_name=scan_name,
+                    data_only=data_only,
+                    output_path=output_path,
+                    risk_category=risk_category,
+                    timeout=timeout,
+                    _skip_evals=False, # TODO: make this param a kwarg
                 )
-                
-            # Process tasks in parallel with optimized batching
-            if parallel_execution and orchestrator_tasks:
-                print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                
-                # Create batches for processing
-                for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
-                    end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
-                    batch = orchestrator_tasks[i:end_idx]
-                    progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
-                    self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
-                    
-                    try:
-                        # Add timeout to each batch
-                        await asyncio.wait_for(
-                            asyncio.gather(*batch),
-                            timeout=timeout * 2  # Double timeout for batches
-                        )
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
-                        print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
-                        # Set task status to TIMEOUT
-                        batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
-                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
-                        continue
-            else:
-                # Sequential execution 
-                self.logger.info("Running orchestrator processing sequentially")
-                print("⚙️ Processing tasks sequentially")
-                for i, task in enumerate(orchestrator_tasks):
-                    progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
-                    self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
-                    
-                    try:
-                        # Add timeout to each task
-                        await asyncio.wait_for(task, timeout=timeout)
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
-                        print(f"⚠️ Task {i+1} timed out, continuing with next task")
-                        # Set task status to TIMEOUT
-                        task_key = f"scan_task_{i+1}"
-                        self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
-                        continue
-            
-            progress_bar.close()
-            
-            # Print final status
-            tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
-            tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
-            tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
-            
-            total_time = time.time() - self.start_time
-            # Only log the summary to file, don't print to console
-            self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
-            
-            # Process results
-            log_section_header(self.logger, "Processing results")
-            
-            # Convert results to RedTeamResult using only red_team_info
-            red_team_result = self._to_red_team_result()
-            scan_result = ScanResult(
-                scorecard=red_team_result["scorecard"],
-                parameters=red_team_result["parameters"],
-                attack_details=red_team_result["attack_details"],
-                studio_url=red_team_result["studio_url"],
             )
             
-            # Create output with either full results or just conversations
-            if data_only:
-                self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
-            else:
-                output = RedTeamResult(
-                    scan_result=red_team_result, 
-                    attack_details=red_team_result["attack_details"]
-                )
+        # Process tasks in parallel with optimized batching
+        if parallel_execution and orchestrator_tasks:
+            print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
             
-            # Log results to MLFlow
+            # Create batches for processing
+            for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
+                end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
+                batch = orchestrator_tasks[i:end_idx]
+                progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
+                self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
+                
+                try:
+                    # Add timeout to each batch
+                    await asyncio.wait_for(
+                        asyncio.gather(*batch),
+                        timeout=timeout * 2  # Double timeout for batches
+                    )
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
+                    print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
+                    self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                    continue
+        else:
+            # Sequential execution 
+            self.logger.info("Running orchestrator processing sequentially")
+            print("⚙️ Processing tasks sequentially")
+            for i, task in enumerate(orchestrator_tasks):
+                progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
+                self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
+                
+                try:
+                    # Add timeout to each task
+                    await asyncio.wait_for(task, timeout=timeout)
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
+                    print(f"⚠️ Task {i+1} timed out, continuing with next task")
+                    # Set task status to TIMEOUT
+                    task_key = f"scan_task_{i+1}"
+                    self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
+                    self.logger.debug(f"Error in task {i+1}: {str(e)}")
+                    continue
+        
+        progress_bar.close()
+        
+        # Print final status
+        tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
+        tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
+        tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
+        
+        total_time = time.time() - self.start_time
+        # Only log the summary to file, don't print to console
+        self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
+        
+        # Process results
+        log_section_header(self.logger, "Processing results")
+        
+        # Convert results to RedTeamResult using only red_team_info
+        red_team_result = self._to_red_team_result()
+        scan_result = ScanResult(
+            scorecard=red_team_result["scorecard"],
+            parameters=red_team_result["parameters"],
+            attack_details=red_team_result["attack_details"],
+            studio_url=red_team_result["studio_url"],
+        )
+        
+        output = RedTeamResult(
+            scan_result=red_team_result, 
+            attack_details=red_team_result["attack_details"]
+        )
+        
+        if not data_only:
             self.logger.info("Logging results to MLFlow")
             await self._log_redteam_results_to_mlflow(
                 redteam_output=output,
                 eval_run=eval_run,
-                data_only=data_only
+                _skip_evals=False # TODO: make this a kwarg
             )
         
-        if data_only: 
-            self.logger.info("Data-only mode, returning results without evaluation")
-            return output
         
         if output_path and output.scan_result:
             # Ensure output_path is an absolute path
