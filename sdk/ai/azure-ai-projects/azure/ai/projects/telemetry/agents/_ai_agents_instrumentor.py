@@ -9,6 +9,7 @@ import importlib
 import json
 import logging
 import os
+from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
@@ -25,6 +26,9 @@ from azure.ai.projects.models import (
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
+    RunStepCodeInterpreterToolCall,
+    RunStepCodeInterpreterToolCallDetails,
+    RunStepDeltaCodeInterpreterOutput,
     SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
@@ -262,9 +266,9 @@ class _AIAgentsInstrumentorPreview:
         message_id: Optional[str] = None,
         message_status: Optional[str] = None,
         run_step_status: Optional[str] = None,
-        created_at: Optional[int] = None,
-        completed_at: Optional[int] = None,
-        cancelled_at: Optional[int] = None,
+        created_at: Optional[datetime] = None,
+        completed_at: Optional[datetime] = None,
+        cancelled_at: Optional[datetime] = None,
         failed_at: Optional[int] = None,
         run_step_last_error: Optional[str] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
@@ -289,13 +293,16 @@ class _AIAgentsInstrumentorPreview:
             attrs[GEN_AI_RUN_STEP_STATUS] = self._status_to_string(run_step_status)
 
         if created_at:
-            attrs[GEN_AI_CREATED_AT] = created_at
+            created_at_string = created_at.strftime("%Y-%m-%d %H:%M:%S.%f")
+            attrs[GEN_AI_CREATED_AT] = created_at_string
 
         if completed_at:
-            attrs[GEN_AI_COMPLETED_AT] = completed_at
+            completed_at_string = completed_at.strftime("%Y-%m-%d %H:%M:%S.%f")
+            attrs[GEN_AI_COMPLETED_AT] = completed_at_string
 
         if cancelled_at:
-            attrs[GEN_AI_CANCELLED_AT] = cancelled_at
+            cancelled_at_string = cancelled_at.strftime("%Y-%m-%d %H:%M:%S.%f")
+            attrs[GEN_AI_CANCELLED_AT] = cancelled_at_string
 
         if failed_at:
             attrs[GEN_AI_FAILED_AT] = failed_at
@@ -337,104 +344,117 @@ class _AIAgentsInstrumentorPreview:
             usage=usage,
         )
 
-    def add_run_step_event(self, span, step: RunStep) -> None:
-        if step["type"] == "message_creation":
-            self._add_message_creation_run_step_event(
-                span,
-                thread_id=step["thread_id"],
-                thread_run_id=step["run_id"],
-                agent_id=step["assistant_id"],
-                created_at=step["created_at"],
-                run_step_status=step["status"],
-                completed_at=step["completed_at"],
-                cancelled_at=step["cancelled_at"],
-                failed_at=step["failed_at"],
-                run_step_last_error=step["last_error"],
-                message_id=step["step_details"]["message_creation"]["message_id"],
-                usage=step["usage"],
-            )
-        elif step["type"] == "tool_calls":
-            step_details = None
-            if _trace_agents_content:
-                step_details = step["step_details"]["tool_calls"]
+    def _process_tool_calls(self, step: RunStep) -> List[Dict[str, Any]]:
+        """
+        Helper method to process tool calls and return a list of tool call dictionaries.
+        """
+        tool_calls = []
+        for t in cast(RunStepToolCallDetails, step.step_details).tool_calls:
+            if not _trace_agents_content:
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                }
+            elif isinstance(t, RunStepFunctionToolCall):
+                try:
+                    parsed_arguments = json.loads(t.function.arguments)
+                except json.JSONDecodeError:
+                    parsed_arguments = {}
 
-            self._add_tool_call_run_step_event(
-                span,
-                thread_id=step["thread_id"],
-                thread_run_id=step["run_id"],
-                agent_id=step["assistant_id"],
-                created_at=step["created_at"],
-                run_step_status=step["status"],
-                completed_at=step["completed_at"],
-                cancelled_at=step["cancelled_at"],
-                failed_at=step["failed_at"],
-                run_step_last_error=step["last_error"],
-                usage=step["usage"],
-                run_step_details=step_details,
-            )
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "function": {
+                        "name": t.function.name,
+                        "arguments": parsed_arguments,
+                    },
+                }
+            elif isinstance(t, RunStepCodeInterpreterToolCall):
+                try:
+                    parsed_outputs = str(t.code_interpreter.outputs)
+                except Exception as e:
+                    logging.warning("Error parsing code interpreter outputs: '%s'", str(e))
+                    parsed_outputs = {}
+
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "code_interpreter": {
+                        "input": t.code_interpreter.input,
+                        "output": parsed_outputs,
+                    },
+                }
+            else:
+                try:
+                    step_details = str(step["step_details"]["tool_calls"])
+                except Exception as e:
+                    logging.warning("Error parsing step details: '%s'", str(e))
+                    step_details = ""
+
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "tool_call_details": step_details,
+                }
+            tool_calls.append(tool_call)
+        return tool_calls
+
+    def _add_tool_call_event(
+        self,
+        span,
+        step: RunStep,
+        event_name: str
+    ) -> None:
+        """
+        Helper method to add a tool call event to a span.
+        """
+        tool_calls = self._process_tool_calls(step)
+        attributes = self._create_event_attributes(
+            thread_id=step.thread_id,
+            agent_id=step.agent_id,
+            thread_run_id=step.run_id,
+            run_step_status=step.status,
+            created_at=step.created_at,
+            completed_at=step.completed_at,
+            cancelled_at=step.cancelled_at,
+            failed_at=step.failed_at,
+            run_step_last_error=step.last_error,
+            usage=step.usage,
+        )
+
+        if tool_calls:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
+
+        span.span_instance.add_event(name=event_name, attributes=attributes)
+
+    def add_run_step_event(self, span, step: RunStep) -> None:
+        """
+        Adds a run step event to the span.
+        """
+        if step["type"] == "message_creation":
+            self._add_message_creation_run_step_event(span, step)
+        elif step["type"] == "tool_calls":
+            self._add_tool_call_event(span, step, "gen_ai.run_step.tool_calls")
 
     def _add_message_creation_run_step_event(
         self,
         span,
-        thread_id: Optional[str] = None,
-        thread_run_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        created_at: Optional[int] = None,
-        run_step_status: Optional[str] = None,
-        completed_at: Optional[int] = None,
-        cancelled_at: Optional[int] = None,
-        failed_at: Optional[int] = None,
-        run_step_last_error: Optional[str] = None,
-        message_id: Optional[str] = None,
-        usage: Optional[_models.RunStepCompletionUsage] = None,
+        step: RunStep
     ) -> None:
         attributes = self._create_event_attributes(
-            thread_id=thread_id,
-            agent_id=agent_id,
-            thread_run_id=thread_run_id,
-            message_id=message_id,
-            run_step_status=run_step_status,
-            created_at=created_at,
-            completed_at=completed_at,
-            cancelled_at=cancelled_at,
-            failed_at=failed_at,
-            run_step_last_error=run_step_last_error,
-            usage=usage,
+            thread_id=step.thread_id,
+            agent_id=step.agent_id,
+            thread_run_id=step.run_id,
+            message_id=step["step_details"]["message_creation"]["message_id"],
+            run_step_status=step.status,
+            created_at=step.created_at,
+            completed_at=step.completed_at,
+            cancelled_at=step.cancelled_at,
+            failed_at=step.failed_at,
+            run_step_last_error=step.last_error,
+            usage=step.usage
         )
         span.span_instance.add_event(name="gen_ai.run_step.message_creation", attributes=attributes)
-
-    def _add_tool_call_run_step_event(
-        self,
-        span,
-        thread_id: Optional[str] = None,
-        thread_run_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        created_at: Optional[int] = None,
-        run_step_status: Optional[str] = None,
-        completed_at: Optional[int] = None,
-        cancelled_at: Optional[int] = None,
-        failed_at: Optional[int] = None,
-        run_step_last_error: Optional[str] = None,
-        usage: Optional[_models.RunStepCompletionUsage] = None,
-        run_step_details: Optional[int] = None,
-    ) -> None:
-        attributes = self._create_event_attributes(
-            thread_id=thread_id,
-            agent_id=agent_id,
-            thread_run_id=thread_run_id,
-            run_step_status=run_step_status,
-            created_at=created_at,
-            completed_at=completed_at,
-            cancelled_at=cancelled_at,
-            failed_at=failed_at,
-            run_step_last_error=run_step_last_error,
-            usage=usage,
-        )
-
-        if run_step_details:
-            attributes[GEN_AI_RUN_STEP_DETAILS] = json.dumps(str(run_step_details), ensure_ascii=False)
-
-        span.span_instance.add_event(name="gen_ai.run_step.tool_calls", attributes=attributes)
 
     def _add_message_event(
         self,
@@ -522,33 +542,7 @@ class _AIAgentsInstrumentorPreview:
         return status.value if hasattr(status, "value") else status
 
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
-        tool_calls = [
-            {
-                "id": t.id,
-                "type": t.type,
-                "function": (
-                    {"name": t.function.name, "arguments": json.loads(t.function.arguments)}
-                    if isinstance(t, RunStepFunctionToolCall)
-                    else None
-                ),
-            }
-            for t in cast(RunStepToolCallDetails, step.step_details).tool_calls
-        ]
-
-        attributes = self._create_event_attributes(
-            thread_id=step.thread_id,
-            agent_id=step.agent_id,
-            thread_run_id=step.run_id,
-            message_status=step.status,
-            usage=step.usage,
-        )
-
-        if _trace_agents_content:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
-        else:
-            tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording}, ensure_ascii=False)
-        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+        self._add_tool_call_event(span, step, "gen_ai.assistant.message")
 
     def _add_tool_event_from_thread_run(self, span, run: ThreadRun) -> None:
         tool_calls = []
@@ -1956,11 +1950,6 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         retval = None
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            self.instrumentor._add_tool_event_from_thread_run(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-                self.span, run
-            )
-
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
@@ -1972,8 +1961,11 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
 
-        # todo - report errors for failure statuses here and in run ?
-        if step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails) and step.status == RunStepStatus.COMPLETED:
+            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, step
+            )
+        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
@@ -2063,11 +2055,6 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         retval = None
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            self.instrumentor._add_tool_event_from_thread_run(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-                self.span, run
-            )
-
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
@@ -2079,8 +2066,11 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         if self.inner_handler:
             retval = await self.inner_handler.on_run_step(step)  # type: ignore
 
-        # todo - report errors for failure statuses here and in run ?
-        if step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails) and step.status == RunStepStatus.COMPLETED:
+            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, step
+            )
+        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
