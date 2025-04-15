@@ -1,0 +1,14 @@
+# coding=utf-8
+{% if code_model.license_header %}
+{{ code_model.license_header }}
+{% endif %}
+
+{% for request_builder in request_builders %}
+from ._request_builders import {{ request_builder.name }}
+{% endfor %}
+
+__all__ = [
+    {% for request_builder in request_builders %}
+    '{{ request_builder.name }}',
+    {% endfor %}
+]
