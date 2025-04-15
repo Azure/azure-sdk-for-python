@@ -16,7 +16,7 @@
 ### Bugs Fixed
 
 ### Breaking Changes
-The toolset parameter in `create_agents` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
 
 ## 1.0.0b8 (2025-03-28)
 
