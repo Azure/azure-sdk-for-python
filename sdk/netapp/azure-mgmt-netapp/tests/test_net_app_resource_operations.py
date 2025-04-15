@@ -10,6 +10,7 @@ class TestNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
+    @pytest.mark.skip(reason="Skipping this test for service side issue re-enable when fixed")
     @recorded_by_proxy
     def test_query_network_sibling_set(self):
 
@@ -24,6 +25,7 @@ class TestNetAppResourceOperations(AzureMgmtRecordedTestCase):
             assert str(e).startswith("(NoNicsFoundForSubnet)")
         print("Finished with test_query_network_sibling_set")
 
+    @pytest.mark.skip(reason="Skipping this test for service side issue re-enable when fixed")
     @recorded_by_proxy
     def test_begin_update_network_sibling_set(self):
 
