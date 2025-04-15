@@ -17,7 +17,7 @@ from typing_extensions import Self
 
 
 class PromptTemplate:
-    """The helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
+    """A helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
     Prompty library is required to use this class (`pip install prompty`).
     """
 
@@ -120,7 +120,7 @@ class PromptTemplate:
         self,
         *,
         api: str = "chat",
-        prompty: Optional["Prompty"] = None,
+        prompty: Optional["Prompty"] = None,  # type: ignore[name-defined]
         prompt_template: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
