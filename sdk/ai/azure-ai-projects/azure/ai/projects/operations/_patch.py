@@ -24,6 +24,8 @@ from typing import (
     Sequence,
     TextIO,
     Union,
+    Callable,
+    Set,
     cast,
     overload,
 )
@@ -841,7 +843,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Dict[str, _models.ToolSet] = {}
+        self._function_tool = _models.FunctionTool(set())
 
     # pylint: disable=arguments-differ
     @overload
@@ -1073,8 +1075,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-        if toolset is not None:
-            self._toolset[new_agent.id] = toolset
         return new_agent
 
     # pylint: disable=arguments-differ
@@ -1327,7 +1327,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[agent_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -1823,11 +1822,9 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.agent_id)
-                    if toolset is not None:
-                        tool_outputs = toolset.execute_tool_calls(tool_calls)
-                    else:
-                        raise ValueError("Toolset is not available in the client.")
+                    toolset = _models.ToolSet()
+                    toolset.add(self._function_tool)
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
@@ -2520,13 +2517,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
-            if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.agent_id)
-                if toolset:
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-                else:
-                    logger.debug("Toolset is not available in the client.")
-                    return
+            if (
+                any(tool_call.type == "function" for tool_call in tool_calls)
+                and len(self._function_tool.definitions) > 0
+            ):
+
+                toolset = _models.ToolSet()
+                toolset.add(self._function_tool)
+                tool_outputs = toolset.execute_tool_calls(tool_calls)
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
@@ -3308,9 +3306,56 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if agent_id in self._toolset:
-            del self._toolset[agent_id]
         return super().delete_agent(agent_id, **kwargs)
+
+    @overload
+    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]]) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, function_tool: _models.FunctionTool) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword function_tool: A FunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.FunctionTool]
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, toolset: _models.ToolSet) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword toolset: A ToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.ToolSet]
+        """
+
+    @distributed_trace
+    def enable_auto_function_calls(
+        self,
+        *,
+        functions: Optional[Set[Callable[..., Any]]] = None,
+        function_tool: Optional[_models.FunctionTool] = None,
+        toolset: Optional[_models.ToolSet] = None,
+    ) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        :keyword function_tool: A FunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.FunctionTool]
+        :keyword toolset: A ToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.ToolSet]
+        """
+        if functions:
+            self._function_tool = _models.FunctionTool(functions)
+        elif function_tool:
+            self._function_tool = function_tool
+        elif toolset:
+            tool = toolset.get_tool(_models.FunctionTool)
+            self._function_tool = tool
 
 
 __all__: List[str] = [

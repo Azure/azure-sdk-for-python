@@ -693,7 +693,6 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            logging.error("Function '%s' not found.", function_name)
             raise ValueError(f"Function '{function_name}' not found.")
 
         function = self._functions[function_name]
@@ -701,11 +700,9 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         try:
             parsed_arguments = json.loads(arguments)
         except json.JSONDecodeError as e:
-            logging.error("Invalid JSON arguments for function '%s': %s", function_name, e)
             raise ValueError(f"Invalid JSON arguments: {e}") from e
 
         if not isinstance(parsed_arguments, dict):
-            logging.error("Arguments must be a JSON object for function '%s'.", function_name)
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
@@ -734,9 +731,8 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
 class FunctionTool(BaseFunctionTool):
 
     def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
         try:
+            function, parsed_arguments = self._get_func_and_args(tool_call)
             return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
@@ -1380,7 +1376,8 @@ class ToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Failed to execute tool call %s: %s", tool_call, e)
+                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
+                tool_outputs.append(tool_output)
 
         return tool_outputs
 
