@@ -70,6 +70,8 @@ user:
 
   **Response:** Technology revolutionizes modern education by providing interactive learning platforms, enabling personalized learning experiences, and connecting students worldwide, thereby transforming how knowledge is acquired and shared.
 
+Note that the QUERY can either be a string with a user request or an entire conversation history including previous requests and responses from the assistant.
+In this case, the assistant's response should be evaluated in the context of the entire conversation but the focus should be on the last query and response.
 
 # Data
 RESPONSE: {{response}}
