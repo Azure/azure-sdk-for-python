@@ -111,13 +111,13 @@ def update_correlation_context_header(
     features = ""
 
     if uses_load_balancing:
-        features += "LB,"
+        features += "LB+"
 
     if uses_ai_configuration:
-        features += "AI,"
+        features += "AI+"
 
     if uses_aicc_configuration:
-        features += "AICC,"
+        features += "AICC+"
 
     if features:
         correlation_context += ",Features=" + features[:-1]

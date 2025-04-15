@@ -233,7 +233,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
                 provider._uses_ai_configuration,
                 provider._uses_aicc_configuration,
             )
-            assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI,AICC"
+            assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI+AICC"
 
 
 def secret_resolver(secret_id):
