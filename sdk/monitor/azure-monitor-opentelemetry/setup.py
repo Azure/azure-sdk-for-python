@@ -84,6 +84,7 @@ setup(
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
         "azure-monitor-opentelemetry-exporter~=1.0.0b31",
+        # TODO: Unpin once breaking change in 1.32.0/0.53b0 is resolved.
         "opentelemetry-instrumentation-django<0.53b0,>=0.49b0",
         "opentelemetry-instrumentation-fastapi<0.53b0,>=0.49b0",
         "opentelemetry-instrumentation-flask<0.53b0,>=0.49b0",
