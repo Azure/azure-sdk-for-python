@@ -1265,11 +1265,7 @@ class RedTeam():
             result_path = os.path.join(self.scan_output_dir, result_filename)
         else:
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
-            
-        # evaluators_dict = {
-        #     risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential)
-        # }
-        
+
         # Completely suppress all output during evaluation call 
         import io
         import sys
@@ -1339,16 +1335,8 @@ class RedTeam():
             
             # Run evaluation silently
             eval_logger.debug(f"Starting evaluation for {risk_category.value}/{strategy_name}")
-            # evaluate_outputs = evaluate(
-            #     data=data_path,
-            #     evaluators=evaluators_dict,
-            #     output_path=result_path,
-            #     _use_run_submitter_client=True
-            # )            # Extract messages from the data_path JSON Lines file
-            # messages = []
             query_response = {"query": "", "response": ""}
             try:
-                # import pdb; pdb.set_trace()  # Debugging breakpoint
                 with open(data_path, "r", encoding="utf-8") as f:
                     for line in f:
                         try:
@@ -1463,8 +1451,7 @@ class RedTeam():
         :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
-        :param timeout: The timeout in seconds for API calls (default: 120)
-        :return: None
+        :param timeout: The timeout in seconds for API calls
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
