@@ -19,6 +19,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
+    EVALUATION_PASS_FAIL_MAPPING,
     EvaluationMetrics,
     DefaultOpenEncoding,
     Prefixes,
@@ -209,6 +210,47 @@ def _process_rows(row, detail_defect_rates):
     return detail_defect_rates
 
 
+def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
+    """
+    Aggregate binary output results (pass/fail) from evaluation dataframe.
+    
+    For each evaluator, calculates the proportion of "pass" results.
+    
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: A dictionary mapping evaluator names to the proportion of pass results.
+    :rtype: Dict[str, float]
+    """
+    results = {}
+    
+    # Find all columns that end with "_result"
+    result_columns = [
+        col for col in df.columns
+        if col.startswith("outputs.") and col.endswith("_result")
+    ]
+    
+    for col in result_columns:
+        # Extract the evaluator name from the column name
+        # (outputs.<evaluator>.<metric>_result)
+        parts = col.split(".")
+        if len(parts) >= 3:
+            evaluator_name = parts[1]
+            
+            # Count the occurrences of each unique value (pass/fail)
+            value_counts = df[col].value_counts().to_dict()
+            
+            # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
+            total_rows = len(df)
+            pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
+            proportion = pass_count / total_rows if total_rows > 0 else 0.0
+            
+            # Set the result with the evaluator name as the key
+            result_key = f"{evaluator_name}.binary_aggregate"
+            results[result_key] = round(proportion, 2)
+    
+    return results
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -249,6 +291,15 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     metrics = mean_value.to_dict()
     # Add defect rates back into metrics
     metrics.update(defect_rates)
+    
+    # Add binary threshold metrics based on pass/fail results
+    original_df = df.copy()
+    for col in df.columns:
+        # Restore the "outputs." prefix for the binary aggregation function
+        original_df.rename(columns={col: f"outputs.{col}"}, inplace=True)
+    binary_metrics = _aggregation_binary_output(original_df)
+    metrics.update(binary_metrics)
+    
     return metrics
 
 
