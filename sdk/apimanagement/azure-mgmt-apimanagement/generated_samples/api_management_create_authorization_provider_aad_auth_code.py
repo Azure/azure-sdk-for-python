@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.apimanagement import ApiManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.authorization_provider.create_or_update(
@@ -43,8 +41,8 @@ def main():
                 "oauth2": {
                     "grantTypes": {
                         "authorizationCode": {
-                            "clientId": "59790825-fdd3-4b10-bc7a-4c3aaf25801d",
-                            "clientSecret": "xxxxxxxxxxxxxxxxxxxxxxxx",
+                            "clientId": "clientsecretid",
+                            "clientSecret": "clientsecretvalue",
                             "resourceUri": "https://graph.microsoft.com",
                             "scopes": "User.Read.All Group.Read.All",
                         }
@@ -57,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateAuthorizationProviderAADAuthCode.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2024-05-01/examples/ApiManagementCreateAuthorizationProviderAADAuthCode.json
 if __name__ == "__main__":
     main()
