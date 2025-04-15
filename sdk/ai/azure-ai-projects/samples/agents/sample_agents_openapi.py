@@ -69,7 +69,6 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=openapi_tool.definitions,
     )
-
     # [END create_agent_with_openapi]
 
     print(f"Created agent, ID: {agent.id}")

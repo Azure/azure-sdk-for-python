@@ -2603,8 +2603,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-        :paramtype purpose: Union[str, _models.FilePurpose, None]
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
@@ -2613,15 +2613,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
+        # If a JSON body is provided directly, pass it along
         if body is not None:
-            return super().upload_file(body=body, **kwargs)
+            return super()._upload_file(body=body, **kwargs)
 
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
+        # If file content is passed in directly
         if file is not None and purpose is not None:
-            return super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+            return super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
+        # If a file path is provided
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
@@ -2630,11 +2634,11 @@ class AgentsOperations(AgentsOperationsGenerated):
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
 
-                return super().upload_file(file=file_content, purpose=purpose, **kwargs)
+                return super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}") from e
 

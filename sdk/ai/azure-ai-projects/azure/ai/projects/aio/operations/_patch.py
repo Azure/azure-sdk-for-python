@@ -2422,15 +2422,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
+        # If a JSON body is provided directly, pass it along
         if body is not None:
-            return await super().upload_file(body=body, **kwargs)
+            return await super()._upload_file(body=body, **kwargs)
 
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
+        # If file content is passed in directly
         if file is not None and purpose is not None:
-            return await super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+            return await super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
+        # If a file path is provided
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
@@ -2439,11 +2443,11 @@ class AgentsOperations(AgentsOperationsGenerated):
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
 
-                return await super().upload_file(file=file_content, purpose=purpose, **kwargs)
+                return await super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}.") from e
 

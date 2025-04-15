@@ -52,6 +52,7 @@ To report an issue with the client library, or request additional features, plea
     - [Create message](#create-message) with:
       - [File search attachment](#create-message-with-file-search-attachment)
       - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
+      - [Create Message with Image Inputs](#create-message-with-image-inputs)
     - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
     - [Retrieve message](#retrieve-message)
     - [Retrieve file](#retrieve-file)
@@ -609,7 +610,6 @@ agent = project_client.agents.create_agent(
 
 Currently, the Azure Function integration for the AI Agent has the following limitations:
 
-- Azure Functions integration is available **only for non-streaming scenarios**.
 - Supported trigger for Azure Function is currently limited to **Queue triggers** only.
   HTTP or other trigger types and streaming responses are not supported at this time.
 
@@ -984,6 +984,88 @@ message = project_client.agents.create_message(
 ```
 
 <!-- END SNIPPET -->
+
+#### Create Message with Image Inputs
+
+You can send messages to Azure agents with image inputs in following ways:
+
+- **Using an image stored as a uploaded file**
+- **Using a public image accessible via URL**
+- **Using a base64 encoded image string**
+
+The following examples demonstrate each method:
+
+##### Create message using uploaded image file
+
+```python
+# Upload the local image file
+image_file = project_client.agents.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
+
+# Construct content using uploaded image
+file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageFileBlock(image_file=file_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
+
+##### Create message with an image URL input
+
+```python
+# Specify the public image URL
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+
+# Create content directly referencing image URL
+url_param = MessageImageUrlParam(url=image_url, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageUrlBlock(image_url=url_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
+
+##### Create message with base64-encoded image input
+
+```python
+import base64
+
+def image_file_to_base64(path: str) -> str:
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
+
+# Convert your image file to base64 format
+image_base64 = image_file_to_base64("image_file.png")
+
+# Prepare the data URL
+img_data_url = f"data:image/png;base64,{image_base64}"
+
+# Use base64 encoded string as image URL parameter
+url_param = MessageImageUrlParam(url=img_data_url, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageUrlBlock(image_url=url_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
 
 #### Create Run, Run_and_Process, or Stream
 
