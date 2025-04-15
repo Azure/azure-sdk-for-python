@@ -130,7 +130,7 @@ class PromptTemplate:
         :paramtype api: str
         :keyword prompty: Optional Prompty object.
         :paramtype prompty: ~prompty.Prompty or None.
-        :keyword prompt_tmplate: Optional prompt template string.
+        :keyword prompt_template: Optional prompt template string.
         :paramtype prompt_template: str or None.
         :keyword model_name: Optional AI Model name.
         :paramtype model_name: str or None.
