@@ -27,18 +27,7 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.onedp import AIProjectClient
-from azure.ai.projects.onedp.prompts import PromptTemplate
-
-# TODO: Remove console logging
-import sys
-import logging
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-identity_logger = logging.getLogger("azure.identity")
-identity_logger.setLevel(logging.ERROR)
-# End logging
+from azure.ai.projects.onedp import AIProjectClient, PromptTemplate
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -46,7 +35,6 @@ model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    logging_enable=True
 ) as project_client:
 
     with project_client.inference.get_chat_completions_client() as client:

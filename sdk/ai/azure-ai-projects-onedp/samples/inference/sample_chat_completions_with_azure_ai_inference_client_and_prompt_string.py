@@ -27,8 +27,7 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.onedp import AIProjectClient
-from azure.ai.projects.onedp.prompts import PromptTemplate
+from azure.ai.projects.onedp import AIProjectClient, PromptTemplate
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]

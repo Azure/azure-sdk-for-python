@@ -14,14 +14,17 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
-from prompty import headless, load, prepare
-from prompty.core import Prompty
 
 
 class PromptTemplate:
     """The helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
-    Prompty library is required to be installed to use this class.
+    Prompty library is required to use this class (`pip install prompty`).
     """
+
+    _MISSING_PROMPTY_PACKAGE_MESSAGE = (
+        "The 'prompty' package is required in order to use the 'PromptTemplate' class. "
+        "Please install it by running 'pip install prompty'."
+    )
 
     @classmethod
     def from_prompty(cls, file_path: str) -> Self:
@@ -34,6 +37,11 @@ class PromptTemplate:
         """
         if not file_path:
             raise ValueError("Please provide file_path")
+
+        try:
+            from prompty import load
+        except ImportError as exc:
+            raise ImportError(cls._MISSING_PROMPTY_PACKAGE_MESSAGE) from exc
 
         # Get the absolute path of the file by `traceback.extract_stack()`, it's "-2" because:
         #  In the stack, the last function is the current function.
@@ -59,7 +67,12 @@ class PromptTemplate:
         :return: The PromptTemplate object.
         :rtype: PromptTemplate
         """
-        prompt_template = _remove_leading_empty_space(prompt_template)
+        try:
+            from prompty import headless
+        except ImportError as exc:
+            raise ImportError(cls._MISSING_PROMPTY_PACKAGE_MESSAGE) from exc
+
+        prompt_template = cls._remove_leading_empty_space(prompt_template)
         prompty = headless(api=api, content=prompt_template)
         prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
         prompty.template.parser = "prompty"
@@ -107,10 +120,21 @@ class PromptTemplate:
         self,
         *,
         api: str = "chat",
-        prompty: Optional[Prompty] = None,
+        prompty: Optional["Prompty"] = None,
         prompt_template: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
+        """Create a PromptTemplate object.
+
+        :keyword api: The API type.
+        :paramtype api: str
+        :keyword prompty: Optional Prompty object.
+        :paramtype prompty: ~prompty.Prompty or None.
+        :keyword prompt_tmplate: Optional prompt template string.
+        :paramtype prompt_template: str or None.
+        :keyword model_name: Optional AI Model name.
+        :paramtype model_name: str or None.
+        """
         self.prompty = prompty
         if self.prompty is not None:
             self.model_name = (
@@ -139,6 +163,11 @@ class PromptTemplate:
         :return: The rendered prompt template.
         :rtype: List[Dict[str, Any]]
         """
+        try:
+            from prompty import prepare
+        except ImportError as exc:
+            raise ImportError(self._MISSING_PROMPTY_PACKAGE_MESSAGE) from exc
+
         if data is None:
             data = kwargs
 

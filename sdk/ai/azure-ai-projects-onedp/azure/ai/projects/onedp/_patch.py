@@ -10,6 +10,7 @@ from typing import List, Any, Union, Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations, InferenceOperations, AssistantsOperations
+from ._patch_prompts import PromptTemplate
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -54,7 +55,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.assistants = AssistantsOperations(self)
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+    "PromptTemplate",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
