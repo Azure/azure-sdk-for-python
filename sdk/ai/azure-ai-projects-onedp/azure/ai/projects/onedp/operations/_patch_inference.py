@@ -90,6 +90,7 @@ class InferenceOperations:
             ) from e
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
+        # TODO: Remove this before //build?
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
@@ -243,6 +244,7 @@ class InferenceOperations:
             # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the
             # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
 
+        # TODO: Confirm that it's okay to do two REST API calls here.
         # If the connection uses API key authentication, we need to make another service call to get
         # the connection with API key populated.
         if connection.credentials.auth_type == CredentialType.API_KEY:

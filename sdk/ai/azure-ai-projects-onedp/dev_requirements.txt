@@ -5,3 +5,4 @@ aiohttp
 azure.storage.blob
 azure.ai.inference
 openai
+prompty
