@@ -51,6 +51,7 @@ from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
+from pyrit.memory import CentralMemory
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
 from pyrit.orchestrator import Orchestrator, CrescendoOrchestrator
 from pyrit.exceptions import PyritException
@@ -281,7 +282,7 @@ class RedTeam():
                         continue
                     if file.endswith('.log') and not os.environ.get('DEBUG'):
                         continue
-                    if file == artifact_name or file == eval_info_name:
+                    if file == artifact_name:
                         continue
                     
                     try:
@@ -668,6 +669,17 @@ class RedTeam():
             # Use a batched approach for send_prompts_async to prevent overwhelming
             # the model with too many concurrent requests
             batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
+
+            # Initialize output path for memory labelling
+            base_path = str(uuid.uuid4())
+            
+            # If scan output directory exists, place the file there
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+            else:
+                output_path = f"{base_path}{DATA_EXT}"
+
+            self.red_team_info[strategy_name][risk_category]["data_file"] = output_path
             
             # Process prompts concurrently within each batch
             if len(all_prompts) > batch_size:
@@ -682,8 +694,8 @@ class RedTeam():
                     try:
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
-                            orchestrator.send_prompts_async(prompt_list=batch),
-                            timeout=timeout  # Use provided timeout
+                            orchestrator.send_prompts_async(prompt_list=batch, memory_labels = {"risk_strategy_path": output_path, "batch": batch_idx+1}),
+                            timeout=timeout  # Use provided timeouts
                         )
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
                         self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
@@ -700,12 +712,14 @@ class RedTeam():
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -714,7 +728,7 @@ class RedTeam():
                 batch_start_time = datetime.now()
                 try:
                     await asyncio.wait_for(
-                        orchestrator.send_prompts_async(prompt_list=all_prompts),
+                        orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels = {"risk_strategy_path": output_path, "batch": 1}),
                         timeout=timeout  # Use provided timeout
                     )
                     batch_duration = (datetime.now() - batch_start_time).total_seconds()
@@ -726,10 +740,12 @@ class RedTeam():
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
                     self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
                     self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
@@ -740,159 +756,7 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
-    async def _crescendo_orchestrator(
-        self, 
-        chat_target: PromptChatTarget, 
-        all_prompts: List[str], 
-        converter: Union[PromptConverter, List[PromptConverter]], 
-        strategy_name: str = "crescendo", 
-        risk_category: str = "unknown",
-        timeout: int = 480,
-        max_turns: int = 10,
-        max_backtracks: int = 5
-    ) -> Orchestrator:
-        """Run the Crescendo Orchestrator attack which uses a meta-LLM to try to jailbreak the target.
-        
-        :param chat_target: The target to send prompts to
-        :type chat_target: PromptChatTarget
-        :param all_prompts: List of prompts to send (objectives)
-        :type all_prompts: List[str]
-        :param converter: Converter or list of converters (not used by Crescendo but kept for API compatibility)
-        :type converter: Union[PromptConverter, List[PromptConverter]]
-        :param strategy_name: Name of the strategy being used (for logging)
-        :type strategy_name: str
-        :param risk_category: Name of the risk category being evaluated (for logging)
-        :type risk_category: str
-        :param timeout: The timeout in seconds for API calls
-        :type timeout: int
-        :param max_turns: Maximum number of turns in the Crescendo conversation
-        :type max_turns: int
-        :param max_backtracks: Maximum number of backtracks in the Crescendo conversation
-        :type max_backtracks: int 
-        :return: The orchestrator instance with processed results
-        :rtype: Orchestrator
-        """
-        task_key = f"{strategy_name}_{risk_category}_orchestrator"
-        self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
-        
-        log_strategy_start(self.logger, strategy_name, risk_category)
-        
-        # Log which orchestrator and parameters are being used
-        self.logger.debug(f"Using CrescendoOrchestrator with max_turns={max_turns}, max_backtracks={max_backtracks}")
-        
-        # Create a main orchestrator to collect all results
-        # This will be our return value after processing all prompts
-        main_orchestrator = None
-        
-        try:
-            if not all_prompts:
-                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category}")
-                self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
-                # Create an empty orchestrator to return
-                adversarial_target = AzureRAIServiceTarget(
-                    client=self.generated_rai_client,
-                    api_version=None,
-                    model="gpt-4"
-                )
-                scoring_target = AzureRAIServiceTarget(  # Using AzureRAIServiceTarget instead of OpenAIChatTarget
-                    client=self.generated_rai_client,
-                    api_version=None,
-                    model="gpt-4"
-                )
-                main_orchestrator = CrescendoOrchestrator(
-                    objective_target=chat_target,
-                    adversarial_chat=adversarial_target,
-                    max_turns=max_turns,
-                    max_backtracks=max_backtracks,
-                    scoring_target=scoring_target,
-                    prompt_converters=None
-                )
-                return main_orchestrator
-            
-            # Debug log the first few characters of each prompt
-            self.logger.debug(f"First objective (truncated): {all_prompts[0][:50]}...")
-            self.logger.debug(f"Processing {len(all_prompts)} objectives individually for {strategy_name}/{risk_category}")
-            
-            # Process each prompt individually (batch size of 1)
-            for prompt_idx, prompt in enumerate(all_prompts):
-                prompt_start_time = datetime.now()
-                self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}: {prompt[:50]}...")
-                
-                try:
-                    # Create new targets specifically for this prompt
-                    # The adversarial target now gets the specific objective for this prompt
-                    adversarial_target = AzureRAIServiceTarget(
-                        client=self.generated_rai_client,
-                        api_version=None,
-                        model="gpt-4",
-                        objective=prompt  # Use the current prompt as the objective
-                    )
-                    
-                    # Use AzureRAIServiceTarget for scoring as well
-                    scoring_target = AzureRAIServiceTarget(
-                        client=self.generated_rai_client,
-                        api_version=None,
-                        model="gpt-4"
-                    )
-                    
-                    # Create a new orchestrator for this specific prompt
-                    orchestrator = CrescendoOrchestrator(
-                        objective_target=chat_target,
-                        adversarial_chat=adversarial_target,
-                        max_turns=max_turns,
-                        max_backtracks=max_backtracks,
-                        scoring_target=scoring_target,
-                        prompt_converters=None  # Crescendo doesn't use converters
-                    )
-                    
-                    # Store the first orchestrator as our main one to return later
-                    if main_orchestrator is None:
-                        main_orchestrator = orchestrator
-                    
-                    # Use wait_for to implement a timeout
-                    # Note: Using a list with a single prompt to match the expected API
-                    await asyncio.wait_for(
-                        orchestrator.run_attacks_async(objectives=[prompt]),
-                        timeout=timeout  # Use provided timeout
-                    )
-                    
-                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
-                    self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category} in {prompt_duration:.2f} seconds")
-                    
-                    # Print progress to console
-                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
-                        print(f"Strategy {strategy_name}, Risk {risk_category}: Processed prompt {prompt_idx+1}/{len(all_prompts)}")
-                        
-                except asyncio.TimeoutError:
-                    self.logger.warning(f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds")
-                    self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1} after {timeout} seconds.", exc_info=True)
-                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1}")
-                    
-                    # Set task status to TIMEOUT
-                    prompt_task_key = f"{strategy_name}_{risk_category}_prompt_{prompt_idx+1}"
-                    self.task_statuses[prompt_task_key] = TASK_STATUS["TIMEOUT"]
-                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                    
-                    # Continue with the next prompt rather than failing completely
-                    continue
-                except Exception as e:
-                    log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category}")
-                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1}: {str(e)}")
-                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                    
-                    # Continue with the next prompt even if one fails
-                    continue
-            
-            self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
-            return orchestrator
-            
-        except Exception as e:
-            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
-            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
-            self.task_statuses[task_key] = TASK_STATUS["FAILED"]
-            raise
-
-    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator) -> str:
+    def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
         
         :param orchestrator: The orchestrator that generated the outputs
@@ -900,31 +764,47 @@ class RedTeam():
         :return: Path to the output file
         :rtype: Union[str, os.PathLike]
         """
-        base_path = str(uuid.uuid4())
-        
-        # If scan output directory exists, place the file there
-        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-            
+        output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
+        memory = CentralMemory.get_memory_instance()
 
-        memory = orchestrator.get_memory()
+        memory_label = {"risk_strategy_path": output_path}
 
-        # Get conversations as a List[List[ChatMessage]]
-        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
-        
-        #Convert to json lines
-        json_lines = ""
-        for conversation in conversations: # each conversation is a List[ChatMessage]
-            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+        prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
 
-        with Path(output_path).open("w") as f:
-            f.writelines(json_lines)
-
-        orchestrator.dispose_db_engine()
-        self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)]
+        # Check if we should overwrite existing file with more conversations
+        if os.path.exists(output_path):
+            existing_line_count = 0
+            try:
+                with open(output_path, 'r') as existing_file:
+                    existing_line_count = sum(1 for _ in existing_file)
+                
+                # Use the number of prompts to determine if we have more conversations
+                # This is more accurate than using the memory which might have incomplete conversations
+                if len(conversations) > existing_line_count:
+                    self.logger.debug(f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content.")
+                    #Convert to json lines
+                    json_lines = ""
+                    for conversation in conversations: # each conversation is a List[ChatMessage]
+                        json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+                    with Path(output_path).open("w") as f:
+                        f.writelines(json_lines)
+                    self.logger.debug(f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}")
+                else:
+                    self.logger.debug(f"Existing file has {existing_line_count} lines, new data has {len(conversations)} prompts. Keeping existing file.")
+                    return output_path
+            except Exception as e:
+                self.logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
+        else:
+            self.logger.debug(f"Creating new file: {output_path}")
+            #Convert to json lines
+            json_lines = ""
+            for conversation in conversations: # each conversation is a List[ChatMessage]
+                json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+            with Path(output_path).open("w") as f:
+                f.writelines(json_lines)
+            self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
         return str(output_path)
     
     # Replace with utility function
@@ -1546,7 +1426,8 @@ class RedTeam():
                     progress_bar.update(1)
                 return None
             
-            data_path = self._write_pyrit_outputs_to_file(orchestrator)
+            data_path = self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value)
+            orchestrator.dispose_db_engine()
             
             # Store data file in our tracking dictionary
             self.red_team_info[strategy_name][risk_category.value]["data_file"] = data_path
