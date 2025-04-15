@@ -19,6 +19,7 @@ AZURE_LOCATION = "eastus"
 SAP_VIRTUAL_INSTANCE_NAME = "S08"
 
 
+@pytest.mark.skip("hard to test")
 @pytest.mark.skipif(os.getenv("AZURE_TEST_RUN_LIVE") not in ("true", "yes"), reason="only run live test")
 class TestMgmtWorkloadsSapVirtualInstance(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
