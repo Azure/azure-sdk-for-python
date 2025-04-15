@@ -3,4 +3,4 @@
 pkill -f "python3"
 
 # Remove all files with .logs in their filename
-rm -f *.logs*
+rm -f *.log*
