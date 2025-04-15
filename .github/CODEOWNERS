@@ -299,7 +299,7 @@
 
 # ServiceLabel: %Maps
 # PRLabel: %Maps
-/sdk/maps/                                                           @dubiety
+/sdk/maps/                                                           @dubiety @andykao1213
 
 # ServiceLabel: %Mixed Reality
 # PRLabel: %Mixed Reality
@@ -318,7 +318,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs
+/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai

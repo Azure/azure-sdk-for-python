@@ -160,13 +160,20 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     async def load_feature_flags(
-        self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
-    ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str], Dict[str, bool]]:
+        self,
+        feature_flag_selectors: List[SettingSelector],
+        feature_flag_refresh_enabled: bool,
+        provided_endpoint: str,
+        **kwargs
+    ) -> Tuple[
+        List[FeatureFlagConfigurationSetting],
+        Dict[Tuple[str, str], str],
+        Dict[str, bool],
+    ]:
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
-        endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
         filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
@@ -180,7 +187,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
                 feature_flag_value = json.loads(feature_flag.value)
 
-                self._feature_flag_telemetry(endpoint, feature_flag, feature_flag_value)
+                self._feature_flag_telemetry(provided_endpoint, feature_flag, feature_flag_value)
                 self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
 
                 loaded_feature_flags.append(feature_flag_value)
@@ -232,6 +239,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
+        provided_endpoint: str,
         **kwargs
     ) -> Tuple[bool, Optional[Mapping[Tuple[str, str], Optional[str]]], Optional[List[Any]], Dict[str, bool]]:
         """
@@ -240,6 +248,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :param Mapping[Tuple[str, str], Optional[str]] refresh_on: The feature flags to check for changes
         :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
         :param Mapping[str, str] headers: The headers to use for the request
+        :param str provided_endpoint: The endpoint provided by the user
 
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value of the feature flag sentinel keys. The third item is the updated feature flags.
@@ -252,7 +261,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             )
             if changed:
                 feature_flags, feature_flag_sentinel_keys, filters_used = await self.load_feature_flags(
-                    feature_flag_selectors, True, headers=headers, **kwargs
+                    feature_flag_selectors, True, provided_endpoint, headers=headers, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
         return False, None, None, {}

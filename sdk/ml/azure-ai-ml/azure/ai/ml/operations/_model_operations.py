@@ -452,10 +452,10 @@ class ModelOperations(_ScopeDependentOperations):
                     from azure.identity import ClientSecretCredential
 
                     token_credential = ClientSecretCredential(
-                        tenant_id=ds.credentials["tenant_id"],
-                        client_id=ds.credentials["client_id"],
-                        client_secret=ds.credentials["client_secret"],
-                        authority=ds.credentials["authority_url"],
+                        tenant_id=ds.credentials["tenant_id"],  # type:ignore
+                        client_id=ds.credentials["client_id"],  # type:ignore
+                        client_secret=ds.credentials["client_secret"],  # type:ignore
+                        authority=ds.credentials["authority_url"],  # type:ignore
                     )
                     credential = token_credential
                 except (KeyError, TypeError):
@@ -686,7 +686,9 @@ class ModelOperations(_ScopeDependentOperations):
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub, _model_client = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
