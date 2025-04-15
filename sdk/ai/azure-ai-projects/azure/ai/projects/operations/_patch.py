@@ -1828,9 +1828,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        run = self.submit_tool_outputs_to_run(
-                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
-                        )
+                        self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             logging.info("Current run status: %s", run.status)
 

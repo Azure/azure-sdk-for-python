@@ -49,12 +49,12 @@ with project_client:
     thread = project_client.agents.create_thread()
     # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
-        
+
     # List all threads for the agent
     # [START list_threads]
     threads = project_client.agents.list_threads()
     # [END list_threads]
-    
+
     # Print thread information
     print(f"Threads for agent {agent.id}:")
     for current_thread in threads.data:

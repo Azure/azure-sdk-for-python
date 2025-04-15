@@ -1645,7 +1645,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        run = await self.submit_tool_outputs_to_run(
+                        await self.submit_tool_outputs_to_run(
                             thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
 
