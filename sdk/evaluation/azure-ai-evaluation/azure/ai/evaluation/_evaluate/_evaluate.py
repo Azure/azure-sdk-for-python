@@ -264,6 +264,8 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     :return: The aggregated metrics.
     :rtype: Dict[str, float]
     """
+    binary_metrics = _aggregation_binary_output(df)
+
     df.rename(columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True)
 
     handled_columns = []
@@ -293,11 +295,6 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     metrics.update(defect_rates)
     
     # Add binary threshold metrics based on pass/fail results
-    original_df = df.copy()
-    for col in df.columns:
-        # Restore the "outputs." prefix for the binary aggregation function
-        original_df.rename(columns={col: f"outputs.{col}"}, inplace=True)
-    binary_metrics = _aggregation_binary_output(original_df)
     metrics.update(binary_metrics)
     
     return metrics
