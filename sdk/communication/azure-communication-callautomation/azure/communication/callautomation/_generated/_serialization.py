@@ -411,7 +411,7 @@ class Model:
         :param function key_extractors: A key extractor function.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: An instance of this model
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         :rtype: Self
         """
         deserializer = Deserializer(cls._infer_class_models())
