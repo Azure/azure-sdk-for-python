@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_kubernetes_clusters_list_by_subscription(self, resource_group):
         response = self.client.kubernetes_clusters.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
     def test_kubernetes_clusters_list_by_resource_group(self, resource_group):
         response = self.client.kubernetes_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
         response = self.client.kubernetes_clusters.get(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -190,7 +190,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -202,7 +202,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
         response = self.client.kubernetes_clusters.begin_delete(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -214,7 +214,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
         response = self.client.kubernetes_clusters.begin_update(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -227,7 +227,7 @@ class TestNetworkCloudMgmtKubernetesClustersOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             kubernetes_cluster_restart_node_parameters={"nodeName": "str"},
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
