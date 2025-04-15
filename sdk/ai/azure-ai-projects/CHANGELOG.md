@@ -11,7 +11,6 @@
 ### Sample updates
 * Added `project_client.agents.enable_auto_function_calls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
 * New BingCustomSearchTool sample
-* Add list_threads usage to agent basics sample
 * New samples added for image input from url, file and base64
 
 ### Bugs Fixed

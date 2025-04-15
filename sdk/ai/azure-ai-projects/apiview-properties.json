@@ -23,6 +23,8 @@
         "azure.ai.projects.models.BingGroundingToolDefinition": "Azure.AI.Projects.Agents.BingGroundingToolDefinition",
         "azure.ai.projects.models.CodeInterpreterToolDefinition": "Azure.AI.Projects.Agents.CodeInterpreterToolDefinition",
         "azure.ai.projects.models.CodeInterpreterToolResource": "Azure.AI.Projects.Agents.CodeInterpreterToolResource",
+        "azure.ai.projects.models.ConnectedAgentDetails": "Azure.AI.Projects.Agents.ConnectedAgentDetails",
+        "azure.ai.projects.models.ConnectedAgentToolDefinition": "Azure.AI.Projects.Agents.ConnectedAgentToolDefinition",
         "azure.ai.projects.models.Trigger": "Azure.AI.Projects.Trigger",
         "azure.ai.projects.models.CronTrigger": "Azure.AI.Projects.CronTrigger",
         "azure.ai.projects.models.Dataset": "Azure.AI.Projects.Dataset",
