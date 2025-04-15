@@ -225,7 +225,7 @@ print(
 )
 dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
     name=dataset_name,
-    version="1",
+    version=dataset_version,
     file="sample_folder/sample_file1.txt",
 )
 print(dataset)
@@ -275,14 +275,22 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
+print(f"Create an Index named `{index_name}` referencing an existing AI Search resource:")
+index = project_client.indexes.create_version(
+    name=index_name,
+    version=index_version,
+    body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
+)
+print(index)
+exit()
+
+print(f"Get an existing Index named `{index_name}`, version `{index_version}`:")
+index = project_client.indexes.get_version(name=index_name, version=index_version)
+print(index)
+
 print(f"Listing all versions of the Index named `{index_name}`:")
 for index in project_client.indexes.list_versions(name=index_name):
     print(index)
-exit()
-
-print("Get an existing Index version `1`:")
-index = project_client.indexes.get_version(name=index_name, version="1")
-print(index)
 
 print("List latest versions of all Indexes:")
 for index in project_client.indexes.list_latest():
