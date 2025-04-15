@@ -9,9 +9,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from enum import Enum
 
-class EvaluationMetrics(str, Enum):
-    Relevance = "relevance"
-    HateUnfairness = "hate_unfairness"
-    Violence = "violence"
-    Groundedness = "groundedness"
-    GroundednessPro = "groundedness_pro"
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    RELEVANCE = "relevance"
+    HATE_UNFAIRNESS = "hate_unfairness"
+    VIOLENCE = "violence"
+    GROUNDEDNESS = "groundedness"
+    GROUNDEDNESS_PRO = "groundedness_pro"
