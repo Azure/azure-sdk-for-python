@@ -72,6 +72,9 @@ with project_client:
         run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
         print(f"Run status: {run.status}")
 
+    if run.status == "failed":
+        print(f"Run failed: {run.last_error}")
+
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 

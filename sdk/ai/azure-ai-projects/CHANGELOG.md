@@ -4,12 +4,14 @@
 
 ### Features added
 * Utilities to load prompt template strings and Prompty file content
-* Add BingCustomSearchTool class with sample
-* Add list_threads API to agents namespace
+* Added BingCustomSearchTool class with sample
+* Added list_threads API to agents namespace
+* Added image input support for agents create_message
 
 ### Sample updates
 * New BingCustomSearchTool sample
 * Add list_threads usage to agent basics sample
+* New samples added for image input from url, file and base64
 
 ### Bugs Fixed
 
