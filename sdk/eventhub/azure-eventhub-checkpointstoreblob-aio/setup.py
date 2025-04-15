@@ -80,6 +80,6 @@ setup(
         "isodate>=0.6.1",
         # end of dependencies for the vendored storage blob
         'azure-eventhub>=5.0.0',
-        'aiohttp>=3.8.3',
+        'aiohttp>=3.10.10',
     ]
 )

@@ -30,19 +30,19 @@ variables:
 
 jobs:
 - job: ReleaseHelper
-  displayName: ReleaseHelper Python 3.8
+  displayName: ReleaseHelper Python 3.9
   timeoutInMinutes: 30
   strategy:
     maxParallel: 1
   pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
-    vmImage: 'ubuntu-20.04'
+    name: azsdk-pool
+    vmImage: 'ubuntu-22.04'
   variables:
     Codeql.Enabled: false
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '3.9'
         addToPath: true
         architecture: 'x64'
     - bash: |
@@ -54,7 +54,7 @@ jobs:
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir file-storage
         git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
-        
+
         mkdir azure-rest-api-specs
         git clone -b $(SPEC_BRANCH) https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
