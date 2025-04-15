@@ -532,7 +532,9 @@ class _AIAssistantsInstrumentorPreview:
     ) -> "Optional[AbstractSpan]":
         run_span = event_handler.span if isinstance(event_handler, _AssistantEventHandlerTraceWrapper) else None
         if run_span is None:
-            run_span = event_handler.span if isinstance(event_handler, _AsyncAssistantEventHandlerTraceWrapper) else None
+            run_span = (
+                event_handler.span if isinstance(event_handler, _AsyncAssistantEventHandlerTraceWrapper) else None
+            )
 
         if run_span:
             recorded = self._add_tool_message_events(run_span, tool_outputs)
@@ -1527,7 +1529,13 @@ class _AIAssistantsInstrumentorPreview:
             ("azure.ai.assistants.models", "AssistantRunStream", "__exit__", TraceType.AssistantS, "__exit__"),
         )
         async_apis = (
-            ("azure.ai.assistants.aio", "AssistantsClient", "create_assistant", TraceType.AssistantS, "assistant_create"),
+            (
+                "azure.ai.assistants.aio",
+                "AssistantsClient",
+                "create_assistant",
+                TraceType.AssistantS,
+                "assistant_create",
+            ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",

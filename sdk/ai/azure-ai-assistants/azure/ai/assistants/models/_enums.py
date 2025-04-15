@@ -205,6 +205,17 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     terminal state."""
 
 
+class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
+
+    AUTO = "auto"
+    """Automatically select an appropriate detail level."""
+    LOW = "low"
+    """Use a lower detail level to reduce bandwidth or cost."""
+    HIGH = "high"
+    """Use a higher detail level—potentially more resource-intensive."""
+
+
 class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
@@ -223,6 +234,19 @@ class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies an ascending sort order."""
     DESCENDING = "desc"
     """Specifies a descending sort order."""
+
+
+class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the kind of content block within a message. Could be text, an image file, an external
+    image URL, or an unknown future type.
+    """
+
+    TEXT = "text"
+    """Indicates a block containing text content."""
+    IMAGE_FILE = "image_file"
+    """Indicates a block referencing an internally uploaded image file."""
+    IMAGE_URL = "image_url"
+    """Indicates a block referencing an external image URL."""
 
 
 class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

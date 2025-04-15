@@ -62,7 +62,6 @@ with assistants_client:
         instructions="You are a helpful assistant",
         tools=openapi_tool.definitions,
     )
-
     # [END create_assistant_with_openapi]
 
     print(f"Created assistant, ID: {assistant.id}")

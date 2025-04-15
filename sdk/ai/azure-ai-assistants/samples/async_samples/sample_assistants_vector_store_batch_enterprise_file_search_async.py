@@ -42,9 +42,7 @@ async def main():
                 asset_identifier=asset_uri,
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
-            vector_store = await assistants_client.create_vector_store_and_poll(
-                file_ids=[], name="sample_vector_store"
-            )
+            vector_store = await assistants_client.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
             # Add the file to the vector store or you can supply file ids in the vector store creation

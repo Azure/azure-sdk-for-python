@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -44,7 +45,7 @@ assistants_client = AssistantsClient.from_connection_string(
 )
 
 with assistants_client:
-    bing_connection_id = os.environ['AZURE_BING_CONECTION_ID']
+    bing_connection_id = os.environ["AZURE_BING_CONECTION_ID"]
     bing = BingGroundingTool(connection_id=bing_connection_id)
     print(f"Bing Connection ID: {bing_connection_id}")
 

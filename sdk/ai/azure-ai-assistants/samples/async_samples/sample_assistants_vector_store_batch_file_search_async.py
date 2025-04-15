@@ -39,9 +39,7 @@ async def main() -> None:
             print(f"Uploaded file, file ID: {file.id}")
 
             # Create a vector store with no file and wait for it to be processed
-            vector_store = await assistants_client.create_vector_store_and_poll(
-                file_ids=[], name="sample_vector_store"
-            )
+            vector_store = await assistants_client.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
             # Add the file to the vector store or you can supply file ids in the vector store creation

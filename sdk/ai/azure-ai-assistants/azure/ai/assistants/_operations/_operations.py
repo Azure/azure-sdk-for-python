@@ -52,7 +52,7 @@ def build_assistants_create_assistant_request(**kwargs: Any) -> HttpRequest:  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_assistants_list_assistants_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_assistants_get_assistant_request(assistant_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +134,7 @@ def build_assistants_update_assistant_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +162,7 @@ def build_assistants_delete_assistant_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -187,7 +187,7 @@ def build_assistants_create_thread_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,7 +208,7 @@ def build_assistants_get_thread_request(thread_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -233,7 +233,7 @@ def build_assistants_update_thread_request(thread_id: str, **kwargs: Any) -> Htt
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +259,7 @@ def build_assistants_delete_thread_request(thread_id: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -284,7 +284,7 @@ def build_assistants_create_message_request(thread_id: str, **kwargs: Any) -> Ht
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -319,7 +319,7 @@ def build_assistants_list_messages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -353,7 +353,7 @@ def build_assistants_get_message_request(thread_id: str, message_id: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -379,7 +379,7 @@ def build_assistants_update_message_request(thread_id: str, message_id: str, **k
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -409,7 +409,7 @@ def build_assistants_create_run_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +445,7 @@ def build_assistants_list_runs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -477,7 +477,7 @@ def build_assistants_get_run_request(thread_id: str, run_id: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -503,7 +503,7 @@ def build_assistants_update_run_request(thread_id: str, run_id: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -533,7 +533,7 @@ def build_assistants_submit_tool_outputs_to_run_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -560,7 +560,7 @@ def build_assistants_cancel_run_request(thread_id: str, run_id: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -586,7 +586,7 @@ def build_assistants_create_thread_and_run_request(**kwargs: Any) -> HttpRequest
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -614,7 +614,7 @@ def build_assistants_get_run_step_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -652,7 +652,7 @@ def build_assistants_list_run_steps_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -689,7 +689,7 @@ def build_assistants_list_files_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -710,7 +710,7 @@ def build_assistants_upload_file_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -729,7 +729,7 @@ def build_assistants_delete_file_request(file_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -753,7 +753,7 @@ def build_assistants_get_file_request(file_id: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -779,7 +779,7 @@ def build_assistants_get_file_content_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -810,7 +810,7 @@ def build_assistants_list_vector_stores_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -838,7 +838,7 @@ def build_assistants_create_vector_store_request(**kwargs: Any) -> HttpRequest: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -861,7 +861,7 @@ def build_assistants_get_vector_store_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -888,7 +888,7 @@ def build_assistants_modify_vector_store_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -916,7 +916,7 @@ def build_assistants_delete_vector_store_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -949,7 +949,7 @@ def build_assistants_list_vector_store_files_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -986,7 +986,7 @@ def build_assistants_create_vector_store_file_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1014,7 +1014,7 @@ def build_assistants_get_vector_store_file_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1041,7 +1041,7 @@ def build_assistants_delete_vector_store_file_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1069,7 +1069,7 @@ def build_assistants_create_vector_store_file_batch_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1097,7 +1097,7 @@ def build_assistants_get_vector_store_file_batch_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1124,7 +1124,7 @@ def build_assistants_cancel_vector_store_file_batch_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1159,7 +1159,7 @@ def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "latest"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2413,7 +2413,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         thread_id: str,
         *,
         role: Union[str, _models.MessageRole],
-        content: str,
+        content: "_types.MessageInputContent",
         content_type: str = "application/json",
         attachments: Optional[List[_models.MessageAttachment]] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2424,17 +2424,16 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword role: The role of the entity that is creating the message. Allowed values include:
-
-         * `user`: Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
-         messages from the assistant into the
-         conversation. Known values are: "user" and "assistant". Required.
+         ``user``, which indicates the message is sent by an actual user (and should be
+         used in most cases to represent user-generated messages), and ``assistant``,
+         which indicates the message is generated by the agent (use this value to insert
+         messages from the agent into the conversation). Known values are: "user" and "assistant".
+         Required.
         :paramtype role: str or ~azure.ai.assistants.models.MessageRole
-        :keyword content: The textual content of the initial message. Currently, robust input including
-         images and annotated text may only be provided via
-         a separate call to the create message API. Required.
-        :paramtype content: str
+        :keyword content: The content of the initial message. This may be a basic string (if you only
+         need text) or an array of typed content blocks (for example, text, image_file,
+         image_url, and so on). Is either a str type or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.assistants.models.MessageInputContentBlock]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2494,7 +2493,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         role: Union[str, _models.MessageRole] = _Unset,
-        content: str = _Unset,
+        content: "_types.MessageInputContent" = _Unset,
         attachments: Optional[List[_models.MessageAttachment]] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -2506,17 +2505,16 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword role: The role of the entity that is creating the message. Allowed values include:
-
-         * `user`: Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
-         messages from the assistant into the
-         conversation. Known values are: "user" and "assistant". Required.
+         ``user``, which indicates the message is sent by an actual user (and should be
+         used in most cases to represent user-generated messages), and ``assistant``,
+         which indicates the message is generated by the agent (use this value to insert
+         messages from the agent into the conversation). Known values are: "user" and "assistant".
+         Required.
         :paramtype role: str or ~azure.ai.assistants.models.MessageRole
-        :keyword content: The textual content of the initial message. Currently, robust input including
-         images and annotated text may only be provided via
-         a separate call to the create message API. Required.
-        :paramtype content: str
+        :keyword content: The content of the initial message. This may be a basic string (if you only
+         need text) or an array of typed content blocks (for example, text, image_file,
+         image_url, and so on). Is either a str type or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.assistants.models.MessageInputContentBlock]
         :keyword attachments: A list of files attached to the message, and the tools they should be
          added to. Default value is None.
         :paramtype attachments: list[~azure.ai.assistants.models.MessageAttachment]
@@ -4525,33 +4523,16 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         return deserialized  # type: ignore
 
     @overload
-    def upload_file(self, body: _models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Multipart body. Required.
-        :type body: ~azure.ai.assistants.models.UploadFileRequest
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _upload_file(self, body: _models._models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile: ...
     @overload
-    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Multipart body. Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile: ...
 
     @distributed_trace
-    def upload_file(self, body: Union[_models.UploadFileRequest, JSON], **kwargs: Any) -> _models.OpenAIFile:
+    def _upload_file(self, body: Union[_models._models.UploadFileRequest, JSON], **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
-        :type body: ~azure.ai.assistants.models.UploadFileRequest or JSON
+        :type body: ~azure.ai.assistants.models._models.UploadFileRequest or JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:

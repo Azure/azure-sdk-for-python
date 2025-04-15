@@ -98,9 +98,7 @@ with tracer.start_as_current_span(scenario):
         thread = assistants_client.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = assistants_client.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = assistants_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID {message.id}")
 
         with assistants_client.create_stream(

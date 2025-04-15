@@ -1,8 +1,9 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from openai.types import file_purpose
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -54,10 +55,7 @@ _Unset: Any = object()
 
 
 class AssistantsClient(AssistantsClientGenerated):
-    
-    
-    
-    
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._toolset: Dict[str, _models.AsyncToolSet] = {}
@@ -186,7 +184,9 @@ class AssistantsClient(AssistantsClientGenerated):
         """
 
     @overload
-    async def create_assistant(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Assistant:
+    async def create_assistant(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
         """Creates a new assistant.
 
         :param body: Required.
@@ -1796,7 +1796,7 @@ class AssistantsClient(AssistantsClientGenerated):
     @distributed_trace_async
     async def upload_file(
         self,
-        body: Optional[Union[_models.UploadFileRequest, JSON]] = None,
+        body: Optional[JSON] = None,
         *,
         file: Optional[FileType] = None,
         file_path: Optional[str] = None,
@@ -1824,19 +1824,16 @@ class AssistantsClient(AssistantsClientGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
+        # If a JSON body is provided directly, pass it along
         if body is not None:
-            return await super().upload_file(body=body, **kwargs)
+            return await super()._upload_file(body=body, **kwargs)
 
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
         if file is not None and purpose is not None:
-            file_body = _models.UploadFileRequest(
-                file=file,
-                purpose=purpose,
-                filename=filename
-            )
-            return await super().upload_file(body=file_body, **kwargs)
+            return await super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
@@ -1846,16 +1843,11 @@ class AssistantsClient(AssistantsClientGenerated):
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
-                file_body = _models.UploadFileRequest(
-                    file=file_content,
-                    purpose=purpose,
-                    filename=filename
-                )
 
-                return await super().upload_file(body=file_body, **kwargs)
+                return await super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}.") from e
 
@@ -2522,7 +2514,7 @@ class AssistantsClient(AssistantsClientGenerated):
         except (ValueError, RuntimeError, TypeError, IOError) as e:
             logger.error("An error occurred in save_file: %s", e)
             raise
-        
+
     @classmethod
     def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
         """
@@ -2612,7 +2604,7 @@ class AssistantsClient(AssistantsClientGenerated):
         }
 
 
-__all__: List[str] = ['AssistantsClient']  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

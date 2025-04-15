@@ -216,7 +216,10 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
             # create assistant with tools
             assistant = await client.assistants.create_assistant(
-                model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions
+                model="gpt-4o",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+                tools=functions.definitions,
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
@@ -1550,7 +1553,9 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
                         body = {"tool_outputs": tool_outputs}
-                        await client.assistants.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
+                        await client.assistants.submit_tool_outputs_to_run(
+                            thread_id=thread.id, run_id=run.id, body=body
+                        )
 
                 print("Current run status:", run.status)
 
@@ -2371,7 +2376,9 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
         if streaming:
             thread_run = None
-            async with await ai_client.assistants.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
+            async with await ai_client.assistants.create_stream(
+                thread_id=thread.id, assistant_id=assistant.id
+            ) as stream:
                 async for _, event_data, _ in stream:
                     if isinstance(event_data, ThreadRun):
                         thread_run = event_data

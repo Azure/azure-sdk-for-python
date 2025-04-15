@@ -43,7 +43,7 @@ async def main() -> None:
         )
 
         # Enable Azure Monitor tracing
-        application_insights_connection_string = os.environ['AI_APPINSIGHTS_CONNECTION_STRING']
+        application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
         # enable additional instrumentations

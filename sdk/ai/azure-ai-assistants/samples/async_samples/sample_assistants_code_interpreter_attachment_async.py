@@ -22,12 +22,7 @@ USAGE:
 import asyncio
 import os
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import (
-    CodeInterpreterTool,
-    FilePurpose,
-    MessageAttachment,
-    ListSortOrder
-) 
+from azure.ai.assistants.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder
 from azure.identity.aio import DefaultAzureCredential
 
 

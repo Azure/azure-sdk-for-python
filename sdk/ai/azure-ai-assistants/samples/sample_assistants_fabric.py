@@ -32,7 +32,7 @@ assistants_client = AssistantsClient.from_connection_string(
 )
 
 # [START create_assistant_with_fabric_tool]
-conn_id = os.environ['FABRIC_CONNECTION_ID']
+conn_id = os.environ["FABRIC_CONNECTION_ID"]
 
 print(conn_id)
 

@@ -214,7 +214,9 @@ class TestAssistantsMock:
         else:
             submit_tool_mock.assert_not_called()
 
-    def _assert_toolset_dict(self, assistants_client: AssistantsClient, assistant_id: str, toolset: Optional[AsyncToolSet]):
+    def _assert_toolset_dict(
+        self, assistants_client: AssistantsClient, assistant_id: str, toolset: Optional[AsyncToolSet]
+    ):
         """Check that the tool set dictionary state is as expected."""
         if toolset is None:
             assert assistant_id not in assistants_client._toolset

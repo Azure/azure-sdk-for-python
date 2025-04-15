@@ -123,7 +123,9 @@ async def main() -> None:
             print(f"Created message, message ID {message.id}")
 
             async with await assistants_client.create_stream(
-                thread_id=thread.id, assistant_id=assistant.id, event_handler=MyEventHandler(functions, assistants_client)
+                thread_id=thread.id,
+                assistant_id=assistant.id,
+                event_handler=MyEventHandler(functions, assistants_client),
             ) as stream:
                 await stream.until_done()
 

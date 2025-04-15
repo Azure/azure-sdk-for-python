@@ -77,7 +77,7 @@ class MyEventHandler(AssistantEventHandler):
 
 
 # Enable Azure Monitor tracing
-application_insights_connection_string = os.environ['AI_APPINSIGHTS_CONNECTION_STRING']
+application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
 scenario = os.path.basename(__file__)
@@ -97,9 +97,7 @@ with tracer.start_as_current_span(scenario):
         thread = assistants_client.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = assistants_client.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = assistants_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID {message.id}")
 
         with assistants_client.create_stream(

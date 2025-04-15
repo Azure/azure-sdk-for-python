@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -36,7 +37,7 @@ import os
 import jsonref
 from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.assistants.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme 
+from azure.ai.assistants.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme
 
 
 assistants_client = AssistantsClient.from_connection_string(
@@ -50,22 +51,21 @@ connection_id = os.environ["OPENAPI_CONNECTION_ID"]
 
 print(connection_id)
 
-with open('./tripadvisor_openapi.json', 'r') as f:
+with open("./tripadvisor_openapi.json", "r") as f:
     openapi_spec = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
 auth = OpenApiConnectionAuthDetails(security_scheme=OpenApiConnectionSecurityScheme(connection_id=connection_id))
 
 # Initialize an Assistant OpenApi tool using the read in OpenAPI spec
-openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth)
+openapi = OpenApiTool(
+    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
+)
 
 # Create an Assistant with OpenApi tool and process Assistant run
 with assistants_client:
     assistant = assistants_client.create_assistant(
-        model=model_name,
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=openapi.definitions
+        model=model_name, name="my-assistant", instructions="You are a helpful assistant", tools=openapi.definitions
     )
     print(f"Created assistant, ID: {assistant.id}")
 

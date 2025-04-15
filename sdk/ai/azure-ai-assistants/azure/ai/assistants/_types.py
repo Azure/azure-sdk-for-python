@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import List, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
@@ -17,6 +17,7 @@ AssistantsApiResponseFormatOption = Union[
     "_models.AssistantsApiResponseFormat",
     "_models.ResponseFormatJsonSchemaType",
 ]
+MessageInputContent = Union[str, List["_models.MessageInputContentBlock"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AssistantsApiToolChoiceOption = Union[
     str, str, "_models.AssistantsApiToolChoiceOptionMode", "_models.AssistantsNamedToolChoice"

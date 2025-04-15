@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -675,7 +676,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type index_connection_id: str
         :param index_name: Name of Index in search resource to be used by tool.
         :type index_name: str
-        :param query_type: Type of query in an AIIndexResource attached to this assistant. 
+        :param query_type: Type of query in an AIIndexResource attached to this assistant.
             Default value is AzureAISearchQueryType.SIMPLE.
         :type query_type: AzureAISearchQueryType
         :param filter: Odata filter string for search resource.
@@ -1271,9 +1272,9 @@ class BaseAsyncAssistantEventHandler(AsyncIterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAssistantEventHandler[T]"], Awaitable[None]]] = (
-            None
-        )
+        self.submit_tool_outputs: Optional[
+            Callable[[ThreadRun, "BaseAsyncAssistantEventHandler[T]"], Awaitable[None]]
+        ] = None
         self.buffer: Optional[bytes] = None
 
     def initialize(
@@ -1394,7 +1395,9 @@ class BaseAssistantEventHandler(Iterator[T]):
             pass
 
 
-class AsyncAssistantEventHandler(BaseAsyncAssistantEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
+class AsyncAssistantEventHandler(
+    BaseAsyncAssistantEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]
+):
 
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
@@ -1403,9 +1406,9 @@ class AsyncAssistantEventHandler(BaseAsyncAssistantEventHandler[Tuple[str, Strea
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            await cast(Callable[[ThreadRun, "BaseAsyncAssistantEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
-                event_data_obj, self
-            )
+            await cast(
+                Callable[[ThreadRun, "BaseAsyncAssistantEventHandler"], Awaitable[None]], self.submit_tool_outputs
+            )(event_data_obj, self)
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:
@@ -1762,7 +1765,7 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
-]  
+]
 
 
 def patch_sdk():
