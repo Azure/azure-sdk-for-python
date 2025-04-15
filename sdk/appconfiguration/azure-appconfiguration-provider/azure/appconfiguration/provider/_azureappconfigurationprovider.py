@@ -424,7 +424,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._feature_filter_usage,
                 self._uses_key_vault,
                 self._uses_load_balancing,
-                is_failoverpy_request,
+                is_failover_request,
                 self._uses_ai_configuration,
                 self._uses_aicc_configuration,
             )
