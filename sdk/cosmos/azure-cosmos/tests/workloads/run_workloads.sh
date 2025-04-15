@@ -33,5 +33,3 @@ done
 for (( i=0; i<num_runs; i++ )); do
     python3 r_w_q_workload_sync.py &
 done
-
-wait
