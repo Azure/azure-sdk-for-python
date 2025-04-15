@@ -1,0 +1,124 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "284",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "desiredDirection": "Increase",
+        "definition": {
+          "type": "EventCount",
+          "event": {
+            "eventName": "TestEvent"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:34:25 GMT",
+        "ETag": "\"UeSbbGIPX0g=\"",
+        "Last-Modified": "Tue, 15 Apr 2025 22:34:24 GMT",
+        "mise-correlation-id": "3f6be33b-a717-4e4f-8d4b-a9f485f1c1ff",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "lifecycle": "Active",
+        "desiredDirection": "Increase",
+        "id": "Sanitized",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "definition": {
+          "event": {
+            "eventName": "TestEvent"
+          },
+          "type": "EventCount"
+        },
+        "eTag": "UeSbbGIPX0g=",
+        "lastModifiedAt": "2025-04-15T22:34:24.9968022+00:00"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "69",
+        "Content-Type": "application/merge-patch+json",
+        "If-Match": "\"UeSbbGIPX0g=\"",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "description": "This metric was updated with a conditional request"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:34:25 GMT",
+        "ETag": "\"ns4od+U+tZQ=\"",
+        "Last-Modified": "Tue, 15 Apr 2025 22:34:25 GMT",
+        "mise-correlation-id": "4afa421a-6a56-416a-989f-bd405c559afc",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "lifecycle": "Active",
+        "desiredDirection": "Increase",
+        "id": "Sanitized",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "This metric was updated with a conditional request",
+        "categories": [
+          "Test"
+        ],
+        "definition": {
+          "event": {
+            "eventName": "TestEvent"
+          },
+          "type": "EventCount"
+        },
+        "eTag": "ns4od+U+tZQ=",
+        "lastModifiedAt": "2025-04-15T22:34:25.1547478+00:00"
+      }
+    }
+  ],
+  "Variables": {}
+}

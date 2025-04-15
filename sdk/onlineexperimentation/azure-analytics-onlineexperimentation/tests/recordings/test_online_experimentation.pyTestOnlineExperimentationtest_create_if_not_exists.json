@@ -1,0 +1,155 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_create_if_not_exists?api-version=2025-05-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Date": "Tue, 15 Apr 2025 22:32:49 GMT",
+        "mise-correlation-id": "0c80524e-d438-4af5-b610-305b72ceffbc",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_create_if_not_exists?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "287",
+        "Content-Type": "application/merge-patch+json",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "If-None-Match Test Metric",
+        "description": "A metric created with If-None-Match header",
+        "categories": [
+          "Test",
+          "Conditional"
+        ],
+        "desiredDirection": "Increase",
+        "definition": {
+          "type": "EventCount",
+          "event": {
+            "eventName": "ConditionalCreateEvent"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "362",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:32:50 GMT",
+        "ETag": "\"Z7GgLmCOJuk=\"",
+        "Last-Modified": "Tue, 15 Apr 2025 22:32:50 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "73e278e3-b52d-4f4a-9d69-7bcd04a4bb86",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "lifecycle": "Active",
+        "desiredDirection": "Increase",
+        "id": "Sanitized",
+        "displayName": "If-None-Match Test Metric",
+        "description": "A metric created with If-None-Match header",
+        "categories": [
+          "Test",
+          "Conditional"
+        ],
+        "definition": {
+          "event": {
+            "eventName": "ConditionalCreateEvent"
+          },
+          "type": "EventCount"
+        },
+        "eTag": "Z7GgLmCOJuk=",
+        "lastModifiedAt": "2025-04-15T22:32:50.294993+00:00"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_create_if_not_exists?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "241",
+        "Content-Type": "application/merge-patch+json",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "This should not be updated",
+        "description": "This update should fail",
+        "categories": [
+          "Test"
+        ],
+        "desiredDirection": "Increase",
+        "definition": {
+          "type": "EventCount",
+          "event": {
+            "eventName": "TestEvent"
+          }
+        }
+      },
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "166",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:32:50 GMT",
+        "mise-correlation-id": "0764f2b8-d33c-4702-8973-27ab4ab580ae",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-error-code": "conditionNotMet",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "conditionNotMet",
+          "message": "The condition specified in the If-None-Match request header was not met.",
+          "target": null,
+          "details": [],
+          "innerError": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
