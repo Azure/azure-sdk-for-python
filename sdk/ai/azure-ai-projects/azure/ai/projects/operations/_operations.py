@@ -33,7 +33,7 @@ from .. import _model_base, models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Deserializer, Serializer
-from .._vendor import FileType,  prepare_multipart_form_data
+from .._vendor import FileType, prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -4975,7 +4975,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
 
     @overload
     def upload_file(
