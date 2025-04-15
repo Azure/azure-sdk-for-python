@@ -108,7 +108,7 @@ class AppServicePlanKwargs(TypedDict, total=False):
     """Scaling worker count."""
     target_worker_size: Literal[0, 1, 2]
     """The instance size of the hosting plan (small, medium, or large)."""
-    worker_rier_name: str
+    worker_tier_name: str
     """Target worker tier assigned to the App Service plan."""
     zone_redundant: bool
     """Zone Redundant server farms can only be used on Premium or ElasticPremium SKU tiers within ZRS Supported

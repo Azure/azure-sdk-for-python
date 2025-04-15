@@ -6,6 +6,7 @@ from azure.projects.resources.ai import AIServices
 from azure.projects.resources.ai.deployment import AIEmbeddings
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
@@ -88,7 +89,7 @@ def test_aiservices_embeddings_properties():
     assert fields["aiservices_account.embeddings_deployment"].symbol == symbols[0]
     assert fields["aiservices_account.embeddings_deployment"].resource_group == None
     assert not fields["aiservices_account.embeddings_deployment"].name
-    assert fields["aiservices_account.embeddings_deployment"].add_defaults
+    assert fields["aiservices_account.embeddings_deployment"].defaults
 
     r2 = AIEmbeddings(model="gpt-4o", capacity=10)
     assert r2.properties == {"name": "gpt-4o", "sku": {"capacity": 10}, "properties": {"model": {"name": "gpt-4o"}}}
@@ -118,7 +119,7 @@ def test_aiservices_embeddings_properties():
     assert fields["aiservices_account.embeddings_deployment_gpt4o"].symbol == symbols[0]
     assert fields["aiservices_account.embeddings_deployment_gpt4o"].resource_group == None
     assert fields["aiservices_account.embeddings_deployment_gpt4o"].name == "gpt-4o"
-    assert fields["aiservices_account.embeddings_deployment_gpt4o"].add_defaults
+    assert fields["aiservices_account.embeddings_deployment_gpt4o"].defaults
 
     r3 = AIEmbeddings(model="gpt-4o", capacity=30)
     assert r3.properties == {"name": "gpt-4o", "sku": {"capacity": 30}, "properties": {"model": {"name": "gpt-4o"}}}
@@ -155,7 +156,7 @@ def test_aiservices_embeddings_properties():
     assert fields["aiservices_account_foo.embeddings_deployment_foo_secret"].symbol == symbols[0]
     assert fields["aiservices_account_foo.embeddings_deployment_foo_secret"].resource_group == None
     assert fields["aiservices_account_foo.embeddings_deployment_foo_secret"].name == "secret"
-    assert fields["aiservices_account_foo.embeddings_deployment_foo_secret"].add_defaults
+    assert fields["aiservices_account_foo.embeddings_deployment_foo_secret"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -187,7 +188,7 @@ def test_aiservices_embeddings_properties():
     assert fields["aiservices_account.embeddings_deployment_foo"].symbol == symbols[0]
     assert fields["aiservices_account.embeddings_deployment_foo"].resource_group == None
     assert fields["aiservices_account.embeddings_deployment_foo"].name == "foo"
-    assert fields["aiservices_account.embeddings_deployment_foo"].add_defaults
+    assert fields["aiservices_account.embeddings_deployment_foo"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -224,7 +225,7 @@ def test_aiservices_embeddings_reference():
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].symbol == symbols[0]
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].resource_group == None
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].name == "foo"
-    assert not fields["aiservices_account_bar.embeddings_deployment_bar_foo"].add_defaults
+    assert not fields["aiservices_account_bar.embeddings_deployment_bar_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_baz")
     r = AIEmbeddings.reference(name="foo", account="bar", resource_group="baz")
@@ -254,7 +255,7 @@ def test_aiservices_embeddings_reference():
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].symbol == symbols[0]
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].resource_group == None
     assert fields["aiservices_account_bar.embeddings_deployment_bar_foo"].name == "foo"
-    assert not fields["aiservices_account_bar.embeddings_deployment_bar_foo"].add_defaults
+    assert not fields["aiservices_account_bar.embeddings_deployment_bar_foo"].defaults
 
     r = AIEmbeddings.reference(
         name="foo",
@@ -275,8 +276,8 @@ def test_aiservices_embeddings_defaults():
     r = AIEmbeddings()
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
-    field.add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-embeddings-deployment"),
         "sku": {

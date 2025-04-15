@@ -30,6 +30,7 @@ from ...._parameters import GLOBAL_PARAMS
 from ...._bicep.expressions import Output, Parameter, ResourceSymbol
 from ...._bicep.utils import clean_name
 from ...._setting import StoredPrioritizedSetting
+from ...._utils import find_all_resource_match
 from ...._resource import (
     ExtensionResources,
     FieldsType,
@@ -275,7 +276,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         if "properties" in current_properties:
             # We need to do this because multiple models cannot be deployed in parallel without
             # creating conflict errors for the parent AIServices account.
-            for field in self._find_all_resource_match(
+            for field in find_all_resource_match(
                 fields,
                 parent=current_properties["parent"],
                 resource_types=[

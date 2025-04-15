@@ -106,6 +106,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
     "sdk/projects/azure-projects/tests/test_infra/**",
+    "sdk/projects/azure-projects/samples/**/*.html",
     "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
@@ -654,12 +655,16 @@
       ]
     },
     {
-      "filename": "sdk/projects/azure-projects/**/*.py",
+      "filename": "sdk/projects/azure-projects/**",
       "words": [
         "azproj",
+        "azproject",
         "azprojects",
         "aiservices",
         "aifoundry",
+        "mcpcommand",
+        "fastmcp",
+        "GUNICORN",
         "GZRS",
         "RAGZRS",
         "nfsv",
@@ -1448,7 +1453,7 @@
         "ralphe",
         "Inadherent",
         "nbformat",
-        "nbconvert",
+        "nbconvert"
       ]
     },
     {

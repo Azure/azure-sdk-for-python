@@ -38,8 +38,8 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
 }
 
-output AZURE_APPCONFIG_ID_R1 string = configurationstore.id
 output AZURE_APPCONFIG_ID string = configurationstore.id
+output AZURE_APPCONFIG_ID_R1 string = configurationstore.id
 output AZURE_APPCONFIG_NAME string = configurationstore.name
 output AZURE_APPCONFIG_NAME_R1 string = configurationstore.name
 output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
@@ -78,9 +78,9 @@ output AZURE_APPCONFIG_RESOURCE_GROUP_R2 string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT_R2 string = configurationstore_foo.properties.endpoint
 
 
-resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_foo
-  name: 'AZURE_APPCONFIG_ID_R1'
+  name: 'AZURE_APPCONFIG_ID'
   properties: {
     value: configurationstore.id
   }
@@ -88,9 +88,9 @@ resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_foo
-  name: 'AZURE_APPCONFIG_ID'
+  name: 'AZURE_APPCONFIG_ID_R1'
   properties: {
     value: configurationstore.id
   }

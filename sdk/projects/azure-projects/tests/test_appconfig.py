@@ -5,6 +5,7 @@ import pytest
 from azure.projects.resources.appconfig import ConfigStore
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
@@ -54,7 +55,7 @@ def test_appconfig_properties():
     assert fields["configurationstore"].symbol == symbols[0]
     assert fields["configurationstore"].resource_group == None
     assert not fields["configurationstore"].name
-    assert fields["configurationstore"].add_defaults
+    assert fields["configurationstore"].defaults
 
     r2 = ConfigStore(location="westus", sku="Standard")
     assert r2.properties == {"location": "westus", "sku": {"name": "Standard"}, "properties": {}}
@@ -73,7 +74,7 @@ def test_appconfig_properties():
     assert fields["configurationstore"].symbol == symbols[0]
     assert fields["configurationstore"].resource_group == None
     assert not fields["configurationstore"].name
-    assert fields["configurationstore"].add_defaults
+    assert fields["configurationstore"].defaults
 
     r3 = ConfigStore(sku="Free")
     assert r3.properties == {"properties": {}, "sku": {"name": "Free"}}
@@ -101,7 +102,7 @@ def test_appconfig_properties():
     assert fields["configurationstore_foo"].symbol == symbols[0]
     assert fields["configurationstore_foo"].resource_group == None
     assert fields["configurationstore_foo"].name == "foo"
-    assert fields["configurationstore_foo"].add_defaults
+    assert fields["configurationstore_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -125,7 +126,7 @@ def test_appconfig_properties():
     assert fields["configurationstore_testa"].symbol == symbols[0]
     assert fields["configurationstore_testa"].resource_group == None
     assert fields["configurationstore_testa"].name == param1
-    assert fields["configurationstore_testa"].add_defaults
+    assert fields["configurationstore_testa"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -156,7 +157,7 @@ def test_appconfig_reference():
     assert fields["configurationstore_foo"].symbol == symbols[0]
     assert fields["configurationstore_foo"].resource_group == None
     assert fields["configurationstore_foo"].name == "foo"
-    assert not fields["configurationstore_foo"].add_defaults
+    assert not fields["configurationstore_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_bar")
     r = ConfigStore.reference(name="foo", resource_group="bar")
@@ -174,7 +175,7 @@ def test_appconfig_reference():
     assert fields["configurationstore_foo"].symbol == symbols[0]
     assert fields["configurationstore_foo"].resource_group == rg
     assert fields["configurationstore_foo"].name == "foo"
-    assert not fields["configurationstore_foo"].add_defaults
+    assert not fields["configurationstore_foo"].defaults
 
     r = ConfigStore.reference(name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB))
     assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar")}
@@ -192,8 +193,8 @@ def test_appconfig_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
+    add_defaults(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",

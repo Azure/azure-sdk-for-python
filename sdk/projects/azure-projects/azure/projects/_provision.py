@@ -24,6 +24,7 @@ import yaml  # type: ignore[import-untyped]
 from dotenv import dotenv_values
 
 from ._version import VERSION
+from ._utils import add_defaults
 from ._component import AzureApp, AzureInfrastructure
 from ._parameters import GLOBAL_PARAMS
 from ._bicep.utils import resolve_value, serialize_dict
@@ -100,7 +101,7 @@ def _init_project(
     # TODO: Needs to properly set code root
     if os.path.isfile(azure_yaml):
         with open(azure_yaml, "r", encoding="utf-8") as config:
-            yaml_doc = yaml.load(config, yaml.Loader)
+            yaml_doc = yaml.safe_load(config)
     else:
         yaml_doc = {}
 
@@ -235,9 +236,7 @@ def export(
         component_resources=_get_component_resources(deployment),
         component_fields=fields,
     )
-    for field in fields.values():
-        if field.add_defaults:
-            field.add_defaults(field, export_parameters)
+    add_defaults(fields, export_parameters)
     add_extensions(fields, export_parameters)
 
     try:
@@ -297,7 +296,7 @@ def _parse_module(
     if component.config_store:
         outputs = [o for f in component_fields.values() for o in f.outputs.values()]
         for output_type in outputs:
-            for output in output_type:
+            for output in sorted(output_type):
                 new_setting = ConfigSetting(
                     name=output.name,  # f"{output.name}$azprojects",
                     value=output,
@@ -382,7 +381,7 @@ def _write_resources(  # pylint: disable=too-many-statements
         bicep.write("\n")
         # TODO: Only output the values for config store, then everything can be retrieved from there.
         for output_type in field.outputs.values():
-            for output in output_type:
+            for output in sorted(output_type):
                 all_outputs.append((output.name, output.type))
                 bicep.write(output.__bicep__())
         bicep.write("\n\n")

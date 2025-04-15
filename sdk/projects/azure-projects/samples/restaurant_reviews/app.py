@@ -10,7 +10,7 @@ from datetime import datetime
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 
 from azure.projects import AzureApp
-from azure.data.tables import TableClient
+from azure.data.tables import TableClient, UpdateMode
 
 from models import Restaurant, Review
 
@@ -63,7 +63,7 @@ def add_restaurant():
         return render_template("create_restaurant.html", error=error)
     else:
         restaurant = Restaurant(name=name, street_address=street_address, description=description)
-        azproject.restaurants.upsert_entity(restaurant.model_dump(by_alias=True), mode="replace")
+        azproject.restaurants.upsert_entity(restaurant.model_dump(by_alias=True), mode=UpdateMode.REPLACE)
     return redirect(url_for("details", id=restaurant.id))
 
 

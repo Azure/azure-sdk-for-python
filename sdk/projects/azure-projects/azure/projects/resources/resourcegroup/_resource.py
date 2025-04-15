@@ -11,6 +11,7 @@ from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
 from ..._parameters import GLOBAL_PARAMS
+from ..._utils import find_last_resource_match
 from ..._bicep.expressions import Parameter, ResourceSymbol, Subscription
 from ..._resource import Resource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
@@ -121,12 +122,12 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
                 extensions={},
                 existing=True,
                 name=properties["name"],
-                add_defaults=None,
+                defaults=None,
             )
             fields[self._get_field_id(symbol, ())] = field
             return (symbol,)
 
-        field_match = self._find_last_resource_match(fields, name=properties.get("name"))
+        field_match = find_last_resource_match(fields, resource=self.identifier, name=properties.get("name"))
         if field_match:
             params = field_match.properties
             symbol = field_match.symbol
@@ -144,7 +145,10 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
                 extensions={},
                 existing=False,
                 name=properties.get("name"),
-                add_defaults=self._add_defaults,
+                defaults={
+                    "resource": self.DEFAULTS,
+                    "extensions": self.DEFAULT_EXTENSIONS,
+                },
             )
             fields[self._get_field_id(symbol, ())] = field
         self._merge_properties(params, properties, symbol=symbol, resource_group=symbol)

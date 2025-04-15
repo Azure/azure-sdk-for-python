@@ -8,6 +8,7 @@ from azure.projects.resources.appconfig import ConfigStore
 from azure.projects.resources.appconfig.setting import ConfigSetting
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, AzureInfrastructure, export, field, AzureApp
@@ -48,7 +49,7 @@ def test_appconfig_setting_properties():
     assert fields["configurationstore.keyvalue_foo"].symbol == symbols[0]
     assert fields["configurationstore.keyvalue_foo"].resource_group == None
     assert fields["configurationstore.keyvalue_foo"].name == "foo"
-    assert fields["configurationstore.keyvalue_foo"].add_defaults
+    assert fields["configurationstore.keyvalue_foo"].defaults
 
     r2 = ConfigSetting(name="foo", value="one", content_type="content-type")
     assert r2.properties == {"name": "foo", "properties": {"value": "one", "contentType": "content-type"}}
@@ -72,7 +73,7 @@ def test_appconfig_setting_properties():
     assert fields["configurationstore.keyvalue_foo"].symbol == symbols[0]
     assert fields["configurationstore.keyvalue_foo"].resource_group == None
     assert fields["configurationstore.keyvalue_foo"].name == "foo"
-    assert fields["configurationstore.keyvalue_foo"].add_defaults
+    assert fields["configurationstore.keyvalue_foo"].defaults
 
     r3 = ConfigSetting(name="foo", value="foo")
     assert r3.properties == {"name": "foo", "properties": {"value": "foo"}}
@@ -102,7 +103,7 @@ def test_appconfig_setting_properties():
     assert fields["configurationstore.keyvalue_bar"].symbol == symbols[0]
     assert fields["configurationstore.keyvalue_bar"].resource_group == None
     assert fields["configurationstore.keyvalue_bar"].name == "bar"
-    assert fields["configurationstore.keyvalue_bar"].add_defaults
+    assert fields["configurationstore.keyvalue_bar"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -133,7 +134,7 @@ def test_appconfig_setting_properties():
     assert fields["configurationstore_testa.keyvalue_testa_testb"].symbol == symbols[0]
     assert fields["configurationstore_testa.keyvalue_testa_testb"].resource_group == None
     assert fields["configurationstore_testa.keyvalue_testa_testb"].name == param2
-    assert fields["configurationstore_testa.keyvalue_testa_testb"].add_defaults
+    assert fields["configurationstore_testa.keyvalue_testa_testb"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -173,7 +174,7 @@ def test_appconfig_setting_reference():
     assert fields["configurationstore_bar.keyvalue_bar_foo"].symbol == symbols[0]
     assert fields["configurationstore_bar.keyvalue_bar_foo"].resource_group == None
     assert fields["configurationstore_bar.keyvalue_bar_foo"].name == "foo"
-    assert not fields["configurationstore_bar.keyvalue_bar_foo"].add_defaults
+    assert not fields["configurationstore_bar.keyvalue_bar_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_baz")
     r = ConfigSetting.reference(name="foo", store="bar", resource_group="baz")
@@ -201,7 +202,7 @@ def test_appconfig_setting_reference():
     assert fields["configurationstore_bar.keyvalue_bar_foo"].symbol == symbols[0]
     assert fields["configurationstore_bar.keyvalue_bar_foo"].resource_group == None
     assert fields["configurationstore_bar.keyvalue_bar_foo"].name == "foo"
-    assert not fields["configurationstore_bar.keyvalue_bar_foo"].add_defaults
+    assert not fields["configurationstore_bar.keyvalue_bar_foo"].defaults
 
     account = ConfigStore.reference(
         name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB)
@@ -221,8 +222,8 @@ def test_appconfig_setting_defaults():
     r = ConfigSetting(name="setting", value="value", content_type=contenttype)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
-    field.add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": "setting",
         "parent": ResourceSymbol("configurationstore"),

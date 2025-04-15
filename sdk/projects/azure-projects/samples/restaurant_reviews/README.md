@@ -18,7 +18,7 @@ Azure Projects is designed to work with the [Azure Developer CLI](https://learn.
 
 Azure Projects supports local deployment for testing and debugging.
 **Warning**
-Running a local deployment will still deploy backend resources in Azure, which may accrew costs while the app is running locally. The Azure Projects deployment should be shutdown once no longer needed.
+Running a local deployment will still deploy backend resources in Azure, which may accrue costs while the app is running locally. The Azure Projects deployment should be shutdown once no longer needed.
 
 1. Create a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments) and activate it.
 

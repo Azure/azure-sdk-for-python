@@ -72,8 +72,8 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
 
 output AZURE_AI_AISERVICES_ID_B string = aiservices_account.id
 output AZURE_AI_AISERVICES_ID_R string = aiservices_account.id
-output AZURE_AI_AISERVICES_NAME_R string = aiservices_account.name
 output AZURE_AI_AISERVICES_NAME_B string = aiservices_account.name
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account.name
 output AZURE_AI_AISERVICES_RESOURCE_GROUP_B string = resourceGroup().name
 output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
 output AZURE_AI_AISERVICES_ENDPOINT_B string = aiservices_account.properties.endpoint
@@ -189,9 +189,9 @@ resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configuration
 
 
 
-resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnameb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME_R'
+  name: 'AZURE_AI_AISERVICES_NAME_B'
   properties: {
     value: aiservices_account.name
   }
@@ -199,9 +199,9 @@ resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesnameb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME_B'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account.name
   }

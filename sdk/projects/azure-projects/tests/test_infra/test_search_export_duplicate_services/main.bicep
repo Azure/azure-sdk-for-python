@@ -54,7 +54,7 @@ output AZURE_SEARCH_NAME_R1 string = test_module.outputs.AZURE_SEARCH_NAME_R1
 output AZURE_SEARCH_NAME_R2 string = test_module.outputs.AZURE_SEARCH_NAME_R2
 output AZURE_SEARCH_RESOURCE_GROUP_R1 string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_R1
 output AZURE_SEARCH_RESOURCE_GROUP_R2 string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_R2
-output AZURE_SEARCH_ENDPOINT_R2 string = test_module.outputs.AZURE_SEARCH_ENDPOINT_R2
 output AZURE_SEARCH_ENDPOINT_R1 string = test_module.outputs.AZURE_SEARCH_ENDPOINT_R1
+output AZURE_SEARCH_ENDPOINT_R2 string = test_module.outputs.AZURE_SEARCH_ENDPOINT_R2
 
 

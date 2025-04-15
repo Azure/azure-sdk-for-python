@@ -11,13 +11,11 @@ from itertools import product
 from collections import defaultdict
 import os
 from typing import (
-    Generator,
     Literal,
     Mapping,
     MutableMapping,
     Tuple,
     Optional,
-    Callable,
     Type,
     Union,
     Dict,
@@ -38,13 +36,16 @@ from dotenv import dotenv_values
 from azure.core.settings import _unset
 
 from .resources._identifiers import ResourceIdentifiers
-from ._utils import run_coroutine_sync
+from ._utils import (
+    run_coroutine_sync,
+    resolve_properties,
+    find_last_resource_match,
+    find_resource_group,
+)
 from ._setting import StoredPrioritizedSetting
 from ._bicep.expressions import (
     Output,
-    Expression,
     Parameter,
-    PlaceholderParameter,
     ResourceSymbol,
     ResourceGroup as RGSymbol,
 )
@@ -105,7 +106,7 @@ class FieldType(NamedTuple):
     extensions: "ExtensionResources"
     existing: bool
     name: Optional[Union[str, Parameter]]
-    add_defaults: Optional[Callable[[FieldType, Dict[str, Parameter]], None]]  # TODO: Clean this up?
+    defaults: Optional[Dict[str, Any]]
 
 
 class ResourceReference(TypedDict, total=False):
@@ -285,11 +286,6 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             return self.properties["name"]
         except KeyError:
             pass
-        # try:
-        #     # TODO: How to access stored defaults?
-        #     return self.DEFAULTS["name"]
-        # except KeyError:
-        #     pass
         raise RuntimeError("Resource name not known.")
 
     def _outputs(
@@ -325,68 +321,6 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 current_properties[key] = value
         return {}
 
-    def _find_all_resource_match(
-        self,
-        fields: FieldsType,
-        *,
-        resource_types: Optional[List[ResourceIdentifiers]] = None,
-        resource_group: Optional[ResourceSymbol] = None,
-        name: Optional[Union[str, Expression]] = None,
-        parent: Optional[ResourceSymbol] = None,
-    ) -> Generator[FieldType, None, None]:
-        resources = resource_types or [self.identifier]
-        for field in (f for f in reversed(list(fields.values())) if f.identifier in resources):
-            if name and resource_group:
-                if field.name == name and field.resource_group == resource_group:
-                    yield field
-            elif name and parent:
-                if field.name == name and field.properties["parent"] == parent:
-                    yield field
-            elif resource_group:
-                if field.resource_group == resource_group:
-                    yield field
-            elif parent:
-                if field.properties["parent"] == parent:
-                    yield field
-            elif name:
-                if field.name == name:
-                    yield field
-            else:
-                yield field
-
-    def _find_last_resource_match(
-        self,
-        fields: FieldsType,
-        *,
-        resource: Optional[ResourceIdentifiers] = None,
-        resource_group: Optional[ResourceSymbol] = None,
-        name: Optional[Union[str, Expression]] = None,
-        parent: Optional[ResourceSymbol] = None,
-    ) -> Optional[FieldType]:
-        if resource:
-            resource_types = [resource]
-        else:
-            resource_types = [self.identifier]
-        matches = self._find_all_resource_match(
-            fields, resource_types=resource_types, resource_group=resource_group, name=name, parent=parent
-        )
-        try:
-            return next(matches)
-        except StopIteration:
-            return None
-
-    def _find_resource_group(
-        self,
-        fields: FieldsType,
-        *,
-        name: Optional[str] = None,
-    ) -> Optional[ResourceSymbol]:
-        # TODO: This might be no longer needed, always one resource group per deployment
-        match = self._find_last_resource_match(fields, resource=ResourceIdentifiers.resource_group, name=name)
-        if match:
-            return match.symbol
-        return None
-
     def _get_field_id(self, symbol: ResourceSymbol, parents: Tuple[ResourceSymbol, ...]) -> str:
         if self.parent:
             prefix = self.parent._get_field_id(parents[0], parents[1:])  # pylint: disable=protected-access
@@ -401,87 +335,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             resolved = name.get(component)
             if isinstance(resolved, Resource):
                 return resolved._resolve_resource(parameters, component)  # pylint: disable=protected-access
-        return self._resolve_properties(self.properties, parameters, component)
-
-    def _resolve_properties(
-        self,
-        properties: Mapping[Union[str, Parameter], Any],
-        parameters: Dict[str, Parameter],
-        component: Optional[AzureInfrastructure] = None,
-    ) -> Dict[Union[str, Parameter], Any]:
-        # TODO: Better design here? We need to gather Parameters both
-        # with and without resolving ComponentFields.
-        # TODO We also need to resolve resource references to a ResourceSymbol.id.
-        from ._component import ComponentField
-
-        new_props: Dict[Union[str, Parameter], Any] = {}
-        for key, value in properties.items():
-            if isinstance(key, Parameter) and key.name:
-                if key.name in parameters:
-                    key = parameters[key.name]
-                else:
-                    parameters[key.name] = value
-
-            if component and isinstance(value, ComponentField):
-                new_props[key] = value.get(component)
-            elif isinstance(value, Parameter) and value.name:
-                if value.name in parameters:
-                    value = parameters[value.name]
-                else:
-                    parameters[value.name] = value
-                new_props[key] = value
-            elif isinstance(value, list):
-                resolved_items = []
-                for item in value:
-                    if component and isinstance(item, ComponentField):
-                        resolved_items.append(item.get(component))
-                    elif isinstance(item, Parameter) and item.name:
-                        if item.name in parameters:
-                            item = parameters[item.name]
-                        else:
-                            parameters[item.name] = item
-                        resolved_items.append(item)
-                    else:
-                        try:
-                            resolved_items.append(self._resolve_properties(item, parameters, component))
-                            continue
-                        except (AttributeError, TypeError):
-                            resolved_items.append(item)
-                new_props[key] = resolved_items
-            else:
-                try:
-                    new_props[key] = self._resolve_properties(value, parameters, component)
-                    continue
-                except (AttributeError, TypeError):
-                    new_props[key] = value
-        return new_props
-
-    def _add_defaults(self, field: FieldType, parameters: Dict[str, Parameter]):
-        # TODO: Move this method out to standalone function that also loads defaults from store.
-        for key, value in self.DEFAULTS.items():
-            if key == "identity" and isinstance(parameters["managedIdentityId"], PlaceholderParameter):
-                # This indicates that no managed identity is being deployed, so skip it.
-                continue
-            if field.properties.get(key):
-                if key in self._properties_to_merge:
-                    try:
-                        updated_default = value.copy()
-                        updated_default.update(field.properties[key])
-                        field.properties[key] = updated_default
-                    except AttributeError:
-                        # We probably got an Expression
-                        # TODO: support bicep union operation?
-                        pass
-            else:
-                field.properties[key] = value
-        # TODO: This is making a copy of the properties, very slow...
-        # file.properties is Dict[str, Any], but resolve properties supports Dict[Union[Parameter, str], Any] which
-        # would only expect to show up in sub-dicts like tags.
-        field.properties.update(self._resolve_properties(field.properties, parameters))  # type: ignore[arg-type]
-        if "managed_identity_roles" not in field.extensions:
-            field.extensions["managed_identity_roles"] = self.DEFAULT_EXTENSIONS.get("managed_identity_roles", [])
-        if "user_roles" not in field.extensions:
-            field.extensions["user_roles"] = self.DEFAULT_EXTENSIONS.get("user_roles", [])
+        return resolve_properties(self.properties, parameters, component)
 
     def __bicep__(  # pylint: disable=too-many-statements
         self,
@@ -537,18 +391,22 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 extensions=extensions,
                 existing=True,
                 name=ref_properties["name"],
-                add_defaults=None,
+                defaults=None,
             )
             fields[self._get_field_id(symbol, parents)] = field
             return (symbol, *parents)
 
         # TODO: Is this going to pick up an existing RG that we don't want to deploy to?
         # We can probably remove this and just default using the current RG scope.
-        rg = self._find_resource_group(fields)
+        rg = find_resource_group(fields)
         if not parents:
-            field_match = self._find_last_resource_match(fields, resource_group=rg, name=properties.get("name"))
+            field_match = find_last_resource_match(
+                fields, resource=self.identifier, resource_group=rg, name=properties.get("name")
+            )
         else:
-            field_match = self._find_last_resource_match(fields, parent=parents[0], name=properties.get("name"))
+            field_match = find_last_resource_match(
+                fields, resource=self.identifier, parent=parents[0], name=properties.get("name")
+            )
 
         if field_match:
             params = field_match.properties
@@ -588,7 +446,10 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 extensions=extensions,
                 existing=False,
                 name=properties.get("name"),
-                add_defaults=self._add_defaults,
+                defaults={
+                    "resource": self.DEFAULTS,
+                    "extensions": self.DEFAULT_EXTENSIONS,
+                },
             )
             fields[self._get_field_id(symbol, parents)] = field
         output_config = self._merge_properties(

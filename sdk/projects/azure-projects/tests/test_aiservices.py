@@ -5,6 +5,7 @@ import pytest
 from azure.projects.resources.ai._resource import AIServices, CognitiveServicesAccount
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources import RESOURCE_FROM_CLIENT_ANNOTATION, ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
@@ -59,7 +60,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].symbol == symbols[0]
     assert fields["aiservices_account"].resource_group == None
     assert not fields["aiservices_account"].name
-    assert fields["aiservices_account"].add_defaults
+    assert fields["aiservices_account"].defaults
 
     r2 = AIServices(location="westus", sku="F1")
     assert r2.properties == {"kind": "AIServices", "location": "westus", "sku": {"name": "F1"}, "properties": {}}
@@ -79,7 +80,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].symbol == symbols[0]
     assert fields["aiservices_account"].resource_group == None
     assert not fields["aiservices_account"].name
-    assert fields["aiservices_account"].add_defaults
+    assert fields["aiservices_account"].defaults
 
     r3 = AIServices(sku="C3")
     assert r3.properties == {"kind": "AIServices", "sku": {"name": "C3"}, "properties": {}}
@@ -109,7 +110,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account_foo"].symbol == symbols[0]
     assert fields["aiservices_account_foo"].resource_group == None
     assert fields["aiservices_account_foo"].name == "foo"
-    assert fields["aiservices_account_foo"].add_defaults
+    assert fields["aiservices_account_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -139,7 +140,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account_testa"].symbol == symbols[0]
     assert fields["aiservices_account_testa"].resource_group == None
     assert fields["aiservices_account_testa"].name == param1
-    assert fields["aiservices_account_testa"].add_defaults
+    assert fields["aiservices_account_testa"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -170,7 +171,7 @@ def test_aiservices_reference():
     assert fields["aiservices_account_foo"].symbol == symbols[0]
     assert fields["aiservices_account_foo"].resource_group == None
     assert fields["aiservices_account_foo"].name == "foo"
-    assert not fields["aiservices_account_foo"].add_defaults
+    assert not fields["aiservices_account_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_bar")
     r = AIServices.reference(name="foo", resource_group="bar")
@@ -188,7 +189,7 @@ def test_aiservices_reference():
     assert fields["aiservices_account_foo"].symbol == symbols[0]
     assert fields["aiservices_account_foo"].resource_group == rg
     assert fields["aiservices_account_foo"].name == "foo"
-    assert not fields["aiservices_account_foo"].add_defaults
+    assert not fields["aiservices_account_foo"].defaults
 
     r = AIServices.reference(name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB))
     assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar"), "kind": "AIServices"}
@@ -206,8 +207,8 @@ def test_aiservices_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
+    add_defaults(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
         "location": "westus",

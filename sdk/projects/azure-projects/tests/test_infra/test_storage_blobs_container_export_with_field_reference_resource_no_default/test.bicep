@@ -65,8 +65,8 @@ resource storageaccount_teststorage 'Microsoft.Storage/storageAccounts@2023-05-0
   }
 }
 
-output AZURE_STORAGE_ID_STORAGE string = storageaccount_teststorage.id
 output AZURE_STORAGE_ID_R string = storageaccount_teststorage.id
+output AZURE_STORAGE_ID_STORAGE string = storageaccount_teststorage.id
 output AZURE_STORAGE_NAME_R string = storageaccount_teststorage.name
 output AZURE_STORAGE_NAME_STORAGE string = storageaccount_teststorage.name
 output AZURE_STORAGE_RESOURCE_GROUP_R string = resourceGroup().name
@@ -79,8 +79,8 @@ resource blobservice_teststorage 'Microsoft.Storage/storageAccounts/blobServices
   name: 'default'
 }
 
-output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount_teststorage.properties.primaryEndpoints.blob
 output AZURE_BLOBS_ENDPOINT_R string = storageaccount_teststorage.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount_teststorage.properties.primaryEndpoints.blob
 
 
 resource container_teststorage 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
@@ -135,9 +135,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID_STORAGE'
+  name: 'AZURE_STORAGE_ID_R'
   properties: {
     value: storageaccount_teststorage.id
   }
@@ -145,9 +145,9 @@ resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID_R'
+  name: 'AZURE_STORAGE_ID_STORAGE'
   properties: {
     value: storageaccount_teststorage.id
   }
@@ -195,9 +195,9 @@ resource keyvalue_azurestorageresourcegroupstorage 'Microsoft.AppConfiguration/c
 
 
 
-resource keyvalue_azureblobsendpointstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT_STORAGE'
+  name: 'AZURE_BLOBS_ENDPOINT_R'
   properties: {
     value: storageaccount_teststorage.properties.primaryEndpoints.blob
   }
@@ -205,9 +205,9 @@ resource keyvalue_azureblobsendpointstorage 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureblobsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT_R'
+  name: 'AZURE_BLOBS_ENDPOINT_STORAGE'
   properties: {
     value: storageaccount_teststorage.properties.primaryEndpoints.blob
   }

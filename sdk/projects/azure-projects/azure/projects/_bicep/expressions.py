@@ -300,6 +300,12 @@ class Output(Parameter):
     def __ne__(self, value: Any) -> bool:
         return not self.__eq__(value)
 
+    def __lt__(self, value: Any) -> bool:
+        try:
+            return self.name < value.name
+        except AttributeError:
+            return False
+
     def __hash__(self):
         return hash(self.value + self.name)
 

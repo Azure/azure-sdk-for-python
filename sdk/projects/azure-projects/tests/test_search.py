@@ -5,6 +5,7 @@ import pytest
 from azure.projects.resources.search import SearchService
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
@@ -61,7 +62,7 @@ def test_search_properties():
     assert fields["searchservice"].symbol == symbols[0]
     assert fields["searchservice"].resource_group == None
     assert not fields["searchservice"].name
-    assert fields["searchservice"].add_defaults
+    assert fields["searchservice"].defaults
 
     r2 = SearchService(location="westus", sku="free")
     assert r2.properties == {"location": "westus", "sku": {"name": "free"}, "properties": {}}
@@ -76,7 +77,7 @@ def test_search_properties():
     assert fields["searchservice"].symbol == symbols[0]
     assert fields["searchservice"].resource_group == None
     assert not fields["searchservice"].name
-    assert fields["searchservice"].add_defaults
+    assert fields["searchservice"].defaults
 
     r3 = SearchService(sku="standard")
     assert r3.properties == {"properties": {}, "sku": {"name": "standard"}}
@@ -104,7 +105,7 @@ def test_search_properties():
     assert fields["searchservice_foo"].symbol == symbols[0]
     assert fields["searchservice_foo"].resource_group == None
     assert fields["searchservice_foo"].name == "foo"
-    assert fields["searchservice_foo"].add_defaults
+    assert fields["searchservice_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -128,7 +129,7 @@ def test_search_properties():
     assert fields["searchservice_testa"].symbol == symbols[0]
     assert fields["searchservice_testa"].resource_group == None
     assert fields["searchservice_testa"].name == param1
-    assert fields["searchservice_testa"].add_defaults
+    assert fields["searchservice_testa"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -159,7 +160,7 @@ def test_search_reference():
     assert fields["searchservice_foo"].symbol == symbols[0]
     assert fields["searchservice_foo"].resource_group == None
     assert fields["searchservice_foo"].name == "foo"
-    assert not fields["searchservice_foo"].add_defaults
+    assert not fields["searchservice_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_bar")
     r = SearchService.reference(name="foo", resource_group="bar")
@@ -177,7 +178,7 @@ def test_search_reference():
     assert fields["searchservice_foo"].symbol == symbols[0]
     assert fields["searchservice_foo"].resource_group == rg
     assert fields["searchservice_foo"].name == "foo"
-    assert not fields["searchservice_foo"].add_defaults
+    assert not fields["searchservice_foo"].defaults
 
     r = SearchService.reference(name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB))
     assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar")}
@@ -195,8 +196,8 @@ def test_search_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
+    add_defaults(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",

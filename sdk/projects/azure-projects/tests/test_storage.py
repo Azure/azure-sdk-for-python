@@ -5,6 +5,7 @@ from azure.projects.resources.storage import StorageAccount
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects._resource import FieldType
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, AzureInfrastructure, export, field, AzureApp
@@ -43,7 +44,7 @@ def test_storage_properties():
     assert fields["storageaccount"].symbol == symbols[0]
     assert fields["storageaccount"].resource_group == None
     assert not fields["storageaccount"].name
-    assert fields["storageaccount"].add_defaults
+    assert fields["storageaccount"].defaults
 
     r2 = StorageAccount(location="westus", sku="Standard_RAGRS")
     assert r2.properties == {"location": "westus", "sku": {"name": "Standard_RAGRS"}, "properties": {}}
@@ -62,7 +63,7 @@ def test_storage_properties():
     assert fields["storageaccount"].symbol == symbols[0]
     assert fields["storageaccount"].resource_group == None
     assert not fields["storageaccount"].name
-    assert fields["storageaccount"].add_defaults
+    assert fields["storageaccount"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
     assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}}
@@ -86,7 +87,7 @@ def test_storage_properties():
     assert fields["storageaccount_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo"].resource_group == None
     assert fields["storageaccount_foo"].name == "foo"
-    assert fields["storageaccount_foo"].add_defaults
+    assert fields["storageaccount_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -110,7 +111,7 @@ def test_storage_properties():
     assert fields["storageaccount_testa"].symbol == symbols[0]
     assert fields["storageaccount_testa"].resource_group == None
     assert fields["storageaccount_testa"].name == param1
-    assert fields["storageaccount_testa"].add_defaults
+    assert fields["storageaccount_testa"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -141,7 +142,7 @@ def test_storage_reference():
     assert fields["storageaccount_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo"].resource_group == None
     assert fields["storageaccount_foo"].name == "foo"
-    assert not fields["storageaccount_foo"].add_defaults
+    assert not fields["storageaccount_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_bar")
     r = StorageAccount.reference(name="foo", resource_group="bar")
@@ -159,7 +160,7 @@ def test_storage_reference():
     assert fields["storageaccount_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo"].resource_group == rg
     assert fields["storageaccount_foo"].name == "foo"
-    assert not fields["storageaccount_foo"].add_defaults
+    assert not fields["storageaccount_foo"].defaults
 
     r = StorageAccount.reference(name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB))
     assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar")}
@@ -177,8 +178,8 @@ def test_storage_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
+    add_defaults(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",

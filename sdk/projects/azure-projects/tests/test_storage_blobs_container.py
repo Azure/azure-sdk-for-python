@@ -6,6 +6,7 @@ from azure.projects.resources.storage.blobs.container import BlobContainer
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects._resource import FieldType
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, AzureInfrastructure, export, field, AzureApp
@@ -68,7 +69,7 @@ def test_storage_blobs_container_properties():
     assert fields["storageaccount.blobservice.container"].symbol == symbols[0]
     assert fields["storageaccount.blobservice.container"].resource_group == None
     assert not fields["storageaccount.blobservice.container"].name
-    assert fields["storageaccount.blobservice.container"].add_defaults
+    assert fields["storageaccount.blobservice.container"].defaults
 
     r2 = BlobContainer(default_encryption_scope="test")
     assert r2.properties == {"properties": {"defaultEncryptionScope": "test"}}
@@ -93,7 +94,7 @@ def test_storage_blobs_container_properties():
     assert fields["storageaccount.blobservice.container"].symbol == symbols[0]
     assert fields["storageaccount.blobservice.container"].resource_group == None
     assert not fields["storageaccount.blobservice.container"].name
-    assert fields["storageaccount.blobservice.container"].add_defaults
+    assert fields["storageaccount.blobservice.container"].defaults
 
     r3 = BlobContainer(default_encryption_scope="foo")
     assert r3.properties == {"properties": {"defaultEncryptionScope": "foo"}}
@@ -125,7 +126,7 @@ def test_storage_blobs_container_properties():
     assert fields["storageaccount.blobservice.container_foo"].symbol == symbols[0]
     assert fields["storageaccount.blobservice.container_foo"].resource_group == None
     assert fields["storageaccount.blobservice.container_foo"].name == "foo"
-    assert fields["storageaccount.blobservice.container_foo"].add_defaults
+    assert fields["storageaccount.blobservice.container_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -159,7 +160,7 @@ def test_storage_blobs_container_properties():
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].symbol == symbols[0]
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].resource_group == None
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].name == param2
-    assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].add_defaults
+    assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -200,7 +201,7 @@ def test_storage_blobs_container_reference():
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].symbol == symbols[0]
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].resource_group == None
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].name == "foo"
-    assert not fields["storageaccount_bar.blobservice_bar.container_bar_foo"].add_defaults
+    assert not fields["storageaccount_bar.blobservice_bar.container_bar_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_baz")
     r = BlobContainer.reference(name="foo", account="bar", resource_group="baz")
@@ -231,7 +232,7 @@ def test_storage_blobs_container_reference():
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].symbol == symbols[0]
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].resource_group == None
     assert fields["storageaccount_bar.blobservice_bar.container_bar_foo"].name == "foo"
-    assert not fields["storageaccount_bar.blobservice_bar.container_bar_foo"].add_defaults
+    assert not fields["storageaccount_bar.blobservice_bar.container_bar_foo"].defaults
 
     account = BlobStorage.reference(
         account="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB)
@@ -251,8 +252,8 @@ def test_storage_blobs_container_defaults():
     r = BlobContainer(default_encryption_scope=scope)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
-    field.add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "parent": ResourceSymbol("blobservice"),

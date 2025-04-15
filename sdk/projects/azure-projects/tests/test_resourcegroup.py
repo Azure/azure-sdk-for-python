@@ -5,6 +5,7 @@ from azure.projects._resource import FieldType
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects._component import ComponentField
+from azure.projects._utils import add_defaults
 from azure.projects._bicep.expressions import ResourceSymbol, Subscription
 from azure.projects import Parameter, export, AzureInfrastructure, field
 from azure.projects.resources._identifiers import ResourceIdentifiers
@@ -33,7 +34,7 @@ def test_resourcegroup_properties():
     assert fields["resourcegroup"].symbol == symbols[0]
     assert fields["resourcegroup"].resource_group == symbols[0]
     assert fields["resourcegroup"].name == None
-    assert fields["resourcegroup"].add_defaults
+    assert fields["resourcegroup"].defaults
 
     r2 = ResourceGroup(location="westus")
     assert r2.properties == {"location": "westus"}
@@ -48,7 +49,7 @@ def test_resourcegroup_properties():
     assert fields["resourcegroup"].symbol == symbols[0]
     assert fields["resourcegroup"].resource_group == symbols[0]
     assert fields["resourcegroup"].name == None
-    assert fields["resourcegroup"].add_defaults
+    assert fields["resourcegroup"].defaults
 
     r3 = ResourceGroup(location="eastus")
     assert r3.properties == {"location": "eastus"}
@@ -68,7 +69,7 @@ def test_resourcegroup_properties():
     assert fields["resourcegroup_foo"].symbol == symbols[0]
     assert fields["resourcegroup_foo"].resource_group == symbols[0]
     assert fields["resourcegroup_foo"].name == "foo"
-    assert fields["resourcegroup_foo"].add_defaults
+    assert fields["resourcegroup_foo"].defaults
 
 
 def test_resourcegroup_parameter_properties():
@@ -93,7 +94,7 @@ def test_resourcegroup_parameter_properties():
     assert fields["resourcegroup_rgname"].symbol == symbols[0]
     assert fields["resourcegroup_rgname"].resource_group == symbols[0]
     assert fields["resourcegroup_rgname"].name == rg_name
-    assert fields["resourcegroup_rgname"].add_defaults
+    assert fields["resourcegroup_rgname"].defaults
 
 
 def test_resourcegroup_reference():
@@ -122,7 +123,7 @@ def test_resourcegroup_reference():
     assert fields["resourcegroup_foo"].symbol == symbols[0]
     assert fields["resourcegroup_foo"].resource_group == symbols[0]
     assert fields["resourcegroup_foo"].name == "foo"
-    assert not fields["resourcegroup_foo"].add_defaults
+    assert not fields["resourcegroup_foo"].defaults
 
     r = ResourceGroup.reference(name="bar", subscription=TEST_SUB)
     assert r.properties == {"name": "bar", "subscription": TEST_SUB}
@@ -139,7 +140,7 @@ def test_resourcegroup_reference():
     assert fields["resourcegroup_bar"].symbol == symbols[0]
     assert fields["resourcegroup_bar"].resource_group == symbols[0]
     assert fields["resourcegroup_bar"].name == "bar"
-    assert not fields["resourcegroup_bar"].add_defaults
+    assert not fields["resourcegroup_bar"].defaults
 
 
 def test_resourcegroup_parameter_reference():
@@ -171,7 +172,7 @@ def test_resourcegroup_parameter_reference():
     assert fields["resourcegroup_rgname"].symbol == symbols[0]
     assert fields["resourcegroup_rgname"].resource_group == symbols[0]
     assert fields["resourcegroup_rgname"].name == rg_name
-    assert not fields["resourcegroup_rgname"].add_defaults
+    assert not fields["resourcegroup_rgname"].defaults
 
 
 def test_resourcegroup_defaults():
@@ -179,11 +180,8 @@ def test_resourcegroup_defaults():
     r = ResourceGroup(name=rg_name)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
-    assert field.properties == {
-        "name": rg_name,
-    }
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": rg_name,
         "location": GLOBAL_PARAMS["location"],

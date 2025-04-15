@@ -31,6 +31,7 @@ from ...._resource import (
     ResourceReference,
     ExtensionResources,
 )
+from ...._utils import find_last_resource_match
 from .._resource import AppServicePlan
 from ._config import SiteConfig
 
@@ -176,7 +177,7 @@ class AppSiteKwargs(TypedDict, total=False):
     """Required if app of kind functionapp. Resource ID of the storage account to manage triggers and logging
     function executions.
     """
-    storage_account_use_tdentity_authentication: bool
+    storage_account_use_identity_authentication: bool
     """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false).
     When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account
     is 'Storage Blob Data Owner'.
@@ -325,7 +326,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 "PYTHON_ENABLE_GUNICORN_MULTIWORKERS": "true",
                 "AZURE_CLIENT_ID": parameters["managedIdentityClientId"],
             }
-            app_config = self._find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
+            app_config = find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
             if app_config:
                 app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"][0]
             app_settings.update(self._app_settings)

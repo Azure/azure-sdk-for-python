@@ -5,6 +5,7 @@ from azure.projects._resource import FieldType
 from azure.projects.resources.managedidentity import UserAssignedIdentity
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output
 from azure.projects import Parameter, export, AzureInfrastructure, field
@@ -32,7 +33,7 @@ def test_identity_properties():
     assert fields["userassignedidentity"].symbol == symbols[0]
     assert fields["userassignedidentity"].resource_group == None
     assert not fields["userassignedidentity"].name
-    assert fields["userassignedidentity"].add_defaults
+    assert fields["userassignedidentity"].defaults
 
     r2 = UserAssignedIdentity(location="westus")
     assert r2.properties == {"location": "westus"}
@@ -47,7 +48,7 @@ def test_identity_properties():
     assert fields["userassignedidentity"].symbol == symbols[0]
     assert fields["userassignedidentity"].resource_group == None
     assert not fields["userassignedidentity"].name
-    assert fields["userassignedidentity"].add_defaults
+    assert fields["userassignedidentity"].defaults
 
     r3 = UserAssignedIdentity(location="eastus")
     assert r3.properties == {"location": "eastus"}
@@ -67,7 +68,7 @@ def test_identity_properties():
     assert fields["userassignedidentity_foo"].symbol == symbols[0]
     assert fields["userassignedidentity_foo"].resource_group == None
     assert fields["userassignedidentity_foo"].name == "foo"
-    assert fields["userassignedidentity_foo"].add_defaults
+    assert fields["userassignedidentity_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -86,7 +87,7 @@ def test_identity_properties():
     assert fields["userassignedidentity_testa"].symbol == symbols[0]
     assert fields["userassignedidentity_testa"].resource_group == None
     assert fields["userassignedidentity_testa"].name == param1
-    assert fields["userassignedidentity_testa"].add_defaults
+    assert fields["userassignedidentity_testa"].defaults
 
     assert params.get("testA") == param1
     assert params.get("testB") == param2
@@ -118,7 +119,7 @@ def test_identity_reference():
     assert fields["userassignedidentity_foo"].symbol == symbols[0]
     assert fields["userassignedidentity_foo"].resource_group == None
     assert fields["userassignedidentity_foo"].name == "foo"
-    assert not fields["userassignedidentity_foo"].add_defaults
+    assert not fields["userassignedidentity_foo"].defaults
 
     r = UserAssignedIdentity.reference(name="bar", resource_group="rgtest")
     assert r.properties == {"name": "bar", "resource_group": ResourceGroup(name="rgtest")}
@@ -138,7 +139,7 @@ def test_identity_reference():
     assert fields["userassignedidentity_bar"].symbol == symbols[0]
     assert fields["userassignedidentity_bar"].resource_group == ResourceSymbol("resourcegroup_rgtest")
     assert fields["userassignedidentity_bar"].name == "bar"
-    assert not fields["userassignedidentity_bar"].add_defaults
+    assert not fields["userassignedidentity_bar"].defaults
 
     r = UserAssignedIdentity.reference(
         name="bar", resource_group=ResourceGroup.reference(name="rgtest", subscription=TEST_SUB)
@@ -165,7 +166,7 @@ def test_identity_reference():
     assert fields["userassignedidentity_bar"].symbol == symbols[0]
     assert fields["userassignedidentity_bar"].resource_group == ResourceSymbol("resourcegroup_rgtest")
     assert fields["userassignedidentity_bar"].name == "bar"
-    assert not fields["userassignedidentity_bar"].add_defaults
+    assert not fields["userassignedidentity_bar"].defaults
 
 
 def test_identity_defaults():
@@ -173,8 +174,8 @@ def test_identity_defaults():
     r = UserAssignedIdentity(name=ua_name)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field: FieldType = fields.popitem()[1]
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": ua_name,
         "location": GLOBAL_PARAMS["location"],

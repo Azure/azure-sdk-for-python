@@ -29,6 +29,7 @@ from .._identifiers import ResourceIdentifiers
 from .._extension import ManagedIdentity, convert_managed_identities, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
 from ..._setting import StoredPrioritizedSetting
+from ..._utils import find_all_resource_match, find_last_resource_match
 from ..._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup as RGSymbol, Output
 from ..._resource import (
     Resource,
@@ -282,7 +283,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
             if not current_properties["properties"]["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
                 current_properties["properties"]["workspaceHubConfig"]["defaultWorkspaceResourceGroup"] = RGSymbol().id
 
-            for searchservices in self._find_all_resource_match(fields, resource_types=[ResourceIdentifiers.search]):
+            for searchservices in find_all_resource_match(fields, resource_types=[ResourceIdentifiers.search]):
                 search_connection = AIConnection(
                     {
                         # We have to do this to prevent infinit recursion on calling self.parent.__bicep__()
@@ -305,7 +306,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 )
                 search_connection.__bicep__(fields, parameters=parameters)
             # TODO: Support "OpenaI" cognitive services once it supports AAD.
-            for aiservices in self._find_all_resource_match(fields, resource_types=[ResourceIdentifiers.ai_services]):
+            for aiservices in find_all_resource_match(fields, resource_types=[ResourceIdentifiers.ai_services]):
 
                 # TODO: This will actually fail if there's more than one.... should more than one even be supported?
                 ai_connection = AIConnection(
@@ -409,16 +410,16 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
             if not current_properties["properties"].get("storageAccount"):
-                storage = self._find_last_resource_match(fields, resource=ResourceIdentifiers.storage_account)
+                storage = find_last_resource_match(fields, resource=ResourceIdentifiers.storage_account)
                 if not storage:
-                    blob_storage = self._find_last_resource_match(fields, resource=ResourceIdentifiers.blob_storage)
+                    blob_storage = find_last_resource_match(fields, resource=ResourceIdentifiers.blob_storage)
                     if not blob_storage:
                         raise ValueError("Cannot create AI Hub without associated Storage account.")
                     current_properties["properties"]["storageAccount"] = blob_storage.properties["parent"].id
                 else:
                     current_properties["properties"]["storageAccount"] = storage.symbol.id
             if not current_properties["properties"].get("keyVault"):
-                vault = self._find_last_resource_match(fields, resource=ResourceIdentifiers.keyvault)
+                vault = find_last_resource_match(fields, resource=ResourceIdentifiers.keyvault)
                 if not vault:
                     raise ValueError("Cannot create an AI Hub without associated KeyVault account.")
                 current_properties["properties"]["keyVault"] = vault.symbol.id
@@ -520,7 +521,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
             if not current_properties["properties"].get("hubResourceId"):
-                hub = self._find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
+                hub = find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
                 if not hub:
                     raise ValueError("Cannot create AI Project without associated AI Hub.")
                 current_properties["properties"]["hubResourceId"] = hub.symbol.id

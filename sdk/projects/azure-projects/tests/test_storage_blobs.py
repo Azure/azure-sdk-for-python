@@ -6,6 +6,7 @@ from azure.projects.resources.storage.blobs import BlobStorage
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects._resource import FieldType
+from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, AzureInfrastructure, export, field, AzureApp
@@ -52,7 +53,7 @@ def test_storage_blobs_properties():
     assert fields["storageaccount.blobservice"].symbol == symbols[0]
     assert fields["storageaccount.blobservice"].resource_group == None
     assert not fields["storageaccount.blobservice"].name
-    assert fields["storageaccount.blobservice"].add_defaults
+    assert fields["storageaccount.blobservice"].defaults
 
     r2 = BlobStorage(location="westus", sku="Standard_RAGRS", is_versioning_enabled=True)
     assert r2.properties == {"properties": {"isVersioningEnabled": True}}
@@ -70,7 +71,7 @@ def test_storage_blobs_properties():
     assert fields["storageaccount.blobservice"].symbol == symbols[0]
     assert fields["storageaccount.blobservice"].resource_group == None
     assert not fields["storageaccount.blobservice"].name
-    assert fields["storageaccount.blobservice"].add_defaults
+    assert fields["storageaccount.blobservice"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
     assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}}
@@ -104,7 +105,7 @@ def test_storage_blobs_properties():
     assert fields["storageaccount_foo.blobservice_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo.blobservice_foo"].resource_group == None
     assert fields["storageaccount_foo.blobservice_foo"].name == None
-    assert fields["storageaccount_foo.blobservice_foo"].add_defaults
+    assert fields["storageaccount_foo.blobservice_foo"].defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
@@ -128,7 +129,7 @@ def test_storage_blobs_properties():
     assert fields["storageaccount_testa.blobservice_testa"].symbol == symbols[0]
     assert fields["storageaccount_testa.blobservice_testa"].resource_group == None
     assert fields["storageaccount_testa.blobservice_testa"].name == None
-    assert fields["storageaccount_testa.blobservice_testa"].add_defaults
+    assert fields["storageaccount_testa.blobservice_testa"].defaults
     assert params.get("testA") == param1
     assert params.get("testB") == param2
     assert params.get("testC") == param3
@@ -162,7 +163,7 @@ def test_storage_blobs_reference():
     assert fields["storageaccount_foo.blobservice_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo.blobservice_foo"].resource_group == None
     assert fields["storageaccount_foo.blobservice_foo"].name == "default"
-    assert not fields["storageaccount_foo.blobservice_foo"].add_defaults
+    assert not fields["storageaccount_foo.blobservice_foo"].defaults
 
     rg = ResourceSymbol("resourcegroup_bar")
     r = BlobStorage.reference(account="foo", resource_group="bar")
@@ -183,7 +184,7 @@ def test_storage_blobs_reference():
     assert fields["storageaccount_foo.blobservice_foo"].symbol == symbols[0]
     assert fields["storageaccount_foo.blobservice_foo"].resource_group == None
     assert fields["storageaccount_foo.blobservice_foo"].name == "default"
-    assert not fields["storageaccount_foo.blobservice_foo"].add_defaults
+    assert not fields["storageaccount_foo.blobservice_foo"].defaults
 
     r = BlobStorage.reference(
         account=StorageAccount.reference(
@@ -203,8 +204,8 @@ def test_storage_blobs_defaults():
     r = BlobStorage(is_versioning_enabled=versioning)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
-    field.add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
         "name": "default",
         "parent": ResourceSymbol("storageaccount"),
