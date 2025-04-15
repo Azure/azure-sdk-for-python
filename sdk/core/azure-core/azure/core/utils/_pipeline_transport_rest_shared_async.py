@@ -57,6 +57,7 @@ class _PartGenerator(AsyncIterator[HttpResponseType], Generic[HttpResponseType])
             # Not happy to make this code asyncio specific, but that's multipart only for now
             # If we need trio and multipart, let's reinvesitgate that later
             import asyncio  # pylint: disable=do-not-import-asyncio
+
             await asyncio.gather(*[parse_responses(res) for res in responses])
 
         return responses

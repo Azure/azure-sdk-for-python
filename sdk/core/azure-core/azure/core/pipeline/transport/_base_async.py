@@ -168,4 +168,5 @@ class AsyncHttpTransport(
         :param float duration: The number of seconds to sleep.
         """
         import asyncio  # pylint: disable=do-not-import-asyncio
+
         await asyncio.sleep(duration)
