@@ -77,6 +77,7 @@ with project_client:
     functions = FunctionTool(user_functions)
     toolset = ToolSet()
     toolset.add(functions)
+    project_client.agents.enable_auto_function_calls(toolset=toolset)
 
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],

@@ -78,3 +78,4 @@ nltk
 azure-monitor-opentelemetry
 python-dotenv
 pyrit
+prompty

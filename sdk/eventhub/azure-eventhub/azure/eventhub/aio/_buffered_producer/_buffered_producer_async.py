@@ -3,11 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import logging
 import queue
 import time
-from asyncio import Lock
 from typing import Optional, Callable, Awaitable, TYPE_CHECKING
 
 from .._producer_async import EventHubProducer
@@ -39,7 +38,7 @@ class BufferedProducer:
         self._max_buffer_len = max_buffer_length
         self._cur_buffered_len = 0
         self._producer: EventHubProducer = producer
-        self._lock = Lock()
+        self._lock = asyncio.Lock()
         self._max_wait_time = max_wait_time
         self._on_success = self.failsafe_callback(on_success)
         self._on_error = self.failsafe_callback(on_error)

@@ -174,7 +174,7 @@ def get_running_async_lock() -> AsyncContextManager:
     """
 
     try:
-        import asyncio
+        import asyncio  # pylint: disable=do-not-import-asyncio
 
         # Check if we are running in an asyncio event loop.
         asyncio.get_running_loop()
