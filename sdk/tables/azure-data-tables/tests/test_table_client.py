@@ -10,6 +10,7 @@ import time
 
 from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from unittest.mock import patch
 
 from azure.data.tables import (
     TableServiceClient,
@@ -902,6 +903,24 @@ class TestTableClientUnitTests(TableTestCase):
             assert service.url.startswith(f"https://{self.tables_storage_account_name}.table.core.windows.net")
             assert service.credential == token_credential
             assert not hasattr(service.credential, "account_key")
+
+    @pytest.mark.parametrize("client_class", SERVICES)
+    def test_create_service_client_with_custom_audience(self, client_class):
+        url = self.account_url(self.tables_storage_account_name, "table")
+        token_credential = self.get_token_credential()
+        custom_audience = "https://foo.bar"
+        expected_scope = custom_audience + "/.default"
+
+        # Test with patching to verify BearerTokenChallengePolicy is created with the proper scope.
+        with patch("azure.data.tables._authentication.BearerTokenChallengePolicy") as mock_policy:
+            client_class(
+                url,
+                credential=token_credential,
+                table_name="foo",
+                audience=custom_audience,
+            )
+
+            mock_policy.assert_called_with(token_credential, expected_scope)
 
     def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
