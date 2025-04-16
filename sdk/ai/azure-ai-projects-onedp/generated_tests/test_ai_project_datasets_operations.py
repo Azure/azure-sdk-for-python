@@ -92,3 +92,17 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
         # please add some check logic here by yourself
         # ...
+
+    @AIProjectPreparer()
+    @recorded_by_proxy
+    def test_datasets_get_credentials(self, aiproject_endpoint):
+        client = self.create_client(endpoint=aiproject_endpoint)
+        response = client.datasets.get_credentials(
+            name="str",
+            version="str",
+            body={},
+            content_type="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
