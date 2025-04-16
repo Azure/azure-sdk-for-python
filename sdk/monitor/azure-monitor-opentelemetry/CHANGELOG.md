@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.8 (Unreleased)
+## 1.6.8 (2025-04-16)
 
 ### Bugs Fixed
 
