@@ -230,9 +230,13 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
         # Extract the evaluator name from the column name
         # (outputs.<evaluator>.<metric>_result)
         parts = col.split(".")
+        evaluator_name = None
         if len(parts) >= 3:
             evaluator_name = parts[1]
-
+        else:
+            LOGGER.warning("Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col)
+            continue
+        if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
             value_counts = df[col].value_counts().to_dict()
 
