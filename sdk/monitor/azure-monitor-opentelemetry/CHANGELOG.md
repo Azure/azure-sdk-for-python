@@ -1,6 +1,23 @@
 # Release History
 
-## 1.6.6 (Unreleased)
+## 1.6.8 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.7 (2025-04-10)
+
+### Bugs Fixed
+
+- Adapt to OpenTelemetry dependency resolver change.
+    ([#40463](https://github.com/Azure/azure-sdk-for-python/pull/40463))
+
+## 1.6.6 (2025-04-07)
 
 ### Features Added
 
@@ -8,12 +25,6 @@
     ([#40057](https://github.com/Azure/azure-sdk-for-python/pull/40057))
 - Enable Azure AI Agents instrumentation
     ([#40043](https://github.com/Azure/azure-sdk-for-python/pull/40043))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.6.5 (2025-02-14)
 

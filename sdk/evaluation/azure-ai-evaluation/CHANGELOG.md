@@ -1,5 +1,21 @@
 # Release History
 
+## 1.6.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0 (2025-04-04)
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
 ## 1.4.0 (2025-03-27)
 
 ### Features Added

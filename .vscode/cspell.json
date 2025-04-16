@@ -1412,6 +1412,8 @@
         "Inadherent",
         "nbformat",
         "nbconvert",
+        "onedp",
+        "azureai",
       ]
     },
     {

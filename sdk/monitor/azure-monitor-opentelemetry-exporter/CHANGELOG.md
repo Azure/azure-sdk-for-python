@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b36 (Unreleased)
+## 1.0.0b37 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b36 (2025-04-07)
 
 ### Features Added
 
@@ -8,12 +18,10 @@
   ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 - Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
   ([#40059](https://github.com/Azure/azure-sdk-for-python/pull/40059))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Update AKS check to use KUBERNETES_SERVICE_HOST
+  ([#39941](https://github.com/Azure/azure-sdk-for-python/pull/39941))
+- Enabled Entra ID Credential configuration via env var
+  ([#40237](https://github.com/Azure/azure-sdk-for-python/pull/40237))
 
 ## 1.0.0b35 (2025-03-04)
 
