@@ -4,9 +4,10 @@
 
 import math
 import re
+import os
 from typing import Dict, TypeVar, Union
 
-from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
@@ -39,13 +40,17 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     :param ignore_queries: If True, queries will be ignored in conversation evaluations. Default is False.
         Useful since some evaluators of this format are response-only.
     :type ignore_queries: bool
+    :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty file based on reasoning models. Defaults to False.
+    :type is_reasoning_model: bool
     """
 
     _LLM_CALL_TIMEOUT = 600
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False, threshold: int = 3, _higher_is_better: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False,
+                 threshold: int = 3, _higher_is_better: bool = False, **kwargs) -> None:
         self._result_key = result_key
+        self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
@@ -59,7 +64,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             user_agent,
         )
 
-        self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config,
+                                       is_reasoning_model=self._is_reasoning_model)
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.

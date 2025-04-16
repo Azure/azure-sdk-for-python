@@ -131,8 +131,6 @@ def test_receive_transfer_and_flow():
     )
 
     link._outgoing_flow = mock_outgoing
-    link.total_link_credit = 0  # Set the total link credit to 0 to start, no credit on the wire
-
     link.flow(link_credit=100)  # Send a flow frame with desired link credit of 100
 
     # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
@@ -142,20 +140,15 @@ def test_receive_transfer_and_flow():
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 99
-    assert link.total_link_credit == 99
 
     # Only received 1 transfer frame per receive call, we set desired link credit again
     # this will send a flow of 1
     link.flow(link_credit=100)
-    assert link.current_link_credit == 1
-    assert link.total_link_credit == 100
-
+    assert link.current_link_credit == 100
     link._incoming_transfer(transfer_frame_two)
-    assert link.current_link_credit == 0
-    assert link.total_link_credit == 99
+    assert link.current_link_credit == 99
     link._incoming_transfer(transfer_frame_three)
-    assert link.current_link_credit == -1
-    assert link.total_link_credit == 98
+    assert link.current_link_credit == 98
 
 @pytest.mark.parametrize(
     "frame",

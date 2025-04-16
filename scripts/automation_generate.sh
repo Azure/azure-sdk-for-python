@@ -1,11 +1,6 @@
 #!/bin/bash
 
-VIRTUAL_ENV=$TMPDIR/venv-sdk
-export VIRTUAL_ENV
-PATH="$VIRTUAL_ENV/bin:$PATH"
-export PATH
-
-TEMP_FILE="$TMPDIR/venv-sdk/auto_temp.json"
+TEMP_FILE="$TMPDIR/auto_temp.json"
 # generate code
 python -m packaging_tools.sdk_generator "$1" "$TEMP_FILE" --debug 2>&1
 echo "[Generate] codegen done!!!"

@@ -49,7 +49,7 @@ class GleuScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, threshold=0.5):
+    def __init__(self, *, threshold=0.5):
         self._threshold = threshold
         self._higher_is_better = True
         super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)

@@ -58,7 +58,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
@@ -72,7 +71,7 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         # dependencies for the vendored storage blob
         "azure-core>=1.30.0",
@@ -81,6 +80,6 @@ setup(
         "isodate>=0.6.1",
         # end of dependencies for the vendored storage blob
         'azure-eventhub>=5.0.0',
-        'aiohttp>=3.8.3',
+        'aiohttp>=3.11.0',
     ]
 )

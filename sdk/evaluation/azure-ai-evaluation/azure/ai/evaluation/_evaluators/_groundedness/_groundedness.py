@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
-from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
@@ -69,7 +69,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=3, **kwargs):
+    def __init__(self, model_config, *, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
