@@ -18,6 +18,8 @@ from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
+from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
+
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
@@ -610,7 +612,7 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 def evaluate(
     *,
     data: Union[str, os.PathLike],
-    evaluators: Dict[str, Callable],
+    evaluators: Dict[str, Union[Callable, AoaiGrader]],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
@@ -626,8 +628,9 @@ def evaluate(
         JSONL and CSV files are supported.  `target` and `data` both cannot be None. Required.
     :paramtype data: str
     :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
-        and value as the evaluator function. Required.
-    :paramtype evaluators: Dict[str, Callable]
+        and value as the evaluator function. Also accepts AoaiGrader instances as values, which are processed separately.
+        Required.
+    :paramtype evaluators: Dict[str, Union[Callable, ~azure.ai.evaluation.AoaiGrader]]
     :keyword evaluation_name: Display name of the evaluation.
     :paramtype evaluation_name: Optional[str]
     :keyword target: Target to be evaluated. `target` and `data` both cannot be None
@@ -664,7 +667,7 @@ def evaluate(
             evaluation_name=evaluation_name,
             target=target,
             data=data,
-            evaluators=evaluators,
+            evaluators_and_graders=evaluators,
             evaluator_config=evaluator_config,
             azure_ai_project=azure_ai_project,
             output_path=output_path,
@@ -729,7 +732,7 @@ def _print_fail_flag_warning() -> None:
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     *,
-    evaluators: Dict[str, Callable],
+    evaluators_and_graders: Dict[str, Union[Callable, AoaiGrader]],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     data: Union[str, os.PathLike],
@@ -741,7 +744,118 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
         _print_fail_flag_warning()
-    input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
+    
+    # Split normal evaluators and OAI graders
+    from ._evaluate_aoai import (
+        _begin_aoai_evaluation,
+        _split_evaluators_and_grader_configs,
+        _get_evaluation_run_results
+    )
+    evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
+
+    results_df: pd.DataFrame = pd.DataFrame()
+    metrics: Dict[str, Any] = {}
+
+
+    input_data_df = _validate_and_load_data(target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name)
+    eval_run_id = "not set yet"
+    eval_group_id = "not set yet"
+    grader_name_map = {}
+    oai_client = None
+    if len(graders) > 0:
+        for grader in graders.values():
+            if isinstance(grader, AoaiGrader):
+                oai_client = grader.get_client()
+                break
+        try:
+            aoi_name = evaluation_name if evaluation_name else "oai_run"
+            eval_group_id, eval_run_id, grader_name_map = _begin_aoai_evaluation(oai_client, graders, input_data_df, aoi_name)
+        except EvaluationException as e:
+            # TODO, check if there's normal evaluations to be done, if so, do them, but print this as a warning.
+            raise e
+    
+    # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
+    if len(evaluators) > 0:
+        eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
+            evaluators=evaluators,
+            input_data_df=input_data_df,
+            data=data,
+            evaluation_name=evaluation_name,
+            target=target,
+            evaluator_config=evaluator_config,
+            azure_ai_project=azure_ai_project,
+            output_path=output_path,
+            fail_on_evaluator_errors=fail_on_evaluator_errors
+        )
+        results_df = eval_result_df
+        metrics = eval_metrics
+        # TODO figure out how to update this printing
+        _print_summary(per_evaluator_results)
+
+    # Evaluate AOAI graders
+    if len(graders) > 0:
+        aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_group_id, eval_run_id, grader_name_map)
+        # aoai_results, aoai_metrics = _temp_get_dummy_aoai_data(graders, input_data_df)
+        # Combine results if both evaluators and graders are present
+        if len(evaluators) > 0:
+            results_df = pd.concat([results_df, aoai_results], axis=1)
+            metrics.update(aoai_metrics)
+        else:
+            # Otherwise combine aoai results with input data df to include input columns in outputs.
+            results_df = pd.concat([input_data_df, aoai_results], axis=1)
+            metrics = aoai_metrics
+
+    # Done with all evaluations, message outputs into final forms, and log results if needed.
+
+    # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
+    target_run: Optional[Run] = None
+    trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
+    studio_url = None
+    if trace_destination:
+
+        studio_url = _log_metrics_and_instance_results(
+            metrics, results_df, trace_destination, target_run, evaluation_name, **kwargs
+        )
+
+    result_df_dict = results_df.to_dict("records")
+    result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+
+
+    if output_path:
+        _write_output(output_path, result)
+
+    return result
+
+
+def _turn_error_logs_into_exception(log_path: str) -> None:
+    """Produce an EvaluationException using the contents of the inputted
+    file as the error message.
+
+    :param log_path: The path to the error log file.
+    :type log_path: str
+    """
+    with open(log_path, "r", encoding=DefaultOpenEncoding.READ) as file:
+        error_message = file.read()
+    raise EvaluationException(
+        message=error_message,
+        target=ErrorTarget.EVALUATE,
+        category=ErrorCategory.FAILED_EXECUTION,
+        blame=ErrorBlame.UNKNOWN,
+    )
+
+def _run_callable_evaluators(
+    evaluators: Dict[str, Callable],
+    input_data_df: pd.DataFrame,
+    data: Union[str, os.PathLike],
+    evaluation_name: Optional[str] = None,
+    target: Optional[Callable] = None,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+    azure_ai_project: Optional[AzureAIProject] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
+    fail_on_evaluator_errors: bool = False,
+    **kwargs,
+
+) -> Tuple[pd.DataFrame, Dict[str, Any], Dict[str, __EvaluatorInfo]]:
 
     # Process evaluator config to replace ${target.} with ${data.}
     if evaluator_config is None:
@@ -875,42 +989,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # will be marked as outputs already so we do not need to rename them.
     input_data_df = _rename_columns_conditionally(input_data_df)
 
-    result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
-    metrics = _aggregate_metrics(evaluators_result_df, evaluators)
-    metrics.update(evaluators_metric)
+    eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
+    eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
+    eval_metrics.update(evaluators_metric)
 
-    # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    target_run = None
-    trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-    studio_url = None
-    if trace_destination:
-        studio_url = _log_metrics_and_instance_results(
-            metrics, result_df, trace_destination, target_run, evaluation_name, **kwargs
-        )
-
-    result_df_dict = result_df.to_dict("records")
-    result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
-
-    _print_summary(per_evaluator_results)
-
-    if output_path:
-        _write_output(output_path, result)
-
-    return result
-
-
-def _turn_error_logs_into_exception(log_path: str) -> None:
-    """Produce an EvaluationException using the contents of the inputted
-    file as the error message.
-
-    :param log_path: The path to the error log file.
-    :type log_path: str
-    """
-    with open(log_path, "r", encoding=DefaultOpenEncoding.READ) as file:
-        error_message = file.read()
-    raise EvaluationException(
-        message=error_message,
-        target=ErrorTarget.EVALUATE,
-        category=ErrorCategory.FAILED_EXECUTION,
-        blame=ErrorBlame.UNKNOWN,
-    )
+    return eval_result_df, eval_metrics, per_evaluator_results

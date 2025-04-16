@@ -40,6 +40,8 @@ from ._model_configurations import (
     Message,
     OpenAIModelConfiguration,
 )
+from ._aoai.aoai_grader import AoaiGrader
+
 
 # The converter from the AI service to the evaluator schema requires a dependency on
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
@@ -87,6 +89,7 @@ __all__ = [
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
+    "AoaiGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -1,0 +1,104 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# TODO import acceptable configs from AOAI SDK?
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from typing import Any, Dict, Union
+
+class AoaiGrader():
+    """
+    Base class for azure open ai grader warppers, recommended only for use by experience OpenAI API users.
+    Combines a model configuration and any grader configuration
+    into a singlular object that can be used in evaluations.
+
+    Supplying an AoaiGrader to the `evaluate` method will cause an asynchronous request to evaluate
+    the grader via the OpenAI API. The results of the evaluation will then be merged into the standard
+    evaluation results.
+
+    :param model_config: The model configuration to use for the grader.
+    :type model_config: Union[
+        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration
+    ]
+    :param grader_config: The grader configuration to use for the grader.
+    :type grader_config: Any
+    :param kwargs: Additional keyword arguments to pass to the grader.
+    :type kwargs: Dict[str, Any]
+
+
+    """
+
+    id = "openai://grader"
+
+    def __init__(self, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Any, **kwargs: Dict[str, Any]):
+        
+        self._model_config = model_config
+        self._grader_config = grader_config
+
+        # aoai graders need an api key in their config
+        # if-statements nested due to python failing to properly short-circuit the validate bypass for some reason.
+        if kwargs.get("validate", True):
+            self._validate_model_config()
+            self._validate_grader_config()
+
+
+
+    def _validate_model_config(self) -> None:
+        """Validate the model configuration that this grader wrapper is using."""
+        if "api_key" not in self._model_config or not self._model_config.get("api_key"):
+            msg = f"{type(self).__name__}: Requires an api_key in the supplied model_config."
+            raise EvaluationException(
+                message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.AOAI_GRADER,
+            )
+    
+    def _validate_grader_config(self) -> None:
+        """Validate the grader configuration that this grader wrapper is using."""
+
+        return
+
+
+    def get_model_config(self) -> AzureOpenAIModelConfiguration:
+        """Get the model configuration that this grader wrapper is using.
+
+        :return: The model configuration.
+        :rtype: AzureOpenAIModelConfiguration
+        """
+        return self._model_config
+    
+    def get_grader_config(self) -> Any:
+        """Get the grader configuration that this grader wrapper is using.
+
+        :return: The grader configuration.
+        :rtype: Any
+        """
+        return self._grader_config
+
+    def get_client(self) -> Any:
+        """Construct an appropriate OpenAI client using this grader's model configuration.
+        Returns a slightly different client depending on whether or not this grader's model
+        configuration is for Azure OpenAI or OpenAI.
+
+        :return: The OpenAI client.
+        :rtype: [~openai.OpenAI, ~openai.AzureOpenAI]
+        """
+        if "azure_endpoint" in self._model_config:
+           from openai import AzureOpenAI
+           # TODO set default values?
+           return AzureOpenAI(
+                azure_endpoint=self._model_config["azure_endpoint"],
+                api_key=self._model_config.get("api_key", None), # Default-style access to appease linters.
+                api_version=self._model_config.get("api_version", ""),
+                azure_deployment=self._model_config.get("azure_deployment", ""),
+            )
+        from openai import OpenAI
+        # TODO add default values for base_url and organization?
+        return OpenAI(
+            api_key=self._model_config["api_key"],
+            base_url=self._model_config.get("base_url", ""),
+            organization=self._model_config.get("organization", ""),
+        )
