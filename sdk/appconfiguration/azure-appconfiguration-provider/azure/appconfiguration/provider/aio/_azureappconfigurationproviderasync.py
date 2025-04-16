@@ -32,6 +32,8 @@ from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    APP_CONFIG_AI_MIME_PROFILE,
+    APP_CONFIG_AICC_MIME_PROFILE,
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -368,6 +370,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._uses_key_vault,
                     self._uses_load_balancing,
                     is_failover_request,
+                    self._uses_ai_configuration,
+                    self._uses_aicc_configuration,
                 )
 
                 try:
@@ -438,6 +442,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._uses_key_vault,
                 self._uses_load_balancing,
                 is_failover_request,
+                self._uses_ai_configuration,
+                self._uses_aicc_configuration,
             )
             try:
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
@@ -489,6 +495,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        # Reset feature flag usage
+        self._uses_ai_configuration = False
+        self._uses_aicc_configuration = False
+
         configuration_settings_processed = {}
         for config in configuration_settings:
             if isinstance(config, FeatureFlagConfigurationSetting):
@@ -507,6 +517,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
+                if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
+                    self._uses_ai_configuration = True
+                if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
+                    self._uses_aicc_configuration = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 # If the value is not a valid JSON, treat it like regular string value

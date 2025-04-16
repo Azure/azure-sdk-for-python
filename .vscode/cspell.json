@@ -1844,6 +1844,13 @@
       ]
     },
     {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
+      ]
+    },
+    {
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"
