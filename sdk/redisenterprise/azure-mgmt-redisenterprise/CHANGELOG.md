@@ -14,9 +14,7 @@
   - Added enum `Kind`
   - Added model `SkuDetails`
   - Added model `SkuDetailsList`
-  - Model `RedisEnterpriseOperations` added method `list_skus_for_scaling`
-  - Method `DatabasesOperations.begin_flush` has a new overload `def begin_flush(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: Optional[FlushParameters], content_type: str)`
-  - Method `DatabasesOperations.begin_flush` has a new overload `def begin_flush(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: Optional[IO[bytes]], content_type: str)`
+  - Operation group `RedisEnterpriseOperations` added method `list_skus_for_scaling`
 
 ### Breaking Changes
 
