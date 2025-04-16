@@ -734,7 +734,7 @@ class FunctionTool(BaseFunctionTool):
         try:
             function, parsed_arguments = self._get_func_and_args(tool_call)
             return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self
@@ -745,13 +745,12 @@ class FunctionTool(BaseFunctionTool):
 class AsyncFunctionTool(BaseFunctionTool):
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:  # pylint: disable=invalid-overridden-method
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
         try:
+            function, parsed_arguments = self._get_func_and_args(tool_call)
             if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
             return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction
