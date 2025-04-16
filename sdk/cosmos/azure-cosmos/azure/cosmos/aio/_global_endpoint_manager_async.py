@@ -216,5 +216,5 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.refresh_task.cancel()
             try:
                 await self.refresh_task
-            except (Exception, CancelledError) : #pylint: disable=broad-exception-caught
+            except (Exception, asyncio.CancelledError) : #pylint: disable=broad-exception-caught
                 pass
