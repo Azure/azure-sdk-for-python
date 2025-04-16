@@ -28,7 +28,7 @@ class TestTracingAsync:
         if not account_url:
             pytest.skip("AZURE_STORAGE_BLOB_ENDPOINT environment variable is not set.")
 
-        client = BlobServiceClient(account_url=account_url, credential=get_credential())
+        client = BlobServiceClient(account_url=account_url, credential=get_credential(is_async=True))
 
         with tracing_helper.tracer.start_as_current_span(name="root") as parent:
             await client.get_service_properties()
@@ -72,7 +72,7 @@ class TestTracingAsync:
         account_name = "nonexistentaccount"
         invalid_url = f"https://{account_name}.blob.core.windows.net/"
 
-        client = BlobServiceClient(account_url=invalid_url, credential=get_credential())
+        client = BlobServiceClient(account_url=invalid_url, credential=get_credential(is_async=True))
 
         # Expecting this operation to fail
         with tracing_helper.tracer.start_as_current_span(name="root") as parent:
