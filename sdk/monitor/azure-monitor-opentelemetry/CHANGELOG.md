@@ -7,8 +7,6 @@
 - Pin OTel before breaking change.
     ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
 
-### Other Changes
-
 ## 1.6.7 (2025-04-10)
 
 ### Bugs Fixed
