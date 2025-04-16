@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
 import os
 from typing import Any, Dict, List
 from urllib.parse import urljoin, urlparse

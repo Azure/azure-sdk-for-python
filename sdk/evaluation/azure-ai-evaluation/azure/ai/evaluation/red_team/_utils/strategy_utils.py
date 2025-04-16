@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# type: ignore
 """
 Utility functions for handling attack strategies and converters in Red Team Agent.
 """

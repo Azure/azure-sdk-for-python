@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
 from typing import Dict
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from typing_extensions import overload, override

@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
+
 from typing import Dict
 
 from nltk.translate.meteor_score import meteor_score

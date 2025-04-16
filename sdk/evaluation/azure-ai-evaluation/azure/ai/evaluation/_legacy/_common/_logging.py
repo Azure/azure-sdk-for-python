@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# type: ignore
 # Original source:
 # - promptflow-core/promptflow/_core/log_manager.py
 # - promptflow-core/promptflow/_utils/logger_utils.py
