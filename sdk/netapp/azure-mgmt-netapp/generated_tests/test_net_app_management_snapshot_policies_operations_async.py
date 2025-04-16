@@ -25,7 +25,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.snapshot_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             snapshot_policy_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
                 "type": "str",
                 "weeklySchedule": {"day": "str", "hour": 0, "minute": 0, "snapshotsToKeep": 0, "usedBytes": 0},
             },
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
                     "type": "str",
                     "weeklySchedule": {"day": "str", "hour": 0, "minute": 0, "snapshotsToKeep": 0, "usedBytes": 0},
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -121,7 +121,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 account_name="str",
                 snapshot_policy_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -135,7 +135,7 @@ class TestNetAppManagementSnapshotPoliciesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             snapshot_policy_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself

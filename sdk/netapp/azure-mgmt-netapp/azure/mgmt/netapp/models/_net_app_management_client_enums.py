@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AcceptGrowCapacityPoolForShortTermCloneSplit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """While auto splitting the short term clone volume, if the parent pool does not have enough space
+    to accommodate the volume after split, it will be automatically resized, which will lead to
+    increased billing. To accept capacity pool size auto grow and create a short term clone volume,
+    set the property as accepted.
+    """
+
+    ACCEPTED = "Accepted"
+    """Auto grow capacity pool for short term clone split is accepted."""
+    DECLINED = "Declined"
+    """Auto grow capacity pool for short term clone split is declined. Short term clone volume
+    creation will not be allowed, to create short term clone volume accept auto grow capacity pool."""
+
+
 class ActiveDirectoryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the Active Directory."""
 
@@ -119,6 +133,23 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The bucket credentials status. There states:
+
+    "NoCredentialsSet": Access and Secret key pair have not been generated.
+    "CredentialsExpired": Access and Secret key pair have expired.
+    "Active": The certificate has been installed and credentials are unexpired.
+    """
+
+    NO_CREDENTIALS_SET = "NoCredentialsSet"
+    """Access and Secret key pair have not been generated."""
+    CREDENTIALS_EXPIRED = "CredentialsExpired"
+    """Access and Secret key pair have expired."""
+    ACTIVE = "Active"
+    """The certificate has been installed on the bucket server and the bucket credentials are
+    unexpired."""
+
+
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag indicating whether subvolume operations are enabled on the volume."""
 
@@ -156,6 +187,25 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SRC = "src"
     DST = "dst"
+
+
+class ExternalReplicationSetupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property that only applies to external replications. Provides a machine-readable value for the
+    status of the external replication setup.
+    """
+
+    CLUSTER_PEER_REQUIRED = "ClusterPeerRequired"
+    """Your cluster needs to be peered by using the 'peerExternalCluster' action"""
+    CLUSTER_PEER_PENDING = "ClusterPeerPending"
+    """The peering needs to be accepted on your cluster before the setup can proceed"""
+    V_SERVER_PEER_REQUIRED = "VServerPeerRequired"
+    """Need to call 'authorizeExternalReplication' and accept the returned 'vserver peer accept'
+    command on your cluster to finish setting up the external replication"""
+    REPLICATION_CREATE_REQUIRED = "ReplicationCreateRequired"
+    """Need to call 'authorizeExternalReplication' to finish setting up the external replication"""
+    NO_ACTION_REQUIRED = "NoActionRequired"
+    """External Replication setup is complete, you can now monitor the 'mirrorState' in the
+    replication status for the health of the replication"""
 
 
 class FileAccessLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -205,6 +255,15 @@ class KeyVaultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """KeyVault connection Updating"""
 
 
+class LdapServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the LDAP server."""
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+    """The volume should use Active Directory for LDAP connections."""
+    OPEN_LDAP = "OpenLDAP"
+    """The volume should use OpenLDAP for LDAP connections."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -228,6 +287,34 @@ class MirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNINITIALIZED = "Uninitialized"
     MIRRORED = "Mirrored"
     BROKEN = "Broken"
+
+
+class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MultiAD Status for the account."""
+
+    DISABLED = "Disabled"
+    """Account is MultiAD disabled, Means its a SharedAD or SingleAD account."""
+    ENABLED = "Enabled"
+    """Account is MultiAD enabled"""
+
+
+class NetappProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    PROVISIONING = "Provisioning"
+    """Resource is getting provisioned"""
+    UPDATING = "Updating"
+    """Resource is updating"""
+    DELETING = "Deleting"
+    """Resource is getting deleted"""
+    ACCEPTED = "Accepted"
+    """Resource has been accepted"""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,6 +398,15 @@ class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DAILY = "daily"
 
 
+class ReplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the replication is cross zone or cross region."""
+
+    CROSS_REGION_REPLICATION = "CrossRegionReplication"
+    """Cross region replication"""
+    CROSS_ZONE_REPLICATION = "CrossZoneReplication"
+    """Cross zone replication"""
+
+
 class SecurityStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The security style of volume, default unix, defaults to ntfs for dual protocol or CIFS
     protocol.
@@ -330,7 +426,9 @@ class ServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ULTRA = "Ultra"
     """Ultra service level"""
     STANDARD_ZRS = "StandardZRS"
-    """Zone redundant storage service level"""
+    """Zone redundant storage service level. This will be deprecated soon."""
+    FLEXIBLE = "Flexible"
+    """Flexible service level"""
 
 
 class SmbAccessBasedEnumeration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -354,7 +452,7 @@ class SmbNonBrowsable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of quota."""
+    """Type of quota rule."""
 
     DEFAULT_USER_QUOTA = "DefaultUserQuota"
     """Default user quota"""
@@ -364,6 +462,149 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Individual user quota"""
     INDIVIDUAL_GROUP_QUOTA = "IndividualGroupQuota"
     """Individual group quota"""
+
+
+class VolumeLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Language supported for volume."""
+
+    C_UTF8 = "c.utf-8"
+    """Posix with UTF-8"""
+    UTF8_MB4 = "utf8mb4"
+    """UTF-8 with 4 byte character support"""
+    AR = "ar"
+    """Arabic - Deprecated"""
+    AR_UTF8 = "ar.utf-8"
+    """Arabic with UTF-8"""
+    HR = "hr"
+    """Croatian - Deprecated"""
+    HR_UTF8 = "hr.utf-8"
+    """Croatian with UTF-8"""
+    CS = "cs"
+    """Czech - Deprecated"""
+    CS_UTF8 = "cs.utf-8"
+    """Czech with UTF-8"""
+    DA = "da"
+    """Danish - Deprecated"""
+    DA_UTF8 = "da.utf-8"
+    """Danish with UTF-8"""
+    NL = "nl"
+    """Dutch - Deprecated"""
+    NL_UTF8 = "nl.utf-8"
+    """Dutch with UTF-8"""
+    EN = "en"
+    """English - Deprecated"""
+    EN_UTF8 = "en.utf-8"
+    """English with UTF-8"""
+    FI = "fi"
+    """Finnish - Deprecated"""
+    FI_UTF8 = "fi.utf-8"
+    """Finnish with UTF-8"""
+    FR = "fr"
+    """French - Deprecated"""
+    FR_UTF8 = "fr.utf-8"
+    """French with UTF-8"""
+    DE = "de"
+    """German - Deprecated"""
+    DE_UTF8 = "de.utf-8"
+    """German with UTF-8"""
+    HE = "he"
+    """Hebrew - Deprecated"""
+    HE_UTF8 = "he.utf-8"
+    """Hebrew with UTF-8"""
+    HU = "hu"
+    """Hungarian - Deprecated"""
+    HU_UTF8 = "hu.utf-8"
+    """Hungarian with UTF-8"""
+    IT = "it"
+    """Italian - Deprecated"""
+    IT_UTF8 = "it.utf-8"
+    """Italian with UTF-8"""
+    JA = "ja"
+    """Japanese euc-j - Deprecated"""
+    JA_UTF8 = "ja.utf-8"
+    """Japanese euc-j with UTF-8"""
+    JA_V1 = "ja-v1"
+    """Japanese euc-j - Deprecated"""
+    JA_V1_UTF8 = "ja-v1.utf-8"
+    """Japanese euc-j with UTF-8"""
+    JA_JP_PCK = "ja-jp.pck"
+    """Japanese pck"""
+    JA_JP_PCK_UTF8 = "ja-jp.pck.utf-8"
+    """Japanese pck with UTF-8 - Deprecated"""
+    JA_JP932 = "ja-jp.932"
+    """Japanese cp932"""
+    JA_JP932_UTF8 = "ja-jp.932.utf-8"
+    """Japanese cp932 with UTF-8 - Deprecated"""
+    JA_JP_PCK_V2 = "ja-jp.pck-v2"
+    """Japanese pck - sjis"""
+    JA_JP_PCK_V2_UTF8 = "ja-jp.pck-v2.utf-8"
+    """Japanese pck - sjis with UTF-8 - Deprecated"""
+    KO = "ko"
+    """Korean - Deprecated"""
+    KO_UTF8 = "ko.utf-8"
+    """Korean with UTF-8"""
+    NO = "no"
+    """Norwegian - Deprecated"""
+    NO_UTF8 = "no.utf-8"
+    """Norwegian with UTF-8"""
+    PL = "pl"
+    """Polish - Deprecated"""
+    PL_UTF8 = "pl.utf-8"
+    """Polish with UTF-8"""
+    PT = "pt"
+    """Portuguese - Deprecated"""
+    PT_UTF8 = "pt.utf-8"
+    """Portuguese with UTF-8"""
+    C = "c"
+    """Posix - Deprecated"""
+    RO = "ro"
+    """Romanian - Deprecated"""
+    RO_UTF8 = "ro.utf-8"
+    """Romanian with UTF-8"""
+    RU = "ru"
+    """Russian - Deprecated"""
+    RU_UTF8 = "ru.utf-8"
+    """Russian with UTF-8"""
+    ZH = "zh"
+    """Simplified Chinese - Deprecated"""
+    ZH_UTF8 = "zh.utf-8"
+    """Simplified Chinese with UTF-8"""
+    ZH_GBK = "zh.gbk"
+    """Simplified gbk Chinese"""
+    ZH_GBK_UTF8 = "zh.gbk.utf-8"
+    """Simplified gbk Chinese with UTF-8 - Deprecated"""
+    ZH_TW_BIG5 = "zh-tw.big5"
+    """Traditional Chinese BIG 5"""
+    ZH_TW_BIG5_UTF8 = "zh-tw.big5.utf-8"
+    """Traditional Chinese BIG 5 with UTF-8 - Deprecated"""
+    ZH_TW = "zh-tw"
+    """Traditional Chinese EUC-TW"""
+    ZH_TW_UTF8 = "zh-tw.utf-8"
+    """Traditional Chinese EUC-TW with UTF-8 - Deprecated"""
+    SK = "sk"
+    """Slovak - Deprecated"""
+    SK_UTF8 = "sk.utf-8"
+    """Slovak with UTF-8"""
+    SL = "sl"
+    """Slovenian - Deprecated"""
+    SL_UTF8 = "sl.utf-8"
+    """Slovenian with UTF-8"""
+    ES = "es"
+    """Spanish - Deprecated"""
+    ES_UTF8 = "es.utf-8"
+    """Spanish with UTF-8"""
+    SV = "sv"
+    """Swedish - Deprecated"""
+    SV_UTF8 = "sv.utf-8"
+    """Swedish with UTF-8"""
+    TR = "tr"
+    """Turkish - Deprecated"""
+    TR_UTF8 = "tr.utf-8"
+    """Turkish with UTF-8"""
+    EN_US = "en-us"
+    """US English - Deprecated"""
+    EN_US_UTF8 = "en-us.utf-8"
+    """US English with UTF-8"""
 
 
 class VolumeStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMeta):

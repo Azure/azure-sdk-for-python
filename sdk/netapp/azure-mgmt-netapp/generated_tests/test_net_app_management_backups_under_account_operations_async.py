@@ -27,7 +27,7 @@ class TestNetAppManagementBackupsUnderAccountOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 account_name="str",
                 body={"backupVaultId": "str"},
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
