@@ -27,6 +27,8 @@ from typing import Any
 from enum import EnumMeta, Enum
 
 
+
+
 class CaseInsensitiveEnumMeta(EnumMeta):
     """Enum metaclass to allow for interoperability with case-insensitive strings.
 
