@@ -227,6 +227,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -309,6 +310,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -370,6 +372,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -453,6 +456,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -552,6 +556,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -593,6 +598,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -622,6 +628,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -663,6 +670,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -702,6 +710,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -784,6 +793,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if
             `no_response` is specified.
@@ -860,6 +870,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -939,6 +950,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty if
@@ -1009,6 +1021,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
@@ -1262,6 +1275,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
@@ -1320,6 +1334,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
