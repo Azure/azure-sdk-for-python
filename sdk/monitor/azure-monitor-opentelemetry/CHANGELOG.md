@@ -2,11 +2,10 @@
 
 ## 1.6.8 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Pin OTel before breaking change.
+    ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
 
 ### Other Changes
 
@@ -14,8 +13,7 @@
 
 ### Bugs Fixed
 
-- Adapt to OpenTelemetry dependency resolver change.
-    ([#40463](https://github.com/Azure/azure-sdk-for-python/pull/40463))
+### Other Changes
 
 ## 1.6.6 (2025-04-07)
 
