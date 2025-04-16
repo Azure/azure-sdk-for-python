@@ -3,6 +3,7 @@
     "CrossLanguageDefinitionId": {
         "azure.ai.projects.onedp.models.BaseCredentials": "Azure.AI.Projects.BaseCredentials",
         "azure.ai.projects.onedp.models.ApiKeyCredentials": "Azure.AI.Projects.ApiKeyCredentials",
+        "azure.ai.projects.onedp.models.AssetCredentialResponse": "Azure.AI.Projects.AssetCredentialResponse",
         "azure.ai.projects.onedp.models.Index": "Azure.AI.Projects.Index",
         "azure.ai.projects.onedp.models.AzureAISearchIndex": "Azure.AI.Projects.AzureAISearchIndex",
         "azure.ai.projects.onedp.models.BlobReferenceForConsumption": "Azure.AI.Projects.BlobReferenceForConsumption",
@@ -49,6 +50,7 @@
         "azure.ai.projects.onedp.AIProjectClient.datasets.delete_version": "Azure.AI.Projects.ServicePatterns.Datasets.deleteVersion",
         "azure.ai.projects.onedp.AIProjectClient.datasets.create_version": "Azure.AI.Projects.ServicePatterns.Datasets.createVersion",
         "azure.ai.projects.onedp.AIProjectClient.datasets.start_pending_upload_version": "Azure.AI.Projects.Datasets.startPendingUploadVersion",
+        "azure.ai.projects.onedp.AIProjectClient.datasets.get_credentials": "Azure.AI.Projects.Datasets.getCredentials",
         "azure.ai.projects.onedp.AIProjectClient.indexes.list_versions": "Azure.AI.Projects.ServicePatterns.Indexes.listVersions",
         "azure.ai.projects.onedp.AIProjectClient.indexes.list_latest": "Azure.AI.Projects.ServicePatterns.Indexes.listLatest",
         "azure.ai.projects.onedp.AIProjectClient.indexes.get_version": "Azure.AI.Projects.ServicePatterns.Indexes.getVersion",

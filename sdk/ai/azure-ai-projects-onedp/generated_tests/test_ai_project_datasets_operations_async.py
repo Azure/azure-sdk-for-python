@@ -93,3 +93,17 @@ class TestAIProjectDatasetsOperationsAsync(AIProjectClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
+
+    @AIProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_datasets_get_credentials(self, aiproject_endpoint):
+        client = self.create_async_client(endpoint=aiproject_endpoint)
+        response = await client.datasets.get_credentials(
+            name="str",
+            version="str",
+            body={},
+            content_type="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

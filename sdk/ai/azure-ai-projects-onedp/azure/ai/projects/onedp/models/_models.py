@@ -83,6 +83,37 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         super().__init__(*args, auth_type=CredentialType.API_KEY, **kwargs)
 
 
+class AssetCredentialResponse(_model_base.Model):
+    """Represents a reference to a blob for consumption.
+
+    :ivar blob_reference_for_consumption: Credential info to access the storage account. Required.
+    :vartype blob_reference_for_consumption:
+     ~azure.ai.projects.onedp.models.BlobReferenceForConsumption
+    """
+
+    blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
+        name="blobReferenceForConsumption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Credential info to access the storage account. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_reference_for_consumption: "_models.BlobReferenceForConsumption",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Index(_model_base.Model):
     """Index resource Definition.
 
@@ -199,7 +230,9 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
 class BlobReferenceForConsumption(_model_base.Model):
     """Represents a reference to a blob for consumption.
 
-    :ivar blob_uri: Blob URI path for client to upload data. Required.
+    :ivar blob_uri: Blob URI path for client to upload data. Example:
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -208,7 +241,8 @@ class BlobReferenceForConsumption(_model_base.Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -387,7 +421,9 @@ class DatasetVersion(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar dataset_uri: Uri of the data. Required.
+    :ivar dataset_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype dataset_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.onedp.models.DatasetType
@@ -410,7 +446,8 @@ class DatasetVersion(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
-    """[Required] Uri of the data. Required."""
+    """[Required] Uri of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -666,7 +703,9 @@ class EvaluatorConfiguration(_model_base.Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar dataset_uri: [Required] Uri of the data. Required.
+    :ivar dataset_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype dataset_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
@@ -721,7 +760,9 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar dataset_uri: [Required] Uri of the data. Required.
+    :ivar dataset_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype dataset_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
