@@ -504,6 +504,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def can_use_multiple_write_locations_for_request(self, request):  # pylint: disable=name-too-long
         return self.can_use_multiple_write_locations() and (
             request.resource_type == http_constants.ResourceType.Document
+            or request.resource_type == http_constants.ResourceType.PartitionKey
             or (
                 request.resource_type == http_constants.ResourceType.StoredProcedure
                 and request.operation_type == documents._OperationType.ExecuteJavaScript

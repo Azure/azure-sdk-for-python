@@ -2192,8 +2192,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id,
-                                  "partitionkey", documents._OperationType.Delete, options)
-        request_params = RequestObject("partitionkey", documents._OperationType.Delete, headers)
+                                  http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options)
+        request_params = RequestObject(http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
         _, last_response_headers = self.__Post(
             path=path,

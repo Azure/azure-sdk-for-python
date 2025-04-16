@@ -314,7 +314,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         set of locations from the final location evaluation. The locations in
         this list are specified as the names of the azure Cosmos locations like,
         'West US', 'East US', 'Central India' and so on.
-    :vartype ExcludedLocations: ~CosmosExcludedLocations
+    :vartype ExcludedLocations: List[str]
     :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
