@@ -31,92 +31,14 @@
   - Added model `Project`
   - Added model `ProjectProperties`
   - Added model `ProxyResource`
-  - Model `OrganizationsOperations` added method `get_postgres_versions`
-  - Added model `BranchesOperations`
-  - Added model `ComputesOperations`
-  - Added model `EndpointsOperations`
-  - Added model `ModelsOperations`
-  - Added model `NeonDatabasesOperations`
-  - Added model `NeonRolesOperations`
-  - Added model `ProjectsOperations`
-  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
-  - Method `OrganizationProperties.__init__` has a new overload `def __init__(self: None, marketplace_details: _models.MarketplaceDetails, user_details: _models.UserDetails, company_details: _models.CompanyDetails, partner_organization_properties: Optional[_models.PartnerOrganizationProperties], project_properties: Optional[_models.ProjectProperties])`
-  - Method `Attributes.__init__` has a new overload `def __init__(self: None, name: str, value: str)`
-  - Method `Attributes.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Branch.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.BranchProperties])`
-  - Method `Branch.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `BranchProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], project_id: Optional[str], parent_id: Optional[str], role_name: Optional[str], database_name: Optional[str], roles: Optional[List[_models.NeonRoleProperties]], databases: Optional[List[_models.NeonDatabaseProperties]], endpoints: Optional[List[_models.EndpointProperties]])`
-  - Method `BranchProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Compute.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.ComputeProperties])`
-  - Method `Compute.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `ComputeProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], region: Optional[str], cpu_cores: Optional[int], memory: Optional[int], status: Optional[str])`
-  - Method `ComputeProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `ConnectionUriProperties.__init__` has a new overload `def __init__(self: None, project_id: Optional[str], branch_id: Optional[str], database_name: Optional[str], role_name: Optional[str], endpoint_id: Optional[str], is_pooled: Optional[bool])`
-  - Method `ConnectionUriProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `DefaultEndpointSettings.__init__` has a new overload `def __init__(self: None, autoscaling_limit_min_cu: float, autoscaling_limit_max_cu: float)`
-  - Method `DefaultEndpointSettings.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Endpoint.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.EndpointProperties])`
-  - Method `Endpoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `EndpointProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], project_id: Optional[str], branch_id: Optional[str], endpoint_type: Optional[Union[str, _models.EndpointType]])`
-  - Method `EndpointProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `NeonDatabase.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.NeonDatabaseProperties])`
-  - Method `NeonDatabase.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `NeonDatabaseProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], branch_id: Optional[str], owner_name: Optional[str])`
-  - Method `NeonDatabaseProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `NeonRole.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.NeonRoleProperties])`
-  - Method `NeonRole.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `NeonRoleProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], branch_id: Optional[str], permissions: Optional[List[str]], is_super_user: Optional[bool])`
-  - Method `NeonRoleProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `PgVersion.__init__` has a new overload `def __init__(self: None, version: Optional[int])`
-  - Method `PgVersion.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `PgVersionsResult.__init__` has a new overload `def __init__(self: None, versions: List[_models.PgVersion])`
-  - Method `PgVersionsResult.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Project.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.ProjectProperties])`
-  - Method `Project.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `ProjectProperties.__init__` has a new overload `def __init__(self: None, entity_name: Optional[str], attributes: Optional[List[_models.Attributes]], region_id: Optional[str], storage: Optional[int], pg_version: Optional[int], history_retention: Optional[int], default_endpoint_settings: Optional[_models.DefaultEndpointSettings], branch: Optional[_models.BranchProperties], roles: Optional[List[_models.NeonRoleProperties]], databases: Optional[List[_models.NeonDatabaseProperties]], endpoints: Optional[List[_models.EndpointProperties]])`
-  - Method `ProjectProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `OrganizationsOperations.get_postgres_versions` has a new overload `def get_postgres_versions(self: None, resource_group_name: str, parameters: Optional[PgVersion], content_type: str)`
-  - Method `OrganizationsOperations.get_postgres_versions` has a new overload `def get_postgres_versions(self: None, resource_group_name: str, parameters: Optional[JSON], content_type: str)`
-  - Method `OrganizationsOperations.get_postgres_versions` has a new overload `def get_postgres_versions(self: None, resource_group_name: str, parameters: Optional[IO[bytes]], content_type: str)`
-  - Method `BranchesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, resource: Branch, content_type: str)`
-  - Method `BranchesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, resource: JSON, content_type: str)`
-  - Method `BranchesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, resource: IO[bytes], content_type: str)`
-  - Method `BranchesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, properties: Branch, content_type: str)`
-  - Method `BranchesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, properties: JSON, content_type: str)`
-  - Method `BranchesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, properties: IO[bytes], content_type: str)`
-  - Method `ComputesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, resource: Compute, content_type: str)`
-  - Method `ComputesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, resource: JSON, content_type: str)`
-  - Method `ComputesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, resource: IO[bytes], content_type: str)`
-  - Method `ComputesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, properties: Compute, content_type: str)`
-  - Method `ComputesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, properties: JSON, content_type: str)`
-  - Method `ComputesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, compute_name: str, properties: IO[bytes], content_type: str)`
-  - Method `EndpointsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, resource: Endpoint, content_type: str)`
-  - Method `EndpointsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, resource: JSON, content_type: str)`
-  - Method `EndpointsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, resource: IO[bytes], content_type: str)`
-  - Method `EndpointsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, properties: Endpoint, content_type: str)`
-  - Method `EndpointsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, properties: JSON, content_type: str)`
-  - Method `EndpointsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, endpoint_name: str, properties: IO[bytes], content_type: str)`
-  - Method `NeonDatabasesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, resource: NeonDatabase, content_type: str)`
-  - Method `NeonDatabasesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, resource: JSON, content_type: str)`
-  - Method `NeonDatabasesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, resource: IO[bytes], content_type: str)`
-  - Method `NeonDatabasesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, properties: NeonDatabase, content_type: str)`
-  - Method `NeonDatabasesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, properties: JSON, content_type: str)`
-  - Method `NeonDatabasesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_database_name: str, properties: IO[bytes], content_type: str)`
-  - Method `NeonRolesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, resource: NeonRole, content_type: str)`
-  - Method `NeonRolesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, resource: JSON, content_type: str)`
-  - Method `NeonRolesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, resource: IO[bytes], content_type: str)`
-  - Method `NeonRolesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, properties: NeonRole, content_type: str)`
-  - Method `NeonRolesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, properties: JSON, content_type: str)`
-  - Method `NeonRolesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, branch_name: str, neon_role_name: str, properties: IO[bytes], content_type: str)`
-  - Method `ProjectsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, resource: Project, content_type: str)`
-  - Method `ProjectsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, resource: JSON, content_type: str)`
-  - Method `ProjectsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, organization_name: str, project_name: str, resource: IO[bytes], content_type: str)`
-  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, properties: Project, content_type: str)`
-  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, properties: JSON, content_type: str)`
-  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, organization_name: str, project_name: str, properties: IO[bytes], content_type: str)`
-  - Method `ProjectsOperations.get_connection_uri` has a new overload `def get_connection_uri(self: None, resource_group_name: str, organization_name: str, project_name: str, connection_uri_parameters: ConnectionUriProperties, content_type: str)`
-  - Method `ProjectsOperations.get_connection_uri` has a new overload `def get_connection_uri(self: None, resource_group_name: str, organization_name: str, project_name: str, connection_uri_parameters: JSON, content_type: str)`
-  - Method `ProjectsOperations.get_connection_uri` has a new overload `def get_connection_uri(self: None, resource_group_name: str, organization_name: str, project_name: str, connection_uri_parameters: IO[bytes], content_type: str)`
+  - Operation group `OrganizationsOperations` added method `get_postgres_versions`
+  - Added operation group `BranchesOperations`
+  - Added operation group `ComputesOperations`
+  - Added operation group `EndpointsOperations`
+  - Added operation group `ModelsOperations`
+  - Added operation group `NeonDatabasesOperations`
+  - Added operation group `NeonRolesOperations`
+  - Added operation group `ProjectsOperations`
 
 ## 1.0.0b1 (2024-12-03)
 
