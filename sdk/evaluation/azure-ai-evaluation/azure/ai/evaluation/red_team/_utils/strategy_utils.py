@@ -108,57 +108,48 @@ def get_chat_target(
         return target
 
     chat_target = None
-    # Check if target is a dict-like object with the required keys
-    if not isinstance(target, Callable) and hasattr(target, "__getitem__") and hasattr(target, "get"):
-        # Type check passed, now we can safely use dictionary-like access
-        target_dict = target  # type: Dict[str, Any]
-        
-        if "azure_deployment" in target_dict and "azure_endpoint" in target_dict:  # Azure OpenAI
-            api_key = target_dict.get("api_key", None)
-            api_version = target_dict.get("api_version", "2024-06-01")
+    if not isinstance(target, Callable):
+        if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
+            api_key = target.get("api_key", None)
+            api_version = target.get("api_version", "2024-06-01")
             if not api_key:
                 chat_target = OpenAIChatTarget(
-                    model_name=target_dict["azure_deployment"],
-                    endpoint=target_dict["azure_endpoint"],
+                    model_name=target["azure_deployment"],
+                    endpoint=target["azure_endpoint"],
                     use_aad_auth=True,
                     api_version=api_version,
                 )
             else:
                 chat_target = OpenAIChatTarget(
-                    model_name=target_dict["azure_deployment"],
-                    endpoint=target_dict["azure_endpoint"],
+                    model_name=target["azure_deployment"],
+                    endpoint=target["azure_endpoint"],
                     api_key=api_key,
                     api_version=api_version,
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
-                model_name=target_dict.get("model", ""),
-                endpoint=target_dict.get("base_url", None),
-                api_key=target_dict.get("api_key", ""),
-                api_version=target_dict.get("api_version", "2024-06-01"),
+                model_name=target["model"],
+                endpoint=target.get("base_url", None),
+                api_key=target["api_key"],
+                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable
         # First, determine if the callable has is a valid callback target
         try:
-            # Only attempt to get signature for actual callables
-            if callable(target):
-                sig = inspect.signature(target)
-                param_names = list(sig.parameters.keys())
-                has_callback_signature = (
-                    "messages" in param_names
-                    and "stream" in param_names
-                    and "session_state" in param_names
-                    and "context" in param_names
-                )
-            else:
-                has_callback_signature = False
+            sig = inspect.signature(target)
+            param_names = list(sig.parameters.keys())
+            has_callback_signature = (
+                "messages" in param_names
+                and "stream" in param_names
+                and "session_state" in param_names
+                and "context" in param_names
+            )
         except (ValueError, TypeError):
             has_callback_signature = False
 
-        if has_callback_signature and callable(target):
-            # We know target is callable and has the right signature
-            chat_target = _CallbackChatTarget(callback=target)  # type: ignore
+        if has_callback_signature:
+            chat_target = _CallbackChatTarget(callback=target)
         else:
 
             async def callback_target(
@@ -200,7 +191,7 @@ def get_orchestrators_for_attack_strategies(
     :return: A list of orchestrator functions
     :rtype: List[Callable]
     """
-    call_to_orchestrators: List[Callable] = []
+    call_to_orchestrators = []
 
     # Since we're just returning one orchestrator type for now, simplify the logic
     # This can be expanded later if different orchestrators are needed for different strategies

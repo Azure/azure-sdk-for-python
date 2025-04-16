@@ -50,7 +50,7 @@ def get_flattened_attack_strategies(
     :return: Flattened list of attack strategies
     :rtype: List[Union[AttackStrategy, List[AttackStrategy]]]
     """
-    flattened_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = []
+    flattened_strategies = []
     seen_strategies = set()
     attack_strategies_temp = attack_strategies.copy()
 
@@ -75,14 +75,12 @@ def get_flattened_attack_strategies(
     attack_strategies_temp.append(AttackStrategy.Baseline)
 
     for strategy in attack_strategies_temp:
-        if isinstance(strategy, list):  # For composed strategies
-            if tuple(strategy) not in seen_strategies:
-                flattened_strategies.append([s for s in strategy])
-                seen_strategies.add(tuple(strategy))
-        elif isinstance(strategy, AttackStrategy):  # For single strategies
-            if tuple([strategy]) not in seen_strategies:
-                flattened_strategies.append([strategy])  # Append as a list with one element
-                seen_strategies.add(tuple([strategy]))
+        if isinstance(strategy, List) and tuple(strategy) not in seen_strategies:  # For composed strategies
+            flattened_strategies.append([s for s in strategy])
+            seen_strategies.add(tuple(strategy))
+        elif isinstance(strategy, AttackStrategy) and strategy not in seen_strategies:  # For single strategies
+            flattened_strategies.append(strategy)
+            seen_strategies.add(strategy)
 
     return flattened_strategies
 
@@ -103,12 +101,12 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     and attack complexity levels in a tabular format.
 
     :param redteam_result: The RedTeamResult object to format
-    :type redteam_result: RedTeamResult
+    :type redteam_result: Dict[str, Any]
     :return: A formatted scorecard as a string
     :rtype: str
     """
-    scorecard = redteam_result.scorecard
-    risk_summary = scorecard.risk_category_summary[0] if scorecard.risk_category_summary else {}
+    scorecard = redteam_result["scorecard"]
+    risk_summary = scorecard["risk_category_summary"][0] if scorecard["risk_category_summary"] else {}
     overall_asr = risk_summary.get("overall_asr", 0)
 
     output = [f"Overall ASR: {overall_asr}%"]
@@ -123,7 +121,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     )
     output.append(separator)
 
-    for item in scorecard.joint_risk_attack_summary:
+    for item in scorecard["joint_risk_attack_summary"]:
         risk_category = item["risk_category"].replace("_", "-").capitalize()
 
         baseline_val = item.get("baseline_asr")

@@ -10,7 +10,7 @@ import logging
 import tempfile
 import time
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Mapping, Optional, Union, cast
+from typing import Callable, Dict, List, Optional, Union, cast
 import json
 from pathlib import Path
 import itertools
@@ -1591,7 +1591,7 @@ class RedTeam:
             eval_logger.debug(f"Starting evaluation for {risk_category.value}/{strategy_name}")
             evaluate_outputs = evaluate(
                 data=data_path,
-                evaluators=cast(Dict[str, Callable[..., Any]], evaluators_dict),
+                evaluators=evaluators_dict,
                 output_path=result_path,
             )
             eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
@@ -2020,7 +2020,7 @@ class RedTeam:
                 print("📚 Using attack objectives from Azure RAI service")
 
             # Dictionary to store all objectives
-            all_objectives: Dict[str, Dict[str, List[str]]] = {}
+            all_objectives = {}
 
             # First fetch baseline objectives for all risk categories
             # This is important as other strategies depend on baseline objectives
@@ -2164,8 +2164,7 @@ class RedTeam:
             tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
             tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
 
-            # If self.start_time is None, use the current time to avoid type errors
-            total_time = time.time() - (self.start_time or time.time())
+            total_time = time.time() - self.start_time
             # Only log the summary to file, don't print to console
             self.logger.info(
                 f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes"
@@ -2177,18 +2176,18 @@ class RedTeam:
             # Convert results to RedTeamResult using only red_team_info
             red_team_result = self._to_red_team_result()
             scan_result = ScanResult(
-                scorecard=red_team_result.scorecard,
-                parameters=red_team_result.parameters,
-                attack_details=red_team_result.attack_details,
-                studio_url=red_team_result.studio_url,
+                scorecard=red_team_result["scorecard"],
+                parameters=red_team_result["parameters"],
+                attack_details=red_team_result["attack_details"],
+                studio_url=red_team_result["studio_url"],
             )
 
             # Create output with either full results or just conversations
             if data_only:
                 self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result.attack_details)
+                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
             else:
-                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result.attack_details)
+                output = RedTeamResult(scan_result=red_team_result, attack_details=red_team_result["attack_details"])
 
             # Log results to MLFlow
             self.logger.info("Logging results to MLFlow")
@@ -2217,7 +2216,7 @@ class RedTeam:
 
         if output.scan_result:
             self.logger.debug("Generating scorecard")
-            scorecard = self._to_scorecard(output)
+            scorecard = self._to_scorecard(output.scan_result)
             # Store scorecard in a variable for accessing later if needed
             self.scorecard = scorecard
 
@@ -2225,7 +2224,7 @@ class RedTeam:
             print(scorecard)
 
             # Print URL for detailed results (once only)
-            studio_url = output.scan_result.studio_url if output.scan_result else ""
+            studio_url = output.scan_result.get("studio_url", "")
             if studio_url:
                 print(f"\nDetailed results available at:\n{studio_url}")
 
