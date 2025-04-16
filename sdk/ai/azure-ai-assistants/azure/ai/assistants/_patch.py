@@ -1759,70 +1759,52 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
                         event_handler=event_handler,
                     )
 
-    @overload
-    def upload_file(self, body: _models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Multipart body. Required.
-        :type body: ~azure.ai.assistants.models.UploadFileRequest
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Multipart body. Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def upload_file(
         self,
-        body: Union[_models.UploadFileRequest, JSON] = _Unset,
+        body: Optional[JSON] = None,
+        *,
+        file: Optional[FileType] = None,
+        file_path: Optional[str] = None,
+        purpose: Union[str, _models.FilePurpose, None] = None,
+        filename: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
 
-        kwargs can include next parameters:
-        param file: File content. Required if `body` and `purpose` are not provided.
-        type file: Optional[FileType]
-        param file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        type file_path: Optional[str]
-        param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-        "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        type purpose: Union[str, _models.FilePurpose, None]
-        param filename: The name of the file.
-        type filename: Optional[str]
+        
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
         :type body: Optional[JSON]
+        :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :type file: Optional[FileType]
+        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :type file_path: Optional[str]
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+          "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :type purpose: Union[str, _models.FilePurpose, None]
+        :keyword  filename: The name of the file.
+        :type filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
-        if body is not _Unset:
-            return super().upload_file(body=body, **kwargs)
+        # If a JSON body is provided directly, pass it along
+        if body is not None:
+            return super()._upload_file(body=body, **kwargs)
 
-        purpose = kwargs.get("purpose")
-        file = kwargs.get("file")
-        file_path = kwargs.get("file_path")
-        filename = kwargs.get("filename")
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
+        # If file content is passed in directly
         if file is not None and purpose is not None:
-            file_body = _models.UploadFileRequest(file=file, purpose=purpose, filename=filename)
-            return super().upload_file(body=file_body, **kwargs)
+            return super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
+        # If a file path is provided
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
@@ -1831,12 +1813,11 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
-                file_body = _models.UploadFileRequest(file=file_content, purpose=purpose, filename=filename)
 
-                return super().upload_file(body=file_body, **kwargs)
+                return super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}") from e
 

@@ -10,10 +10,9 @@ import json
 import logging
 import os
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast, TYPE_CHECKING
 from urllib.parse import urlparse
 
-from azure.ai.assistants import _types
 from azure.ai.assistants.models import AssistantRunStream, AsyncAssistantRunStream, _models
 from azure.ai.assistants.models._enums import AssistantsApiResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.assistants.models import (
@@ -66,6 +65,9 @@ try:
     _tracing_library_available = True
 except ModuleNotFoundError:
     _tracing_library_available = False
+
+if TYPE_CHECKING:
+    from .. import _types
 
 
 __all__ = [

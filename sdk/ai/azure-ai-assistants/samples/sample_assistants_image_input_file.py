@@ -5,15 +5,15 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use basic assistant operations from
+    This sample demonstrates how to use basic assistant operations using image file input for the
     the Azure Assistants service using a synchronous client.
 
 USAGE:
-    python sample_assistants_basics.py
+    python sample_assistants_image_input_file.py
 
     Before running the sample:
 
-    pip install azure-ai-assistants azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
@@ -22,39 +22,47 @@ USAGE:
 """
 
 import os, time
+from typing import List
 from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.assistants.models import ListSortOrder, MessageTextContent
+from azure.ai.assistants.models import (
+    MessageTextContent,
+    MessageInputContentBlock,
+    MessageImageFileParam,
+    MessageInputTextBlock,
+    MessageInputImageFileBlock,
+)
 
-# [START create_project_client]
+
 assistants_client = AssistantsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
-# [END create_project_client]
 
 with assistants_client:
 
-    # [START create_assistant]
     assistant = assistants_client.create_assistant(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are helpful assistant",
     )
-    # [END create_assistant]
     print(f"Created assistant, assistant ID: {assistant.id}")
 
-    # [START create_thread]
     thread = assistants_client.create_thread()
-    # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
-    # [START create_message]
-    message = assistants_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    # [END create_message]
+    image_file = assistants_client.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
+    print(f"Uploaded file, file ID: {image_file.id}")
+
+    input_message = "Hello, what is in the image ?"
+    file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
+    content_blocks: List[MessageInputContentBlock] = [
+        MessageInputTextBlock(text=input_message),
+        MessageInputImageFileBlock(image_file=file_param),
+    ]
+    message = assistants_client.create_message(thread_id=thread.id, role="user", content=content_blocks)
     print(f"Created message, message ID: {message.id}")
 
-    # [START create_run]
     run = assistants_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
 
     # Poll the run as long as run status is queued or in progress
@@ -62,14 +70,15 @@ with assistants_client:
         # Wait for a second
         time.sleep(1)
         run = assistants_client.get_run(thread_id=thread.id, run_id=run.id)
-        # [END create_run]
         print(f"Run status: {run.status}")
+
+    if run.status == "failed":
+        print(f"Run failed: {run.last_error}")
 
     assistants_client.delete_assistant(assistant.id)
     print("Deleted assistant")
 
-    # [START list_messages]
-    messages = assistants_client.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    messages = assistants_client.list_messages(thread_id=thread.id)
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.
@@ -78,4 +87,4 @@ with assistants_client:
         if isinstance(last_message_content, MessageTextContent):
             print(f"{data_point.role}: {last_message_content.text.value}")
 
-    # [END list_messages]
+    print(f"Messages: {messages}")
