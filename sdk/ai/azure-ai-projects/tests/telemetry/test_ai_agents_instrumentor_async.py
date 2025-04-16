@@ -53,16 +53,6 @@ CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
 content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
 
-# TODO - remove when https://github.com/Azure/azure-sdk-for-python/issues/40086 is fixed
-class FakeToolSetDict(dict):
-    def __init__(self, toolset=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.toolset = toolset
-
-    def get(self, k, default=None):
-        return self.toolset
-
-
 class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     """Tests for AI agents instrumentor."""
 
@@ -437,12 +427,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
+        client.agents.enable_auto_function_calls(toolset=toolset)
+
         agent = await client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+        client.agents.enable_auto_function_calls(toolset=toolset)
 
         thread = await client.agents.create_thread()
         message = await client.agents.create_message(
@@ -662,7 +654,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+        client.agents.enable_auto_function_calls(toolset=toolset)
 
         thread = await client.agents.create_thread()
         message = await client.agents.create_message(

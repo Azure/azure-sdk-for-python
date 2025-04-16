@@ -36,9 +36,9 @@ class AIProjectClient:
     :vartype evaluations: azure.ai.projects.aio.operations.EvaluationsOperations
     :param endpoint: The Azure AI Foundry project endpoint, in the form
      ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``\\\\ , where
-     :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus) and
-     :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
+     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
+     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
+     the Enterprise private link. Required.
     :type endpoint: str
     :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
@@ -121,12 +121,16 @@ class AIProjectClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
             ),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -215,12 +215,20 @@ class TestAgentsOperations:
         else:
             submit_tool_mock.assert_not_called()
 
-    def _assert_toolset_dict(self, project_client: AIProjectClient, agent_id: str, toolset: Optional[AsyncToolSet]):
-        """Check that the tool set dictionary state is as expected."""
-        if toolset is None:
-            assert agent_id not in project_client.agents._toolset
-        else:
-            assert project_client.agents._toolset.get(agent_id) is not None
+    def _set_toolcalls(
+        self, project_client: AgentsOperations, toolset1: Optional[AsyncToolSet], toolset2: Optional[AsyncToolSet]
+    ) -> None:
+        """Set the tool calls for the agent."""
+        if toolset1 and toolset2:
+            function_in_toolset1 = set(toolset1.get_tool(tool_type=AsyncFunctionTool)._functions.values())
+            function_in_toolset2 = set(toolset2.get_tool(tool_type=AsyncFunctionTool)._functions.values())
+            function_tool = AsyncFunctionTool(function_in_toolset1)
+            function_tool.add_functions(function_in_toolset2)
+            project_client.enable_auto_function_calls(function_tool=function_tool)
+        elif toolset1:
+            project_client.enable_auto_function_calls(toolset=toolset1)
+        elif toolset2:
+            project_client.enable_auto_function_calls(toolset=toolset2)
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
@@ -264,6 +272,7 @@ class TestAgentsOperations:
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
         async with project_client:
+            self._set_toolcalls(project_client.agents, toolset1, toolset2)
             # Check that pipelines are created as expected.
             agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
@@ -286,16 +295,6 @@ class TestAgentsOperations:
 
             await project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent2.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
-            # Check the contents of a toolset
-            self._assert_toolset_dict(project_client, agent1.id, toolset1)
-            self._assert_toolset_dict(project_client, agent2.id, toolset2)
-            # Check that we cleanup tools after deleting agent.
-            await project_client.agents.delete_agent(agent1.id)
-            self._assert_toolset_dict(project_client, agent1.id, None)
-            self._assert_toolset_dict(project_client, agent2.id, toolset2)
-            await project_client.agents.delete_agent(agent2.id)
-            self._assert_toolset_dict(project_client, agent1.id, None)
-            self._assert_toolset_dict(project_client, agent2.id, None)
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
@@ -337,12 +336,11 @@ class TestAgentsOperations:
                 instructions="You are a helpful assistant",
                 toolset=toolset1,
             )
-            self._assert_toolset_dict(project_client, agent1.id, toolset1)
-            await project_client.agents.update_agent(agent1.id, toolset=toolset2)
+            agent1 = await project_client.agents.update_agent(agent1.id, toolset=toolset2)
             if toolset2 is None:
-                self._assert_toolset_dict(project_client, agent1.id, toolset1)
+                assert agent1.tools == None
             else:
-                self._assert_toolset_dict(project_client, agent1.id, toolset2)
+                assert agent1.tools[0].function.name == function2.__name__
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
@@ -394,8 +392,8 @@ class TestAgentsOperations:
                 toolset=toolset1,
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
-            self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
+            self._set_toolcalls(project_client.agents, toolset1, toolset2)
             # Create run with new tool set, which also can be none.
             await project_client.agents.create_and_process_run(
                 thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2
@@ -404,7 +402,6 @@ class TestAgentsOperations:
                 self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset2)
             else:
                 self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
-            self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
@@ -441,8 +438,10 @@ class TestAgentsOperations:
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
+
         async with project_client:
             # Check that pipelines are created as expected.
+            self._set_toolcalls(project_client.agents, toolset, None)
             agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
@@ -505,6 +504,7 @@ class TestAgentsOperations:
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
         async with project_client:
+            self._set_toolcalls(project_client.agents, toolset, None)
             # Check that pipelines are created as expected.
             agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
@@ -554,7 +554,7 @@ class TestIntegrationAgentsOperations:
         toolset.add(functions)
 
         operation = AgentsOperations()
-        operation._toolset = {"asst_01": toolset}
+        operation.enable_auto_function_calls(toolset=toolset)
         count = 0
 
         async with await operation.create_stream(thread_id="thread_id", agent_id="asst_01") as stream:
