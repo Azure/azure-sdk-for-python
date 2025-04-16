@@ -24,12 +24,11 @@ from azure.ai.projects.models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    RunStepError,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
-    RunStepCodeInterpreterToolCallDetails,
-    RunStepDeltaCodeInterpreterOutput,
-    SubmitToolOutputsAction,
+    RunStepBingGroundingToolCall,
     ThreadMessage,
     ThreadRun,
     ToolDefinition,
@@ -54,13 +53,12 @@ from azure.ai.projects.telemetry.agents._utils import (
     GEN_AI_THREAD_RUN_STATUS,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
-    GEN_AI_CREATED_AT,
-    GEN_AI_COMPLETED_AT,
-    GEN_AI_CANCELLED_AT,
-    GEN_AI_FAILED_AT,
+    GEN_AI_RUNSTEP_START_TIMESTAMP,
+    GEN_AI_RUNSTEP_END_TIMESTAMP,
+    GEN_AI_RUNSTEP_CANCEL_TIMESTAMP,
+    GEN_AI_RUNSTEP_FAIL_TIMESTAMP,
     GEN_AI_RUN_STEP_STATUS,
-    GEN_AI_RUN_STEP_LAST_ERROR,
-    GEN_AI_RUN_STEP_DETAILS,
+    ERROR_MESSAGE,
     OperationName,
     start_span,
 )
@@ -269,8 +267,8 @@ class _AIAgentsInstrumentorPreview:
         created_at: Optional[datetime] = None,
         completed_at: Optional[datetime] = None,
         cancelled_at: Optional[datetime] = None,
-        failed_at: Optional[int] = None,
-        run_step_last_error: Optional[str] = None,
+        failed_at: Optional[datetime] = None,
+        run_step_last_error: Optional[RunStepError] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> Dict[str, Any]:
         attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
@@ -293,22 +291,36 @@ class _AIAgentsInstrumentorPreview:
             attrs[GEN_AI_RUN_STEP_STATUS] = self._status_to_string(run_step_status)
 
         if created_at:
-            created_at_string = created_at.strftime("%Y-%m-%d %H:%M:%S.%f")
-            attrs[GEN_AI_CREATED_AT] = created_at_string
+            if isinstance(created_at, datetime):
+                attrs[GEN_AI_RUNSTEP_START_TIMESTAMP] = created_at.isoformat()
+            else:
+                # fallback in case int or string gets passed
+                attrs[GEN_AI_RUNSTEP_START_TIMESTAMP] = str(created_at)
 
         if completed_at:
-            completed_at_string = completed_at.strftime("%Y-%m-%d %H:%M:%S.%f")
-            attrs[GEN_AI_COMPLETED_AT] = completed_at_string
+            if isinstance(completed_at, datetime):
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = completed_at.isoformat()
+            else:
+                # fallback in case int or string gets passed
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(completed_at)
 
         if cancelled_at:
-            cancelled_at_string = cancelled_at.strftime("%Y-%m-%d %H:%M:%S.%f")
-            attrs[GEN_AI_CANCELLED_AT] = cancelled_at_string
+            if isinstance(cancelled_at, datetime):
+                attrs[GEN_AI_RUNSTEP_CANCEL_TIMESTAMP] = cancelled_at.isoformat()
+            else:
+                # fallback in case int or string gets passed
+                attrs[GEN_AI_RUNSTEP_CANCEL_TIMESTAMP] = str(cancelled_at)
 
         if failed_at:
-            attrs[GEN_AI_FAILED_AT] = failed_at
+            if isinstance(failed_at, datetime):
+                attrs[GEN_AI_RUNSTEP_FAIL_TIMESTAMP] = failed_at.isoformat()
+            else:
+                # fallback in case int or string gets passed
+                attrs[GEN_AI_RUNSTEP_FAIL_TIMESTAMP] = failed_at.isoformat()
 
         if run_step_last_error:
-            attrs[GEN_AI_RUN_STEP_LAST_ERROR] = run_step_last_error
+            attrs[ERROR_MESSAGE] = run_step_last_error.message
+            attrs[ERROR_TYPE] = run_step_last_error.code
 
         if usage:
             attrs[GEN_AI_USAGE_INPUT_TOKENS] = usage.prompt_tokens
@@ -344,6 +356,32 @@ class _AIAgentsInstrumentorPreview:
             usage=usage,
         )
 
+    def _get_tool_details(self, tool: Any) -> Dict[str, Any]:
+        """
+        Extracts tool details from a tool object dynamically and ensures the result is JSON-serializable.
+
+        :param tool: The tool object (e.g., RunStepToolCallDetails).
+        :return: A dictionary containing the tool details.
+        """
+        tool_details = {}
+
+        # Dynamically extract attributes from the tool object
+        for attr in dir(tool):
+            # Skip private or special attributes
+            if not attr.startswith("_") and not callable(getattr(tool, attr)):
+                try:
+                    value = getattr(tool, attr)
+                    # Ensure the value is JSON-serializable
+                    if isinstance(value, (str, int, float, bool, list, dict, type(None))):
+                        tool_details[attr] = value
+                    else:
+                        # Convert non-serializable objects to strings
+                        tool_details[attr] = str(value)
+                except Exception as e:
+                    logging.warning("Error extracting attribute '%s': %s", attr, str(e))
+
+        return tool_details
+
     def _process_tool_calls(self, step: RunStep) -> List[Dict[str, Any]]:
         """
         Helper method to process tool calls and return a list of tool call dictionaries.
@@ -371,7 +409,7 @@ class _AIAgentsInstrumentorPreview:
                 }
             elif isinstance(t, RunStepCodeInterpreterToolCall):
                 try:
-                    parsed_outputs = str(t.code_interpreter.outputs)
+                    parsed_outputs = json.dumps(t.code_interpreter.outputs)
                 except Exception as e:
                     logging.warning("Error parsing code interpreter outputs: '%s'", str(e))
                     parsed_outputs = {}
@@ -384,17 +422,32 @@ class _AIAgentsInstrumentorPreview:
                         "output": parsed_outputs,
                     },
                 }
-            else:
+            elif isinstance(t, RunStepBingGroundingToolCall):
+                bing_grounding = {}
                 try:
-                    step_details = str(step["step_details"]["tool_calls"])
+                     bing_grounding = json.dumps(t.bing_grounding)
                 except Exception as e:
-                    logging.warning("Error parsing step details: '%s'", str(e))
-                    step_details = ""
+                    logging.warning("Error parsing Bing grounding: '%s'", str(e))
+                    parsed_outputs = {}
 
                 tool_call = {
                     "id": t.id,
                     "type": t.type,
-                    "tool_call_details": step_details,
+                    t.type: {
+                        "bing_grounding": bing_grounding
+                    },
+                }
+            else:
+                try:
+                    tool_details = json.dumps(self._get_tool_details(t))
+                except Exception as e:
+                    logging.warning("Error parsing step details: '%s'", str(e))
+                    tool_details = ""
+
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    t.type: tool_details,
                 }
             tool_calls.append(tool_call)
         return tool_calls
