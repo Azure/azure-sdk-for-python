@@ -23,7 +23,7 @@ class TestNetAppManagementNetAppResourceRegionInfosOperations(AzureMgmtRecordedT
     def test_net_app_resource_region_infos_list(self, resource_group):
         response = self.client.net_app_resource_region_infos.list(
             location="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetAppManagementNetAppResourceRegionInfosOperations(AzureMgmtRecordedT
     def test_net_app_resource_region_infos_get(self, resource_group):
         response = self.client.net_app_resource_region_infos.get(
             location="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself

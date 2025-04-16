@@ -1,5 +1,75 @@
 # Release History
 
+## 14.0.0b1 (2025-05-19)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `net_app_resource_usages`
+  - Client `NetAppManagementClient` added operation group `net_app_resource_quota_limits_account`
+  - Client `NetAppManagementClient` added operation group `buckets`
+  - Model `Backup` added property `snapshot_creation_date`
+  - Model `Backup` added property `completion_date`
+  - Model `Backup` added property `is_large_volume`
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Model `EncryptionIdentity` added property `federated_client_id`
+  - Model `NetAppAccount` added property `nfs_v4_id_domain`
+  - Model `NetAppAccount` added property `multi_ad_status`
+  - Model `NetAppAccount` added property `ldap_configuration`
+  - Model `NetAppAccountPatch` added property `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` added property `multi_ad_status`
+  - Model `NetAppAccountPatch` added property `ldap_configuration`
+  - Model `OperationListResult` added property `next_link`
+  - Model `ReplicationObject` added property `destination_replications`
+  - Model `ReplicationObject` added property `external_replication_setup_status`
+  - Model `ReplicationObject` added property `external_replication_setup_info`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `ldap_server_type`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `Volume` added property `language`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `ldap_server_type`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `language`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Added model `Bucket`
+  - Added model `BucketCredentialsExpiry`
+  - Added model `BucketGenerateCredentials`
+  - Added model `BucketList`
+  - Added model `BucketPatch`
+  - Added model `BucketServerPatchProperties`
+  - Added model `BucketServerProperties`
+  - Added model `CifsUser`
+  - Added enum `CredentialsStatus`
+  - Added model `DestinationReplication`
+  - Added enum `ExternalReplicationSetupStatus`
+  - Added model `FileSystemUser`
+  - Added model `LdapConfiguration`
+  - Added enum `LdapServerType`
+  - Added model `ListQuotaReportResponse`
+  - Added enum `MultiAdStatus`
+  - Added enum `NetappProvisioningState`
+  - Added model `NfsUser`
+  - Added model `QuotaItem`
+  - Added model `QuotaItemList`
+  - Added model `QuotaReport`
+  - Added enum `ReplicationType`
+  - Added model `UsageName`
+  - Added model `UsageResult`
+  - Added model `UsagesListResult`
+  - Added enum `VolumeLanguage`
+  - Operation group `VolumesOperations` added method `begin_list_quota_report`
+  - Operation group `VolumesOperations` added method `begin_split_clone_from_parent`
+  - Added operation group `BucketsOperations`
+  - Added operation group `NetAppResourceQuotaLimitsAccountOperations`
+  - Added operation group `NetAppResourceUsagesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `SubscriptionQuotaItem`
+  - Deleted or renamed model `SubscriptionQuotaItemList`
+
 ## 13.4.0 (2025-02-26)
 
 ### Features Added

@@ -25,7 +25,7 @@ class TestNetAppManagementBackupVaultsOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.backup_vaults.list_by_net_app_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementBackupVaultsOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestNetAppManagementBackupVaultsOperationsAsync(AzureMgmtRecordedTestCase)
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestNetAppManagementBackupVaultsOperationsAsync(AzureMgmtRecordedTestCase)
                 account_name="str",
                 backup_vault_name="str",
                 body={"tags": {"str": "str"}},
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,7 +99,7 @@ class TestNetAppManagementBackupVaultsOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 account_name="str",
                 backup_vault_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

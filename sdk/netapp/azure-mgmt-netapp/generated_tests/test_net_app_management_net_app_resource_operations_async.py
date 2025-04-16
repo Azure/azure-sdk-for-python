@@ -27,7 +27,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
             name="str",
             type="str",
             resource_group="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
             location="str",
             name="str",
             subnet_id="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
             name="str",
             type="str",
             resource_group="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
     async def test_net_app_resource_query_region_info(self, resource_group):
         response = await self.client.net_app_resource.query_region_info(
             location="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
             location="str",
             network_sibling_set_id="str",
             subnet_id="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestNetAppManagementNetAppResourceOperationsAsync(AzureMgmtRecordedTestCas
                 subnet_id="str",
                 network_sibling_set_state_id="str",
                 network_features="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

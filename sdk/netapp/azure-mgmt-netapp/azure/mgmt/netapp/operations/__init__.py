@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._net_app_resource_operations import NetAppResourceOperations  # type: ignore
+from ._net_app_resource_usages_operations import NetAppResourceUsagesOperations  # type: ignore
 from ._net_app_resource_quota_limits_operations import NetAppResourceQuotaLimitsOperations  # type: ignore
 from ._net_app_resource_region_infos_operations import NetAppResourceRegionInfosOperations  # type: ignore
 from ._accounts_operations import AccountsOperations  # type: ignore
@@ -26,10 +28,12 @@ from ._volume_quota_rules_operations import VolumeQuotaRulesOperations  # type: 
 from ._volume_groups_operations import VolumeGroupsOperations  # type: ignore
 from ._subvolumes_operations import SubvolumesOperations  # type: ignore
 from ._backups_operations import BackupsOperations  # type: ignore
+from ._net_app_resource_quota_limits_account_operations import NetAppResourceQuotaLimitsAccountOperations  # type: ignore
 from ._backup_vaults_operations import BackupVaultsOperations  # type: ignore
 from ._backups_under_backup_vault_operations import BackupsUnderBackupVaultOperations  # type: ignore
 from ._backups_under_volume_operations import BackupsUnderVolumeOperations  # type: ignore
 from ._backups_under_account_operations import BackupsUnderAccountOperations  # type: ignore
+from ._buckets_operations import BucketsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -38,6 +42,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "NetAppResourceOperations",
+    "NetAppResourceUsagesOperations",
     "NetAppResourceQuotaLimitsOperations",
     "NetAppResourceRegionInfosOperations",
     "AccountsOperations",
@@ -50,10 +55,12 @@ __all__ = [
     "VolumeGroupsOperations",
     "SubvolumesOperations",
     "BackupsOperations",
+    "NetAppResourceQuotaLimitsAccountOperations",
     "BackupVaultsOperations",
     "BackupsUnderBackupVaultOperations",
     "BackupsUnderVolumeOperations",
     "BackupsUnderAccountOperations",
+    "BucketsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

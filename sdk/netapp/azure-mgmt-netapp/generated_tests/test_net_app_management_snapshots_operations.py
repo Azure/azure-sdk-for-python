@@ -26,7 +26,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
             pool_name="str",
             volume_name="str",
             snapshot_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
             volume_name="str",
             snapshot_name="str",
             body={},
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
             pool_name="str",
             volume_name="str",
             snapshot_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestNetAppManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
             volume_name="str",
             snapshot_name="str",
             body={"filePaths": ["str"], "destinationPath": "str"},
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
