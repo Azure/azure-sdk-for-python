@@ -98,6 +98,11 @@ class EnvironmentCredential:
                 tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
                 **kwargs
             )
+            _LOGGER.warning(
+                "EnvironmentCredential is configured to use username and password authentication. "
+                "This authentication method doesn't support multifactor authentication (MFA) and is deprecated. "
+                "For more details on Microsoft Entra MFA enforcement, see https://aka.ms/azsdk/identity/mfa."
+            )
 
         if self._credential:
             _LOGGER.info("Environment is configured for %s", self._credential.__class__.__name__)
