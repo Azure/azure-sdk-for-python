@@ -23,11 +23,6 @@ USAGE:
 
 import os
 import asyncio
-from azure.ai.evaluation.red_team import (
-    RedTeam, 
-    AttackStrategy, 
-    RiskCategory
-)
 from azure.identity import DefaultAzureCredential
 
 
@@ -84,7 +79,7 @@ class RedTeamSamples(object):
             application_scenario="A customer service chatbot for a retail company"
         )
 
-        print(f"Scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Scan completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_basic_callback]
         return results
 
@@ -148,7 +143,7 @@ class RedTeamSamples(object):
             application_scenario="An AI assistant for educational content"
         )
 
-        print(f"Advanced scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Advanced scan completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_advanced_callback]
         return results
 
@@ -196,7 +191,7 @@ class RedTeamSamples(object):
             timeout=360
         )
 
-        print(f"Model test completed with {len(model_results.redteaming_data) if model_results.redteaming_data else 0} conversations")
+        print(f"Model test completed with {len(model_results.attack_details) if model_results.attack_details else 0} conversations")
         # [END red_team_direct_model]
         return model_results
 
@@ -239,7 +234,7 @@ class RedTeamSamples(object):
             application_scenario="A financial advisor chatbot"
         )
 
-        print(f"Complexity levels test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Complexity levels test completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_complexity_levels]
         return results
 
@@ -289,7 +284,7 @@ class RedTeamSamples(object):
             application_scenario="A medical information assistant"
         )
 
-        print(f"Specific strategies test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Specific strategies test completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_specific_strategies]
         return results
 
@@ -335,7 +330,7 @@ class RedTeamSamples(object):
         )
 
         # Access the collected conversation data
-        conversations = results.redteaming_data
+        conversations = results.attack_details
         print(f"Collected {len(conversations) if conversations else 0} conversations without evaluation")
         # [END red_team_data_only]
         return results
@@ -468,7 +463,7 @@ class RedTeamSamples(object):
             application_scenario="A content creation assistant for bloggers and writers"
         )
 
-        print(f"Custom application test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Custom application test completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_custom_application]
         return results
 
@@ -520,7 +515,7 @@ class RedTeamSamples(object):
             application_scenario="A general-purpose AI assistant"
         )
         
-        print(f"PyRIT target scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"PyRIT target scan completed with {len(results.attack_details) if results.attack_details else 0} conversations")
         # [END red_team_pyrit_target]
         return results
 
