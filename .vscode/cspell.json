@@ -1453,7 +1453,9 @@
         "ralphe",
         "Inadherent",
         "nbformat",
-        "nbconvert"
+        "nbconvert",
+        "onedp",
+        "azureai"
       ]
     },
     {
