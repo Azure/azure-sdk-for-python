@@ -49,7 +49,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a QAEvaluator.
 
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_qa_evaluator]
             :end-before: [END threshold_qa_evaluator]
@@ -77,7 +77,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         fluency_threshold: int = 3,
         similarity_threshold: int = 3,
         f1_score_threshold: float = 0.5,
-        **kwargs
+        **kwargs,
     ):
         # Type checking
         for name, value in [

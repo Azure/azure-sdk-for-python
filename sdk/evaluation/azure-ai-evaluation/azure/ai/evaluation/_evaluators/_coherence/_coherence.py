@@ -32,7 +32,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a CoherenceEvaluator with a query and response.
-    
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
@@ -66,7 +66,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
 
     @overload

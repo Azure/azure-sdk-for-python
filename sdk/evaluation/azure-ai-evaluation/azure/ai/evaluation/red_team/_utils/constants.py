@@ -3,6 +3,7 @@ Constants used in Red Team Agent.
 """
 
 import os
+
 # Update imports to use direct import from azure.ai.evaluation
 from azure.ai.evaluation import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
 from .._attack_strategy import AttackStrategy
@@ -36,11 +37,11 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.UnicodeConfusable.value): "easy",
     str(AttackStrategy.UnicodeSubstitution.value): "easy",
     str(AttackStrategy.Url.value): "easy",
-    str(AttackStrategy.EASY.value): "easy", 
+    str(AttackStrategy.EASY.value): "easy",
     str(AttackStrategy.Tense.value): "moderate",
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
-    str(AttackStrategy.Jailbreak.value): "easy"
+    str(AttackStrategy.Jailbreak.value): "easy",
 }
 
 # Mapping of risk categories to their evaluators
@@ -48,7 +49,7 @@ RISK_CATEGORY_EVALUATOR_MAP = {
     RiskCategory.Violence: ViolenceEvaluator,
     RiskCategory.HateUnfairness: HateUnfairnessEvaluator,
     RiskCategory.Sexual: SexualEvaluator,
-    RiskCategory.SelfHarm: SelfHarmEvaluator
+    RiskCategory.SelfHarm: SelfHarmEvaluator,
 }
 
 # Task timeouts and status codes

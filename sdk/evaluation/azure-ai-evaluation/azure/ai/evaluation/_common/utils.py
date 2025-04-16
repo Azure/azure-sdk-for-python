@@ -274,7 +274,8 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
-def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5) -> bool:
+
+def check_score_is_valid(score: Union[str, float], min_score=1, max_score=5) -> bool:
     """Check if the score is valid, i.e. is convertable to number and is in the range [min_score, max_score].
 
     :param score: The score to check.
@@ -292,6 +293,7 @@ def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5)
         return False
 
     return min_score <= numeric_score <= max_score
+
 
 def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.

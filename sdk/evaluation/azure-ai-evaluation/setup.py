@@ -81,11 +81,7 @@ setup(
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
     ],
-    extras_require={
-        "redteam": [
-            "pyrit==0.8.1"
-        ]
-    },
+    extras_require={"redteam": ["pyrit==0.8.1"]},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",

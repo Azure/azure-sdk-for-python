@@ -61,7 +61,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a HateUnfairnessEvaluator.
 
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_hate_unfairness_evaluator]
             :end-before: [END threshold_hate_unfairness_evaluator]

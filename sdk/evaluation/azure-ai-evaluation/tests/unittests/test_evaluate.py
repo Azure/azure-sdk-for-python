@@ -90,6 +90,7 @@ def questions_answers_file():
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
 
+
 @pytest.fixture
 def questions_answers_korean_file():
     return _get_file("questions_answers_korean.jsonl")
@@ -865,7 +866,7 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
-    
+
     def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
         output_path = "eval_test_results_korean.jsonl"
 

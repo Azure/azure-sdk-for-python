@@ -85,17 +85,17 @@ class RougeScoreEvaluator(EvaluatorBase):
 
     @override
     def __init__(
-        self, 
+        self,
         rouge_type: RougeType,
         *,
         precision_threshold: float = 0.5,
         recall_threshold: float = 0.5,
-        f1_score_threshold: float = 0.5
+        f1_score_threshold: float = 0.5,
     ):
         self._rouge_type = rouge_type
         self._higher_is_better = True
         super().__init__()
-        
+
         # Type checking for threshold parameters
         for name, value in [
             ("precision_threshold", precision_threshold),
@@ -104,7 +104,7 @@ class RougeScoreEvaluator(EvaluatorBase):
         ]:
             if not isinstance(value, float):
                 raise TypeError(f"{name} must be a float, got {type(value)}")
-                
+
         self._threshold = {
             "precision": precision_threshold,
             "recall": recall_threshold,
@@ -112,10 +112,10 @@ class RougeScoreEvaluator(EvaluatorBase):
         }
 
     def _get_binary_result(
-            self,
-            rouge_precision: float,
-            rouge_recall: float,
-            rouge_f1_score: float,
+        self,
+        rouge_precision: float,
+        rouge_recall: float,
+        rouge_f1_score: float,
     ) -> Dict[str, bool]:
         """
         Get binary result based on the threshold.
@@ -140,22 +140,22 @@ class RougeScoreEvaluator(EvaluatorBase):
         precision_valid = not math.isnan(rouge_precision)
         recall_valid = not math.isnan(rouge_recall)
         f1_valid = not math.isnan(rouge_f1_score)
-        
+
         if self._higher_is_better:
             if precision_valid:
-                results["rouge_precision_result"] = (rouge_precision >= self._threshold["precision"])
+                results["rouge_precision_result"] = rouge_precision >= self._threshold["precision"]
             if recall_valid:
-                results["rouge_recall_result"] = (rouge_recall >= self._threshold["recall"])
+                results["rouge_recall_result"] = rouge_recall >= self._threshold["recall"]
             if f1_valid:
-                results["rouge_f1_score_result"] = (rouge_f1_score >= self._threshold["f1_score"])
+                results["rouge_f1_score_result"] = rouge_f1_score >= self._threshold["f1_score"]
         else:
             if precision_valid:
-                results["rouge_precision_result"] = (rouge_precision <= self._threshold["precision"])
+                results["rouge_precision_result"] = rouge_precision <= self._threshold["precision"]
             if recall_valid:
-                results["rouge_recall_result"] = (rouge_recall <= self._threshold["recall"])
+                results["rouge_recall_result"] = rouge_recall <= self._threshold["recall"]
             if f1_valid:
-                results["rouge_f1_score_result"] = (rouge_f1_score <= self._threshold["f1_score"])
-        
+                results["rouge_f1_score_result"] = rouge_f1_score <= self._threshold["f1_score"]
+
         return results
 
     @override
@@ -177,9 +177,9 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_f1_score_result": False,
         }
         # Convert metrics to floats, using nan for None or non-convertible values
-        rouge_precision = float(metrics.precision) if metrics.precision is not None else float('nan')
-        rouge_recall = float(metrics.recall) if metrics.recall is not None else float('nan')
-        rouge_f1_score = float(metrics.fmeasure) if metrics.fmeasure is not None else float('nan')
+        rouge_precision = float(metrics.precision) if metrics.precision is not None else float("nan")
+        rouge_recall = float(metrics.recall) if metrics.recall is not None else float("nan")
+        rouge_f1_score = float(metrics.fmeasure) if metrics.fmeasure is not None else float("nan")
         binary_results = self._get_binary_result(
             rouge_precision=rouge_precision,
             rouge_recall=rouge_recall,

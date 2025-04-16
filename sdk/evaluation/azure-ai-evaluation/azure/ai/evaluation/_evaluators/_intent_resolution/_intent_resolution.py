@@ -13,6 +13,7 @@ from azure.ai.evaluation._model_configurations import Conversation, Message
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
 
+
 @experimental
 class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
@@ -47,23 +48,19 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *,
-                 threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
         self,
         *,
-        query            : Union[str, List[dict]],
-        response         : Union[str, List[dict]],
-        tool_definitions : Optional[Union[dict, List[dict]]] = None,
+        query: Union[str, List[dict]],
+        response: Union[str, List[dict]],
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate intent resolution for a given query, response and optional tool definitions.
         The query and response can be either a string or a list of messages.
@@ -128,8 +125,12 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
         if isinstance(llm_output, dict):
-            score  = llm_output.get("resolution_score", math.nan)
-            if not check_score_is_valid(score, IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE):
+            score = llm_output.get("resolution_score", math.nan)
+            if not check_score_is_valid(
+                score,
+                IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE,
+                IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE,
+            ):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
                     internal_message="Invalid score value.",
@@ -138,19 +139,21 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
             reason = llm_output.get("explanation", "")
             score = float(score)
-            score_result = 'pass' if score >= self.threshold else 'fail'
+            score_result = "pass" if score >= self.threshold else "fail"
 
-            #remove fields 'explanation' and 'resolution_score' from llm_output as they are already included in the response_dict
-            if 'explanation' in llm_output: llm_output.pop("explanation")
-            if 'resolution_score' in llm_output: llm_output.pop("resolution_score")
+            # remove fields 'explanation' and 'resolution_score' from llm_output as they are already included in the response_dict
+            if "explanation" in llm_output:
+                llm_output.pop("explanation")
+            if "resolution_score" in llm_output:
+                llm_output.pop("resolution_score")
 
             response_dict = {
-                             f"{self._result_key}"           : score,
-                             f"{self._result_key}_result"    : score_result,
-                             f"{self._result_key}_threshold" : self.threshold,
-                             f"{self._result_key}_reason"    : reason,
-                             f"additional_details"           : llm_output
-                        }
+                f"{self._result_key}": score,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_reason": reason,
+                f"additional_details": llm_output,
+            }
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
         return {self._result_key: math.nan}

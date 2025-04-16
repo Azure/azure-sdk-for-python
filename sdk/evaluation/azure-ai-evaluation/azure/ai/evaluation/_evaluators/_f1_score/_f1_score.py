@@ -137,7 +137,7 @@ class F1ScoreEvaluator(EvaluatorBase):
             if f1_result <= self._threshold:
                 binary_result = True
         return {
-            "f1_score": f1_result, 
+            "f1_score": f1_result,
             "f1_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
             "f1_threshold": self._threshold,
         }

@@ -5,14 +5,20 @@ Unit tests for red_team_result module.
 import pytest
 import json
 from unittest.mock import patch, MagicMock
-try: 
+
+try:
     import pyrit
+
     has_pyrit = True
 except ImportError:
     has_pyrit = False
 if has_pyrit:
     from azure.ai.evaluation.red_team._red_team_result import (
-        RedTeamOutput, _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, _Conversation
+        RedTeamOutput,
+        _RedTeamResult,
+        _RedTeamingScorecard,
+        _RedTeamingParameters,
+        _Conversation,
     )
 
 
@@ -27,7 +33,7 @@ def mock_scorecard():
                 "overall_successful_attacks": 25,
                 "violence_asr": 30.0,
                 "violence_total": 50,
-                "violence_successful_attacks": 15
+                "violence_successful_attacks": 15,
             }
         ],
         "attack_technique_summary": [
@@ -40,7 +46,7 @@ def mock_scorecard():
                 "baseline_successful_attacks": 2,
                 "easy_complexity_asr": 20.0,
                 "easy_complexity_total": 30,
-                "easy_complexity_successful_attacks": 6
+                "easy_complexity_successful_attacks": 6,
             }
         ],
         "joint_risk_attack_summary": [
@@ -49,17 +55,12 @@ def mock_scorecard():
                 "baseline_asr": 10.0,
                 "easy_complexity_asr": 20.0,
                 "moderate_complexity_asr": 30.0,
-                "difficult_complexity_asr": 40.0
+                "difficult_complexity_asr": 40.0,
             }
         ],
         "detailed_joint_risk_attack_asr": {
-            "easy": {
-                "violence": {
-                    "Base64Converter_ASR": 15.0,
-                    "FlipConverter_ASR": 25.0
-                }
-            }
-        }
+            "easy": {"violence": {"Base64Converter_ASR": 15.0, "FlipConverter_ASR": 25.0}}
+        },
     }
 
 
@@ -71,13 +72,10 @@ def mock_parameters():
             "application_scenario": "Test scenario",
             "risk_categories": ["violence", "hate_unfairness"],
             "custom_attack_seed_prompts": "",
-            "policy_document": ""
+            "policy_document": "",
         },
         "attack_complexity": ["Easy", "Difficult"],
-        "techniques_used": {
-            "easy": ["Base64Converter", "FlipConverter"],
-            "difficult": ["CharSwapGenerator"]
-        }
+        "techniques_used": {"easy": ["Base64Converter", "FlipConverter"], "difficult": ["CharSwapGenerator"]},
     }
 
 
@@ -91,14 +89,9 @@ def mock_conversation():
         "risk_category": "violence",
         "conversation": [
             {"role": "user", "content": "Test attack message"},
-            {"role": "assistant", "content": "Test harmful response"}
+            {"role": "assistant", "content": "Test harmful response"},
         ],
-        "risk_assessment": {
-            "violence": {
-                "severity_label": "high",
-                "reason": "Contains explicit violence"
-            }
-        }
+        "risk_assessment": {"violence": {"severity_label": "high", "reason": "Contains explicit violence"}},
     }
 
 
@@ -112,7 +105,7 @@ class TestRedTeamOutputInitialization:
         output = RedTeamOutput()
         assert output.red_team_result is None
         assert output.redteaming_data is None
-        
+
         # Test with data
         mock_result = {"test": "data"}
         mock_data = [{"conversation": []}]
@@ -132,12 +125,12 @@ class TestRedTeamOutputMethods:
             "redteaming_scorecard": mock_scorecard,
             "redteaming_parameters": mock_parameters,
             "redteaming_data": [mock_conversation],
-            "studio_url": "https://example.com/studio"
+            "studio_url": "https://example.com/studio",
         }
-        
+
         output = RedTeamOutput(red_team_result=mock_result)
         json_str = output.to_json()
-        
+
         # Parse JSON to verify it's valid
         json_data = json.loads(json_str)
         assert "redteaming_scorecard" in json_data
@@ -155,7 +148,7 @@ class TestRedTeamOutputMethods:
         """Test to_scorecard method of RedTeamOutput."""
         mock_result = {"redteaming_scorecard": mock_scorecard}
         output = RedTeamOutput(red_team_result=mock_result)
-        
+
         scorecard = output.to_scorecard()
         assert scorecard == mock_scorecard
 
@@ -175,7 +168,7 @@ class TestRedTeamOutputConversion:
         """Test to_eval_qr_json_lines method with data."""
         output = RedTeamOutput(redteaming_data=[mock_conversation])
         json_lines = output.to_eval_qr_json_lines()
-        
+
         # Should have one valid JSON line
         json_data = json.loads(json_lines[0])
         assert json_data["query"] == "Test attack message"
@@ -198,19 +191,19 @@ class TestRedTeamOutputConversion:
                 {"role": "user", "content": "First message"},
                 {"role": "assistant", "content": "First response"},
                 {"role": "user", "content": "Second message"},
-                {"role": "assistant", "content": "Second response"}
-            ]
+                {"role": "assistant", "content": "Second response"},
+            ],
         }
-        
+
         output = RedTeamOutput(redteaming_data=[mock_multi_turn])
         lines = output.to_eval_qr_json_lines()
-        
+
         assert len(lines) == 2
-        
+
         first_turn = json.loads(lines[0])
         assert first_turn["query"] == "First message"
         assert first_turn["response"] == "First response"
-        
+
         second_turn = json.loads(lines[1])
         assert second_turn["query"] == "Second message"
         assert second_turn["response"] == "Second response"
@@ -219,7 +212,7 @@ class TestRedTeamOutputConversion:
         """Test to_eval_qr_json_lines method with no data."""
         output = RedTeamOutput()
         json_lines = output.to_eval_qr_json_lines()
-        assert json_lines == ''
+        assert json_lines == ""
 
 
 @pytest.mark.unittest
@@ -231,7 +224,7 @@ class TestRedTeamOutputRendering:
         """Test attack_simulation method with data."""
         output = RedTeamOutput(redteaming_data=[mock_conversation])
         simulation_text = output.attack_simulation()
-        
+
         # Check for expected parts of the output
         assert "Attack Technique: Base64Converter" in simulation_text
         assert "Attack Complexity: easy" in simulation_text
@@ -257,11 +250,11 @@ class TestRedTeamOutputRendering:
             "risk_category": "violence",
             "conversation": [
                 {"role": "user", "content": "Test attack message"},
-                {"role": "assistant", "content": "Safe response"}
-            ]
+                {"role": "assistant", "content": "Safe response"},
+            ],
         }
-        
+
         output = RedTeamOutput(redteaming_data=[mock_failed])
         simulation_text = output.attack_simulation()
-        
+
         assert "Attack Success: Failed" in simulation_text

@@ -75,7 +75,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
 
     # Ignoring a mypy error about having only 1 overload function.

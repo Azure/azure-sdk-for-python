@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
+
 @experimental
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
@@ -64,15 +65,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *,
-                 threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
@@ -80,8 +77,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: Union[str, List[dict]],
         tool_definitions: Union[dict, List[dict]],
-        tool_calls: Union[dict, List[dict]]  = None,
-        response: Union[str, List[dict]] = None
+        tool_calls: Union[dict, List[dict]] = None,
+        response: Union[str, List[dict]] = None,
     ) -> Dict[str, Union[str, float]]:
         """
         Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.
@@ -155,8 +152,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             if isinstance(response, list):
                 for message in response:
                     if message.get("role") == "assistant":
-                        tool_calls.extend([content for content in message.get("content")
-                                        if content.get("type") == "tool_call"])
+                        tool_calls.extend(
+                            [content for content in message.get("content") if content.get("type") == "tool_call"]
+                        )
             if len(tool_calls) == 0:
                 raise EvaluationException(
                     message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
@@ -175,7 +173,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # TODO : When evaluating an agent tool that depends on the output of a previous tool call,
         # we need to provide the output of the previous tool call as part of messages.
         for tool_call in tool_calls:
-            if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":  # TODO assuming dict here but it can be a class
+            if (
+                isinstance(tool_call, dict) and tool_call.get("type") == "tool_call"
+            ):  # TODO assuming dict here but it can be a class
                 function_name = tool_call.get("name")
                 tool_definition = [tool for tool in tool_definitions if tool.get("name") == function_name]
                 if len(tool_definition) > 0:
@@ -217,7 +217,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return {
                 self._result_key: bool(float(score)),
                 f"{self._result_key}_reason": reason,
-                "tool_call_id" : eval_input.get("tool_call").get("tool_call_id"),
+                "tool_call_id": eval_input.get("tool_call").get("tool_call_id"),
             }
         return {self._result_key: float(score)}
 
@@ -260,10 +260,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Go over each turn, and rotate the results into a
         # metric: List[values] format for the evals_per_turn dictionary.
 
-        score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
+        score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results]) / len(
+            per_turn_results
+        )
         aggregated[self._AGGREGATE_RESULT_KEY] = score
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
+        aggregated[f"{self._AGGREGATE_RESULT_KEY}_result"] = "pass" if score >= self.threshold else "fail"
+        aggregated[f"{self._AGGREGATE_RESULT_KEY}_threshold"] = self.threshold
 
         aggregated["per_tool_call_details"] = per_turn_results
         return aggregated

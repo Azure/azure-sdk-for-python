@@ -55,7 +55,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a SexualEvaluator.
-    
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

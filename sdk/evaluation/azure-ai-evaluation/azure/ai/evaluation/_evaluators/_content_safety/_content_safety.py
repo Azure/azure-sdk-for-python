@@ -45,9 +45,9 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a ContentSafetyEvaluator.
-    
+
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_content_safety_evaluator]
             :end-before: [END threshold_content_safety_evaluator]
@@ -60,15 +60,15 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(
-        self, 
-        credential, 
+        self,
+        credential,
         azure_ai_project,
-        *, 
+        *,
         violence_threshold: int = 3,
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
-        **kwargs
+        **kwargs,
     ):
         # Type checking
         for name, value in [
@@ -79,7 +79,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]:
             if not isinstance(value, int):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
-        
+
         evaluators = [
             ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold),
             SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold),

@@ -90,7 +90,9 @@ def _openai_api_list() -> Generator[Tuple[Any, Callable, bool], None, None]:
         except ImportError:
             raise MissingRequiredPackage("Please install the 'openai' package to use the Azure AI Evaluation SDK")
         except AttributeError:
-            logging.warning("The module '%s' does not have class '%s' or method '%s'", module_name, class_name, method_name)
+            logging.warning(
+                "The module '%s' does not have class '%s' or method '%s'", module_name, class_name, method_name
+            )
 
 
 def inject_openai_api():
@@ -117,6 +119,7 @@ def recover_openai_api():
 
 class CaptureOpenAITokenUsage:
     """Context manager to capture OpenAI token usage."""
+
     def __init__(self):
         self._tokens = TokenMetrics(0, 0, 0)
 

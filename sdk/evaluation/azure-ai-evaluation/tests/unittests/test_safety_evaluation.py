@@ -71,10 +71,7 @@ def mock_eval_result_dict():
         "metrics": {},
         "studio_url": "some url",
     }
-    return {
-        "Mock_Jailbreak": jailbreak, 
-        "Mock_Regular": regular
-    }
+    return {"Mock_Jailbreak": jailbreak, "Mock_Regular": regular}
 
 
 @pytest.fixture
@@ -171,7 +168,7 @@ class TestSafetyEvaluation:
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         mock__call__.return_value = [JsonLineChatProtocol({"messages": []})]
-        
+
         results = await safety_eval._simulate(target=mock_target)
         assert isinstance(results, dict)
         # Test that it returns simulator data paths
@@ -224,7 +221,7 @@ class TestSafetyEvaluation:
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         mock_call.return_value = JsonLineList([{"messages": []}])
-        
+
         results = await safety_eval._simulate(
             target=mock_target, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA
         )
