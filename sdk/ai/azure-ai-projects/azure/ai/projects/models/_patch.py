@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import base64
 import datetime
 import inspect
@@ -845,12 +845,15 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         Constructor initializes the tool with a primary API definition.
 
         :param name: The name of the API.
+        :type name: str
         :param description: The API description.
+        :type description: str
         :param spec: The API specification.
+        :type spec: Any
         :param auth: Authentication details for the API.
         :type auth: OpenApiAuthDetails
         :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
-        :type default_parameters: OpenApiAuthDetails
+        :type default_parameters:  Optional[List[str]]
         """
         default_params: List[str] = [] if default_parameters is None else default_parameters
         self._default_auth = auth

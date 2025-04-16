@@ -294,7 +294,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-Also notices that if you use asynchronous client, you use `AsyncToolSet` instead.  Additional information related to `AsyncFunctionTool` be discussed in the later sections.
+Also notice that if you use the asynchronous client, use `AsyncToolSet` instead. Additional information related to `AsyncFunctionTool` be discussed in the later sections.
 
 Here is an example to use `tools` and `tool_resources`:
 <!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
@@ -561,7 +561,7 @@ agent = await project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-Notices that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process_run` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
+Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process_run` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
 [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py)
 
 #### Create Agent With Azure Function Call
