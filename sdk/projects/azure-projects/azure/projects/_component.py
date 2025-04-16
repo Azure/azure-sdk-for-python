@@ -56,6 +56,20 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
     return {}
 
 
+def get_annotation_name(annotation: Any) -> str:
+    # This is needed because in Python <3.10, the __name__ attribute is not set for
+    # generic types. We need to get the name of the type from the string representation.
+    if hasattr(annotation, "__name__"):
+        return annotation.__name__
+    if str(annotation).startswith("typing.") and hasattr(annotation, "_name"):
+        return annotation._name  # pylint: disable=protected-access
+    annotation_name = str(annotation).rsplit(".", maxsplit=1)[-1]
+    try:
+        return annotation_name[0 : annotation_name.index("[")]
+    except ValueError:
+        return annotation_name
+
+
 def get_mro_annotations(cls: Type, base_cls: Type) -> Mapping[str, Tuple[Any, Any]]:
     # TODO: Test if it's worth replacing this with typing.get_type_hints()
     # TODO: I don't think this supports string annotations. Need to test.
@@ -481,7 +495,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         new_kwargs: Dict[str, Any] = {}
         for attr, (annotation, _) in mro_annotations.items():
             annotation = get_optional_annotation(annotation)
-            if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+            if annotation and get_annotation_name(annotation) in RESOURCE_FROM_CLIENT_ANNOTATION:
                 resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                 new_kwargs[attr] = resource_cls(env_suffix=attr_map.get(attr))
             elif attr == "config_store":
@@ -526,7 +540,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
                 fields = []
                 for attr, (annotation, _) in mro_annotations.items():
                     annotation = get_optional_annotation(annotation)
-                    if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+                    if annotation and get_annotation_name(annotation) in RESOURCE_FROM_CLIENT_ANNOTATION:
                         resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                         attr_map[attr] = attr
                         fields.append((attr, resource_cls, field(default=resource_cls())))

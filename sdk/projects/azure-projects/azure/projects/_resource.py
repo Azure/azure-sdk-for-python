@@ -312,7 +312,10 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         return symbol.value
 
     def _merge_properties(
-        self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs  # pylint: disable=unused-argument
+        self,
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
+        **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         for key, value in new_properties.items():
             if key in current_properties:
