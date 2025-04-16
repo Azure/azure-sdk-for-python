@@ -21,8 +21,8 @@ _LOGGER = logging.getLogger(__name__)
 class EnvironmentCredential(AsyncContextManager):
     """A credential configured by environment variables.
 
-    This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
-    a user with a username and password. Configuration is attempted in this order, using these environment variables:
+    This credential is capable of authenticating as a service principal using a client secret or a certificate.
+    Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
