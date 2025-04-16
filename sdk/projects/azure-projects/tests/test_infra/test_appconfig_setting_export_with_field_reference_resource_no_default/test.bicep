@@ -15,6 +15,10 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore_testconfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  name: 'testconfig'
+  sku: {
+    name: 'Standard'
+  }
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -23,10 +27,6 @@ resource configurationstore_testconfig 'Microsoft.AppConfiguration/configuration
       privateLinkDelegation: 'Disabled'
     }
     publicNetworkAccess: 'Enabled'
-  }
-  name: 'testconfig'
-  sku: {
-    name: 'Standard'
   }
   location: location
   tags: azdTags

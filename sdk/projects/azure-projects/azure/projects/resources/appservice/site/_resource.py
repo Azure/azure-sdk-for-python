@@ -295,56 +295,51 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
-        current_properties: "AppSiteResource",  # type: ignore[arg-type]
-        new_properties: "AppSiteResource",  # type: ignore[arg-type]
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
         *,
         parameters: Dict[str, Parameter],
         symbol: ResourceSymbol,
         fields: FieldsType,
-        resource_group: ResourceSymbol,
         **kwargs,
     ) -> Dict[str, Any]:
-        output_config = super()._merge_properties(
-            cast(Dict[str, Any], current_properties),
-            cast(Dict[str, Any], new_properties),
+        merged_properties = super()._merge_properties(
+            current_properties,
+            new_properties,
             symbol=symbol,
             fields=fields,
-            resource_group=resource_group,
             parameters=parameters,
             **kwargs,
         )
-        if "properties" in current_properties:
-            # TODO: Fix this recursive call problem....
-            # We only want to run this on the first call, not subsequent ones.
-            if not current_properties["properties"].get("serverFarmId"):
-                symbols = self._plan.__bicep__(fields, parameters=parameters)
-                current_properties["properties"]["serverFarmId"] = symbols[0].id
-            app_settings = {
-                "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
-                "ENABLE_ORYX_BUILD": "true",
-                "PYTHON_ENABLE_GUNICORN_MULTIWORKERS": "true",
-                "AZURE_CLIENT_ID": parameters["managedIdentityClientId"],
-            }
-            app_config = find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
-            if app_config:
-                app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"][0]
-            app_settings.update(self._app_settings)
-            site_settings = SiteConfig({"parent": symbol}, name="appsettings", settings=app_settings, parent=self)
-            site_settings.__bicep__(fields, parameters=parameters)
-            app_logs = SiteConfig(
-                {"parent": symbol},
-                name="logs",
-                settings={
-                    "applicationLogs": {"fileSystem": {"level": "Verbose"}},
-                    "detailedErrorMessages": {"enabled": True},
-                    "failedRequestsTracing": {"enabled": True},
-                    "httpLogs": {"fileSystem": {"enabled": True, "retentionInDays": 1, "retentionInMb": 35}},
-                },
-                parent=self,
-            )
-            app_logs.__bicep__(fields, parameters=parameters)
-        return output_config
+        if not merged_properties.get("serverFarmId"):
+            symbols = self._plan.__bicep__(fields, parameters=parameters)
+            merged_properties["serverFarmId"] = symbols[0].id
+
+        app_settings = {
+            "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
+            "ENABLE_ORYX_BUILD": "true",
+            "PYTHON_ENABLE_GUNICORN_MULTIWORKERS": "true",
+            "AZURE_CLIENT_ID": parameters["managedIdentityClientId"],
+        }
+        app_config = find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
+        if app_config:
+            app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"][0]
+        app_settings.update(self._app_settings)
+        site_settings = SiteConfig({"parent": symbol}, name="appsettings", settings=app_settings, parent=self)
+        site_settings.__bicep__(fields, parameters=parameters)
+        app_logs = SiteConfig(
+            {"parent": symbol},
+            name="logs",
+            settings={
+                "applicationLogs": {"fileSystem": {"level": "Verbose"}},
+                "detailedErrorMessages": {"enabled": True},
+                "failedRequestsTracing": {"enabled": True},
+                "httpLogs": {"fileSystem": {"enabled": True, "retentionInDays": 1, "retentionInMb": 35}},
+            },
+            parent=self,
+        )
+        app_logs.__bicep__(fields, parameters=parameters)
+        return merged_properties
 
     def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}

@@ -15,6 +15,10 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore_testconfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  name: 'testconfig'
+  sku: {
+    name: 'Standard'
+  }
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -23,10 +27,6 @@ resource configurationstore_testconfig 'Microsoft.AppConfiguration/configuration
       privateLinkDelegation: 'Disabled'
     }
     publicNetworkAccess: 'Enabled'
-  }
-  name: 'testconfig'
-  sku: {
-    name: 'Standard'
   }
   location: location
   tags: azdTags
@@ -49,17 +49,17 @@ output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_testconfig.propert
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
-  properties: {
-    accessTier: 'Hot'
-    allowCrossTenantReplication: false
-    allowSharedKeyAccess: false
-  }
   name: defaultName
   location: location
   tags: azdTags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_GRS'
+  }
+  properties: {
+    accessTier: 'Hot'
+    allowCrossTenantReplication: false
+    allowSharedKeyAccess: false
   }
   identity: {
     type: 'UserAssigned'
@@ -76,7 +76,6 @@ output AZURE_STORAGE_RESOURCE_GROUP_BLOBS string = resourceGroup().name
 
 resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' = {
   parent: storageaccount
-  properties: {}
   name: 'default'
 }
 

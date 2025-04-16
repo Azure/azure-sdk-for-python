@@ -252,44 +252,23 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         )
         return outputs
 
-    def _merge_properties(  # type: ignore[override]  # Parameter superset
-        self,
-        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
-        current_properties: "DeploymentResource",  # type: ignore[arg-type]
-        new_properties: "DeploymentResource",  # type: ignore[arg-type]
-        *,
-        parameters: Dict[str, Parameter],
-        symbol: ResourceSymbol,
-        fields: FieldsType,
-        resource_group: ResourceSymbol,
-        **kwargs,
-    ) -> Dict[str, Any]:
-        output_config = super()._merge_properties(
-            cast(Dict[str, Any], current_properties),
-            cast(Dict[str, Any], new_properties),
-            symbol=symbol,
-            fields=fields,
-            resource_group=resource_group,
-            parameters=parameters,
-            **kwargs,
-        )
-        if "properties" in current_properties:
-            # We need to do this because multiple models cannot be deployed in parallel without
-            # creating conflict errors for the parent AIServices account.
-            for field in find_all_resource_match(
-                fields,
-                parent=current_properties["parent"],
-                resource_types=[
-                    ResourceIdentifiers.ai_deployment,
-                    ResourceIdentifiers.ai_chat_deployment,
-                    ResourceIdentifiers.ai_embeddings_deployment,
-                ],
-            ):
-                if field.name != current_properties.get("name"):
-                    current_properties["dependsOn"] = [field.symbol]
-                    break
-                continue
-        return output_config
+    def _merge_resource(  # type: ignore[override]  # Parameter superset
+        self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], *, fields: FieldsType, **kwargs
+    ):
+        super()._merge_resource(current_properties, new_properties, **kwargs)
+        for field in find_all_resource_match(
+            fields,
+            parent=current_properties["parent"],
+            resource_types=[
+                ResourceIdentifiers.ai_deployment,
+                ResourceIdentifiers.ai_chat_deployment,
+                ResourceIdentifiers.ai_embeddings_deployment,
+            ],
+        ):
+            if field.name != current_properties.get("name"):
+                current_properties["dependsOn"] = [field.symbol]
+                break
+            continue
 
 
 _DEFAULT_CHAT_MODEL = Parameter("aiChatModel", default="o1-mini", type="string")

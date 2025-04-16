@@ -305,27 +305,37 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 pass
         return outputs
 
-    def _merge_properties(
-        self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs
-    ) -> Dict[str, Any]:
-        # TODO: Try creating a separate merge_resource and merge_properties
-        for key, value in new_properties.items():
-            if key in current_properties:
-                if key in self._properties_to_merge:
-                    self._merge_properties(current_properties[key], value, **kwargs)
-                elif current_properties[key] != value:
-                    raise ValueError(
-                        f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_properties[key]}'."
-                    )
-            else:
-                current_properties[key] = value
-        return {}
-
     def _get_field_id(self, symbol: ResourceSymbol, parents: Tuple[ResourceSymbol, ...]) -> str:
         if self.parent:
             prefix = self.parent._get_field_id(parents[0], parents[1:])  # pylint: disable=protected-access
             return f"{prefix}.{symbol.value}"
         return symbol.value
+
+    def _merge_properties(
+        self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
+        for key, value in new_properties.items():
+            if key in current_properties:
+                if current_properties[key] != value:
+                    raise ValueError(
+                        f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_properties[key]}'."
+                    )
+            else:
+                current_properties[key] = value
+        return current_properties
+
+    def _merge_resource(self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs) -> None:
+        for key, value in new_properties.items():
+            if key in ["properties", "tags"]:
+                merged = self._merge_properties(current_properties.get(key, {}), value, **kwargs)
+                if merged:
+                    current_properties[key] = merged
+            elif key in current_properties and current_properties[key] != value:
+                raise ValueError(
+                    f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_properties[key]}'."
+                )
+            else:
+                current_properties[key] = value
 
     def _resolve_resource(self, parameters, component):
         from ._component import ComponentField
@@ -452,7 +462,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 },
             )
             fields[self._get_field_id(symbol, parents)] = field
-        output_config = self._merge_properties(
+        self._merge_resource(
             params,
             properties,
             fields=fields,
@@ -463,9 +473,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         if attrname or not field_match:
             # TODO: Figure out correct behaviour for parent outputs here.
             # attrname will be None in the case of resolving a parent bicep, which is fine?
-            resource_outputs = self._outputs(
-                symbol=symbol, suffix=suffix, resource_group=rg, parents=parents, **output_config
-            )
+            resource_outputs = self._outputs(symbol=symbol, suffix=suffix, resource_group=rg, parents=parents)
             for key, value in resource_outputs.items():
                 outputs[key] = list(set(outputs.get(key, []) + value))
 

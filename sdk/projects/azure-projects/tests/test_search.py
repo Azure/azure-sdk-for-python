@@ -54,7 +54,7 @@ def test_search_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["searchservice"]
     assert fields["searchservice"].resource == "Microsoft.Search/searchServices"
-    assert fields["searchservice"].properties == {"properties": {}}
+    assert fields["searchservice"].properties == {}
     assert fields["searchservice"].outputs == _get_outputs()
     assert fields["searchservice"].extensions == {}
     assert fields["searchservice"].existing == False
@@ -69,7 +69,7 @@ def test_search_properties():
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["searchservice"]
     assert fields["searchservice"].resource == "Microsoft.Search/searchServices"
-    assert fields["searchservice"].properties == {"location": "westus", "properties": {}, "sku": {"name": "free"}}
+    assert fields["searchservice"].properties == {"location": "westus", "sku": {"name": "free"}}
     assert fields["searchservice"].outputs == _get_outputs()
     assert fields["searchservice"].extensions == {}
     assert fields["searchservice"].existing == False

@@ -36,7 +36,7 @@ def test_storage_properties():
     assert len(symbols) == 1
     assert list(fields.keys()) == ["storageaccount"]
     assert fields["storageaccount"].resource == "Microsoft.Storage/storageAccounts"
-    assert fields["storageaccount"].properties == {"properties": {}}
+    assert fields["storageaccount"].properties == {}
     assert fields["storageaccount"].outputs == _get_outputs()
     assert fields["storageaccount"].extensions == {}
     assert fields["storageaccount"].existing == False
@@ -54,7 +54,6 @@ def test_storage_properties():
     assert fields["storageaccount"].properties == {
         "location": "westus",
         "sku": {"name": "Standard_RAGRS"},
-        "properties": {},
     }
     assert fields["storageaccount"].outputs == _get_outputs()
     assert fields["storageaccount"].extensions == {}

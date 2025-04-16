@@ -40,7 +40,7 @@ def test_keyvault_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["vault"]
     assert fields["vault"].resource == "Microsoft.KeyVault/vaults"
-    assert fields["vault"].properties == {"properties": {}}
+    assert fields["vault"].properties == {}
     assert fields["vault"].outputs == _get_outputs()
     assert fields["vault"].extensions == {}
     assert fields["vault"].existing == False

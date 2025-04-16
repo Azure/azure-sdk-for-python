@@ -52,7 +52,7 @@ def test_aiservices_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account"]
     assert fields["aiservices_account"].resource == "Microsoft.CognitiveServices/accounts"
-    assert fields["aiservices_account"].properties == {"kind": "AIServices", "properties": {}}
+    assert fields["aiservices_account"].properties == {"kind": "AIServices"}
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}
     assert fields["aiservices_account"].existing == False
@@ -71,7 +71,6 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "location": "westus",
         "sku": {"name": "F1"},
-        "properties": {},
     }
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}

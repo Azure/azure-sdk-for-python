@@ -20,6 +20,10 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  name: defaultName
+  sku: {
+    name: 'Standard'
+  }
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -28,10 +32,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
       privateLinkDelegation: 'Disabled'
     }
     publicNetworkAccess: 'Enabled'
-  }
-  name: defaultName
-  sku: {
-    name: 'Standard'
   }
   location: location
   tags: azdTags
@@ -51,6 +51,12 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  name: '${defaultName}-aiservices'
+  location: location
+  tags: azdTags
+  sku: {
+    name: 'S0'
+  }
   properties: {
     publicNetworkAccess: 'Enabled'
     disableLocalAuth: true
@@ -58,12 +64,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     networkAcls: {
       defaultAction: 'Allow'
     }
-  }
-  name: '${defaultName}-aiservices'
-  location: location
-  tags: azdTags
-  sku: {
-    name: 'S0'
   }
   identity: {
     type: 'UserAssigned'
@@ -81,6 +81,7 @@ output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account.properties.end
 
 resource embeddings_deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   parent: aiservices_account
+  name: '${defaultName}-embeddings-deployment'
   properties: {
     model: {
       name: aiEmbeddingsModel
@@ -88,7 +89,6 @@ resource embeddings_deployment 'Microsoft.CognitiveServices/accounts/deployments
       version: aiEmbeddingsModelVersion
     }
   }
-  name: '${defaultName}-embeddings-deployment'
   sku: {
     name: aiEmbeddingsModelSku
     capacity: aiEmbeddingsModelCapacity

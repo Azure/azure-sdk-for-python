@@ -15,6 +15,10 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  name: defaultName
+  sku: {
+    name: 'Standard'
+  }
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -23,10 +27,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
       privateLinkDelegation: 'Disabled'
     }
     publicNetworkAccess: 'Enabled'
-  }
-  name: defaultName
-  sku: {
-    name: 'Standard'
   }
   location: location
   tags: azdTags
@@ -46,6 +46,12 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  name: '${defaultName}-aiservices'
+  location: location
+  tags: azdTags
+  sku: {
+    name: 'S0'
+  }
   properties: {
     publicNetworkAccess: 'Enabled'
     disableLocalAuth: true
@@ -53,12 +59,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     networkAcls: {
       defaultAction: 'Allow'
     }
-  }
-  name: '${defaultName}-aiservices'
-  location: location
-  tags: azdTags
-  sku: {
-    name: 'S0'
   }
   identity: {
     type: 'UserAssigned'
@@ -75,12 +75,12 @@ output AZURE_AI_AISERVICES_ENDPOINT_AI string = aiservices_account.properties.en
 
 
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
-  properties: {
-    publicNetworkAccess: 'Disabled'
-  }
   name: defaultName
   sku: {
     name: 'basic'
+  }
+  properties: {
+    publicNetworkAccess: 'Disabled'
   }
   location: location
   tags: azdTags
@@ -99,17 +99,17 @@ output AZURE_SEARCH_ENDPOINT_SEARCH string = 'https://${searchservice.name}.sear
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
-  properties: {
-    accessTier: 'Hot'
-    allowCrossTenantReplication: false
-    allowSharedKeyAccess: false
-  }
   name: defaultName
   location: location
   tags: azdTags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_GRS'
+  }
+  properties: {
+    accessTier: 'Hot'
+    allowCrossTenantReplication: false
+    allowSharedKeyAccess: false
   }
   identity: {
     type: 'UserAssigned'
@@ -126,7 +126,6 @@ output AZURE_STORAGE_RESOURCE_GROUP_STORAGE string = resourceGroup().name
 
 resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' = {
   parent: storageaccount
-  properties: {}
   name: 'default'
 }
 
@@ -134,6 +133,7 @@ output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount.properties.primaryEn
 
 
 resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
+  name: defaultName
   properties: {
     sku: {
       family: 'A'
@@ -144,7 +144,6 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
     accessPolicies: []
     enableRbacAuthorization: true
   }
-  name: defaultName
   location: location
   tags: azdTags
 }

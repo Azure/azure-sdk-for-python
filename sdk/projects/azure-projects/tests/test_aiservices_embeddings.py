@@ -79,7 +79,6 @@ def test_aiservices_embeddings_properties():
         == "Microsoft.CognitiveServices/accounts/deployments"
     )
     assert fields["aiservices_account.embeddings_deployment"].properties == {
-        "properties": {},
         "parent": ResourceSymbol("aiservices_account"),
     }
     assert fields["aiservices_account.embeddings_deployment"].outputs == _get_outputs()

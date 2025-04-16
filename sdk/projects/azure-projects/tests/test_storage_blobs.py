@@ -43,7 +43,6 @@ def test_storage_blobs_properties():
     assert list(fields.keys()) == ["storageaccount", "storageaccount.blobservice"]
     assert fields["storageaccount.blobservice"].resource == "Microsoft.Storage/storageAccounts/blobServices"
     assert fields["storageaccount.blobservice"].properties == {
-        "properties": {},
         "parent": ResourceSymbol("storageaccount"),
     }
     assert fields["storageaccount.blobservice"].outputs == _get_outputs()
@@ -96,7 +95,6 @@ def test_storage_blobs_properties():
     assert fields["storageaccount_foo.blobservice_foo"].resource == "Microsoft.Storage/storageAccounts/blobServices"
     assert fields["storageaccount_foo.blobservice_foo"].properties == {
         "parent": ResourceSymbol("storageaccount_foo"),
-        "properties": {},
     }
     assert fields["storageaccount_foo.blobservice_foo"].outputs == _get_outputs("_foo")
     assert fields["storageaccount_foo.blobservice_foo"].extensions == {}

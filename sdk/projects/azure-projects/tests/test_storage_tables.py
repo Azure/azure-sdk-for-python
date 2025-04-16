@@ -43,7 +43,6 @@ def test_storage_tables_properties():
     assert list(fields.keys()) == ["storageaccount", "storageaccount.tableservice"]
     assert fields["storageaccount.tableservice"].resource == "Microsoft.Storage/storageAccounts/tableServices"
     assert fields["storageaccount.tableservice"].properties == {
-        "properties": {},
         "parent": ResourceSymbol("storageaccount"),
     }
     assert fields["storageaccount.tableservice"].outputs == _get_outputs()
@@ -96,7 +95,6 @@ def test_storage_tables_properties():
     assert fields["storageaccount_foo.tableservice_foo"].resource == "Microsoft.Storage/storageAccounts/tableServices"
     assert fields["storageaccount_foo.tableservice_foo"].properties == {
         "parent": ResourceSymbol("storageaccount_foo"),
-        "properties": {},
     }
     assert fields["storageaccount_foo.tableservice_foo"].outputs == _get_outputs("_foo")
     assert fields["storageaccount_foo.tableservice_foo"].extensions == {}

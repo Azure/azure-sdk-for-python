@@ -151,5 +151,5 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
                 },
             )
             fields[self._get_field_id(symbol, ())] = field
-        self._merge_properties(params, properties, symbol=symbol, resource_group=symbol)
+        self._merge_resource(params, properties, symbol=symbol, resource_group=symbol)
         return (symbol,)

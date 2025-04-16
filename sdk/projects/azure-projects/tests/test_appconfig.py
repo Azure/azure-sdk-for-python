@@ -47,7 +47,7 @@ def test_appconfig_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["configurationstore"]
     assert fields["configurationstore"].resource == "Microsoft.AppConfiguration/configurationStores"
-    assert fields["configurationstore"].properties == {"properties": {}}
+    assert fields["configurationstore"].properties == {}
     assert fields["configurationstore"].outputs == _get_outputs()
     assert fields["configurationstore"].extensions == {}
     assert fields["configurationstore"].existing == False
@@ -64,7 +64,6 @@ def test_appconfig_properties():
     assert fields["configurationstore"].resource == "Microsoft.AppConfiguration/configurationStores"
     assert fields["configurationstore"].properties == {
         "location": "westus",
-        "properties": {},
         "sku": {"name": "Standard"},
     }
     assert fields["configurationstore"].outputs == _get_outputs()

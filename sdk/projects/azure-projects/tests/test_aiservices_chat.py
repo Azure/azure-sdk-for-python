@@ -66,7 +66,6 @@ def test_aiservices_chat_properties():
     assert list(fields.keys()) == ["aiservices_account", "aiservices_account.chat_deployment"]
     assert fields["aiservices_account.chat_deployment"].resource == "Microsoft.CognitiveServices/accounts/deployments"
     assert fields["aiservices_account.chat_deployment"].properties == {
-        "properties": {},
         "parent": ResourceSymbol("aiservices_account"),
     }
     assert fields["aiservices_account.chat_deployment"].outputs == _get_outputs()

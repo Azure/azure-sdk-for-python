@@ -256,32 +256,27 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
-        current_properties: "MachineLearningWorkspaceResource",  # type: ignore[arg-type]
-        new_properties: "MachineLearningWorkspaceResource",  # type: ignore[arg-type]
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
         *,
         parameters: Dict[str, Parameter],
         symbol: ResourceSymbol,
         fields: FieldsType,
-        resource_group: ResourceSymbol,
         **kwargs,
     ) -> Dict[str, Any]:
-        output_config = super()._merge_properties(
-            cast(Dict[str, Any], current_properties),
-            cast(Dict[str, Any], new_properties),
+        merged_properties = super()._merge_properties(
+            current_properties,
+            new_properties,
             symbol=symbol,
             fields=fields,
-            resource_group=resource_group,
             parameters=parameters,
             **kwargs,
         )
-        if "properties" in current_properties and self._kind in ["Project", "Hub"]:
-            # TODO: Fix this recursive call problem....
-            # We only want to run this on the first call, not subsequent ones.
-            if not current_properties["properties"].get("workspaceHubConfig"):
-                current_properties["properties"]["workspaceHubConfig"] = {}
-            if not current_properties["properties"]["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
-                current_properties["properties"]["workspaceHubConfig"]["defaultWorkspaceResourceGroup"] = RGSymbol().id
+        if self._kind in ["Project", "Hub"]:
+            if not merged_properties.get("workspaceHubConfig"):
+                merged_properties["workspaceHubConfig"] = {}
+            if not merged_properties["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
+                merged_properties["workspaceHubConfig"]["defaultWorkspaceResourceGroup"] = RGSymbol().id
 
             for searchservices in find_all_resource_match(fields, resource_types=[ResourceIdentifiers.search]):
                 search_connection = AIConnection(
@@ -301,7 +296,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                     metadata={
                         "ApiType": "Azure",
                         "ResourceId": searchservices.symbol.id,
-                        "location": current_properties.get("location", parameters["location"]),
+                        "location": merged_properties.get("location", parameters["location"]),
                     },
                 )
                 search_connection.__bicep__(fields, parameters=parameters)
@@ -323,11 +318,11 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                     metadata={
                         "ApiType": "Azure",
                         "ResourceId": aiservices.symbol.id,
-                        "location": current_properties.get("location", parameters["location"]),
+                        "location": merged_properties.get("location", parameters["location"]),
                     },
                 )
                 ai_connection.__bicep__(fields, parameters=parameters)
-        return output_config
+        return merged_properties
 
 
 _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
@@ -388,42 +383,33 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: "MachineLearningWorkspaceResource",
-        new_properties: "MachineLearningWorkspaceResource",
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
         *,
-        parameters: Dict[str, Parameter],
-        symbol: ResourceSymbol,
         fields: FieldsType,
-        resource_group: ResourceSymbol,
         **kwargs,
     ) -> Dict[str, Any]:
-        output_config = super()._merge_properties(
+        merged_properties = super()._merge_properties(
             current_properties,
             new_properties,
-            symbol=symbol,
             fields=fields,
-            resource_group=resource_group,
-            parameters=parameters,
             **kwargs,
         )
-        if "properties" in current_properties:
-            # TODO: Fix this recursive call problem....
-            # We only want to run this on the first call, not subsequent ones.
-            if not current_properties["properties"].get("storageAccount"):
-                storage = find_last_resource_match(fields, resource=ResourceIdentifiers.storage_account)
-                if not storage:
-                    blob_storage = find_last_resource_match(fields, resource=ResourceIdentifiers.blob_storage)
-                    if not blob_storage:
-                        raise ValueError("Cannot create AI Hub without associated Storage account.")
-                    current_properties["properties"]["storageAccount"] = blob_storage.properties["parent"].id
-                else:
-                    current_properties["properties"]["storageAccount"] = storage.symbol.id
-            if not current_properties["properties"].get("keyVault"):
-                vault = find_last_resource_match(fields, resource=ResourceIdentifiers.keyvault)
-                if not vault:
-                    raise ValueError("Cannot create an AI Hub without associated KeyVault account.")
-                current_properties["properties"]["keyVault"] = vault.symbol.id
-        return output_config
+        if not merged_properties.get("storageAccount"):
+            storage = find_last_resource_match(fields, resource=ResourceIdentifiers.storage_account)
+            if not storage:
+                blob_storage = find_last_resource_match(fields, resource=ResourceIdentifiers.blob_storage)
+                if not blob_storage:
+                    raise ValueError("Cannot create AI Hub without associated Storage account.")
+                merged_properties["storageAccount"] = blob_storage.properties["parent"].id
+            else:
+                merged_properties["storageAccount"] = storage.symbol.id
+        if not merged_properties.get("keyVault"):
+            vault = find_last_resource_match(fields, resource=ResourceIdentifiers.keyvault)
+            if not vault:
+                raise ValueError("Cannot create an AI Hub without associated KeyVault account.")
+            merged_properties["keyVault"] = vault.symbol.id
+        return merged_properties
 
 
 _DEFAULT_AI_PROJECT: "MachineLearningWorkspaceResource" = {
@@ -499,33 +485,24 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: "MachineLearningWorkspaceResource",
-        new_properties: "MachineLearningWorkspaceResource",
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
         *,
-        parameters: Dict[str, Parameter],
-        symbol: ResourceSymbol,
         fields: FieldsType,
-        resource_group: ResourceSymbol,
         **kwargs,
     ) -> Dict[str, Any]:
-        output_config = super()._merge_properties(
+        merged_properties = super()._merge_properties(
             current_properties,
             new_properties,
-            symbol=symbol,
             fields=fields,
-            resource_group=resource_group,
-            parameters=parameters,
             **kwargs,
         )
-        if "properties" in current_properties:
-            # TODO: Fix this recursive call problem....
-            # We only want to run this on the first call, not subsequent ones.
-            if not current_properties["properties"].get("hubResourceId"):
-                hub = find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
-                if not hub:
-                    raise ValueError("Cannot create AI Project without associated AI Hub.")
-                current_properties["properties"]["hubResourceId"] = hub.symbol.id
-        return output_config
+        if not merged_properties.get("hubResourceId"):
+            hub = find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
+            if not hub:
+                raise ValueError("Cannot create AI Project without associated AI Hub.")
+            merged_properties["hubResourceId"] = hub.symbol.id
+        return merged_properties
 
     def _build_credential(self, cls: Type[ClientType], *, use_async: Optional[bool], credential: Any) -> Any:
         # TODO: This needs work - how to close the credential.
