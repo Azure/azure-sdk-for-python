@@ -29,11 +29,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attributes
     """REST API for managing Redis Enterprise resources in Azure.
 
     :ivar operations: Operations operations
@@ -60,7 +59,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-ver
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2025-05-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
