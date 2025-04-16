@@ -7,7 +7,7 @@ import struct
 import uuid
 import logging
 import time
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from .._encode import encode_payload
 from ._link_async import Link

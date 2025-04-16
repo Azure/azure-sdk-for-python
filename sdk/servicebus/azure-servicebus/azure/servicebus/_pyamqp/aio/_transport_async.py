@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
