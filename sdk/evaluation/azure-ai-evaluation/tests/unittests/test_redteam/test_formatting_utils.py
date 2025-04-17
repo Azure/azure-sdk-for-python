@@ -140,21 +140,21 @@ class TestScorecardFormatting:
     
     def test_format_scorecard_empty(self):
         """Test scorecard formatting with empty data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [],
                 "joint_risk_attack_summary": []
             }
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 0%" in result
 
     def test_format_scorecard_with_data(self):
         """Test scorecard formatting with actual data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [{
                     "overall_asr": 25.5
                 }],
@@ -171,7 +171,7 @@ class TestScorecardFormatting:
             "studio_url": "https://example.com/studio"
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 25.5%" in result
         assert "Violence" in result  # Should show capitalized risk category
@@ -182,8 +182,8 @@ class TestScorecardFormatting:
 
     def test_format_scorecard_partial_data(self):
         """Test scorecard formatting with partial data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [{
                     "overall_asr": 15.0
                 }],
@@ -198,7 +198,7 @@ class TestScorecardFormatting:
             }
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 15.0%" in result
         assert "Hate-unfairness" in result  # Should show formatted risk category
