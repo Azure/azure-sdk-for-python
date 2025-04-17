@@ -91,6 +91,14 @@ class ChurnOptionSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HIGH = "High"
 
 
+class ClusterRecoveryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The recovery point type."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    APPLICATION_CONSISTENT = "ApplicationConsistent"
+    CRASH_CONSISTENT = "CrashConsistent"
+
+
 class DataSyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data sync option."""
 
@@ -106,11 +114,15 @@ class DisableProtectionReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The DiskType."""
+    """The disk type."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
+    ULTRA_SSD_LRS = "UltraSSD_LRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
 
 
 class DiskReplicationProgressHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,6 +133,15 @@ class DiskReplicationProgressHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta
     SLOW_PROGRESS = "SlowProgress"
     NO_PROGRESS = "NoProgress"
     QUEUED = "Queued"
+
+
+class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The disk state."""
+
+    UNAVAILABLE = "Unavailable"
+    INITIAL_REPLICATION_PENDING = "InitialReplicationPending"
+    INITIAL_REPLICATION_FAILED = "InitialReplicationFailed"
+    PROTECTED = "Protected"
 
 
 class EthernetAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -150,6 +171,13 @@ class FailoverDeploymentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_APPLICABLE = "NotApplicable"
     CLASSIC = "Classic"
     RESOURCE_MANAGER = "ResourceManager"
+
+
+class FailoverDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Failover direction."""
+
+    PRIMARY_TO_RECOVERY = "PrimaryToRecovery"
+    RECOVERY_TO_PRIMARY = "RecoveryToPrimary"
 
 
 class HealthErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -205,6 +233,14 @@ class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_SPECIFIED = "NotSpecified"
     NO_LICENSE_TYPE = "NoLicenseType"
     WINDOWS_SERVER = "WindowsServer"
+
+
+class LinuxLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The license type for Linux VM's."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    NO_LICENSE_TYPE = "NoLicenseType"
+    LINUX_SERVER = "LinuxServer"
 
 
 class MigrationItemOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -393,6 +429,13 @@ class RpInMageRecoveryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LATEST_TIME = "LatestTime"
     LATEST_TAG = "LatestTag"
     CUSTOM = "Custom"
+
+
+class SecurityConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Security configuration state."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class SecurityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
