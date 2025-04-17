@@ -769,6 +769,8 @@ class RedTeam():
             self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
+    
+    
 
     async def _crescendo_orchestrator(
         self, 
@@ -844,6 +846,14 @@ class RedTeam():
 
                 return main_orchestrator
             
+            # If scan output directory exists, place the file there
+            base_path = str(uuid.uuid4())
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+            else:
+                output_path = f"{base_path}{DATA_EXT}"
+
+            self.red_team_info[strategy_name][risk_category]["data_file"] = output_path
             # Debug log the first few characters of each prompt
             self.logger.debug(f"First objective (truncated): {all_prompts[0][:50]}...")
             self.logger.debug(f"Processing {len(all_prompts)} objectives individually for {strategy_name}/{risk_category}")
@@ -928,56 +938,69 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
-    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator) -> str:
-        """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
-        
-        :param orchestrator: The orchestrator that generated the outputs
-        :type orchestrator: Orchestrator
-        :return: Path to the output file
-        :rtype: Union[str, os.PathLike]
+    def _write_pyrit_outputs_to_file(
+            self,
+            orchestrator: Orchestrator,
+            strategy_name: str,
+            risk_category: str,
+            batch_idx: int
+        ) -> str:
+        """
+        Write PyRIT outputs to one JSONL file (all conversations), and return its path.
         """
         output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
-        self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
-        memory = CentralMemory.get_memory_instance()
+        self.logger.debug(f"Writing PyRIT outputs to single file: {output_path}")
 
-        memory_label = {"risk_strategy_path": output_path}
+        # Try Crescendo memory, else CentralMemory
+        try:
+            pieces = orchestrator.get_memory()
+            self.logger.debug(f"Got {len(pieces)} pieces from Crescendo orchestrator")
+        except AttributeError:
+            mem = CentralMemory.get_memory_instance()
+            pieces = mem.get_prompt_request_pieces(
+                labels={"risk_strategy_path": output_path}
+            )
+            self.logger.debug(f"Got {len(pieces)} pieces from CentralMemory")
 
-        prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
+        # Group by conversation_id
+        conv_map: Dict[str, List[ChatMessage]] = {}
+        for piece in pieces:
+            conv_map.setdefault(piece.conversation_id, []).append(
+                piece.to_chat_message()
+            )
 
-        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)]
-        # Check if we should overwrite existing file with more conversations
-        if os.path.exists(output_path):
-            existing_line_count = 0
-            try:
-                with open(output_path, 'r') as existing_file:
-                    existing_line_count = sum(1 for _ in existing_file)
-                
-                # Use the number of prompts to determine if we have more conversations
-                # This is more accurate than using the memory which might have incomplete conversations
-                if len(conversations) > existing_line_count:
-                    self.logger.debug(f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content.")
-                    #Convert to json lines
-                    json_lines = ""
-                    for conversation in conversations: # each conversation is a List[ChatMessage]
-                        json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
-                    with Path(output_path).open("w") as f:
-                        f.writelines(json_lines)
-                    self.logger.debug(f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}")
-                else:
-                    self.logger.debug(f"Existing file has {existing_line_count} lines, new data has {len(conversations)} prompts. Keeping existing file.")
-                    return output_path
-            except Exception as e:
-                self.logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
-        else:
-            self.logger.debug(f"Creating new file: {output_path}")
-            #Convert to json lines
-            json_lines = ""
-            for conversation in conversations: # each conversation is a List[ChatMessage]
-                json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
-            with Path(output_path).open("w") as f:
-                f.writelines(json_lines)
-            self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
-        return str(output_path)
+        # Separate conversations with system messages from those without
+        regular_convs = {}
+        system_convs = {}
+        for conv_id, msgs in conv_map.items():
+            if any(m.role == 'system' for m in msgs):
+                system_convs[conv_id] = msgs
+            else:
+                regular_convs[conv_id] = msgs
+
+        # Write regular conversations to main file
+        lines = []
+        for msgs in regular_convs.values():
+            msg_dicts = [self._message_to_dict(m) for m in msgs]
+            lines.append(json.dumps({"conversation": {"messages": msg_dicts}}))
+        import pdb; pdb.set_trace()
+        Path(output_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+        self.logger.debug(f"Wrote {len(regular_convs)} regular conversation(s) to {output_path}")
+
+        # Write system conversations to separate file if any exist
+        if system_convs:
+            base_path, ext = os.path.splitext(output_path)
+            system_path = f"{base_path}_system{DATA_EXT}"
+            
+            system_lines = []
+            for msgs in system_convs.values():
+                msg_dicts = [self._message_to_dict(m) for m in msgs]
+                system_lines.append(json.dumps({"conversation": {"messages": msg_dicts}}))
+            
+            Path(system_path).write_text("\n".join(system_lines) + "\n", encoding="utf-8")
+            self.logger.debug(f"Wrote {len(system_convs)} system conversation(s) to {system_path}")
+
+        return output_path
     
     # Replace with utility function
     def _get_chat_target(self, target: Union[PromptChatTarget,Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
@@ -1648,12 +1671,8 @@ class RedTeam():
         # This is the key improvement - we select the right orchestrator here
         # instead of relying on the passed-in orchestrator
         is_crescendo = False
-        # TODO; Debugger
-        # import pdb; pdb.set_trace()
-        if isinstance(strategy, list):
-            is_crescendo = AttackStrategy.Crescendo in strategy
-        else:
-            is_crescendo = strategy == AttackStrategy.Crescendo
+        if strategy == AttackStrategy.Crescendo:
+            is_crescendo = True
             
         # Choose the right orchestrator function based on the strategy
         orchestrator_func = self._crescendo_orchestrator if is_crescendo else self._prompt_sending_orchestrator
@@ -1668,7 +1687,14 @@ class RedTeam():
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
                 # Use the orchestrator function that was determined by the strategy
-                orchestrator = await orchestrator_func(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
+                orchestrator = await orchestrator_func(
+                    chat_target=self.chat_target, 
+                    all_prompts=all_prompts, 
+                    converter=converter, 
+                    strategy_name=strategy_name, 
+                    risk_category=risk_category.value, 
+                    timeout=timeout
+                )
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
                 self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
@@ -1678,8 +1704,8 @@ class RedTeam():
                 async with progress_bar_lock:
                     progress_bar.update(1)
                 return None
-            
-            data_path = self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value)
+            # import pdb; pdb.set_trace()
+            data_path = self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value, batch_idx=0)
             orchestrator.dispose_db_engine()
             
             # Store data file in our tracking dictionary
@@ -1939,7 +1965,7 @@ class RedTeam():
             self.red_team_info = {}
             #TODO: debugger
             print(f"len(flattened_attack_strategies)={len(flattened_attack_strategies)}")
-            # import pdb; pdb.set_trace()
+            import pdb; pdb.set_trace()
             for strategy in flattened_attack_strategies:
                 strategy_name = self._get_strategy_name(strategy)
                 self.red_team_info[strategy_name] = {}
