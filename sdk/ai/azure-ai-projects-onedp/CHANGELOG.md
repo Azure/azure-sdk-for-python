@@ -10,7 +10,7 @@ Major changes happened in this version as the client library switched to using t
 * Endpoint URL is now needed to construct the `AIProjectClient`, instead of using the factory method
 `.from_connection_string`. Find this endpoint URL in your AI Foundry project page.
 * Agent operations that were previously part of the `azure.ai.projects` package have moved out to a separate new package
-`azure-ai-assistants` with a client named `AssistantClient`. See <http://pypi.org/project/azure-ai-assistants> for more information. You can get the `AssistantClient` by calling `.assistant.get_client()` method on your `AIProjectClient`.
+`azure-ai-assistants` with a client named `AssistantClient`. See INSERT URL HERE for more information. You can get the `AssistantClient` by calling `.assistant.get_client()` method on your `AIProjectClient`.
 * Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
 * Several changes to `.connections` operations. Please see new connection samples.
 * TODO: `.evaluations` methods ..
