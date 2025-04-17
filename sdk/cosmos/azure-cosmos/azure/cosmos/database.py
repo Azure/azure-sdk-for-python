@@ -405,7 +405,7 @@ class DatabaseProxy(object):
         populate_query_metrics: Optional[bool] = None,
         *,
         initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,  
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
