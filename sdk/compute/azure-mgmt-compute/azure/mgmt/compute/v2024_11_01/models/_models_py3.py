@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,20 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AdditionalCapabilities(_serialization.Model):
@@ -334,7 +329,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
      applied to scale set instances in a rolling fashion when a newer version of the OS image
      becomes available. Default value is false. If this is set to true for Windows based scale sets,
      `enableAutomaticUpdates
-     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
      is automatically set to false and cannot be set to true.
     :vartype enable_automatic_os_upgrade: bool
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled. Default
@@ -372,7 +367,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
          applied to scale set instances in a rolling fashion when a newer version of the OS image
          becomes available. Default value is false. If this is set to true for Windows based scale sets,
          `enableAutomaticUpdates
-         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
          is automatically set to false and cannot be set to true.
         :paramtype enable_automatic_os_upgrade: bool
         :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -567,9 +562,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -698,9 +693,9 @@ class AvailabilitySet(Resource):
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
         self.proximity_placement_group = proximity_placement_group
-        self.statuses = None
+        self.statuses: Optional[List["_models.InstanceViewStatus"]] = None
         self.scheduled_events_policy = scheduled_events_policy
-        self.virtual_machine_scale_set_migration_info = None
+        self.virtual_machine_scale_set_migration_info: Optional["_models.VirtualMachineScaleSetMigrationInfo"] = None
 
 
 class AvailabilitySetListResult(_serialization.Model):
@@ -849,9 +844,9 @@ class AvailabilitySetUpdate(UpdateResource):
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
         self.proximity_placement_group = proximity_placement_group
-        self.statuses = None
+        self.statuses: Optional[List["_models.InstanceViewStatus"]] = None
         self.scheduled_events_policy = scheduled_events_policy
-        self.virtual_machine_scale_set_migration_info = None
+        self.virtual_machine_scale_set_migration_info: Optional["_models.VirtualMachineScaleSetMigrationInfo"] = None
 
 
 class AvailablePatchSummary(_serialization.Model):
@@ -910,14 +905,14 @@ class AvailablePatchSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.assessment_activity_id = None
-        self.reboot_pending = None
-        self.critical_and_security_patch_count = None
-        self.other_patch_count = None
-        self.start_time = None
-        self.last_modified_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.assessment_activity_id: Optional[str] = None
+        self.reboot_pending: Optional[bool] = None
+        self.critical_and_security_patch_count: Optional[int] = None
+        self.other_patch_count: Optional[int] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class BillingProfile(_serialization.Model):
@@ -1026,9 +1021,9 @@ class BootDiagnosticsInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.console_screenshot_blob_uri = None
-        self.serial_console_log_blob_uri = None
-        self.status = None
+        self.console_screenshot_blob_uri: Optional[str] = None
+        self.serial_console_log_blob_uri: Optional[str] = None
+        self.status: Optional["_models.InstanceViewStatus"] = None
 
 
 class CapacityReservation(Resource):
@@ -1145,13 +1140,13 @@ class CapacityReservation(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.zones = zones
-        self.reservation_id = None
-        self.platform_fault_domain_count = None
-        self.virtual_machines_associated = None
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.reservation_id: Optional[str] = None
+        self.platform_fault_domain_count: Optional[int] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.CapacityReservationInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class CapacityReservationGroup(Resource):
@@ -1252,9 +1247,9 @@ class CapacityReservationGroup(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.zones = zones
-        self.capacity_reservations = None
-        self.virtual_machines_associated = None
-        self.instance_view = None
+        self.capacity_reservations: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.CapacityReservationGroupInstanceView"] = None
         self.sharing_profile = sharing_profile
 
 
@@ -1287,8 +1282,8 @@ class CapacityReservationGroupInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.capacity_reservations = None
-        self.shared_subscription_ids = None
+        self.capacity_reservations: Optional[List["_models.CapacityReservationInstanceViewWithName"]] = None
+        self.shared_subscription_ids: Optional[List["_models.SubResourceReadOnly"]] = None
 
 
 class CapacityReservationGroupListResult(_serialization.Model):
@@ -1388,9 +1383,9 @@ class CapacityReservationGroupUpdate(UpdateResource):
         :paramtype sharing_profile: ~azure.mgmt.compute.v2024_11_01.models.ResourceSharingProfile
         """
         super().__init__(tags=tags, **kwargs)
-        self.capacity_reservations = None
-        self.virtual_machines_associated = None
-        self.instance_view = None
+        self.capacity_reservations: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.CapacityReservationGroupInstanceView"] = None
         self.sharing_profile = sharing_profile
 
 
@@ -1470,7 +1465,7 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(utilization_info=utilization_info, statuses=statuses, **kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class CapacityReservationListResult(_serialization.Model):
@@ -1609,13 +1604,13 @@ class CapacityReservationUpdate(UpdateResource):
         """
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
-        self.reservation_id = None
-        self.platform_fault_domain_count = None
-        self.virtual_machines_associated = None
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.reservation_id: Optional[str] = None
+        self.platform_fault_domain_count: Optional[int] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.CapacityReservationInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class CapacityReservationUtilization(_serialization.Model):
@@ -1646,8 +1641,8 @@ class CapacityReservationUtilization(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.current_capacity = None
-        self.virtual_machines_allocated = None
+        self.current_capacity: Optional[int] = None
+        self.virtual_machines_allocated: Optional[List["_models.SubResourceReadOnly"]] = None
 
 
 class ComputeOperationListResult(_serialization.Model):
@@ -1670,7 +1665,7 @@ class ComputeOperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.ComputeOperationValue"]] = None
 
 
 class ComputeOperationValue(_serialization.Model):
@@ -1713,12 +1708,12 @@ class ComputeOperationValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.origin = None
-        self.name = None
-        self.operation = None
-        self.resource = None
-        self.description = None
-        self.provider = None
+        self.origin: Optional[str] = None
+        self.name: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.description: Optional[str] = None
+        self.provider: Optional[str] = None
 
 
 class ConvertToVirtualMachineScaleSetInput(_serialization.Model):
@@ -1927,8 +1922,8 @@ class DataDisk(_serialization.Model):
         self.managed_disk = managed_disk
         self.source_resource = source_resource
         self.to_be_detached = to_be_detached
-        self.disk_iops_read_write = None
-        self.disk_m_bps_read_write = None
+        self.disk_iops_read_write: Optional[int] = None
+        self.disk_m_bps_read_write: Optional[int] = None
         self.detach_option = detach_option
         self.delete_option = delete_option
 
@@ -1954,7 +1949,7 @@ class DataDiskImage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.lun = None
+        self.lun: Optional[int] = None
 
 
 class DataDisksToAttach(_serialization.Model):
@@ -2198,13 +2193,13 @@ class DedicatedHost(Resource):
         self.sku = sku
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
-        self.host_id = None
-        self.virtual_machines = None
+        self.host_id: Optional[str] = None
+        self.virtual_machines: Optional[List["_models.SubResourceReadOnly"]] = None
         self.license_type = license_type
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.DedicatedHostInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DedicatedHostAllocatableVM(_serialization.Model):
@@ -2364,8 +2359,8 @@ class DedicatedHostGroup(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
-        self.hosts = None
-        self.instance_view = None
+        self.hosts: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.DedicatedHostGroupInstanceView"] = None
         self.support_automatic_placement = support_automatic_placement
         self.additional_capabilities = additional_capabilities
 
@@ -2542,8 +2537,8 @@ class DedicatedHostGroupUpdate(UpdateResource):
         super().__init__(tags=tags, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
-        self.hosts = None
-        self.instance_view = None
+        self.hosts: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.DedicatedHostGroupInstanceView"] = None
         self.support_automatic_placement = support_automatic_placement
         self.additional_capabilities = additional_capabilities
 
@@ -2588,7 +2583,7 @@ class DedicatedHostInstanceView(_serialization.Model):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(**kwargs)
-        self.asset_id = None
+        self.asset_id: Optional[str] = None
         self.available_capacity = available_capacity
         self.statuses = statuses
 
@@ -2638,7 +2633,7 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(available_capacity=available_capacity, statuses=statuses, **kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class DedicatedHostListResult(_serialization.Model):
@@ -2791,13 +2786,13 @@ class DedicatedHostUpdate(UpdateResource):
         self.sku = sku
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
-        self.host_id = None
-        self.virtual_machines = None
+        self.host_id: Optional[str] = None
+        self.virtual_machines: Optional[List["_models.SubResourceReadOnly"]] = None
         self.license_type = license_type
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.DedicatedHostInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DefaultVirtualMachineScaleSetInfo(_serialization.Model):
@@ -2829,8 +2824,8 @@ class DefaultVirtualMachineScaleSetInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.constrained_maximum_capacity = None
-        self.default_virtual_machine_scale_set = None
+        self.constrained_maximum_capacity: Optional[bool] = None
+        self.default_virtual_machine_scale_set: Optional["_models.SubResource"] = None
 
 
 class DiagnosticsProfile(_serialization.Model):
@@ -3064,7 +3059,7 @@ class SubResourceReadOnly(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class DiskRestorePointAttributes(SubResourceReadOnly):
@@ -3391,7 +3386,7 @@ class HostEndpointSettings(_serialization.Model):
     :vartype mode: str or ~azure.mgmt.compute.v2024_11_01.models.Modes
     :ivar in_vm_access_control_profile_reference_id: Specifies the InVMAccessControlProfileVersion
      resource id in the format of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
     :vartype in_vm_access_control_profile_reference_id: str
     """
 
@@ -3416,7 +3411,7 @@ class HostEndpointSettings(_serialization.Model):
         :paramtype mode: str or ~azure.mgmt.compute.v2024_11_01.models.Modes
         :keyword in_vm_access_control_profile_reference_id: Specifies the
          InVMAccessControlProfileVersion resource id in the format of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
         :paramtype in_vm_access_control_profile_reference_id: str
         """
         super().__init__(**kwargs)
@@ -3515,7 +3510,7 @@ class Image(Resource):
         self.extended_location = extended_location
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.hyper_v_generation = hyper_v_generation
 
 
@@ -3932,7 +3927,7 @@ class ImageReference(SubResource):
      time even if a new version becomes available. Please do not use field 'version' for gallery
      image deployment, gallery image should always use 'id' field for deployment, to use 'latest'
      version of gallery image, just set
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
      in the 'id' field without version input.
     :vartype version: str
     :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
@@ -3991,7 +3986,7 @@ class ImageReference(SubResource):
          after deploy time even if a new version becomes available. Please do not use field 'version'
          for gallery image deployment, gallery image should always use 'id' field for deployment, to use
          'latest' version of gallery image, just set
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
          in the 'id' field without version input.
         :paramtype version: str
         :keyword shared_gallery_image_id: Specified the shared gallery image unique id for vm
@@ -4006,7 +4001,7 @@ class ImageReference(SubResource):
         self.offer = offer
         self.sku = sku
         self.version = version
-        self.exact_version = None
+        self.exact_version: Optional[str] = None
         self.shared_gallery_image_id = shared_gallery_image_id
         self.community_gallery_image_id = community_gallery_image_id
 
@@ -4125,7 +4120,7 @@ class ImageUpdate(UpdateResource):
         super().__init__(tags=tags, **kwargs)
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.hyper_v_generation = hyper_v_generation
 
 
@@ -4345,17 +4340,17 @@ class LastPatchInstallationSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.installation_activity_id = None
-        self.maintenance_window_exceeded = None
-        self.not_selected_patch_count = None
-        self.excluded_patch_count = None
-        self.pending_patch_count = None
-        self.installed_patch_count = None
-        self.failed_patch_count = None
-        self.start_time = None
-        self.last_modified_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.installation_activity_id: Optional[str] = None
+        self.maintenance_window_exceeded: Optional[bool] = None
+        self.not_selected_patch_count: Optional[int] = None
+        self.excluded_patch_count: Optional[int] = None
+        self.pending_patch_count: Optional[int] = None
+        self.installed_patch_count: Optional[int] = None
+        self.failed_patch_count: Optional[int] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class LinuxConfiguration(_serialization.Model):
@@ -4731,7 +4726,7 @@ class LogAnalyticsOperationResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.properties = None
+        self.properties: Optional["_models.LogAnalyticsOutput"] = None
 
 
 class LogAnalyticsOutput(_serialization.Model):
@@ -4754,7 +4749,7 @@ class LogAnalyticsOutput(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.output = None
+        self.output: Optional[str] = None
 
 
 class MaintenanceRedeployStatus(_serialization.Model):
@@ -5127,8 +5122,8 @@ class OrchestrationServiceSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.service_name = None
-        self.service_state = None
+        self.service_name: Optional[Union[str, "_models.OrchestrationServiceNames"]] = None
+        self.service_state: Optional[Union[str, "_models.OrchestrationServiceState"]] = None
 
 
 class OSDisk(_serialization.Model):
@@ -5626,12 +5621,12 @@ class PatchInstallationDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.patch_id = None
-        self.name = None
-        self.version = None
-        self.kb_id = None
-        self.classifications = None
-        self.installation_state = None
+        self.patch_id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.version: Optional[str] = None
+        self.kb_id: Optional[str] = None
+        self.classifications: Optional[List[str]] = None
+        self.installation_state: Optional[Union[str, "_models.PatchInstallationState"]] = None
 
 
 class PatchSettings(_serialization.Model):
@@ -5980,9 +5975,9 @@ class ProximityPlacementGroup(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.zones = zones
         self.proximity_placement_group_type = proximity_placement_group_type
-        self.virtual_machines = None
-        self.virtual_machine_scale_sets = None
-        self.availability_sets = None
+        self.virtual_machines: Optional[List["_models.SubResourceWithColocationStatus"]] = None
+        self.virtual_machine_scale_sets: Optional[List["_models.SubResourceWithColocationStatus"]] = None
+        self.availability_sets: Optional[List["_models.SubResourceWithColocationStatus"]] = None
         self.colocation_status = colocation_status
         self.intent = intent
 
@@ -6146,9 +6141,9 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class PublicIPAddressSku(_serialization.Model):
@@ -6251,8 +6246,8 @@ class RecoveryWalkResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.walk_performed = None
-        self.next_platform_update_domain = None
+        self.walk_performed: Optional[bool] = None
+        self.next_platform_update_domain: Optional[int] = None
 
 
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
@@ -6514,9 +6509,9 @@ class ResourceWithOptionalLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -6605,11 +6600,11 @@ class RestorePoint(ProxyResource):
         super().__init__(**kwargs)
         self.exclude_disks = exclude_disks
         self.source_metadata = source_metadata
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.consistency_mode = consistency_mode
         self.time_created = time_created
         self.source_restore_point = source_restore_point
-        self.instance_view = None
+        self.instance_view: Optional["_models.RestorePointInstanceView"] = None
 
 
 class RestorePointCollection(Resource):
@@ -6683,9 +6678,9 @@ class RestorePointCollection(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.source = source
-        self.provisioning_state = None
-        self.restore_point_collection_id = None
-        self.restore_points = None
+        self.provisioning_state: Optional[str] = None
+        self.restore_point_collection_id: Optional[str] = None
+        self.restore_points: Optional[List["_models.RestorePoint"]] = None
 
 
 class RestorePointCollectionListResult(_serialization.Model):
@@ -6748,7 +6743,7 @@ class RestorePointCollectionSourceProperties(_serialization.Model):
         :paramtype id: str
         """
         super().__init__(**kwargs)
-        self.location = None
+        self.location: Optional[str] = None
         self.id = id
 
 
@@ -6802,9 +6797,9 @@ class RestorePointCollectionUpdate(UpdateResource):
         """
         super().__init__(tags=tags, **kwargs)
         self.source = source
-        self.provisioning_state = None
-        self.restore_point_collection_id = None
-        self.restore_points = None
+        self.provisioning_state: Optional[str] = None
+        self.restore_point_collection_id: Optional[str] = None
+        self.restore_points: Optional[List["_models.RestorePoint"]] = None
 
 
 class RestorePointEncryption(_serialization.Model):
@@ -6953,16 +6948,16 @@ class RestorePointSourceMetadata(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVMStorageProfile
         """
         super().__init__(**kwargs)
-        self.hardware_profile = None
+        self.hardware_profile: Optional["_models.HardwareProfile"] = None
         self.storage_profile = storage_profile
-        self.os_profile = None
-        self.diagnostics_profile = None
-        self.license_type = None
-        self.vm_id = None
-        self.security_profile = None
-        self.location = None
-        self.user_data = None
-        self.hyper_v_generation = None
+        self.os_profile: Optional["_models.OSProfile"] = None
+        self.diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None
+        self.license_type: Optional[str] = None
+        self.vm_id: Optional[str] = None
+        self.security_profile: Optional["_models.SecurityProfile"] = None
+        self.location: Optional[str] = None
+        self.user_data: Optional[str] = None
+        self.hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None
 
 
 class RestorePointSourceVMDataDisk(_serialization.Model):
@@ -7020,13 +7015,13 @@ class RestorePointSourceVMDataDisk(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.DiskRestorePointAttributes
         """
         super().__init__(**kwargs)
-        self.lun = None
-        self.name = None
-        self.caching = None
-        self.disk_size_gb = None
+        self.lun: Optional[int] = None
+        self.name: Optional[str] = None
+        self.caching: Optional[Union[str, "_models.CachingTypes"]] = None
+        self.disk_size_gb: Optional[int] = None
         self.managed_disk = managed_disk
         self.disk_restore_point = disk_restore_point
-        self.write_accelerator_enabled = None
+        self.write_accelerator_enabled: Optional[bool] = None
 
 
 class RestorePointSourceVMOSDisk(_serialization.Model):
@@ -7087,14 +7082,14 @@ class RestorePointSourceVMOSDisk(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.DiskRestorePointAttributes
         """
         super().__init__(**kwargs)
-        self.os_type = None
-        self.encryption_settings = None
-        self.name = None
-        self.caching = None
-        self.disk_size_gb = None
+        self.os_type: Optional[Union[str, "_models.OperatingSystemType"]] = None
+        self.encryption_settings: Optional["_models.DiskEncryptionSettings"] = None
+        self.name: Optional[str] = None
+        self.caching: Optional[Union[str, "_models.CachingTypes"]] = None
+        self.disk_size_gb: Optional[int] = None
         self.managed_disk = managed_disk
         self.disk_restore_point = disk_restore_point
-        self.write_accelerator_enabled = None
+        self.write_accelerator_enabled: Optional[bool] = None
 
 
 class RestorePointSourceVMStorageProfile(_serialization.Model):
@@ -7142,7 +7137,7 @@ class RestorePointSourceVMStorageProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.os_disk = os_disk
         self.data_disks = data_disks
-        self.disk_controller_type = None
+        self.disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None
 
 
 class RetrieveBootDiagnosticsDataResult(_serialization.Model):
@@ -7169,8 +7164,8 @@ class RetrieveBootDiagnosticsDataResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.console_screenshot_blob_uri = None
-        self.serial_console_log_blob_uri = None
+        self.console_screenshot_blob_uri: Optional[str] = None
+        self.serial_console_log_blob_uri: Optional[str] = None
 
 
 class RollbackStatusInfo(_serialization.Model):
@@ -7202,9 +7197,9 @@ class RollbackStatusInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.successfully_rolledback_instance_count = None
-        self.failed_rolledback_instance_count = None
-        self.rollback_error = None
+        self.successfully_rolledback_instance_count: Optional[int] = None
+        self.failed_rolledback_instance_count: Optional[int] = None
+        self.rollback_error: Optional["_models.ApiError"] = None
 
 
 class RollingUpgradePolicy(_serialization.Model):
@@ -7356,10 +7351,10 @@ class RollingUpgradeProgressInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.successful_instance_count = None
-        self.failed_instance_count = None
-        self.in_progress_instance_count = None
-        self.pending_instance_count = None
+        self.successful_instance_count: Optional[int] = None
+        self.failed_instance_count: Optional[int] = None
+        self.in_progress_instance_count: Optional[int] = None
+        self.pending_instance_count: Optional[int] = None
 
 
 class RollingUpgradeRunningStatus(_serialization.Model):
@@ -7396,10 +7391,10 @@ class RollingUpgradeRunningStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.start_time = None
-        self.last_action = None
-        self.last_action_time = None
+        self.code: Optional[Union[str, "_models.RollingUpgradeStatusCode"]] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_action: Optional[Union[str, "_models.RollingUpgradeActionType"]] = None
+        self.last_action_time: Optional[datetime.datetime] = None
 
 
 class RollingUpgradeStatusInfo(Resource):
@@ -7461,10 +7456,10 @@ class RollingUpgradeStatusInfo(Resource):
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.policy = None
-        self.running_status = None
-        self.progress = None
-        self.error = None
+        self.policy: Optional["_models.RollingUpgradePolicy"] = None
+        self.running_status: Optional["_models.RollingUpgradeRunningStatus"] = None
+        self.progress: Optional["_models.RollingUpgradeProgressInfo"] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class RunCommandDocumentBase(_serialization.Model):
@@ -8027,7 +8022,7 @@ class SecurityPostureReference(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar id: The security posture reference id in the form of
-     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
      Required.
     :vartype id: str
     :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
@@ -8057,7 +8052,7 @@ class SecurityPostureReference(_serialization.Model):
     ) -> None:
         """
         :keyword id: The security posture reference id in the form of
-         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
          Required.
         :paramtype id: str
         :keyword exclude_extensions: The list of virtual machine extension names to exclude when
@@ -8076,7 +8071,7 @@ class SecurityPostureReferenceUpdate(_serialization.Model):
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
     :ivar id: The security posture reference id in the form of
-     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
     :vartype id: str
     :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
      the security posture.
@@ -8101,7 +8096,7 @@ class SecurityPostureReferenceUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword id: The security posture reference id in the form of
-         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
         :paramtype id: str
         :keyword exclude_extensions: The list of virtual machine extension names to exclude when
          applying the security posture.
@@ -8191,7 +8186,7 @@ class ServiceArtifactReference(_serialization.Model):
     machines in the scale set when using 'latest' image version. Minimum api-version: 2022-11-01.
 
     :ivar id: The service artifact reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
     :vartype id: str
     """
 
@@ -8202,7 +8197,7 @@ class ServiceArtifactReference(_serialization.Model):
     def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The service artifact reference id in the form of
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
         :paramtype id: str
         """
         super().__init__(**kwargs)
@@ -8446,7 +8441,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
      through ssh. The public key is in ssh-rsa format. Required.
     :vartype public_key: str
     :ivar id: The ARM resource id in the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
      Required.
     :vartype id: str
     """
@@ -8475,7 +8470,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
          machine through ssh. The public key is in ssh-rsa format. Required.
         :paramtype public_key: str
         :keyword id: The ARM resource id in the form of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
          Required.
         :paramtype id: str
         """
@@ -8756,8 +8751,8 @@ class SystemData(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.created_at = None
-        self.last_modified_at = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.last_modified_at: Optional[datetime.datetime] = None
 
 
 class TerminateNotificationProfile(_serialization.Model):
@@ -8881,9 +8876,9 @@ class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.properties = None
-        self.type = None
-        self.location = None
+        self.properties: Optional["_models.UpgradeOperationHistoricalStatusInfoProperties"] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
 
 
 class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -8927,12 +8922,12 @@ class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # p
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.running_status = None
-        self.progress = None
-        self.error = None
-        self.started_by = None
-        self.target_image_reference = None
-        self.rollback_info = None
+        self.running_status: Optional["_models.UpgradeOperationHistoryStatus"] = None
+        self.progress: Optional["_models.RollingUpgradeProgressInfo"] = None
+        self.error: Optional["_models.ApiError"] = None
+        self.started_by: Optional[Union[str, "_models.UpgradeOperationInvoker"]] = None
+        self.target_image_reference: Optional["_models.ImageReference"] = None
+        self.rollback_info: Optional["_models.RollbackStatusInfo"] = None
 
 
 class UpgradeOperationHistoryStatus(_serialization.Model):
@@ -8964,9 +8959,9 @@ class UpgradeOperationHistoryStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.start_time = None
-        self.end_time = None
+        self.code: Optional[Union[str, "_models.UpgradeState"]] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.end_time: Optional[datetime.datetime] = None
 
 
 class UpgradePolicy(_serialization.Model):
@@ -9123,8 +9118,8 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class UserInitiatedReboot(_serialization.Model):
@@ -9658,12 +9653,12 @@ class VirtualMachine(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
-        self.resources = None
+        self.resources: Optional[List["_models.VirtualMachineExtension"]] = None
         self.identity = identity
         self.zones = zones
         self.extended_location = extended_location
-        self.managed_by = None
-        self.etag = None
+        self.managed_by: Optional[str] = None
+        self.etag: Optional[str] = None
         self.placement = placement
         self.hardware_profile = hardware_profile
         self.scheduled_events_policy = scheduled_events_policy
@@ -9681,17 +9676,17 @@ class VirtualMachine(Resource):
         self.billing_profile = billing_profile
         self.host = host
         self.host_group = host_group
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineInstanceView"] = None
         self.license_type = license_type
-        self.vm_id = None
+        self.vm_id: Optional[str] = None
         self.extensions_time_budget = extensions_time_budget
         self.platform_fault_domain = platform_fault_domain
         self.scheduled_events_profile = scheduled_events_profile
         self.user_data = user_data
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineAgentInstanceView(_serialization.Model):
@@ -9793,14 +9788,14 @@ class VirtualMachineAssessPatchesResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.assessment_activity_id = None
-        self.reboot_pending = None
-        self.critical_and_security_patch_count = None
-        self.other_patch_count = None
-        self.start_date_time = None
-        self.available_patches = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.assessment_activity_id: Optional[str] = None
+        self.reboot_pending: Optional[bool] = None
+        self.critical_and_security_patch_count: Optional[int] = None
+        self.other_patch_count: Optional[int] = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.available_patches: Optional[List["_models.VirtualMachineSoftwarePatchProperties"]] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class VirtualMachineCaptureParameters(_serialization.Model):
@@ -9885,10 +9880,10 @@ class VirtualMachineCaptureResult(SubResource):
         :paramtype id: str
         """
         super().__init__(id=id, **kwargs)
-        self.schema = None
-        self.content_version = None
-        self.parameters = None
-        self.resources = None
+        self.schema: Optional[str] = None
+        self.content_version: Optional[str] = None
+        self.parameters: Optional[JSON] = None
+        self.resources: Optional[List[JSON]] = None
 
 
 class VirtualMachineExtension(ResourceWithOptionalLocation):
@@ -10047,7 +10042,7 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.instance_view = instance_view
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -10392,7 +10387,7 @@ class VirtualMachineHealthStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
+        self.status: Optional["_models.InstanceViewStatus"] = None
 
 
 class VirtualMachineIdentity(_serialization.Model):
@@ -10413,7 +10408,7 @@ class VirtualMachineIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
     """
@@ -10445,13 +10440,13 @@ class VirtualMachineIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -10854,18 +10849,18 @@ class VirtualMachineInstallPatchesResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.installation_activity_id = None
-        self.reboot_status = None
-        self.maintenance_window_exceeded = None
-        self.excluded_patch_count = None
-        self.not_selected_patch_count = None
-        self.pending_patch_count = None
-        self.installed_patch_count = None
-        self.failed_patch_count = None
-        self.patches = None
-        self.start_date_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.installation_activity_id: Optional[str] = None
+        self.reboot_status: Optional[Union[str, "_models.VMGuestPatchRebootStatus"]] = None
+        self.maintenance_window_exceeded: Optional[bool] = None
+        self.excluded_patch_count: Optional[int] = None
+        self.not_selected_patch_count: Optional[int] = None
+        self.pending_patch_count: Optional[int] = None
+        self.installed_patch_count: Optional[int] = None
+        self.failed_patch_count: Optional[int] = None
+        self.patches: Optional[List["_models.PatchInstallationDetail"]] = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class VirtualMachineInstanceView(_serialization.Model):
@@ -11011,12 +11006,12 @@ class VirtualMachineInstanceView(_serialization.Model):
         self.maintenance_redeploy_status = maintenance_redeploy_status
         self.disks = disks
         self.extensions = extensions
-        self.vm_health = None
+        self.vm_health: Optional["_models.VirtualMachineHealthStatus"] = None
         self.boot_diagnostics = boot_diagnostics
-        self.assigned_host = None
+        self.assigned_host: Optional[str] = None
         self.statuses = statuses
         self.patch_status = patch_status
-        self.is_vm_in_standby_pool = None
+        self.is_vm_in_standby_pool: Optional[bool] = None
 
 
 class VirtualMachineIpTag(_serialization.Model):
@@ -11408,7 +11403,7 @@ class VirtualMachinePatchStatus(_serialization.Model):
         super().__init__(**kwargs)
         self.available_patch_summary = available_patch_summary
         self.last_patch_installation_summary = last_patch_installation_summary
-        self.configuration_statuses = None
+        self.configuration_statuses: Optional[List["_models.InstanceViewStatus"]] = None
 
 
 class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -11810,8 +11805,8 @@ class VirtualMachineRunCommand(Resource):
         self.error_blob_uri = error_blob_uri
         self.output_blob_managed_identity = output_blob_managed_identity
         self.error_blob_managed_identity = error_blob_managed_identity
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineRunCommandInstanceView"] = None
         self.treat_failure_as_deployment_failure = treat_failure_as_deployment_failure
 
 
@@ -12164,8 +12159,8 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         self.error_blob_uri = error_blob_uri
         self.output_blob_managed_identity = output_blob_managed_identity
         self.error_blob_managed_identity = error_blob_managed_identity
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineRunCommandInstanceView"] = None
         self.treat_failure_as_deployment_failure = treat_failure_as_deployment_failure
 
 
@@ -12455,15 +12450,15 @@ class VirtualMachineScaleSet(Resource):
         self.identity = identity
         self.zones = zones
         self.extended_location = extended_location
-        self.etag = None
+        self.etag: Optional[str] = None
         self.upgrade_policy = upgrade_policy
         self.scheduled_events_policy = scheduled_events_policy
         self.automatic_repairs_policy = automatic_repairs_policy
         self.virtual_machine_profile = virtual_machine_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.overprovision = overprovision
         self.do_not_run_extensions_on_overprovisioned_v_ms = do_not_run_extensions_on_overprovisioned_v_ms
-        self.unique_id = None
+        self.unique_id: Optional[str] = None
         self.single_placement_group = single_placement_group
         self.zone_balance = zone_balance
         self.platform_fault_domain_count = platform_fault_domain_count
@@ -12474,7 +12469,7 @@ class VirtualMachineScaleSet(Resource):
         self.orchestration_mode = orchestration_mode
         self.spot_restore_policy = spot_restore_policy
         self.priority_mix_policy = priority_mix_policy
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.constrained_maximum_capacity = constrained_maximum_capacity
         self.resiliency_policy = resiliency_policy
         self.zonal_platform_fault_domain_align_mode = zonal_platform_fault_domain_align_mode
@@ -12745,7 +12740,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.type = None
+        self.type: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -12754,7 +12749,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.provision_after_extensions = provision_after_extensions
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -12962,8 +12957,8 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
          ~azure.mgmt.compute.v2024_11_01.models.KeyVaultSecretReference
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -12972,7 +12967,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.provision_after_extensions = provision_after_extensions
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -13021,7 +13016,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
      scale set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
     """
@@ -13055,13 +13050,13 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -13103,10 +13098,10 @@ class VirtualMachineScaleSetInstanceView(_serialization.Model):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(**kwargs)
-        self.virtual_machine = None
-        self.extensions = None
+        self.virtual_machine: Optional["_models.VirtualMachineScaleSetInstanceViewStatusesSummary"] = None
+        self.extensions: Optional[List["_models.VirtualMachineScaleSetVMExtensionsSummary"]] = None
         self.statuses = statuses
-        self.orchestration_services = None
+        self.orchestration_services: Optional[List["_models.OrchestrationServiceSummary"]] = None
 
 
 class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  # pylint: disable=name-too-long
@@ -13130,7 +13125,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.statuses_summary = None
+        self.statuses_summary: Optional[List["_models.VirtualMachineStatusCodeCount"]] = None
 
 
 class VirtualMachineScaleSetIPConfiguration(_serialization.Model):
@@ -13519,8 +13514,8 @@ class VirtualMachineScaleSetMigrationInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.default_virtual_machine_scale_set_info = None
-        self.migrate_to_virtual_machine_scale_set = None
+        self.default_virtual_machine_scale_set_info: Optional["_models.DefaultVirtualMachineScaleSetInfo"] = None
+        self.migrate_to_virtual_machine_scale_set: Optional["_models.SubResource"] = None
 
 
 class VirtualMachineScaleSetNetworkConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -13679,7 +13674,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :vartype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -13711,7 +13706,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
         :paramtype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -14316,9 +14311,9 @@ class VirtualMachineScaleSetSku(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.resource_type = None
-        self.sku = None
-        self.capacity = None
+        self.resource_type: Optional[str] = None
+        self.sku: Optional["_models.Sku"] = None
+        self.capacity: Optional["_models.VirtualMachineScaleSetSkuCapacity"] = None
 
 
 class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
@@ -14355,10 +14350,10 @@ class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.minimum = None
-        self.maximum = None
-        self.default_capacity = None
-        self.scale_type = None
+        self.minimum: Optional[int] = None
+        self.maximum: Optional[int] = None
+        self.default_capacity: Optional[int] = None
+        self.scale_type: Optional[Union[str, "_models.VirtualMachineScaleSetSkuScaleType"]] = None
 
 
 class VirtualMachineScaleSetStorageProfile(_serialization.Model):
@@ -14868,7 +14863,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylin
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :vartype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -14902,7 +14897,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylin
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
         :paramtype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -15555,16 +15550,16 @@ class VirtualMachineScaleSetVM(Resource):
         :paramtype user_data: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.instance_id = None
-        self.sku = None
+        self.instance_id: Optional[str] = None
+        self.sku: Optional["_models.Sku"] = None
         self.plan = plan
-        self.resources = None
-        self.zones = None
+        self.resources: Optional[List["_models.VirtualMachineExtension"]] = None
+        self.zones: Optional[List[str]] = None
         self.identity = identity
-        self.etag = None
-        self.latest_model_applied = None
-        self.vm_id = None
-        self.instance_view = None
+        self.etag: Optional[str] = None
+        self.latest_model_applied: Optional[bool] = None
+        self.vm_id: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineScaleSetVMInstanceView"] = None
         self.hardware_profile = hardware_profile
         self.resilient_vm_deletion_status = resilient_vm_deletion_status
         self.storage_profile = storage_profile
@@ -15575,12 +15570,12 @@ class VirtualMachineScaleSetVM(Resource):
         self.network_profile_configuration = network_profile_configuration
         self.diagnostics_profile = diagnostics_profile
         self.availability_set = availability_set
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.license_type = license_type
-        self.model_definition_applied = None
+        self.model_definition_applied: Optional[str] = None
         self.protection_policy = protection_policy
         self.user_data = user_data
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
@@ -15725,8 +15720,8 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         :paramtype provision_after_extensions: list[str]
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.force_update_tag = force_update_tag
         self.publisher = publisher
@@ -15736,7 +15731,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.instance_view = instance_view
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -15791,8 +15786,8 @@ class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.statuses_summary = None
+        self.name: Optional[str] = None
+        self.statuses_summary: Optional[List["_models.VirtualMachineStatusCodeCount"]] = None
 
 
 class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
@@ -15911,8 +15906,8 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
          ~azure.mgmt.compute.v2024_11_01.models.KeyVaultSecretReference
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -16017,7 +16012,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
      **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
      characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
      infrastructure services implementation guidelines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
     :vartype computer_name: str
     :ivar os_name: The Operating System running on the hybrid machine.
     :vartype os_name: str
@@ -16102,7 +16097,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
          **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
          characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
          infrastructure services implementation guidelines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
         :paramtype computer_name: str
         :keyword os_name: The Operating System running on the hybrid machine.
         :paramtype os_name: str
@@ -16120,10 +16115,10 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
         self.maintenance_redeploy_status = maintenance_redeploy_status
         self.disks = disks
         self.extensions = extensions
-        self.vm_health = None
+        self.vm_health: Optional["_models.VirtualMachineHealthStatus"] = None
         self.boot_diagnostics = boot_diagnostics
         self.statuses = statuses
-        self.assigned_host = None
+        self.assigned_host: Optional[str] = None
         self.placement_group_id = placement_group_id
         self.computer_name = computer_name
         self.os_name = os_name
@@ -16417,7 +16412,7 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):
         self.hardware_profile = hardware_profile
         self.service_artifact_reference = service_artifact_reference
         self.security_posture_reference = security_posture_reference
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(_serialization.Model):
@@ -16610,16 +16605,16 @@ class VirtualMachineSoftwarePatchProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.patch_id = None
-        self.name = None
-        self.version = None
-        self.kb_id = None
-        self.classifications = None
-        self.reboot_behavior = None
-        self.activity_id = None
-        self.published_date = None
-        self.last_modified_date_time = None
-        self.assessment_state = None
+        self.patch_id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.version: Optional[str] = None
+        self.kb_id: Optional[str] = None
+        self.classifications: Optional[List[str]] = None
+        self.reboot_behavior: Optional[Union[str, "_models.VMGuestPatchRebootBehavior"]] = None
+        self.activity_id: Optional[str] = None
+        self.published_date: Optional[datetime.datetime] = None
+        self.last_modified_date_time: Optional[datetime.datetime] = None
+        self.assessment_state: Optional[Union[str, "_models.PatchAssessmentState"]] = None
 
 
 class VirtualMachineStatusCodeCount(_serialization.Model):
@@ -16646,8 +16641,8 @@ class VirtualMachineStatusCodeCount(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.count = None
+        self.code: Optional[str] = None
+        self.count: Optional[int] = None
 
 
 class VirtualMachineUpdate(UpdateResource):
@@ -16990,17 +16985,17 @@ class VirtualMachineUpdate(UpdateResource):
         self.billing_profile = billing_profile
         self.host = host
         self.host_group = host_group
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineInstanceView"] = None
         self.license_type = license_type
-        self.vm_id = None
+        self.vm_id: Optional[str] = None
         self.extensions_time_budget = extensions_time_budget
         self.platform_fault_domain = platform_fault_domain
         self.scheduled_events_profile = scheduled_events_profile
         self.user_data = user_data
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VMDiskSecurityProfile(_serialization.Model):
@@ -17064,7 +17059,7 @@ class VMGalleryApplication(_serialization.Model):
     :ivar order: Optional, Specifies the order in which the packages have to be installed.
     :vartype order: int
     :ivar package_reference_id: Specifies the GalleryApplicationVersion resource id on the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.
      Required.
     :vartype package_reference_id: str
     :ivar configuration_reference: Optional, Specifies the uri to an azure blob that will replace
@@ -17109,7 +17104,7 @@ class VMGalleryApplication(_serialization.Model):
         :paramtype order: int
         :keyword package_reference_id: Specifies the GalleryApplicationVersion resource id on the form
          of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.
          Required.
         :paramtype package_reference_id: str
         :keyword configuration_reference: Optional, Specifies the uri to an azure blob that will
@@ -17327,7 +17322,7 @@ class WindowsConfiguration(_serialization.Model):
         self.additional_unattend_content = additional_unattend_content
         self.patch_settings = patch_settings
         self.win_rm = win_rm
-        self.enable_vm_agent_platform_updates = None
+        self.enable_vm_agent_platform_updates: Optional[bool] = None
 
 
 class WindowsParameters(_serialization.Model):
