@@ -10,6 +10,7 @@
 * Fixed how the environment variables in the sdk are parsed. See [PR 40303](https://github.com/Azure/azure-sdk-for-python/pull/40303).
 
 #### Other Changes
+* Health checks are now done concurrently and for all regions for async apis. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
 
 ### 4.10.0b4 (2025-04-01)
 
