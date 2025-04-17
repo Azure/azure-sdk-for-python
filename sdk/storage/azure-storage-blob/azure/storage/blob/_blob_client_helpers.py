@@ -522,9 +522,9 @@ def _create_page_blob_options(
     tier = None
     if premium_page_blob_tier:
         try:
-            tier = premium_page_blob_tier.value  # type: ignore
+            tier = premium_page_blob_tier.value  # type: ignore [assignment]
         except AttributeError:
-            tier = premium_page_blob_tier  # type: ignore
+            tier = premium_page_blob_tier  # type: ignore [assignment]
 
     blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
@@ -734,7 +734,7 @@ def _stage_block_options(
 ) -> Dict[str, Any]:
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
-        data = data.encode(kwargs.pop('encoding') or 'UTF-8')  # type: ignore
+        data = data.encode(kwargs.pop('encoding') or 'UTF-8')
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     if length is None:
         length = get_length(data)
@@ -955,10 +955,10 @@ def _get_page_ranges_options(
     }
     if previous_snapshot_diff:
         try:
-            options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
+            options['prevsnapshot'] = previous_snapshot_diff.snapshot  # type: ignore [assignment]
         except AttributeError:
             try:
-                options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
+                options['prevsnapshot'] = previous_snapshot_diff['snapshot']  # type: ignore [assignment]
             except TypeError:
                 options['prevsnapshot'] = previous_snapshot_diff
     options.update({k: v for k, v in kwargs.items() if v is not None})
@@ -1025,7 +1025,7 @@ def _upload_page_options(
     if length is None or length % 512 != 0:
         raise ValueError("length must be an integer that aligns with 512 page size")
     end_range = offset + length - 1  # Reformat to an inclusive range index
-    content_range = f'bytes={offset}-{end_range}'  # type: ignore
+    content_range = f'bytes={offset}-{end_range}'
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     seq_conditions = SequenceNumberAccessConditions(
         if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),

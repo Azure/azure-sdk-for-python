@@ -432,7 +432,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             version_id=version_id,
             audience=audience,
             api_version=api_version,
-            secondary_hostname=secondary or secondary_hostname,
+            secondary_hostname=secondary_hostname or secondary,
             max_block_size=max_block_size,
             max_page_size=max_page_size,
             max_chunk_get_size=max_chunk_get_size,
@@ -3064,7 +3064,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         warnings.warn(
             "get_page_ranges is deprecated, use list_page_ranges instead",
@@ -3273,7 +3273,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         options = _get_page_ranges_options(
             snapshot=self.snapshot,
