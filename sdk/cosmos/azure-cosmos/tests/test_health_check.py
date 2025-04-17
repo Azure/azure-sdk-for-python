@@ -126,14 +126,14 @@ class TestHealthCheck:
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheck.host, REGION_1)
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.mark_endpoint_unavailable_for_read(
             locational_endpoint, True)
-        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = REGIONS
+        self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
         try:
             setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+            setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
 
     class MockGetDatabaseAccountCheck(object):
         def __init__(self, client_connection=None, endpoint_unavailable=False):

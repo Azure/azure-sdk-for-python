@@ -153,8 +153,8 @@ class TestHealthCheckAsync:
         # checks the background health check works as expected when all endpoints healthy
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
-        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
@@ -168,7 +168,7 @@ class TestHealthCheckAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+            setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
@@ -189,8 +189,8 @@ class TestHealthCheckAsync:
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
-        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
@@ -201,7 +201,7 @@ class TestHealthCheckAsync:
                 await asyncio.sleep(1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+            setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
 
         if not use_write_global_endpoint:
             num_unavailable_endpoints = len(REGIONS)
