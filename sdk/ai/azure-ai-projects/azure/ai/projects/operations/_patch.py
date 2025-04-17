@@ -31,7 +31,16 @@ from typing import (
 )
 
 from azure.core.exceptions import ResourceNotFoundError
+from azure.identity import DefaultAzureCredential
 from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2018_05_01_preview.models import ApplicationInsightsComponent
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.models import ApplicationInsightsComponent
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+import uuid
 
 from .. import models as _models
 from .._vendor import FileType
@@ -799,7 +808,15 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             )
 
             if not get_workspace_response.properties.application_insights:
-                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+                # raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+                # instead or raising resource not found, create resource. may need to refactor depending on if
+                # we want this to be client choice to create the app insights in case resource doesnt exist 
+                # or just do this automatically
+                self._outer_instance.telemetry.create_application_insights_if_not_exists(
+                    resource_group_name=get_workspace_response.properties.resourceGroupName,
+                    resource_name="your_resource_name",
+                    location="your_location"
+                )
 
             # Make a GET call to the Application Insights resource URL to get the connection string
             app_insights_respose: GetAppInsightsResponse = self._get_app_insights(
@@ -809,6 +826,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             self._connection_string = app_insights_respose.properties.connection_string
 
         return self._connection_string
+
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry

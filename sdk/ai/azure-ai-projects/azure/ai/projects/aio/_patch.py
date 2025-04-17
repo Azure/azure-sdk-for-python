@@ -25,6 +25,15 @@ from .operations import (
     EvaluationsOperations,
     TelemetryOperations,
 )
+from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2020_02_02_preview.models import ApplicationInsightsComponent
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+from azure.mgmt.applicationinsights.v2020_02_02_preview.operations._components_operations import ComponentsOperations
+
+import uuid
 from .operations._patch import _SyncCredentialWrapper, InferenceOperations
 
 if TYPE_CHECKING:
@@ -66,6 +75,9 @@ class AIProjectClient(
         kwargs3 = kwargs.copy()
 
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
+        self._create_app_insights: Optional[bool] = kwargs.get("create_app_insights", None)
+        if self._create_app_insights:
+            self.create_app_insights(subscription_id, resource_group_name, project_name, credential)
 
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the
@@ -259,6 +271,55 @@ class AIProjectClient(
             credential,
             **kwargs,
         )
+    
+    @classmethod
+    def create_app_insights(cls, subscription_id, resource_group_name, resource_name, location, principal_id, credential=None) -> Self:
+       """Create an Application Insights resource and assign RBAC roles.
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights resource.
+        :type resource_name: str
+        :param location: The location of the resource.
+        :type location: str
+        :return: The connection string of the Application Insights resource.
+        :rtype: str
+        """
+        # Use provided credential or create a new one
+        credential = credential or DefaultAzureCredential()
+
+        # Create Application Insights resource
+        client = ApplicationInsightsManagementClient(credential, subscription_id)
+        app_insights_component = ApplicationInsightsComponent(
+            location=location,
+            application_type="web",
+            kind="web"
+        )
+        client.components.create_or_update(resource_group_name, resource_name, app_insights_component)
+
+        # Retrieve the connection string
+        component = client.components.get(resource_group_name, resource_name)
+        connection_string = component.connection_string
+
+        # Assign RBAC roles
+        role_definition = '3913510d-42f4-4e42-8a64-420c390055eb'  # Monitoring Metrics Publisher
+        authorization_client = AuthorizationManagementClient(credential, subscription_id)
+        role_definition_id = f"/subscriptions/{subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_definition}"
+        scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource_name}"
+        role_assignment_name = str(uuid.uuid4())  # Generate a unique role assignment name
+
+        role_assignment_params = RoleAssignmentCreateParameters(
+            role_definition_id=role_definition_id,
+            principal_id=principal_id
+        )
+       authorization_client.role_assignments.create(
+            scope=scope,
+            role_assignment_name=role_assignment_name,
+            parameters=role_assignment_params 
+            )
+       if not connection_string:
+           raise ValueError("Connection string cannot be None")
+       credential = DefaultAzureCredential()
+       return cls.from_connection_string(connection_string, credential)
 
     def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Foundry project.
