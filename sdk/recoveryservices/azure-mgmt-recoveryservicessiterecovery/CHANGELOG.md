@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2025-05-18)
+
+change log generation was timeout!!!
+
 ## 1.2.0 (2024-02-22)
 
 ### Features Added
