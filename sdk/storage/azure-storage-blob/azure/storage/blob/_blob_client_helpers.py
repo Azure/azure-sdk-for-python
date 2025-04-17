@@ -135,10 +135,10 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         raise TypeError(f"Unsupported data type: {type(data)}")
 
     validate_content = kwargs.pop('validate_content') or False
-    content_settings = kwargs.pop('content_settings') or None
+    content_settings = kwargs.pop('content_settings', None)
     overwrite = kwargs.pop('overwrite') or False
     max_concurrency = kwargs.pop('max_concurrency') or 1
-    cpk = kwargs.pop('cpk') or None
+    cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
