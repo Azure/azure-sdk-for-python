@@ -51,6 +51,11 @@ The Adversarial simulator does not support selecting individual harms, instead w
 Identify the type of simulations being run (adversarial or non-adversarial).
 Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute.
 
+## Handle RedTeam errors
+
+### Target resource not found
+When initializing an Azure OpenAI model directly as `target` for a `RedTeam` scan, ensure `azure_endpoint` is specified in the format `https://<hub>.openai.azure.com/openai/deployments/<deployment_name>/chat/completions?api-version=2025-01-01-preview`. If using `AzureOpenAI`, `endpoint` should be specified in the format `https://<hub>.openai.azure.com/`. 
+
 ## Logging
 
 You can set logging level via environment variable `PF_LOGGING_LEVEL`, valid values includes `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`, default to `INFO`.
