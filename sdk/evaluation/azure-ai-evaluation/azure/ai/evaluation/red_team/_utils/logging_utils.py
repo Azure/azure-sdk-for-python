@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 
-def setup_logger(logger_name="RedTeamLogger", output_dir=None):
+def setup_logger(logger_name="RedTeamLogger", output_dir=None, log_filename=None):
     """Configure and return a logger instance for the Red Team Agent.
     
     Creates two handlers:
@@ -21,11 +21,14 @@ def setup_logger(logger_name="RedTeamLogger", output_dir=None):
     :type logger_name: str
     :param output_dir: Directory to store log files in. If None, logs are stored in current directory.
     :type output_dir: Optional[str]
+    :param log_filename: Name of the log file. If None, defaults to "redteam.log".
+    :type log_filename: Optional[str]
     :return: The configured logger instance
     :rtype: logging.Logger
     """
-    # Format matches what's expected in test_setup_logger
-    log_filename = "redteam.log"
+    # Use provided log_filename or default to "redteam.log"
+    if log_filename is None:
+        log_filename = "redteam.log"
     
     # If output directory is specified, create path with that directory
     if output_dir:
