@@ -52,6 +52,24 @@ logger = logging.getLogger(__name__)
 class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        # TODO: Remove this custom code when 1DP service will be available
+        if not endpoint:
+            raise ValueError("Connection string or 1DP endpoint is required")
+        parts = endpoint.split(";")
+        # Detect legacy endpoint and build it in old way.
+        if len(parts) == 4:
+            endpoint = "https://" + parts[0]
+            subscription_id = parts[1]
+            resource_group_name = parts[2]
+            project_name = parts[3]
+            endpoint = (
+                f"{endpoint}/agents/v1.0/subscriptions"
+                f"/{subscription_id}/resourceGroups/{resource_group_name}/providers"
+                f"/Microsoft.MachineLearningServices/workspaces/{project_name}"
+            )
+            # Override the credential scope with the legacy one.  
+            kwargs['credential_scopes'] =  ["https://management.azure.com/.default"]
+        # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
         self._toolset: Dict[str, _models.ToolSet] = {}
 

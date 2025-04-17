@@ -22,7 +22,10 @@ import asyncio
 import time
 
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import ListSortOrder
+from azure.ai.assistants.models import (
+    MessageTextContent,
+    ListSortOrder
+)
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -66,7 +69,10 @@ async def main() -> None:
             print("Deleted assistant")
 
             messages = await assistant_client.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            print(f"Messages: {messages}")
+            for data_point in messages.data:
+                last_message_content = data_point.content[-1]
+                if isinstance(last_message_content, MessageTextContent):
+                    print(f"{data_point.role}: {last_message_content.text.value}")
 
 
 if __name__ == "__main__":
