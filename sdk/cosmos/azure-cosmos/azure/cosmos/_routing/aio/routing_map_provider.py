@@ -22,10 +22,12 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+from typing import Dict, Any
 
 from ... import _base
 from ..collection_routing_map import CollectionRoutingMap
 from .. import routing_range
+
 
 # pylint: disable=protected-access
 
@@ -58,13 +60,21 @@ class PartitionKeyRangeCache(object):
         :return: List of overlapping partition key ranges.
         :rtype: list
         """
-        cl = self._documentClient
-
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        await self.initialize_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
 
+        return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
+
+    async def initialize_collection_routing_map_if_needed(
+            self,
+            collection_link: str,
+            collection_id: str,
+            **kwargs: Dict[str, Any]
+    ):
+        client = self._documentClient
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
-            collection_pk_ranges = [pk async for pk in cl._ReadPartitionKeyRanges(collection_link, **kwargs)]
+            collection_pk_ranges = [pk async for pk in client._ReadPartitionKeyRanges(collection_link, **kwargs)]
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
@@ -72,8 +82,18 @@ class PartitionKeyRangeCache(object):
             collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(
                 [(r, True) for r in collection_pk_ranges], collection_id
             )
-            self._collection_routing_map_by_item[collection_id] = collection_routing_map
-        return collection_routing_map.get_overlapping_ranges(partition_key_ranges)
+        self._collection_routing_map_by_item[collection_id] = collection_routing_map
+
+    async def get_range_by_partition_key_range_id(
+            self,
+            collection_link: str,
+            partition_key_range_id: int,
+            **kwargs: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        await self.initialize_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
+
+        return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(partition_key_range_id)
 
     @staticmethod
     def _discard_parent_ranges(partitionKeyRanges):
@@ -196,3 +216,11 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             pass
 
         return target_partition_key_ranges
+
+    async def get_range_by_partition_key_range_id(
+            self,
+            collection_link: str,
+            partition_key_range_id: int,
+            **kwargs: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        return await super().get_range_by_partition_key_range_id(collection_link, partition_key_range_id, **kwargs)

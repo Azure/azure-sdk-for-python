@@ -1,0 +1,99 @@
+# The MIT License (MIT)
+# Copyright (c) 2021 Microsoft Corporation
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""Internal class for global endpoint manager for circuit breaker.
+"""
+from typing import TYPE_CHECKING
+
+from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
+    _GlobalPartitionEndpointManagerForCircuitBreakerCore
+
+from azure.cosmos._global_endpoint_manager import _GlobalEndpointManager
+from azure.cosmos._request_object import RequestObject
+from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
+from azure.cosmos.http_constants import HttpHeaders
+
+if TYPE_CHECKING:
+    from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+
+
+
+class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
+    """
+    This internal class implements the logic for partition endpoint management for
+    geo-replicated database accounts.
+    """
+
+
+    def __init__(self, client: "CosmosClientConnection"):
+        super(_GlobalPartitionEndpointManagerForCircuitBreaker, self).__init__(client)
+        self.global_partition_endpoint_manager_core = (
+            _GlobalPartitionEndpointManagerForCircuitBreakerCore(client, self.location_cache))
+
+    def is_circuit_breaker_applicable(self, request: RequestObject) -> bool:
+        return self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request)
+
+
+    def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
+        container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
+        partition_key = request.headers[HttpHeaders.PartitionKey]
+        # get the partition key range for the given partition key
+        target_container_link = None
+        for container_link, properties in self.Client._container_properties_cache.items(): # pylint: disable=protected-access
+            if properties["_rid"] == container_rid:
+                target_container_link = container_link
+        if not target_container_link:
+            raise RuntimeError("Illegal state: the container cache is not properly initialized.")
+        # TODO: @tvaron3 check different clients and create them in different ways
+        pk_range = (self.Client._routing_map_provider # pylint: disable=protected-access
+                    .get_overlapping_ranges(target_container_link, partition_key))
+        return PartitionKeyRangeWrapper(pk_range, container_rid)
+
+    def record_failure(
+            self,
+            request: RequestObject
+    ) -> None:
+        if self.is_circuit_breaker_applicable(request):
+            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
+
+    def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> str:
+        # TODO: @tvaron3 check here if it is healthy tentative and move it back to Unhealthy
+        if self.is_circuit_breaker_applicable(request):
+            request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
+                                                                                                    pk_range_wrapper)
+        return super(_GlobalPartitionEndpointManagerForCircuitBreaker, self).resolve_service_endpoint(request,
+                                                                                                      pk_range_wrapper)
+
+    def mark_partition_unavailable(
+            self,
+            request: RequestObject,
+            pk_range_wrapper: PartitionKeyRangeWrapper
+    ) -> None:
+        self.global_partition_endpoint_manager_core.mark_partition_unavailable(request, pk_range_wrapper)
+
+    def record_success(
+            self,
+            request: RequestObject
+    ) -> None:
+        if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request):
+            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)
