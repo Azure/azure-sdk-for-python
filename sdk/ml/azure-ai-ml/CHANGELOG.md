@@ -7,7 +7,7 @@
 
  ### Other Changes
   - Hub and Project are officially GA'd and no longer experimental.
-  - Added upper version restrictions for all dependencies in `install_requires` to ensure compatibility and prevent breaking changes due to major version updates.
+  - Added major version restrictions for most of the dependencies in `install_requires` to ensure compatibility and prevent breaking changes due to major version updates.
 
 ## 1.26.2 (2025-04-08)
 
