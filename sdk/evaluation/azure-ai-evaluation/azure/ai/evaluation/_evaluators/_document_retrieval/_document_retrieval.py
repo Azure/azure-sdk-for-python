@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-import json
 import math
 import operator
 from itertools import starmap
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing import Dict, List, TypedDict, Optional
+from typing_extensions import override, overload
 
 
 RetrievalGroundTruthDocument = TypedDict(
@@ -25,7 +25,6 @@ RetrievedDocument = TypedDict(
         "relevance_score": float
     }
 )
-
 
 DocumentRetrievalMetrics = TypedDict(
     'DocumentRetrievalMetrics',
@@ -50,7 +49,7 @@ DocumentRetrievalMetrics = TypedDict(
 )
 
 
-class DocumentRetrievalEvaluator:
+class DocumentRetrievalEvaluator(EvaluatorBase):
     """
     Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity and Top K Relevance.
     """
@@ -192,18 +191,15 @@ class DocumentRetrievalEvaluator:
             
         return result
 
-    def __call__(self, *, retrieval_ground_truth: str, retrieved_documents: str) -> DocumentRetrievalMetrics:
-        """
-        Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        retrieval_ground_truth = eval_input.get("retrieval_ground_truth")
+        retrieved_documents = eval_input.get("retrieved_documents")
 
-        Input `retrieval_ground_truth` is a JSON-formatted string representation of `List[azure.ai.evaluation.RetrievalGroundTruthDocument]`, where each item of the list represents a ground-truth judgement for a particular document relative to a query.
-        Input `retrieved_documents` is a JSON-formatted string representation of `List[azure.ai.evaluation.RetrievedDocument]`, where each item of the list represents a document scored by a search algorithm for the same query.
-
-        Evaluation metrics calculated include NDCG@3, XDCG@3, Fidelity, Top K Relevance and Holes.
-        """
-        # input validation
-        qrels = [RetrievalGroundTruthDocument(x) for x in json.loads(retrieval_ground_truth)]
-        results = [RetrievedDocument(x) for x in json.loads(retrieved_documents)]
+        if not retrieval_ground_truth or not retrieved_documents:
+            raise EvaluationException("One or more inputs is missing.")
+        
+        qrels = [RetrievalGroundTruthDocument(x) for x in retrieval_ground_truth]
+        results = [RetrievedDocument(x) for x in retrieved_documents]
 
         if len(qrels) > 10000 or len(results) > 10000:
             raise ValueError("The results and ground-truth sets should contain no more than 10000 items.")
@@ -286,3 +282,19 @@ class DocumentRetrievalEvaluator:
             metrics[k] = v
         
         return DocumentRetrievalMetrics(**metrics)
+
+    @overload
+    def __call__(self, *, retrieval_ground_truth: List[RetrievalGroundTruthDocument], retrieved_documents: List[RetrievedDocument]) -> DocumentRetrievalMetrics:
+        """
+        Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
+
+        Input `retrieval_ground_truth` is an instance of `List[azure.ai.evaluation.RetrievalGroundTruthDocument]`, where each item of the list represents a ground-truth judgement for a particular document relative to a query.
+        Input `retrieved_documents` is an instance of `List[azure.ai.evaluation.RetrievedDocument]`, where each item of the list represents a document scored by a search algorithm for the same query.
+
+        Evaluation metrics calculated include NDCG@3, XDCG@3, Fidelity, Top K Relevance and Holes.
+        """
+    
+    @override
+    def __call__(self, *args, **kwargs):
+        return super().__call__(*args, **kwargs)
+
