@@ -472,6 +472,7 @@ def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretC
         registry_name="UnsecureTest-testFeed",
     )
 
+
 @pytest.fixture
 def sdkv2_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
