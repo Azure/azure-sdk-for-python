@@ -28,6 +28,7 @@ def fetch_current_datetime(format: Optional[str] = None) -> str:
         time_format = "%Y-%m-%d %H:%M:%S"
 
     time_json = json.dumps({"current_time": current_time.strftime(time_format)})
+    raise ValueError("Just a minute")
     return time_json
 
 
