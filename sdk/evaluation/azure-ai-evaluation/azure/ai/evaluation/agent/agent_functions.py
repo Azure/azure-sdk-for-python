@@ -18,6 +18,7 @@ from azure.ai.evaluation.agent import RedTeamToolProvider
 credential = None
 tool_provider = None
 azure_ai_project = None
+target_function = None
 
 def _get_tool_provider() -> RedTeamToolProvider:
     """Get or create the RedTeamToolProvider instance."""
@@ -165,6 +166,41 @@ def red_team_explain_purpose() -> str:
     
     return json.dumps(explanation)
 
+def red_team_send_to_target(prompt: str) -> str:
+    """
+    Send a prompt to the target function (e.g., call_ollama) and return the response.
+    
+    This function allows sending prompts to an external model or service for 
+    evaluation.
+    
+    :param prompt (str): The prompt text to send to the target function.
+    :return: A JSON string containing the response from the target function.
+    :rtype: str
+    """
+    global target_function
+    
+    if target_function is None:
+        return json.dumps({
+            "status": "error",
+            "message": "Target function not initialized. Make sure to pass a target_func to initialize_tool_provider."
+        })
+    
+    try:
+        # Call the target function with the prompt
+        response = target_function(prompt)
+        
+        return json.dumps({
+            "status": "success",
+            "prompt": prompt,
+            "response": response
+        })
+    except Exception as e:
+        return json.dumps({
+            "status": "error",
+            "message": f"Error calling target function: {str(e)}",
+            "prompt": prompt
+        })
+
 # Example User Input for Each Function
 # 1. Red Team Fetch Harmful Prompt
 #    User Input: "Fetch a harmful prompt in the 'violence' category."
@@ -191,17 +227,29 @@ user_functions: Set[Callable[..., Any]] = {
     red_team_convert_prompt,
     red_team_unified,
     red_team_get_available_strategies,
-    red_team_explain_purpose
+    red_team_explain_purpose,
+    red_team_send_to_target
 }
 
-def initialize_tool_provider(projects_connection_string) -> Set[Callable[..., Any]]:
+def initialize_tool_provider(
+        projects_connection_string: str,
+        target_func: Optional[Callable[[str], str]] = None,
+    ) -> Set[Callable[..., Any]]:
     """
     Initialize the RedTeamToolProvider with the Azure AI project and credential.
     This function is called when the module is imported.
+    
+    :param projects_connection_string: The Azure AI project connection string.
+    :param target_func: A function that takes a string prompt and returns a string response.
+    :return: A set of callable functions that can be used as tools.
     """
     # projects_connection_string is in the format: connection_string;subscription_id;resource_group;project_name
     # parse it to a dictionary called azure_ai_project
-    global azure_ai_project, credential, tool_provider
+    global azure_ai_project, credential, tool_provider, target_function
+    
+    # Store the target function for later use
+    if target_func is not None:
+        globals()['target_function'] = target_func
     azure_ai_project = {
         "subscription_id": projects_connection_string.split(";")[1],
         "resource_group_name": projects_connection_string.split(";")[2],
