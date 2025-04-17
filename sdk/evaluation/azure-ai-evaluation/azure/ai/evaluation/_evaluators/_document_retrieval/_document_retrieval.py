@@ -83,7 +83,8 @@ class DocumentRetrievalEvaluator:
                 f"Threshold must be a dictionary, got {type(threshold)}"
             )
 
-        self._threshold.update(threshold)
+        elif isinstance(threshold, dict):
+            self._threshold.update(threshold)
 
     def _compute_holes(
         self,
