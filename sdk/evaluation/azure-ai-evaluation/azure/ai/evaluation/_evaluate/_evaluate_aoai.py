@@ -145,7 +145,6 @@ def _get_evaluation_run_results(
         for single_grader_row_result in row_result.results:
             grader_name = grader_name_map[single_grader_row_result["name"]]
             for name, value in single_grader_row_result.items():
-                print(f"=-=-=-=-=-=-=-=-=: {name}, {value}")
                 if name in ["name"]: # Todo decide if we also want to exclude "sample"
                     continue
                 formatted_column_name = f"outputs.{grader_name}.{name}"
