@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport_async import AsyncTransport

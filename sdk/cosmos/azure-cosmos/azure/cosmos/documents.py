@@ -196,7 +196,7 @@ class DataType:
 
 
 class IndexingDirective:
-    """Specifies whether or not the resource is to be indexed."""
+    """Specifies whether the resource is to be indexed."""
     Default: int = 0
     """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
@@ -224,7 +224,7 @@ class PermissionMode:
 
 
 class TriggerType:
-    """Specifies the type of a trigger."""
+    """Specifies the type of trigger."""
     Pre: Literal["pre"] = "pre"
     """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
@@ -336,6 +336,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
+        # RequestTimeout is the connection timeout for all operations except database account
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
         self.ReadTimeout: int = self.__defaultReadTimeout
@@ -351,6 +352,23 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
+
+    def override_dba_timeouts(
+            self,
+            connection_timeout: Optional[int] = None,
+            read_timeout: Optional[int] = None
+    ) -> None:
+        """Override the timeouts for database account operations.
+
+        :param int connection_timeout:
+            Connection timeout in seconds.
+        :param int read_timeout:
+            Read timeout in seconds.
+        """
+        if connection_timeout is not None:
+            self.DBAConnectionTimeout = connection_timeout
+        if read_timeout is not None:
+            self.DBAReadTimeout = read_timeout
 
 
 class _OperationType:

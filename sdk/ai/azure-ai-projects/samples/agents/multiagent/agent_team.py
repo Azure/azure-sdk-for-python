@@ -328,10 +328,11 @@ class AgentTeam:
                     agent = self._get_member_by_name(task.recipient)
                     if agent and agent.agent_instance:
                         run = self._project_client.agents.create_and_process_run(
-                            thread_id=self._agent_thread.id, assistant_id=agent.agent_instance.id
+                            thread_id=self._agent_thread.id, agent_id=agent.agent_instance.id
                         )
                         print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
                         messages = self._project_client.agents.list_messages(thread_id=self._agent_thread.id)
+                        print(messages)
                         text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
                         if text_message and text_message.text:
                             print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")

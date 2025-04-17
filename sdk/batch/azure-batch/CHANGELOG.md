@@ -1,14 +1,37 @@
 # Release History
 
-## 15.0.0b2 (Unreleased)
+## 15.0.0b2 (2025-03-01)
 
 ### Features Added
 
+- Force delete/terminate job or job schedule:
+  - Added `force` parameter of type Boolean to `delete_job`, `terminate_job`,  `delete_job_schedule`, and `terminate_job_schedule`
+
+- Support for compute node start/deallocate operations:
+  - Added `start_node`, `deallocate_node` methods to `BatchClient` and `AsyncBatchClient`
+
+- Container task data mount isolation:
+  - Added `containerHostBatchBindMounts` of type `List<ContainerHostBatchBindMountEntry>` to `BatchTaskContainerSettings`
+
+- Patch improvements for pool and job:
+  - Added `displayName`, `vmSize`, `taskSlotsPerNode`, `taskSchedulingPolicy`, `enableInterNodeCommunication`, `virtualMachineConfiguration`, `networkConfiguration`, `userAccounts`, `mountConfiguration`, `upgradePolicy`, and `resourceTags` to `BatchPoolUpdateContent`
+  - Added `networkConfiguration` to `BatchJobUpdateContent`
+
+- Confidential VM support:
+  - Added `confidentialVM` to `SecurityTypes`.
+  - Added `securityProfile` of type `VMDiskSecurityProfile` to `ManagedDisk`
+
+- Support for shared and community gallery images:
+  - Added `sharedGalleryImageId` and `communityGalleryImageId` to `ImageReference`
+
+- Re-add support for `BatchCertificate` (temporary since this feature is deprecated):
+  - Added `create_certificate`, `list_certificates`, `cancel_certificate_deletion`, `delete_certificate`, and`get_certificate` methods to `BatchClient` and `AsyncBatchClient`
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Removed `get_remote_desktop` method from `BatchClient`. Use `get_node_remote_login_settings` instead to remotely login to a compute node
+- Removed `CloudServiceConfiguration` from pool models and operations. Use `VirtualMachineConfiguration` when creating pools
+- Removed `ApplicationLicenses` from pool models and operations
 
 ## 15.0.0b1 (2024-09-01)
 
