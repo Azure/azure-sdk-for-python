@@ -160,6 +160,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
+        throughput_bucket = kwargs.pop('throughput_bucket', None)
+        if throughput_bucket:
+            self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
+
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 

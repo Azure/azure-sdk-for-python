@@ -131,6 +131,7 @@ class DatabaseProxy(object):
         self,
         *,
         initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the database properties.
@@ -138,6 +139,7 @@ class DatabaseProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
@@ -152,6 +154,8 @@ class DatabaseProxy(object):
         database_link = _get_database_link(self)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
 
         self._properties = await self.client_connection.ReadDatabase(
@@ -177,6 +181,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -210,6 +215,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -277,9 +283,10 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -305,6 +312,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -340,6 +348,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -384,6 +393,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
+                throughput_bucket=throughput_bucket,
                 **kwargs
             )
 
@@ -421,6 +431,7 @@ class DatabaseProxy(object):
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -428,6 +439,7 @@ class DatabaseProxy(object):
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -450,6 +462,8 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -470,6 +484,7 @@ class DatabaseProxy(object):
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -481,6 +496,7 @@ class DatabaseProxy(object):
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -493,6 +509,8 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -520,6 +538,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -548,6 +567,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -583,6 +603,8 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         request_options = _build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -615,6 +637,7 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         *,
         initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -626,6 +649,7 @@ class DatabaseProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -649,6 +673,8 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)
