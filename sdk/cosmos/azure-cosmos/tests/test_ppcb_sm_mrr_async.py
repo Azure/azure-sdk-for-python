@@ -297,6 +297,8 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                 health_status = health_info.unavailability_info.get(HEALTH_STATUS)
                 if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
                     unhealthy_partitions += 1
+                    assert health_info.write_failure_count == 0
+                    assert health_info.write_consecutive_failure_count == 0
                 else:
                     assert health_info.read_consecutive_failure_count < 10
                     assert health_info.write_failure_count == 0

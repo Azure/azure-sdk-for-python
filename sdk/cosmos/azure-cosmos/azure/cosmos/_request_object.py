@@ -42,7 +42,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
         self.excluded_locations: Optional[List[str]] = None
-        self.excluded_locations_circuit_breaker: Set[str] = set()
+        self.excluded_locations_circuit_breaker: List[str] = []
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -89,5 +89,5 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
 
-    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: Set[str]) -> None: # pylint: disable=name-too-long
+    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations

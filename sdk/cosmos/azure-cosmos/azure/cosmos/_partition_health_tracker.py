@@ -23,7 +23,7 @@
 """
 import logging
 import os
-from typing import Dict, Set, Any
+from typing import Dict, Set, Any, List
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
 from ._constants import _Constants as Constants
@@ -171,15 +171,15 @@ class _PartitionHealthTracker(object):
             self._reset_partition_health_tracker_stats()
 
 
-    def get_excluded_locations(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> Set[str]:
+    def get_excluded_locations(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> List[str]:
         self._check_stale_partition_info(pk_range_wrapper)
-        excluded_locations = set()
+        excluded_locations = []
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if partition_health_info.unavailability_info:
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
                     if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY):
-                        excluded_locations.add(location)
+                        excluded_locations.append(location)
         return excluded_locations
 
 
