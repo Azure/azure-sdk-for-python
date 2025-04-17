@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     ApiKeyCredentials,
+    AssetCredentialResponse,
     AzureAISearchIndex,
     BaseCredentials,
     BlobReferenceForConsumption,
@@ -60,6 +61,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ApiKeyCredentials",
+    "AssetCredentialResponse",
     "AzureAISearchIndex",
     "BaseCredentials",
     "BlobReferenceForConsumption",

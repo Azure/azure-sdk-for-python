@@ -27,7 +27,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-- Python 3.8 or later.
+- Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
 - The project endpoint URL, of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
@@ -225,7 +225,7 @@ print(
 )
 dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
     name=dataset_name,
-    version="1",
+    version=dataset_version,
     file="sample_folder/sample_file1.txt",
 )
 print(dataset)
@@ -275,14 +275,22 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
+print(f"Create an Index named `{index_name}` referencing an existing AI Search resource:")
+index = project_client.indexes.create_version(
+    name=index_name,
+    version=index_version,
+    body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
+)
+print(index)
+exit()
+
+print(f"Get an existing Index named `{index_name}`, version `{index_version}`:")
+index = project_client.indexes.get_version(name=index_name, version=index_version)
+print(index)
+
 print(f"Listing all versions of the Index named `{index_name}`:")
 for index in project_client.indexes.list_versions(name=index_name):
     print(index)
-exit()
-
-print("Get an existing Index version `1`:")
-index = project_client.indexes.get_version(name=index_name, version="1")
-print(index)
 
 print("List latest versions of all Indexes:")
 for index in project_client.indexes.list_latest():
