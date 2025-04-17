@@ -41,6 +41,7 @@
         "azure.ai.projects.onedp.AIProjectClient.connections.get": "Azure.AI.Projects.Connections.get",
         "azure.ai.projects.onedp.AIProjectClient.connections.get_with_credentials": "Azure.AI.Projects.Connections.getWithCredentials",
         "azure.ai.projects.onedp.AIProjectClient.connections.list": "Azure.AI.Projects.Connections.list",
+        "azure.ai.projects.onedp.AIProjectClient.connections.list_with_credentials": "Azure.AI.Projects.Connections.listWithCredentials",
         "azure.ai.projects.onedp.AIProjectClient.evaluations.get": "Azure.AI.Projects.Evaluations.get",
         "azure.ai.projects.onedp.AIProjectClient.evaluations.list": "Azure.AI.Projects.Evaluations.list",
         "azure.ai.projects.onedp.AIProjectClient.evaluations.create_run": "Azure.AI.Projects.Evaluations.createRun",
