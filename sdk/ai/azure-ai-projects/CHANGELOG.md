@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0b9 (2025-04-16)
+
+### Features added
+
+* Utilities to load prompt template strings and Prompty file content
+* Added BingCustomSearchTool class with sample
+* Added list_threads API to agents namespace
+* Added image input support for agents create_message
+
+### Sample updates
+
+* Added `project_client.agents.enable_auto_function_calls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
+* New BingCustomSearchTool sample
+* New samples added for image input from url, file and base64
+
+### Breaking Changes
+
+Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+
 ## 1.0.0b8 (2025-03-28)
 
 ### Features added
