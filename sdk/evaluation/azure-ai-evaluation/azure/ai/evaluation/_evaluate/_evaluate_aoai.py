@@ -331,8 +331,9 @@ def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: 
 
     print(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...\n")
     iters = 0
+    # max wait time = 2^10 * 3 = 3072 seconds ~= 51 minutes
     max_iters = 10 # TODO assign as a constant somewhere? Make configurable?
-    wait_interval = 10 # Seconds. TODO assign as a constant somewhere? Make configurable?
+    wait_interval = 3 # Seconds. TODO assign as a constant somewhere? Make configurable?
     # Max wait is 
     while(iters < max_iters):
         iters += 1
