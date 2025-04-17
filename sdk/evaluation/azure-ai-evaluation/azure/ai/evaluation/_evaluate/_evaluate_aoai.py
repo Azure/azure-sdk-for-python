@@ -3,12 +3,10 @@
 # ---------------------------------------------------------
 
 import logging
-from math import sin
 
 from openai import AzureOpenAI, OpenAI
-import openai
 import pandas as pd
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union, Type
+from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
@@ -16,14 +14,16 @@ from ._batch_run import CodeClient, ProxyClient
 #import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
-from azure.ai.evaluation._constants import AOAI_ID_MAPPING
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
 
-
-
-def _begin_aoai_evaluation(client: Union[OpenAI, AzureOpenAI], graders: Dict[str, AoaiGrader], data: pd.DataFrame, run_name: str) -> Tuple[str, str, Dict[str, str]]:
+def _begin_aoai_evaluation(
+        client: Union[OpenAI, AzureOpenAI],
+        graders: Dict[str, AoaiGrader],
+        data: pd.DataFrame,
+        run_name: str
+    ) -> Tuple[str, str, Dict[str, str]]:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
     AOAI evaluation runs must be queried for completion, so this returns a poller to accomplish that task
@@ -45,6 +45,9 @@ def _begin_aoai_evaluation(client: Union[OpenAI, AzureOpenAI], graders: Dict[str
     # Format data for eval group creation
     grader_name_list  = []
     grader_list = []
+    
+    print("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...\n")
+    
     for name, grader in graders.items():
         grader_name_list.append(name)
         grader_list.append(grader.get_grader_config())
@@ -56,6 +59,8 @@ def _begin_aoai_evaluation(client: Union[OpenAI, AzureOpenAI], graders: Dict[str
         testing_criteria=grader_list,
         metadata={"is_foundry_eval": "true"}
     )
+    
+    print(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...\n")
     # Use eval group info to map grader IDs back to user-assigned names.
     eval_name_map = {}
     num_criteria = len(eval_group_info.testing_criteria)
@@ -72,10 +77,17 @@ def _begin_aoai_evaluation(client: Union[OpenAI, AzureOpenAI], graders: Dict[str
 
     # Create eval run 
     eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data)
+    print(f"AOAI: Eval run created with id {eval_run_id}." +
+          " Results will be retrieved after normal evaluation is complete...\n")
 
     return eval_group_info.id, eval_run_id, eval_name_map
 
-def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str, grader_name_map: Dict[str, str]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def _get_evaluation_run_results(
+        client: Union[OpenAI, AzureOpenAI],
+        eval_group_id: str,
+        eval_run_id: str,
+        grader_name_map: Dict[str, str]
+    ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume.
@@ -97,7 +109,7 @@ def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_i
     """
 
     # Wait for evaluation run to complete
-    run_results = _get_run_results(client, eval_group_id, eval_run_id)
+    run_results = _wait_for_run_conclusion(client, eval_group_id, eval_run_id)
     if run_results.status != "completed":
         raise EvaluationException(
             message=f"AOAI evaluation run {eval_group_id}/{eval_run_id} failed with status {run_results.status}.",
@@ -105,6 +117,7 @@ def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_i
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
+    print(f"AOAI: Evaluation run {eval_group_id}/{eval_run_id} completed successfully. Gathering results...\n")
     # Convert run results into a dictionary of metrics
     run_metrics = {}
     for criteria_result in run_results.per_testing_criteria_results:
@@ -119,7 +132,8 @@ def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_i
     # Get full results and convert them into a dataframe.
     # Notes on raw full data output from OAI eval runs:
     # Each row in the full results list in itself a list.
-    # Each entry corresponds to one grader's results from the criteria list that was inputted to the eval group.
+    # Each entry corresponds to one grader's results from the criteria list
+    # that was inputted to the eval group.
     # Each entry is a dictionary, with a name, sample, passed boolean, and score number.
     # The name is used to figure out which grader the entry refers to, the sample is ignored.
     # The passed and score values are then added to the results dictionary, prepended with the grader's name
@@ -131,7 +145,8 @@ def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_i
         for single_grader_row_result in row_result.results:
             grader_name = grader_name_map[single_grader_row_result["name"]]
             for name, value in single_grader_row_result.items():
-                if name in ["name", "sample"]:
+                print(f"=-=-=-=-=-=-=-=-=: {name}, {value}")
+                if name in ["name"]: # Todo decide if we also want to exclude "sample"
                     continue
                 formatted_column_name = f"outputs.{grader_name}.{name}"
                 if (formatted_column_name not in listed_results):
@@ -141,16 +156,19 @@ def _get_evaluation_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_i
 
     return output_df, run_metrics
 
-def _split_evaluators_and_grader_configs(evaluators: Dict[str, Union[Callable, AoaiGrader]]) -> Tuple[Dict[str, Callable], Dict[str, AoaiGrader]]:
+def _split_evaluators_and_grader_configs(
+        evaluators: Dict[str, Union[Callable, AoaiGrader]]
+    ) -> Tuple[Dict[str, Callable], Dict[str, AoaiGrader]]:
     """
-    Given a dictionary of strings to Evaluators and AOAI grader configs. Identity which is which, and return two
+    Given a dictionary of strings to Evaluators and AOAI graders. Identity which is which, and return two
     dictionaries that each contain one subset, the first containing the evaluators and the second containing
-    the AOAI grader configs.
+    the AOAI graders. AOAI graders are defined as anything that is an instance of the AoaiGrader class,
+    including child class instances. 
 
     :param evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
         and value as the evaluator function or AOAI grader. 
     :type evaluators: Dict[str, Union[Callable, ]]
-    :return: Tuple of two dictionaries, the first containing evaluators and the second containing AOAI grader configs.
+    :return: Tuple of two dictionaries, the first containing evaluators and the second containing AOAI graders.
     :rtype: Tuple[Dict[str, Callable], Dict[str, AoaiGrader]]
     """
     true_evaluators = {}
@@ -162,10 +180,6 @@ def _split_evaluators_and_grader_configs(evaluators: Dict[str, Union[Callable, A
             true_evaluators[key] = value
     return true_evaluators, aoai_graders
 
-# TODO - if we decide on a per-grader-config class implementation, this function will need
-# the following updates:
-# - Add back the model_id input, use that to call _get_grader_class
-# - further check that grader_config aligns with grader implied by model_id
 def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AoaiGrader:
     """
     Given a model ID that refers to a specific AOAI grader wrapper class, return an instance of that class
@@ -187,30 +201,36 @@ def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str,
             target=ErrorTarget.AOAI_GRADER,
         )
 
-    grader_config = init_params.get("grader_config", None)
-    if grader_config is None:
-        raise EvaluationException(
-            message="Grader converter needs a valid 'grader_config' key in init_params.",
-            blame=ErrorBlame.USER_ERROR,
-            category=ErrorCategory.INVALID_VALUE,
-            target=ErrorTarget.AOAI_GRADER,
-        )
+    grader_class =  _get_grader_class(grader_id)
+    return grader_class(**init_params)
 
-    grader_class =  AoaiGrader #_get_grader_class(model_id)
-    return grader_class(model_config=model_config, grader_config=grader_config)
-
-# NOTE: Currently unused in due to single grader class implementation
-# Delete if we don't switch to a class-per-grader-config implementation
 def _get_grader_class(model_id: str) -> Type[AoaiGrader]:
     """
     Given a model ID, return the class of the corresponding grader wrapper.
     """
-    stripped_id = ""# TODO extract minimal string to ID things that ID graders
-    if (stripped_id not in AOAI_ID_MAPPING):
-        # TODO better error using package exception class
-        raise ValueError(f"Model ID {model_id} not recognized as an AOAI grader")
-    return AOAI_ID_MAPPING[stripped_id]
 
+    from azure.ai.evaluation import (
+        AoaiGrader,
+        LabelGrader,
+        StringCheckGrader,
+        TextSimilarityGrader,
+    )
+    id_map = {
+        AoaiGrader.id: AoaiGrader,
+        LabelGrader.id: LabelGrader,
+        StringCheckGrader.id: StringCheckGrader,
+        TextSimilarityGrader.id: TextSimilarityGrader,
+    }
+
+    for key in id_map.keys():
+        if model_id == key:
+            return id_map[key]
+    raise EvaluationException(
+        message=f"Model ID {model_id} not recognized as an AOAI grader ID",
+        blame=ErrorBlame.USER_ERROR,
+        category=ErrorCategory.INVALID_VALUE,
+        target=ErrorTarget.AOAI_GRADER,
+    )
 
 def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[str, Any]:
     """Produce a data source config that naively maps all columns from the supplied data source into
@@ -241,7 +261,12 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     }
     return data_source_config
 
-def _begin_eval_run(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, run_name: str, input_data_df: pd.DataFrame) -> str:
+def _begin_eval_run(
+        client: Union[OpenAI, AzureOpenAI],
+        eval_group_id: str,
+        run_name: str,
+        input_data_df: pd.DataFrame
+    ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to 
     start an evaluation run with the given name and description.
@@ -291,7 +316,7 @@ def _begin_eval_run(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, run_
     )
     return eval_run.id
 
-def _get_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str) -> Any:
+def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str) -> Any:
     """
     Perform exponential backoff polling to get the results of an AOAI evaluation run.
     Raises an EvaluationException if max attempts are reached without receiving a concluding status.
@@ -305,6 +330,7 @@ def _get_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eva
     """
 
 
+    print(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...\n")
     iters = 0
     max_iters = 10 # TODO assign as a constant somewhere? Make configurable?
     wait_interval = 10 # Seconds. TODO assign as a constant somewhere? Make configurable?
@@ -314,11 +340,12 @@ def _get_run_results(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eva
         wait_interval *= 2
         sleep(wait_interval)
         response = client.evals.runs.retrieve(eval_id=eval_group_id, run_id=eval_run_id)
-        if response.status not in  ["queued", "running"]:
+        if response.status not in  ["queued", "in_progress"]:
             return response
         if iters > max_iters:
             raise EvaluationException(
-                message=f"Timed out waiting for AOAI evaluation to complete after {max_iters} rounds of polling. Final status was {response.status}",
+                message=f"Timed out waiting for AOAI evaluation to complete after {max_iters}"
+                 + f" rounds of polling. Final status was {response.status}",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.AOAI_GRADER,

@@ -9,7 +9,6 @@ import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
-from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
@@ -22,7 +21,6 @@ from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
-    DefaultOpenEncoding,
     Prefixes,
     _InternalEvaluationMetrics,
 )
@@ -32,7 +30,6 @@ from ._batch_run import (
     EvalRunContext,
     CodeClient,
     ProxyClient,
-    ProxyRun,
     TargetRunContext,
     RunSubmitterClient,
 )
@@ -50,7 +47,7 @@ LOGGER = logging.getLogger(__name__)
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
 # means something sufficiently different.
-# Note that content safety metrics are handled seprately.
+# Note that content safety metrics are handled separately.
 METRIC_COLUMN_NAME_REPLACEMENTS = {
     "groundedness_pro_label": "groundedness_pro_passing_rate",
 }
@@ -799,7 +796,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
         results_df = eval_result_df
         metrics = eval_metrics
-        # TODO figure out how to update this printing
+        # TODO figure out how to update this printing to include OAI results?
         _print_summary(per_evaluator_results)
 
     # Evaluate AOAI graders
@@ -823,7 +820,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     studio_url = None
     if trace_destination:
         studio_url = _log_metrics_and_instance_results(
-            metrics, resuls_df, trace_destination, None, evaluation_name, **kwargs
+            metrics, results_df, trace_destination, None, evaluation_name, **kwargs
         )
 
     result_df_dict = results_df.to_dict("records")

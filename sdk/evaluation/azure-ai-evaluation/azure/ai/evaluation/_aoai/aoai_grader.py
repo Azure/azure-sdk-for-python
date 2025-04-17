@@ -22,23 +22,22 @@ class AoaiGrader():
         ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration
     ]
-    :param grader_config: The grader configuration to use for the grader.
-    :type grader_config: Any
+    :param grader_config: The grader configuration to use for the grader. This is expected
+        to be formatted as a dictionary that matches the specifications of the sub-types of
+        the TestingCriterion alias specified in (OpenAI's SDK)[https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L151].
+    :type grader_config: Dict[str, Any]
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Dict[str, Any]
 
 
     """
 
-    id = "openai://grader"
+    id = "aoai://general"
 
-    def __init__(self, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Any, **kwargs: Dict[str, Any]):
-        
+    def __init__(self, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Dict[str, Any], **kwargs: Dict[str, Any]):        
         self._model_config = model_config
         self._grader_config = grader_config
 
-        # aoai graders need an api key in their config
-        # if-statements nested due to python failing to properly short-circuit the validate bypass for some reason.
         if kwargs.get("validate", True):
             self._validate_model_config()
             self._validate_grader_config()
