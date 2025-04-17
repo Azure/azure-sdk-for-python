@@ -77,10 +77,7 @@ class TestHealthCheckAsync:
         expected_regional_routing_context = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        if use_read_global_endpoint:
-            assert mock_get_database_account_check.counter == 1
-        else:
-            assert mock_get_database_account_check.counter == 2
+        assert mock_get_database_account_check.counter == 2
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_regional_routing_context.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -105,12 +102,8 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
 
-        if not use_read_global_endpoint:
-            for region in REGIONS:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
-                expected_endpoints.append(locational_endpoint)
-        else:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        for region in REGIONS:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
             expected_endpoints.append(locational_endpoint)
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
@@ -201,11 +194,7 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
 
-        if not use_write_global_endpoint:
-            num_unavailable_endpoints = len(REGIONS)
-        else:
-            num_unavailable_endpoints = 1
-
+        num_unavailable_endpoints = len(REGIONS)
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == num_unavailable_endpoints
 
