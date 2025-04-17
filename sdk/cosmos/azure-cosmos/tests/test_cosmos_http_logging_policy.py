@@ -3,8 +3,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
-import sys
-sys.path.append(r'C:\Users\bryanambriz\REPOS\azure-sdk-for-python\sdk\cosmos\azure-cosmos')
 import logging
 import unittest
 import uuid

@@ -233,9 +233,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
             url_obj = request.http_request.url  # type: ignore[attr-defined, union-attr]
             try:
-                duration: Optional[float] = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr, arg-type]
+                duration: Optional[float] = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr, arg-type]  # pylint: disable=line-too-long
             except (ValueError, TypeError):
-                duration: Optional[float] = (time.time() - context["start_time"]) * 1000 \
+                duration = (time.time() - context["start_time"]) * 1000 \
                     if "start_time" in context else None  # type: ignore[union-attr, arg-type]
 
             log_data = {"duration": duration,
@@ -243,7 +243,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         "verb": request.http_request.method,
                         "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
                         "url": str(url_obj), "database_name": None, "collection_name": None,
-                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]
+                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]  # pylint: disable=line-too-long
 
             if log_data["url"]:
                 url_parts: List[str] = log_data["url"].split('/')  # type: ignore[union-attr]
@@ -274,8 +274,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         value = self._redact_header(res_header, value)
                         if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
                             logger.info("    %r: %r", res_header, value, extra=log_data)
-                    if "start_time" in context:
-                        seconds = duration / 1000
+                    if "start_time" in context and duration:
+                        seconds = duration / 1000  # type: ignore[operator]
                         logger.info(f"Elapsed time in seconds: {seconds:.6f}".rstrip('0').rstrip('.'),
                                     extra=log_data)
                     else:
@@ -290,8 +290,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     value = self._redact_header(res_header, value)
                     if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
                         log_string += "\n    '{}': '{}'".format(res_header, value)
-                if "start_time" in context:
-                    seconds = duration / 1000
+                if "start_time" in context and duration:
+                    seconds = duration / 1000  # type: ignore[operator]
                     log_string += f"\nElapsed time in seconds: {seconds:.6f}".rstrip('0').rstrip('.')
                 else:
                     log_string += "\nElapsed time in seconds: unknown"
