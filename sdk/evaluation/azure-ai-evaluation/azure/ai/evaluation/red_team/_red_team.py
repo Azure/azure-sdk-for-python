@@ -69,6 +69,7 @@ from ._utils.logging_utils import (
     log_strategy_start, log_strategy_completion, log_error
 )
 from ._utils.rai_service_target import AzureRAIServiceTarget
+from ._utils.rai_service_eval_chat_target import RAIServiceEvalChatTarget
 
 @experimental
 class RedTeam():
@@ -675,6 +676,7 @@ class RedTeam():
             if not all_prompts:
                 self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+
                 return orchestrator
             
             # Debug log the first few characters of each prompt
@@ -854,11 +856,10 @@ class RedTeam():
                     )
                     
                     # Use AzureRAIServiceTarget for scoring as well
-                    scoring_target_red_llm = OpenAIChatTarget(
-                        model_name=os.environ.get("UNSAFE_LLM_MODEL_NAME", "gpt-4o-unsafe"),
-                        endpoint=os.environ.get("UNSAFE_LLM_ENDPOINT", ""),
-                        use_aad_auth=True,
-                        api_version=os.environ.get("UNSAFE_LLM_API_VERSION", "2025-01-01-preview"),
+                    scoring_target_red_llm = RAIServiceEvalChatTarget(
+                        logger=self.logger,
+                        credential=self.credential,
+                        evaluator_name=risk_category,
                     )
                     
                     # Create a new orchestrator for this specific prompt
