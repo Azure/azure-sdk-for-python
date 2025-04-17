@@ -24,7 +24,7 @@ from .._constants import (
     DefaultOpenEncoding,
     Prefixes,
     _InternalEvaluationMetrics,
-    BINARY_AGGREGATE_SUFFIX.
+    BINARY_AGGREGATE_SUFFIX,
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
