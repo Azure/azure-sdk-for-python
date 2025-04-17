@@ -166,7 +166,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             if deployment.environment
             else None
         )
-    if not is_registry_id_for_resource(deployment.model.id):
+    if not is_registry_id_for_resource(deployment.model):
         deployment.model = (
             orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
             if deployment.model
