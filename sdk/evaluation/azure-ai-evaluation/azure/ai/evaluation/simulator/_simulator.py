@@ -11,7 +11,7 @@ import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union, Tuple
 
-from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty
 from tqdm import tqdm
 
 from azure.ai.evaluation._common._experimental import experimental

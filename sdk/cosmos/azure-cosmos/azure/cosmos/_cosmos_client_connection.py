@@ -234,8 +234,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
-        self._global_endpoint_manager.force_refresh(database_account)
+        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None
@@ -3183,7 +3183,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf)
-        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
+                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                         documents._QueryFeature.CompositeAggregate + "," +
                                         documents._QueryFeature.Distinct + "," +

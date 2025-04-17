@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -27,6 +28,8 @@ from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    APP_CONFIG_AI_MIME_PROFILE,
+    APP_CONFIG_AICC_MIME_PROFILE,
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -352,6 +355,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._uses_key_vault,
                     self._uses_load_balancing,
                     is_failover_request,
+                    self._uses_ai_configuration,
+                    self._uses_aicc_configuration,
                 )
 
                 try:
@@ -359,21 +364,17 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers=headers, **kwargs
                         )
-                        configuration_settings_processed = {}
-                        for config in configuration_settings:
-                            key = self._process_key_name(config)
-                            value = self._process_key_value(config)
-                            configuration_settings_processed[key] = value
-                        if self._feature_flag_enabled:
-                            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
-                                FEATURE_MANAGEMENT_KEY
-                            ]
+                        configuration_settings_processed = self._process_configurations(configuration_settings)
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
                         need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
+                                self._refresh_on_feature_flags,
+                                self._feature_flag_selectors,
+                                headers,
+                                self._origin_endpoint,
+                                **kwargs,
                             )
                         )
                         if refresh_on_feature_flags:
@@ -424,20 +425,21 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._uses_key_vault,
                 self._uses_load_balancing,
                 is_failover_request,
+                self._uses_ai_configuration,
+                self._uses_aicc_configuration,
             )
             try:
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
                 )
-                configuration_settings_processed = {}
-                for config in configuration_settings:
-                    key = self._process_key_name(config)
-                    value = self._process_key_value(config)
-                    configuration_settings_processed[key] = value
-
+                configuration_settings_processed = self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
+                        self._feature_flag_selectors,
+                        self._feature_flag_refresh_enabled,
+                        self._origin_endpoint,
+                        headers=headers,
+                        **kwargs,
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -473,12 +475,33 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
+    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        # Reset feature flag usage
+        self._uses_ai_configuration = False
+        self._uses_aicc_configuration = False
+
+        configuration_settings_processed = {}
+        for config in configuration_settings:
+            if isinstance(config, FeatureFlagConfigurationSetting):
+                # Feature flags are not processed like other settings
+                continue
+            key = self._process_key_name(config)
+            value = self._process_key_value(config)
+            configuration_settings_processed[key] = value
+        if self._feature_flag_enabled and FEATURE_MANAGEMENT_KEY in self._dict:
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+        return configuration_settings_processed
+
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
+                if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
+                    self._uses_ai_configuration = True
+                if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
+                    self._uses_aicc_configuration = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 # If the value is not a valid JSON, treat it like regular string value

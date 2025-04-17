@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -76,6 +77,7 @@ with project_client:
     functions = FunctionTool(user_functions)
     toolset = ToolSet()
     toolset.add(functions)
+    project_client.agents.enable_auto_function_calls(toolset=toolset)
 
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -97,7 +99,7 @@ with project_client:
     print(f"Created message, message ID {message.id}")
 
     with project_client.agents.create_stream(
-        thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         stream.until_done()
 

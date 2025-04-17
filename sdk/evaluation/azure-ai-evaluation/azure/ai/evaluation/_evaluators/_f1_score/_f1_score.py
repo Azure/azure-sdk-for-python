@@ -7,6 +7,7 @@ from typing import List, Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class F1ScoreEvaluator(EvaluatorBase):
@@ -25,6 +26,8 @@ class F1ScoreEvaluator(EvaluatorBase):
     model's responses. It provides a balanced evaluation of your model's performance in terms of capturing accurate
     information in the response.
 
+    :param threshold: The threshold for the F1 score evaluator. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -34,13 +37,24 @@ class F1ScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call an F1ScoreEvaluator.
+
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_f1_score_evaluator]
+            :end-before: [END threshold_f1_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call an F1ScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *, threshold=0.5):
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
     @classmethod
     def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
@@ -115,8 +129,18 @@ class F1ScoreEvaluator(EvaluatorBase):
         response = eval_input["response"]
         # Run f1 score computation.
         f1_result = self._compute_f1_score(response=response, ground_truth=ground_truth)
-
-        return {"f1_score": f1_result}
+        binary_result = False
+        if self._higher_is_better:
+            if f1_result >= self._threshold:
+                binary_result = True
+        else:
+            if f1_result <= self._threshold:
+                binary_result = True
+        return {
+            "f1_score": f1_result, 
+            "f1_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "f1_threshold": self._threshold,
+        }
 
     @overload  # type: ignore
     def __call__(self, *, response: str, ground_truth: str) -> Dict[str, float]:

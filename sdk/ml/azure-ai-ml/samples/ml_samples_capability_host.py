@@ -170,7 +170,7 @@ class CapabilityHostConfigurationOptions(object):
             resource_group,
             workspace_name=hub_name,
         )
-        capability_hosts = ml_client.capability_hosts.list()
+        capability_hosts = ml_client.capability_hosts.list()  # type:ignore
 
         # List CapabilityHosts created in Project
         ml_client = MLClient(
@@ -179,7 +179,7 @@ class CapabilityHostConfigurationOptions(object):
             resource_group,
             workspace_name=project_name,
         )
-        capability_hosts = ml_client.capability_hosts.list()
+        capability_hosts = ml_client.capability_hosts.list()  # type:ignore
         # [END capability_host_list_operation]
 
 

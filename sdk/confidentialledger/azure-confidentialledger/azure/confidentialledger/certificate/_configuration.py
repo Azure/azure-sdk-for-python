@@ -22,13 +22,13 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
     :param endpoint: The certificate endpoint (or "Identity Service Endpoint" in the Azure portal),
      for example https://identity.confidential-ledger.core.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-08-22-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-08-22-preview")
+        api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

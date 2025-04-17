@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Other Changes
+
+- Updated type annotations in `BlobCheckpointStore`.
+- Bumped `aiohttp` min dependency version to 3.11.0.
+
 ## 1.2.0 (2025-02-13)
 
 This version and all future versions will require Python 3.8+. Python 2.7, 3.6, and 3.7 are no longer supported.

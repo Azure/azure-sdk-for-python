@@ -72,7 +72,7 @@ setup(
         "msrest>=0.6.18",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
-        "marshmallow>=3.5",
+        "marshmallow>=3.5,<4.0.0",
         "jsonschema>=4.0.0",
         "tqdm",
         # Used for PR 825138
@@ -88,6 +88,8 @@ setup(
         "azure-common>=1.1",
         "typing-extensions",
         "azure-monitor-opentelemetry",
+        # TODO: remove six after using new autorest
+        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package

@@ -65,7 +65,10 @@ _SERVICE_PARAMS = {
 
 
 class StorageAccountHostsMixin(object):
+
     _client: Any
+    _hosts: Dict[str, str]
+
     def __init__(
         self,
         parsed_url: Any,
@@ -74,7 +77,7 @@ class StorageAccountHostsMixin(object):
         **kwargs: Any
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
-        self._hosts = kwargs.get("_hosts")
+        self._hosts = kwargs.get("_hosts", {})
         self.scheme = parsed_url.scheme
         self._is_localhost = False
 
@@ -93,7 +96,7 @@ class StorageAccountHostsMixin(object):
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
 
-        secondary_hostname = None
+        secondary_hostname = ""
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
@@ -363,7 +366,7 @@ class TransportWrapper(HttpTransport):
 
 
 def _format_shared_key_credential(
-    account_name: str,
+    account_name: Optional[str],
     credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None  # pylint: disable=line-too-long
 ) -> Any:
     if isinstance(credential, str):

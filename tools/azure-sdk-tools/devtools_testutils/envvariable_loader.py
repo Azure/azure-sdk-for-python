@@ -64,9 +64,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
             if not all(x is not None for x in [tenant, client, secret]):
                 use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false").lower()
                 use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false").lower()
-                use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false").lower()
                 use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false").lower()
-                user_auth = use_pwsh == "true" or use_cli == "true" or use_vscode == "true" or use_azd == "true"
+                user_auth = use_pwsh == "true" or use_cli == "true" or use_azd == "true"
                 if not user_auth:
                     # All variables are required for service principal authentication
                     _logger.warn(
