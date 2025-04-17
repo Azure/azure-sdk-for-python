@@ -36,7 +36,7 @@ setup(
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description_content_type="text/markdown",
     long_description=readme + "\n\n" + changelog,
-    license="MIT",
+    license="MIT License",
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
@@ -53,6 +53,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     include_package_data=True,
@@ -67,12 +68,12 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "pyyaml>=5.1.0,<6.0.0",
-        "msrest>=0.6.18,<1.0.0",
+        "pyyaml>=5.1.0",
+        "msrest>=0.6.18",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
         "marshmallow>=3.5,<4.0.0",
-        "jsonschema>=4.0.0,<5.0.0",
+        "jsonschema>=4.0.0",
         "tqdm",
         # Used for PR 825138
         "strictyaml",
@@ -84,11 +85,11 @@ setup(
         "azure-storage-file-datalake>=12.2.0",
         "pydash>=6.0.0",
         "isodate",
-        "azure-common>=1.1,<2.0.0",
+        "azure-common>=1.1",
         "typing-extensions",
         "azure-monitor-opentelemetry",
         # TODO: remove six after using new autorest
-        "six>=1.11.0,<2.0.0",
+        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package
