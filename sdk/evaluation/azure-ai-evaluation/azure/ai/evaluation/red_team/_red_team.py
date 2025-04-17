@@ -839,7 +839,7 @@ class RedTeam():
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
-                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e)
+                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
@@ -1440,13 +1440,8 @@ class RedTeam():
             result_path = os.path.join(self.scan_output_dir, result_filename)
         else:
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
-            
-        # Create a logger for evaluation
-        eval_logger = logging.getLogger('redteam_evaluation')
         
         try: # Run evaluation silently
-            eval_logger.debug(f"Starting evaluation for {risk_category.value}/{strategy_name}")
-            
             # Import the utility function to get the appropriate metric
             from ._utils.metric_mapping import get_metric_from_risk_category
             
@@ -1481,7 +1476,7 @@ class RedTeam():
             self.logger.debug(f"Found {len(conversations)} conversations in {data_path}")
             
             # Evaluate each conversation
-            batch_start_time = datetime.now()  
+            eval_start_time = datetime.now()  
             tasks = [self._evaluate_conversation(conversation=conversation, metric_name=metric_name, strategy_name=strategy_name, risk_category=risk_category, idx=idx) for idx, conversation in enumerate(conversations)]
             rows = await asyncio.gather(*tasks)
 
@@ -1497,7 +1492,8 @@ class RedTeam():
             
             # Write evaluation results to the output file
             _write_output(result_path, evaluation_result)
-            self.logger.debug(f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {datetime.now() - batch_start_time} seconds")
+            eval_duration = (datetime.now() - eval_start_time).total_seconds()
+            self.logger.debug(f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {eval_duration} seconds")
             self.logger.debug(f"Successfully wrote evaluation results for {len(rows)} conversations to {result_path}")
             
         except Exception as e:
@@ -1536,6 +1532,7 @@ class RedTeam():
         :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
+        :param timeout: The timeout in seconds for API calls
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
