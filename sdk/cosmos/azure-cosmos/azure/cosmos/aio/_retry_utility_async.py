@@ -224,9 +224,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     if isinstance(e.inner_exception, ClientConnectionError):
                         _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
+                        await global_endpoint_manager.record_failure(args[0])
                         _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
                 # in case customer is not using aiohttp
                 except ImportError:
+                    await global_endpoint_manager.record_failure(args[0])
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
@@ -270,6 +272,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             start_time = time.time()
             try:
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
+                print("RetryUtility - Sending request")
                 response = await self.next.send(request)
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise

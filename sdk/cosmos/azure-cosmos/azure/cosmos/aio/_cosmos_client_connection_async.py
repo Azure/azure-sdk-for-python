@@ -2853,7 +2853,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :raises SystemError: If the query compatibility mode is undefined.
         """
         if options is None:
-            options = {}
+            options: Dict[str, Any] = {}
 
         if query:
             __GetBodiesFromQueryResult = result_fn
@@ -2867,6 +2867,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return []
 
         initial_headers = self.default_headers.copy()
+
+
+        cont_prop = kwargs.pop("containerProperties", None)
+
+        if cont_prop:
+            cont_prop = await cont_prop()
+            options["containerRID"] = cont_prop["_rid"]
+
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             op_typ = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
@@ -2904,26 +2912,24 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             raise SystemError("Unexpected query compatibility mode.")
 
+        # check if query has prefix partition key
+        partition_key = options.get("partitionKey", None)
+        isPrefixPartitionQuery = False
+        partition_key_definition = None
+        if cont_prop and partition_key:
+                pk_properties = cont_prop["partitionKey"]
+                partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+                if partition_key_definition.kind == "MultiHash" and \
+                        (isinstance(partition_key, List) and \
+                         len(partition_key_definition['paths']) != len(partition_key)):
+                    isPrefixPartitionQuery = True
+
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ,
                                       documents._OperationType.SqlQuery,
                                       options, partition_key_range_id)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
-
-        # check if query has prefix partition key
-        cont_prop = kwargs.pop("containerProperties", None)
-        partition_key = options.get("partitionKey", None)
-        isPrefixPartitionQuery = False
-        partition_key_definition = None
-        if cont_prop:
-            cont_prop = await cont_prop()
-            pk_properties = cont_prop["partitionKey"]
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-            if partition_key_definition.kind == "MultiHash" and \
-                    (isinstance(partition_key, List) and \
-                     len(partition_key_definition['paths']) != len(partition_key)):
-                isPrefixPartitionQuery = True
 
         if isPrefixPartitionQuery and partition_key_definition:
             # here get the overlapping ranges
