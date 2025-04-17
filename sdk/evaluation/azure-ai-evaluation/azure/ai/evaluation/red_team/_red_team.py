@@ -822,30 +822,7 @@ class RedTeam():
                 self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 # Create an empty orchestrator to return
-                adversarial_target = AzureRAIServiceTarget(
-                    client=self.generated_rai_client,
-                    api_version=None,
-                    model="gpt-4"
-                )
-
-                # TODO: create new scoring target
-                # sample scorer: https://github.com/Azure/PyRIT/blob/main/pyrit/score/substring_scorer.py
-                scoring_target_red_llm = OpenAIChatTarget(
-                    model_name=os.environ.get("UNSAFE_LLM_MODEL_NAME", "gpt-4o-unsafe"),
-                    endpoint=os.environ.get("UNSAFE_LLM_ENDPOINT", ""),
-                    use_aad_auth=True,
-                    api_version=os.environ.get("UNSAFE_LLM_API_VERSION", "2025-01-01-preview"),
-                )
-                main_orchestrator = CrescendoOrchestrator(
-                    objective_target=chat_target,
-                    adversarial_chat=adversarial_target,
-                    max_turns=max_turns,
-                    max_backtracks=max_turns,
-                    scoring_target=scoring_target_red_llm,
-                    prompt_converters=None
-                )
-
-                return main_orchestrator
+                raise Exception("No prompts found for Crescendo orchestrator")
             
             # If scan output directory exists, place the file there
             base_path = str(uuid.uuid4())
@@ -871,7 +848,9 @@ class RedTeam():
                         client=self.generated_rai_client,
                         api_version=None,
                         model="gpt-4",
-                        objective=prompt  # Use the current prompt as the objective
+                        prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
+                        objective=prompt,  # Use the current prompt as the objective
+                        logger=self.logger,
                     )
                     
                     # Use AzureRAIServiceTarget for scoring as well
