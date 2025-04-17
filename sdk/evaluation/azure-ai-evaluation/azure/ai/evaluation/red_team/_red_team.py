@@ -58,6 +58,12 @@ from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 
+# Retry imports
+import httpx
+import tenacity
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+
 # Local imports - constants and utilities
 from ._utils.constants import (
     BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
@@ -87,11 +93,98 @@ class RedTeam():
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
-    :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
+    :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
-    :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
-    :type max_parallel_tasks: int
     """
+      # Retry configuration constants
+    MAX_RETRY_ATTEMPTS = 5  # Increased from 3
+    MIN_RETRY_WAIT_SECONDS = 2  # Increased from 1
+    MAX_RETRY_WAIT_SECONDS = 30  # Increased from 10
+    
+    def _create_retry_config(self):
+        """Create a standard retry configuration for connection-related issues.
+        
+        :return: Dictionary with retry configuration for different exception types
+        :rtype: dict
+        """
+        return {            # For connection timeouts and network-related errors
+            "connect_timeout": {
+                "retry": retry_if_exception_type((
+                    httpx.ConnectTimeout,
+                    httpx.ReadTimeout,
+                    httpx.ConnectError,
+                    httpx.HTTPError,
+                    httpx.TimeoutException,
+                    ConnectionError,
+                    ConnectionRefusedError,
+                    ConnectionResetError,
+                    TimeoutError
+                )),
+                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
+                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
+                "retry_error_callback": self._log_retry_error,
+                "before_sleep": self._log_retry_attempt,
+            },            # For service request errors 
+            "service_error": {
+                "retry": retry_if_exception_type((ServiceRequestError, ServiceResponseError)),
+                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
+                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
+                "retry_error_callback": self._log_retry_error,
+                "before_sleep": self._log_retry_attempt,
+            },
+            # New comprehensive retry for all network operations
+            "network_retry": {
+                "retry": retry_if_exception_type((
+                    httpx.ConnectTimeout, 
+                    httpx.ReadTimeout,
+                    httpx.ConnectError,
+                    httpx.HTTPError, 
+                    httpx.TimeoutException,
+                    ConnectionError,
+                    ConnectionRefusedError,
+                    ConnectionResetError,
+                    TimeoutError,
+                    OSError,  # Catches broader system-level I/O errors
+                    IOError,
+                    ServiceRequestError, 
+                    ServiceResponseError
+                )),
+                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
+                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
+                "retry_error_callback": self._log_retry_error,
+                "before_sleep": self._log_retry_attempt,
+            }
+        }
+    
+    def _log_retry_attempt(self, retry_state):
+        """Log retry attempts for better visibility.
+        
+        :param retry_state: Current state of the retry
+        :type retry_state: tenacity.RetryCallState
+        """
+        exception = retry_state.outcome.exception()
+        if exception:
+            self.logger.warning(
+                f"Connection issue: {exception.__class__.__name__}. "
+                f"Retrying in {retry_state.next_action.sleep} seconds... "
+                f"(Attempt {retry_state.attempt_number}/{self.MAX_RETRY_ATTEMPTS})"
+            )
+    
+    def _log_retry_error(self, retry_state):
+        """Log the final error after all retries have been exhausted.
+        
+        :param retry_state: Final state of the retry
+        :type retry_state: tenacity.RetryCallState
+        :return: The exception that caused retries to be exhausted
+        :rtype: Exception
+        """
+        exception = retry_state.outcome.exception()
+        self.logger.error(
+            f"All retries failed after {retry_state.attempt_number} attempts. "
+            f"Last error: {exception.__class__.__name__}: {str(exception)}"
+        )
+        return exception
+
     def __init__(
             self,
             azure_ai_project,
@@ -422,9 +515,17 @@ class RedTeam():
                 
             # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
             if strategy == "jailbreak":
-                self.logger.debug("Applying jailbreak prefixes to custom objectives")
+                self.logger.debug("Applying jailbreak prefixes to custom objectives")                
                 try:
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def get_jailbreak_prefixes_with_retry():
+                        try:
+                            return await self.generated_rai_client.get_jailbreak_prefixes()
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError, ConnectionError) as e:
+                            self.logger.warning(f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}")
+                            raise
+
+                    jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
                     for objective in selected_cat_objectives:
                         if "messages" in objective and len(objective["messages"]) > 0:
                             message = objective["messages"][0]
@@ -702,14 +803,23 @@ class RedTeam():
                 for batch_idx, batch in enumerate(batches):
                     self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category}")
                     
-                    batch_start_time = datetime.now()
-                    # Send prompts in the batch concurrently with a timeout
-                    try:
-                        # Use wait_for to implement a timeout
-                        await asyncio.wait_for(
-                            orchestrator.send_prompts_async(prompt_list=batch, memory_labels = {"risk_strategy_path": output_path, "batch": batch_idx+1}),
-                            timeout=timeout  # Use provided timeouts
-                        )
+                    batch_start_time = datetime.now()  # Send prompts in the batch concurrently with a timeout and retry logic
+                    try:  # Create retry decorator for this specific call with enhanced retry strategy
+                        @retry(**self._create_retry_config()["network_retry"])
+                        async def send_batch_with_retry():
+                            try:
+                                return await asyncio.wait_for(
+                                    orchestrator.send_prompts_async(prompt_list=batch, memory_labels={"risk_strategy_path": output_path, "batch": batch_idx+1}),
+                                    timeout=timeout  # Use provided timeouts
+                                )
+                            except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError, 
+                                   ConnectionError, TimeoutError) as e:
+                                # Log the error with enhanced information and allow retry logic to handle it
+                                self.logger.warning(f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category}: {type(e).__name__}: {str(e)}")
+                                raise
+                        
+                        # Execute the retry-enabled function
+                        await send_batch_with_retry()
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
                         self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
                         
@@ -717,7 +827,7 @@ class RedTeam():
                         if batch_idx < len(batches) - 1:  # Don't print for the last batch
                             print(f"Strategy {strategy_name}, Risk {risk_category}: Processed batch {batch_idx+1}/{len(batches)}")
                             
-                    except asyncio.TimeoutError:
+                    except (asyncio.TimeoutError, tenacity.RetryError):
                         self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
                         self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
                         print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
@@ -729,24 +839,36 @@ class RedTeam():
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
-                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
+                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e)
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                         # Continue with other batches even if one fails
                         continue
-            else:
-                # Small number of prompts, process all at once with a timeout
+            else:  # Small number of prompts, process all at once with a timeout and retry logic
                 self.logger.debug(f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category}")
                 batch_start_time = datetime.now()
-                try:
-                    await asyncio.wait_for(
-                        orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels = {"risk_strategy_path": output_path, "batch": 1}),
-                        timeout=timeout  # Use provided timeout
-                    )
+                try: # Create retry decorator with enhanced retry strategy
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def send_all_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                timeout=timeout  # Use provided timeout
+                            )
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                               ConnectionError, TimeoutError, OSError) as e:
+                            # Enhanced error logging with type information
+                            self.logger.warning(f"Network error in single batch for {strategy_name}/{risk_category}: {type(e).__name__}: {str(e)}")
+                            # Add a small delay before retry to allow network recovery
+                            await asyncio.sleep(2)
+                            raise
+                    
+                    # Execute the retry-enabled function
+                    await send_all_with_retry()
                     batch_duration = (datetime.now() - batch_start_time).total_seconds()
                     self.logger.debug(f"Successfully processed single batch for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
-                except asyncio.TimeoutError:
+                except (asyncio.TimeoutError, tenacity.RetryError):
                     self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
                     print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}")
                     # Set task status to TIMEOUT
@@ -1236,16 +1358,28 @@ class RedTeam():
                 "query": "",  # Empty query as required
                 "response": " ".join(assistant_messages)  # Join all assistant messages
             }
-            
             try:
-                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
-                # Evaluate this conversation with RAI service
-                evaluate_output = await evaluate_with_rai_service(
-                    data=query_response,
-                    metric_name=metric_name,
-                    project_scope=self.azure_ai_project,
-                    credential=self.credential
-                )
+                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}") # Create retry-enabled wrapper for evaluate_with_rai_service with enhanced retry strategy
+                @retry(**self._create_retry_config()["network_retry"])
+                async def evaluate_with_rai_service_with_retry():
+                    try:
+                        return await evaluate_with_rai_service(
+                            data=query_response,
+                            metric_name=metric_name,
+                            project_scope=self.azure_ai_project,
+                            credential=self.credential
+                        )
+                    except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, 
+                            httpx.HTTPError, httpx.TimeoutException, ConnectionError,
+                            ConnectionRefusedError, ConnectionResetError, TimeoutError, 
+                            OSError, IOError) as e:
+                        self.logger.warning(f"Network error while evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {type(e).__name__}: {str(e)}")
+                        # Add a short delay before retry to increase success probability
+                        await asyncio.sleep(2)
+                        raise
+                
+                # Call the retry-enabled function
+                evaluate_output = await evaluate_with_rai_service_with_retry()
                 
                 # Create a row with the format expected by _to_red_team_result
                 row = {
@@ -1347,6 +1481,7 @@ class RedTeam():
             self.logger.debug(f"Found {len(conversations)} conversations in {data_path}")
             
             # Evaluate each conversation
+            batch_start_time = datetime.now()  
             tasks = [self._evaluate_conversation(conversation=conversation, metric_name=metric_name, strategy_name=strategy_name, risk_category=risk_category, idx=idx) for idx, conversation in enumerate(conversations)]
             rows = await asyncio.gather(*tasks)
 
@@ -1362,6 +1497,7 @@ class RedTeam():
             
             # Write evaluation results to the output file
             _write_output(result_path, evaluation_result)
+            self.logger.debug(f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {datetime.now() - batch_start_time} seconds")
             self.logger.debug(f"Successfully wrote evaluation results for {len(rows)} conversations to {result_path}")
             
         except Exception as e:
@@ -1390,6 +1526,7 @@ class RedTeam():
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
         :param target: The target model or function to scan
+        :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
         :param call_orchestrator: Function to call to create an orchestrator
         :param strategy: The attack strategy to use
         :param risk_category: The risk category to evaluate
@@ -1399,7 +1536,6 @@ class RedTeam():
         :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
-        :param timeout: The timeout in seconds for API calls
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
