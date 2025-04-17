@@ -377,6 +377,7 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prompty",
     "pschema",
     "PSECRET",
     "pydantic",
@@ -1840,6 +1841,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, Optional, Dict
 
 try:

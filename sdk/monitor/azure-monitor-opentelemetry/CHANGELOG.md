@@ -1,21 +1,17 @@
 # Release History
 
-## 1.6.8 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.6.8 (2025-04-17)
 
 ### Bugs Fixed
 
-### Other Changes
+- Pin OTel before breaking change.
+    ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
 
 ## 1.6.7 (2025-04-10)
 
 ### Bugs Fixed
 
-- Adapt to OpenTelemetry dependency resolver change.
-    ([#40463](https://github.com/Azure/azure-sdk-for-python/pull/40463))
+### Other Changes
 
 ## 1.6.6 (2025-04-07)
 
