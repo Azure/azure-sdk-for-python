@@ -60,17 +60,17 @@ class TestLocationCache(unittest.TestCase):
 
     def test_is_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Write") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, False)
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read")
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Write") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read")
+        assert lc.is_endpoint_unavailable(location1_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
         lc.mark_endpoint_unavailable_for_write(location2_endpoint, False)
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "Read") is False
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "Write")
+        assert lc.is_endpoint_unavailable(location2_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location2_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location2_endpoint, "Write")
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
         lc.location_unavailability_info_by_endpoint[location1_endpoint] = location1_info
 
@@ -93,7 +93,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = read_region['databaseAccountEndpoint']
             for region in read_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
@@ -104,7 +104,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = write_region['databaseAccountEndpoint']
             for region in write_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
