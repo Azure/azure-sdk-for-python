@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add a new setting `settings.tracing_experimental_enabled` to enable experimental tracing features. This setting can also be enabled via the `AZURE_TRACING_EXPERIMENTAL_ENABLED` environment variable.
+
 ### Breaking Changes
 
 ### Bugs Fixed

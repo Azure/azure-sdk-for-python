@@ -175,7 +175,7 @@ class TestConverters(object):
             m.convert_azure_cloud(10)
 
 
-_standard_settings = ["log_level", "tracing_enabled"]
+_standard_settings = ["log_level", "tracing_enabled", "tracing_experimental_enabled"]
 
 
 class TestStandardSettings(object):
@@ -194,9 +194,10 @@ class TestStandardSettings(object):
         assert m.settings.defaults_only is False
 
     def test_config(self):
-        val = m.settings.config(log_level=30, tracing_enabled=True)
+        val = m.settings.config(log_level=30, tracing_enabled=True, tracing_experimental_enabled=True)
         assert isinstance(val, tuple)
         assert val.tracing_enabled is True
+        assert val.tracing_experimental_enabled is True
         assert val.log_level == 30
         os.environ["AZURE_LOG_LEVEL"] = "debug"
         val = m.settings.config(tracing_enabled=False)
@@ -216,6 +217,7 @@ class TestStandardSettings(object):
         val: NamedTuple = m.settings.defaults
         assert val.log_level == logging.INFO
         assert val.tracing_enabled is None
+        assert val.tracing_experimental_enabled is False
         assert val.tracing_implementation is None
         assert val.azure_cloud == AzureClouds.AZURE_PUBLIC_CLOUD
 
