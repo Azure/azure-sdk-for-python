@@ -39,8 +39,7 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.carbonoptimization import CarbonOptimizationMgmtClient
 import os
 
-sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = CarbonOptimizationMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = CarbonOptimizationMgmtClient(credential=DefaultAzureCredential())
 ```
 
 ## Examples
