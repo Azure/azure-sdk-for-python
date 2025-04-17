@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
+
 from typing import Dict, List, Union
 
 from typing_extensions import overload, override

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# type: ignore
 # Original source code: promptflow-tracing/promptflow/tracing/_integrations/_openai_injector.py
 
 import functools

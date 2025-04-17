@@ -385,7 +385,7 @@ class TestMassEvaluate:
         for key in known_keys:
             assert key in row_result_df.keys()
 
-        assert len(metrics) == 13
+        assert len(metrics) == 15
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
