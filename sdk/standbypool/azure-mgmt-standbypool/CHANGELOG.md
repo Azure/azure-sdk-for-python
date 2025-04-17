@@ -1,5 +1,41 @@
 # Release History
 
+## 2.0.0 (2025-04-21)
+
+### Features Added
+
+  - Model `ContainerGroupInstanceCountSummary` added property `zone`
+  - Model `StandbyContainerGroupPoolResourceProperties` added property `zones`
+  - Model `StandbyContainerGroupPoolResourceUpdateProperties` added property `zones`
+  - Model `StandbyContainerGroupPoolRuntimeViewResourceProperties` added property `status`
+  - Model `StandbyContainerGroupPoolRuntimeViewResourceProperties` added property `prediction`
+  - Model `StandbyVirtualMachinePoolRuntimeViewResourceProperties` added property `status`
+  - Model `StandbyVirtualMachinePoolRuntimeViewResourceProperties` added property `prediction`
+  - Enum `VirtualMachineState` added member `HIBERNATED`
+  - Added enum `HealthStateCode`
+  - Added enum `PoolContainerGroupState`
+  - Added model `PoolContainerGroupStateCount`
+  - Added model `PoolStatus`
+  - Added enum `PoolVirtualMachineState`
+  - Added model `PoolVirtualMachineStateCount`
+  - Added model `StandbyContainerGroupPoolForecastValues`
+  - Added model `StandbyContainerGroupPoolPrediction`
+  - Added model `StandbyVirtualMachinePoolForecastValues`
+  - Added model `StandbyVirtualMachinePoolPrediction`
+  - Method `ContainerGroupInstanceCountSummary.__init__` has a new overload `def __init__(self: None, instance_counts_by_state: List[_models.PoolContainerGroupStateCount], zone: Optional[int])`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
+  - Method `StandbyContainerGroupPoolResourceProperties.__init__` has a new overload `def __init__(self: None, elasticity_profile: _models.StandbyContainerGroupPoolElasticityProfile, container_group_properties: _models.ContainerGroupProperties, zones: Optional[List[str]])`
+  - Method `StandbyContainerGroupPoolResourceUpdateProperties.__init__` has a new overload `def __init__(self: None, elasticity_profile: Optional[_models.StandbyContainerGroupPoolElasticityProfile], container_group_properties: Optional[_models.ContainerGroupProperties], zones: Optional[List[str]])`
+  - Method `VirtualMachineInstanceCountSummary.__init__` has a new overload `def __init__(self: None, instance_counts_by_state: List[_models.PoolVirtualMachineStateCount], zone: Optional[int])`
+  - Method `PoolContainerGroupStateCount.__init__` has a new overload `def __init__(self: None, state: Union[str, _models.PoolContainerGroupState], count: int)`
+  - Method `PoolContainerGroupStateCount.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PoolVirtualMachineStateCount.__init__` has a new overload `def __init__(self: None, state: Union[str, _models.PoolVirtualMachineState], count: int)`
+  - Method `PoolVirtualMachineStateCount.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+
+### Breaking Changes
+
+  - Deleted or renamed model `PoolResourceStateCount`
+
 ## 1.0.0 (2024-09-25)
 
 ### Features Added
