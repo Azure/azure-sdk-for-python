@@ -1,5 +1,10 @@
 # Release History
 
+## 2.0.2 (2025-04-17)
+
+### Other Changes
+
+* Updates telemetry for JSON usage.
 ## 2.0.1 (2025-03-07)
 
 ### Bugs Fixed
