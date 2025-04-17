@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
+import sys
+sys.path.append(r'C:\Users\bryanambriz\REPOS\azure-sdk-for-python\sdk\cosmos\azure-cosmos')
 import logging
 import unittest
 import uuid
@@ -100,6 +102,16 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert messages_request.verb == "GET"
         assert 200 == messages_request.status_code
         assert "Read" == messages_request.operation_type
+        assert elapsed_time is not None
+        assert "Response headers" in messages_response.message
+        # Test if we can log into from creating a database
+        messages_request = self.mock_handler_diagnostic.messages[4]
+        messages_response = self.mock_handler_diagnostic.messages[5]
+        elapsed_time = messages_request.duration
+        assert "dbs" == messages_request.resource_type
+        assert messages_request.verb == "POST"
+        assert 201 == messages_request.status_code
+        assert messages_request.operation_type == "Create"
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
 

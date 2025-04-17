@@ -28,7 +28,7 @@ import logging
 import time
 import os
 import urllib.parse
-from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping, Set, List
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Set, List
 import types
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -72,16 +72,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             enable_diagnostics_logging: bool = False,
             **kwargs
     ):
+        super().__init__(logger, **kwargs)
+        self.logger: logging.Logger = logger or logging.getLogger("azure.cosmos._cosmos_http_logging_policy")
         self._enable_diagnostics_logging = enable_diagnostics_logging
         self.__global_endpoint_manager = global_endpoint_manager
         self.__database_account_settings: Optional[DatabaseAccount] = (database_account or
                                                                        self.__get_database_account_settings())
-
-        self.logger: logging.Logger = logger or logging.getLogger("azure.cosmos.cosmos_http_logging_policy")
-        self.allowed_query_params: Set[str] = set()
-        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-
-        cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "Transfer-Encoding"]
+        # The list of headers we do not want to log, it needs to be updated if any new headers should not be logged
+        cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "TransferEncoding"]
         cosmos_allow_list = [
             v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
         ]
@@ -148,7 +146,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 if 'logger_attributes' in request.context:
                     cosmos_logger_attributes = request.context['logger_attributes']
                     cosmos_logger_attributes['is_request'] = True
-                elif (logger.filters):
+                elif logger.filters:
                     return
                 else:
                     cosmos_logger_attributes = {
@@ -233,18 +231,19 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             headers = request.http_request.headers
             sub_status_str = http_response.headers.get("x-ms-substatus")
             sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
-            url_obj = http_response.internal_response.url  # type: ignore[attr-defined, union-attr]
+            url_obj = request.http_request.url  # type: ignore[attr-defined, union-attr]
             try:
-                duration = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr]
-            except (ValueError, TypeError) as e:
-                duration = (time.time() - context["start_time"]) * 1000 if "start_time" in context else None
+                duration: Optional[float] = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr, arg-type]
+            except (ValueError, TypeError):
+                duration: Optional[float] = (time.time() - context["start_time"]) * 1000 \
+                    if "start_time" in context else None  # type: ignore[union-attr, arg-type]
 
             log_data = {"duration": duration,
                         "status_code": http_response.status_code, "sub_status_code": sub_status_code,
                         "verb": request.http_request.method,
                         "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
                         "url": str(url_obj), "database_name": None, "collection_name": None,
-                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}
+                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]
 
             if log_data["url"]:
                 url_parts: List[str] = log_data["url"].split('/')  # type: ignore[union-attr]

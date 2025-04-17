@@ -953,6 +953,7 @@ database = client.create_database(DATABASE_NAME, logger=logger)
 **NOTICE: The Following is a Preview Feature.**
 To further customize what gets logged, you can use logger filters to filter out the logs you don't want to see. You are able to filter based on the following attributes in the log record of cosmos diagnostics logs:
 - `status_code`
+- `sub_status_code`
 - `duration`
 - `verb`
 - `database_name`
@@ -974,7 +975,10 @@ You can take a look at the samples [here][cosmos_diagnostics_filter_sample] or t
   # Create a filter to filter out logs
   class CustomFilter(logging.Filter):
     def filter(self, record):
-        return hasattr(record, 'status_code') and record.status_code >= 400
+        ret = (hasattr(record, 'status_code') and record.status_code > 400
+           and not (record.status_code in [404, 409, 412] and getattr(record, 'sub_status_code', None) in [0, None])
+           and hasattr(record, 'duration') and record.duration > 1000)
+        return ret
   # Add the filter to the logger
   logger.addFilter(CustomFilter())
   client = CosmosClient(endpoint, key,logger=logger, enable_diagnostics_logging=True)

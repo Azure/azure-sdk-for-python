@@ -13,7 +13,10 @@ key = os.environ["ACCOUNT_KEY"]
 # You can filter based on request and response related attributes that are added to the log record
 class CosmosStatusCodeFilter(logging.Filter):
     def filter(self, record):
-        return hasattr(record, 'status_code') and record.status_code >= 400
+        ret = (hasattr(record, 'status_code') and record.status_code > 400
+               and not (record.status_code in [404, 409, 412] and getattr(record, 'sub_status_code', None) in [0, None])
+               and hasattr(record, 'duration') and record.duration > 1000)
+        return ret
 # Initialize the logger
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.INFO)
