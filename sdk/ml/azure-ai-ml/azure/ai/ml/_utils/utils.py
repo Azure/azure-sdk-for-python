@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-lines
+# pylint: disable=protected-access,too-many-lines,unreachable
 import copy
 import decimal
 import hashlib
