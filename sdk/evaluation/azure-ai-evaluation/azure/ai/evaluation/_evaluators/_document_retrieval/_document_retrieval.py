@@ -9,7 +9,6 @@ from azure.ai.evaluation._exceptions import EvaluationException
 from typing import Dict, List, TypedDict, Optional
 from typing_extensions import override, overload
 
-# cspell:ignore ndcg, xdcg
 
 RetrievalGroundTruthDocument = TypedDict(
     'RetrievalGroundTruthDocument',
