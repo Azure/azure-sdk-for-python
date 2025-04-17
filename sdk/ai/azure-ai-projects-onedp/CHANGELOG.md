@@ -2,21 +2,49 @@
 
 ## 1.0.0b10 (Unreleased)
 
+Major changes happened in this version as the client library switched to using the new AI Foundry data-plane REST APIs.
+(TODO: Add link). Please see updated samples.
+
+### Breaking changes
+
+* Endpoint URL is now needed to construct the `AIProjectClient`, instead of using the factory method
+`.from_connection_string`. Find this endpoint URL in your AI Foundry project page.
+* Agent operations that were previously part of the `azure.ai.projects` package have moved out to a separate new package
+`azure-ai-assistants` with a client named `AssistantClient`. See INSERT URL HERE for more information. You can get the `AssistantClient` by calling `.assistant.get_client()` method on your `AIProjectClient`.
+* Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
+* Several changes to `.connections` operations. Please see new connection samples.
+* TODO: `.evaluations` methods ..
+
 ### Features added
+
+* `.deployment` methods to enumerate the deployed AI models in your AI Foundry project.
+* `.datasets` method to upload documents and reference them. These documents will be used to augment the capability
+of your selected LLM (RAG pattern).
+* `.indexes` methods to handle your AI search indexes and search queries, as part of RAG pattern.
+* TODO: `.red_team` methods ...
 
 ### Sample updates
 
 ### Bugs Fixed
 
-## 1.0.0b9 (2025-04-15)
+## 1.0.0b9 (2025-04-16)
 
 ### Features added
 
-* Update me
+* Utilities to load prompt template strings and Prompty file content
+* Added BingCustomSearchTool class with sample
+* Added list_threads API to agents namespace
+* Added image input support for agents create_message
 
 ### Sample updates
 
-### Bugs Fixed
+* Added `project_client.agents.enable_auto_function_calls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
+* New BingCustomSearchTool sample
+* New samples added for image input from url, file and base64
+
+### Breaking Changes
+
+Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
 
 ## 1.0.0b8 (2025-03-28)
 
