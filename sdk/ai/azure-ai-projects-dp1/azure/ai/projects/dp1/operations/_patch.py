@@ -61,34 +61,56 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_agent(
         self,
         *,
-        model_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        instructions: Optional[str] = None,
+        model_id: str,
+        display_name: str,
+        instructions: str,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Creates an agent with the specified model and instructions.
-
-        :param model_id: The identifier of the model to use for this agent. Required.
-        :type model_id: str
-        :param display_name: The name of the agent; used for display purposes and sent to the LLM to identify
-        :type display_name: str
-        :param instructions: Instructions provided to guide how this agent operates. Required.
-        :type instructions: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Agent
+    ) -> "_models.Agent":
         """
+        Creates a new Agent resource with simplified parameters.
+
+        :keyword model_id: The ID of the model to use for the agent. Required.
+        :paramtype model_id: str
+        :keyword display_name: The display name of the agent. Required.
+        :paramtype display_name: str
+        :keyword instructions: Instructions provided to guide how this agent operates. Required.
+        :paramtype instructions: str
+        :return: The created Agent object.
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        :raises TypeError: If mutually exclusive arguments are provided.
+        """
+        ...
 
     @overload
     def create_agent(
-        self, *, options: _models.AgentCreationOptions, content_type: str = "application/json", **kwargs: Any
+        self,
+        *,
+        display_name: str,
+        content_type: str = "application/json",
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
-        :keyword options: The options for agent creation. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
+        :keyword display_name: The display name of the agent; used for display purposes and sent to the
+         LLM to identify the agent. Required.
+        :paramtype display_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -124,20 +146,34 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @distributed_trace
     def create_agent(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, options: _models.AgentCreationOptions = _Unset, model_id: Optional[str] = None, display_name: Optional[str] = None, instructions: Optional[str] = None,**kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        display_name: str = _Unset,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        model_id: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword options: The options for agent creation. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
-        :param model_id: The identifier of the model to use for this agent. Required.
-        :type model_id: str
-        :param display_name: The name of the agent; used for display purposes and sent to the LLM to identify
-        :type display_name: str
-        :param instructions: Instructions provided to guide how this agent operates. Required.
-        :type instructions: str
+        :keyword display_name: The display name of the agent; used for display purposes and sent to the
+         LLM to identify the agent. Required.
+        :paramtype display_name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -150,6 +186,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        # Error handling for mutually exclusive arguments
+        if model_id and agent_model:
+            raise TypeError("`model_id` and `agent_model` cannot be provided together.")
+        if model_id:
+            agent_model = _models.AgentModel(id=model_id)
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -157,19 +199,15 @@ class AgentsOperations(AgentsOperationsGenerated):
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if model_id and display_name and instructions:
-                if options is not _Unset:
-                    raise TypeError("options and model_id/display_name/instructions are mutually exclusive")
-                agent_model = AzureAgentModel(id=model_id)
-                options = _models.AgentCreationOptions(
-                    model=agent_model, display_name=display_name, instructions=instructions
-                )
-            elif model_id or display_name or instructions:
-                raise TypeError("missing required argument: model_id/display_name/instructions")
-
-            if options is _Unset:
-                raise TypeError("missing required argument: options")
-            body = {"options": options}
+            if display_name is _Unset:
+                raise TypeError("missing required argument: display_name")
+            body = {
+                "agentModel": agent_model,
+                "displayName": display_name,
+                "instructions": instructions,
+                "toolChoice": tool_choice,
+                "tools": tools,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -220,61 +258,81 @@ class AgentsOperations(AgentsOperationsGenerated):
     def run(
         self,
         *,
-        model_id: Optional[str] = None,
-        instructions: Optional[str] = None,
-        message: Optional[str] = None,
+        model_id: str,
+        instructions: str,
+        message: str,
         **kwargs: Any
-    ) -> _models.Run:
+    ) -> "_models.Run":
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :keyword model_id: Identifier for the model used by the agent responsible for the run.
+        :keyword model_id: The ID of the model to use for the run. Required.
         :paramtype model_id: str
-        :keyword instructions: Instructions for the agent responsible for the run.
+        :keyword instructions: Instructions for the agent. Required.
         :paramtype instructions: str
-        :keyword message: Input message to be procssed during the run.
+        :keyword message: A message to send to the agent. Required.
         :paramtype message: str
-        :return: Run. The Run is compatible with MutableMapping
+        :return: The completed Run object.
         :rtype: ~azure.ai.projects.dp1.models.Run
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TypeError: If required arguments are missing.
         """
+        ...
 
     @overload
     def run(
         self,
         *,
-        agent_id: Optional[str] = None,
-        message: Optional[str] = None,
+        agent_id: str,
+        message: str,
         **kwargs: Any
-    ) -> _models.Run:
+    ) -> "_models.Run":
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :keyword agent_id: Unique identifier for the agent responsible for the run.
+        :keyword agent_id: The ID of the agent to use for the run. Required.
         :paramtype agent_id: str
-        :keyword message: Input message to be procssed during the run.
+        :keyword message: A message to send to the agent. Required.
         :paramtype message: str
-        :return: Run. The Run is compatible with MutableMapping
+        :return: The completed Run object.
         :rtype: ~azure.ai.projects.dp1.models.Run
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TypeError: If required arguments are missing.
         """
+        ...
 
     @overload
     def run(
         self,
         *,
-        options: _models.AgentConfigurationOptions,
-        inputs: _models.RunInputs,
+        input: List[_models.ChatMessage],
         content_type: str = "application/json",
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         **kwargs: Any
     ) -> _models.Run:
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -313,11 +371,15 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        options: _models.AgentConfigurationOptions = _Unset,
-        inputs: _models.RunInputs = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         model_id: Optional[str] = None,
         instructions: Optional[str] = None,
-        agent_id: Optional[str] = None,
         message: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Run:
@@ -325,22 +387,35 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
-        :keyword model_id: Identifier for the model used by the agent responsible for the run.
-        :paramtype model_id: str
-        :keyword instructions: Instructions for the agent responsible for the run.
-        :paramtype instructions: str
-        :keyword agent_id: Unique identifier for the agent responsible for the run.
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
         :paramtype agent_id: str
-        :keyword message: Input message to be procssed during the run.
-        :paramtype message: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        # Error handling for mutually exclusive arguments
+        if model_id and agent_configuration:
+            raise TypeError("`model_id` and `agent_configuration` cannot be provided together.")
+        if message and input is not _Unset:
+            raise TypeError("`message` and `input` cannot be provided together.")
+        if instructions and not model_id:
+            raise TypeError("`model_id` must be provided when `instructions` is specified.")
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -357,28 +432,28 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is _Unset:
             if model_id:
-                if options is not _Unset:
-                    raise TypeError("options and model_id are mutually exclusive")
-                agent_model = AzureAgentModel(id=model_id)
-                options = _models.AgentConfigurationOptions(model=agent_model, instructions=instructions)
-            elif instructions:
-                raise TypeError("missing required argument: model_id required with instructions")
+                agent_model = _models.AzureAgentModel(id=model_id)
+                agent_configuration = _models.AgentConfigurationOptions(display_name="", agent_model=agent_model, instructions=instructions)
 
-            if agent_id and message:
-                if inputs is not _Unset:
-                    raise TypeError("inputs and agent_id/message are mutually exclusive")
-                chat_content = TextContent(text=message)
-                chat_message = ChatMessage(content=[chat_content])
-                inputs = _models.RunInputs(agent_id=agent_id, input=[chat_message])
-            elif agent_id or message:
-                raise TypeError("missing required argument: agent_id/message")
+            if message:
+                chat_content = _models.TextContent(text=message)
+                chat_message = _models.ChatMessage(content=[chat_content])
+                input = [chat_message]
 
-            if options is _Unset:
-                raise TypeError("missing required argument: options")
-            if inputs is _Unset:
-                raise TypeError("missing required argument: inputs")
-            body = {"inputs": inputs, "options": options}
+            if input is _Unset:
+                raise TypeError("missing required argument: `input`")
+
+            body = {
+                "agentConfiguration": agent_configuration,
+                "agentId": agent_id,
+                "conversationId": conversation_id,
+                "input": input,
+                "metadata": metadata,
+                "options": options,
+                "userId": user_id,
+            }
             body = {k: v for k, v in body.items() if v is not None}
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -423,7 +498,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
 
 __all__: List[str] = [
     "AgentsOperations",

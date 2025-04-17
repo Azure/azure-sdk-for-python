@@ -14,8 +14,9 @@ if TYPE_CHECKING:
 
 from ._operations import ServicePatternsOperations  # type: ignore
 from ._operations import MessagesOperations  # type: ignore
-from ._operations import ThreadsOperations  # type: ignore
+from ._operations import ConversationsOperations  # type: ignore
 from ._operations import AgentsOperations  # type: ignore
+from ._operations import RunsOperations  # type: ignore
 from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import EvaluationsOperations  # type: ignore
 from ._operations import DatasetsOperations  # type: ignore
@@ -29,8 +30,9 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ServicePatternsOperations",
     "MessagesOperations",
-    "ThreadsOperations",
+    "ConversationsOperations",
     "AgentsOperations",
+    "RunsOperations",
     "ConnectionsOperations",
     "EvaluationsOperations",
     "DatasetsOperations",

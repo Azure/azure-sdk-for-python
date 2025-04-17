@@ -9,14 +9,11 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-
 with project_client:
-
     agent = project_client.agents.create_agent(
         model_id="gpt-4o", display_name="SampleAgent", instructions="You are helpful assistant"
     )
 
-    run: Run = project_client.agents.run(agent_id=agent.agent_id, message="Tell me a joke")
-    messages = run.run_outputs.messages
-    for text_message in messages.text_messages:
+    run = project_client.agents.run(agent_id=agent.agent_id, message="Tell me a joke")
+    for text_message in run.text_messages:
         print(text_message)

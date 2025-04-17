@@ -46,6 +46,11 @@ from ...operations._operations import (
     build_agents_update_agent_request,
     build_connections_get_request,
     build_connections_list_request,
+    build_conversations_create_conversation_request,
+    build_conversations_delete_conversation_request,
+    build_conversations_get_conversation_request,
+    build_conversations_list_conversations_request,
+    build_conversations_update_conversation_request,
     build_datasets_create_request,
     build_datasets_create_version_request,
     build_datasets_delete_version_request,
@@ -70,11 +75,7 @@ from ...operations._operations import (
     build_messages_list_messages_request,
     build_messages_send_message_request,
     build_messages_update_message_request,
-    build_threads_create_thread_request,
-    build_threads_delete_thread_request,
-    build_threads_get_thread_request,
-    build_threads_list_threads_request,
-    build_threads_update_thread_request,
+    build_runs_list_run_inputs_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -129,71 +130,71 @@ class MessagesOperations:
 
     @overload
     async def send_message(
-        self, thread_id: str, resource: _models.ChatMessage, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+        self, conversation_id: str, body: _models.ChatMessage, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
         """Creates (sends) a new chat message, returning the created ChatMessage.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
-        :param resource: The resource instance. Required.
-        :type resource: ~azure.ai.projects.dp1.models.ChatMessage
+        :param conversation_id: The ID of the conversation. Required.
+        :type conversation_id: str
+        :param body: The message to create. Required.
+        :type body: ~azure.ai.projects.dp1.models.ChatMessage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def send_message(
-        self, thread_id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+        self, conversation_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
         """Creates (sends) a new chat message, returning the created ChatMessage.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
-        :param resource: The resource instance. Required.
-        :type resource: JSON
+        :param conversation_id: The ID of the conversation. Required.
+        :type conversation_id: str
+        :param body: The message to create. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def send_message(
-        self, thread_id: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+        self, conversation_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
         """Creates (sends) a new chat message, returning the created ChatMessage.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
-        :param resource: The resource instance. Required.
-        :type resource: IO[bytes]
+        :param conversation_id: The ID of the conversation. Required.
+        :type conversation_id: str
+        :param body: The message to create. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def send_message(
-        self, thread_id: str, resource: Union[_models.ChatMessage, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+        self, conversation_id: str, body: Union[_models.ChatMessage, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ChatMessage:
         """Creates (sends) a new chat message, returning the created ChatMessage.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
-        :param resource: The resource instance. Is one of the following types: ChatMessage, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.ai.projects.dp1.models.ChatMessage or JSON or IO[bytes]
-        :return: None
-        :rtype: None
+        :param conversation_id: The ID of the conversation. Required.
+        :type conversation_id: str
+        :param body: The message to create. Is one of the following types: ChatMessage, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.dp1.models.ChatMessage or JSON or IO[bytes]
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -208,17 +209,17 @@ class MessagesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_messages_send_message_request(
-            thread_id=thread_id,
+            conversation_id=conversation_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -230,32 +231,38 @@ class MessagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatMessage, response.json())
 
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_message(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ChatMessage:
+    async def get_message(self, conversation_id: str, message_id: str, **kwargs: Any) -> _models.ChatMessage:
         """Retrieves (reads) an existing chat message.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :return: ChatMessage. The ChatMessage is compatible with MutableMapping
@@ -276,7 +283,7 @@ class MessagesOperations:
         cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
 
         _request = build_messages_get_message_request(
-            thread_id=thread_id,
+            conversation_id=conversation_id,
             message_id=message_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -321,7 +328,7 @@ class MessagesOperations:
     @overload
     async def update_message(
         self,
-        thread_id: str,
+        conversation_id: str,
         message_id: str,
         resource: _models.ChatMessage,
         *,
@@ -330,8 +337,8 @@ class MessagesOperations:
     ) -> _models.ChatMessage:
         """Updates an existing chat message (or creates if not found) and returns the updated message.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
@@ -346,12 +353,18 @@ class MessagesOperations:
 
     @overload
     async def update_message(
-        self, thread_id: str, message_id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        conversation_id: str,
+        message_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ChatMessage:
         """Updates an existing chat message (or creates if not found) and returns the updated message.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
@@ -367,7 +380,7 @@ class MessagesOperations:
     @overload
     async def update_message(
         self,
-        thread_id: str,
+        conversation_id: str,
         message_id: str,
         resource: IO[bytes],
         *,
@@ -376,8 +389,8 @@ class MessagesOperations:
     ) -> _models.ChatMessage:
         """Updates an existing chat message (or creates if not found) and returns the updated message.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
@@ -392,12 +405,16 @@ class MessagesOperations:
 
     @distributed_trace_async
     async def update_message(
-        self, thread_id: str, message_id: str, resource: Union[_models.ChatMessage, JSON, IO[bytes]], **kwargs: Any
+        self,
+        conversation_id: str,
+        message_id: str,
+        resource: Union[_models.ChatMessage, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ChatMessage:
         """Updates an existing chat message (or creates if not found) and returns the updated message.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :param resource: The resource instance. Is one of the following types: ChatMessage, JSON,
@@ -429,7 +446,7 @@ class MessagesOperations:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_messages_update_message_request(
-            thread_id=thread_id,
+            conversation_id=conversation_id,
             message_id=message_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -474,11 +491,11 @@ class MessagesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_message(self, thread_id: str, message_id: str, **kwargs: Any) -> None:
+    async def delete_message(self, conversation_id: str, message_id: str, **kwargs: Any) -> None:
         """Deletes a chat message. Returns 204 on success.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :param message_id: A unique identifier for this message. Required.
         :type message_id: str
         :return: None
@@ -499,7 +516,7 @@ class MessagesOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_messages_delete_message_request(
-            thread_id=thread_id,
+            conversation_id=conversation_id,
             message_id=message_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -530,11 +547,11 @@ class MessagesOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def list_messages(self, thread_id: str, **kwargs: Any) -> AsyncIterable["_models.ChatMessage"]:
+    def list_messages(self, conversation_id: str, **kwargs: Any) -> AsyncIterable["_models.ChatMessage"]:
         """Lists chat messages, returning a collection of ChatMessage objects.
 
-        :param thread_id: A unique identifier for this thread. Required.
-        :type thread_id: str
+        :param conversation_id: A unique identifier for this conversation. Required.
+        :type conversation_id: str
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.ChatMessage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -556,7 +573,7 @@ class MessagesOperations:
             if not next_link:
 
                 _request = build_messages_list_messages_request(
-                    thread_id=thread_id,
+                    conversation_id=conversation_id,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -615,14 +632,14 @@ class MessagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ThreadsOperations:
+class ConversationsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
-        :attr:`threads` attribute.
+        :attr:`conversations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -633,65 +650,65 @@ class ThreadsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_thread(
+    async def create_conversation(
         self, *, messages: List[_models.ChatMessage], content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Creates a new Thread and returns it.
+    ) -> _models.Conversation:
+        """Creates a new Conversation and returns it.
 
-        :keyword messages: A list of messages in this thread. Required.
+        :keyword messages: A list of messages in this conversation. Required.
         :paramtype messages: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_thread(
+    async def create_conversation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Creates a new Thread and returns it.
+    ) -> _models.Conversation:
+        """Creates a new Conversation and returns it.
 
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_thread(
+    async def create_conversation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Creates a new Thread and returns it.
+    ) -> _models.Conversation:
+        """Creates a new Conversation and returns it.
 
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_thread(
+    async def create_conversation(
         self, body: Union[JSON, IO[bytes]] = _Unset, *, messages: List[_models.ChatMessage] = _Unset, **kwargs: Any
-    ) -> _models.Thread:
-        """Creates a new Thread and returns it.
+    ) -> _models.Conversation:
+        """Creates a new Conversation and returns it.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword messages: A list of messages in this thread. Required.
+        :keyword messages: A list of messages in this conversation. Required.
         :paramtype messages: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -706,7 +723,7 @@ class ThreadsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Conversation] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if messages is _Unset:
@@ -720,7 +737,7 @@ class ThreadsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_threads_create_thread_request(
+        _request = build_conversations_create_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -751,7 +768,7 @@ class ThreadsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Thread, response.json())
+            deserialized = _deserialize(_models.Conversation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -759,13 +776,13 @@ class ThreadsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_thread(self, thread_id: str, **kwargs: Any) -> _models.Thread:
-        """Retrieves an existing thread by its ID.
+    async def get_conversation(self, conversation_id: str, **kwargs: Any) -> _models.Conversation:
+        """Retrieves an existing conversation by its ID.
 
-        :param thread_id: The identifier of the Thread. Required.
-        :type thread_id: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :param conversation_id: The identifier of the Conversation. Required.
+        :type conversation_id: str
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -779,10 +796,10 @@ class ThreadsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Conversation] = kwargs.pop("cls", None)
 
-        _request = build_threads_get_thread_request(
-            thread_id=thread_id,
+        _request = build_conversations_get_conversation_request(
+            conversation_id=conversation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -811,7 +828,7 @@ class ThreadsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Thread, response.json())
+            deserialized = _deserialize(_models.Conversation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -819,72 +836,72 @@ class ThreadsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_thread(
-        self, thread_id: str, body: _models.Thread, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Updates or replaces a thread by its ID, returning the updated Thread.
+    async def update_conversation(
+        self, conversation_id: str, body: _models.Conversation, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Conversation:
+        """Updates or replaces a conversation by its ID, returning the updated Conversation.
 
-        :param thread_id: The identifier of the Thread to update. Required.
-        :type thread_id: str
-        :param body: The updated Thread resource data. Required.
-        :type body: ~azure.ai.projects.dp1.models.Thread
+        :param conversation_id: The identifier of the Conversation to update. Required.
+        :type conversation_id: str
+        :param body: The updated Conversation resource data. Required.
+        :type body: ~azure.ai.projects.dp1.models.Conversation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_thread(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Updates or replaces a thread by its ID, returning the updated Thread.
+    async def update_conversation(
+        self, conversation_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Conversation:
+        """Updates or replaces a conversation by its ID, returning the updated Conversation.
 
-        :param thread_id: The identifier of the Thread to update. Required.
-        :type thread_id: str
-        :param body: The updated Thread resource data. Required.
+        :param conversation_id: The identifier of the Conversation to update. Required.
+        :type conversation_id: str
+        :param body: The updated Conversation resource data. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_thread(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Thread:
-        """Updates or replaces a thread by its ID, returning the updated Thread.
+    async def update_conversation(
+        self, conversation_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Conversation:
+        """Updates or replaces a conversation by its ID, returning the updated Conversation.
 
-        :param thread_id: The identifier of the Thread to update. Required.
-        :type thread_id: str
-        :param body: The updated Thread resource data. Required.
+        :param conversation_id: The identifier of the Conversation to update. Required.
+        :type conversation_id: str
+        :param body: The updated Conversation resource data. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def update_thread(
-        self, thread_id: str, body: Union[_models.Thread, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Thread:
-        """Updates or replaces a thread by its ID, returning the updated Thread.
+    async def update_conversation(
+        self, conversation_id: str, body: Union[_models.Conversation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Conversation:
+        """Updates or replaces a conversation by its ID, returning the updated Conversation.
 
-        :param thread_id: The identifier of the Thread to update. Required.
-        :type thread_id: str
-        :param body: The updated Thread resource data. Is one of the following types: Thread, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.dp1.models.Thread or JSON or IO[bytes]
-        :return: Thread. The Thread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :param conversation_id: The identifier of the Conversation to update. Required.
+        :type conversation_id: str
+        :param body: The updated Conversation resource data. Is one of the following types:
+         Conversation, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.Conversation or JSON or IO[bytes]
+        :return: Conversation. The Conversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Conversation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -899,7 +916,7 @@ class ThreadsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Conversation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -908,8 +925,8 @@ class ThreadsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_threads_update_thread_request(
-            thread_id=thread_id,
+        _request = build_conversations_update_conversation_request(
+            conversation_id=conversation_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -940,7 +957,7 @@ class ThreadsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Thread, response.json())
+            deserialized = _deserialize(_models.Conversation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -948,11 +965,11 @@ class ThreadsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_thread(self, thread_id: str, **kwargs: Any) -> None:
-        """Deletes a thread, returning 204 on success.
+    async def delete_conversation(self, conversation_id: str, **kwargs: Any) -> None:
+        """Deletes a conversation, returning 204 on success.
 
-        :param thread_id: The ID of the thread to delete. Required.
-        :type thread_id: str
+        :param conversation_id: The ID of the conversation to delete. Required.
+        :type conversation_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -970,8 +987,8 @@ class ThreadsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_threads_delete_thread_request(
-            thread_id=thread_id,
+        _request = build_conversations_delete_conversation_request(
+            conversation_id=conversation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -996,11 +1013,11 @@ class ThreadsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def list_threads(self, **kwargs: Any) -> List[_models.Thread]:
-        """Lists all threads, returning an array of Thread items.
+    async def list_conversations(self, **kwargs: Any) -> List[_models.Conversation]:
+        """Lists all conversations, returning an array of Conversation items.
 
-        :return: list of Thread
-        :rtype: list[~azure.ai.projects.dp1.models.Thread]
+        :return: list of Conversation
+        :rtype: list[~azure.ai.projects.dp1.models.Conversation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1014,9 +1031,9 @@ class ThreadsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Thread]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Conversation]] = kwargs.pop("cls", None)
 
-        _request = build_threads_list_threads_request(
+        _request = build_conversations_list_conversations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1045,7 +1062,7 @@ class ThreadsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.Thread], response.json())
+            deserialized = _deserialize(List[_models.Conversation], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1072,15 +1089,34 @@ class AgentsOperations:
 
     @overload
     async def create_agent(
-        self, *, options: _models.AgentCreationOptions, content_type: str = "application/json", **kwargs: Any
+        self,
+        *,
+        display_name: str,
+        content_type: str = "application/json",
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
-        :keyword options: The options for agent creation. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
+        :keyword display_name: The display name of the agent; used for display purposes and sent to the
+         LLM to identify the agent. Required.
+        :paramtype display_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1118,14 +1154,33 @@ class AgentsOperations:
 
     @distributed_trace_async
     async def create_agent(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, options: _models.AgentCreationOptions = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        display_name: str = _Unset,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword options: The options for agent creation. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
+        :keyword display_name: The display name of the agent; used for display purposes and sent to the
+         LLM to identify the agent. Required.
+        :paramtype display_name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1145,9 +1200,15 @@ class AgentsOperations:
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if options is _Unset:
-                raise TypeError("missing required argument: options")
-            body = {"options": options}
+            if display_name is _Unset:
+                raise TypeError("missing required argument: display_name")
+            body = {
+                "agentModel": agent_model,
+                "displayName": display_name,
+                "instructions": instructions,
+                "toolChoice": tool_choice,
+                "tools": tools,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1492,20 +1553,38 @@ class AgentsOperations:
     async def run(
         self,
         *,
-        options: _models.AgentConfigurationOptions,
-        inputs: _models.RunInputs,
+        input: List[_models.ChatMessage],
         content_type: str = "application/json",
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         **kwargs: Any
     ) -> _models.Run:
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1544,18 +1623,36 @@ class AgentsOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        options: _models.AgentConfigurationOptions = _Unset,
-        inputs: _models.RunInputs = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         **kwargs: Any
     ) -> _models.Run:
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1575,11 +1672,17 @@ class AgentsOperations:
         cls: ClsType[_models.Run] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if options is _Unset:
-                raise TypeError("missing required argument: options")
-            if inputs is _Unset:
-                raise TypeError("missing required argument: inputs")
-            body = {"inputs": inputs, "options": options}
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "agentConfiguration": agent_configuration,
+                "agentId": agent_id,
+                "conversationId": conversation_id,
+                "input": input,
+                "metadata": metadata,
+                "options": options,
+                "userId": user_id,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1630,20 +1733,38 @@ class AgentsOperations:
     async def stream(
         self,
         *,
-        options: _models.AgentConfigurationOptions,
-        inputs: _models.RunInputs,
+        input: List[_models.ChatMessage],
         content_type: str = "application/json",
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         **kwargs: Any
     ) -> None:
         """The most basic operation.
 
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1682,18 +1803,36 @@ class AgentsOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        options: _models.AgentConfigurationOptions = _Unset,
-        inputs: _models.RunInputs = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        agent_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        agent_configuration: Optional[_models.AgentConfigurationOptions] = None,
         **kwargs: Any
     ) -> None:
         """The most basic operation.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword options: The options for the agent completing the run. Required.
-        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
-        :keyword inputs: The inputs for the run. Required.
-        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword conversation_id: Optional identifier for an existing conversation. Default value is
+         None.
+        :paramtype conversation_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword agent_configuration: The agent configuration when not using a previously created
+         agent. Default value is None.
+        :paramtype agent_configuration: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1713,11 +1852,17 @@ class AgentsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if options is _Unset:
-                raise TypeError("missing required argument: options")
-            if inputs is _Unset:
-                raise TypeError("missing required argument: inputs")
-            body = {"inputs": inputs, "options": options}
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "agentConfiguration": agent_configuration,
+                "agentId": agent_id,
+                "conversationId": conversation_id,
+                "input": input,
+                "metadata": metadata,
+                "options": options,
+                "userId": user_id,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1900,6 +2045,84 @@ class AgentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class RunsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
+        :attr:`runs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def list_run_inputs(self, run_id: str, **kwargs: Any) -> _models.RunInputs:
+        """Lists the inputs for a specific run by its ID.
+
+        :param run_id: The ID of the run. Required.
+        :type run_id: str
+        :return: RunInputs. The RunInputs is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.RunInputs
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RunInputs] = kwargs.pop("cls", None)
+
+        _request = build_runs_list_run_inputs_request(
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RunInputs, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class ConnectionsOperations:

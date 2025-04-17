@@ -20,13 +20,14 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AgentsOperations,
     ConnectionsOperations,
+    ConversationsOperations,
     DatasetsOperations,
     DeploymentsOperations,
     EvaluationsOperations,
     IndexesOperations,
     MessagesOperations,
+    RunsOperations,
     ServicePatternsOperations,
-    ThreadsOperations,
 )
 
 if TYPE_CHECKING:
@@ -40,10 +41,12 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype service_patterns: azure.ai.projects.dp1.operations.ServicePatternsOperations
     :ivar messages: MessagesOperations operations
     :vartype messages: azure.ai.projects.dp1.operations.MessagesOperations
-    :ivar threads: ThreadsOperations operations
-    :vartype threads: azure.ai.projects.dp1.operations.ThreadsOperations
+    :ivar conversations: ConversationsOperations operations
+    :vartype conversations: azure.ai.projects.dp1.operations.ConversationsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.dp1.operations.AgentsOperations
+    :ivar runs: RunsOperations operations
+    :vartype runs: azure.ai.projects.dp1.operations.RunsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.dp1.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -97,8 +100,9 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.threads = ThreadsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.conversations = ConversationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -11,6 +11,6 @@ with project_client:
     run = project_client.agents.run(
         model_id="gpt-4o", instructions="You are helpful assistant", message="Tell me a joke"
     )
-    messages = run.run_outputs.messages
-    for text_message in messages.text_messages:
+
+    for text_message in run.text_messages:
         print(text_message)
