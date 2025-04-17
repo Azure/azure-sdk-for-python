@@ -90,8 +90,10 @@ async def perform_write_operation(operation, container, fault_injection_containe
                    'key': 'value'}
         resp = await fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == "delete":
+        await container.create_item(body=doc)
         resp = await fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == "patch":
+        await container.create_item(body=doc)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = await fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
     elif operation == "batch":
@@ -172,9 +174,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         custom_transport =  FaultInjectionTransportAsync()
         id_value = 'failoverDoc-' + str(uuid.uuid4())
         document_definition = {'id': id_value,
-                               'pk': 'pk1',
-                               'name': 'sample document',
-                               'key': 'value'}
+                               'pk': 'pk1'}
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
@@ -183,18 +183,19 @@ class TestPerPartitionCircuitBreakerMMAsync:
         )))
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        setup_teardown = await self.setup_method(custom_transport, default_endpoint=self.host)
+        setup = await self.setup_method(default_endpoint=self.host)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
+        with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
             await perform_write_operation(write_operation,
                                           container,
                                           fault_injection_container,
                                           document_definition['id'],
                                           document_definition['pk'],
                                           expected_uri)
+        assert exc_info.value == error
 
         TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
 
@@ -202,20 +203,20 @@ class TestPerPartitionCircuitBreakerMMAsync:
         for i in range(4):
             with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
                 await perform_write_operation(write_operation,
-                                              setup[COLLECTION],
+                                              container,
                                               fault_injection_container,
                                               document_definition['id'],
                                               document_definition['pk'],
                                               expected_uri)
 
         await perform_write_operation(write_operation,
-                                      setup[COLLECTION],
+                                      container,
                                       fault_injection_container,
                                       document_definition['id'],
                                       document_definition['pk'],
                                       expected_uri)
         TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
-        TestPerPartitionCircuitBreakerMMAsync.cleanup_method(custom_setup)
+        await TestPerPartitionCircuitBreakerMMAsync.cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
