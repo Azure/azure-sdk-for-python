@@ -708,6 +708,7 @@ class RedTeam():
                     try:
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
+                            # TODO: use - orchestrator.send_normalizer_requests_async()
                             orchestrator.send_prompts_async(prompt_list=batch, memory_labels = {"risk_strategy_path": output_path, "batch": batch_idx+1}),
                             timeout=timeout  # Use provided timeouts
                         )
