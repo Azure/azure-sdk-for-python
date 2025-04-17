@@ -73,7 +73,7 @@ class SecurityDomainClient(KeyVaultClient):
             **kwargs,
         )
 
-    @overload  # type: ignore[override]
+    @overload
     async def begin_download(
         self,
         certificate_info: CertificateInfo,
@@ -147,7 +147,37 @@ class SecurityDomainClient(KeyVaultClient):
             **kwargs,
         )
 
-    @distributed_trace_async  # type: ignore[override]
+    @overload
+    @distributed_trace_async
+    async def begin_upload(
+        self,
+        security_domain: SecurityDomain,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AsyncLROPoller[SecurityDomainOperationStatus]: ...
+
+    @overload
+    @distributed_trace_async
+    async def begin_upload(
+        self,
+        security_domain: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AsyncLROPoller[SecurityDomainOperationStatus]: ...
+
+    @overload
+    @distributed_trace_async
+    async def begin_upload(
+        self,
+        security_domain: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AsyncLROPoller[SecurityDomainOperationStatus]: ...
+
+    @distributed_trace_async
     async def begin_upload(
         self,
         security_domain: Union[SecurityDomain, JSON, IO[bytes]],

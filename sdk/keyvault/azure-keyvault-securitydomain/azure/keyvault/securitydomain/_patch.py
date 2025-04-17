@@ -115,7 +115,7 @@ class SecurityDomainClient(KeyVaultClient):
             **kwargs,
         )
 
-    @overload  # type: ignore[override]
+    @overload
     def begin_download(
         self,
         certificate_info: CertificateInfo,
@@ -186,6 +186,36 @@ class SecurityDomainClient(KeyVaultClient):
             polling=polling_method,
             **kwargs,
         )
+
+    @overload
+    @distributed_trace
+    def begin_upload(
+        self,
+        security_domain: SecurityDomain,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[SecurityDomainOperationStatus]: ...
+
+    @overload
+    @distributed_trace
+    def begin_upload(
+        self,
+        security_domain: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[SecurityDomainOperationStatus]: ...
+
+    @overload
+    @distributed_trace
+    def begin_upload(
+        self,
+        security_domain: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[SecurityDomainOperationStatus]: ...
 
     @distributed_trace
     def begin_upload(
