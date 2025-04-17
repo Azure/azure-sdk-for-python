@@ -60,8 +60,9 @@ from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64C
 
 # Retry imports
 import httpx
+import httpcore
 import tenacity
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 # Local imports - constants and utilities
@@ -108,47 +109,30 @@ class RedTeam():
         :rtype: dict
         """
         return {            # For connection timeouts and network-related errors
-            "connect_timeout": {
-                "retry": retry_if_exception_type((
-                    httpx.ConnectTimeout,
-                    httpx.ReadTimeout,
-                    httpx.ConnectError,
-                    httpx.HTTPError,
-                    httpx.TimeoutException,
-                    ConnectionError,
-                    ConnectionRefusedError,
-                    ConnectionResetError,
-                    TimeoutError
-                )),
-                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
-                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
-                "retry_error_callback": self._log_retry_error,
-                "before_sleep": self._log_retry_attempt,
-            },            # For service request errors 
-            "service_error": {
-                "retry": retry_if_exception_type((ServiceRequestError, ServiceResponseError)),
-                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
-                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
-                "retry_error_callback": self._log_retry_error,
-                "before_sleep": self._log_retry_attempt,
-            },
-            # New comprehensive retry for all network operations
             "network_retry": {
-                "retry": retry_if_exception_type((
-                    httpx.ConnectTimeout, 
-                    httpx.ReadTimeout,
-                    httpx.ConnectError,
-                    httpx.HTTPError, 
-                    httpx.TimeoutException,
-                    ConnectionError,
-                    ConnectionRefusedError,
-                    ConnectionResetError,
-                    TimeoutError,
-                    OSError,  # Catches broader system-level I/O errors
-                    IOError,
-                    ServiceRequestError, 
-                    ServiceResponseError
-                )),
+                "retry": retry_if_exception(
+                    lambda e: isinstance(e, (
+                        httpx.ConnectTimeout, 
+                        httpx.ReadTimeout,
+                        httpx.ConnectError,
+                        httpx.HTTPError, 
+                        httpx.TimeoutException,
+                        httpx.HTTPStatusError,
+                        httpcore.ReadTimeout,
+                        ConnectionError,
+                        ConnectionRefusedError,
+                        ConnectionResetError,
+                        TimeoutError,
+                        OSError,
+                        IOError,
+                        asyncio.TimeoutError,
+                        ServiceRequestError, 
+                        ServiceResponseError
+                    )) or (
+                        isinstance(e, httpx.HTTPStatusError) and 
+                        (e.response.status_code == 500 or "model_error" in str(e))
+                    )
+                ),
                 "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
                 "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
                 "retry_error_callback": self._log_retry_error,
@@ -812,10 +796,13 @@ class RedTeam():
                                     orchestrator.send_prompts_async(prompt_list=batch, memory_labels={"risk_strategy_path": output_path, "batch": batch_idx+1}),
                                     timeout=timeout  # Use provided timeouts
                                 )
-                            except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError, 
-                                   ConnectionError, TimeoutError) as e:
+                            except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                                   ConnectionError, TimeoutError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                                   httpx.HTTPStatusError) as e:
                                 # Log the error with enhanced information and allow retry logic to handle it
                                 self.logger.warning(f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category}: {type(e).__name__}: {str(e)}")
+                                # Add a small delay before retry to allow network recovery
+                                await asyncio.sleep(1)
                                 raise
                         
                         # Execute the retry-enabled function
@@ -857,8 +844,9 @@ class RedTeam():
                                 timeout=timeout  # Use provided timeout
                             )
                         except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
-                               ConnectionError, TimeoutError, OSError) as e:
-                            # Enhanced error logging with type information
+                               ConnectionError, TimeoutError, OSError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                               httpx.HTTPStatusError) as e:
+                            # Enhanced error logging with type information and context
                             self.logger.warning(f"Network error in single batch for {strategy_name}/{risk_category}: {type(e).__name__}: {str(e)}")
                             # Add a small delay before retry to allow network recovery
                             await asyncio.sleep(2)
