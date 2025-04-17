@@ -385,14 +385,14 @@ class PercentileMetricDefinition(ExperimentMetricDefinition, discriminator="Perc
      Required.
     :vartype value: ~azure.analytics.onlineexperimentation.models.AggregatedValue
     :ivar percentile: The percentile to measure. Required.
-    :vartype percentile: int
+    :vartype percentile: float
     """
 
     type: Literal[ExperimentMetricType.PERCENTILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of metric. Required. Calculates a specified percentile of an event property."""
     value: "_models.AggregatedValue" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value to aggregate, including the event name and property to measure. Required."""
-    percentile: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    percentile: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The percentile to measure. Required."""
 
     @overload
@@ -400,7 +400,7 @@ class PercentileMetricDefinition(ExperimentMetricDefinition, discriminator="Perc
         self,
         *,
         value: "_models.AggregatedValue",
-        percentile: int,
+        percentile: float,
     ) -> None: ...
 
     @overload
