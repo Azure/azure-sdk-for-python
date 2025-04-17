@@ -423,7 +423,11 @@ class Settings:
     :type log_level: PrioritizedSetting
     :cvar tracing_enabled: Whether tracing should be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
     :type tracing_enabled: PrioritizedSetting
-    :cvar tracing_implementation: The tracing implementation to use (AZURE_SDK_TRACING_IMPLEMENTATION)
+    :cvar tracing_experimental_enabled: Whether experimental tracing should be enabled across Azure SDKs
+        (AZURE_TRACING_EXPERIMENTAL_ENABLED)
+    :type tracing_experimental_enabled: PrioritizedSetting
+    :cvar tracing_implementation: The tracing implementation to use when using plugin-based tracing
+        (AZURE_SDK_TRACING_IMPLEMENTATION)
     :type tracing_implementation: PrioritizedSetting
 
     :Example:
@@ -512,6 +516,13 @@ class Settings:
         env_var="AZURE_TRACING_ENABLED",
         convert=convert_tracing_enabled,
         default=None,
+    )
+
+    tracing_experimental_enabled: PrioritizedSetting[Union[str, bool], bool] = PrioritizedSetting(
+        "tracing_experimental_enabled",
+        env_var="AZURE_TRACING_EXPERIMENTAL_ENABLED",
+        convert=convert_bool,
+        default=False,
     )
 
     tracing_implementation: PrioritizedSetting[
