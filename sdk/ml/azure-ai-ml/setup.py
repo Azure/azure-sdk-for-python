@@ -36,7 +36,7 @@ setup(
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description_content_type="text/markdown",
     long_description=readme + "\n\n" + changelog,
-    license="MIT License",
+    license="MIT",
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
