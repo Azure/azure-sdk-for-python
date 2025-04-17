@@ -227,7 +227,7 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @annatisch @Azure/azure-cosmos-python-sdk
+/sdk/cosmos/                                                         @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
@@ -299,7 +299,7 @@
 
 # ServiceLabel: %Maps
 # PRLabel: %Maps
-/sdk/maps/                                                           @dubiety
+/sdk/maps/                                                           @dubiety @andykao1213
 
 # ServiceLabel: %Mixed Reality
 # PRLabel: %Mixed Reality
