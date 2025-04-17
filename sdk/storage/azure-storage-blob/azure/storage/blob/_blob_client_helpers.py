@@ -522,9 +522,9 @@ def _create_page_blob_options(
     tier = None
     if premium_page_blob_tier:
         try:
-            tier = premium_page_blob_tier.value  # type: ignore [assignment]
+            tier = premium_page_blob_tier.value  # type: ignore [attr-defined]
         except AttributeError:
-            tier = premium_page_blob_tier  # type: ignore [assignment]
+            tier = premium_page_blob_tier  # type: ignore [attr-defined]
 
     blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
@@ -955,10 +955,10 @@ def _get_page_ranges_options(
     }
     if previous_snapshot_diff:
         try:
-            options['prevsnapshot'] = previous_snapshot_diff.snapshot  # type: ignore [assignment]
+            options['prevsnapshot'] = previous_snapshot_diff.snapshot  # type: ignore [union-attr]
         except AttributeError:
             try:
-                options['prevsnapshot'] = previous_snapshot_diff['snapshot']  # type: ignore [assignment]
+                options['prevsnapshot'] = previous_snapshot_diff['snapshot']  # type: ignore [union-attr, index]
             except TypeError:
                 options['prevsnapshot'] = previous_snapshot_diff
     options.update({k: v for k, v in kwargs.items() if v is not None})
