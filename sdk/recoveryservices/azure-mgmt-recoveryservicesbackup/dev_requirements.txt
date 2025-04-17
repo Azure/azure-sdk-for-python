@@ -1,2 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 requests
+azure-mgmt-resource
+aiohttp
