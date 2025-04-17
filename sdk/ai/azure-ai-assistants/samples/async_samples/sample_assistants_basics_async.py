@@ -36,7 +36,7 @@ async def main() -> None:
     async with DefaultAzureCredential() as creds:
         assistant_client = AssistantsClient(
             endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
+            credential=creds),
         )
 
         async with assistant_client:

@@ -1369,7 +1369,7 @@
         "fspath",
         "wttr"
       ]
-    }
+    },
     {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [

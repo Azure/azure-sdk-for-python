@@ -2881,11 +2881,9 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # Create AzureAISearchTool
-            connection_name = kwargs.pop(
-                "azure_ai_assistants_assistants_tests_search_connection_name", "my-search-connection-name"
+            conn_id = kwargs.pop(
+                "azure_ai_assistants_assistants_tests_search_connection_id", "my-search-connection-ID"
             )
-            connection = client.connections.get(connection_name=connection_name)
-            conn_id = connection.id
             index_name = kwargs.pop("azure_ai_assistants_assistants_tests_search_index_name", "my-search-index")
 
             azure_search_tool = AzureAISearchTool(

@@ -127,7 +127,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
         credential = self.get_credential(AssistantsClient, is_async=True)
 
         # create and return client
-        client = AssistantsClient.from_connection_string(
+        client = AssistantsClient(
             endpoint=endpoint,
             credential=credential,
         )
