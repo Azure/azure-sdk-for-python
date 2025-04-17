@@ -983,7 +983,7 @@ class RedTeam():
         for msgs in regular_convs.values():
             msg_dicts = [self._message_to_dict(m) for m in msgs]
             lines.append(json.dumps({"conversation": {"messages": msg_dicts}}))
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         Path(output_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
         self.logger.debug(f"Wrote {len(regular_convs)} regular conversation(s) to {output_path}")
 
@@ -1965,7 +1965,7 @@ class RedTeam():
             self.red_team_info = {}
             #TODO: debugger
             print(f"len(flattened_attack_strategies)={len(flattened_attack_strategies)}")
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             for strategy in flattened_attack_strategies:
                 strategy_name = self._get_strategy_name(strategy)
                 self.red_team_info[strategy_name] = {}
