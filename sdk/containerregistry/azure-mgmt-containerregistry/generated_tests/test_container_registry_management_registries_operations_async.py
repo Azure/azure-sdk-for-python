@@ -37,7 +37,7 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
                     "targetTags": ["str"],
                     "untaggedTargetRepositories": ["str"],
                 },
-                api_version="2023-07-01",
+                api_version="2019-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -49,30 +49,9 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
     async def test_registries_check_name_availability(self, resource_group):
         response = await self.client.registries.check_name_availability(
             registry_name_check_request={"name": "str", "type": "Microsoft.ContainerRegistry/registries"},
-            api_version="2023-07-01",
+            api_version="2019-05-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_registries_list(self, resource_group):
-        response = self.client.registries.list(
-            api_version="2023-07-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_registries_list_by_resource_group(self, resource_group):
-        response = self.client.registries.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2023-07-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -82,7 +61,7 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
         response = await self.client.registries.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2019-05-01",
         )
 
         # please add some check logic here by yourself
@@ -100,73 +79,26 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
                     "sku": {"name": "str", "tier": "str"},
                     "adminUserEnabled": False,
                     "creationDate": "2020-02-20 00:00:00",
-                    "dataEndpointEnabled": bool,
-                    "dataEndpointHostNames": ["str"],
-                    "encryption": {
-                        "keyVaultProperties": {
-                            "identity": "str",
-                            "keyIdentifier": "str",
-                            "keyRotationEnabled": bool,
-                            "lastKeyRotationTimestamp": "2020-02-20 00:00:00",
-                            "versionedKeyIdentifier": "str",
-                        },
-                        "status": "str",
-                    },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "loginServer": "str",
                     "name": "str",
-                    "networkRuleBypassOptions": "str",
-                    "networkRuleSet": {"defaultAction": "Allow", "ipRules": [{"value": "str", "action": "Allow"}]},
+                    "networkRuleSet": {
+                        "defaultAction": "Allow",
+                        "ipRules": [{"value": "str", "action": "str"}],
+                        "virtualNetworkRules": [{"id": "str", "action": "str"}],
+                    },
                     "policies": {
-                        "exportPolicy": {"status": "enabled"},
                         "quarantinePolicy": {"status": "str"},
                         "retentionPolicy": {"days": 7, "lastUpdatedTime": "2020-02-20 00:00:00", "status": "str"},
                         "trustPolicy": {"status": "str", "type": "Notary"},
                     },
-                    "privateEndpointConnections": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "privateEndpoint": {"id": "str"},
-                            "privateLinkServiceConnectionState": {
-                                "actionsRequired": "str",
-                                "description": "str",
-                                "status": "str",
-                            },
-                            "provisioningState": "str",
-                            "systemData": {
-                                "createdAt": "2020-02-20 00:00:00",
-                                "createdBy": "str",
-                                "createdByType": "str",
-                                "lastModifiedAt": "2020-02-20 00:00:00",
-                                "lastModifiedBy": "str",
-                                "lastModifiedByType": "str",
-                            },
-                            "type": "str",
-                        }
-                    ],
                     "provisioningState": "str",
-                    "publicNetworkAccess": "str",
                     "status": {"displayStatus": "str", "message": "str", "timestamp": "2020-02-20 00:00:00"},
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
+                    "storageAccount": {"id": "str"},
                     "tags": {"str": "str"},
                     "type": "str",
-                    "zoneRedundancy": "str",
                 },
-                api_version="2023-07-01",
+                api_version="2019-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -180,7 +112,7 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
             await self.client.registries.begin_delete(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                api_version="2023-07-01",
+                api_version="2019-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -196,36 +128,20 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
                 registry_name="str",
                 registry_update_parameters={
                     "adminUserEnabled": bool,
-                    "dataEndpointEnabled": bool,
-                    "encryption": {
-                        "keyVaultProperties": {
-                            "identity": "str",
-                            "keyIdentifier": "str",
-                            "keyRotationEnabled": bool,
-                            "lastKeyRotationTimestamp": "2020-02-20 00:00:00",
-                            "versionedKeyIdentifier": "str",
-                        },
-                        "status": "str",
+                    "networkRuleSet": {
+                        "defaultAction": "Allow",
+                        "ipRules": [{"value": "str", "action": "str"}],
+                        "virtualNetworkRules": [{"id": "str", "action": "str"}],
                     },
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "networkRuleBypassOptions": "str",
-                    "networkRuleSet": {"defaultAction": "Allow", "ipRules": [{"value": "str", "action": "Allow"}]},
                     "policies": {
-                        "exportPolicy": {"status": "enabled"},
                         "quarantinePolicy": {"status": "str"},
                         "retentionPolicy": {"days": 7, "lastUpdatedTime": "2020-02-20 00:00:00", "status": "str"},
                         "trustPolicy": {"status": "str", "type": "Notary"},
                     },
-                    "publicNetworkAccess": "str",
                     "sku": {"name": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2023-07-01",
+                api_version="2019-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -234,23 +150,10 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_registries_list_usages(self, resource_group):
-        response = await self.client.registries.list_usages(
+    async def test_registries_list_by_resource_group(self, resource_group):
+        response = self.client.registries.list_by_resource_group(
             resource_group_name=resource_group.name,
-            registry_name="str",
-            api_version="2023-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_registries_list_private_link_resources(self, resource_group):
-        response = self.client.registries.list_private_link_resources(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            api_version="2023-07-01",
+            api_version="2019-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -258,14 +161,11 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_registries_get_private_link_resource(self, resource_group):
-        response = await self.client.registries.get_private_link_resource(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            group_name="str",
-            api_version="2023-07-01",
+    async def test_registries_list(self, resource_group):
+        response = self.client.registries.list(
+            api_version="2019-05-01",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -275,7 +175,7 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
         response = await self.client.registries.list_credentials(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2019-05-01",
         )
 
         # please add some check logic here by yourself
@@ -288,7 +188,7 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             registry_name="str",
             regenerate_credential_parameters={"name": "str"},
-            api_version="2023-07-01",
+            api_version="2019-05-01",
         )
 
         # please add some check logic here by yourself
@@ -296,15 +196,12 @@ class TestContainerRegistryManagementRegistriesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_registries_begin_generate_credentials(self, resource_group):
-        response = await (
-            await self.client.registries.begin_generate_credentials(
-                resource_group_name=resource_group.name,
-                registry_name="str",
-                generate_credentials_parameters={"expiry": "2020-02-20 00:00:00", "name": "str", "tokenId": "str"},
-                api_version="2023-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_registries_list_usages(self, resource_group):
+        response = await self.client.registries.list_usages(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            api_version="2019-05-01",
+        )
 
         # please add some check logic here by yourself
         # ...

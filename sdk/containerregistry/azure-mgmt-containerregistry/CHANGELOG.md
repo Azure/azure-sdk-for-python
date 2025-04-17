@@ -1,5 +1,30 @@
 # Release History
 
+## 13.0.0 (2025-04-21)
+
+### Features Added
+
+  - Added operation RegistriesOperations.get_build_source_upload_url
+  - Added operation RegistriesOperations.schedule_run
+  - Added operation RunsOperations.cancel
+  - Added operation RunsOperations.update
+  - Added operation TaskRunsOperations.delete
+  - Added operation TasksOperations.create
+  - Added operation TasksOperations.delete
+  - Added operation TasksOperations.update
+  - Model Registry has a new parameter role_assignment_mode
+  - Model RegistryUpdateParameters has a new parameter role_assignment_mode
+  - Model SourceRegistryCredentials has a new parameter identity
+
+### Breaking Changes
+
+  - Removed operation RunsOperations.begin_cancel
+  - Removed operation RunsOperations.begin_update
+  - Removed operation TaskRunsOperations.begin_delete
+  - Removed operation TasksOperations.begin_create
+  - Removed operation TasksOperations.begin_delete
+  - Removed operation TasksOperations.begin_update
+
 ## 12.0.0 (2025-02-24)
 
 ### Breaking Changes

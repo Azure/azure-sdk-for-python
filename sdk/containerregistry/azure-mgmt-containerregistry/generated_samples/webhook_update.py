@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2023-07-01/examples/WebhookUpdate.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2019-05-01/examples/WebhookUpdate.json
 if __name__ == "__main__":
     main()
