@@ -56,8 +56,6 @@ class TestHealthCheckAsync:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
-    # health check in all these tests should check the endpoints for the first two write regions and the first two read regions
-    # without checking the same endpoint twice
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
