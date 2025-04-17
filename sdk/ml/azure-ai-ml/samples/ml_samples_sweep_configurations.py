@@ -161,7 +161,7 @@ class SweepConfigurationOptions(object):
             sampling_algorithm=BayesianSamplingAlgorithm(),
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},
+            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},  # type:ignore
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
             objective=Objective(goal="maximize", primary_metric="accuracy"),
@@ -185,7 +185,7 @@ class SweepConfigurationOptions(object):
             sampling_algorithm=GridSamplingAlgorithm(),
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},
+            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},  # type:ignore
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
         )
@@ -208,7 +208,7 @@ class SweepConfigurationOptions(object):
             sampling_algorithm=RandomSamplingAlgorithm(seed=999, rule="sobol", logbase="e"),
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},
+            inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},  # type:ignore
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
         )

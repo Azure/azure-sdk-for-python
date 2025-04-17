@@ -156,7 +156,7 @@ class ComputeConfigurationOptions(object):
         # [START compute_instance_ssh_settings]
         from azure.ai.ml.entities import ComputeInstanceSshSettings
 
-        ssh_settings = ComputeInstanceSshSettings(
+        ssh_settings = ComputeInstanceSshSettings(  # type:ignore
             ssh_key_value="ssh-rsa ABCDEFGHIJKLMNOPQRSTUVWXYZ administrator@MININT-2023"
         )
         # [END compute_instance_ssh_settings]
@@ -178,7 +178,7 @@ class ComputeConfigurationOptions(object):
         # [START vm_ssh_settings]
         from azure.ai.ml.entities import VirtualMachineSshSettings
 
-        ssh_settings = VirtualMachineSshSettings(
+        ssh_settings = VirtualMachineSshSettings(  # type:ignore
             admin_username="azureuser",
             admin_password="azureuserpassword",
             ssh_port=8888,
@@ -192,7 +192,7 @@ class ComputeConfigurationOptions(object):
         vm_compute = VirtualMachineCompute(
             name="vm-compute",
             resource_id="/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/my-rg/providers/Microsoft.Compute/virtualMachines/my-vm",
-            ssh_settings=ssh_settings,
+            ssh_settings=ssh_settings,  # type:ignore
         )
         # [END vm_compute]
 

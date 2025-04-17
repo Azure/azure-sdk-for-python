@@ -88,8 +88,7 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
     )
 
 
-def _is_cloud_event(event):
-    # type: (Any) -> bool
+def _is_cloud_event(event: Any) -> bool:
     required = ("id", "source", "specversion", "type")
     try:
         return all((_ in event for _ in required)) and event["specversion"] == "1.0"
@@ -97,8 +96,7 @@ def _is_cloud_event(event):
         return False
 
 
-def _is_eventgrid_event_format(event):
-    # type: (Any) -> bool
+def _is_eventgrid_event_format(event: Any) -> bool:
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
     try:
         return all((prop in event for prop in required))

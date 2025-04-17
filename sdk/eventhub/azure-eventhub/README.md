@@ -24,7 +24,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 
 ### Prerequisites
 
-- Python 3.8 or later.
+- Python 3.9 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/free/).
 

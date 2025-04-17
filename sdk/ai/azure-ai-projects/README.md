@@ -46,11 +46,13 @@ To report an issue with the client library, or request additional features, plea
       - [Function call](#create-agent-with-function-call)
       - [Azure Function Call](#create-agent-with-azure-function-call)
       - [OpenAPI](#create-agent-with-openapi)
+      - [Fabric data](#create-an-agent-with-fabric)
     - [Create thread](#create-thread) with
       - [Tool resource](#create-thread-with-tool-resource)
     - [Create message](#create-message) with:
       - [File search attachment](#create-message-with-file-search-attachment)
       - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
+      - [Create Message with Image Inputs](#create-message-with-image-inputs)
     - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
     - [Retrieve message](#retrieve-message)
     - [Retrieve file](#retrieve-file)
@@ -279,6 +281,9 @@ toolset = ToolSet()
 toolset.add(functions)
 toolset.add(code_interpreter)
 
+# To enable tool calls executed automatically
+project_client.agents.enable_auto_function_calls(toolset=toolset)
+
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
@@ -289,7 +294,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-Also notices that if you use asynchronous client, you use `AsyncToolSet` instead.  Additional information related to `AsyncFunctionTool` be discussed in the later sections.
+Also notice that if you use the asynchronous client, use `AsyncToolSet` instead. Additional information related to `AsyncFunctionTool` be discussed in the later sections.
 
 Here is an example to use `tools` and `tool_resources`:
 <!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
@@ -455,17 +460,15 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
-        conn_id = conn.id
-        break
+connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
+conn_id = connection.id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+)
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -480,14 +483,37 @@ with project_client:
 
 <!-- END SNIPPET -->
 
+If the agent has found the relevant information in the index, the reference
+and annotation will be provided in the message response. In the example above, we replace
+the reference placeholder by the actual reference and url. Please note, that to
+get sensible result, the index needs to have fields "title" and "url".
+
+<!-- SNIPPET:sample_agents_azure_ai_search.populate_references_agent_with_azure_ai_search_tool -->
+
+```python
+# Fetch and log all messages
+messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+for message in messages.data:
+    if message.role == MessageRole.AGENT and message.url_citation_annotations:
+        placeholder_annotations = {
+            annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
+            for annotation in message.url_citation_annotations
+        }
+        for message_text in message.text_messages:
+            message_str = message_text.text.value
+            for k, v in placeholder_annotations.items():
+                message_str = message_str.replace(k, v)
+            print(f"{message.role}: {message_str}")
+    else:
+        for message_text in message.text_messages:
+            print(f"{message.role}: {message_text.text.value}")
+```
+
+<!-- END SNIPPET -->
+
 #### Create Agent with Function Call
 
-You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
-
-- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
-- `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
-
-For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
+You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`.
 
 For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/FunctionTool.md)
 
@@ -498,6 +524,7 @@ Here is an example to use [user functions](https://github.com/Azure/azure-sdk-fo
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
 toolset.add(functions)
+project_client.agents.enable_auto_function_calls(toolset=toolset)
 
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -522,6 +549,7 @@ functions = AsyncFunctionTool(user_async_functions)
 
 toolset = AsyncToolSet()
 toolset.add(functions)
+project_client.agents.enable_auto_function_calls(toolset=toolset)
 
 agent = await project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -532,6 +560,9 @@ agent = await project_client.agents.create_agent(
 ```
 
 <!-- END SNIPPET -->
+
+Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process_run` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
+[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py)
 
 #### Create Agent With Azure Function Call
 
@@ -579,7 +610,6 @@ agent = project_client.agents.create_agent(
 
 Currently, the Azure Function integration for the AI Agent has the following limitations:
 
-- Azure Functions integration is available **only for non-streaming scenarios**.
 - Supported trigger for Azure Function is currently limited to **Queue triggers** only.
   HTTP or other trigger types and streaming responses are not supported at this time.
 
@@ -762,10 +792,17 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
+    name="get_weather",
+    spec=openapi_weather,
+    description="Retrieve weather information for a location",
+    auth=auth,
+    default_parameters=["format"],
 )
 openapi_tool.add_definition(
-    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
+    name="get_countries",
+    spec=openapi_countries,
+    description="Retrieve a list of countries",
+    auth=auth,
 )
 
 # Create agent with OpenApi tool and process assistant run
@@ -779,6 +816,37 @@ with project_client:
 ```
 
 <!-- END SNIPPET -->
+
+#### Create an Agent with Fabric
+
+To enable your Agent to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
+
+```python
+fabric_connection = project_client.connections.get(connection_name=os.environ["FABRIC_CONNECTION_NAME"])
+conn_id = fabric_connection.id
+
+print(conn_id)
+
+# Initialize an Agent Fabric tool and add the connection id
+fabric = FabricTool(connection_id=conn_id)
+
+# Create an Agent with the Fabric tool and process an Agent run
+with project_client:
+    agent = project_client.agents.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are a helpful agent",
+        tools=fabric.definitions,
+        headers={"x-ms-enable-preview": "true"},
+    )
+```
+
+<!-- END SNIPPET -->
+
 
 #### Create Thread
 
@@ -823,6 +891,19 @@ thread = project_client.agents.create_thread(tool_resources=file_search.resource
 ```
 
 <!-- END SNIPPET -->
+
+#### List Threads
+
+To list all threads attached to a given agent, use the list_threads API:
+
+<!-- SNIPPET:sample_agents_basics.list_threads -->
+
+```python
+threads = project_client.agents.list_threads()
+```
+
+<!-- END SNIPPET -->
+
 #### Create Message
 
 To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
@@ -904,6 +985,88 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+#### Create Message with Image Inputs
+
+You can send messages to Azure agents with image inputs in following ways:
+
+- **Using an image stored as a uploaded file**
+- **Using a public image accessible via URL**
+- **Using a base64 encoded image string**
+
+The following examples demonstrate each method:
+
+##### Create message using uploaded image file
+
+```python
+# Upload the local image file
+image_file = project_client.agents.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
+
+# Construct content using uploaded image
+file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageFileBlock(image_file=file_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
+
+##### Create message with an image URL input
+
+```python
+# Specify the public image URL
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+
+# Create content directly referencing image URL
+url_param = MessageImageUrlParam(url=image_url, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageUrlBlock(image_url=url_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
+
+##### Create message with base64-encoded image input
+
+```python
+import base64
+
+def image_file_to_base64(path: str) -> str:
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
+
+# Convert your image file to base64 format
+image_base64 = image_file_to_base64("image_file.png")
+
+# Prepare the data URL
+img_data_url = f"data:image/png;base64,{image_base64}"
+
+# Use base64 encoded string as image URL parameter
+url_param = MessageImageUrlParam(url=img_data_url, detail="high")
+content_blocks = [
+    MessageInputTextBlock(text="Hello, what is in the image?"),
+    MessageInputImageUrlBlock(image_url=url_param),
+]
+
+# Create the message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content=content_blocks
+)
+```
+
 #### Create Run, Run_and_Process, or Stream
 
 To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
@@ -926,7 +1089,7 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method.
 
 Here is an example:
 
