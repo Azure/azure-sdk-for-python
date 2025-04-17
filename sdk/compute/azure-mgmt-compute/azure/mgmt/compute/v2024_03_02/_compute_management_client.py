@@ -35,22 +35,21 @@ if TYPE_CHECKING:
 class ComputeManagementClient:
     """Compute Client.
 
-    :ivar disks: DisksOperations operations
-    :vartype disks: azure.mgmt.compute.v2024_03_02.operations.DisksOperations
     :ivar disk_accesses: DiskAccessesOperations operations
     :vartype disk_accesses: azure.mgmt.compute.v2024_03_02.operations.DiskAccessesOperations
     :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
     :vartype disk_encryption_sets:
      azure.mgmt.compute.v2024_03_02.operations.DiskEncryptionSetsOperations
+    :ivar disks: DisksOperations operations
+    :vartype disks: azure.mgmt.compute.v2024_03_02.operations.DisksOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.compute.v2024_03_02.operations.SnapshotsOperations
     :ivar disk_restore_point: DiskRestorePointOperations operations
     :vartype disk_restore_point:
      azure.mgmt.compute.v2024_03_02.operations.DiskRestorePointOperations
-    :ivar snapshots: SnapshotsOperations operations
-    :vartype snapshots: azure.mgmt.compute.v2024_03_02.operations.SnapshotsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
@@ -97,17 +96,17 @@ class ComputeManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize, "2024-03-02")
         self.disk_accesses = DiskAccessesOperations(
             self._client, self._config, self._serialize, self._deserialize, "2024-03-02"
         )
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2024-03-02"
         )
-        self.disk_restore_point = DiskRestorePointOperations(
+        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize, "2024-03-02")
+        self.snapshots = SnapshotsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2024-03-02"
         )
-        self.snapshots = SnapshotsOperations(
+        self.disk_restore_point = DiskRestorePointOperations(
             self._client, self._config, self._serialize, self._deserialize, "2024-03-02"
         )
 

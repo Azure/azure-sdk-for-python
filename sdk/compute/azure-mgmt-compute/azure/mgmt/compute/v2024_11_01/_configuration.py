@@ -25,8 +25,7 @@ class ComputeManagementClientConfiguration:  # pylint: disable=too-many-instance
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :keyword api_version: Api Version. Default value is "2024-11-01". Note that overriding this
      default value may result in unsupported behavior.

@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from collections.abc import MutableMapping
+import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
@@ -123,7 +124,7 @@ class CloudService(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar properties: Cloud service properties.
     :vartype properties: ~azure.mgmt.compute.v2024_11_04.models.CloudServiceProperties
-    :ivar system_data: The system meta data relating to this resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.compute.v2024_11_04.models.SystemData
     :ivar zones: List of logical availability zone of the resource. List should contain only 1 zone
      where cloud service should be provisioned. This field is optional.
@@ -135,6 +136,7 @@ class CloudService(_serialization.Model):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -154,7 +156,6 @@ class CloudService(_serialization.Model):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.CloudServiceProperties"] = None,
-        system_data: Optional["_models.SystemData"] = None,
         zones: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
@@ -165,8 +166,6 @@ class CloudService(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword properties: Cloud service properties.
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.CloudServiceProperties
-        :keyword system_data: The system meta data relating to this resource.
-        :paramtype system_data: ~azure.mgmt.compute.v2024_11_04.models.SystemData
         :keyword zones: List of logical availability zone of the resource. List should contain only 1
          zone where cloud service should be provisioned. This field is optional.
         :paramtype zones: list[str]
@@ -178,7 +177,7 @@ class CloudService(_serialization.Model):
         self.location = location
         self.tags = tags
         self.properties = properties
-        self.system_data = system_data
+        self.system_data: Optional["_models.SystemData"] = None
         self.zones = zones
 
 
@@ -1985,6 +1984,70 @@ class SubResourceReadOnly(_serialization.Model):
 
 
 class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class SystemDataAutoGenerated(_serialization.Model):
     """The system meta data relating to this resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
