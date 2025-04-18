@@ -6,8 +6,8 @@
 FILE: sample_guidance_inference.py
 
 DESCRIPTION:
-The sample_guidance_inference.py module processes a sample radiology document with the Radiology Insights service.
-It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
+The sample_guidance_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, and display 
   
 
@@ -18,21 +18,21 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
-2. python sample_guidance_inference.py
+2. python sample_guidance_inference_async.py
    
 """
 
+import asyncio
 import datetime
 import os
 import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 
-def radiology_insights_sync() -> None:
+async def radiology_insights_async() -> None:
+
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
     # [START create_radiology_insights_client]
     credential = DefaultAzureCredential()
@@ -98,16 +98,17 @@ def radiology_insights_sync() -> None:
     patient_data = models.RadiologyInsightsJob(
         job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
     )
+
     # [END create_radiology_insights_request]
 
-    # Health Insights Radiology Insights
     try:
-        poller = radiology_insights_client.begin_infer_radiology_insights(
-            id=job_id,
-            resource=patient_data,
-        )
-        radiology_insights_result = poller.result()
-        display_guidance(radiology_insights_result)
+        async with radiology_insights_client:
+            poller = await radiology_insights_client.begin_infer_radiology_insights(
+                id=job_id,
+                resource=patient_data,
+            )
+            radiology_insights_result = await poller.result()
+            display_guidance(radiology_insights_result)
     except Exception as ex:
         raise ex
 
@@ -139,4 +140,7 @@ def display_guidance(radiology_insights_result):
 
 
 if __name__ == "__main__":
-    radiology_insights_sync()
+    try:
+        asyncio.run(radiology_insights_async())
+    except Exception as ex:
+        raise ex
