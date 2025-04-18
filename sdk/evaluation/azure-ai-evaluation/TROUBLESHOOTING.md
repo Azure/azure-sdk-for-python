@@ -30,6 +30,10 @@ This guide walks you through how to investigate failures, common errors in the `
 
 - Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
 
+### Troubleshoot Column Mapping Issues
+
+- When using `column_mapping` parameter in evaluators, ensure all keys and values are non-empty strings and contain only alphanumeric characters. Empty strings, non-string values, or non-alphanumeric characters can cause serialization errors and issues in downstream applications. Example of valid mapping: `{"query": "${data.query}", "response": "${data.response}"}`.
+
 ### Troubleshoot Safety Evaluator Issues
 
 - Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaisafetyeval-regionsupport).
@@ -53,6 +57,11 @@ The Adversarial simulator does not support selecting individual harms, instead w
 
 Identify the type of simulations being run (adversarial or non-adversarial).
 Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute.
+
+## Handle RedTeam errors
+
+### Target resource not found
+When initializing an Azure OpenAI model directly as `target` for a `RedTeam` scan, ensure `azure_endpoint` is specified in the format `https://<hub>.openai.azure.com/openai/deployments/<deployment_name>/chat/completions?api-version=2025-01-01-preview`. If using `AzureOpenAI`, `endpoint` should be specified in the format `https://<hub>.openai.azure.com/`. 
 
 ## Logging
 
