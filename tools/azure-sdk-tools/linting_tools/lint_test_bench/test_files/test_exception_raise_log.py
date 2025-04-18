@@ -8,6 +8,7 @@ import logging
 
 try:
     a = "this is doing something here"
+    a.get("this")
 except TypeError as e:
     logging.debug(
         "This is a TypeError: %s",
