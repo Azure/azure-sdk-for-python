@@ -67,7 +67,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
                 f"/{subscription_id}/resourceGroups/{resource_group_name}/providers"
                 f"/Microsoft.MachineLearningServices/workspaces/{project_name}"
             )
-            # Override the credential scope with the legacy one.  
+            # Override the credential scope with the legacy one.
             kwargs['credential_scopes'] =  ["https://management.azure.com/.default"]
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)

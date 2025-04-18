@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
+import asyncio  # pylint: disable = do-not-import-asyncio
 import io
 import logging
 import os
@@ -70,7 +70,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
                 f"/{subscription_id}/resourceGroups/{resource_group_name}/providers"
                 f"/Microsoft.MachineLearningServices/workspaces/{project_name}"
             )
-            # Override the credential scope with the legacy one.  
+            # Override the credential scope with the legacy one.
             kwargs['credential_scopes'] =  ["https://management.azure.com/.default"]
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
@@ -1787,7 +1787,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :type file_path: Optional[str]
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-        "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+          "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
         :type purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :type filename: Optional[str]

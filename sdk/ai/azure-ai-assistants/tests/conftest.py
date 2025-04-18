@@ -3,32 +3,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-
 import pytest
 from devtools_testutils import (
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
     remove_batch_sanitizers,
     get_credential,
     test_proxy,
-    add_general_regex_sanitizer,
-    add_body_key_sanitizer,
 )
+from azure.ai.assistants import AssistantsClient
 from dotenv import load_dotenv, find_dotenv
 
 if not load_dotenv(find_dotenv(filename="azure_ai_assistants_tests.env"), override=True):
     print("Failed to apply environment variables for azure-ai-projects tests.")
-
-
-def pytest_collection_modifyitems(items):
-    if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
-        return
-    for item in items:
-        if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
-            item.add_marker(
-                pytest.mark.skip(
-                    reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to AI Foundry project settings"
-                )
-            )
 
 
 class SanitizedValues:
@@ -148,6 +135,11 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         json_path="data_source.uri",
         value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
     )
+    
+    add_body_key_sanitizer(
+        json_path="tool_resources.azure_ai_search.indexes[*].index_connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex"
+    ) 
 
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")

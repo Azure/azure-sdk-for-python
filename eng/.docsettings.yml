@@ -16,6 +16,7 @@ omitted_paths:
   - sdk/vision/azure-ai-vision-imageanalysis/tests/*
   - sdk/ai/azure-ai-inference/tests/*
   - sdk/ai/azure-ai-projects/tests/*
+  - sdk/ai/azure-ai-assistants/tests/*
   - sdk/storage/azure-storage-extensions/*
 
 language: python
