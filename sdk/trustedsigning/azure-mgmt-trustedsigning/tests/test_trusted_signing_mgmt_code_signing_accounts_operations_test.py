@@ -26,7 +26,6 @@ class TestTrustedSigningMgmtCodeSigningAccountsOperations(AzureMgmtRecordedTestC
         )
         result = [r for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestTrustedSigningMgmtCodeSigningAccountsOperations(AzureMgmtRecordedTestC
         response = self.client.code_signing_accounts.list_by_subscription()
         result = [r for r in response]
         assert response
-        
