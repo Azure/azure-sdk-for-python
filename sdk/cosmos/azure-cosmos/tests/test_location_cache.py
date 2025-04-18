@@ -76,6 +76,18 @@ class TestLocationCache:
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
         lc.location_unavailability_info_by_endpoint[location1_endpoint] = location1_info
 
+    def test_endpoints_to_health_check(self):
+        lc = refresh_location_cache([location4_name], False)
+        db_acc = create_database_account(False)
+        lc.perform_on_database_account_read(db_acc)
+
+        # check endpoints to health check
+        endpoints = lc.endpoints_to_health_check()
+        assert len(endpoints) == 3
+        assert default_endpoint in endpoints
+        assert location1_endpoint in endpoints
+        assert location4_endpoint in endpoints
+
     def test_get_locations(self):
         lc = refresh_location_cache([], False)
         db_acc = create_database_account(False)
