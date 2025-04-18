@@ -47,6 +47,16 @@ class ApmProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class ApmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of application performance monitoring."""
+
+    APPLICATION_INSIGHTS = "ApplicationInsights"
+    APP_DYNAMICS = "AppDynamics"
+    DYNATRACE = "Dynatrace"
+    NEW_RELIC = "NewRelic"
+    ELASTIC_APM = "ElasticAPM"
+
+
 class ApplicationAcceleratorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the application accelerator."""
 
@@ -95,6 +105,7 @@ class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNATRACE = "Dynatrace"
     NEW_RELIC = "NewRelic"
     ELASTIC_APM = "ElasticAPM"
+    CA_CERTIFICATES = "CACertificates"
 
 
 class BuilderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -157,14 +168,25 @@ class CertificateResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveE
     DELETING = "Deleting"
 
 
+class ConfigServerEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enabled state of the config server. This is only used in Consumption tier."""
+
+    ENABLED = "Enabled"
+    """Enable the config server."""
+    DISABLED = "Disabled"
+    """Disable the config server."""
+
+
 class ConfigServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the config server."""
 
     NOT_AVAILABLE = "NotAvailable"
+    CREATING = "Creating"
     DELETED = "Deleted"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
+    DELETING = "Deleting"
 
 
 class ConfigurationServiceGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -277,6 +299,30 @@ class DevToolPortalProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     CANCELED = "Canceled"
 
 
+class EurekaServerEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enabled state of the eureka server. This is only used in Consumption tier."""
+
+    ENABLED = "Enabled"
+    """Enable the eureka server."""
+    DISABLED = "Disabled"
+    """Disable the eureka server."""
+
+
+class EurekaServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the eureka server."""
+
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The frequency to run the maintenance job."""
+
+    WEEKLY = "Weekly"
+
+
 class GatewayCertificateVerification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to enable certificate verification or not."""
 
@@ -322,6 +368,27 @@ class HTTPSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HTTP = "HTTP"
     HTTPS = "HTTPS"
+
+
+class JobExecutionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of the job execution."""
+
+    RUNNING = "Running"
+    PENDING = "Pending"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    COMPLETED = "Completed"
+
+
+class JobResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Job."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
 
 
 class KeyVaultCertificateAutoSync(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -391,6 +458,15 @@ class PredefinedAcceleratorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable the predefined accelerator."""
     DISABLED = "Disabled"
     """Disable the predefined accelerator."""
+
+
+class PrivateStorageAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the vnet injection service enables private links for backend storage account
+    and container registry.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ProbeActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -477,7 +553,24 @@ class SupportedRuntimeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JAVA8 = "Java_8"
     JAVA11 = "Java_11"
     JAVA17 = "Java_17"
+    JAVA21 = "Java_21"
     NET_CORE31 = "NetCore_31"
+
+
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+
+
+class TestEndpointAuthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of test endpoint auth."""
+
+    ENABLED = "Enabled"
+    """Enable test endpoint auth."""
+    DISABLED = "Disabled"
+    """Disable test endpoint auth"""
 
 
 class TestKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -505,7 +598,25 @@ class TriggeredBuildResultProvisioningState(str, Enum, metaclass=CaseInsensitive
     CANCELED = "Canceled"
 
 
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of job trigger."""
+
+    MANUAL = "Manual"
+
+
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the underlying resource to mount as a persistent disk."""
 
     AZURE_FILE_VOLUME = "AzureFileVolume"
+
+
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The day to run the maintenance job."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"

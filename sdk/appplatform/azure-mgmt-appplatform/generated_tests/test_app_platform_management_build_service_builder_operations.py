@@ -20,13 +20,13 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_build_service_builder_get(self, resource_group):
         response = self.client.build_service_builder.get(
             resource_group_name=resource_group.name,
             service_name="str",
             build_service_name="str",
             builder_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_build_service_builder_begin_create_or_update(self, resource_group):
         response = self.client.build_service_builder.begin_create_or_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -44,7 +44,7 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "buildpackGroups": [{"buildpacks": [{"id": "str"}], "name": "str"}],
+                    "buildpackGroups": [{"buildpacks": [{"id": "str", "version": "str"}], "name": "str"}],
                     "provisioningState": "str",
                     "stack": {"id": "str", "version": "str"},
                 },
@@ -58,7 +58,7 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,13 +66,13 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_build_service_builder_begin_delete(self, resource_group):
         response = self.client.build_service_builder.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
             build_service_name="str",
             builder_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,12 +80,12 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_build_service_builder_list(self, resource_group):
         response = self.client.build_service_builder.list(
             resource_group_name=resource_group.name,
             service_name="str",
             build_service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -93,13 +93,13 @@ class TestAppPlatformManagementBuildServiceBuilderOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_deployments(self, resource_group):
+    def test_build_service_builder_list_deployments(self, resource_group):
         response = self.client.build_service_builder.list_deployments(
             resource_group_name=resource_group.name,
             service_name="str",
             build_service_name="str",
             builder_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

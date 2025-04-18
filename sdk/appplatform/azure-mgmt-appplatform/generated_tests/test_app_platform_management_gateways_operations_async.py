@@ -21,12 +21,12 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_gateways_get(self, resource_group):
         response = await self.client.gateways.get(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_gateways_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.gateways.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -44,6 +44,7 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "addonConfigs": {"str": {}},
                         "apiMetadataProperties": {
                             "description": "str",
                             "documentation": "str",
@@ -51,6 +52,7 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
                             "title": "str",
                             "version": "str",
                         },
+                        "apmTypes": ["str"],
                         "apms": [{"resourceId": "str"}],
                         "clientAuth": {"certificateVerification": "Disabled", "certificates": ["str"]},
                         "corsProperties": {
@@ -72,6 +74,7 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
                         "provisioningState": "str",
                         "public": False,
                         "resourceRequests": {"cpu": "1", "memory": "2Gi"},
+                        "responseCacheProperties": "gateway_response_cache_properties",
                         "ssoProperties": {
                             "clientId": "str",
                             "clientSecret": "str",
@@ -91,7 +94,7 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,13 +103,29 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_gateways_begin_update_capacity(self, resource_group):
+        response = await (
+            await self.client.gateways.begin_update_capacity(
+                resource_group_name=resource_group.name,
+                service_name="str",
+                gateway_name="str",
+                gateway_capacity_resource={"sku": {"capacity": 0, "name": "S0", "tier": "Standard"}},
+                api_version="2024-05-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_gateways_begin_delete(self, resource_group):
         response = await (
             await self.client.gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 gateway_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,12 +134,12 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_env_secrets(self, resource_group):
+    async def test_gateways_list_env_secrets(self, resource_group):
         response = await self.client.gateways.list_env_secrets(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -128,13 +147,13 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart(self, resource_group):
+    async def test_gateways_begin_restart(self, resource_group):
         response = await (
             await self.client.gateways.begin_restart(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 gateway_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -143,11 +162,11 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_gateways_list(self, resource_group):
         response = self.client.gateways.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -155,13 +174,13 @@ class TestAppPlatformManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate_domain(self, resource_group):
+    async def test_gateways_validate_domain(self, resource_group):
         response = await self.client.gateways.validate_domain(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
             validate_payload={"name": "str"},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
