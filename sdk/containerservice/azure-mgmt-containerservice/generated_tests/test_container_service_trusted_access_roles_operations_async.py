@@ -24,7 +24,7 @@ class TestContainerServiceTrustedAccessRolesOperationsAsync(AzureMgmtRecordedTes
     async def test_trusted_access_roles_list(self, resource_group):
         response = self.client.trusted_access_roles.list(
             location="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

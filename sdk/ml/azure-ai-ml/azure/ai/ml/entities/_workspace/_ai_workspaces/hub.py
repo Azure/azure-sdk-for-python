@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional
 from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2024_10_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
@@ -16,7 +15,6 @@ from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace.workspace import Workspace
 
 
-@experimental
 class Hub(Workspace):
     """A Hub is a special type of workspace that acts as a parent and resource container for lightweight child
     workspaces called projects. Resources like the hub's storage account, key vault,

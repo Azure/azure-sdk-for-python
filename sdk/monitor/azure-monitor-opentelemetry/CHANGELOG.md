@@ -1,10 +1,13 @@
 # Release History
 
-## 1.6.7 (Unreleased)
+## 1.6.8 (2025-04-17)
 
-### Features Added
+### Bugs Fixed
 
-### Breaking Changes
+- Pin OTel before breaking change.
+    ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
+
+## 1.6.7 (2025-04-10)
 
 ### Bugs Fixed
 

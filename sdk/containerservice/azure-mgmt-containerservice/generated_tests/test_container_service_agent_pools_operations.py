@@ -25,7 +25,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -165,7 +165,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "windowsProfile": {"disableOutboundNat": bool},
                 "workloadRuntime": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -178,7 +178,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -191,7 +191,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -205,7 +205,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machines={"machineNames": ["str"]},
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -217,7 +217,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -230,7 +230,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
