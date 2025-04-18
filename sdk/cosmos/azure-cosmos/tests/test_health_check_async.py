@@ -189,7 +189,7 @@ class TestHealthCheckAsync:
             for i in range(2):
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
                 # wait for background task to finish
-                await asyncio.sleep(1)
+                await asyncio.sleep(2)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
