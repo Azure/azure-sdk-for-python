@@ -52,6 +52,10 @@ def function2():
     return "output from the second agent"
 
 
+def function_throw_exception():
+    raise ValueError("Just a minute")
+
+
 class TestAgentsOperations:
     """Tests for agent operations"""
 
@@ -217,16 +221,17 @@ class TestAgentsOperations:
         self, project_client: AgentsOperations, toolset1: Optional[ToolSet], toolset2: Optional[ToolSet]
     ) -> None:
         """Set the tool calls for the agent."""
+        max_retry = 3
         if toolset1 and toolset2:
             function_in_toolset1 = set(toolset1.get_tool(tool_type=FunctionTool)._functions.values())
             function_in_toolset2 = set(toolset2.get_tool(tool_type=FunctionTool)._functions.values())
             function_tool = FunctionTool(function_in_toolset1)
             function_tool.add_functions(function_in_toolset2)
-            project_client.enable_auto_function_calls(function_tool=function_tool)
+            project_client.enable_auto_function_calls(function_tool=function_tool, max_retry=max_retry)
         elif toolset1:
-            project_client.enable_auto_function_calls(toolset=toolset1)
+            project_client.enable_auto_function_calls(toolset=toolset1, max_retry=max_retry)
         elif toolset2:
-            project_client.enable_auto_function_calls(toolset=toolset2)
+            project_client.enable_auto_function_calls(toolset=toolset2, max_retry=max_retry)
 
     @patch("azure.ai.projects._patch.PipelineClient")
     @pytest.mark.parametrize(
@@ -295,6 +300,45 @@ class TestAgentsOperations:
             # Check that we cleanup tools after deleting agent.
             project_client.agents.delete_agent(agent1.id)
             project_client.agents.delete_agent(agent2.id)
+
+    @patch("azure.ai.projects.operations._operations.AgentsOperations.cancel_run")
+    @patch("azure.ai.projects._patch.PipelineClient")
+    def test_auto_function_calls_retry(
+        self,
+        mock_pipeline_client_gen: MagicMock,
+        mock_cancel_run: MagicMock,
+    ) -> None:
+        """Test azure function with toolset."""
+        toolset = self.get_toolset("file_for_agent1", function_throw_exception)
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.side_effect = [
+            self._get_agent_json("first", "123", toolset),
+            self._get_run("run1", toolset),  # create_run
+            self._get_run("run2", toolset),  # get_run
+            self._get_run("run3", toolset),  # get_run
+            self._get_run("run4", toolset),  # get_run
+            self._get_run("run5", toolset),  # get_run
+        ]
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_response
+        mock_pipeline = MagicMock()
+        mock_pipeline._pipeline.run.return_value = mock_pipeline_response
+        mock_pipeline_client_gen.return_value = mock_pipeline
+        project_client = self.get_mock_client()
+        with project_client:
+            # Check that pipelines are created as expected.
+            self._set_toolcalls(project_client.agents, toolset, None)
+            agent1 = project_client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="first",
+                instructions="You are a helpful assistant",
+                toolset=toolset,
+            )
+            # Create run with new tool set, which also can be none.
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
+            assert mock_cancel_run.call_count == 1
+            assert project_client.agents.submit_tool_outputs_to_run.call_count == 3
 
     @patch("azure.ai.projects._patch.PipelineClient")
     @pytest.mark.parametrize(

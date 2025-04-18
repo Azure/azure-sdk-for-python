@@ -15,6 +15,7 @@ import pytest
 import sys
 import io
 import time
+import user_functions
 
 from azure.ai.projects.aio import AIProjectClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
@@ -24,6 +25,9 @@ from azure.ai.projects.models import (
     AzureFunctionStorageQueue,
     AgentStreamEvent,
     AgentThread,
+    AsyncToolSet,
+    AsyncFunctionTool,
+    AsyncAgentEventHandler,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     FilePurpose,
@@ -3048,7 +3052,47 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     # #
     # # **********************************************************************************
 
-    # TODO
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_stream_with_retry(self, **kwargs):
+        """Test creating stream with body: IO[bytes]."""
+
+        class MyEventHandler(AsyncAgentEventHandler):
+            pass
+
+        async with self.create_client(**kwargs) as client:
+            functions = AsyncFunctionTool(user_functions.user_functions)
+            toolset = AsyncToolSet()
+            toolset.add(functions)
+            client.agents.enable_auto_function_calls(functions={user_functions.fetch_weather}, max_retry=2)
+
+            agent = await client.agents.create_agent(
+                model="gpt-4o-mini",
+                name="my-assistant",
+                instructions="You are a helpful assistant",
+                toolset=toolset,
+            )
+            print(f"Created agent, ID: {agent.id}")
+
+            thread = await client.agents.create_thread()
+            print(f"Created thread, thread ID {thread.id}")
+
+            message = await client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
+            )
+            print(f"Created message, message ID {message.id}")
+
+            event_handler = MyEventHandler()
+            async with await client.agents.create_stream(
+                thread_id=thread.id, agent_id=agent.id, event_handler=event_handler
+            ) as stream:
+                await stream.until_done()
+
+            await client.agents.delete_agent(agent.id)
+
+            assert event_handler.current_retry == 3
 
     # # **********************************************************************************
     # #

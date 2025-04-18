@@ -188,8 +188,17 @@ class TestAsyncAgentEventHandler:
         pass
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "has_errors_in_toolcalls_output,expected_current_retry",
+        [
+            (True, 1),
+            (False, 0),
+        ],
+    )
     @patch("azure.ai.projects.models._patch._parse_event")
-    async def test_tool_calls(self, mock_parse_event: AsyncMock):
+    async def test_tool_calls(
+        self, mock_parse_event: AsyncMock, has_errors_in_toolcalls_output: bool, expected_current_retry: int
+    ):
         # Test if the event type and status are met, submit function calls.
         submit_tool_outputs = AsyncMock()
         handler = self.MyAgentEventHandler()
@@ -201,13 +210,18 @@ class TestAsyncAgentEventHandler:
         event_obj.required_action = SubmitToolOutputsAction({})
         mock_parse_event.return_value = ("", event_obj)
 
-        async for _ in handler:
-            await handler.until_done()
+        with patch(
+            "azure.ai.projects.models._patch._has_errors_in_toolcalls_output",
+            return_value=has_errors_in_toolcalls_output,
+        ):
+            async for _ in handler:
+                await handler.until_done()
 
         assert mock_parse_event.call_count == 1
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
-        assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+        assert submit_tool_outputs.call_args[0] == (event_obj, handler, True)
+        assert handler.current_retry == expected_current_retry
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.models._patch.AsyncAgentEventHandler.on_unhandled_event")

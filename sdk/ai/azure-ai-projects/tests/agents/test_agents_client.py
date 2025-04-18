@@ -1647,6 +1647,50 @@ class TestAgentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
+    def test_create_stream_with_retry(self, **kwargs):
+        """Test creating stream with body: IO[bytes]."""
+
+        class MyEventHandler(AgentEventHandler):
+            pass
+
+        with self.create_client(**kwargs) as client:
+            # [START create_agent_with_function_tool]
+            functions = FunctionTool(user_functions.user_functions)
+            toolset = ToolSet()
+            toolset.add(functions)
+            client.agents.enable_auto_function_calls(functions={user_functions.fetch_weather}, max_retry=2)
+
+            agent = client.agents.create_agent(
+                model="gpt-4o-mini",
+                name="my-assistant",
+                instructions="You are a helpful assistant",
+                toolset=toolset,
+            )
+            # [END create_agent_with_function_tool]
+            print(f"Created agent, ID: {agent.id}")
+
+            thread = client.agents.create_thread()
+            print(f"Created thread, thread ID {thread.id}")
+
+            message = client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
+            )
+            print(f"Created message, message ID {message.id}")
+
+            event_handler = MyEventHandler()
+            with client.agents.create_stream(
+                thread_id=thread.id, agent_id=agent.id, event_handler=event_handler
+            ) as stream:
+                stream.until_done()
+
+            client.agents.delete_agent(agent.id)
+
+            assert event_handler.current_retry == 3
+
+    @agentClientPreparer()
+    @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
 
