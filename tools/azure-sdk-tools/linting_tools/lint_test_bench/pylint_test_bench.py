@@ -4,6 +4,7 @@ import os
 import logging
 import sys
 import uuid
+import azure.core
 from azure.identity import get_bearer_token_provider
 from pathlib import Path
 from datetime import datetime
@@ -114,7 +115,7 @@ def fix_file(file_path: str, logger) -> dict:
         file_name = Path(file_path).name
         
         # Define output paths
-        fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
+        fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed_.py" if "_fixed" not in file_name else base_dir / 'fixed_files' / file_name
 
         # Read the original content
         with open(file_path, 'r', encoding='utf-8') as f:
