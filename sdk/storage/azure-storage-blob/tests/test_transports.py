@@ -18,17 +18,11 @@ class TestStorageTransports(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
         self.container_name = self.get_resource_name('utcontainer')
-        self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name, timeout=5)
             except ResourceExistsError:
                 pass
-            try:
-                self.bsc.create_container(self.source_container_name, timeout=5)
-            except ResourceExistsError:
-                pass
-        self.byte_data = self.get_random_bytes(1024)
 
     @BlobPreparer()
     def test_legacy_transport_old_response(self, **kwargs):
