@@ -53,8 +53,8 @@ from azure.ai.projects.telemetry.agents._utils import (
     GEN_AI_THREAD_RUN_STATUS,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
-    GEN_AI_RUNSTEP_START_TIMESTAMP,
-    GEN_AI_RUNSTEP_END_TIMESTAMP,
+    GEN_AI_RUN_STEP_START_TIMESTAMP,
+    GEN_AI_RUN_STEP_END_TIMESTAMP,
     GEN_AI_RUN_STEP_STATUS,
     ERROR_MESSAGE,
     OperationName,
@@ -290,31 +290,24 @@ class _AIAgentsInstrumentorPreview:
 
         if created_at:
             if isinstance(created_at, datetime):
-                attrs[GEN_AI_RUNSTEP_START_TIMESTAMP] = created_at.isoformat()
+                attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = created_at.isoformat()
             else:
                 # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_START_TIMESTAMP] = str(created_at)
+                attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = str(created_at)
 
+        end_timestamp = None
         if completed_at:
-            if isinstance(completed_at, datetime):
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = completed_at.isoformat()
-            else:
-                # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(completed_at)
+            end_timestamp = completed_at
+        elif cancelled_at:
+            end_timestamp = cancelled_at
+        elif failed_at:
+            end_timestamp = failed_at
 
-        if cancelled_at:
-            if isinstance(cancelled_at, datetime):
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = cancelled_at.isoformat()
-            else:
-                # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(cancelled_at)
-
-        if failed_at:
-            if isinstance(failed_at, datetime):
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = failed_at.isoformat()
-            else:
-                # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(failed_at)
+        if isinstance(end_timestamp, datetime):
+            attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = end_timestamp.isoformat()
+        else:
+            # fallback in case int or string gets passed
+            attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = str(end_timestamp)
 
         if run_step_last_error:
             attrs[ERROR_MESSAGE] = run_step_last_error.message
