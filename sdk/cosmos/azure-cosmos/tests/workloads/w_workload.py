@@ -1,0 +1,39 @@
+import os
+import sys
+
+from azure.cosmos import documents
+from workload_utils import create_logger, upsert_item_concurrently
+from workload_configs import (PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS,
+                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
+
+sys.path.append(r"./")
+
+from azure.cosmos.aio import CosmosClient as AsyncClient
+import asyncio
+
+import time
+from datetime import datetime
+
+async def run_workload(client_id, client_logger):
+    connectionPolicy = documents.ConnectionPolicy()
+    connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
+                           enable_diagnostics_logging=True, logger=client_logger,
+                           user_agent=str(client_id) + "-" + datetime.now().strftime(
+                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS, connection_policy=connectionPolicy) as client:
+        db = client.get_database_client(COSMOS_DATABASE)
+        cont = db.get_container_client(COSMOS_CONTAINER)
+        time.sleep(1)
+
+        while True:
+            try:
+                await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
+            except Exception as e:
+                client_logger.info("Exception in application layer")
+                client_logger.error(e)
+
+
+if __name__ == "__main__":
+    file_name = os.path.basename(__file__)
+    first_name, logger = create_logger(file_name)
+    asyncio.run(run_workload(first_name, logger))

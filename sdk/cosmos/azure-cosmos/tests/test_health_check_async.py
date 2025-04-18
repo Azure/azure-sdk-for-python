@@ -11,6 +11,7 @@ import pytest
 import pytest_asyncio
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos._constants import _Constants
 
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
