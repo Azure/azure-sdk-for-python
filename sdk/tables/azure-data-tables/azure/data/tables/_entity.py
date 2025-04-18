@@ -5,10 +5,23 @@
 # --------------------------------------------------------------------------
 import datetime
 from enum import Enum
-from typing import Any, Union, NamedTuple, Optional
+from urllib.parse import quote
+from typing import Any, Union, NamedTuple, Optional, Dict
 from typing_extensions import TypedDict, Required
 
 from azure.core import CaseInsensitiveEnumMeta
+
+
+class TablesEntityDatetime(datetime.datetime):
+
+    @property
+    def tables_service_value(self) -> str:
+        # pylint: disable=attribute-defined-outside-init
+        try:
+            return self._service_value
+        except AttributeError:
+            self._service_value: str = ""
+            return self._service_value
 
 
 class EntityMetadata(TypedDict, total=False):
@@ -33,13 +46,10 @@ class EntityMetadata(TypedDict, total=False):
     requested."""
 
 
-class TableEntity(dict):
+class TableEntity(Dict[str, Any]):
     """
     An Entity dictionary with additional metadata
-
     """
-
-    _metadata: EntityMetadata = {"etag": None, "timestamp": None}
 
     @property
     def metadata(self) -> EntityMetadata:
@@ -48,7 +58,29 @@ class TableEntity(dict):
         :return: Dict of entity metadata
         :rtype: ~azure.data.tables.EntityMetadata
         """
-        return self._metadata
+        # pylint: disable=attribute-defined-outside-init
+        try:
+            # It's possible for only the timestamp to have been populated, in which case
+            # we can automatically infer the etag.
+            if isinstance(self._metadata["timestamp"], TablesEntityDatetime) and self._metadata["etag"] is None:
+                timestamp = self._metadata["timestamp"].tables_service_value
+                self._metadata["etag"] = "W/\"datetime'" + quote(timestamp) + "'\""
+            return self._metadata
+        except KeyError:
+            # This probably means someone has popped keys from the dict
+            return self._metadata
+        except AttributeError:
+            # The metadata was never set - this would likely only happen if someone
+            # instantiated this object directly.
+            system_timestamp: Optional[datetime.datetime] = self.get("Timestamp")
+            etag: Optional[str] = self.get("odata.etag")
+            if etag is None and isinstance(system_timestamp, TablesEntityDatetime):
+                etag = "W/\"datetime'" + quote(system_timestamp.tables_service_value) + "'\""
+            self._metadata: EntityMetadata = {
+                "etag": etag,
+                "timestamp": system_timestamp,
+            }
+            return self._metadata
 
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

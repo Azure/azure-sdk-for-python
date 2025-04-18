@@ -17,8 +17,9 @@ class CreateEntityBatchTest(_TableTest):
         batch_size = 0
         batch = []
         for row in range(self.args.count):
-            self.base_entity["RowKey"] = str(row)
-            batch.append(("upsert", self.base_entity))
+            entity = dict(self.base_entity)
+            entity["RowKey"] = str(row)
+            batch.append(("upsert", entity))
             batch_size += 1
             if batch_size >= 100:
                 self.table_client.submit_transaction(batch)
@@ -31,8 +32,9 @@ class CreateEntityBatchTest(_TableTest):
         batch_size = 0
         batch = []
         for row in range(self.args.count):
-            self.base_entity["RowKey"] = str(row)
-            batch.append(("upsert", self.base_entity))
+            entity = dict(self.base_entity)
+            entity["RowKey"] = str(row)
+            batch.append(("upsert", entity))
             batch_size += 1
             if batch_size >= 100:
                 await self.async_table_client.submit_transaction(batch)

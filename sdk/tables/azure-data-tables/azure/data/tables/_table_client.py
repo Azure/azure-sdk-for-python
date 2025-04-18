@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import json
 from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
@@ -15,7 +16,11 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
-from ._encoder import TableEntityEncoder, EncoderMapType
+from ._encoder import (
+    TableEntityEncoder,
+    EncoderMapType,
+    TableEntityJSONEncoder,
+)
 from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
@@ -56,15 +61,6 @@ class TableClient(TablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or None
-    :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map:
-        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
-    :vartype decoder_map:
-        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar flatten_result_entity: Whether to flatten entity metadata in deserialization. Default is False,
-        which means the metadata would be deserialized to property metadata in TableEntity.
-    :vartype flatten_result_entity: bool
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -74,9 +70,9 @@ class TableClient(TablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
-        encoder_map: Optional[EncoderMapType] = None,
-        decoder_map: Optional[DecoderMapType] = None,
-        flatten_result_entity: bool = False,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -94,32 +90,60 @@ class TableClient(TablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encoder_map:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encoder_map:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decoder_map:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decoder_map:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :paramtype bool flatten_result_entity:
-            Whether to flatten entity metadata in deserialization. Default is False,
-            which means the metadata would be deserialized to property metadata in TableEntity.
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encoder_map)
-        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
+        self._encoder = TableEntityEncoder(convert_map=custom_encode or {}, entity_format=entity_format)
+        self._decoder = TableEntityDecoder(convert_map=custom_decode or {}, entity_format=entity_format)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        table_name: str,
+        *,
+        api_version: Optional[str] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
+        **kwargs: Any,
+    ) -> "TableClient":
         """Creates TableClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
         :param str table_name: The table name.
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
 
@@ -133,7 +157,16 @@ class TableClient(TablesBaseClient):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            table_name=table_name,
+            credential=credential,
+            api_version=api_version,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            entity_format=entity_format,
+            **kwargs,
+        )
 
     @classmethod
     def from_table_url(
@@ -141,6 +174,10 @@ class TableClient(TablesBaseClient):
         table_url: str,
         *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        api_version: Optional[str] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
@@ -153,6 +190,22 @@ class TableClient(TablesBaseClient):
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or None
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
@@ -176,7 +229,16 @@ class TableClient(TablesBaseClient):
             table_name = table_name[8:-2]
         if not table_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid table name")
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            table_name=table_name,
+            credential=credential,
+            api_version=api_version,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            entity_format=entity_format,
+            **kwargs,
+        )
 
     @distributed_trace
     def get_table_access_policy(self, **kwargs) -> Dict[str, Optional[TableAccessPolicy]]:
@@ -199,9 +261,11 @@ class TableClient(TablesBaseClient):
         output: Dict[str, Optional[TableAccessPolicy]] = {}
         for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
+                start = identifier.access_policy.start
+                expiry = identifier.access_policy.expiry
                 output[identifier.id] = TableAccessPolicy(
-                    start=deserialize_iso(identifier.access_policy.start),
-                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    start=deserialize_iso(start) if start else None,
+                    expiry=deserialize_iso(expiry) if expiry else None,
                     permission=identifier.access_policy.permission,
                 )
             else:
@@ -291,11 +355,18 @@ class TableClient(TablesBaseClient):
                 _reprocess_error(decoded_error)
                 raise
 
+    def _encode_key(self, key_name: str, key_value: Any) -> str:
+        try:
+            _, encoded_key = self._encoder(key_name, key_value)
+            return encoded_key
+        except (KeyError, TypeError):
+            return cast(str, key_value)
+
     @overload
     def delete_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -357,38 +428,39 @@ class TableClient(TablesBaseClient):
         """
 
     @distributed_trace
-    def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
+    def delete_entity(
+        self, *args: Any, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    ) -> None:
         entity = kwargs.pop("entity", None)
         try:
             if not entity:
                 entity = args[0]
-            entity_json = self.encoder(entity)
-            partition_key = entity_json.get("PartitionKey")
-            row_key = entity_json.get("RowKey")
+            partition_key = self._encode_key("PartitionKey", entity["PartitionKey"])
+            row_key = self._encode_key("RowKey", entity["RowKey"])
         except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
-                partition_key = cast(str, args[0])
+                partition_key = args[0]
+            partition_key = self._encode_key("PartitionKey", partition_key)
+
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
-                row_key = cast(str, args[1])
+                row_key = args[1]
+            row_key = self._encode_key("RowKey", row_key)
 
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
+            etag = entity.metadata["etag"]
+        valid_match_condition = _get_match_condition(
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
-
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
                 etag=etag or "*",
-                match_condition=match_condition,
+                match_condition=valid_match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -415,13 +487,14 @@ class TableClient(TablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                 self._client.table.insert_entity(
                     table=self.table_name,
-                    table_entity_properties=entity_json,
+                    table_entity_properties=payload,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 ),
@@ -460,13 +533,14 @@ class TableClient(TablesBaseClient):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
+            etag = entity.metadata["etag"]
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -476,7 +550,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -492,7 +566,7 @@ class TableClient(TablesBaseClient):
                         row_key=_prepare_key(row_key),
                         etag=etag,
                         match_condition=match_condition,
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -523,14 +597,13 @@ class TableClient(TablesBaseClient):
         """
         if select and not isinstance(select, str):
             select = ",".join(select)
-
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
             table=self.table_name,
             results_per_page=results_per_page,
             select=select,
-            decoder=self.decoder,
+            decoder=self._decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -571,7 +644,6 @@ class TableClient(TablesBaseClient):
         query_filter = _parameter_filter_substitution(parameters, query_filter)
         if select and not isinstance(select, str):
             select = ",".join(select)
-
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
@@ -579,15 +651,15 @@ class TableClient(TablesBaseClient):
             results_per_page=results_per_page,
             filter=query_filter,
             select=select,
-            decoder=self.decoder,
+            decoder=self._decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
     def get_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         select: Optional[Union[str, List[str]]] = None,
         **kwargs,
@@ -618,6 +690,8 @@ class TableClient(TablesBaseClient):
             user_select = ",".join(select)
         elif isinstance(select, str):
             user_select = select
+        partition_key = self._encode_key("PartitionKey", partition_key)
+        row_key = self._encode_key("RowKey", row_key)
         try:
             entity_json = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -628,7 +702,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
-        return self.decoder(entity_json)
+        return self._decoder(entity_json)
 
     @distributed_trace
     def upsert_entity(
@@ -656,9 +730,10 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Replacing/Merging or Inserting an entity into a table
         """
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.MERGE:
@@ -668,7 +743,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -680,7 +755,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -729,7 +804,7 @@ class TableClient(TablesBaseClient):
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            encoder=self.encoder,
+            encoder=self._encoder,
         )
         try:
             for operation in operations:
