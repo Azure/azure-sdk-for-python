@@ -161,8 +161,8 @@ TempTypeSpecFiles/
 
 # temporary folders and files created by running command 'tsp-client install-dependencies'
 node_modules/
-package-lock.json
-package.json
+/package-lock.json
+/package.json
 
 # component detection report
 component-detection-pip-report.json
