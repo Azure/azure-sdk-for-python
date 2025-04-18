@@ -1646,7 +1646,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     toolset.add(self._function_tool)
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
-                    if self.has_errors_in_toolcalls_output(tool_outputs):
+                    if self._has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= self._function_tool_max_retry:
                             logging.warning(
                                 f"Tool outputs contain errors - reaching max retry {self._function_tool_max_retry}"
@@ -1667,7 +1667,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
-    def has_errors_in_toolcalls_output(self, tool_outputs: List[Dict]) -> bool:
+    def _has_errors_in_toolcalls_output(self, tool_outputs: List[Dict]) -> bool:
         """
         Check if any tool output contains an error.
 
@@ -2374,7 +2374,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 toolset.add(self._function_tool)
                 tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
-                if self.has_errors_in_toolcalls_output(tool_outputs):
+                if self._has_errors_in_toolcalls_output(tool_outputs):
                     if submit_with_error:
                         logging.warning(f"Tool outputs contain errors - retrying")
                     else:
