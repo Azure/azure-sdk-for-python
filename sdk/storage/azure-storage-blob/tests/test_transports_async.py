@@ -32,6 +32,56 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
                 pass
 
     @BlobPreparer()
+    async def test_legacy_transport_old_response(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockLegacyTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='container',
+            blob_name='blob',
+            credential=storage_account_key,
+            transport=transport,
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True)
+        assert resp is not None
+
+        blob_data = await (await blob_client.download_blob()).read()
+        assert blob_data == b"Hello Async World!"
+
+        resp = await blob_client.delete_blob()
+        assert resp is None
+
+    @BlobPreparer()
+    async def test_legacy_transport_old_response_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockLegacyTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='container',
+            blob_name='blob',
+            credential=storage_account_key,
+            transport=transport,
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        assert blob_data == b"Hello Async World!"
+
+        resp = await blob_client.delete_blob()
+        assert resp is None
+
+    @BlobPreparer()
     @recorded_by_proxy_async
     async def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
