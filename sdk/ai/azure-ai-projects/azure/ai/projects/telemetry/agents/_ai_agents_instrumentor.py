@@ -55,8 +55,6 @@ from azure.ai.projects.telemetry.agents._utils import (
     GEN_AI_USAGE_OUTPUT_TOKENS,
     GEN_AI_RUNSTEP_START_TIMESTAMP,
     GEN_AI_RUNSTEP_END_TIMESTAMP,
-    GEN_AI_RUNSTEP_CANCEL_TIMESTAMP,
-    GEN_AI_RUNSTEP_FAIL_TIMESTAMP,
     GEN_AI_RUN_STEP_STATUS,
     ERROR_MESSAGE,
     OperationName,
@@ -306,17 +304,17 @@ class _AIAgentsInstrumentorPreview:
 
         if cancelled_at:
             if isinstance(cancelled_at, datetime):
-                attrs[GEN_AI_RUNSTEP_CANCEL_TIMESTAMP] = cancelled_at.isoformat()
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = cancelled_at.isoformat()
             else:
                 # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_CANCEL_TIMESTAMP] = str(cancelled_at)
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(cancelled_at)
 
         if failed_at:
             if isinstance(failed_at, datetime):
-                attrs[GEN_AI_RUNSTEP_FAIL_TIMESTAMP] = failed_at.isoformat()
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = failed_at.isoformat()
             else:
                 # fallback in case int or string gets passed
-                attrs[GEN_AI_RUNSTEP_FAIL_TIMESTAMP] = failed_at.isoformat()
+                attrs[GEN_AI_RUNSTEP_END_TIMESTAMP] = str(failed_at)
 
         if run_step_last_error:
             attrs[ERROR_MESSAGE] = run_step_last_error.message
@@ -356,32 +354,6 @@ class _AIAgentsInstrumentorPreview:
             usage=usage,
         )
 
-    def _get_tool_details(self, tool: Any) -> Dict[str, Any]:
-        """
-        Extracts tool details from a tool object dynamically and ensures the result is JSON-serializable.
-
-        :param tool: The tool object (e.g., RunStepToolCallDetails).
-        :return: A dictionary containing the tool details.
-        """
-        tool_details = {}
-
-        # Dynamically extract attributes from the tool object
-        for attr in dir(tool):
-            # Skip private or special attributes
-            if not attr.startswith("_") and not callable(getattr(tool, attr)):
-                try:
-                    value = getattr(tool, attr)
-                    # Ensure the value is JSON-serializable
-                    if isinstance(value, (str, int, float, bool, list, dict, type(None))):
-                        tool_details[attr] = value
-                    else:
-                        # Convert non-serializable objects to strings
-                        tool_details[attr] = str(value)
-                except Exception as e:
-                    logging.warning("Error extracting attribute '%s': %s", attr, str(e))
-
-        return tool_details
-
     def _process_tool_calls(self, step: RunStep) -> List[Dict[str, Any]]:
         """
         Helper method to process tool calls and return a list of tool call dictionaries.
@@ -408,41 +380,24 @@ class _AIAgentsInstrumentorPreview:
                     },
                 }
             elif isinstance(t, RunStepCodeInterpreterToolCall):
-                try:
-                    parsed_outputs = json.dumps(t.code_interpreter.outputs)
-                except Exception as e:
-                    logging.warning("Error parsing code interpreter outputs: '%s'", str(e))
-                    parsed_outputs = {}
-
                 tool_call = {
                     "id": t.id,
                     "type": t.type,
                     "code_interpreter": {
                         "input": t.code_interpreter.input,
-                        "output": parsed_outputs,
+                        "outputs": [output.as_dict() for output in t.code_interpreter.outputs],
                     },
                 }
             elif isinstance(t, RunStepBingGroundingToolCall):
-                bing_grounding = {}
-                try:
-                     bing_grounding = json.dumps(t.bing_grounding)
-                except Exception as e:
-                    logging.warning("Error parsing Bing grounding: '%s'", str(e))
-                    parsed_outputs = {}
-
                 tool_call = {
                     "id": t.id,
                     "type": t.type,
                     t.type: {
-                        "bing_grounding": bing_grounding
+                        "bing_grounding": t.bing_grounding
                     },
                 }
             else:
-                try:
-                    tool_details = json.dumps(self._get_tool_details(t))
-                except Exception as e:
-                    logging.warning("Error parsing step details: '%s'", str(e))
-                    tool_details = ""
+                tool_details = t.as_dict()[t.type]
 
                 tool_call = {
                     "id": t.id,
@@ -625,10 +580,10 @@ class _AIAgentsInstrumentorPreview:
         )
 
         if _trace_agents_content:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
         else:
             tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording}, ensure_ascii=False)
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
