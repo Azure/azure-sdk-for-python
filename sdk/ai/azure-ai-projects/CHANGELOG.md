@@ -17,7 +17,9 @@
 
 ### Breaking Changes
 
-Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+* Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+* Because of the function calls redesign, when errors occur in `FunctionTool.execute` and `AsyncFunctionTool.execute`, they return a JSON string in the format of `{error: [message]}` instead of throwing errors.
+* Because of the function calls redesign, when errors occur in `ToolSet.execute_tool_calls` and `AsyncToolSet.execute_tool_calls`, the returned array now includes an entry with output: {error: [message]} instead of not inserting the entry into the array.
 
 ## 1.0.0b8 (2025-03-28)
 
@@ -37,8 +39,7 @@ Redesigned automatic function calls because agents retrieved by `update_agent` a
 * Fix for a bug in Agent tracing causing tool calls not to be recorded in traces.
 * Fix for a bug in Agent tracing causing function tool calls to not work properly when tracing is enabled.
 * Fix for a bug in Agent streaming, where `agent_id` was not included in the response. This caused the SDK not to make function calls when the thread run status is `requires_action`.
-
-## 1.0.0b7 (2025-03-06)
+* Fix for a bug in Agent `create_and_process_run` addresses an issue where it would get into an infinite loop when automatic function calls fail.
 
 ### Features added
 
