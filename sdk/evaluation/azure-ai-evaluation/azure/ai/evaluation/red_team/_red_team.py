@@ -10,7 +10,7 @@ import logging
 import tempfile
 import time
 from datetime import datetime
-from typing import Callable, Dict, List, Optional, Union, cast
+from typing import Callable, Dict, List, Optional, Union, cast, Any
 import json
 from pathlib import Path
 import itertools
@@ -105,6 +105,10 @@ class RedTeam():
     def _create_retry_config(self):
         """Create a standard retry configuration for connection-related issues.
         
+        Creates a dictionary with retry configurations for various network and connection-related
+        exceptions. The configuration includes retry predicates, stop conditions, wait strategies,
+        and callback functions for logging retry attempts.
+        
         :return: Dictionary with retry configuration for different exception types
         :rtype: dict
         """
@@ -143,6 +147,9 @@ class RedTeam():
     def _log_retry_attempt(self, retry_state):
         """Log retry attempts for better visibility.
         
+        Logs information about connection issues that trigger retry attempts, including the 
+        exception type, retry count, and wait time before the next attempt.
+        
         :param retry_state: Current state of the retry
         :type retry_state: tenacity.RetryCallState
         """
@@ -156,6 +163,9 @@ class RedTeam():
     
     def _log_retry_error(self, retry_state):
         """Log the final error after all retries have been exhausted.
+        
+        Logs detailed information about the error that persisted after all retry attempts have been exhausted.
+        This provides visibility into what ultimately failed and why.
         
         :param retry_state: Final state of the retry
         :type retry_state: tenacity.RetryCallState
@@ -226,12 +236,17 @@ class RedTeam():
     ) -> EvalRun:
         """Start an MLFlow run for the Red Team Agent evaluation.
         
+        Initializes and configures an MLFlow run for tracking the Red Team Agent evaluation process.
+        This includes setting up the proper logging destination, creating a unique run name, and
+        establishing the connection to the MLFlow tracking server based on the Azure AI project details.
+        
         :param azure_ai_project: Azure AI project details for logging
         :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
         :param run_name: Optional name for the MLFlow run
         :type run_name: Optional[str]
         :return: The MLFlow run object
         :rtype: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
+        :raises EvaluationException: If no azure_ai_project is provided or trace destination cannot be determined
         """
         if not azure_ai_project:
             log_error(self.logger, "No azure_ai_project provided, cannot start MLFlow run")
@@ -289,8 +304,13 @@ class RedTeam():
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
+        Records the results from a Red Team Agent evaluation to MLFlow for tracking and analysis.
+        This includes saving artifacts like scorecards, evaluation data, and metrics to provide
+        a comprehensive view of the evaluation results. The function handles both regular evaluation
+        results and data-only mode when evaluation results aren't available.
+        
         :param redteam_output: The output from the red team agent evaluation
-        :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
+        :type redteam_output: ~azure.ai.evaluation.RedTeamResult
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
         :param _skip_evals: Whether to log only data without evaluation results
@@ -442,14 +462,18 @@ class RedTeam():
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
         
-        :param attack_objective_generator: The generator with risk categories to get attack objectives for
-        :type attack_objective_generator: ~azure.ai.evaluation.redteam._AttackObjectiveGenerator
+        Retrieves attack objectives based on the provided risk category and strategy. These objectives
+        can come from either the RAI service or from custom attack seed prompts if provided. The function 
+        handles different strategies, including special handling for jailbreak strategy which requires 
+        applying prefixes to messages. It also maintains a cache of objectives to ensure consistency 
+        across different strategies for the same risk category.
+        
         :param risk_category: The specific risk category to get objectives for
         :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
-        :type application_scenario: str
+        :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
-        :type strategy: str
+        :type strategy: Optional[str]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -687,21 +711,65 @@ class RedTeam():
 
     # Replace with utility function
     def _message_to_dict(self, message: ChatMessage):
+        """Convert a PyRIT ChatMessage object to a dictionary representation.
+        
+        Transforms a ChatMessage object into a standardized dictionary format that can be
+        used for serialization, storage, and analysis. The dictionary format is compatible 
+        with JSON serialization.
+        
+        :param message: The PyRIT ChatMessage to convert
+        :type message: ChatMessage
+        :return: Dictionary representation of the message
+        :rtype: dict
+        """
         from ._utils.formatting_utils import message_to_dict
         return message_to_dict(message)
     
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
+        """Get a standardized string name for an attack strategy or list of strategies.
+        
+        Converts an AttackStrategy enum value or a list of such values into a standardized
+        string representation used for logging, file naming, and result tracking. Handles both
+        single strategies and composite strategies consistently.
+        
+        :param attack_strategy: The attack strategy or list of strategies to name
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: Standardized string name for the strategy
+        :rtype: str
+        """
         from ._utils.formatting_utils import get_strategy_name
         return get_strategy_name(attack_strategy)
 
     # Replace with utility function
     def _get_flattened_attack_strategies(self, attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Union[AttackStrategy, List[AttackStrategy]]]:
+        """Flatten a nested list of attack strategies into a single-level list.
+        
+        Processes a potentially nested list of attack strategies to create a flat list
+        where composite strategies are handled appropriately. This ensures consistent
+        processing of strategies regardless of how they are initially structured.
+        
+        :param attack_strategies: List of attack strategies, possibly containing nested lists
+        :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :return: Flattened list of attack strategies
+        :rtype: List[Union[AttackStrategy, List[AttackStrategy]]]
+        """
         from ._utils.formatting_utils import get_flattened_attack_strategies
         return get_flattened_attack_strategies(attack_strategies)
     
     # Replace with utility function
     def _get_converter_for_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Union[PromptConverter, List[PromptConverter]]:
+        """Get the appropriate prompt converter(s) for a given attack strategy.
+        
+        Maps attack strategies to their corresponding prompt converters that implement
+        the attack technique. Handles both single strategies and composite strategies,
+        returning either a single converter or a list of converters as appropriate.
+        
+        :param attack_strategy: The attack strategy or strategies to get converters for
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: The prompt converter(s) for the specified strategy
+        :rtype: Union[PromptConverter, List[PromptConverter]]
+        """
         from ._utils.strategy_utils import get_converter_for_strategy
         return get_converter_for_strategy(attack_strategy)
 
@@ -716,19 +784,25 @@ class RedTeam():
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
         
+        Creates and configures a PyRIT PromptSendingOrchestrator to efficiently send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
         :param chat_target: The target to send prompts to
         :type chat_target: PromptChatTarget
-        :param all_prompts: List of prompts to send
+        :param all_prompts: List of prompts to process and send
         :type all_prompts: List[str]
-        :param converter: Converter or list of converters to use for prompt transformation
+        :param converter: Prompt converter or list of converters to transform prompts
         :type converter: Union[PromptConverter, List[PromptConverter]]
-        :param strategy_name: Name of the strategy being used (for logging)
+        :param strategy_name: Name of the attack strategy being used
         :type strategy_name: str
-        :param risk_category: Name of the risk category being evaluated (for logging)
+        :param risk_category: Risk category being evaluated
         :type risk_category: str
-        :param timeout: The timeout in seconds for API calls
+        :param timeout: Timeout in seconds for each prompt
         :type timeout: int
-        :return: The orchestrator instance with processed results
+        :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
         task_key = f"{strategy_name}_{risk_category}_orchestrator"
@@ -880,12 +954,23 @@ class RedTeam():
             raise
 
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
-        """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
+        """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
+        
+        Extracts conversation data from the PyRIT orchestrator's memory and writes it to a JSON lines file.
+        Each line in the file represents a conversation with messages in a standardized format.
+        The function handles file management including creating new files and appending to or updating 
+        existing files based on conversation counts.
         
         :param orchestrator: The orchestrator that generated the outputs
         :type orchestrator: Orchestrator
+        :param strategy_name: The name of the strategy used to generate the outputs
+        :type strategy_name: str
+        :param risk_category: The risk category being evaluated
+        :type risk_category: str
+        :param batch_idx: Optional batch index for multi-batch processing
+        :type batch_idx: Optional[int]
         :return: Path to the output file
-        :rtype: Union[str, os.PathLike]
+        :rtype: str
         """
         output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
@@ -932,11 +1017,35 @@ class RedTeam():
     
     # Replace with utility function
     def _get_chat_target(self, target: Union[PromptChatTarget,Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
+        """Convert various target types to a standardized PromptChatTarget object.
+        
+        Handles different input target types (function, model configuration, or existing chat target)
+        and converts them to a PyRIT PromptChatTarget object that can be used with orchestrators.
+        This function provides flexibility in how targets are specified while ensuring consistent
+        internal handling.
+        
+        :param target: The target to convert, which can be a function, model configuration, or chat target
+        :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        :return: A standardized PromptChatTarget object
+        :rtype: PromptChatTarget
+        """
         from ._utils.strategy_utils import get_chat_target
         return get_chat_target(target)
     
     # Replace with utility function
     def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
+        """Get appropriate orchestrator functions for the specified attack strategies.
+        
+        Determines which orchestrator functions should be used based on the attack strategies.
+        Returns a list of callable functions that can create orchestrators configured for the 
+        specified strategies. This function is crucial for mapping strategies to the appropriate
+        execution environment.
+        
+        :param attack_strategy: List of attack strategies to get orchestrators for
+        :type attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :return: List of callable functions that create appropriately configured orchestrators
+        :rtype: List[Callable]
+        """
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         call_to_orchestrators = []
         # Sending PromptSendingOrchestrator for each complexity level
@@ -952,15 +1061,29 @@ class RedTeam():
     
     # Replace with utility function
     def _get_attack_success(self, result: str) -> bool:
+        """Determine if an attack was successful based on the evaluation result string.
+        
+        Parses evaluation result strings (like "fail" or "pass") and converts them to boolean
+        values indicating whether an attack was successful. This standardizes the interpretation
+        of results across different evaluation formats.
+        
+        :param result: The evaluation result string to parse
+        :type result: str
+        :return: Boolean indicating whether the attack was successful
+        :rtype: bool
+        """
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
     def _to_red_team_result(self) -> RedTeamResult:
         """Convert tracking data from red_team_info to the RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
+        Processes the internal red_team_info tracking dictionary to build a structured RedTeamResult object.
+        This includes compiling information about the attack strategies used, complexity levels, risk categories,
+        conversation details, attack success rates, and risk assessments. The resulting object provides
+        a standardized representation of the red team evaluation results for reporting and analysis.
         
-        :return: Structured red team agent results
+        :return: Structured red team agent results containing evaluation metrics and conversation details
         :rtype: RedTeamResult
         """
         converters = []
@@ -1331,10 +1454,39 @@ class RedTeam():
 
     # Replace with utility function
     def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
+        """Convert RedTeamResult to a human-readable scorecard format.
+        
+        Creates a formatted scorecard string presentation of the red team evaluation results.
+        This scorecard includes metrics like attack success rates, risk assessments, and other
+        relevant evaluation information presented in an easily readable text format.
+        
+        :param redteam_result: The structured red team evaluation results
+        :type redteam_result: RedTeamResult
+        :return: A formatted text representation of the scorecard
+        :rtype: str
+        """
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
 
     async def _evaluate_conversation(self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int) -> None:
+        """Evaluate a single conversation using the specified metric and risk category.
+        
+        Processes a single conversation for evaluation, extracting assistant messages and applying
+        the appropriate evaluator based on the metric name and risk category. The evaluation results
+        are stored for later aggregation and reporting.
+        
+        :param conversation: Dictionary containing the conversation to evaluate
+        :type conversation: Dict
+        :param metric_name: Name of the evaluation metric to apply
+        :type metric_name: str
+        :param strategy_name: Name of the attack strategy used in the conversation
+        :type strategy_name: str
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param idx: Index of the conversation for tracking purposes
+        :type idx: int
+        :return: None
+        """
         messages = conversation["conversation"]["messages"]
         
         # Extract all assistant messages for evaluation
@@ -1400,25 +1552,33 @@ class RedTeam():
         risk_category: RiskCategory,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
-        data_only: bool = False,
-        output_path: Optional[Union[str, os.PathLike]] = None
+        output_path: Optional[Union[str, os.PathLike]] = None,
+        _skip_evals: bool = False,
     ) -> None:
-        """Call the evaluate method if not data_only.
-
-        :param scan_name: Optional name for the evaluation.
+        """Perform evaluation on collected red team attack data.
+        
+        Processes red team attack data from the provided data path and evaluates the conversations
+        against the appropriate metrics for the specified risk category. The function handles
+        evaluation result storage, path management, and error handling. If _skip_evals is True,
+        the function will not perform actual evaluations and only process the data.
+        
+        :param data_path: Path to the input data containing red team conversations
+        :type data_path: Union[str, os.PathLike]
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param strategy: Attack strategy or strategies used to generate the data
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :param scan_name: Optional name for the evaluation
         :type scan_name: Optional[str]
-        :param data_only: Whether to return only data paths instead of evaluation results.
-        :type data_only: bool
-        :param data_path: Path to the input data.
-        :type data_path: Optional[Union[str, os.PathLike]]
-        :param output_path: Path for output results.
+        :param output_path: Path for storing evaluation results
         :type output_path: Optional[Union[str, os.PathLike]]
-        :return: Evaluation results or data paths.
-        :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: None
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, scan_name={scan_name}")
-        if data_only:
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={_skip_evals}, scan_name={scan_name}")
+        if _skip_evals:
             return None
         
         # If output_path is provided, use it; otherwise create one in the scan output directory if available
@@ -1504,25 +1664,44 @@ class RedTeam():
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
             scan_name: Optional[str] = None,
-            data_only: bool = False, # TODO: remove this param
+            data_only: bool = False,
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
             _skip_evals: bool = False,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
+        Executes a red team attack process using the specified strategy and risk category against the
+        target model or function. This includes creating an orchestrator, applying prompts through the
+        appropriate converter, saving results to files, and optionally evaluating the results.
+        The function handles progress tracking, logging, and error handling throughout the process.
+        
         :param target: The target model or function to scan
         :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
         :param call_orchestrator: Function to call to create an orchestrator
+        :type call_orchestrator: Callable
         :param strategy: The attack strategy to use
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
+        :type risk_category: RiskCategory
         :param all_prompts: List of prompts to use for the scan
+        :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
+        :type progress_bar: tqdm
         :param progress_bar_lock: Lock for the progress bar
+        :type progress_bar_lock: asyncio.Lock
         :param scan_name: Optional name for the evaluation
+        :type scan_name: Optional[str]
         :param data_only: Whether to return only data without evaluation
+        :type data_only: bool
         :param output_path: Optional path for output
+        :type output_path: Optional[Union[str, os.PathLike]]
         :param timeout: The timeout in seconds for API calls
+        :type timeout: int
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: Evaluation result if available
+        :rtype: Optional[EvaluationResult]
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
@@ -1559,7 +1738,7 @@ class RedTeam():
                     scan_name=scan_name,
                     risk_category=risk_category,
                     strategy=strategy,
-                    data_only=_skip_evals,
+                    _skip_evals=_skip_evals,
                     data_path=data_path,
                     output_path=output_path,
                 )
@@ -1617,7 +1796,8 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120
+            timeout: int = 120,
+            **kwargs: Any
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1882,7 +2062,7 @@ class RedTeam():
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
                 
-        
+        _skip_evals = kwargs.get("_skip_evals", False)
         self.logger.info("Completed fetching all attack objectives")
         
         log_section_header(self.logger, "Starting orchestrator processing")
@@ -1918,7 +2098,7 @@ class RedTeam():
                     output_path=output_path,
                     risk_category=risk_category,
                     timeout=timeout,
-                    _skip_evals=False, # TODO: make this param a kwarg
+                    _skip_evals=_skip_evals,
                 )
             )
             
@@ -2007,7 +2187,7 @@ class RedTeam():
             await self._log_redteam_results_to_mlflow(
                 redteam_output=output,
                 eval_run=eval_run,
-                _skip_evals=False # TODO: make this a kwarg
+                _skip_evals=_skip_evals
             )
         
         
