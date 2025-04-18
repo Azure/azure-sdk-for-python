@@ -70,7 +70,7 @@ def test_groundtruth_min_gte_max():
 
 def test_incorrect_groundtruth_min():
     expected_exception_msg = ("A query relevance label less than the configured minimum value was detected in the evaluation input data. "
-                        "Check the range of ground truth label values in the input data and set the value of ground_truth_minimum to "
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_label_min to "
                         "the appropriate value for your data.")
     data_groundtruth_min = 0
     configured_groundtruth_min = 1
@@ -94,7 +94,7 @@ def test_incorrect_groundtruth_min():
 
 def test_incorrect_groundtruth_max():
     expected_exception_msg = ("A query relevance label greater than the configured maximum value was detected in the evaluation input data. "
-                        "Check the range of ground truth label values in the input data and set the value of ground_truth_maximum to "
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_label_max to "
                         "the appropriate value for your data.")
     data_groundtruth_max = 5
     configured_groundtruth_max = 4
@@ -141,15 +141,15 @@ def test_threshold(doc_retrieval_eval_data):
         results = evaluator(**record)
 
         expected_keys = [
-            "ndcg@3", "ndcg@3_result", "ndcg@3_threshold", "ndcg@3_lower_is_better",
-            "xdcg@3", "xdcg@3_result", "xdcg@3_threshold", "xdcg@3_lower_is_better",
-            "fidelity", "fidelity_result", "fidelity_threshold", "fidelity_lower_is_better",
-            "top1_relevance", "top1_relevance_result", "top1_relevance_threshold", "top1_relevance_lower_is_better",
-            "top3_max_relevance", "top3_max_relevance_result", "top3_max_relevance_threshold", "top3_max_relevance_lower_is_better",
-            "total_retrieved_documents", "total_retrieved_documents_result", "total_retrieved_documents_threshold", "total_retrieved_documents_lower_is_better",
-            "total_ground_truth_documents", "total_ground_truth_documents_result", "total_ground_truth_documents_threshold", "total_ground_truth_documents_lower_is_better",
-            "holes", "holes_result", "holes_threshold", "holes_lower_is_better",
-            "holes_ratio", "holes_ratio_result", "holes_ratio_threshold", "holes_ratio_lower_is_better"
+            "ndcg@3", "ndcg@3_result", "ndcg@3_threshold", "ndcg@3_higher_is_better",
+            "xdcg@3", "xdcg@3_result", "xdcg@3_threshold", "xdcg@3_higher_is_better",
+            "fidelity", "fidelity_result", "fidelity_threshold", "fidelity_higher_is_better",
+            "top1_relevance", "top1_relevance_result", "top1_relevance_threshold", "top1_relevance_higher_is_better",
+            "top3_max_relevance", "top3_max_relevance_result", "top3_max_relevance_threshold", "top3_max_relevance_higher_is_better",
+            "total_retrieved_documents", "total_retrieved_documents_result", "total_retrieved_documents_threshold", "total_retrieved_documents_higher_is_better",
+            "total_ground_truth_documents", "total_ground_truth_documents_result", "total_ground_truth_documents_threshold", "total_ground_truth_documents_higher_is_better",
+            "holes", "holes_result", "holes_threshold", "holes_higher_is_better",
+            "holes_ratio", "holes_ratio_result", "holes_ratio_threshold", "holes_ratio_higher_is_better"
         ]
 
         assert set(expected_keys) == set(results.keys())
