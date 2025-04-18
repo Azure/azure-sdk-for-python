@@ -7,14 +7,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
-import base64
-import datetime
+import asyncio  # pylint: disable = do-not-import-asyncio
 import inspect
 import itertools
 import json
 import logging
-import math
 import re
 from abc import ABC, abstractmethod
 from typing import (
@@ -38,8 +35,6 @@ from typing import (
     get_origin,
     overload,
 )
-
-from azure.core.credentials import AccessToken, TokenCredential
 
 from ._enums import AssistantStreamEvent, MessageRole, AzureAISearchQueryType
 from ._models import (
@@ -77,6 +72,7 @@ from ._models import (
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
+    VectorStoreDataSource,
 )
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
@@ -97,7 +93,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
 
     **Note:** Classes inherited from the model check that the parameters are present
     in the list of attributes and if they are not, the error is being raised. This check may not
-    be relevant for classes, not inherited from azure.ai.projects._model_base.Model.
+    be relevant for classes, not inherited from azure.ai.assistants._model_base.Model.
     :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
     :type parameters: Union[str, Dict[str, Any]]
@@ -197,87 +193,6 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         event_obj = str(parsed_data)
 
     return event_type, event_obj
-
-
-# TODO: Look into adding an async version of this class
-class SASTokenCredential(TokenCredential):
-    def __init__(
-        self,
-        *,
-        sas_token: str,
-        credential: TokenCredential,
-        subscription_id: str,
-        resource_group_name: str,
-        project_name: str,
-        connection_name: str,
-    ):
-        self._sas_token = sas_token
-        self._credential = credential
-        self._subscription_id = subscription_id
-        self._resource_group_name = resource_group_name
-        self._project_name = project_name
-        self._connection_name = connection_name
-        self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
-        logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
-
-    @classmethod
-    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime.datetime:
-        payload = jwt_token.split(".")[1]
-        padded_payload = payload + "=" * (4 - len(payload) % 4)  # Add padding if necessary
-        decoded_bytes = base64.urlsafe_b64decode(padded_payload)
-        decoded_str = decoded_bytes.decode("utf-8")
-        decoded_payload = json.loads(decoded_str)
-        expiration_date = decoded_payload.get("exp")
-        return datetime.datetime.fromtimestamp(expiration_date, datetime.timezone.utc)
-
-    def _refresh_token(self) -> None:
-        logger.debug("[SASTokenCredential._refresh_token] Enter")
-        from azure.ai.assistants import AssistantsClient
-
-        project_client = AssistantsClient(
-            credential=self._credential,
-            # Since we are only going to use the "connections" operations, we don't need to supply an endpoint.
-            # http://management.azure.com is hard coded in the SDK.
-            endpoint="not-needed",
-            subscription_id=self._subscription_id,
-            resource_group_name=self._resource_group_name,
-            project_name=self._project_name,
-        )
-
-        connection = project_client.connections.get(connection_name=self._connection_name, include_credentials=True)
-
-        self._sas_token = ""
-        if connection is not None and connection.token_credential is not None:
-            sas_credential = cast(SASTokenCredential, connection.token_credential)
-            self._sas_token = sas_credential._sas_token  # pylint: disable=protected-access
-        self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
-        logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
-
-    def get_token(
-        self,
-        *scopes: str,
-        claims: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        enable_cae: bool = False,
-        **kwargs: Any,
-    ) -> AccessToken:
-        """Request an access token for `scopes`.
-
-        :param str scopes: The type of access needed.
-
-        :keyword str claims: Additional claims required in the token, such as those returned in a resource
-            provider's claims challenge following an authorization failure.
-        :keyword str tenant_id: Optional tenant to include in the token request.
-        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
-            token. Defaults to False.
-
-        :rtype: AccessToken
-        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
-        """
-        logger.debug("SASTokenCredential.get_token] Enter")
-        if self._expires_on < datetime.datetime.now(datetime.timezone.utc):
-            self._refresh_token()
-        return AccessToken(self._sas_token, math.floor(self._expires_on.timestamp()))
 
 
 # Define type_map to translate Python type annotations to JSON Schema types
@@ -1130,7 +1045,7 @@ class BaseToolSet:
         Safely converts a dictionary into a ToolResources instance.
 
         :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.projects.models.AzureAISearchResource
+            accepted by ~azure.ai.assistants.models.AzureAISearchResource
         :type resources: Dict[str, Any]
         :return: A ToolResources instance.
         :rtype: ToolResources
@@ -1183,7 +1098,7 @@ class ToolSet(BaseToolSet):
         if isinstance(tool, AsyncFunctionTool):
             raise ValueError(
                 "AsyncFunctionTool is not supported in ToolSet.  "
-                + "To use async functions, use AsyncToolSet and assistants operations in azure.ai.projects.aio."
+                + "To use async functions, use AsyncToolSet and assistants operations in azure.ai.assistants.aio."
             )
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
@@ -1711,7 +1626,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :type role: MessageRole
 
         :return: The last message from a sender in the specified role.
-        :rtype: ~azure.ai.projects.models.ThreadMessage
+        :rtype: ~azure.ai.assistants.models.ThreadMessage
         """
         for msg in self.data:
             if msg.role == role:
@@ -1725,7 +1640,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :type role: MessageRole
 
         :return: The last text message from a sender in the specified role.
-        :rtype: ~azure.ai.projects.models.MessageTextContent
+        :rtype: ~azure.ai.assistants.models.MessageTextContent
         """
         for msg in self.data:
             if msg.role == role:
@@ -1756,7 +1671,6 @@ __all__: List[str] = [
     "SharepointTool",
     "FabricTool",
     "AzureAISearchTool",
-    "SASTokenCredential",
     "Tool",
     "ToolSet",
     "BaseAsyncAssistantEventHandlerT",

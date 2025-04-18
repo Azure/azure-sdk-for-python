@@ -17,7 +17,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 import asyncio
 from typing import Any
@@ -96,8 +96,9 @@ class MyEventHandler(AsyncAssistantEventHandler[str]):
 
 async def main() -> None:
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         ) as assistants_client:
 
             # [START create_assistant_with_function_tool]

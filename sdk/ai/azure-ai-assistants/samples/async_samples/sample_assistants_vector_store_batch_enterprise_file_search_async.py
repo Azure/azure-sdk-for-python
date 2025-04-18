@@ -16,7 +16,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity azure-ai-ml aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 import asyncio
 import os
@@ -33,11 +33,12 @@ from azure.identity.aio import DefaultAzureCredential
 async def main():
 
     async with DefaultAzureCredential() as credential:
-        async with AssistantsClient.from_connection_string(
-            credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         ) as assistants_client:
             # We will upload the local file to Azure and will use it for vector store creation.
-            _, asset_uri = assistants_client.upload_file_to_azure_blob("../product_info_1.md")
+            asset_uri = os.environ["AZURE_BLOB_URI"]
             ds = VectorStoreDataSource(
                 asset_identifier=asset_uri,
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,

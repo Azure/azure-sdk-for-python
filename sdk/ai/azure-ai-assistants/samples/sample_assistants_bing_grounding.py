@@ -16,11 +16,10 @@ USAGE:
     pip install azure-ai-assistants azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
-       Azure AI Foundry project.
+    1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the 
+    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, as found in the 
        "Connected resources" tab in your Azure AI Foundry project.
 """
 
@@ -30,13 +29,13 @@ from azure.ai.assistants.models import MessageRole, BingGroundingTool
 from azure.identity import DefaultAzureCredential
 
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # [START create_assistant_with_bing_grounding_tool]
-conn_id = os.environ["AZURE_BING_CONECTION_ID"]
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
 print(conn_id)
 

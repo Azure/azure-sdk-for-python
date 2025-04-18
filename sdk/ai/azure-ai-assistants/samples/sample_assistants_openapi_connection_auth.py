@@ -28,8 +28,8 @@ USAGE:
     pip install azure-ai-assistants azure-identity jsonref
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your Foundry Project.
-    PROJECT_OPENAPI_CONNECTION_NAME - the connection name for the OpenAPI connection authentication
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
+    OPENAPI_CONNECTION_ID - the connection ID for the OpenAPI connection, taken from Azure AI Foundry.
     MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Assistants against
 """
 
@@ -40,12 +40,11 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme
 
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-connection_name = os.environ["PROJECT_OPENAPI_CONNECTION_NAME"]
 model_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 connection_id = os.environ["OPENAPI_CONNECTION_ID"]
 

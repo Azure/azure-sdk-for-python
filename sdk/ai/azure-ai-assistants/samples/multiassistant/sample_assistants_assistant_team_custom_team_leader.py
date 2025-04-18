@@ -16,7 +16,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity
 
     Set these environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     MODEL_DEPLOYMENT_NAME - the name of the model deployment to use.
 """
 
@@ -28,9 +28,9 @@ from assistant_team import AssistantTeam, AssistantTask
 from assistant_trace_configurator import AssistantTraceConfigurator
 from azure.ai.assistants.models import FunctionTool, ToolSet
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")

@@ -18,7 +18,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
  
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
@@ -39,9 +39,9 @@ async def main():
     async with DefaultAzureCredential(
         exclude_managed_identity_credential=True, exclude_environment_credential=True
     ) as creds:
-        async with AssistantsClient.from_connection_string(
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
         ) as assistants_client:
 
             storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]

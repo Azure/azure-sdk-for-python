@@ -1400,15 +1400,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1495,15 +1486,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1564,15 +1546,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1821,15 +1794,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1890,15 +1854,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2059,15 +2014,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2128,15 +2074,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2300,15 +2237,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2369,15 +2297,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2565,15 +2484,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2668,15 +2578,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2740,15 +2641,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2909,15 +2801,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3287,15 +3170,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3386,15 +3260,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3458,15 +3323,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3627,15 +3483,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3808,15 +3655,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3880,15 +3718,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4212,15 +4041,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4301,15 +4121,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4411,15 +4222,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4484,15 +4286,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4564,15 +4357,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4633,15 +4417,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4702,15 +4477,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4771,15 +4537,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4863,15 +4620,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5053,15 +4801,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5122,15 +4861,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5292,15 +5022,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5362,15 +5083,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5466,15 +5178,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5632,15 +5335,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5704,15 +5398,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5781,15 +5466,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5947,15 +5623,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6021,15 +5688,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6096,15 +5754,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6204,15 +5853,6 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 

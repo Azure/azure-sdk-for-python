@@ -18,7 +18,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 
 import os
@@ -26,9 +26,9 @@ from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import FabricTool
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # [START create_assistant_with_fabric_tool]

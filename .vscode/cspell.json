@@ -39,6 +39,8 @@
     "sdk/ai/azure-ai-projects/samples/agents/tripadvisor_openapi.json",
     "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
     "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
+    "sdk/ai/azure-ai-assistants/samples/nifty_500_quarterly_results.csv",
+    "sdk/ai/azure-ai-assistants/samples/tripadvisor_openapi.json",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -1358,6 +1360,14 @@
         "myindexname",
         "wttr",
         "azureopenai"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-assistants/**",
+      "words": [
+        "GENAI",
+        "fspath",
+        "wttr"
       ]
     },
     {

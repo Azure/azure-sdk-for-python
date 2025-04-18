@@ -22,7 +22,7 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
+    * PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -44,9 +44,7 @@ tracer = trace.get_tracer(__name__)
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-        ) as assistant_client:
+        async with AssistantsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as assistant_client:
 
             # Enable console tracing
             # or, if you have local OTLP endpoint running, change it to

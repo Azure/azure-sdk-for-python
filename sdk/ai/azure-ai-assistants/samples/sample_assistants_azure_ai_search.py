@@ -39,9 +39,9 @@ from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # [START create_assistant_with_azure_ai_search_tool]

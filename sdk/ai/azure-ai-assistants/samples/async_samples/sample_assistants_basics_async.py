@@ -16,13 +16,16 @@ USAGE:
     pip install azure-ai-assistants azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 import asyncio
 import time
 
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import ListSortOrder
+from azure.ai.assistants.models import (
+    MessageTextContent,
+    ListSortOrder
+)
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -31,8 +34,9 @@ import os
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
-        assistant_client = AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        assistant_client = AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         )
 
         async with assistant_client:
@@ -65,7 +69,10 @@ async def main() -> None:
             print("Deleted assistant")
 
             messages = await assistant_client.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            print(f"Messages: {messages}")
+            for data_point in messages.data:
+                last_message_content = data_point.content[-1]
+                if isinstance(last_message_content, MessageTextContent):
+                    print(f"{data_point.role}: {last_message_content.text.value}")
 
 
 if __name__ == "__main__":

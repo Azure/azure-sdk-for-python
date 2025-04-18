@@ -19,10 +19,6 @@ import io
 import user_functions
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import (
-    ThreadMessage,
-    RunStep,
-)
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import (
     AzureRecordedTestCase,
@@ -57,6 +53,8 @@ from azure.ai.assistants.models import (
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
     RunStatus,
+    RunStep,
+    ThreadMessage,
     ThreadMessageOptions,
     ThreadRun,
     ToolResources,
@@ -85,12 +83,15 @@ if LOGGING_ENABLED:
 
 assistantClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai.assistants",
-    azure_ai_assistants_assistants_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
-    azure_ai_assistants_assistants_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
-    azure_ai_assistants_assistants_tests_storage_queue="https://foobar.queue.core.windows.net",
-    azure_ai_assistants_assistants_tests_search_index_name="sample_index",
-    azure_ai_assistants_assistants_tests_search_connection_name="search_connection_name",
+    "azure_ai_assistants",
+    # TODO: uncomment this endpoint when re running with 1DP
+    #azure_ai_assistants_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
+    # TODO: remove this endpoint when re running with 1DP
+    azure_ai_assistants_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
+    azure_ai_assistants_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
+    azure_ai_assistants_tests_storage_queue="https://foobar.queue.core.windows.net",
+    azure_ai_assistants_tests_search_index_name="sample_index",
+    azure_ai_assistants_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
 )
 
 
@@ -130,13 +131,13 @@ class TestAssistantClient(AzureRecordedTestCase):
     # helper function: create client using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("azure_ai.assistants_assistants_tests_project_connection_string")
+        endpoint = kwargs.pop("azure_ai_assistants_tests_project_endpoint")
         credential = self.get_credential(AssistantsClient, is_async=False)
 
         # create and return client
-        client = AssistantsClient.from_connection_string(
+        client = AssistantsClient(
+            endpoint=endpoint,
             credential=credential,
-            conn_str=connection_string,
         )
 
         return client
@@ -232,9 +233,9 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         # create assistant
         if body:
-            assistant = client.assistants.create_assistant(body=body)
+            assistant = client.create_assistant(body=body)
         elif functions:
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o",
                 name="my-assistant",
                 instructions="You are helpful assistant",
@@ -244,7 +245,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert assistant.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
             print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
         else:
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
         assert assistant.id
@@ -253,7 +254,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert assistant.model == "gpt-4o"
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -292,7 +293,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         """helper function for updating assistant with different body inputs"""
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
         )
         assert assistant.id
@@ -303,14 +304,14 @@ class TestAssistantClient(AzureRecordedTestCase):
             if use_io:
                 binary_body = json.dumps(body).encode("utf-8")
                 body = io.BytesIO(binary_body)
-            assistant = client.assistants.update_assistant(assistant_id=assistant.id, body=body)
+            assistant = client.update_assistant(assistant_id=assistant.id, body=body)
         else:
-            assistant = client.assistants.update_assistant(assistant_id=assistant.id, name="my-assistant2")
+            assistant = client.update_assistant(assistant_id=assistant.id, name="my-assistant2")
         assert assistant.name
         assert assistant.name == "my-assistant2"
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -320,32 +321,32 @@ class TestAssistantClient(AzureRecordedTestCase):
         """test list assistants"""
         # create client and ensure there are no previous assistants
         with self.create_client(**kwargs) as client:
-            list_length = client.assistants.list_assistants().data.__len__()
+            list_length = client.list_assistants().data.__len__()
 
             # create assistant and check that it appears in the list
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
-            assert client.assistants.list_assistants().data.__len__() == list_length + 1
-            assert client.assistants.list_assistants().data[0].id == assistant.id
+            assert client.list_assistants().data.__len__() == list_length + 1
+            assert client.list_assistants().data[0].id == assistant.id
 
             # create second assistant and check that it appears in the list
-            assistant2 = client.assistants.create_assistant(
+            assistant2 = client.create_assistant(
                 model="gpt-4o", name="my-assistant2", instructions="You are helpful assistant"
             )
-            assert client.assistants.list_assistants().data.__len__() == list_length + 2
+            assert client.list_assistants().data.__len__() == list_length + 2
             assert (
-                client.assistants.list_assistants().data[0].id == assistant.id
-                or client.assistants.list_assistants().data[1].id == assistant.id
+                client.list_assistants().data[0].id == assistant.id
+                or client.list_assistants().data[1].id == assistant.id
             )
 
             # delete assistants and check list
-            client.assistants.delete_assistant(assistant.id)
-            assert client.assistants.list_assistants().data.__len__() == list_length + 1
-            assert client.assistants.list_assistants().data[0].id == assistant2.id
+            client.delete_assistant(assistant.id)
+            assert client.list_assistants().data.__len__() == list_length + 1
+            assert client.list_assistants().data[0].id == assistant2.id
 
-            client.assistants.delete_assistant(assistant2.id)
-            assert client.assistants.list_assistants().data.__len__() == list_length
+            client.delete_assistant(assistant2.id)
+            assert client.list_assistants().data.__len__() == list_length
             print("Deleted assistants")
 
     # **********************************************************************************
@@ -364,20 +365,20 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert isinstance(thread, AssistantThread)
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -424,9 +425,9 @@ class TestAssistantClient(AzureRecordedTestCase):
         """helper function for creating thread with different body inputs"""
         # create thread
         if body:
-            thread = client.assistants.create_thread(body=body)
+            thread = client.create_thread(body=body)
         else:
-            thread = client.assistants.create_thread(metadata={"key1": "value1", "key2": "value2"})
+            thread = client.create_thread(metadata={"key1": "value1", "key2": "value2"})
         assert isinstance(thread, AssistantThread)
         assert thread.id
         print("Created thread, thread ID", thread.id)
@@ -441,25 +442,25 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # get thread
-            thread2 = client.assistants.get_thread(thread.id)
+            thread2 = client.get_thread(thread.id)
             assert thread2.id
             assert thread.id == thread2.id
             print("Got thread, thread ID", thread2.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -471,23 +472,23 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # update thread
-            thread = client.assistants.update_thread(thread.id, metadata={"key1": "value1", "key2": "value2"})
+            thread = client.update_thread(thread.id, metadata={"key1": "value1", "key2": "value2"})
             assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -503,7 +504,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             metadata = {"key1": "value1", "key2": "value2"}
 
             # create thread
-            thread = client.assistants.create_thread(metadata=metadata)
+            thread = client.create_thread(metadata=metadata)
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
@@ -511,7 +512,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             metadata2 = {"key1": "value1", "key2": "newvalue2"}
 
             # update thread
-            thread = client.assistants.update_thread(thread.id, metadata=metadata2)
+            thread = client.update_thread(thread.id, metadata=metadata2)
             assert thread.metadata == {"key1": "value1", "key2": "newvalue2"}
 
     @assistantClientPreparer()
@@ -544,16 +545,16 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _do_test_update_thread(self, client, body):
         """helper function for updating thread with different body inputs"""
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # update thread
         if body:
-            thread = client.assistants.update_thread(thread.id, body=body)
+            thread = client.update_thread(thread.id, body=body)
         else:
             metadata = {"key1": "value1", "key2": "value2"}
-            thread = client.assistants.update_thread(thread.id, metadata=metadata)
+            thread = client.update_thread(thread.id, metadata=metadata)
         assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
     @assistantClientPreparer()
@@ -565,26 +566,26 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert isinstance(thread, AssistantThread)
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # delete thread
-            deletion_status = client.assistants.delete_thread(thread.id)
+            deletion_status = client.delete_thread(thread.id)
             assert deletion_status.id == thread.id
             assert deletion_status.deleted == True
             print("Deleted thread, thread ID", deletion_status.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     # # **********************************************************************************
@@ -631,15 +632,15 @@ class TestAssistantClient(AzureRecordedTestCase):
         """helper function for creating message with different body inputs"""
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
         if body:
-            message = client.assistants.create_message(thread_id=thread.id, body=body)
+            message = client.create_message(thread_id=thread.id, body=body)
         else:
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
         assert message.id
@@ -654,36 +655,36 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create messages
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             assert message.id
             print("Created message, message ID", message.id)
-            message2 = client.assistants.create_message(
+            message2 = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me another joke"
             )
             assert message2.id
             print("Created message, message ID", message2.id)
-            message3 = client.assistants.create_message(
+            message3 = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a third joke"
             )
             assert message3.id
             print("Created message, message ID", message3.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -695,47 +696,47 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # check that initial message list is empty
-            messages0 = client.assistants.list_messages(thread_id=thread.id)
+            messages0 = client.list_messages(thread_id=thread.id)
             print(messages0.data)
             assert messages0.data.__len__() == 0
 
             # create messages and check message list for each one
-            message1 = client.assistants.create_message(
+            message1 = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             assert message1.id
             print("Created message, message ID", message1.id)
-            messages1 = client.assistants.list_messages(thread_id=thread.id)
+            messages1 = client.list_messages(thread_id=thread.id)
             assert messages1.data.__len__() == 1
             assert messages1.data[0].id == message1.id
 
-            message2 = client.assistants.create_message(
+            message2 = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me another joke"
             )
             assert message2.id
             print("Created message, message ID", message2.id)
-            messages2 = client.assistants.list_messages(thread_id=thread.id)
+            messages2 = client.list_messages(thread_id=thread.id)
             assert messages2.data.__len__() == 2
             assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
 
-            message3 = client.assistants.create_message(
+            message3 = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a third joke"
             )
             assert message3.id
             print("Created message, message ID", message3.id)
-            messages3 = client.assistants.list_messages(thread_id=thread.id)
+            messages3 = client.list_messages(thread_id=thread.id)
             assert messages3.data.__len__() == 3
             assert (
                 messages3.data[0].id == message3.id
@@ -744,7 +745,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             )
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -756,32 +757,32 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             assert message.id
             print("Created message, message ID", message.id)
 
             # get message
-            message2 = client.assistants.get_message(thread_id=thread.id, message_id=message.id)
+            message2 = client.get_message(thread_id=thread.id, message_id=message.id)
             assert message2.id
             assert message.id == message2.id
             print("Got message, message ID", message.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -821,20 +822,20 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _do_test_update_message(self, client, body):
         """helper function for updating message with different body inputs"""
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         assert message.id
         print("Created message, message ID", message.id)
 
         # update message
         if body:
-            message = client.assistants.update_message(thread_id=thread.id, message_id=message.id, body=body)
+            message = client.update_message(thread_id=thread.id, message_id=message.id, body=body)
         else:
-            message = client.assistants.update_message(
+            message = client.update_message(
                 thread_id=thread.id, message_id=message.id, metadata={"key1": "value1", "key2": "value2"}
             )
         assert message.metadata == {"key1": "value1", "key2": "value2"}
@@ -854,24 +855,24 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.id
             print("Created run, run ID", run.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -905,14 +906,14 @@ class TestAssistantClient(AzureRecordedTestCase):
         """helper function for creating run with different body inputs"""
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
         )
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
@@ -922,9 +923,9 @@ class TestAssistantClient(AzureRecordedTestCase):
             if use_io:
                 binary_body = json.dumps(body).encode("utf-8")
                 body = io.BytesIO(binary_body)
-            run = client.assistants.create_run(thread_id=thread.id, body=body)
+            run = client.create_run(thread_id=thread.id, body=body)
         else:
-            run = client.assistants.create_run(
+            run = client.create_run(
                 thread_id=thread.id, assistant_id=assistant.id, metadata={"key1": "value1", "key2": "value2"}
             )
         assert run.id
@@ -932,7 +933,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Created run, run ID", run.id)
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -944,30 +945,30 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.id
             print("Created run, run ID", run.id)
 
             # get run
-            run2 = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run2 = client.get_run(thread_id=thread.id, run_id=run.id)
             assert run2.id
             assert run.id == run2.id
             print("Got run, run ID", run2.id)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -979,26 +980,26 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             assert message.id
             print("Created message, message ID", message.id)
 
             # create run
-            run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1016,14 +1017,14 @@ class TestAssistantClient(AzureRecordedTestCase):
             while run.status in ["queued", "in_progress", "requires_action"]:
                 # wait for a second
                 time.sleep(1)
-                run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+                run = client.get_run(thread_id=thread.id, run_id=run.id)
                 print("Run status:", run.status)
 
             assert run.status in ["cancelled", "failed", "completed", "expired"]
             print("Run completed with status:", run.status)
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1035,19 +1036,19 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1055,14 +1056,14 @@ class TestAssistantClient(AzureRecordedTestCase):
             while run.status in ["queued", "in_progress"]:
                 # wait for a second
                 time.sleep(1)
-                run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
-            run = client.assistants.update_run(
+                run = client.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.update_run(
                 thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.metadata == {"key1": "value1", "key2": "value2"}
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1102,19 +1103,19 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _do_test_update_run(self, client, body):
         """helper function for updating run with different body inputs"""
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
         )
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create run
-        run = client.assistants.create_run(
+        run = client.create_run(
             thread_id=thread.id, assistant_id=assistant.id, metadata={"key1": "value1", "key2": "value2"}
         )
         assert run.id
@@ -1124,17 +1125,17 @@ class TestAssistantClient(AzureRecordedTestCase):
         # update run
         while run.status in ["queued", "in_progress"]:
             time.sleep(5)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
         if body:
-            run = client.assistants.update_run(thread_id=thread.id, run_id=run.id, body=body)
+            run = client.update_run(thread_id=thread.id, run_id=run.id, body=body)
         else:
-            run = client.assistants.update_run(
+            run = client.update_run(
                 thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "newvalue2"}
             )
         assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
 
         # delete assistant
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1176,24 +1177,24 @@ class TestAssistantClient(AzureRecordedTestCase):
         # toolset.add(code_interpreter)
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", toolset=toolset
         )
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
         assert message.id
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1215,7 +1216,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         ]
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(1)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
 
             # check if tools are needed
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
@@ -1223,7 +1224,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     print("No tool calls provided - cancelling run")
-                    client.assistants.cancel_run(thread_id=thread.id, run_id=run.id)
+                    client.cancel_run(thread_id=thread.id, run_id=run.id)
                     break
 
                 # submit tool outputs to run
@@ -1235,9 +1236,9 @@ class TestAssistantClient(AzureRecordedTestCase):
                         if use_io:
                             binary_body = json.dumps(body).encode("utf-8")
                             body = io.BytesIO(binary_body)
-                        client.assistants.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
+                        client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
                     else:
-                        client.assistants.submit_tool_outputs_to_run(
+                        client.submit_tool_outputs_to_run(
                             thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
                         )
 
@@ -1247,7 +1248,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         # check that messages used the tool
         print("Messages: ")
-        messages = client.assistants.list_messages(thread_id=thread.id, run_id=run.id)
+        messages = client.list_messages(thread_id=thread.id, run_id=run.id)
         tool_message = messages["data"][0]["content"][0]["text"]["value"]
         # if user_functions_live is used, the time will be the current time
         # since user_functions_recording is used, the time will be 12:30
@@ -1255,7 +1256,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Used tool_outputs")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1290,7 +1291,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         """Wait while run will get to terminal state."""
         while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
             time.sleep(timeout)
-            run = client.assistants.get_run(thread_id=run.thread_id, run_id=run.id)
+            run = client.get_run(thread_id=run.thread_id, run_id=run.id)
         return run
 
     def _do_test_create_parallel_thread_runs(self, use_parallel_runs, create_thread_run, **kwargs):
@@ -1309,7 +1310,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         toolset = ToolSet()
         toolset.add(functions)
         toolset.add(code_interpreter)
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4",
             name="my-assistant",
             instructions="You are helpful assistant",
@@ -1323,16 +1324,16 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
 
         if create_thread_run:
-            run = client.assistants.create_thread_and_run(
+            run = client.create_thread_and_run(
                 assistant_id=assistant.id,
                 parallel_tool_calls=use_parallel_runs,
             )
             run = self._wait_for_run(client, run)
         else:
-            thread = client.assistants.create_thread(messages=[message])
+            thread = client.create_thread(messages=[message])
             assert thread.id
 
-            run = client.assistants.create_and_process_run(
+            run = client.create_and_process_run(
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 parallel_tool_calls=use_parallel_runs,
@@ -1341,8 +1342,8 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert run.status == RunStatus.COMPLETED, run.last_error.message
         assert run.parallel_tool_calls == use_parallel_runs
 
-        assert client.assistants.delete_assistant(assistant.id).deleted, "The assistant was not deleted"
-        messages = client.assistants.list_messages(thread_id=run.thread_id)
+        assert client.delete_assistant(assistant.id).deleted, "The assistant was not deleted"
+        messages = client.list_messages(thread_id=run.thread_id)
         assert len(messages.data), "The data from the assistant was not received."
 
     """
@@ -1356,38 +1357,38 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert isinstance(client, AssistantsClient)
 
         # create assistant
-        assistant = client.assistants.create_assistant(model="gpt-4o", name="my-assistant", instructions="You are helpful assistant")
+        assistant = client.create_assistant(model="gpt-4o", name="my-assistant", instructions="You are helpful assistant")
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
         assert message.id
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id
         print("Created run, run ID", run.id)
 
         # check status and cancel
         assert run.status in ["queued", "in_progress", "requires_action"]
-        client.assistants.cancel_run(thread_id=thread.id, run_id=run.id)
+        client.cancel_run(thread_id=thread.id, run_id=run.id)
 
         while run.status in ["queued", "cancelling"]:
             time.sleep(1)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
             print("Current run status:", run.status)
         assert run.status == "cancelled"
         print("Run cancelled")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
         client.close()
         """
@@ -1423,7 +1424,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         """helper function for creating thread and run with different body inputs"""
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
         )
         assert assistant.id
@@ -1438,10 +1439,10 @@ class TestAssistantClient(AzureRecordedTestCase):
             if use_io:
                 binary_body = json.dumps(body).encode("utf-8")
                 body = io.BytesIO(binary_body)
-            run = client.assistants.create_thread_and_run(body=body)
+            run = client.create_thread_and_run(body=body)
             assert run.metadata == {"key1": "value1", "key2": "value2"}
         else:
-            run = client.assistants.create_thread_and_run(assistant_id=assistant.id)
+            run = client.create_thread_and_run(assistant_id=assistant.id)
 
         # create thread and run
         assert run.id
@@ -1449,7 +1450,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Created run, run ID", run.id)
 
         # get thread
-        thread = client.assistants.get_thread(run.thread_id)
+        thread = client.get_thread(run.thread_id)
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
@@ -1467,7 +1468,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
             # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
             print("Run status:", run.status)
 
@@ -1475,7 +1476,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Run completed")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1489,28 +1490,28 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert isinstance(client, AssistantsClient)
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
         )
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
         assert message.id
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id
         print("Created run, run ID", run.id)
 
-        steps = client.assistants.list_run_steps(thread_id=thread.id, run_id=run.id)
+        steps = client.list_run_steps(thread_id=thread.id, run_id=run.id)
         # commenting assertion out below, do we know exactly when run starts?
         # assert steps['data'].__len__() == 0
 
@@ -1519,7 +1520,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
             assert run.status in [
                 "queued",
                 "in_progress",
@@ -1528,7 +1529,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             ]
             print("Run status:", run.status)
             if run.status != "queued":
-                steps = client.assistants.list_run_steps(thread_id=thread.id, run_id=run.id)
+                steps = client.list_run_steps(thread_id=thread.id, run_id=run.id)
                 print("Steps:", steps)
                 assert steps["data"].__len__() > 0
 
@@ -1536,7 +1537,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Run completed")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
         client.close()
 
@@ -1550,26 +1551,26 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
             )
             assert message.id
             print("Created message, message ID", message.id)
 
             # create run
-            run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1583,7 +1584,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             while run.status in ["queued", "in_progress", "requires_action"]:
                 # wait for a second
                 time.sleep(1)
-                run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+                run = client.get_run(thread_id=thread.id, run_id=run.id)
                 if run.status == "failed":
                     assert run.last_error
                     print(run.last_error)
@@ -1597,14 +1598,14 @@ class TestAssistantClient(AzureRecordedTestCase):
                 print("Run status:", run.status)
 
             # list steps, check that get_run_step works with first step_id
-            steps = client.assistants.list_run_steps(thread_id=thread.id, run_id=run.id)
+            steps = client.list_run_steps(thread_id=thread.id, run_id=run.id)
             assert steps["data"].__len__() > 0
             step = steps["data"][0]
-            get_step = client.assistants.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
+            get_step = client.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
             assert step == get_step
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     # # **********************************************************************************
@@ -1623,26 +1624,26 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
             )
             assert message.id
             print("Created message, message ID", message.id)
 
             # create stream
-            with client.assistants.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
+            with client.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
                 for event_type, event_data, _ in stream:
                     assert (
                         isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep))
@@ -1650,7 +1651,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     )
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
@@ -1664,19 +1665,19 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
             )
             assert message.id
@@ -1686,7 +1687,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             body = {"assistant_id": assistant.id, "stream": True}
 
             # create stream
-            with client.assistants.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
+            with client.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
 
                 for event_type, event_data, _ in stream:
                     print("event type: event data")
@@ -1697,7 +1698,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     )
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1710,19 +1711,19 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # create assistant
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o", name="my-assistant", instructions="You are helpful assistant"
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
 
             # create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
             )
             assert message.id
@@ -1733,7 +1734,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             binary_body = json.dumps(body).encode("utf-8")
 
             # create stream
-            with client.assistants.create_stream(
+            with client.create_stream(
                 thread_id=thread.id, body=io.BytesIO(binary_body), stream=True
             ) as stream:
                 for event_type, event_data, _ in stream:
@@ -1743,7 +1744,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     )
 
             # delete assistant and close client
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -1787,7 +1788,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         # toolset.add(code_interpreter)
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o",
             name="my-assistant",
             instructions="You are helpful assistant",
@@ -1798,17 +1799,17 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
         assert message.id
         print("Created message, message ID", message.id)
 
         # create stream
-        with client.assistants.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
+        with client.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
             for event_type, event_data, _ in stream:
 
                 # Check if tools are needed
@@ -1821,7 +1822,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
                     if not tool_calls:
                         print("No tool calls provided - cancelling run")
-                        client.assistants.cancel_run(thread_id=thread.id, run_id=event_data.id)
+                        client.cancel_run(thread_id=thread.id, run_id=event_data.id)
                         break
 
                     # submit tool outputs to stream
@@ -1834,7 +1835,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                             if use_io:
                                 binary_body = json.dumps(body).encode("utf-8")
                                 body = io.BytesIO(binary_body)
-                            client.assistants.submit_tool_outputs_to_stream(
+                            client.submit_tool_outputs_to_stream(
                                 thread_id=thread.id,
                                 run_id=event_data.id,
                                 body=body,
@@ -1842,7 +1843,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                                 stream=True,
                             )
                         else:
-                            client.assistants.submit_tool_outputs_to_stream(
+                            client.submit_tool_outputs_to_stream(
                                 thread_id=thread.id,
                                 run_id=event_data.id,
                                 tool_outputs=tool_outputs,
@@ -1859,7 +1860,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Stream processing completed")
 
         # check that messages used the tool
-        messages = client.assistants.list_messages(thread_id=thread.id)
+        messages = client.list_messages(thread_id=thread.id)
         print("Messages: ", messages)
         tool_message = messages["data"][0]["content"][0]["text"]["value"]
         # TODO if testing live, uncomment these
@@ -1874,7 +1875,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Used tool_outputs")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
         # client.close()
 
@@ -2037,7 +2038,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         toolset.add(functions)
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o",
             name="my-assistant",
             instructions="You are helpful assistant",
@@ -2047,17 +2048,17 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Created assistant, assistant ID", assistant.id)
 
         # create thread
-        thread = client.assistants.create_thread()
+        thread = client.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.assistants.create_message(thread_id=thread.id, role="user", content=content)
+        message = client.create_message(thread_id=thread.id, role="user", content=content)
         assert message.id
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.assistants.create_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = client.create_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -2079,7 +2080,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         ]
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(1)
-            run = client.assistants.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.get_run(thread_id=thread.id, run_id=run.id)
 
             # check if tools are needed
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
@@ -2087,14 +2088,14 @@ class TestAssistantClient(AzureRecordedTestCase):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     print("No tool calls provided - cancelling run")
-                    client.assistants.cancel_run(thread_id=thread.id, run_id=run.id)
+                    client.cancel_run(thread_id=thread.id, run_id=run.id)
                     break
 
                 # submit tool outputs to run
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
                 print("Tool outputs:", tool_outputs)
                 if tool_outputs:
-                    client.assistants.submit_tool_outputs_to_run(
+                    client.submit_tool_outputs_to_run(
                         thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
                     )
 
@@ -2103,7 +2104,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Run completed with status:", run.status)
 
         # check that messages used the tool
-        messages = client.assistants.list_messages(thread_id=thread.id, run_id=run.id)
+        messages = client.list_messages(thread_id=thread.id, run_id=run.id)
         print("Messages: ", messages)
         tool_message = messages["data"][0]["content"][0]["text"]["value"]
         if expected_values:
@@ -2119,7 +2120,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Used tool_outputs")
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
 
     # # **********************************************************************************
@@ -2142,7 +2143,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
             exception_message = ""
             try:
-                client.assistants.create_assistant(
+                client.create_assistant(
                     model="gpt-4o",
                     name="my-assistant",
                     instructions="You are helpful assistant",
@@ -2175,7 +2176,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
             exception_message = ""
             try:
-                client.assistants.create_assistant(
+                client.create_assistant(
                     model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", tools=[], tool_resources=tool_resources
                 )
             except:
@@ -2202,7 +2203,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
             exception_message = ""
             try:
-                client.assistants.create_assistant(
+                client.create_assistant(
                     model="gpt-4o",
                     name="my-assistant",
                     instructions="You are helpful assistant",
@@ -2233,10 +2234,10 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         # Adjust the file path to be relative to the test file location
         file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "product_info_1.md")
-        openai_file = client.assistants.upload_file_and_poll(file_path=file_path, purpose="assistants")
+        openai_file = client.upload_file_and_poll(file_path=file_path, purpose="assistants")
         print(f"Uploaded file, file ID: {openai_file.id}")
 
-        openai_vectorstore = client.assistants.create_vector_store_and_poll(
+        openai_vectorstore = client.create_vector_store_and_poll(
             file_ids=[openai_file.id], name="my_vectorstore"
         )
         print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
@@ -2248,7 +2249,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         print("Created toolset and added file search")
 
         # create assistant
-        assistant = client.assistants.create_assistant(
+        assistant = client.create_assistant(
             model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", toolset=toolset
         )
         assert assistant.id
@@ -2261,7 +2262,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert assistant.tool_resources["file_search"]["vector_store_ids"][0] == openai_vectorstore.id
 
         # delete assistant and close client
-        client.assistants.delete_assistant(assistant.id)
+        client.delete_assistant(assistant.id)
         print("Deleted assistant")
         client.close()
 
@@ -2277,7 +2278,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         # Create vector store
         body = {"name": "test_vector_store", "metadata": {"key1": "value1", "key2": "value2"}}
         try:
-            vector_store = client.assistants.create_vector_store_and_poll(body=body, sleep_interval=2)
+            vector_store = client.create_vector_store_and_poll(body=body, sleep_interval=2)
             # check correct creation
             assert isinstance(vector_store, VectorStore)
             assert vector_store.name == "test_vector_store"
@@ -2306,7 +2307,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         # Create vector store
         body = {"name": "test_vector_store", "metadata": {"key1": "value1", "key2": "value2"}}
         try:
-            vector_store = client.assistants.create_vector_store(body=body)
+            vector_store = client.create_vector_store(body=body)
             print("here")
             print(vector_store)
             # check correct creation
@@ -2364,11 +2365,11 @@ class TestAssistantClient(AzureRecordedTestCase):
         else:
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-        vector_store = ai_client.assistants.create_vector_store_and_poll(
+        vector_store = ai_client.create_vector_store_and_poll(
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
         assert vector_store.id
@@ -2385,7 +2386,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         ds = [
             VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
@@ -2398,7 +2399,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             ]
         )
         file_search = FileSearchTool()
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4o",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
@@ -2407,19 +2408,19 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert assistant.id
 
-        thread = ai_client.assistants.create_thread(tool_resources=ToolResources(file_search=fs))
+        thread = ai_client.create_thread(tool_resources=ToolResources(file_search=fs))
         assert thread.id
         # create message
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.assistants.list_messages(thread.id)
+        messages = ai_client.list_messages(thread.id)
         assert len(messages)
-        ai_client.assistants.delete_assistant(assistant.id)
+        ai_client.delete_assistant(assistant.id)
         ai_client.close()
 
     @assistantClientPreparer()
@@ -2459,12 +2460,12 @@ class TestAssistantClient(AzureRecordedTestCase):
             ds = None
         else:
             ds = VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                 asset_type="uri_asset",
             )
-        vector_store = ai_client.assistants.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+        vector_store = ai_client.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
-        vector_store_file = ai_client.assistants.create_vector_store_file(
+        vector_store_file = ai_client.create_vector_store_file(
             vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
@@ -2511,13 +2512,13 @@ class TestAssistantClient(AzureRecordedTestCase):
             file_ids = None
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-        vector_store = ai_client.assistants.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+        vector_store = ai_client.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
-        vector_store_file_batch = ai_client.assistants.create_vector_store_file_batch_and_poll(
+        vector_store_file_batch = ai_client.create_vector_store_file_batch_and_poll(
             vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
         )
         assert vector_store_file_batch.id
@@ -2529,7 +2530,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
@@ -2538,18 +2539,18 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert assistant.id
 
-        thread = ai_client.assistants.create_thread()
+        thread = ai_client.create_thread()
         assert thread.id
 
         # create message
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
 
         if streaming:
             thread_run = None
-            with ai_client.assistants.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
+            with ai_client.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
                 for _, event_data, _ in stream:
                     if isinstance(event_data, ThreadRun):
                         thread_run = event_data
@@ -2562,16 +2563,16 @@ class TestAssistantClient(AzureRecordedTestCase):
                             event_data.delta.step_details.tool_calls[0].file_search, RunStepFileSearchToolCallResults
                         )
             assert thread_run is not None
-            run = ai_client.assistants.get_run(thread_id=thread_run.thread_id, run_id=thread_run.id)
+            run = ai_client.get_run(thread_id=thread_run.thread_id, run_id=thread_run.id)
             assert run is not None
         else:
-            run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
 
-        ai_client.assistants.delete_vector_store(vector_store.id)
+        ai_client.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.assistants.list_messages(thread.id)
+        messages = ai_client.list_messages(thread.id)
         assert len(messages)
-        ai_client.assistants.delete_assistant(assistant.id)
+        ai_client.delete_assistant(assistant.id)
         self._remove_file_maybe(file_id, ai_client)
         ai_client.close()
 
@@ -2581,7 +2582,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         self._do_test_message_attachment(data_source=ds, **kwargs)
@@ -2601,14 +2602,14 @@ class TestAssistantClient(AzureRecordedTestCase):
         file_id = self._get_file_id_maybe(ai_client, **kwargs)
 
         # Create assistant with file search tool
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
         )
         assert assistant.id, "Assistant was not created"
 
-        thread = ai_client.assistants.create_thread()
+        thread = ai_client.create_thread()
         assert thread.id, "The thread was not created."
 
         # Create a message with the file search attachment
@@ -2621,7 +2622,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 CodeInterpreterTool().definitions[0],
             ],
         )
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id,
             role="user",
             content="What does the attachment say?",
@@ -2629,12 +2630,12 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id, "The run was not created."
         self._remove_file_maybe(file_id, ai_client)
-        ai_client.assistants.delete_assistant(assistant.id)
+        ai_client.delete_assistant(assistant.id)
 
-        messages = ai_client.assistants.list_messages(thread_id=thread.id)
+        messages = ai_client.list_messages(thread_id=thread.id)
         assert len(messages), "No messages were created"
         ai_client.close()
 
@@ -2644,7 +2645,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def test_create_assistant_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         self._do_test_create_assistant_with_interpreter(data_sources=[ds], **kwargs)
@@ -2665,7 +2666,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.assistants.upload_file_and_poll(
+            file = ai_client.upload_file_and_poll(
                 file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
             )
             assert file.id, "The file was not uploaded."
@@ -2677,7 +2678,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         tr = ToolResources(code_interpreter=cdr)
         # notice that CodeInterpreter must be enabled in the assistant creation, otherwise the assistant will not be able to see the file attachment
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="You are helpful assistant",
@@ -2686,20 +2687,20 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert assistant.id, "Assistant was not created"
 
-        thread = ai_client.assistants.create_thread()
+        thread = ai_client.create_thread()
         assert thread.id, "The thread was not created."
 
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id, "The run was not created."
         self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        ai_client.assistants.delete_assistant(assistant.id)
-        assert len(ai_client.assistants.list_messages(thread_id=thread.id)), "No messages were created"
+        ai_client.delete_assistant(assistant.id)
+        assert len(ai_client.list_messages(thread_id=thread.id)), "No messages were created"
         ai_client.close()
 
     @assistantClientPreparer()
@@ -2708,7 +2709,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def test_create_thread_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         self._do_test_create_thread_with_interpreter(data_sources=[ds], **kwargs)
@@ -2729,7 +2730,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.assistants.upload_file_and_poll(
+            file = ai_client.upload_file_and_poll(
                 file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
             )
             assert file.id, "The file was not uploaded."
@@ -2741,7 +2742,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         tr = ToolResources(code_interpreter=cdr)
         # notice that CodeInterpreter must be enabled in the assistant creation, otherwise the assistant will not be able to see the file attachment
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="You are helpful assistant",
@@ -2749,20 +2750,20 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert assistant.id, "Assistant was not created"
 
-        thread = ai_client.assistants.create_thread(tool_resources=tr)
+        thread = ai_client.create_thread(tool_resources=tr)
         assert thread.id, "The thread was not created."
 
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.id, "The run was not created."
         self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        ai_client.assistants.delete_assistant(assistant.id)
-        messages = ai_client.assistants.list_messages(thread.id)
+        ai_client.delete_assistant(assistant.id)
+        messages = ai_client.list_messages(thread.id)
         assert len(messages)
         ai_client.close()
 
@@ -2777,7 +2778,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         ds = [
             VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
@@ -2790,7 +2791,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             ]
         )
         file_search = FileSearchTool()
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4o",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
@@ -2799,19 +2800,19 @@ class TestAssistantClient(AzureRecordedTestCase):
         )
         assert assistant.id
 
-        thread = ai_client.assistants.create_thread()
+        thread = ai_client.create_thread()
         assert thread.id
         # create message
-        message = ai_client.assistants.create_message(
+        message = ai_client.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.assistants.list_messages(thread.id)
+        messages = ai_client.list_messages(thread.id)
         assert len(messages)
-        ai_client.assistants.delete_assistant(assistant.id)
+        ai_client.delete_assistant(assistant.id)
         ai_client.close()
 
     @assistantClientPreparer()
@@ -2820,7 +2821,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def test_create_attachment_in_thread_azure(self, **kwargs):
         """Create thread with message attachment inline with azure asset IDs."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         self._do_test_create_attachment_in_thread_azure(data_source=ds, **kwargs)
@@ -2840,7 +2841,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         file_id = self._get_file_id_maybe(ai_client, **kwargs)
 
         file_search = FileSearchTool()
-        assistant = ai_client.assistants.create_assistant(
+        assistant = ai_client.create_assistant(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
@@ -2862,14 +2863,14 @@ class TestAssistantClient(AzureRecordedTestCase):
             content="What does the attachment say?",
             attachments=[attachment],
         )
-        thread = ai_client.assistants.create_thread(messages=[message])
+        thread = ai_client.create_thread(messages=[message])
         assert thread.id
 
-        run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.assistants.list_messages(thread.id)
+        messages = ai_client.list_messages(thread.id)
         assert len(messages)
-        ai_client.assistants.delete_assistant(assistant.id)
+        ai_client.delete_assistant(assistant.id)
         ai_client.close()
 
     @assistantClientPreparer()
@@ -2881,12 +2882,10 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # Create AzureAISearchTool
-            connection_name = kwargs.pop(
-                "azure_ai.assistants_assistants_tests_search_connection_name", "my-search-connection-name"
+            conn_id = kwargs.pop(
+                "azure_ai_assistants_tests_search_connection_id", "my-search-connection-ID"
             )
-            connection = client.connections.get(connection_name=connection_name)
-            conn_id = connection.id
-            index_name = kwargs.pop("azure_ai.assistants_assistants_tests_search_index_name", "my-search-index")
+            index_name = kwargs.pop("azure_ai_assistants_tests_search_index_name", "my-search-index")
 
             azure_search_tool = AzureAISearchTool(
                 index_connection_id=conn_id,
@@ -2894,7 +2893,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             )
 
             # Create assistant with the search tool
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4o",
                 name="search-assistant",
                 instructions="You are a helpful assistant that can search for information using Azure AI Search.",
@@ -2905,27 +2904,27 @@ class TestAssistantClient(AzureRecordedTestCase):
             print(f"Created assistant with ID: {assistant.id}")
 
             # Create thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id
             print(f"Created thread with ID: {thread.id}")
 
             # Create message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="Search for information about iPhone prices."
             )
             assert message.id
             print(f"Created message with ID: {message.id}")
 
             # Create and process run
-            run = client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
             # List messages to verify tool was used
-            messages = client.assistants.list_messages(thread_id=thread.id)
+            messages = client.list_messages(thread_id=thread.id)
             assert len(messages.data) > 0
 
             # Clean up
-            client.assistants.delete_assistant(assistant.id)
+            client.delete_assistant(assistant.id)
             print("Deleted assistant")
 
     @assistantClientPreparer()
@@ -2949,18 +2948,18 @@ class TestAssistantClient(AzureRecordedTestCase):
         with self.create_client(**kwargs) as ai_client:
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-            vector_store = ai_client.assistants.create_vector_store_and_poll(
+            vector_store = ai_client.create_vector_store_and_poll(
                 file_ids=[], data_sources=ds, name="my_vectorstore"
             )
-            # vector_store = await ai_client.assistants.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
+            # vector_store = await ai_client.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
             assert vector_store.id
 
             file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-            assistant = ai_client.assistants.create_assistant(
+            assistant = ai_client.create_assistant(
                 model="gpt-4o",
                 name="my-assistant",
                 instructions="Hello, you are helpful assistant and can search information from uploaded files",
@@ -2968,10 +2967,10 @@ class TestAssistantClient(AzureRecordedTestCase):
                 tool_resources=file_search.resources,
             )
             assert assistant.id
-            thread = ai_client.assistants.create_thread()
+            thread = ai_client.create_thread()
             assert thread.id
             # create message
-            message = ai_client.assistants.create_message(
+            message = ai_client.create_message(
                 thread_id=thread.id,
                 role="user",
                 # content="What does the attachment say?"
@@ -2982,7 +2981,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
             if use_stream:
                 run = None
-                with ai_client.assistants.create_stream(
+                with ai_client.create_stream(
                     thread_id=thread.id, assistant_id=assistant.id, include=include
                 ) as stream:
                     for event_type, event_data, _ in stream:
@@ -2992,26 +2991,26 @@ class TestAssistantClient(AzureRecordedTestCase):
                             print("Stream completed.")
                             break
             else:
-                run = ai_client.assistants.create_and_process_run(
+                run = ai_client.create_and_process_run(
                     thread_id=thread.id, assistant_id=assistant.id, include=include
                 )
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
-            steps = ai_client.assistants.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)
+            steps = ai_client.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)
             # The 1st (not 0th) step is a tool call.
             step_id = steps.data[1].id
-            one_step = ai_client.assistants.get_run_step(
+            one_step = ai_client.get_run_step(
                 thread_id=thread.id, run_id=run.id, step_id=step_id, include=include
             )
             self._assert_file_search_valid(one_step.step_details.tool_calls[0], include_content)
             self._assert_file_search_valid(steps.data[1].step_details.tool_calls[0], include_content)
 
-            messages = ai_client.assistants.list_messages(thread_id=thread.id)
+            messages = ai_client.list_messages(thread_id=thread.id)
             assert len(messages)
 
-            ai_client.assistants.delete_vector_store(vector_store.id)
+            ai_client.delete_vector_store(vector_store.id)
             # delete assistant and close client
-            ai_client.assistants.delete_assistant(assistant.id)
+            ai_client.delete_assistant(assistant.id)
             print("Deleted assistant")
             ai_client.close()
 
@@ -3039,7 +3038,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def test_assistants_with_json_schema(self, **kwargs):
         """Test structured output from the assistant."""
         with self.create_client(**kwargs) as ai_client:
-            assistant = ai_client.assistants.create_assistant(
+            assistant = ai_client.create_assistant(
                 # Note only gpt-4o-mini-2024-07-18 and
                 # gpt-4o-2024-08-06 and later support structured output.
                 model="gpt-4o-mini",
@@ -3067,24 +3066,24 @@ class TestAssistantClient(AzureRecordedTestCase):
             )
             assert assistant.id
 
-            thread = ai_client.assistants.create_thread()
+            thread = ai_client.create_thread()
             assert thread.id
 
-            message = ai_client.assistants.create_message(
+            message = ai_client.create_message(
                 thread_id=thread.id,
                 role="user",
                 content=("The mass of the Mars is 6.4171E23 kg"),
             )
             assert message.id
 
-            run = ai_client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
-            del_assistant = ai_client.assistants.delete_assistant(assistant.id)
+            del_assistant = ai_client.delete_assistant(assistant.id)
             assert del_assistant.deleted
 
-            messages = ai_client.assistants.list_messages(thread_id=thread.id)
+            messages = ai_client.list_messages(thread_id=thread.id)
 
             planet_info = []
             # The messages are following in the reverse order,
@@ -3102,7 +3101,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _get_file_id_maybe(self, ai_client: AssistantsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
-            file = ai_client.assistants.upload_file_and_poll(
+            file = ai_client.upload_file_and_poll(
                 file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
             )
             assert file.id, "The file was not uploaded."
@@ -3112,7 +3111,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _remove_file_maybe(self, file_id: str, ai_client: AssistantsClient) -> None:
         """Remove file if we have file ID."""
         if file_id:
-            ai_client.assistants.delete_file(file_id)
+            ai_client.delete_file(file_id)
 
     @assistantClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
@@ -3131,13 +3130,13 @@ class TestAssistantClient(AzureRecordedTestCase):
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
 
-                file: OpenAIFile = client.assistants.upload_file_and_poll(
+                file: OpenAIFile = client.upload_file_and_poll(
                     file_path=test_file_path, purpose=FilePurpose.ASSISTANTS
                 )
 
                 # create assistant
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
-                assistant = client.assistants.create_assistant(
+                assistant = client.create_assistant(
                     model="gpt-4-1106-preview",
                     name="my-assistant",
                     instructions="You are helpful assistant",
@@ -3146,11 +3145,11 @@ class TestAssistantClient(AzureRecordedTestCase):
                 )
                 print(f"Created assistant, assistant ID: {assistant.id}")
 
-                thread = client.assistants.create_thread()
+                thread = client.create_thread()
                 print(f"Created thread, thread ID: {thread.id}")
 
                 # create a message
-                message = client.assistants.create_message(
+                message = client.create_message(
                     thread_id=thread.id,
                     role="user",
                     content="Create an image file same as the text file and give me file id?",
@@ -3158,15 +3157,15 @@ class TestAssistantClient(AzureRecordedTestCase):
                 print(f"Created message, message ID: {message.id}")
 
                 # create run
-                run = client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+                run = client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
                 print(f"Run finished with status: {run.status}")
 
                 # delete file
-                client.assistants.delete_file(file.id)
+                client.delete_file(file.id)
                 print("Deleted file")
 
                 # get messages
-                messages = client.assistants.list_messages(thread_id=thread.id)
+                messages = client.list_messages(thread_id=thread.id)
                 print(f"Messages: {messages}")
 
                 last_msg = messages.get_last_text_message_by_role(MessageRole.ASSISTANT)
@@ -3177,7 +3176,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     file_id = file_path_annotation.file_path.file_id
                     print(f"Image File ID: {file_path_annotation.file_path.file_id}")
                     temp_file_path = os.path.join(temp_dir, "output.png")
-                    client.assistants.save_file(file_id=file_id, file_name="output.png", target_dir=temp_dir)
+                    client.save_file(file_id=file_id, file_name="output.png", target_dir=temp_dir)
                     output_file_exist = os.path.exists(temp_file_path)
 
             assert output_file_exist
@@ -3189,7 +3188,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         # Note: This test was recorded in westus region as for now
         # 2025-02-05 it is not supported in test region (East US 2)
         # create client
-        storage_queue = kwargs["azure_ai.assistants_assistants_tests_storage_queue"]
+        storage_queue = kwargs["azure_ai_assistants_tests_storage_queue"]
         with self.create_client(**kwargs) as client:
             azure_function_tool = AzureFunctionTool(
                 name="foo",
@@ -3210,7 +3209,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     storage_service_endpoint=storage_queue,
                 ),
             )
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4",
                 name="azure-function-assistant-foo",
                 instructions=(
@@ -3226,29 +3225,29 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert assistant.id, "The assistant was not created"
 
             # Create a thread
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id, "The thread was not created."
 
             # Create a message
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id,
                 role="user",
                 content="What is the most prevalent element in the universe? What would foo say?",
             )
             assert message.id, "The message was not created."
 
-            run = client.assistants.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+            run = client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
-            messages = client.assistants.list_messages(thread_id=thread.id)
+            messages = client.list_messages(thread_id=thread.id)
             assert len(messages.text_messages) > 1, "No messages were received from assistant."
 
             # Check that we have function response in at least one message.
             assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
 
             # Delete the assistant once done
-            result = client.assistants.delete_assistant(assistant.id)
+            result = client.delete_assistant(assistant.id)
             assert result.deleted, "The assistant was not deleted."
 
     @assistantClientPreparer()
@@ -3259,16 +3258,16 @@ class TestAssistantClient(AzureRecordedTestCase):
         with self.create_client(**kwargs) as client:
 
             # [START create_assistant]
-            assistant = client.assistants.create_assistant(
+            assistant = client.create_assistant(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
                 instructions="You are a personal electronics tutor. Write and run code to answer questions.",
             )
             assert assistant.id, "The assistant was not created."
-            thread = client.assistants.create_thread()
+            thread = client.create_thread()
             assert thread.id, "Thread was not created"
 
-            message = client.assistants.create_message(
+            message = client.create_message(
                 thread_id=thread.id, role="user", content="What is the equation of light energy?"
             )
             assert message.id, "The message was not created."
@@ -3277,7 +3276,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 ThreadMessageOptions(role=MessageRole.ASSISTANT, content="E=mc^2"),
                 ThreadMessageOptions(role=MessageRole.USER, content="What is the impedance formula?"),
             ]
-            run = client.assistants.create_run(
+            run = client.create_run(
                 thread_id=thread.id, assistant_id=assistant.id, additional_messages=additional_messages
             )
 
@@ -3285,12 +3284,12 @@ class TestAssistantClient(AzureRecordedTestCase):
             while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS]:
                 # wait for a second
                 time.sleep(1)
-                run = client.assistants.get_run(
+                run = client.get_run(
                     thread_id=thread.id,
                     run_id=run.id,
                 )
             assert run.status in RunStatus.COMPLETED
 
-            assert client.assistants.delete_assistant(assistant.id).deleted, "The assistant was not deleted"
-            messages = client.assistants.list_messages(thread_id=thread.id)
+            assert client.delete_assistant(assistant.id).deleted, "The assistant was not deleted"
+            messages = client.list_messages(thread_id=thread.id)
             assert len(messages.data), "The data from the assistant was not received."

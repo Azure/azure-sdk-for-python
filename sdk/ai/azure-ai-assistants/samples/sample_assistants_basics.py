@@ -16,8 +16,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
-       Azure AI Foundry project.
+    1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
@@ -28,9 +27,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import ListSortOrder, MessageTextContent
 
 # [START create_project_client]
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 # [END create_project_client]
 
@@ -74,7 +73,7 @@ with assistants_client:
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.
-    for data_point in reversed(messages.data):
+    for data_point in messages.data:
         last_message_content = data_point.content[-1]
         if isinstance(last_message_content, MessageTextContent):
             print(f"{data_point.role}: {last_message_content.text.value}")

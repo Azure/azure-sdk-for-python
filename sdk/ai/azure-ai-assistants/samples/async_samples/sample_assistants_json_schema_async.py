@@ -15,7 +15,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity pydantic
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
 """
 
 import asyncio
@@ -48,9 +48,9 @@ class Planet(BaseModel):
 
 async def main():
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
         ) as assistants_client:
 
             # [START create_assistant]

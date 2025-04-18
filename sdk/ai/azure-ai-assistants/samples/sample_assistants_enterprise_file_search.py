@@ -14,8 +14,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity azure-ai-ml
 
     Set these environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
-       Azure AI Foundry project.
+    1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
@@ -25,15 +24,16 @@ from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:
 
     # [START upload_file_and_create_assistant_with_file_search]
     # We will upload the local file to Azure and will use it for vector store creation.
-    _, asset_uri = assistants_client.upload_file_to_azure_blob("./product_info_1.md")
+    asset_uri = os.environ["AZURE_BLOB_URI"]
 
     # Create a vector store with no file and wait for it to be processed
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)

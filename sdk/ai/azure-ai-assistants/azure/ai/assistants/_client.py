@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,18 +26,9 @@ if TYPE_CHECKING:
 class AssistantsClient(AssistantsClientOperationsMixin):
     """AssistantsClient.
 
-    :param endpoint: The Azure AI Foundry project endpoint, in the form
-     ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
-     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
-     the Enterprise private link. Required.
+    :param endpoint: Project endpoint in the form of:
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
-    :param subscription_id: The Azure subscription ID. Required.
-    :type subscription_id: str
-    :param resource_group_name: The name of the Azure Resource Group. Required.
-    :type resource_group_name: str
-    :param project_name: The Azure AI Foundry project name. Required.
-    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
@@ -49,24 +39,9 @@ class AssistantsClient(AssistantsClientOperationsMixin):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        subscription_id: str,
-        resource_group_name: str,
-        project_name: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
-        **kwargs: Any
-    ) -> None:
-        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"
-        self._config = AssistantsClientConfiguration(
-            endpoint=endpoint,
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-            project_name=project_name,
-            credential=credential,
-            **kwargs
-        )
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = AssistantsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -111,15 +86,6 @@ class AssistantsClient(AssistantsClientOperationsMixin):
         request_copy = deepcopy(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

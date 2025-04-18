@@ -17,8 +17,7 @@ USAGE:
     pip install azure-ai-assistants azure-identity opentelemetry-sdk azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
-       Azure AI Foundry project.
+    1) PROJECT_ENDPOINT - the Azure AI Assistants endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
@@ -34,8 +33,9 @@ from azure.ai.assistants.models import FunctionTool, RequiredFunctionToolCall, S
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 # Enable Azure Monitor tracing
