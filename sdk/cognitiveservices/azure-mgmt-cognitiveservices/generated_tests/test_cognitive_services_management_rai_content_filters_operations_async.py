@@ -21,7 +21,7 @@ class TestCognitiveServicesManagementRaiContentFiltersOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_rai_content_filters_list(self, resource_group):
         response = self.client.rai_content_filters.list(
             location="str",
             api_version="2024-10-01",
@@ -32,7 +32,7 @@ class TestCognitiveServicesManagementRaiContentFiltersOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_rai_content_filters_get(self, resource_group):
         response = await self.client.rai_content_filters.get(
             location="str",
             filter_name="str",

@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_commitment_plans_list(self, resource_group):
         response = self.client.commitment_plans.list(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -32,7 +32,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_commitment_plans_get(self, resource_group):
         response = self.client.commitment_plans.get(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -45,7 +45,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_commitment_plans_create_or_update(self, resource_group):
         response = self.client.commitment_plans.create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -105,7 +105,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_commitment_plans_begin_delete(self, resource_group):
         response = self.client.commitment_plans.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -118,7 +118,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_plan(self, resource_group):
+    def test_commitment_plans_begin_create_or_update_plan(self, resource_group):
         response = self.client.commitment_plans.begin_create_or_update_plan(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -177,7 +177,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_plan(self, resource_group):
+    def test_commitment_plans_begin_update_plan(self, resource_group):
         response = self.client.commitment_plans.begin_update_plan(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -193,7 +193,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_plan(self, resource_group):
+    def test_commitment_plans_begin_delete_plan(self, resource_group):
         response = self.client.commitment_plans.begin_delete_plan(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -205,7 +205,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_plan(self, resource_group):
+    def test_commitment_plans_get_plan(self, resource_group):
         response = self.client.commitment_plans.get_plan(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -217,7 +217,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_plans_by_resource_group(self, resource_group):
+    def test_commitment_plans_list_plans_by_resource_group(self, resource_group):
         response = self.client.commitment_plans.list_plans_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-10-01",
@@ -228,7 +228,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_plans_by_subscription(self, resource_group):
+    def test_commitment_plans_list_plans_by_subscription(self, resource_group):
         response = self.client.commitment_plans.list_plans_by_subscription(
             api_version="2024-10-01",
         )
@@ -238,7 +238,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_associations(self, resource_group):
+    def test_commitment_plans_list_associations(self, resource_group):
         response = self.client.commitment_plans.list_associations(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -250,7 +250,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_association(self, resource_group):
+    def test_commitment_plans_get_association(self, resource_group):
         response = self.client.commitment_plans.get_association(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -263,7 +263,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_association(self, resource_group):
+    def test_commitment_plans_begin_create_or_update_association(self, resource_group):
         response = self.client.commitment_plans.begin_create_or_update_association(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
@@ -292,7 +292,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_association(self, resource_group):
+    def test_commitment_plans_begin_delete_association(self, resource_group):
         response = self.client.commitment_plans.begin_delete_association(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",

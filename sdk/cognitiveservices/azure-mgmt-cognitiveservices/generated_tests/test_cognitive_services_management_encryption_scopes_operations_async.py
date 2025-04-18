@@ -21,7 +21,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_encryption_scopes_list(self, resource_group):
         response = self.client.encryption_scopes.list(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -33,7 +33,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_encryption_scopes_get(self, resource_group):
         response = await self.client.encryption_scopes.get(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -46,7 +46,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_encryption_scopes_create_or_update(self, resource_group):
         response = await self.client.encryption_scopes.create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -85,7 +85,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_encryption_scopes_begin_delete(self, resource_group):
         response = await (
             await self.client.encryption_scopes.begin_delete(
                 resource_group_name=resource_group.name,
