@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,12 +20,38 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_virtual_machine_extensions_list(self, resource_group):
+        response = self.client.virtual_machine_extensions.list(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_extensions_get(self, resource_group):
+        response = self.client.virtual_machine_extensions.get(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            vm_extension_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_virtual_machine_extensions_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_extensions.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
             extension_parameters={
+                "location": "str",
                 "autoUpgradeMinorVersion": bool,
                 "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
@@ -53,7 +79,6 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                "location": "str",
                 "name": "str",
                 "protectedSettings": {},
                 "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -62,6 +87,14 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
                 "publisher": "str",
                 "settings": {},
                 "suppressFailures": bool,
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
                 "typeHandlerVersion": "str",
@@ -107,31 +140,6 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
             vm_extension_name="str",
             api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_extensions_get(self, resource_group):
-        response = self.client.virtual_machine_extensions.get(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            vm_extension_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_extensions_list(self, resource_group):
-        response = self.client.virtual_machine_extensions.list(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-11-01",
-        )
 
         # please add some check logic here by yourself
         # ...

@@ -7,19 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
+import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ApiError(_serialization.Model):
@@ -128,7 +124,7 @@ class CloudService(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar properties: Cloud service properties.
     :vartype properties: ~azure.mgmt.compute.v2024_11_04.models.CloudServiceProperties
-    :ivar system_data: The system meta data relating to this resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.compute.v2024_11_04.models.SystemData
     :ivar zones: List of logical availability zone of the resource. List should contain only 1 zone
      where cloud service should be provisioned. This field is optional.
@@ -140,6 +136,7 @@ class CloudService(_serialization.Model):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -159,7 +156,6 @@ class CloudService(_serialization.Model):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.CloudServiceProperties"] = None,
-        system_data: Optional["_models.SystemData"] = None,
         zones: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
@@ -170,20 +166,18 @@ class CloudService(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword properties: Cloud service properties.
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.CloudServiceProperties
-        :keyword system_data: The system meta data relating to this resource.
-        :paramtype system_data: ~azure.mgmt.compute.v2024_11_04.models.SystemData
         :keyword zones: List of logical availability zone of the resource. List should contain only 1
          zone where cloud service should be provisioned. This field is optional.
         :paramtype zones: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
         self.properties = properties
-        self.system_data = system_data
+        self.system_data: Optional["_models.SystemData"] = None
         self.zones = zones
 
 
@@ -337,7 +331,7 @@ class CloudServiceExtensionProperties(_serialization.Model):
         self.protected_settings = protected_settings
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
         self.force_update_tag = force_update_tag
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.roles_applied_to = roles_applied_to
 
 
@@ -379,9 +373,9 @@ class CloudServiceInstanceView(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.role_instance = role_instance
-        self.sdk_version = None
-        self.private_ids = None
-        self.statuses = None
+        self.sdk_version: Optional[str] = None
+        self.private_ids: Optional[List[str]] = None
+        self.statuses: Optional[List["_models.ResourceInstanceViewStatus"]] = None
 
 
 class CloudServiceListResult(_serialization.Model):
@@ -642,8 +636,8 @@ class CloudServiceProperties(_serialization.Model):
         self.os_profile = os_profile
         self.network_profile = network_profile
         self.extension_profile = extension_profile
-        self.provisioning_state = None
-        self.unique_id = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_id: Optional[str] = None
 
 
 class CloudServiceRole(_serialization.Model):
@@ -695,10 +689,10 @@ class CloudServiceRole(_serialization.Model):
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.CloudServiceRoleProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
         self.sku = sku
         self.properties = properties
 
@@ -810,7 +804,7 @@ class CloudServiceRoleProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.unique_id = None
+        self.unique_id: Optional[str] = None
 
 
 class CloudServiceRoleSku(_serialization.Model):
@@ -1089,8 +1083,8 @@ class InstanceSku(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.tier = None
+        self.name: Optional[str] = None
+        self.tier: Optional[str] = None
 
 
 class InstanceViewStatusesSummary(_serialization.Model):
@@ -1113,7 +1107,7 @@ class InstanceViewStatusesSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.statuses_summary = None
+        self.statuses_summary: Optional[List["_models.StatusCodeCount"]] = None
 
 
 class LoadBalancerConfiguration(_serialization.Model):
@@ -1319,10 +1313,10 @@ class OSFamily(_serialization.Model):
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.OSFamilyProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
         self.properties = properties
 
 
@@ -1388,9 +1382,9 @@ class OSFamilyProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.label = None
-        self.versions = None
+        self.name: Optional[str] = None
+        self.label: Optional[str] = None
+        self.versions: Optional[List["_models.OSVersionPropertiesBase"]] = None
 
 
 class OSVersion(_serialization.Model):
@@ -1431,10 +1425,10 @@ class OSVersion(_serialization.Model):
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.OSVersionProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
         self.properties = properties
 
 
@@ -1512,12 +1506,12 @@ class OSVersionProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.family = None
-        self.family_label = None
-        self.version = None
-        self.label = None
-        self.is_default = None
-        self.is_active = None
+        self.family: Optional[str] = None
+        self.family_label: Optional[str] = None
+        self.version: Optional[str] = None
+        self.label: Optional[str] = None
+        self.is_default: Optional[bool] = None
+        self.is_active: Optional[bool] = None
 
 
 class OSVersionPropertiesBase(_serialization.Model):
@@ -1552,10 +1546,10 @@ class OSVersionPropertiesBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.version = None
-        self.label = None
-        self.is_default = None
-        self.is_active = None
+        self.version: Optional[str] = None
+        self.label: Optional[str] = None
+        self.is_default: Optional[bool] = None
+        self.is_active: Optional[bool] = None
 
 
 class Resource(_serialization.Model):
@@ -1600,9 +1594,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1645,10 +1639,10 @@ class ResourceInstanceViewStatus(_serialization.Model):
         :paramtype level: str or ~azure.mgmt.compute.v2024_11_04.models.StatusLevelTypes
         """
         super().__init__(**kwargs)
-        self.code = None
-        self.display_status = None
-        self.message = None
-        self.time = None
+        self.code: Optional[str] = None
+        self.display_status: Optional[str] = None
+        self.message: Optional[str] = None
+        self.time: Optional[datetime.datetime] = None
         self.level = level
 
 
@@ -1692,9 +1686,9 @@ class ResourceWithOptionalLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -1751,11 +1745,11 @@ class RoleInstance(_serialization.Model):
         :paramtype properties: ~azure.mgmt.compute.v2024_11_04.models.RoleInstanceProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
-        self.tags = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
+        self.tags: Optional[Dict[str, str]] = None
         self.sku = sku
         self.properties = properties
 
@@ -1815,7 +1809,7 @@ class RoleInstanceNetworkProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.network_interfaces = None
+        self.network_interfaces: Optional[List["_models.SubResource"]] = None
 
 
 class RoleInstanceProperties(_serialization.Model):
@@ -1912,10 +1906,10 @@ class RoleInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.platform_update_domain = None
-        self.platform_fault_domain = None
-        self.private_id = None
-        self.statuses = None
+        self.platform_update_domain: Optional[int] = None
+        self.platform_fault_domain: Optional[int] = None
+        self.private_id: Optional[str] = None
+        self.statuses: Optional[List["_models.ResourceInstanceViewStatus"]] = None
 
 
 class StatusCodeCount(_serialization.Model):
@@ -1942,8 +1936,8 @@ class StatusCodeCount(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.count = None
+        self.code: Optional[str] = None
+        self.count: Optional[int] = None
 
 
 class SubResource(_serialization.Model):
@@ -1986,10 +1980,74 @@ class SubResourceReadOnly(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_04.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class SystemDataAutoGenerated(_serialization.Model):
     """The system meta data relating to this resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2015,8 +2073,8 @@ class SystemData(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.created_at = None
-        self.last_modified_at = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.last_modified_at: Optional[datetime.datetime] = None
 
 
 class UpdateDomain(_serialization.Model):
@@ -2043,8 +2101,8 @@ class UpdateDomain(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class UpdateDomainListResult(_serialization.Model):
@@ -2105,5 +2163,5 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
