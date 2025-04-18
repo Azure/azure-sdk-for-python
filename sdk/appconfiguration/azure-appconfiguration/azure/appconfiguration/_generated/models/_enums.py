@@ -31,6 +31,35 @@ class ConfigurationSettingFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Etag field."""
 
 
+class FeatureFlagFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature Flag fields."""
+
+    NAME = "name"
+    """Name field."""
+    ALIAS = "alias"
+    """Alias field."""
+    LABEL = "label"
+    """Label field."""
+    DESCRIPTION = "description"
+    """Description field."""
+    ENABLED = "enabled"
+    """Enabled field."""
+    CONDITIONS = "conditions"
+    """Conditions field."""
+    VARIANTS = "variants"
+    """Variants field."""
+    ALLOCATION = "allocation"
+    """Allocation field."""
+    TELEMETRY = "telemetry"
+    """Telemetry field."""
+    TAGS = "tags"
+    """Tags field."""
+    LAST_MODIFIED = "last_modified"
+    """Last modified field."""
+    ETAG = "etag"
+    """Etag field."""
+
+
 class LabelFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Label fields."""
 
@@ -51,6 +80,15 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
+
+
+class RequirementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Requirement Type."""
+
+    ANY = "Any"
+    """Any."""
+    ALL = "All"
+    """All."""
 
 
 class SnapshotComposition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -100,3 +138,14 @@ class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Archived"""
     FAILED = "failed"
     """Failed"""
+
+
+class StatusOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status Override."""
+
+    NONE = "None"
+    """None."""
+    ENABLED = "Enabled"
+    """Enabled."""
+    DISABLED = "Disabled"
+    """Disabled."""
