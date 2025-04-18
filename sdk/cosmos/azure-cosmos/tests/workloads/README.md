@@ -1,7 +1,7 @@
 ## SDK Scale Testing
 This directory contains the scale testing workloads for the SDK. The workloads are designed to test the performance 
 and scalability of the SDK under various conditions. There are different types of workloads and each will create a log 
-file when run. These logs are named in this format. 
+file when run. These logs are named in this format `<file name>-<process id>-<date time>.log`. 
 
 ## Setup VM
 1. Create a VM in Azure with the following configuration:
@@ -38,4 +38,3 @@ file when run. These logs are named in this format.
 ## Monitor Run
 - `ps -eaf | grep "python3"` to see the running processes
 - `tail -f <log_file>` to see the logs in real time 
-- `pkill -f "python3"` This will stop all the running python processes
