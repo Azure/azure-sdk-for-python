@@ -3,6 +3,7 @@
 ### 4.10.0b5 (Unreleased)
 
 #### Features Added
+* Added ability to use Filters from Logging module on Diagnostics Logging based on Http request/response related attributes. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897)
 
 #### Breaking Changes
 
@@ -11,7 +12,9 @@
 * Fixed health check to check the first write region when it is not specified in the preferred regions. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
 
 #### Other Changes
+* Optimized Diagnostics Logging by reducing time spent on logging. Logged Errors are more readable and formatted. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897)
 * Health checks are now done concurrently and for all regions for async apis. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
+
 
 ### 4.10.0b4 (2025-04-01)
 
