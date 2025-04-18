@@ -185,7 +185,9 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result[f"{metric_name}_result"] = (
                     metric_value >= self._threshold_metrics[metric_name]
                 )
-                result[f"{metric_name}_threshold"] = self._threshold_metrics[metric_name]
+                result[f"{metric_name}_threshold"] = self._threshold_metrics[
+                    metric_name
+                ]
                 result[f"{metric_name}_lower_is_better"] = False
 
             elif metric_name in self._threshold_holes.keys():
@@ -210,14 +212,16 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         qrels = [
             RetrievalGroundTruthDocument(
                 document_id=x.get("document_id"),
-                query_relevance_label=x.get("query_relevance_label")
-            ) for x in retrieval_ground_truth
+                query_relevance_label=x.get("query_relevance_label"),
+            )
+            for x in retrieval_ground_truth
         ]
         results = [
             RetrievedDocument(
                 document_id=x.get("document_id"),
-                relevance_score=x.get("relevance_score")
-            ) for x in retrieved_documents
+                relevance_score=x.get("relevance_score"),
+            )
+            for x in retrieved_documents
         ]
 
         if len(qrels) > 10000 or len(results) > 10000:
@@ -318,7 +322,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return metrics
 
     @overload
-    def __call__( # type: ignore
+    def __call__(  # type: ignore
         self,
         *,
         retrieval_ground_truth: List[RetrievalGroundTruthDocument],
@@ -334,9 +338,5 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         """
 
     @override
-    def __call__(
-        self,
-        *args, 
-        **kwargs
-    ):
+    def __call__(self, *args, **kwargs):
         return super().__call__(*args, **kwargs)
