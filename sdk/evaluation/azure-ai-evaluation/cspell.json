@@ -5,6 +5,7 @@
         "xdcg",
         "XDCG",
         "idcg",
+        "qrel",
         "qrels"
     ],
     "ignoreWords": [
