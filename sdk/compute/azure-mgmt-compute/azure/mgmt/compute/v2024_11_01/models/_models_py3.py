@@ -7292,7 +7292,7 @@ class RestorePointSourceVMDataDisk(_serialization.Model):
         self.write_accelerator_enabled: Optional[bool] = None
 
 
-class RestorePointSourceVmosDisk(_serialization.Model):
+class RestorePointSourceVMOSDisk(_serialization.Model):
     """Describes an Operating System disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7366,7 +7366,7 @@ class RestorePointSourceVMStorageProfile(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar os_disk: Gets the OS disk of the VM captured at the time of the restore point creation.
-    :vartype os_disk: ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVmosDisk
+    :vartype os_disk: ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVMOSDisk
     :ivar data_disks: Gets the data disks of the VM captured at the time of the restore point
      creation.
     :vartype data_disks: list[~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVMDataDisk]
@@ -7381,7 +7381,7 @@ class RestorePointSourceVMStorageProfile(_serialization.Model):
     }
 
     _attribute_map = {
-        "os_disk": {"key": "osDisk", "type": "RestorePointSourceVmosDisk"},
+        "os_disk": {"key": "osDisk", "type": "RestorePointSourceVMOSDisk"},
         "data_disks": {"key": "dataDisks", "type": "[RestorePointSourceVMDataDisk]"},
         "disk_controller_type": {"key": "diskControllerType", "type": "str"},
     }
@@ -7389,14 +7389,14 @@ class RestorePointSourceVMStorageProfile(_serialization.Model):
     def __init__(
         self,
         *,
-        os_disk: Optional["_models.RestorePointSourceVmosDisk"] = None,
+        os_disk: Optional["_models.RestorePointSourceVMOSDisk"] = None,
         data_disks: Optional[List["_models.RestorePointSourceVMDataDisk"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword os_disk: Gets the OS disk of the VM captured at the time of the restore point
          creation.
-        :paramtype os_disk: ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVmosDisk
+        :paramtype os_disk: ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVMOSDisk
         :keyword data_disks: Gets the data disks of the VM captured at the time of the restore point
          creation.
         :paramtype data_disks:
@@ -9695,11 +9695,9 @@ class VirtualMachine(TrackedResource):
      the VM is part of the VMSS. This property is used by platform for internal resource group
      delete optimization.
     :vartype managed_by: str
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
-     the normal etag convention.  Entity tags are used for comparing two or more entities from the
-     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
-     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :ivar etag: Etag is property returned in Create/Update/Get response of the VM, so that customer
+     can supply it in the header to ensure optimistic updates.
+    :vartype etag: str
     :ivar placement: Placement section specifies the user-defined constraints for virtual machine
      hardware placement. This property cannot be changed once VM is provisioned. Minimum
      api-version: 2024-11-01.
@@ -9825,7 +9823,7 @@ class VirtualMachine(TrackedResource):
         "location": {"required": True},
         "resources": {"readonly": True},
         "managed_by": {"readonly": True},
-        "e_tag": {"readonly": True},
+        "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "instance_view": {"readonly": True},
         "vm_id": {"readonly": True},
@@ -9845,7 +9843,7 @@ class VirtualMachine(TrackedResource):
         "zones": {"key": "zones", "type": "[str]"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "managed_by": {"key": "managedBy", "type": "str"},
-        "e_tag": {"key": "eTag", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
         "placement": {"key": "placement", "type": "Placement"},
         "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
         "scheduled_events_policy": {"key": "properties.scheduledEventsPolicy", "type": "ScheduledEventsPolicy"},
@@ -10043,7 +10041,7 @@ class VirtualMachine(TrackedResource):
         self.zones = zones
         self.extended_location = extended_location
         self.managed_by: Optional[str] = None
-        self.e_tag: Optional[str] = None
+        self.etag: Optional[str] = None
         self.placement = placement
         self.hardware_profile = hardware_profile
         self.scheduled_events_policy = scheduled_events_policy
@@ -12606,11 +12604,9 @@ class VirtualMachineScaleSet(TrackedResource):
     :vartype zones: list[str]
     :ivar extended_location: The extended location of the Virtual Machine Scale Set.
     :vartype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
-     the normal etag convention.  Entity tags are used for comparing two or more entities from the
-     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
-     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :ivar etag: Etag is property returned in Create/Update/Get response of the VMSS, so that
+     customer can supply it in the header to ensure optimistic updates.
+    :vartype etag: str
     :ivar upgrade_policy: The upgrade policy.
     :vartype upgrade_policy: ~azure.mgmt.compute.v2024_11_01.models.UpgradePolicy
     :ivar scheduled_events_policy: The ScheduledEventsPolicy.
@@ -12687,7 +12683,7 @@ class VirtualMachineScaleSet(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "e_tag": {"readonly": True},
+        "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "unique_id": {"readonly": True},
         "time_created": {"readonly": True},
@@ -12705,7 +12701,7 @@ class VirtualMachineScaleSet(TrackedResource):
         "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
         "zones": {"key": "zones", "type": "[str]"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "e_tag": {"key": "eTag", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
         "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
         "scheduled_events_policy": {"key": "properties.scheduledEventsPolicy", "type": "ScheduledEventsPolicy"},
         "automatic_repairs_policy": {"key": "properties.automaticRepairsPolicy", "type": "AutomaticRepairsPolicy"},
@@ -12865,7 +12861,7 @@ class VirtualMachineScaleSet(TrackedResource):
         self.identity = identity
         self.zones = zones
         self.extended_location = extended_location
-        self.e_tag: Optional[str] = None
+        self.etag: Optional[str] = None
         self.upgrade_policy = upgrade_policy
         self.scheduled_events_policy = scheduled_events_policy
         self.automatic_repairs_policy = automatic_repairs_policy

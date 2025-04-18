@@ -5630,7 +5630,7 @@ class DiskRestorePointOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-03-02"))
-        cls: ClsType[_models.DiskRestorePointListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DiskRestorePointList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5672,7 +5672,7 @@ class DiskRestorePointOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("DiskRestorePointListResult", pipeline_response)
+            deserialized = self._deserialize("DiskRestorePointList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore

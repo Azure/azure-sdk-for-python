@@ -1442,8 +1442,8 @@ class DiskRestorePoint(ProxyResource):
         self.logical_sector_size: Optional[int] = None
 
 
-class DiskRestorePointListResult(_serialization.Model):
-    """Paged collection of DiskRestorePoint items.
+class DiskRestorePointList(_serialization.Model):
+    """The List Disk Restore Points operation response.
 
     All required parameters must be populated in order to send to server.
 

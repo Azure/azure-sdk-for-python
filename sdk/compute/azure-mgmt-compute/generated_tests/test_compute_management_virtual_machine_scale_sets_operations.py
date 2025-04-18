@@ -74,7 +74,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
                 "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                 "constrainedMaximumCapacity": bool,
                 "doNotRunExtensionsOnOverprovisionedVMs": bool,
-                "eTag": "str",
+                "etag": "str",
                 "extendedLocation": {"name": "str", "type": "str"},
                 "hostGroup": {"id": "str"},
                 "id": "str",

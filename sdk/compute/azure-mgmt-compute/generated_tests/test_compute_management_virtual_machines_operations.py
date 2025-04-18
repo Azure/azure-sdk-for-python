@@ -88,7 +88,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 "billingProfile": {"maxPrice": 0.0},
                 "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
                 "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
-                "eTag": "str",
+                "etag": "str",
                 "evictionPolicy": "str",
                 "extendedLocation": {"name": "str", "type": "str"},
                 "extensionsTimeBudget": "str",
