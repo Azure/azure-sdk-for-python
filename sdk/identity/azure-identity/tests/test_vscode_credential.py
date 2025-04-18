@@ -22,7 +22,6 @@ GET_REFRESH_TOKEN = VisualStudioCodeCredential.__module__ + ".get_refresh_token"
 GET_USER_SETTINGS = VisualStudioCodeCredential.__module__ + ".get_user_settings"
 
 
-@pytest.mark.skip(reason="VS code credential is disabled")
 def get_credential(user_settings=None, **kwargs):
     # defaulting to empty user settings ensures tests work when real user settings are available
     with mock.patch(GET_USER_SETTINGS, lambda: user_settings or {}):
@@ -361,3 +360,8 @@ def test_multitenant_authentication_not_allowed():
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
+
+
+def test_deprecation_warning():
+    with pytest.deprecated_call():
+        get_credential()

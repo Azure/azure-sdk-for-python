@@ -351,3 +351,8 @@ async def test_multitenant_authentication_not_allowed():
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
+
+
+def test_deprecation_warning():
+    with pytest.deprecated_call():
+        get_credential()

@@ -6,6 +6,7 @@ import abc
 import os
 import sys
 from typing import cast, Any, Dict, Optional
+import warnings
 
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
@@ -26,6 +27,14 @@ else:
 
 class _VSCodeCredentialBase(abc.ABC):
     def __init__(self, **kwargs: Any) -> None:
+        warnings.warn(
+            "This credential is deprecated because the Azure Account extension for Visual Studio Code, which this "
+            "credential relies on, has been deprecated. See the Azure Account extension deprecation notice here: "
+            "https://github.com/microsoft/vscode-azure-account/issues/964. Consider using other developer credentials "
+            "such as AzureCliCredential, AzureDeveloperCliCredential, or AzurePowerShellCredential.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
@@ -107,10 +116,10 @@ class _VSCodeCredentialBase(abc.ABC):
 class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
 
-    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
-    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
-    versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
-    authenticating with :class:`AzureCliCredential`.
+    **Deprecated**: This credential is deprecated because the Azure Account extension for Visual Studio Code, which
+    this credential relies on, has been deprecated. See the Azure Account extension deprecation notice here:
+    https://github.com/microsoft/vscode-azure-account/issues/964. Consider using other developer credentials such as
+    AzureCliCredential, AzureDeveloperCliCredential, or AzurePowerShellCredential.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
