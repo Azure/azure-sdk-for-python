@@ -4,7 +4,7 @@
 import math
 import operator
 from itertools import starmap
-from typing import Dict, List, TypedDict, Optional
+from typing import Dict, List, TypedDict, Tuple, Optional
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
@@ -16,28 +16,6 @@ RetrievalGroundTruthDocument = TypedDict(
 
 RetrievedDocument = TypedDict(
     "RetrievedDocument", {"document_id": str, "relevance_score": float}
-)
-
-DocumentRetrievalMetrics = TypedDict(
-    "DocumentRetrievalMetrics",
-    {
-        "ndcg@3": float,
-        "ndcg@3_result": bool,
-        "xdcg@3": float,
-        "xdcg@3_result": bool,
-        "fidelity": float,
-        "fidelity_result": bool,
-        "top1_relevance": float,
-        "top1_relevance_result": bool,
-        "top3_max_relevance": float,
-        "top3_max_relevance_result": bool,
-        "holes": int,
-        "holes_result": bool,
-        "holes_ratio": float,
-        "holes_ratio_result": bool,
-        "total_retrieved_documents": int,
-        "total_groundtruth_documents": int,
-    },
 )
 
 
@@ -56,6 +34,22 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         super().__init__()
         self.k = 3
         self.xdcg_discount_factor = 0.6
+
+        if groundtruth_label_min >= groundtruth_label_max:
+            raise EvaluationException(
+                "The ground truth label maximum must be strictly greater than the ground truth label minimum."
+            )
+
+        if not isinstance(groundtruth_label_min, int):
+            raise EvaluationException(
+                "The ground truth label minimum must be an integer value."
+            )
+
+        if not isinstance(groundtruth_label_max, int):
+            raise EvaluationException(
+                "The ground truth label maximum must be an integer value."
+            )
+
         self.groundtruth_label_min = groundtruth_label_min
         self.groundtruth_label_max = groundtruth_label_max
 
@@ -143,6 +137,8 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         """
 
         def calculate_weighted_sum_by_rating(labels: List[int]) -> float:
+            # here we assume that the configured groundtruth label minimum translates to "irrelevant",
+            # so we exclude documents with that label from the calculation.
             s = self.groundtruth_label_min + 1
 
             # get a count of each label
@@ -202,36 +198,96 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
 
         return result
 
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+    def _validate_eval_input(
+        self, eval_input: Dict
+    ) -> Tuple[List[RetrievalGroundTruthDocument], List[RetrievedDocument]]:
         retrieval_ground_truth = eval_input.get("retrieval_ground_truth")
         retrieved_documents = eval_input.get("retrieved_documents")
 
         if not retrieval_ground_truth or not retrieved_documents:
             raise EvaluationException("One or more inputs is missing.")
 
-        qrels = [
-            RetrievalGroundTruthDocument(
-                document_id=x.get("document_id"),
-                query_relevance_label=x.get("query_relevance_label"),
-            )
-            for x in retrieval_ground_truth
-        ]
-        results = [
-            RetrievedDocument(
-                document_id=x.get("document_id"),
-                relevance_score=x.get("relevance_score"),
-            )
-            for x in retrieved_documents
-        ]
+        qrels = []
+
+        # validate the qrels to be sure they are the correct type and are bounded by the given configuration
+        for qrel in retrieval_ground_truth:
+            document_id = qrel.get("document_id")
+            query_relevance_label = qrel.get("query_relevance_label")
+
+            if not document_id or not query_relevance_label:
+                raise EvaluationException(
+                    (
+                        "Invalid input data was found in the retrieval ground truth."
+                        "Ensure that all items in the 'retrieval_ground_truth' array contain "
+                        "'document_id' and 'query_relevance_label' properties."
+                    )
+                )
+
+            if not isinstance(query_relevance_label, int):
+                raise EvaluationException(
+                    "Query relevance labels must be integer values."
+                )
+
+            if query_relevance_label < self.groundtruth_label_min:
+                raise EvaluationException(
+                    (
+                        "A query relevance label less than the configured minimum value was detected in the evaluation input data."
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_minimum to "
+                        "the appropriate value for your data."
+                    )
+                )
+
+            if query_relevance_label > self.groundtruth_label_max:
+                raise EvaluationException(
+                    (
+                        "A query relevance label greater than the configured maximum value was detected in the evaluation input data. "
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_maximum to "
+                        "the appropriate value for your data."
+                    )
+                )
+
+            qrels.append(qrel)
+
+        # validate retrieved documents to be sure they are the correct type
+        results = []
+
+        for result in retrieved_documents:
+            document_id = result.get("document_id")
+            relevance_score = result.get("relevance_score")
+
+            if not document_id or not relevance_score:
+                raise EvaluationException(
+                    (
+                        "Invalid input data was found in the retrieved documents. "
+                        "Ensure that all items in the 'retrieved_documents' array contain "
+                        "'document_id' and 'relevance_score' properties."
+                    )
+                )
+
+            if not isinstance(relevance_score, float) or not isinstance(
+                relevance_score, int
+            ):
+                raise EvaluationException(
+                    "Retrieved documents relevance scores must be numerical values."
+                )
+
+            results.append(result)
 
         if len(qrels) > 10000 or len(results) > 10000:
-            raise ValueError(
-                "The results and ground-truth sets should contain no more than 10000 items."
+            raise EvaluationException(
+                "'retrieval_ground_truth' and 'retrieved_documents' inputs should contain no more than 10000 items."
             )
 
         # if the qrels are empty, no meaningful evaluation is possible
         if len(qrels) == 0:
-            raise ValueError("No groundtruth labels were provided.")
+            raise EvaluationException(
+                "'retrieval_ground_truth' parameter must contain at least one item. Check your data input to be sure that each input record has ground truth defined."
+            )
+
+        return qrels, results
+
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        qrels, results = self._validate_eval_input(eval_input)
 
         # if the results set is empty, results are all zero
         if len(results) == 0:
@@ -327,7 +383,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         *,
         retrieval_ground_truth: List[RetrievalGroundTruthDocument],
         retrieved_documents: List[RetrievedDocument],
-    ) -> DocumentRetrievalMetrics:
+    ) -> Dict[str, float]:
         """
         Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
 
