@@ -7,7 +7,6 @@
 
  ### Other Changes
   - Hub and Project are officially GA'd and no longer experimental.
-  - Development - Updated `marshmallow` dependency to restrict versions to `>=3.5,<4.0.0`
 
 ## 1.26.3 (2025-04-17)
 
