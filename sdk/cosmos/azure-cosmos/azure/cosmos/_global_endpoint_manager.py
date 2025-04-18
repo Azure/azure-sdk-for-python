@@ -163,18 +163,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        endpoints_attempted = set()
         database_account, attempted_endpoint = self._GetDatabaseAccount(**kwargs)
-        endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the regional routing contexts to check
         endpoints = self.location_cache.endpoints_to_health_check()
         success_count = 0
         for endpoint in endpoints:
-            if endpoint not in endpoints_attempted:
+            if endpoint != attempted_endpoint:
                 if success_count >= 4:
                     break
-                endpoints_attempted.add(endpoint)
                 # save current dba timeouts
                 previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
                 previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout

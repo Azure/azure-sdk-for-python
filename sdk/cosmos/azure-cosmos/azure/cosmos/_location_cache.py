@@ -119,40 +119,12 @@ def get_endpoints_by_location(new_locations,
 
     return endpoints_by_location, locations_by_endpoints, parsed_locations
 
-def add_endpoint_if_preferred(endpoint: str, preferred_endpoints: Set[str], endpoints: Set[str]) -> bool:
-    if endpoint in preferred_endpoints:
-        endpoints.add(endpoint)
-        return True
-    return False
-
-def _get_health_check_endpoints(
-        account_regional_routing_contexts_by_location,
-        regional_routing_contexts) -> Set[str]:
-    # only check 2 read regions and 2 write regions
-    region_count = 2
+def _get_health_check_endpoints(regional_routing_contexts) -> Set[str]:
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-    endpoints: Set[str] = set()
-    i = 0
     preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}.union(
         {context.get_alternate() for context in regional_routing_contexts}
     )
-
-    for regional_routing_context in account_regional_routing_contexts_by_location.values():
-        region_added = add_endpoint_if_preferred(
-            regional_routing_context.get_primary(),
-            preferred_endpoints,
-            endpoints)
-        region_added |= add_endpoint_if_preferred(
-            regional_routing_context.get_alternate(),
-            preferred_endpoints,
-            endpoints)
-
-        if region_added:
-            i += 1
-        if i == region_count:
-            break
-
-    return endpoints
+    return preferred_endpoints
 
 def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[RegionalRoutingContext],
                                               location_name_by_endpoint: Mapping[str, str],
@@ -508,16 +480,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
 
     def endpoints_to_health_check(self) -> Set[str]:
-        # only check 2 read regions and 2 write regions
         # add read endpoints from gateway and in preferred locations
         health_check_endpoints = _get_health_check_endpoints(
-            self.account_read_regional_routing_contexts_by_location,
             self.read_regional_routing_contexts
         )
-        # add write endpoints from gateway and in preferred locations
-        health_check_endpoints.union(_get_health_check_endpoints(
-            self.account_write_regional_routing_contexts_by_location,
-            self.write_regional_routing_contexts
+        # add first write endpoint in case that the write region is not in preferred locations
+        health_check_endpoints = health_check_endpoints.union(_get_health_check_endpoints(
+            self.write_regional_routing_contexts[:1]
         ))
 
         return health_check_endpoints
