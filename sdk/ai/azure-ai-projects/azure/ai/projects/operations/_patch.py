@@ -2308,6 +2308,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if not event_handler:
             event_handler = cast(_models.BaseAgentEventHandlerT, _models.AgentEventHandler())
+        if isinstance(event_handler, _models.AgentEventHandler):
+            event_handler.set_max_retry(self._function_tool_max_retry)
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     # pylint: disable=arguments-differ
@@ -2544,12 +2546,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
-    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler) -> None:
+    def _handle_submit_tool_outputs(
+        self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler, submit_with_error: bool
+    ) -> Any:
+        tool_outputs = []
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
                 logger.debug("No tool calls to execute.")
-                return
+                return tool_outputs
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
@@ -2562,6 +2567,14 @@ class AgentsOperations(AgentsOperationsGenerated):
                 toolset.add(self._function_tool)
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
 
+                if self.has_errors_in_toolcalls_output(tool_outputs):
+                    if submit_with_error:
+                        logging.warning(f"Tool outputs contain errors - retrying")
+                    else:
+                        logging.warning(f"Tool outputs contain errors - reaching max retry limit")
+                        self.cancel_run(thread_id=run.thread_id, run_id=run.id)
+                        return tool_outputs
+
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     self.submit_tool_outputs_to_stream(
@@ -2570,6 +2583,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                         tool_outputs=tool_outputs,
                         event_handler=event_handler,
                     )
+        return tool_outputs
 
     # pylint: disable=arguments-differ
     @overload
