@@ -44,31 +44,31 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     def __init__(
         self,
         *,
-        groundtruth_label_min: int = 0,
-        groundtruth_label_max: int = 4,
+        ground_truth_label_min: int = 0,
+        ground_truth_label_max: int = 4,
         threshold: Optional[dict] = None,
     ):
         super().__init__()
         self.k = 3
         self.xdcg_discount_factor = 0.6
 
-        if groundtruth_label_min >= groundtruth_label_max:
+        if ground_truth_label_min >= ground_truth_label_max:
             raise EvaluationException(
                 "The ground truth label maximum must be strictly greater than the ground truth label minimum."
             )
 
-        if not isinstance(groundtruth_label_min, int):
+        if not isinstance(ground_truth_label_min, int):
             raise EvaluationException(
                 "The ground truth label minimum must be an integer value."
             )
 
-        if not isinstance(groundtruth_label_max, int):
+        if not isinstance(ground_truth_label_max, int):
             raise EvaluationException(
                 "The ground truth label maximum must be an integer value."
             )
 
-        self.groundtruth_label_min = groundtruth_label_min
-        self.groundtruth_label_max = groundtruth_label_max
+        self.ground_truth_label_min = ground_truth_label_min
+        self.ground_truth_label_max = ground_truth_label_max
 
         # The default threshold for metrics where higher numbers are better.
         self._threshold_metrics = {
@@ -78,7 +78,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             "top1_relevance": 50,
             "top3_max_relevance": 50,
             "total_retrieved_documents": 50,
-            "total_groundtruth_documents": 50,
+            "total_ground_truth_documents": 50,
         }
 
         # Ideally, the number of holes should be zero.
@@ -179,10 +179,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         def calculate_weighted_sum_by_rating(labels: List[int]) -> float:
             # here we assume that the configured groundtruth label minimum translates to "irrelevant",
             # so we exclude documents with that label from the calculation.
-            s = self.groundtruth_label_min + 1
+            s = self.ground_truth_label_min + 1
 
             # get a count of each label
-            label_counts = {str(i): 0 for i in range(s, self.groundtruth_label_max + 1)}
+            label_counts = {str(i): 0 for i in range(s, self.ground_truth_label_max + 1)}
 
             for label in labels:
                 if label >= s:
@@ -195,7 +195,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             # calculate weights
             weights = [
                 (math.pow(2, i + 1) - 1)
-                for i in range(s, self.groundtruth_label_max + 1)
+                for i in range(s, self.ground_truth_label_max + 1)
             ]
 
             # return weighted sum
@@ -224,14 +224,14 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result[f"{metric_name}_threshold"] = self._threshold_metrics[
                     metric_name
                 ]
-                result[f"{metric_name}_lower_is_better"] = False
+                result[f"{metric_name}_higher_is_better"] = True
 
             elif metric_name in self._threshold_holes.keys():
                 result[f"{metric_name}_result"] = (
                     metric_value <= self._threshold_holes[metric_name]
                 )
                 result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
-                result[f"{metric_name}_lower_is_better"] = True
+                result[f"{metric_name}_higher_is_better"] = False
 
             else:
                 raise ValueError(f"No threshold set for metric '{metric_name}'")
@@ -279,20 +279,20 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                     "Query relevance labels must be integer values."
                 )
 
-            if query_relevance_label < self.groundtruth_label_min:
+            if query_relevance_label < self.ground_truth_label_min:
                 raise EvaluationException(
                     (
                         "A query relevance label less than the configured minimum value was detected in the evaluation input data. "
-                        "Check the range of ground truth label values in the input data and set the value of ground_truth_minimum to "
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_label_min to "
                         "the appropriate value for your data."
                     )
                 )
 
-            if query_relevance_label > self.groundtruth_label_max:
+            if query_relevance_label > self.ground_truth_label_max:
                 raise EvaluationException(
                     (
                         "A query relevance label greater than the configured maximum value was detected in the evaluation input data. "
-                        "Check the range of ground truth label values in the input data and set the value of ground_truth_maximum to "
+                        "Check the range of ground truth label values in the input data and set the value of ground_truth_label_max to "
                         "the appropriate value for your data."
                     )
                 )
@@ -353,7 +353,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 "holes": 0,
                 "holes_ratio": 0,
                 "total_retrieved_documents": len(results),
-                "total_groundtruth_documents": len(qrels),
+                "total_ground_truth_documents": len(qrels),
             }
             binary_result = self._get_binary_result(**metrics)
             for k, v in binary_result.items():
@@ -397,7 +397,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 "holes": holes,
                 "holes_ratio": holes_ratio,
                 "total_retrieved_documents": len(results),
-                "total_groundtruth_documents": len(qrels),
+                "total_ground_truth_documents": len(qrels),
             }
             binary_result = self._get_binary_result(**metrics)
             for k, v in binary_result.items():
@@ -421,7 +421,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             "holes": holes,
             "holes_ratio": holes_ratio,
             "total_retrieved_documents": len(results),
-            "total_groundtruth_documents": len(qrels),
+            "total_ground_truth_documents": len(qrels),
         }
 
         binary_result = self._get_binary_result(**metrics)

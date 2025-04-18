@@ -44,7 +44,7 @@ def bad_doc_retrieval_eval_data():
 
 def test_success(doc_retrieval_eval_data):
     _, records = doc_retrieval_eval_data
-    evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=0, groundtruth_label_max=3)
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=3)
     
     for record in records:
         result = evaluator(**record)
@@ -55,14 +55,14 @@ def test_success(doc_retrieval_eval_data):
 def test_groundtruth_min_gte_max():
     expected_exception_msg = "The ground truth label maximum must be strictly greater than the ground truth label minimum."
     with pytest.raises(EvaluationException) as exc_info:
-        DocumentRetrievalEvaluator(groundtruth_label_min=2, groundtruth_label_max=1)
+        DocumentRetrievalEvaluator(ground_truth_label_min=2, ground_truth_label_max=1)
 
     assert expected_exception_msg in str(
         exc_info._excinfo[1]
     )
 
     with pytest.raises(EvaluationException) as exc_info:
-        DocumentRetrievalEvaluator(groundtruth_label_max=0, groundtruth_label_min=0)
+        DocumentRetrievalEvaluator(ground_truth_label_max=0, ground_truth_label_min=0)
 
     assert expected_exception_msg in str(
         exc_info._excinfo[1]
@@ -83,7 +83,7 @@ def test_incorrect_groundtruth_min():
         RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(data_groundtruth_min, 5)
     ]
 
-    evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=configured_groundtruth_min, groundtruth_label_max=4)
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=configured_groundtruth_min, ground_truth_label_max=4)
 
     with pytest.raises(EvaluationException) as exc_info:
         evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
@@ -107,7 +107,7 @@ def test_incorrect_groundtruth_max():
         RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(0, data_groundtruth_max + 1)
     ]
 
-    evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=0, groundtruth_label_max=configured_groundtruth_max)
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=configured_groundtruth_max)
 
     with pytest.raises(EvaluationException) as exc_info:
         evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
@@ -132,12 +132,12 @@ def test_threshold(doc_retrieval_eval_data):
         "top1_relevance": 70,
         "top3_max_relevance": 70,
         "total_retrieved_documents": 10,
-        "total_groundtruth_documents": 10,
+        "total_ground_truth_documents": 10,
         "unknown_metric": 50
     }
 
     for threshold in [custom_threshold_subset, custom_threshold_superset]:
-        evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=0, groundtruth_label_max=2, threshold=threshold)
+        evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2, threshold=threshold)
         results = evaluator(**record)
 
         expected_keys = [
@@ -147,7 +147,7 @@ def test_threshold(doc_retrieval_eval_data):
             "top1_relevance", "top1_relevance_result", "top1_relevance_threshold", "top1_relevance_lower_is_better",
             "top3_max_relevance", "top3_max_relevance_result", "top3_max_relevance_threshold", "top3_max_relevance_lower_is_better",
             "total_retrieved_documents", "total_retrieved_documents_result", "total_retrieved_documents_threshold", "total_retrieved_documents_lower_is_better",
-            "total_groundtruth_documents", "total_groundtruth_documents_result", "total_groundtruth_documents_threshold", "total_groundtruth_documents_lower_is_better",
+            "total_ground_truth_documents", "total_ground_truth_documents_result", "total_ground_truth_documents_threshold", "total_ground_truth_documents_lower_is_better",
             "holes", "holes_result", "holes_threshold", "holes_lower_is_better",
             "holes_ratio", "holes_ratio_result", "holes_ratio_threshold", "holes_ratio_lower_is_better"
         ]
@@ -159,7 +159,7 @@ def test_invalid_input(bad_doc_retrieval_eval_data):
     for record in records:
         expected_exception_msg = record.pop("expected_exception")
         with pytest.raises(EvaluationException) as exc_info:
-            evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=0, groundtruth_label_max=2)
+            evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
             evaluator(**record)
 
         assert expected_exception_msg in str(
