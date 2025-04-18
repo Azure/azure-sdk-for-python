@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -16754,12 +16754,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -16787,7 +16784,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -17020,12 +17017,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -17055,7 +17049,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -17694,12 +17688,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -17728,7 +17719,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -21874,12 +21865,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -21908,7 +21896,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -21997,12 +21985,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -22031,7 +22016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22058,12 +22043,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -22092,7 +22074,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23410,11 +23392,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            409: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceExistsError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -23459,7 +23438,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23611,12 +23590,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -23644,7 +23620,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23794,12 +23770,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -23850,7 +23823,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23935,12 +23908,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -23969,7 +23939,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24208,12 +24178,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -24242,7 +24209,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24425,12 +24392,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -24460,7 +24424,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24934,12 +24898,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -24969,7 +24930,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25568,12 +25529,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -25603,7 +25561,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26111,12 +26069,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -26145,7 +26100,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26521,11 +26476,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            409: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceExistsError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -26571,7 +26523,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26741,12 +26693,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -26775,7 +26724,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26815,12 +26764,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -26872,7 +26818,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26904,12 +26850,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -26939,7 +26882,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26975,12 +26918,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -27010,7 +26950,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27041,12 +26981,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -27081,7 +27018,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27123,12 +27060,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -27181,7 +27115,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27215,12 +27149,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -27251,7 +27182,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27292,12 +27223,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -27350,7 +27278,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -28255,12 +28183,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -28288,7 +28213,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -28469,12 +28394,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -28503,7 +28425,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30456,12 +30378,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30512,7 +30431,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30539,12 +30458,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30573,7 +30489,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30606,12 +30522,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30640,7 +30553,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30666,12 +30579,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30705,7 +30615,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30744,12 +30654,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30801,7 +30708,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30832,12 +30739,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30867,7 +30771,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -30905,12 +30809,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -30962,7 +30863,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -32177,12 +32078,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32233,7 +32131,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -32261,12 +32159,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32295,7 +32190,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -32314,10 +32209,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            429: cast(
-                Type[HttpResponseError],
-                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32446,12 +32337,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32480,7 +32368,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -32589,12 +32477,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32623,7 +32508,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -32883,12 +32768,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -32919,7 +32801,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -33618,12 +33500,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -33653,7 +33532,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -37920,12 +37799,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -37955,7 +37831,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -38051,12 +37927,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -38086,7 +37959,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -38116,12 +37989,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -38151,7 +38021,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -39579,11 +39449,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            409: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceExistsError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -39629,7 +39496,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -39803,12 +39670,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -39837,7 +39701,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -39874,12 +39738,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -39931,7 +39792,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -40022,12 +39883,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -40057,7 +39915,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -40310,12 +40168,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -40345,7 +40200,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -40540,12 +40395,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -40576,7 +40428,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -41077,12 +40929,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -41113,7 +40962,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -41752,12 +41601,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -41788,7 +41634,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -42335,12 +42181,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -42370,7 +42213,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -42772,11 +42615,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            409: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceExistsError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -42823,7 +42663,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43009,12 +42849,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43044,7 +42881,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43087,12 +42924,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43145,7 +42979,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43180,12 +43014,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43216,7 +43047,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43255,12 +43086,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43291,7 +43119,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43325,12 +43153,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43366,7 +43191,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43411,12 +43236,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43470,7 +43292,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43514,12 +43336,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43551,7 +43370,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -43595,12 +43414,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -43654,7 +43470,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -44191,12 +44007,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -44225,7 +44038,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -44422,12 +44235,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -44457,7 +44267,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46540,12 +46350,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46597,7 +46404,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46629,12 +46436,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46664,7 +46468,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46700,12 +46504,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46735,7 +46536,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46766,12 +46567,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46806,7 +46604,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46848,12 +46646,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46906,7 +46701,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -46940,12 +46735,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -46976,7 +46768,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -47017,12 +46809,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -47075,7 +46864,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -48393,12 +48182,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -48450,7 +48236,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -48481,12 +48267,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -48516,7 +48299,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -48535,10 +48318,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            429: cast(
-                Type[HttpResponseError],
-                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -48675,12 +48454,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -48710,7 +48486,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -49568,12 +49344,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -49603,7 +49376,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -50306,12 +50079,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -50341,7 +50111,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -50443,12 +50213,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -50501,7 +50268,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -50535,12 +50302,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -50571,7 +50335,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -50605,12 +50369,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -50640,7 +50401,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -51060,12 +50821,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -51095,7 +50853,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -51293,12 +51051,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -51329,7 +51084,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -52626,12 +52381,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -52660,7 +52412,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -53319,12 +53071,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -53353,7 +53102,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -53448,12 +53197,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -53505,7 +53251,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -53536,12 +53282,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -53571,7 +53314,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -53602,12 +53345,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -53636,7 +53376,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -54028,12 +53768,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -54062,7 +53799,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -54244,12 +53981,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -54279,7 +54013,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -55137,12 +54871,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -55172,7 +54903,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -55350,12 +55081,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            404: cast(
-                Type[HttpResponseError],
-                lambda response: ResourceNotFoundError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -55384,7 +55112,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

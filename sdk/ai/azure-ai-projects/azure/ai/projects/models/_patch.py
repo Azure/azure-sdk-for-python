@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import base64
 import datetime
 import inspect
@@ -51,6 +51,7 @@ from ._models import (
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
+    BingCustomSearchToolDefinition,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -71,6 +72,8 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    SearchConfiguration,
+    SearchConfigurationList,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -690,7 +693,6 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            logging.error("Function '%s' not found.", function_name)
             raise ValueError(f"Function '{function_name}' not found.")
 
         function = self._functions[function_name]
@@ -698,11 +700,9 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         try:
             parsed_arguments = json.loads(arguments)
         except json.JSONDecodeError as e:
-            logging.error("Invalid JSON arguments for function '%s': %s", function_name, e)
             raise ValueError(f"Invalid JSON arguments: {e}") from e
 
         if not isinstance(parsed_arguments, dict):
-            logging.error("Arguments must be a JSON object for function '%s'.", function_name)
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
@@ -731,11 +731,10 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
 class FunctionTool(BaseFunctionTool):
 
     def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
         try:
+            function, parsed_arguments = self._get_func_and_args(tool_call)
             return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self
@@ -746,13 +745,12 @@ class FunctionTool(BaseFunctionTool):
 class AsyncFunctionTool(BaseFunctionTool):
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:  # pylint: disable=invalid-overridden-method
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
         try:
+            function, parsed_arguments = self._get_func_and_args(tool_call)
             if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
             return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction
@@ -781,7 +779,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type index_connection_id: str
         :param index_name: Name of Index in search resource to be used by tool.
         :type index_name: str
-        :param query_type: Type of query in an AIIndexResource attached to this agent. 
+        :param query_type: Type of query in an AIIndexResource attached to this agent.
             Default value is AzureAISearchQueryType.SIMPLE.
         :type query_type: AzureAISearchQueryType
         :param filter: Odata filter string for search resource.
@@ -834,20 +832,35 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     this class also supports adding and removing additional API definitions dynamically.
     """
 
-    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        spec: Any,
+        auth: OpenApiAuthDetails,
+        default_parameters: Optional[List[str]] = None,
+    ) -> None:
         """
         Constructor initializes the tool with a primary API definition.
 
         :param name: The name of the API.
+        :type name: str
         :param description: The API description.
+        :type description: str
         :param spec: The API specification.
+        :type spec: Any
         :param auth: Authentication details for the API.
         :type auth: OpenApiAuthDetails
+        :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
+        :type default_parameters:  Optional[List[str]]
         """
+        default_params: List[str] = [] if default_parameters is None else default_parameters
         self._default_auth = auth
         self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
-                openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
+                openapi=OpenApiFunctionDefinition(
+                    name=name, description=description, spec=spec, auth=auth, default_params=default_params
+                )
             )
         ]
 
@@ -861,7 +874,14 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return self._definitions
 
-    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None) -> None:
+    def add_definition(
+        self,
+        name: str,
+        description: str,
+        spec: Any,
+        auth: Optional[OpenApiAuthDetails] = None,
+        default_parameters: Optional[List[str]] = None,
+    ) -> None:
         """
         Adds a new API definition dynamically.
         Raises a ValueError if a definition with the same name already exists.
@@ -875,8 +895,12 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :param auth: Optional authentication details for this particular API definition.
                      If not provided, the tool's default authentication details will be used.
         :type auth: Optional[OpenApiAuthDetails]
+        :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
+        :type default_parameters: List[str]
         :raises ValueError: If a definition with the same name exists.
         """
+        default_params: List[str] = [] if default_parameters is None else default_parameters
+
         # Check if a definition with the same name exists.
         if any(definition.openapi.name == name for definition in self._definitions):
             raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
@@ -885,7 +909,9 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         auth_to_use = auth if auth is not None else self._default_auth
 
         new_definition = OpenApiToolDefinition(
-            openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth_to_use)
+            openapi=OpenApiFunctionDefinition(
+                name=name, description=description, spec=spec, auth=auth_to_use, default_params=default_params
+            )
         )
         self._definitions.append(new_definition)
 
@@ -1018,6 +1044,46 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
         :rtype: List[ToolDefinition]
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
+    """
+    A tool that searches for information using Bing Custom Search.
+    """
+
+    def __init__(self, connection_id: str, instance_name: str):
+        """
+        Initialize Bing Custom Search with a connection_id.
+
+        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :param instance_name: Config instance name used by tool.
+        """
+        self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+
+    @property
+    def definitions(self) -> List[BingCustomSearchToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            BingCustomSearchToolDefinition(
+                bing_custom_search=SearchConfigurationList(search_configurations=self.connection_ids)
+            )
+        ]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
 
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
@@ -1312,7 +1378,8 @@ class ToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Failed to execute tool call %s: %s", tool_call, e)
+                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
+                tool_outputs.append(tool_output)
 
         return tool_outputs
 
@@ -1855,6 +1922,7 @@ __all__: List[str] = [
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
+    "BingCustomSearchTool",
     "BingGroundingTool",
     "StreamEventData",
     "SharepointTool",
