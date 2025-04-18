@@ -10,7 +10,7 @@ import traceback
 import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from pyrit.models import PromptRequestResponse, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
@@ -41,6 +41,23 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
     async def send_prompt_async(self, *, prompt_request: PromptRequestResponse, objective: str = "") -> PromptRequestResponse:
         self.logger.info("Starting send_prompt_async operation")
         self._validate_request(prompt_request=prompt_request)
+        thing_to_eval = prompt_request.request_pieces[0].to_dict()['original_value'].split("response_to_evaluate_input:")[1]
+        
+
+        self.logger.info(f"Evaluating the input: {thing_to_eval}")
+        evaluation_result = await evaluate_with_rai_service(thing_to_eval, self.credential)
+        self.logger.info(f"Evaluation result: {evaluation_result}")
+        """
+        {
+            
+            "score_value": "number between 0, 100",
+            "description": "any text, lets not keep it empty",
+            "rationale": "reason"
+         
+        }
+        """
+
+        my_response = PromptRequestResponse()
         import pdb; pdb.set_trace()
 
     def is_json_response_supported(self) -> bool:
