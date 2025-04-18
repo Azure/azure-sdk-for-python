@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple
+from typing import Tuple, Dict, Any
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
@@ -134,32 +134,30 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._endpoints_health_check(**kwargs)
                     self.startup = False
 
+    async def _database_account_check(self, endpoint: str, **kwargs: Dict[str, Any]):
+        try:
+            await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
+            self.location_cache.mark_endpoint_available(endpoint)
+        except (exceptions.CosmosHttpResponseError, AzureError):
+            self.mark_endpoint_unavailable_for_read(endpoint, False)
+            self.mark_endpoint_unavailable_for_write(endpoint, False)
+
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        endpoints_attempted = set()
         # get the database account from the default endpoint first
         database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
-        endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
-        success_count = 0
+        database_account_checks = []
         for endpoint in endpoints:
-            if endpoint not in endpoints_attempted:
-                # health check continues until 4 successes or all endpoints are checked
-                if success_count >= 4:
-                    break
-                endpoints_attempted.add(endpoint)
-                try:
-                    await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
-                    success_count += 1
-                    self.location_cache.mark_endpoint_available(endpoint)
-                except (exceptions.CosmosHttpResponseError, AzureError):
-                    self.mark_endpoint_unavailable_for_read(endpoint, False)
-                    self.mark_endpoint_unavailable_for_write(endpoint, False)
+            if endpoint != attempted_endpoint:
+                database_account_checks.append(self._database_account_check(endpoint, **kwargs))
+        await asyncio.gather(*database_account_checks)
+
         self.location_cache.update_location_cache()
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
