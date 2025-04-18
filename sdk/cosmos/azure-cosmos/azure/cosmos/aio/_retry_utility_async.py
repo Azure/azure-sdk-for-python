@@ -317,17 +317,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err
-            except AzureError as err:
-                retry_error = err
-                if _has_database_account_header(request.http_request.headers):
-                    raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
-                    await global_endpoint_manager.record_failure(request_params)
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
             finally:
                 end_time = time.time()
                 if absolute_timeout:
