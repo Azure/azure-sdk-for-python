@@ -272,9 +272,7 @@ class ContainerProxy:
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
@@ -345,8 +343,8 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties()
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -823,9 +821,7 @@ class ContainerProxy:
             kwargs['no_response'] = no_response
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
@@ -904,9 +900,7 @@ class ContainerProxy:
             kwargs['no_response'] = no_response
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
@@ -986,9 +980,7 @@ class ContainerProxy:
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
@@ -1056,9 +1048,7 @@ class ContainerProxy:
             kwargs['priority'] = priority
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
@@ -1315,9 +1305,7 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
@@ -1381,9 +1369,7 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
-        if not self.container_link in self.__get_client_container_caches():
-            container = await self.read()
-            self.__get_client_container_caches()[self.container_link] = _set_properties_cache(container)
+        await self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(

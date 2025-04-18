@@ -12,7 +12,7 @@ from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _location_cache
+from azure.cosmos import PartitionKey, _location_cache, _partition_health_tracker
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -56,7 +56,7 @@ def write_operations_and_errors():
     return params
 
 def read_operations_and_errors():
-    read_operations = ["read", "query", "changefeed", "read_all_items"]
+    read_operations = ["read", "query", "query_pk", "changefeed", "changefeed_pk", "changefeed_epk", "read_all_items"]
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -121,19 +121,53 @@ async def perform_read_operation(operation, container, doc_id, pk, expected_uri)
         request = read_resp.get_response_headers()["_request"]
         # Validate the response comes from "Read Region" (the most preferred read-only region)
         assert request.url.startswith(expected_uri)
-    elif operation == "query":
+    elif operation == "query_pk":
+        # partition key filtered query
         query = "SELECT * FROM c WHERE c.id = @id AND c.pk = @pk"
         parameters = [{"name": "@id", "value": doc_id}, {"name": "@pk", "value": pk}]
         async for item in container.query_items(query=query, partition_key=pk, parameters=parameters):
             assert item['id'] == doc_id
         # need to do query with no pk and with feed range
+    elif operation == "query":
+        # cross partition query
+        query = "SELECT * FROM c WHERE c.id = @id"
+        async for item in container.query_items(query=query):
+            assert item['id'] == doc_id
     elif operation == "changefeed":
         async for _ in container.query_items_change_feed():
+            pass
+    elif operation == "changefeed_pk":
+        # partition key filtered change feed
+        async for _ in container.query_items_change_feed(partition_key=pk):
+            pass
+    elif operation == "changefeed_epk":
+        # partition key filtered by feed range
+        feed_range = await container.feed_range_from_partition_key(partition_key=pk)
+        async for _ in container.query_items_change_feed(feed_range=feed_range):
             pass
     elif operation == "read_all_items":
         async for item in container.read_all_items(partition_key=pk):
             assert item['pk'] == pk
 
+def validate_unhealthy_partitions(global_endpoint_manager,
+                                  expected_unhealthy_partitions):
+    health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pk_range_wrapper_to_health_info
+    unhealthy_partitions = 0
+    for pk_range_wrapper, location_to_health_info in health_info_map.items():
+        for location, health_info in location_to_health_info.items():
+            health_status = health_info.unavailability_info.get(HEALTH_STATUS)
+            if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
+                unhealthy_partitions += 1
+            else:
+                assert health_info.read_consecutive_failure_count < 10
+                assert health_info.write_consecutive_failure_count < 5
+
+    assert unhealthy_partitions == expected_unhealthy_partitions
+
+async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
+    for obj in initialized_objects:
+        method_client: CosmosClient = obj["client"]
+        await method_client.close()
 
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
@@ -161,12 +195,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
-
-    @staticmethod
-    async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
-        for obj in initialized_objects:
-            method_client: CosmosClient = obj["client"]
-            await method_client.close()
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     async def test_write_consecutive_failure_threshold_async(self, setup_teardown, write_operation, error):
@@ -196,33 +224,37 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           expected_uri)
         assert exc_info.value == error
 
-        TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         # writes should fail but still be tracked
         for i in range(4):
-            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
+            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
                 await perform_write_operation(write_operation,
                                               container,
                                               fault_injection_container,
                                               str(uuid.uuid4()),
                                               pk_value,
                                               expected_uri)
+            assert exc_info.value == error
 
+        # writes should now succeed because going to the other region
         await perform_write_operation(write_operation,
                                       container,
                                       fault_injection_container,
                                       str(uuid.uuid4()),
                                       pk_value,
                                       expected_uri)
-        TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
-        await TestPerPartitionCircuitBreakerMMAsync.cleanup_method([custom_setup, setup])
-        # test recovering the partition
+
+        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        await cleanup_method([custom_setup, setup])
+        # test recovering the partition ---------------------------------------------------------------------
 
 
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         custom_transport =  FaultInjectionTransportAsync()
         id_value = str(uuid.uuid4())
         document_definition = {'id': id_value,
@@ -230,7 +262,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                'name': 'sample document',
                                'key': 'value'}
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, expected_uri))
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
@@ -242,11 +274,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
         container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         
-        # create some documents 
+        # create a document to read
         await container.create_item(body=document_definition)
-        for i in range(5):
-            document_definition['id'] = str(uuid.uuid4())
-            await container.create_item(body=document_definition)
 
         # reads should fail over and only the relevant partition should be marked as unavailable
         await perform_read_operation(read_operation,
@@ -255,7 +284,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                      document_definition['pk'],
                                      expected_uri)
         # partition should not have been marked unavailable after one error
-        TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         for i in range(10):
             await perform_read_operation(read_operation,
@@ -265,24 +294,22 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                          expected_uri)
 
         # the partition should have been marked as unavailable after breaking read threshold
-        TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
+        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        await cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
+    async def test_write_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        custom_transport = await self.create_custom_transport_sm_mrr()
-        id_value = 'failoverDoc-' + str(uuid.uuid4())
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransportAsync()
         # two documents targeted to same partition, one will always fail and the other will succeed
-        document_definition = {'id': id_value,
-                               'pk': 'pk1',
-                               'name': 'sample document',
-                               'key': 'value'}
-        doc_2 = {'id': str(uuid.uuid4()),
-                 'pk': 'pk1',
+        pk_value = "pk1"
+        doc = {'id': str(uuid.uuid4()),
+                 'pk': pk_value,
                  'name': 'sample document',
                  'key': 'value'}
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, expected_write_region_uri))
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate,
                                    lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
                                        0,
@@ -290,118 +317,102 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                    )))
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        container = custom_setup['col']
-        global_endpoint_manager = container.client_connection._global_endpoint_manager
+        fault_injection_container = custom_setup['col']
+        setup = await self.setup_method(default_endpoint=self.host)
+        container = setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
-        global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
+        _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
+        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
         try:
-            # writes should fail in sm mrr with circuit breaker and should not mark unavailable a partition
-            for i in range(14):
-                if i == 9:
-                    await container.upsert_item(body=doc_2)
-                with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
-                    await TestPerPartitionCircuitBreakerMMAsync.perform_write_operation(write_operation,
-                                                                                        setup_teardown[COLLECTION],
-                                                                                        container,
-                                                                                        document_definition['id'],
-                                                                                        document_definition['pk'],
-                                                                                        expected_uri)
-
-            TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
-
-            # create item with client without fault injection
-            await setup_teardown[COLLECTION].create_item(body=document_definition)
-        finally:
-            # restore minimum requests
-            global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-
-
-
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_read_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        custom_transport = await self.create_custom_transport_sm_mrr()
-        id_value = 'failoverDoc-' + str(uuid.uuid4())
-        # two documents targeted to same partition, one will always fail and the other will succeed
-        document_definition = {'id': id_value,
-                               'pk': 'pk1',
-                               'name': 'sample document',
-                               'key': 'value'}
-        doc_2 = {'id': str(uuid.uuid4()),
-                 'pk': 'pk1',
-                 'name': 'sample document',
-                 'key': 'value'}
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, expected_write_region_uri))
-        custom_transport.add_fault(predicate,
-                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-                                       0,
-                                       error
-                                   )))
-
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        container = custom_setup['col']
-        global_endpoint_manager = container.client_connection._global_endpoint_manager
-        # lower minimum requests for testing
-        global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
-        try:
-            # writes should fail in sm mrr with circuit breaker and should not mark unavailable a partition
-            for i in range(14):
-                if i == 9:
-                    await container.upsert_item(body=doc_2)
-                with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
-                    await TestPerPartitionCircuitBreakerMMAsync.perform_write_operation(write_operation,
-                                                                                        setup_teardown[COLLECTION],
-                                                                                        container,
-                                                                                        document_definition['id'],
-                                                                                        document_definition['pk'],
-                                                                                        expected_uri)
-
-            TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
-
-            # create item with client without fault injection
-            await setup_teardown[COLLECTION].create_item(body=document_definition)
-
-            # reads should fail over and only the relevant partition should be marked as unavailable
-            await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
-            # partition should not have been marked unavailable after one error
-            TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
-            for i in range(20):
-                if i == 8:
-                    read_resp = await container.read_item(item=doc_2['id'],
-                                                          partition_key=doc_2['pk'])
-                    request = read_resp.get_response_headers()["_request"]
-                    # Validate the response comes from "Read Region" (the most preferred read-only region)
-                    assert request.url.startswith(expected_uri)
+            # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
+            for i in range(10):
+                validate_unhealthy_partitions(global_endpoint_manager, 0)
+                if i == 4 or i == 8:
+                    # perform some successful creates to reset consecutive counter
+                    # remove faults and perform a write
+                    custom_transport.faults = []
+                    await fault_injection_container.upsert_item(body=doc)
+                    custom_transport.add_fault(predicate,
+                                               lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+                                                   0,
+                                                   error
+                                               )))
                 else:
-                    await TestPerPartitionCircuitBreakerMMAsync.perform_read_operation(read_operation,
-                                                                                       container,
-                                                                                       document_definition['id'],
-                                                                                       document_definition['pk'],
-                                                                                       expected_uri)
-            # the partition should have been marked as unavailable after breaking read threshold
-            TestPerPartitionCircuitBreakerMMAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
+                    with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
+                        await perform_read_operation(write_operation,
+                                                      container,
+                                                      fault_injection_container,
+                                                      str(uuid.uuid4()),
+                                                      pk_value,
+                                                      expected_uri)
+                    assert exc_info.value == error
+
+            validate_unhealthy_partitions(global_endpoint_manager, 1)
+
         finally:
+            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
-            global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+            _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+        await cleanup_method([custom_setup, setup])
+
+    @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
+    async def test_read_failure_rate_threshold_async(self, setup_teardown, read_operation, error):
+        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransportAsync()
+        # two documents targeted to same partition, one will always fail and the other will succeed
+        pk_value = "pk1"
+        doc = {'id': str(uuid.uuid4()),
+               'pk': pk_value,
+               'name': 'sample document',
+               'key': 'value'}
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        custom_transport.add_fault(predicate,
+                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+                                       0,
+                                       error
+                                   )))
+
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
+        fault_injection_container = custom_setup['col']
+        setup = await self.setup_method(default_endpoint=self.host)
+        container = setup['col']
+        await container.upsert_item(body=doc)
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        # lower minimum requests for testing
+        _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
+        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        try:
+            for i in range(10):
+                validate_unhealthy_partitions(global_endpoint_manager, 0)
+                if i == 4:
+                    # perform some successful read to reset consecutive counter
+                    # remove faults and perform a read
+                    custom_transport.faults = []
+                    await fault_injection_container.read_item(item=doc["id"], partition_key=pk_value)
+                    custom_transport.add_fault(predicate,
+                                               lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+                                                   0,
+                                                   error
+                                               )))
+                else:
+                    # read will fail and retry in other region
+                    await perform_read_operation(read_operation,
+                                                  fault_injection_container,
+                                                  doc['id'],
+                                                  pk_value,
+                                                  expected_uri)
+
+            validate_unhealthy_partitions(global_endpoint_manager, 1)
+        finally:
+            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            # restore minimum requests
+            _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+        await cleanup_method([custom_setup, setup])
 
         # look at the urls for verifying fall back and use another id for same partition
-
-    @staticmethod
-    def validate_unhealthy_partitions(global_endpoint_manager,
-                                      expected_unhealthy_partitions):
-        health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pk_range_wrapper_to_health_info
-        unhealthy_partitions = 0
-        for pk_range_wrapper, location_to_health_info in health_info_map.items():
-            for location, health_info in location_to_health_info.items():
-                health_status = health_info.unavailability_info.get(HEALTH_STATUS)
-                if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
-                    unhealthy_partitions += 1
-                else:
-                    assert health_info.read_consecutive_failure_count < 10
-                    assert health_info.write_consecutive_failure_count < 5
-
-        assert unhealthy_partitions == expected_unhealthy_partitions
 
     # test_failure_rate_threshold - add service response error - across operation types - test recovering the partition again
     # test service request marks only a partition unavailable not an entire region - across operation types

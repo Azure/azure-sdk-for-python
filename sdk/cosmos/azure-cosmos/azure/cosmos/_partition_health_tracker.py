@@ -48,9 +48,12 @@ def _has_exceeded_failure_rate_threshold(
         failures: int,
         failure_rate_threshold: int,
 ) -> bool:
+    print(MINIMUM_REQUESTS_FOR_FAILURE_RATE)
     if successes + failures < MINIMUM_REQUESTS_FOR_FAILURE_RATE:
         return False
-    return (failures / successes * 100) >= failure_rate_threshold
+    failure_rate = failures / (failures + successes) * 100
+    print("Failure rate", failure_rate)
+    return failure_rate >= failure_rate_threshold
 
 class _PartitionHealthInfo(object):
     """
@@ -96,8 +99,6 @@ class _PartitionHealthTracker(object):
         # partition -> regions -> health info
         self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
-
-    # TODO: @tvaron3 look for useful places to add logs
 
     def mark_partition_unavailable(self, pk_range_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
         # mark the partition key range as unavailable
@@ -200,6 +201,7 @@ class _PartitionHealthTracker(object):
             self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = _PartitionHealthInfo()
 
         health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
+        print(failure_rate_threshold)
 
         # Determine attribute names and environment variables based on the operation type.
         if operation_type == EndpointOperationType.WriteType:
@@ -246,7 +248,7 @@ class _PartitionHealthTracker(object):
             failure_rate_threshold: int,
             consecutive_failure_threshold: int,
     ) -> None:
-
+        print("Check Thresholds called")
         # check the failure rate was not exceeded
         if _has_exceeded_failure_rate_threshold(
                 successes,
