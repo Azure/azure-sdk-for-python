@@ -17,6 +17,7 @@ from ._base_handler import (
 )
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_mgmt import ServiceBusManagementOperationClient
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._configuration import Configuration
 from ._common.utils import (
@@ -697,5 +698,51 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 socket_timeout=socket_timeout,
                 **kwargs,
             )
+        self._handlers.add(handler)
+        return handler
+
+    def get_management_operation_client(self,
+            entity_name: str,
+            *,
+            client_identifier: Optional[str] = None,
+            socket_timeout: Optional[float] = None,
+            **kwargs: Any
+        ) -> ServiceBusManagementOperationClient:
+
+        """Get ServiceBusManagementOperationClient for the specific queue or topic.
+        :param str entity_name: The path of specific Service Bus Queue or Topic the client connects to.
+        :keyword str or None client_identifier: A string-based identifier to uniquely identify the management operation
+            client instance. Service Bus will associate it with some error messages for easier correlation of errors.
+            If not specified, a unique id will be generated.
+        :keyword float or None socket_timeout: The time in seconds that the underlying socket on the connection should
+            wait when sending and receiving data before timing out. If None, a default value of 0.2 for TransportType.Amqp
+            and 1 for TransportType.AmqpOverWebsocket is used. If connection errors are occurring due to write timing out,
+            a larger than default value may need to be passed in.
+        :returns: A management operation client.
+        :rtype: ~azure.servicebus.ServiceBusManagementOperationClient
+        """
+
+        handler = ServiceBusManagementOperationClient(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
+            retry_total=self._config.retry_total,
+            retry_backoff_factor=self._config.retry_backoff_factor,
+            retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
+            amqp_transport=self._amqp_transport,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
+            use_tls=self._config.use_tls,
+            **kwargs,
+        )
         self._handlers.add(handler)
         return handler

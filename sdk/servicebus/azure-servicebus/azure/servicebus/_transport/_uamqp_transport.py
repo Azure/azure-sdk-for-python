@@ -34,6 +34,7 @@ try:
         Source,
         compat,
         Connection,
+        AMQPClient,
         __version__,
     )
     from uamqp.authentication import JWTTokenAuth
@@ -106,7 +107,7 @@ try:
     )
 
     if TYPE_CHECKING:
-        from uamqp import AMQPClient, Target
+        from uamqp import Target
         from logging import Logger
         from ..amqp import (
             AmqpAnnotatedMessage,
@@ -529,6 +530,31 @@ try:
             retry_policy = kwargs.pop("retry_policy")
 
             return SendClient(
+                target,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
+        
+        @staticmethod
+        def create_amqp_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+            """
+            Creates and returns the pyamqp AMQPClient.
+            :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+
+            :keyword str target: Required. The target.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClient
+            :rtype: ~uamqp.AMQPClient
+            """
+            target = kwargs.pop("target")
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClient(
                 target,
                 debug=config.logging_enable,
                 error_policy=retry_policy,
