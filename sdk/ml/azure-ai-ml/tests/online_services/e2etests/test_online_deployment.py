@@ -2,8 +2,8 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-
-from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
+from pathlib import Path
+from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint, load_model
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
 
 
@@ -47,6 +47,54 @@ class TestOnlineDeployment(AzureRecordedTestCase):
             )
         except Exception as ex:
             raise ex
+        finally:
+            client.online_endpoints.begin_delete(name=endpoint.name)
+
+    def test_online_deployment_create_when_registry_assets(
+        self,
+        sdkv2_registry_client: MLClient,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_online_name: Callable[[], str],
+        rand_online_deployment_name: Callable[[], str],
+    ) -> None:
+        # create a model in registry
+        model_name = randstr("test-registry-model")
+        model = Model(name=model_name, path="./tests/test_configs/deployments/model-1/model")
+        model = sdkv2_registry_client.models.create_or_update(model)
+        assert model.name == model_name
+
+        # create a endpoint
+        endpoint_yaml = "tests/test_configs/deployments/online/simple_online_endpoint_mir.yaml"
+        endpoint = load_online_endpoint(endpoint_yaml)
+        endpoint_name = rand_online_name("endpoint_name")
+        endpoint.name = endpoint_name
+        endpoint = client.online_endpoints.begin_create_or_update(endpoint).result()
+        assert endpoint.name == endpoint_name
+
+        # create a deployment
+        deployment_yaml = "tests/test_configs/deployments/online/online_deployment_1.yaml"
+        deployment = load_online_deployment(deployment_yaml)
+        deployment.endpoint_name = endpoint.name
+        deployment.name = rand_online_deployment_name("deployment_name")
+        deployment.model = model
+
+        try:
+            client.online_deployments.begin_create_or_update(deployment).result()
+            dep = client.online_deployments.get(name=deployment.name, endpoint_name=endpoint.name)
+            assert dep.name == deployment.name
+
+            deps = client.online_deployments.list(endpoint_name=endpoint.name)
+            assert len(list(deps)) > 0
+
+            endpoint.traffic = {deployment.name: 100}
+            client.online_endpoints.begin_create_or_update(endpoint).result()
+            endpoint_updated = client.online_endpoints.get(endpoint.name)
+            assert endpoint_updated.traffic[deployment.name] == 100
+            client.online_endpoints.invoke(
+                endpoint_name=endpoint.name,
+                request_file="tests/test_configs/deployments/model-1/sample-request.json",
+            )
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
 
