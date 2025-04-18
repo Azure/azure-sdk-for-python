@@ -85,7 +85,7 @@ setup(
         "azure-storage-file-datalake>=12.2.0",
         "pydash>=6.0.0, < 9",
         "isodate < 1",
-        "azure-common>=1.1 , < 2",
+        "azure-common>=1.1,<2",
         "typing-extensions < 5",
         "azure-monitor-opentelemetry",
         # TODO: remove six after using new autorest
