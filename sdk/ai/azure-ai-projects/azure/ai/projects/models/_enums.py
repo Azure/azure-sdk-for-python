@@ -16,7 +16,7 @@ class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
     """Default value. Let the model handle the return format."""
     NONE = "none"
-    """Setting the value to ``none``\\ , will result in a 400 Bad request."""
+    """Setting the value to ``none``, will result in a 400 Bad request."""
 
 
 class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,6 +45,10 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
+    BING_CUSTOM_SEARCH = "bing_custom_search"
+    """Tool type ``bing_custom_search``"""
+    CONNECTED_AGENT = "connected_agent"
+    """Tool type ``connected_agent``"""
 
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,6 +253,17 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MINUTE = "Minute"
 
 
+class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
+
+    AUTO = "auto"
+    """Automatically select an appropriate detail level."""
+    LOW = "low"
+    """Use a lower detail level to reduce bandwidth or cost."""
+    HIGH = "high"
+    """Use a higher detail level—potentially more resource-intensive."""
+
+
 class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
@@ -267,6 +282,19 @@ class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies an ascending sort order."""
     DESCENDING = "desc"
     """Specifies a descending sort order."""
+
+
+class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the kind of content block within a message. Could be text, an image file, an external
+    image URL, or an unknown future type.
+    """
+
+    TEXT = "text"
+    """Indicates a block containing text content."""
+    IMAGE_FILE = "image_file"
+    """Indicates a block referencing an internally uploaded image file."""
+    IMAGE_URL = "image_url"
+    """Indicates a block referencing an external image URL."""
 
 
 class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

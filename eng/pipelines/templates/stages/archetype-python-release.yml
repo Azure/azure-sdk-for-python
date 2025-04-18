@@ -16,6 +16,8 @@ stages:
       - stage:
         displayName: 'Release: ${{artifact.name}}'
         dependsOn: ${{parameters.DependsOn}}
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml
         condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
         jobs:
           - job: TagRepository

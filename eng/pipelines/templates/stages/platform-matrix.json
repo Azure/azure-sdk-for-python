@@ -9,7 +9,7 @@
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
       "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
     },
-    "PythonVersion": [ "3.8", "3.10", "3.12" ],
+    "PythonVersion": [ "3.10", "3.12" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },

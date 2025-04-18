@@ -416,13 +416,31 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         file_out.writelines(content)
 
 
-def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+def gen_typespec(
+    typespec_relative_path: str,
+    spec_folder: str,
+    head_sha: str,
+    rest_repo_url: str,
+    run_in_pipeline: bool,
+) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
+        cmd = (
+            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+        )
+        if run_in_pipeline:
+            emitter_name = "@azure-tools/typespec-python"
+            if not os.path.exists(f"node_modules/{emitter_name}"):
+                _LOGGER.info("install dependencies only for the first run")
+                check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+            else:
+                _LOGGER.info(f"skip install since {emitter_name} is already installed")
+            cmd += " --skip-install --debug"
+        else:
+            cmd += " --debug"
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:

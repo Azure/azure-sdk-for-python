@@ -9,10 +9,6 @@ parameters:
     default: "not-specified"
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-    parameters:
-      AgentImage: $(OSVmImage)
-
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
     inputs:

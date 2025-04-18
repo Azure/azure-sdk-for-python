@@ -19,6 +19,8 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceFleetMgmtClientConfiguration
 from .operations import (
+    AutoUpgradeProfileOperationsOperations,
+    AutoUpgradeProfilesOperations,
     FleetMembersOperations,
     FleetUpdateStrategiesOperations,
     FleetsOperations,
@@ -27,17 +29,22 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerServiceFleetMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Azure Kubernetes Fleet Manager api client.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservicefleet.aio.operations.Operations
     :ivar fleets: FleetsOperations operations
     :vartype fleets: azure.mgmt.containerservicefleet.aio.operations.FleetsOperations
+    :ivar auto_upgrade_profiles: AutoUpgradeProfilesOperations operations
+    :vartype auto_upgrade_profiles:
+     azure.mgmt.containerservicefleet.aio.operations.AutoUpgradeProfilesOperations
+    :ivar auto_upgrade_profile_operations: AutoUpgradeProfileOperationsOperations operations
+    :vartype auto_upgrade_profile_operations:
+     azure.mgmt.containerservicefleet.aio.operations.AutoUpgradeProfileOperationsOperations
     :ivar fleet_members: FleetMembersOperations operations
     :vartype fleet_members: azure.mgmt.containerservicefleet.aio.operations.FleetMembersOperations
     :ivar update_runs: UpdateRunsOperations operations
@@ -47,11 +54,11 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=client-accepts-api-ver
      azure.mgmt.containerservicefleet.aio.operations.FleetUpdateStrategiesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -94,6 +101,12 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=client-accepts-api-ver
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.auto_upgrade_profiles = AutoUpgradeProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.auto_upgrade_profile_operations = AutoUpgradeProfileOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.update_runs = UpdateRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_update_strategies = FleetUpdateStrategiesOperations(

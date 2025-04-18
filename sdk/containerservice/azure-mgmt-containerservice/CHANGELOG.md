@@ -1,5 +1,22 @@
 # Release History
 
+## 35.0.0 (2025-04-14)
+
+### Features Added
+
+  - Model ManagedClusterIngressProfileWebAppRouting has a new parameter nginx
+
+### Breaking Changes
+
+  - Model LoadBalancer no longer has parameter name_properties_name
+  - Operation LoadBalancersOperations.create_or_update has a new required parameter parameters
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter allow_service_placement
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter name
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter node_selector
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter primary_agent_pool_name
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter service_label_selector
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter service_namespace_selector
+
 ## 34.2.0 (2025-03-18)
 
 ### Features Added

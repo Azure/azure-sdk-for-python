@@ -6,7 +6,7 @@
 
 import sys
 
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import functools
 

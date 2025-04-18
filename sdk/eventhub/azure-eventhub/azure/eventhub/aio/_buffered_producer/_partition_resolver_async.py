@@ -6,7 +6,7 @@
 jenkins-hash lookup3 algorithm implementation
 """
 
-from asyncio import Lock
+from asyncio import Lock  # pylint:disable=do-not-import-asyncio
 from ..._buffered_producer._partition_resolver import (
     generate_hash_code,
 )

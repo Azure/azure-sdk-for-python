@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import logging
 import time
 import queue

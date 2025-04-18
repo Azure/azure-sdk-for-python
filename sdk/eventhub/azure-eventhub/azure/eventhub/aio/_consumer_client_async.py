@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import logging
 import datetime
 import warnings

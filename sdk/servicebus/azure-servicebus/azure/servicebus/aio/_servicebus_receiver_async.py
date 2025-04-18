@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 from collections.abc import AsyncIterator
 import datetime
 import functools

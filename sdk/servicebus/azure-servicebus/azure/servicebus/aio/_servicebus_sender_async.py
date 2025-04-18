@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import datetime
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable

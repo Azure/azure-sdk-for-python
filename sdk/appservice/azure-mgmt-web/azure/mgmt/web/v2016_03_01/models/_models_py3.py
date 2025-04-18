@@ -4430,9 +4430,7 @@ class RampUpRule(_serialization.Model):
     :ivar max_reroute_percentage: Specifies upper boundary below which ReroutePercentage will stay.
     :vartype max_reroute_percentage: float
     :ivar change_decision_callback_url: Custom decision algorithm can be provided in TiPCallback
-     site extension which URL can be specified. See TiPCallback site extension for the scaffold and
-     contracts.
-     https://www.siteextensions.net/packages/TiPCallback/.
+     site extension which URL can be specified.
     :vartype change_decision_callback_url: str
     :ivar name: Name of the routing rule. The recommended name would be to point to the slot which
      will receive the traffic in the experiment.
@@ -4487,9 +4485,7 @@ class RampUpRule(_serialization.Model):
          stay.
         :paramtype max_reroute_percentage: float
         :keyword change_decision_callback_url: Custom decision algorithm can be provided in TiPCallback
-         site extension which URL can be specified. See TiPCallback site extension for the scaffold and
-         contracts.
-         https://www.siteextensions.net/packages/TiPCallback/.
+         site extension which URL can be specified.
         :paramtype change_decision_callback_url: str
         :keyword name: Name of the routing rule. The recommended name would be to point to the slot
          which will receive the traffic in the experiment.

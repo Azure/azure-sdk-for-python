@@ -19,10 +19,6 @@ stages:
       - job: 'Analyze'
         timeoutInMinutes: 90
 
-        variables:
-          - name: PythonVersion
-            value: '3.8'
-
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)
@@ -30,9 +26,9 @@ stages:
 
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.8'
+            displayName: 'Use Python 3.9'
             inputs:
-              versionSpec: '3.8'
+              versionSpec: '3.9'
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 import logging
 from typing import Callable, Dict, Union, cast, TYPE_CHECKING, List, Optional, Any

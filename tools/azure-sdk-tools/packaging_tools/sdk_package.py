@@ -1,4 +1,5 @@
 import sys
+import time
 import argparse
 import json
 import logging
@@ -45,12 +46,15 @@ def main(generate_input, generate_output):
             prefolder=prefolder,
             is_multiapi=package["isMultiapi"],
         )
+
+        changelog_generation_start_time = time.time()
         try:
             md_output = execute_func_with_timeout(change_log_func)
         except multiprocessing.TimeoutError:
             md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
+        _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking Changes" in md_output,
@@ -61,6 +65,7 @@ def main(generate_input, generate_output):
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Generate api stub File
         folder_name = package["path"][0]
+        apiview_start_time = time.time()
         try:
             package_path = Path(sdk_folder, folder_name, package_name)
             check_call(
@@ -82,6 +87,7 @@ def main(generate_input, generate_output):
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
             _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
+        _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
 
         # check generated files and update package["version"]
         if package_name.startswith("azure-mgmt-"):

@@ -25,8 +25,8 @@ jobs:
     displayName: 'Run AutoRest'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: 'ubuntu-20.04'
+      name: azsdk-pool
+      vmImage: 'ubuntu-22.04'
 
     steps:
       - task: NodeTool@0

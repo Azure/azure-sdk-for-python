@@ -5,6 +5,7 @@
 ### Other Changes
 
 - Updated type annotations in `BlobCheckpointStore`.
+- Bumped `aiohttp` min dependency version to 3.11.0.
 
 ## 1.2.0 (2025-02-13)
 
