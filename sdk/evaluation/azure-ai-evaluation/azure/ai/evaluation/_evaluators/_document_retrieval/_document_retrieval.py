@@ -204,8 +204,12 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         retrieval_ground_truth = eval_input.get("retrieval_ground_truth")
         retrieved_documents = eval_input.get("retrieved_documents")
 
-        if not retrieval_ground_truth or not retrieved_documents:
-            raise EvaluationException("One or more inputs is missing.")
+        # if the qrels are empty, no meaningful evaluation is possible
+        if not retrieval_ground_truth:
+            raise EvaluationException(
+                ("'retrieval_ground_truth' parameter must contain at least one item. "
+                 "Check your data input to be sure that each input record has ground truth defined.")
+            )
 
         qrels = []
 
@@ -214,10 +218,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             document_id = qrel.get("document_id")
             query_relevance_label = qrel.get("query_relevance_label")
 
-            if not document_id or not query_relevance_label:
+            if document_id is None or query_relevance_label is None:
                 raise EvaluationException(
                     (
-                        "Invalid input data was found in the retrieval ground truth."
+                        "Invalid input data was found in the retrieval ground truth. "
                         "Ensure that all items in the 'retrieval_ground_truth' array contain "
                         "'document_id' and 'query_relevance_label' properties."
                     )
@@ -231,7 +235,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             if query_relevance_label < self.groundtruth_label_min:
                 raise EvaluationException(
                     (
-                        "A query relevance label less than the configured minimum value was detected in the evaluation input data."
+                        "A query relevance label less than the configured minimum value was detected in the evaluation input data. "
                         "Check the range of ground truth label values in the input data and set the value of ground_truth_minimum to "
                         "the appropriate value for your data."
                     )
@@ -251,37 +255,32 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         # validate retrieved documents to be sure they are the correct type
         results = []
 
-        for result in retrieved_documents:
-            document_id = result.get("document_id")
-            relevance_score = result.get("relevance_score")
+        if isinstance(retrieved_documents, list):
+            for result in retrieved_documents:
+                document_id = result.get("document_id")
+                relevance_score = result.get("relevance_score")
 
-            if not document_id or not relevance_score:
-                raise EvaluationException(
-                    (
-                        "Invalid input data was found in the retrieved documents. "
-                        "Ensure that all items in the 'retrieved_documents' array contain "
-                        "'document_id' and 'relevance_score' properties."
+                if document_id is None or relevance_score is None:
+                    raise EvaluationException(
+                        (
+                            "Invalid input data was found in the retrieved documents. "
+                            "Ensure that all items in the 'retrieved_documents' array contain "
+                            "'document_id' and 'relevance_score' properties."
+                        )
                     )
-                )
 
-            if not isinstance(relevance_score, float) or not isinstance(
-                relevance_score, int
-            ):
-                raise EvaluationException(
-                    "Retrieved documents relevance scores must be numerical values."
-                )
+                if not isinstance(relevance_score, float) and not isinstance(
+                    relevance_score, int
+                ):
+                    raise EvaluationException(
+                        "Retrieved document relevance score must be a numerical value."
+                    )
 
-            results.append(result)
+                results.append(result)
 
         if len(qrels) > 10000 or len(results) > 10000:
             raise EvaluationException(
                 "'retrieval_ground_truth' and 'retrieved_documents' inputs should contain no more than 10000 items."
-            )
-
-        # if the qrels are empty, no meaningful evaluation is possible
-        if len(qrels) == 0:
-            raise EvaluationException(
-                "'retrieval_ground_truth' parameter must contain at least one item. Check your data input to be sure that each input record has ground truth defined."
             )
 
         return qrels, results

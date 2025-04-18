@@ -32,7 +32,7 @@ def doc_retrieval_eval_data():
 
 @pytest.fixture()
 def bad_doc_retrieval_eval_data():
-    filename = _get_file("bad_input_document_retrieval_evaluation.json")
+    filename = _get_file("bad_input_document_retrieval_evaluation.jsonl")
 
     records = []
     with open(filename) as f:
@@ -69,7 +69,7 @@ def test_groundtruth_min_gte_max():
     )
 
 def test_incorrect_groundtruth_min():
-    expected_exception_msg = ("A ground truth label less than the configured minimum value was detected in the evaluation input data."
+    expected_exception_msg = ("A query relevance label less than the configured minimum value was detected in the evaluation input data. "
                         "Check the range of ground truth label values in the input data and set the value of ground_truth_minimum to "
                         "the appropriate value for your data.")
     data_groundtruth_min = 0
@@ -93,7 +93,7 @@ def test_incorrect_groundtruth_min():
     )
 
 def test_incorrect_groundtruth_max():
-    expected_exception_msg = ("A ground truth label greater than the configured maximum value was detected in the evaluation input data."
+    expected_exception_msg = ("A query relevance label greater than the configured maximum value was detected in the evaluation input data. "
                         "Check the range of ground truth label values in the input data and set the value of ground_truth_maximum to "
                         "the appropriate value for your data.")
     data_groundtruth_max = 5
@@ -118,6 +118,7 @@ def test_incorrect_groundtruth_max():
 
 def test_threshold(doc_retrieval_eval_data):
     _, records = doc_retrieval_eval_data
+    record = records[-1]
     custom_threshold_subset = {
         "ndcg@3": 0.7,
         "xdcg@3": 0.7,
@@ -137,13 +138,21 @@ def test_threshold(doc_retrieval_eval_data):
 
     for threshold in [custom_threshold_subset, custom_threshold_superset]:
         evaluator = DocumentRetrievalEvaluator(groundtruth_label_min=0, groundtruth_label_max=2, threshold=threshold)
-        results = evaluator(**records)
+        results = evaluator(**record)
 
-        for key in results.keys():
-            assert key in [
-                "ndcg@3", "xdcg@3", "fidelity", "top1_relevance", "top3_max_relevance",
-                "total_retrieved_documents", "total_groundtruth_documents"
-            ]
+        expected_keys = [
+            "ndcg@3", "ndcg@3_result", "ndcg@3_threshold", "ndcg@3_lower_is_better",
+            "xdcg@3", "xdcg@3_result", "xdcg@3_threshold", "xdcg@3_lower_is_better",
+            "fidelity", "fidelity_result", "fidelity_threshold", "fidelity_lower_is_better",
+            "top1_relevance", "top1_relevance_result", "top1_relevance_threshold", "top1_relevance_lower_is_better",
+            "top3_max_relevance", "top3_max_relevance_result", "top3_max_relevance_threshold", "top3_max_relevance_lower_is_better",
+            "total_retrieved_documents", "total_retrieved_documents_result", "total_retrieved_documents_threshold", "total_retrieved_documents_lower_is_better",
+            "total_groundtruth_documents", "total_groundtruth_documents_result", "total_groundtruth_documents_threshold", "total_groundtruth_documents_lower_is_better",
+            "holes", "holes_result", "holes_threshold", "holes_lower_is_better",
+            "holes_ratio", "holes_ratio_result", "holes_ratio_threshold", "holes_ratio_lower_is_better"
+        ]
+
+        assert set(expected_keys) == set(results.keys())
 
 def test_invalid_input(bad_doc_retrieval_eval_data):
     filename, records = bad_doc_retrieval_eval_data
@@ -160,11 +169,11 @@ def test_invalid_input(bad_doc_retrieval_eval_data):
 
 def test_qrels_results_limit():
     groundtruth_docs = [
-        RetrievalGroundTruthDocument({"document_id": f"doc_{x}", "query_relevance_label": random.choice([0, 1, 2, 3, 4])}) for x in range(0, 9999)
+        RetrievalGroundTruthDocument({"document_id": f"doc_{x}", "query_relevance_label": random.choice([0, 1, 2, 3, 4])}) for x in range(0, 10000)
     ]
 
     retrieved_docs = [
-        RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(0, 9999)
+        RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(0, 10000)
     ]
 
     evaluator = DocumentRetrievalEvaluator()
@@ -174,11 +183,11 @@ def test_qrels_results_exceeds_max_allowed():
     expected_exception_msg = "'retrieval_ground_truth' and 'retrieved_documents' inputs should contain no more than 10000 items."
 
     groundtruth_docs = [
-        RetrievalGroundTruthDocument({"document_id": f"doc_{x}", "query_relevance_label": random.choice([0, 1, 2, 3, 4])}) for x in range(0, 10000)
+        RetrievalGroundTruthDocument({"document_id": f"doc_{x}", "query_relevance_label": random.choice([0, 1, 2, 3, 4])}) for x in range(0, 10001)
     ]
 
     retrieved_docs = [
-        RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(0, 10000)
+        RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)}) for x in range(0, 10001)
     ]
 
     evaluator = DocumentRetrievalEvaluator()
