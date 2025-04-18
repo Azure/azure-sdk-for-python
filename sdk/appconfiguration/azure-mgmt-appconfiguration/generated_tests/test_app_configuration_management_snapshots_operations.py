@@ -20,7 +20,7 @@ class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_snapshots_get(self, resource_group):
         response = self.client.snapshots.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -33,7 +33,7 @@ class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_snapshots_begin_create(self, resource_group):
         response = self.client.snapshots.begin_create(
             resource_group_name=resource_group.name,
             config_store_name="str",

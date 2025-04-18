@@ -21,7 +21,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_configuration_stores_list(self, resource_group):
         response = self.client.configuration_stores.list(
             api_version="2024-05-01",
         )
@@ -31,7 +31,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_configuration_stores_list_by_resource_group(self, resource_group):
         response = self.client.configuration_stores.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-05-01",
@@ -42,7 +42,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_configuration_stores_get(self, resource_group):
         response = await self.client.configuration_stores.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -54,7 +54,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_configuration_stores_begin_create(self, resource_group):
         response = await (
             await self.client.configuration_stores.begin_create(
                 resource_group_name=resource_group.name,
@@ -114,7 +114,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_configuration_stores_begin_delete(self, resource_group):
         response = await (
             await self.client.configuration_stores.begin_delete(
                 resource_group_name=resource_group.name,
@@ -128,7 +128,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_configuration_stores_begin_update(self, resource_group):
         response = await (
             await self.client.configuration_stores.begin_update(
                 resource_group_name=resource_group.name,
@@ -157,7 +157,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_keys(self, resource_group):
+    async def test_configuration_stores_list_keys(self, resource_group):
         response = self.client.configuration_stores.list_keys(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -169,7 +169,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_regenerate_key(self, resource_group):
+    async def test_configuration_stores_regenerate_key(self, resource_group):
         response = await self.client.configuration_stores.regenerate_key(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -182,7 +182,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_deleted(self, resource_group):
+    async def test_configuration_stores_list_deleted(self, resource_group):
         response = self.client.configuration_stores.list_deleted(
             api_version="2024-05-01",
         )
@@ -192,7 +192,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_deleted(self, resource_group):
+    async def test_configuration_stores_get_deleted(self, resource_group):
         response = await self.client.configuration_stores.get_deleted(
             location="str",
             config_store_name="str",
@@ -204,7 +204,7 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_purge_deleted(self, resource_group):
+    async def test_configuration_stores_begin_purge_deleted(self, resource_group):
         response = await (
             await self.client.configuration_stores.begin_purge_deleted(
                 location="str",

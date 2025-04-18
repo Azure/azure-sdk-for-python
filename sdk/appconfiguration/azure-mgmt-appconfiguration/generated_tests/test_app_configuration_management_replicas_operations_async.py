@@ -21,7 +21,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_configuration_store(self, resource_group):
+    async def test_replicas_list_by_configuration_store(self, resource_group):
         response = self.client.replicas.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -33,7 +33,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_replicas_get(self, resource_group):
         response = await self.client.replicas.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -46,7 +46,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_replicas_begin_create(self, resource_group):
         response = await (
             await self.client.replicas.begin_create(
                 resource_group_name=resource_group.name,
@@ -77,7 +77,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_replicas_begin_delete(self, resource_group):
         response = await (
             await self.client.replicas.begin_delete(
                 resource_group_name=resource_group.name,
