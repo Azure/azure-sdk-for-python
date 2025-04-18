@@ -8,10 +8,10 @@
   "include": [
     {
       "Config": {
-        "ubuntu_20.04_3.8_msal": {
+        "ubuntu_20.04_3.9_msal": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.8",
+          "PythonVersion": "3.9",
           "CoverageArg": "--disablecov",
           "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
           "UnsupportedToxEnvironments": "mindependency,latestdependency"

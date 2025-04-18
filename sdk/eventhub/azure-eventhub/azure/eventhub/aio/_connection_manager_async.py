@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
-from asyncio import Lock
+from asyncio import Lock # pylint:disable=do-not-import-asyncio
 
 from .._connection_manager import _ConnectionMode
 from .._constants import TransportType

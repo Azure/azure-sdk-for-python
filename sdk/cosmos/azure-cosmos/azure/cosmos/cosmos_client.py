@@ -185,6 +185,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+        If all preferred locations were excluded, primary/hub location will be used.
     :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
