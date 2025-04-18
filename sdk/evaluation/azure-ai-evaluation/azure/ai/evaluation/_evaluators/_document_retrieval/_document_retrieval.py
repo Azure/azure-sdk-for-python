@@ -21,7 +21,24 @@ RetrievedDocument = TypedDict(
 
 class DocumentRetrievalEvaluator(EvaluatorBase):
     """
-    Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity and Top K Relevance.
+    Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity, Top K Relevance and Holes.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START document_retrieval_evaluator]
+            :end-before: [END document_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a Document RetrievalEvaluator
+
+    .. admonition:: Example with Threshold:
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_document_retrieval_evaluator]
+            :end-before: [END threshold_document_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a DocumentRetrievalEvaluator.
     """
 
     def __init__(
@@ -75,11 +92,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         elif isinstance(threshold, dict):
             self._threshold_metrics.update(threshold)
 
-    def _compute_holes(self, actual_docs: list, labeled_docs: list) -> int:
+    def _compute_holes(self, actual_docs: List[str], labeled_docs: List[str]) -> int:
         """
         The number of documents retrieved from a search query which have no provided ground-truth label.
         This metric is helpful for determining the accuracy of other metrics that are highly sensitive to missing ground-truth knowledge,
         such as NDCG, XDCG, and Fidelity.
+
+        :param actual_docs: A list of retrieved documents' IDs.
+        :type actual_docs: List[str]
+        :param labeled_docs: A list of ideal documents' IDs.
+        :type labeled: List[str]
+        :return: The holes calculation result.
+        :rtype: int
         """
         return len(set(actual_docs).difference(set(labeled_docs)))
 
@@ -88,9 +112,15 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         result_docs_groundtruth_labels: List[int],
         ideal_docs_groundtruth_labels: List[int],
     ) -> float:
-        """
-        NDCG (Normalized Discounted Cumulative Gain) calculated for the top 3 documents retrieved from a search query.
+        """NDCG (Normalized Discounted Cumulative Gain) calculated for the top K documents retrieved from a search query.
         NDCG measures how well a document ranking compares to an ideal document ranking given a list of ground-truth documents.
+        
+        :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
+        :type result_docs_groundtruth_labels: List[int]
+        :param ideal_docs_groundtruth_labels: A list of ideal documents' ground truth labels.
+        :type ideal_docs_groundtruth_labels: List[int]
+        :return: The NDCG@K calculation result.
+        :rtype: float
         """
 
         # Set the scoring function
@@ -105,9 +135,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return ndcg
 
     def _compute_xdcg(self, result_docs_groundtruth_labels: List[int]) -> float:
-        """
-        XDCG calculated for the top 3 documents retrieved from a search query.
-        XDCG measures how objectively good are the top 3 documents, discounted by their position in the list.
+        """XDCG calculated for the top K documents retrieved from a search query.
+        XDCG measures how objectively good are the top K documents, discounted by their position in the list.
+        
+        :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
+        :type result_docs_groundtruth_labels: List[int]
+        :return: The XDCG@K calculation result.
+        :rtype: float
         """
 
         def calculate_xdcg_numerator(relevance, rank):
@@ -131,9 +165,15 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         result_docs_groundtruth_labels: List[int],
         ideal_docs_groundtruth_labels: List[int],
     ) -> float:
-        """
-        Fidelity calculated over all documents retrieved from a search query.
+        """Fidelity calculated over all documents retrieved from a search query.
         Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.
+        
+        :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
+        :type result_docs_groundtruth_labels: List[int]
+        :param ideal_docs_groundtruth_labels: A list of ideal documents' ground truth labels.
+        :type ideal_docs_groundtruth_labels: List[int]
+        :return: The fidelity calculation result.
+        :rtype: float
         """
 
         def calculate_weighted_sum_by_rating(labels: List[int]) -> float:
@@ -201,6 +241,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     def _validate_eval_input(
         self, eval_input: Dict
     ) -> Tuple[List[RetrievalGroundTruthDocument], List[RetrievedDocument]]:
+        """Validate document retrieval evaluator inputs.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Tuple[List[azure.ai.evaluation.RetrievalGroundTruthDocument], List[azure.ai.evaluation.RetrievedDocument]]
+        """
         retrieval_ground_truth = eval_input.get("retrieval_ground_truth")
         retrieved_documents = eval_input.get("retrieved_documents")
 
@@ -286,6 +333,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return qrels, results
 
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        """Produce a document retrieval evaluation result.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict[str, float]
+        """
         qrels, results = self._validate_eval_input(eval_input)
 
         # if the results set is empty, results are all zero
@@ -386,12 +440,28 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         """
         Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
 
-        Input `retrieval_ground_truth` is an instance of `List[azure.ai.evaluation.RetrievalGroundTruthDocument]`, where each item of the list represents a ground-truth judgement for a particular document relative to a query.
-        Input `retrieved_documents` is an instance of `List[azure.ai.evaluation.RetrievedDocument]`, where each item of the list represents a document scored by a search algorithm for the same query.
-
         Evaluation metrics calculated include NDCG@3, XDCG@3, Fidelity, Top K Relevance and Holes.
+
+        :keyword retrieval_ground_truth: a list of ground-truth document judgements for a query, where each item in the list contains a unique document identifier and a query relevance label.
+        :paramtype retrieval_ground_truth: List[azure.ai.evaluation.RetrievalGroundTruthDocument]
+        :keyword retrieved_documents: a list of documents scored by a search algorithm for a query, where each item in the list contains a unique document identifier and a relevance score.
+        :paramtype retrieved_documents: List[azure.ai.evaluation.RetrievedDocument]
+        :return: The document retrieval metrics.
+        :rtype: Dict[str, float]
         """
 
     @override
     def __call__(self, *args, **kwargs):
+        """
+        Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
+
+        Evaluation metrics calculated include NDCG@3, XDCG@3, Fidelity, Top K Relevance and Holes.
+
+        :keyword retrieval_ground_truth: a list of ground-truth document judgements for a query, where each item in the list contains a unique document identifier and a query relevance label.
+        :paramtype retrieval_ground_truth: List[azure.ai.evaluation.RetrievalGroundTruthDocument]
+        :keyword retrieved_documents: a list of documents scored by a search algorithm for a query, where each item in the list contains a unique document identifier and a relevance score.
+        :paramtype retrieved_documents: List[azure.ai.evaluation.RetrievedDocument]
+        :return: The document retrieval metrics.
+        :rtype: Dict[str, float]
+        """
         return super().__call__(*args, **kwargs)
