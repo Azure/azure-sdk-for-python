@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional
 from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
+from urllib3 import HTTPResponse
+from requests import Response
 
 
 class ProgressTracker:
@@ -66,7 +68,7 @@ class AsyncStream:
         return data
 
 
-class MockAioHttpClientResponse(ClientResponse):
+class MockAsyncClientResponse(ClientResponse):
     def __init__(
         self, url: str,
         body_bytes: bytes,
@@ -74,7 +76,7 @@ class MockAioHttpClientResponse(ClientResponse):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
-        super(MockAioHttpClientResponse).__init__()
+        super(MockAsyncClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._headers = headers
@@ -84,9 +86,9 @@ class MockAioHttpClientResponse(ClientResponse):
         self.reason = reason
 
 
-class MockStorageTransport(AsyncHttpTransport):
+class MockLegacyTransport(AsyncHttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is 
+    This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
@@ -103,7 +105,7 @@ class MockStorageTransport(AsyncHttpTransport):
 
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
@@ -114,7 +116,7 @@ class MockStorageTransport(AsyncHttpTransport):
             # get_blob_properties
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -128,7 +130,7 @@ class MockStorageTransport(AsyncHttpTransport):
             # upload_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -143,7 +145,7 @@ class MockStorageTransport(AsyncHttpTransport):
             # delete_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -155,7 +157,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
         await rest_response.load_body()
         return rest_response
