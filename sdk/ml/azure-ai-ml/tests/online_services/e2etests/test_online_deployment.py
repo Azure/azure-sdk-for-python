@@ -95,8 +95,6 @@ class TestOnlineDeployment(AzureRecordedTestCase):
                 endpoint_name=endpoint.name,
                 request_file="tests/test_configs/deployments/model-1/sample-request.json",
             )
-        except Exception as ex:
-            raise ex
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
 
