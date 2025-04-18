@@ -764,7 +764,7 @@ class RedTeam():
             # Debug log the first few characters of each prompt
             self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
             
-            # Use a batched approach for send_prompts_async to prevent overwhelming
+            # Use a batched approach for send_normalizer_requests_async to prevent overwhelming
             # the model with too many concurrent requests
             batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
 
@@ -779,7 +779,65 @@ class RedTeam():
 
             self.red_team_info[strategy_name][risk_category]["data_file"] = output_path
             
-            # Process prompts concurrently within each batch
+            # Get objective IDs for conversation IDs
+            # Use the key structure from _get_attack_objectives
+            current_key = ((risk_category,), strategy_name)
+            selected_objectives = self.attack_objectives.get(current_key, {}).get("selected_objectives", [])
+            self.logger.debug(f"key for {strategy_name}/{risk_category}: {current_key} yielded {len(selected_objectives)} selected objectives")
+            # If we have selected objectives with IDs, use them for conversation IDs
+            objective_ids = {}
+            if selected_objectives:
+                for idx, obj in enumerate(selected_objectives):
+                    obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+                    # Match objective content to prompt
+                    if "messages" in obj and len(obj["messages"]) > 0:
+                        message = obj["messages"][0]
+                        if isinstance(message, dict) and "content" in message:
+                            content = message["content"]
+                            objective_ids[content] = obj_id
+            self.logger.debug(f"Objective IDs for {strategy_name}/{risk_category}: {list(objective_ids.values())}")
+            # Create normalizer requests for each prompt with appropriate conversation IDs
+            async def create_normalizer_requests(prompts):
+                normalizer_requests = []
+                for prompt in prompts:
+                    # Get conversation ID from objective ID if possible
+                    conversation_id = objective_ids.get(prompt, f"conv-{uuid.uuid4()}")
+                    
+                    # Create a SeedPromptGroup with the prompt
+                    from pyrit.models import ChatMessage, SeedPromptGroup, SeedPrompt
+                    self.logger.debug(f"Creating SeedPrompt for prompt_group_id: {conversation_id}")
+                    seed_prompt = SeedPrompt(
+                        prompt_group_id=conversation_id,
+                        value=prompt,
+                        data_type="text",
+                        metadata={
+                            "my_favorite_id": conversation_id
+                        }
+                    )
+                    seed_group = SeedPromptGroup(
+                        prompts=[seed_prompt]
+                    )
+                    
+                    # Create converter configurations
+                    from pyrit.prompt_normalizer import PromptConverterConfiguration
+                    request_converter_configs = []
+                    if converter_list:
+                        config = PromptConverterConfiguration(converters=converter_list)
+                        request_converter_configs.append(config)
+                    
+                    # Create the NormalizerRequest
+                    from pyrit.prompt_normalizer import NormalizerRequest
+                    self.logger.debug(f"Creating NormalizerRequest for prompt_group_id: {conversation_id}")
+                    request = NormalizerRequest(
+                        seed_prompt_group=seed_group,
+                        request_converter_configurations=request_converter_configs,
+                        response_converter_configurations=[],
+                        conversation_id=conversation_id
+                    )
+                    normalizer_requests.append(request)
+                return normalizer_requests
+            
+            # Process normalizer requests concurrently within each batch
             if len(all_prompts) > batch_size:
                 self.logger.debug(f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category}")
                 batches = [all_prompts[i:i + batch_size] for i in range(0, len(all_prompts), batch_size)]
@@ -792,8 +850,13 @@ class RedTeam():
                         @retry(**self._create_retry_config()["network_retry"])
                         async def send_batch_with_retry():
                             try:
+                                import pdb; pdb.set_trace()
+                                normalizer_requests = await create_normalizer_requests(batch)
                                 return await asyncio.wait_for(
-                                    orchestrator.send_prompts_async(prompt_list=batch, memory_labels={"risk_strategy_path": output_path, "batch": batch_idx+1}),
+                                    orchestrator.send_normalizer_requests_async(
+                                        prompt_request_list=normalizer_requests, 
+                                        memory_labels={"risk_strategy_path": output_path, "batch": batch_idx+1}
+                                    ),
                                     timeout=timeout  # Use provided timeouts
                                 )
                             except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
@@ -839,8 +902,13 @@ class RedTeam():
                     @retry(**self._create_retry_config()["network_retry"])
                     async def send_all_with_retry():
                         try:
+                            import pdb; pdb.set_trace()
+                            normalizer_requests = await create_normalizer_requests(all_prompts)
                             return await asyncio.wait_for(
-                                orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                orchestrator.send_normalizer_requests_async(
+                                    prompt_request_list=normalizer_requests,
+                                    memory_labels={"risk_strategy_path": output_path, "batch": 1}
+                                ),
                                 timeout=timeout  # Use provided timeout
                             )
                         except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
@@ -894,7 +962,10 @@ class RedTeam():
         memory_label = {"risk_strategy_path": output_path}
 
         prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
-
+        """
+        prompts_request_pieces[0].to_dict()
+{'id': 'a262c94d-88ea-4466-b4e2-030dbd81c078', 'role': 'user', 'conversation_id': '4b89b303-6762-40ac-9666-1ec913fc0b65', 'sequence': 0, 'timestamp': '2025-04-18T13:52:36.396508', 'labels': {'risk_strategy_path': './scan_Direct-Model-Test-gpt-4o-unsafe_20250418_134929/af1c3152-f9e7-4fad-9e6c-0c373de522ae.jsonl', 'batch': 1}, 'prompt_metadata': {'my_favorite_id': '060386e6-3883-4857-a8ea-8530a9b4a118'}, 'converter_identifiers': [], 'prompt_target_identifier': {'__type__': 'OpenAIChatTarget', '__module__': 'pyrit.prompt_target.openai.openai_chat_target'}, 'orchestrator_identifier': {'__type__': 'PromptSendingOrchestrator', '__module__': 'pyrit.orchestrator.single_turn.prompt_sending_orchestrator', 'id': 'e7c4e60d-105c-4fdc-83a2-c56fc7dbeb0e'}, 'scorer_identifier': {}, 'original_value_data_type': 'text', 'original_value': '******', 'original_value_sha256': '1e9be34e7c154aee0bf89b326fc98994d2dffa3a5ddac43ee2927ae04defc5ab', 'converted_value_data_type': 'text', 'converted_value': '******', 'converted_value_sha256': '1e9be34e7c154aee0bf89b326fc98994d2dffa3a5ddac43ee2927ae04defc5ab', 'response_error': 'none', 'originator': 'undefined', 'original_prompt_id': 'a262c94d-88ea-4466-b4e2-030dbd81c078', 'scores': []}
+        """
         conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)]
         # Check if we should overwrite existing file with more conversations
         if os.path.exists(output_path):
@@ -909,8 +980,12 @@ class RedTeam():
                     self.logger.debug(f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content.")
                     #Convert to json lines
                     json_lines = ""
-                    for conversation in conversations: # each conversation is a List[ChatMessage]
-                        json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+                    for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id):
+                        conversation = [item.to_chat_message() for item in group]
+                        json_lines += json.dumps({
+                            "conversation_id": conv_id,
+                            "conversation": {"messages": [self._message_to_dict(message) for message in conversation]}
+                        }) + "\n"
                     with Path(output_path).open("w") as f:
                         f.writelines(json_lines)
                     self.logger.debug(f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}")
@@ -923,8 +998,12 @@ class RedTeam():
             self.logger.debug(f"Creating new file: {output_path}")
             #Convert to json lines
             json_lines = ""
-            for conversation in conversations: # each conversation is a List[ChatMessage]
-                json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+            for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id):
+                conversation = [item.to_chat_message() for item in group]
+                json_lines += json.dumps({
+                    "conversation_id": conv_id,
+                    "conversation": {"messages": [self._message_to_dict(message) for message in conversation]}
+                }) + "\n"
             with Path(output_path).open("w") as f:
                 f.writelines(json_lines)
             self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
@@ -1003,6 +1082,8 @@ class RedTeam():
                                     conv_data = json.loads(line)
                                     if "conversation" in conv_data and "messages" in conv_data["conversation"]:
                                         messages = conv_data["conversation"]["messages"]
+                                        # Extract the conversation_id from conv_data if it exists
+                                        prompt_id = conv_data.get("conversation_id", f"prompt-{uuid.uuid4()}")
                                         
                                         # Determine attack success based on evaluation results if available
                                         attack_success = None
@@ -1043,6 +1124,7 @@ class RedTeam():
                                             "attack_technique": strategy_name.replace("Converter", "").replace("Prompt", ""),
                                             "attack_complexity": complexity_level,
                                             "risk_category": risk_category,
+                                            "prompt_id": prompt_id,
                                             "conversation": messages,
                                             "risk_assessment": risk_assessment if risk_assessment else None
                                         }
