@@ -54,7 +54,7 @@ IGNORE_BREAKING_CHANGES = {
         ("AddedClassMethod", "*", "*", "values"),
         ("AddedClassMethodParameter", "*", "*", "args", "__init__"),
         ("AddedClassMethodParameter", "*", "*", "exclude_readonly", "as_dict"),
-        # changes to support multi cloud and actually it is not breaking change
+        # Suppress breaking change check for multi-cloud support as it is not considered a breaking change
         ("ChangedParameterDefaultValue", "*", "base_url", "str", "none"),
     ]
 }
