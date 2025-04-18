@@ -94,6 +94,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
+                    store=True,
                 )
                 assert False
             except ServiceRequestError as _:
@@ -129,6 +130,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
             tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
             tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
             top_p=9.876,
+            store=True,
         )
 
         for _ in range(2):
@@ -206,6 +208,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
             ),
             tools=[ModelClientTestBase.TOOL2],
             top_p=3.456,
+            store=False,
         )
 
         for _ in range(2):
@@ -265,6 +268,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
+                    store=True
                 )
                 assert False
             except ServiceRequestError as _:
