@@ -24,6 +24,8 @@ from typing import (
     Sequence,
     TextIO,
     Union,
+    Callable,
+    Set,
     cast,
     overload,
 )
@@ -841,7 +843,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Dict[str, _models.ToolSet] = {}
+        self._function_tool = _models.FunctionTool(set())
 
     # pylint: disable=arguments-differ
     @overload
@@ -1073,8 +1075,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-        if toolset is not None:
-            self._toolset[new_agent.id] = toolset
         return new_agent
 
     # pylint: disable=arguments-differ
@@ -1327,7 +1327,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[agent_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -1823,11 +1822,9 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.agent_id)
-                    if toolset is not None:
-                        tool_outputs = toolset.execute_tool_calls(tool_calls)
-                    else:
-                        raise ValueError("Toolset is not available in the client.")
+                    toolset = _models.ToolSet()
+                    toolset.add(self._function_tool)
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
@@ -2520,13 +2517,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
-            if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.agent_id)
-                if toolset:
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-                else:
-                    logger.debug("Toolset is not available in the client.")
-                    return
+            if (
+                any(tool_call.type == "function" for tool_call in tool_calls)
+                and len(self._function_tool.definitions) > 0
+            ):
+
+                toolset = _models.ToolSet()
+                toolset.add(self._function_tool)
+                tool_outputs = toolset.execute_tool_calls(tool_calls)
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
@@ -2605,8 +2603,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-        :paramtype purpose: Union[str, _models.FilePurpose, None]
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
@@ -2615,15 +2613,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
+        # If a JSON body is provided directly, pass it along
         if body is not None:
-            return super().upload_file(body=body, **kwargs)
+            return super()._upload_file(body=body, **kwargs)
 
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
+        # If file content is passed in directly
         if file is not None and purpose is not None:
-            return super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+            return super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
+        # If a file path is provided
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
@@ -2632,11 +2634,11 @@ class AgentsOperations(AgentsOperationsGenerated):
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
 
-                return super().upload_file(file=file_content, purpose=purpose, **kwargs)
+                return super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}") from e
 
@@ -3304,9 +3306,56 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if agent_id in self._toolset:
-            del self._toolset[agent_id]
         return super().delete_agent(agent_id, **kwargs)
+
+    @overload
+    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]]) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, function_tool: _models.FunctionTool) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword function_tool: A FunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.FunctionTool]
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, toolset: _models.ToolSet) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword toolset: A ToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.ToolSet]
+        """
+
+    @distributed_trace
+    def enable_auto_function_calls(
+        self,
+        *,
+        functions: Optional[Set[Callable[..., Any]]] = None,
+        function_tool: Optional[_models.FunctionTool] = None,
+        toolset: Optional[_models.ToolSet] = None,
+    ) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        :keyword function_tool: A FunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.FunctionTool]
+        :keyword toolset: A ToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.ToolSet]
+        """
+        if functions:
+            self._function_tool = _models.FunctionTool(functions)
+        elif function_tool:
+            self._function_tool = function_tool
+        elif toolset:
+            tool = toolset.get_tool(_models.FunctionTool)
+            self._function_tool = tool
 
 
 __all__: List[str] = [

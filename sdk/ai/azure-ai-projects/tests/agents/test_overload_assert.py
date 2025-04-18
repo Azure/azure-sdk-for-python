@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import unittest
 import pytest
 from azure.ai.projects.operations import AgentsOperations
