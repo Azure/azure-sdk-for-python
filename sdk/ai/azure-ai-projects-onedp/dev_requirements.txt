@@ -1,0 +1,8 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+aiohttp
+azure.storage.blob
+azure.ai.inference
+openai
+prompty
