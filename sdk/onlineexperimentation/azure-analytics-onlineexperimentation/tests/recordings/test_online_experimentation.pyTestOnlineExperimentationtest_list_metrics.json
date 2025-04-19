@@ -1,0 +1,497 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "284",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "desiredDirection": "Increase",
+        "definition": {
+          "type": "EventCount",
+          "event": {
+            "eventName": "TestEvent"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:33:13 GMT",
+        "ETag": "\"UeSbbGIPX0g=\"",
+        "Last-Modified": "Tue, 15 Apr 2025 22:33:08 GMT",
+        "mise-correlation-id": "2965367c-aace-4a3a-8d4f-472d12a52a56",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "lifecycle": "Active",
+        "desiredDirection": "Increase",
+        "id": "Sanitized",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "definition": {
+          "event": {
+            "eventName": "TestEvent"
+          },
+          "type": "EventCount"
+        },
+        "eTag": "UeSbbGIPX0g=",
+        "lastModifiedAt": "2025-04-15T22:33:08.6415217+00:00"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics?api-version=2025-05-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-analytics-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 15 Apr 2025 22:33:13 GMT",
+        "mise-correlation-id": "31c5c0fb-d570-4c29-8656-b3ee86e71bce",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Neutral",
+            "id": "Sanitized",
+            "displayName": "Number of GenAI spans",
+            "description": "The number of GenAI spans. This is an approximation of the number of total GenAI requests made.",
+            "categories": [
+              "GenAI",
+              "Usage",
+              "Standard: genai operational  "
+            ],
+            "definition": {
+              "event": {
+                "eventName": "gen_ai.otel.span"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "IXVL61JoABk=",
+            "lastModifiedAt": "2025-04-12T01:28:00.4695143+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Decrease",
+            "id": "Sanitized",
+            "displayName": "Average GenAI usage tokens",
+            "description": "The average usage tokens (both input and output) per GenAI call of any type. Default desiredDirection is 'Decrease', appropriate for cases where cost reduction is a priority. If you are optimizing for user engagement regardless of cost, you may want to change this to 'Neutral'.",
+            "categories": [
+              "GenAI",
+              "Cost",
+              "Important",
+              "Standard: genai operational  "
+            ],
+            "definition": {
+              "value": {
+                "eventName": "gen_ai.otel.span",
+                "eventProperty": "gen_ai.usage.tokens"
+              },
+              "type": "Average"
+            },
+            "eTag": "LKwe4t/5ESU=",
+            "lastModifiedAt": "2025-04-12T01:29:17.5428338+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Decrease",
+            "id": "Sanitized",
+            "displayName": "Total GenAI usage tokens",
+            "description": "While average usage tokens gives an indication of per-call efficiency, your cost is based on the total token usage. This metric show total usage tokens (both input and output) for any type of GenAI calls. Assuming equal number of GenAI calls, we want total token usage to reduce or remain constant. The statistical test on this metric compares the token usage per user: meaning increased usage may increase the total usage tokens without flagging this metric as statistically significant.",
+            "categories": [
+              "GenAI",
+              "Cost",
+              "Standard: genai operational  "
+            ],
+            "definition": {
+              "value": {
+                "eventName": "gen_ai.otel.span",
+                "eventProperty": "gen_ai.usage.tokens"
+              },
+              "type": "Sum"
+            },
+            "eTag": "lUF2DiFzVEM=",
+            "lastModifiedAt": "2025-04-12T01:29:17.5588615+00:00"
+          },
+          {
+            "lifecycle": "Inactive",
+            "desiredDirection": "Decrease",
+            "id": "Sanitized",
+            "displayName": "Number of GenAI operations that end in a timeout error",
+            "description": "The number of GenAI calls that have 'error.type' equal to 'timeout'. This is an example metric for how to customize GenAI error type metrics to particular error classes. It is set by default to 'Inactive' since different instrumentation libraries may use different error class descriptions.",
+            "categories": [
+              "GenAI",
+              "Standard: genai operational  "
+            ],
+            "definition": {
+              "event": {
+                "eventName": "gen_ai.otel.span",
+                "filter": "['error.type'] == 'timeout'"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "3iHoKj6j51k=",
+            "lastModifiedAt": "2025-04-12T01:29:17.5705842+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Updated Metric",
+            "description": "This metric has been updated with ETag condition",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "cu63FSzpG9k=",
+            "lastModifiedAt": "2025-04-14T20:39:18.2620861+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Get Test Metric",
+            "description": "A metric to be retrieved",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "d80Gy5gw7IE=",
+            "lastModifiedAt": "2025-04-12T03:07:56.6150568+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Original Metric",
+            "description": "Initial description",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "wwYdbIGWw0E=",
+            "lastModifiedAt": "2025-04-12T03:07:58.2310958+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "New Test Metric",
+            "description": "A metric created for testing purposes",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "qOF7bCW8W7s=",
+            "lastModifiedAt": "2025-04-12T03:08:00.3406407+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Updated Metric",
+            "description": "This metric has been updated",
+            "categories": [
+              "Test",
+              "Updated"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "UpdatedTestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "cyvztNL0w2g=",
+            "lastModifiedAt": "2025-04-14T20:39:26.6315045+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Metric 0",
+            "description": "Test metric for listing #0",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "LdAtdg0Cx6A=",
+            "lastModifiedAt": "2025-04-14T20:39:40.2856499+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Metric 1",
+            "description": "Test metric for listing #1",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "Ym64uPU+Z8I=",
+            "lastModifiedAt": "2025-04-14T20:39:40.6760653+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Metric 2",
+            "description": "Test metric for listing #2",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "ilwe8ubl5dg=",
+            "lastModifiedAt": "2025-04-14T20:39:40.8531814+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Metric 3",
+            "description": "Test metric for testing top parameter #3",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "Y+o+rxxL6YM=",
+            "lastModifiedAt": "2025-04-12T03:08:03.8616409+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Metric 4",
+            "description": "Test metric for testing top parameter #4",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "Z74wFVPWjAE=",
+            "lastModifiedAt": "2025-04-12T03:08:04.0180776+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Conditional Delete Metric",
+            "description": "A metric to be conditionally deleted",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "rNiDvXQIl1A=",
+            "lastModifiedAt": "2025-04-12T03:08:07.5159999+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Original Metric",
+            "description": "Initial description",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "ZoLwZJx4bQc=",
+            "lastModifiedAt": "2025-04-12T03:08:10.6175384+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Conditional Delete Fail Metric",
+            "description": "A metric with incorrect ETag for conditional delete",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "GVKg9FiVZN8=",
+            "lastModifiedAt": "2025-04-12T03:08:12.1761106+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "If-None-Match Test Metric",
+            "description": "A metric created with If-None-Match header",
+            "categories": [
+              "Test",
+              "Conditional"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "ConditionalCreateEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "NyoM+7py4jQ=",
+            "lastModifiedAt": "2025-04-14T20:39:32.1899361+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "New Test Metric",
+            "description": "A metric created for testing purposes",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "4KbMe+V3cw8=",
+            "lastModifiedAt": "2025-04-15T19:56:26.9700545+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "Test Metric test_metric_fixed_id",
+            "description": "A metric created for testing purposes (test_metric_fixed_id)",
+            "categories": [
+              "Test"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "TestEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "UeSbbGIPX0g=",
+            "lastModifiedAt": "2025-04-15T22:33:08.6415217+00:00"
+          },
+          {
+            "lifecycle": "Active",
+            "desiredDirection": "Increase",
+            "id": "Sanitized",
+            "displayName": "If-None-Match Test Metric",
+            "description": "A metric created with If-None-Match header",
+            "categories": [
+              "Test",
+              "Conditional"
+            ],
+            "definition": {
+              "event": {
+                "eventName": "ConditionalCreateEvent"
+              },
+              "type": "EventCount"
+            },
+            "eTag": "Z7GgLmCOJuk=",
+            "lastModifiedAt": "2025-04-15T22:32:50.294993+00:00"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
