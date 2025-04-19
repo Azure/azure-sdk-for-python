@@ -64,6 +64,19 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource create request has been accepted"""
 
 
+class PurgeableOrchestrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Purgeable orchestration state to be used in retention policies."""
+
+    COMPLETED = "Completed"
+    """The orchestration is completed"""
+    FAILED = "Failed"
+    """The orchestration is failed"""
+    TERMINATED = "Terminated"
+    """The orchestration is terminated"""
+    CANCELED = "Canceled"
+    """The orchestration is canceled"""
+
+
 class RedundancyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the resource redundancy."""
 

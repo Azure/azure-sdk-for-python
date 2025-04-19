@@ -21,6 +21,9 @@ from ._models import (  # type: ignore
     OperationDisplay,
     ProxyResource,
     Resource,
+    RetentionPolicy,
+    RetentionPolicyDetails,
+    RetentionPolicyProperties,
     Scheduler,
     SchedulerProperties,
     SchedulerPropertiesUpdate,
@@ -38,6 +41,7 @@ from ._enums import (  # type: ignore
     CreatedByType,
     Origin,
     ProvisioningState,
+    PurgeableOrchestrationState,
     RedundancyState,
 )
 from ._patch import __all__ as _patch_all
@@ -52,6 +56,9 @@ __all__ = [
     "OperationDisplay",
     "ProxyResource",
     "Resource",
+    "RetentionPolicy",
+    "RetentionPolicyDetails",
+    "RetentionPolicyProperties",
     "Scheduler",
     "SchedulerProperties",
     "SchedulerPropertiesUpdate",
@@ -66,6 +73,7 @@ __all__ = [
     "CreatedByType",
     "Origin",
     "ProvisioningState",
+    "PurgeableOrchestrationState",
     "RedundancyState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -34,13 +34,13 @@ def main():
         resource_group_name="rgopenapi",
         scheduler_name="testscheduler",
         properties={
-            "properties": {"ipAllowlist": ["10.0.0.0/8"], "sku": {"capacity": 10, "name": "Dedicated"}},
-            "tags": {"key8653": "lr"},
+            "properties": {"ipAllowlist": ["10.0.0.0/8"], "sku": {"capacity": 3, "name": "Dedicated"}},
+            "tags": {"hello": "world"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-10-01-preview/Schedulers_Update.json
+# x-ms-original-file: 2025-04-01-preview/Schedulers_Update.json
 if __name__ == "__main__":
     main()

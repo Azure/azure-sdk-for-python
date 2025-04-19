@@ -17,7 +17,7 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from ._configuration import DurableTaskMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import Operations, SchedulersOperations, TaskHubsOperations
+from .operations import Operations, RetentionPoliciesOperations, SchedulersOperations, TaskHubsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -32,6 +32,8 @@ class DurableTaskMgmtClient:
     :vartype schedulers: azure.mgmt.durabletask.operations.SchedulersOperations
     :ivar task_hubs: TaskHubsOperations operations
     :vartype task_hubs: azure.mgmt.durabletask.operations.TaskHubsOperations
+    :ivar retention_policies: RetentionPoliciesOperations operations
+    :vartype retention_policies: azure.mgmt.durabletask.operations.RetentionPoliciesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -39,7 +41,7 @@ class DurableTaskMgmtClient:
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-10-01-preview". Note that overriding this default value may result in unsupported
+     "2025-04-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -83,6 +85,9 @@ class DurableTaskMgmtClient:
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.schedulers = SchedulersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task_hubs = TaskHubsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.retention_policies = RetentionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
