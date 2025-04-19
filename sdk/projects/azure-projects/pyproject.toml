@@ -1,0 +1,11 @@
+[tool.azure-sdk-build]
+mypy = true
+type_check_samples = true
+verifytypes = true
+# TODO: Get pyright passing
+pyright = false
+pylint = true
+black = true
+sphinx = true
+# absolute_cov = true
+# absolute_cov_percent = 80.00
