@@ -495,7 +495,8 @@ class AsyncEvaluatorBase:
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
         self, *, query=None, response=None, context=None, conversation=None, ground_truth=None,
-            tool_call=None, tool_definitions=None, messages=None, **kwargs
+            tool_call=None, tool_definitions=None, messages=None, retrieval_ground_truth=None,
+            retrieved_documents=None,**kwargs
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation
@@ -515,5 +516,9 @@ class AsyncEvaluatorBase:
             kwargs["tool_definitions"] = tool_definitions
         if messages is not None:
             kwargs["messages"] = messages
+        if retrieval_ground_truth is not None:
+            kwargs["retrieval_ground_truth"] = retrieval_ground_truth
+        if retrieved_documents is not None:
+            kwargs["retrieved_documents"] = retrieved_documents
 
         return await self._real_call(**kwargs)

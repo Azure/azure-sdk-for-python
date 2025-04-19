@@ -1,4 +1,13 @@
 {
+    "words": [
+        "ndcg",
+        "NDCG",
+        "xdcg",
+        "XDCG",
+        "idcg",
+        "qrel",
+        "qrels"
+    ],
     "ignoreWords": [
         "exfiltrating",
         "backdoors",
