@@ -72,7 +72,7 @@ class AsyncStream:
         return data
 
 
-class MockAsyncClientResponse(ClientResponse):
+class MockAioHttpClientResponse(ClientResponse):
     def __init__(
         self, url: str,
         body_bytes: bytes,
@@ -80,7 +80,7 @@ class MockAsyncClientResponse(ClientResponse):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
-        super(MockAsyncClientResponse).__init__()
+        super(MockAioHttpClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._headers = headers
@@ -113,7 +113,7 @@ class MockLegacyTransport(AsyncHttpTransport):
 
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAsyncClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
@@ -124,7 +124,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # get_blob_properties
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAsyncClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -138,7 +138,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # upload_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAsyncClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -153,7 +153,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # delete_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAsyncClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
