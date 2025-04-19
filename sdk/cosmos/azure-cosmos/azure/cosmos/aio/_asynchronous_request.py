@@ -59,6 +59,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
+    if global_endpoint_manager.is_healthy_tentative(request_params):
+        read_timeout = connection_policy.RecoveryReadTimeout
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     else:

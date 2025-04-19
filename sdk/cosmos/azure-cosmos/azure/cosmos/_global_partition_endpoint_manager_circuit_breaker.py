@@ -62,7 +62,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
                 target_container_link = container_link
         if not target_container_link:
             raise RuntimeError("Illegal state: the container cache is not properly initialized.")
-        # TODO: @tvaron3 check different clients and create them in different ways
         pk_range = (self.Client._routing_map_provider # pylint: disable=protected-access
                     .get_overlapping_ranges(target_container_link, partition_key))
         return PartitionKeyRangeWrapper(pk_range, container_rid)

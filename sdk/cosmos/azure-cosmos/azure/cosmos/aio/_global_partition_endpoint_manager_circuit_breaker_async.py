@@ -94,7 +94,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
     def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper):
-        if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request) and pk_range_wrapper:
+        if self.is_circuit_breaker_applicable(request):
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)
         return (super(_GlobalPartitionEndpointManagerForCircuitBreakerAsync, self)
@@ -111,6 +111,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             self,
             request: RequestObject
     ) -> None:
-        if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request):
+        if self.is_circuit_breaker_applicable(request):
             pk_range_wrapper = await self.create_pk_range_wrapper(request)
             self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)
+
+    async def is_healthy_tentative(self, request: RequestObject) -> bool:
+        if self.is_circuit_breaker_applicable(request):
+            pk_range_wrapper = await self.create_pk_range_wrapper(request)
+            return self.global_partition_endpoint_manager_core.is_healthy_tentative(request, pk_range_wrapper)
+        return False

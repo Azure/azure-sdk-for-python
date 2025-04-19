@@ -23,7 +23,7 @@
 """
 import logging
 import os
-from typing import Dict, Set, Any, List
+from typing import Dict, Any, List
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
 from ._constants import _Constants as Constants
@@ -48,11 +48,9 @@ def _has_exceeded_failure_rate_threshold(
         failures: int,
         failure_rate_threshold: int,
 ) -> bool:
-    print(MINIMUM_REQUESTS_FOR_FAILURE_RATE)
     if successes + failures < MINIMUM_REQUESTS_FOR_FAILURE_RATE:
         return False
     failure_rate = failures / (failures + successes) * 100
-    print("Failure rate", failure_rate)
     return failure_rate >= failure_rate_threshold
 
 class _PartitionHealthInfo(object):
@@ -248,7 +246,6 @@ class _PartitionHealthTracker(object):
             failure_rate_threshold: int,
             consecutive_failure_threshold: int,
     ) -> None:
-        print("Check Thresholds called")
         # check the failure rate was not exceeded
         if _has_exceeded_failure_rate_threshold(
                 successes,
@@ -286,3 +283,12 @@ class _PartitionHealthTracker(object):
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
                 health_info.reset_health_stats()
+
+    def is_healthy_tentative(self, pk_range_wrapper, location):
+        if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
+            if location in self.pk_range_wrapper_to_health_info[pk_range_wrapper]:
+                health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
+                return health_info.unavailability_info and \
+                    health_info.unavailability_info[HEALTH_STATUS] == HEALTHY_TENTATIVE
+        return False
+

@@ -246,8 +246,20 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                       expected_uri)
 
         validate_unhealthy_partitions(global_endpoint_manager, 1)
+        # remove faults and reduce initial recover time and perform a write
+        original_val = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        custom_transport.faults = []
+        try:
+            await perform_write_operation(write_operation,
+                                          container,
+                                          fault_injection_container,
+                                          str(uuid.uuid4()),
+                                          pk_value,
+                                          uri_down)
+        finally:
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_val
         await cleanup_method([custom_setup, setup])
-        # test recovering the partition ---------------------------------------------------------------------
 
 
 
@@ -340,7 +352,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                                )))
                 else:
                     with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                        await perform_read_operation(write_operation,
+                        await perform_write_operation(write_operation,
                                                       container,
                                                       fault_injection_container,
                                                       str(uuid.uuid4()),
@@ -382,12 +394,16 @@ class TestPerPartitionCircuitBreakerMMAsync:
         await container.upsert_item(body=doc)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
-        _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
+        _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 8
         os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
         try:
-            for i in range(10):
+            if isinstance(error, ServiceResponseError):
+                num_operations = 4
+            else:
+                num_operations = 8
+            for i in range(num_operations):
                 validate_unhealthy_partitions(global_endpoint_manager, 0)
-                if i == 4:
+                if i == 2:
                     # perform some successful read to reset consecutive counter
                     # remove faults and perform a read
                     custom_transport.faults = []

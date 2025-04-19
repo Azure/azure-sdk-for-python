@@ -80,7 +80,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             else EndpointOperationType.ReadType)
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_failure(pk_range_wrapper, endpoint_operation_type, str(location))
-    # TODO: @tvaron3 lower request timeout to 5.5 seconds for recovering
     # TODO: @tvaron3 exponential backoff for recovering
 
     def add_excluded_locations_to_request(
@@ -108,4 +107,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_success(pk_range_wrapper, endpoint_operation_type, location)
 
-# TODO: @tvaron3 there should be no in region retries when trying on healthy tentative -----------------------
+    def is_healthy_tentative(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper):
+        location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
+        return self.partition_health_tracker.is_healthy_tentative(pk_range_wrapper, location)

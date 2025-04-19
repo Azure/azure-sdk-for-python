@@ -63,6 +63,7 @@ class PartitionKeyRangeCache(object):
 
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
+        # TODO: @tvaron3 change this to be by collectionRID
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
             collection_pk_ranges = list(cl._ReadPartitionKeyRanges(collection_link, **kwargs))
