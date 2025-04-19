@@ -1,0 +1,2 @@
+[tool.azure-sdk-build]
+breaking = false
