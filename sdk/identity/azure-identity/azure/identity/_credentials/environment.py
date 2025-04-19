@@ -5,10 +5,12 @@
 import logging
 import os
 from typing import Optional, Union, Any, cast
+import warnings
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal import within_dac
 from .._internal.decorators import log_get_token
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
@@ -96,7 +98,15 @@ class EnvironmentCredential:
                 username=os.environ[EnvironmentVariables.AZURE_USERNAME],
                 password=os.environ[EnvironmentVariables.AZURE_PASSWORD],
                 tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
+                _silence_deprecation_warning=True,  # avoid duplicate warning
                 **kwargs
+            )
+            warnings.warn(
+                "Environment is configured to use username and password authentication. "
+                "This authentication method is deprecated, as it doesn't support multifactor authentication (MFA). "
+                "For more details, see https://aka.ms/azsdk/identity/mfa.",
+                DeprecationWarning,
+                stacklevel=3 if within_dac.get() else 2,
             )
 
         if self._credential:

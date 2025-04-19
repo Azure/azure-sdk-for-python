@@ -175,3 +175,21 @@ def test_username_password_configuration():
     assert kwargs["password"] == password
     assert kwargs["tenant_id"] == tenant_id
     assert kwargs["foo"] == bar
+
+
+def test_username_password_deprecation_warning():
+    """the credential should pass expected values and any keyword arguments to its inner credential"""
+
+    client_id = "client-id"
+    username = "username"
+    password = "password"
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_USERNAME: username,
+        EnvironmentVariables.AZURE_PASSWORD: password,
+    }
+
+    with mock.patch.dict("os.environ", environment, clear=True):
+        # the deprecation warning is only raised when the credential is used
+        with pytest.deprecated_call():
+            EnvironmentCredential()
