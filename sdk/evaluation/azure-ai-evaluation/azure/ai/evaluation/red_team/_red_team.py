@@ -738,7 +738,7 @@ class RedTeam():
         
         # Create converter list from single converter or list of converters
         converter_list = [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
-        
+        # TODO: Find out why converters are not being run
         # Log which converter is being used
         if converter_list:
             if isinstance(converter_list, list) and len(converter_list) > 0:
@@ -811,7 +811,7 @@ class RedTeam():
                         value=prompt,
                         data_type="text",
                         metadata={
-                            "my_favorite_id": conversation_id
+                            "prompt_group_id": conversation_id,
                         }
                     )
                     seed_group = SeedPromptGroup(
@@ -850,7 +850,6 @@ class RedTeam():
                         @retry(**self._create_retry_config()["network_retry"])
                         async def send_batch_with_retry():
                             try:
-                                import pdb; pdb.set_trace()
                                 normalizer_requests = await create_normalizer_requests(batch)
                                 return await asyncio.wait_for(
                                     orchestrator.send_normalizer_requests_async(
@@ -902,7 +901,6 @@ class RedTeam():
                     @retry(**self._create_retry_config()["network_retry"])
                     async def send_all_with_retry():
                         try:
-                            import pdb; pdb.set_trace()
                             normalizer_requests = await create_normalizer_requests(all_prompts)
                             return await asyncio.wait_for(
                                 orchestrator.send_normalizer_requests_async(
@@ -962,11 +960,18 @@ class RedTeam():
         memory_label = {"risk_strategy_path": output_path}
 
         prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
-        """
-        prompts_request_pieces[0].to_dict()
-{'id': 'a262c94d-88ea-4466-b4e2-030dbd81c078', 'role': 'user', 'conversation_id': '4b89b303-6762-40ac-9666-1ec913fc0b65', 'sequence': 0, 'timestamp': '2025-04-18T13:52:36.396508', 'labels': {'risk_strategy_path': './scan_Direct-Model-Test-gpt-4o-unsafe_20250418_134929/af1c3152-f9e7-4fad-9e6c-0c373de522ae.jsonl', 'batch': 1}, 'prompt_metadata': {'my_favorite_id': '060386e6-3883-4857-a8ea-8530a9b4a118'}, 'converter_identifiers': [], 'prompt_target_identifier': {'__type__': 'OpenAIChatTarget', '__module__': 'pyrit.prompt_target.openai.openai_chat_target'}, 'orchestrator_identifier': {'__type__': 'PromptSendingOrchestrator', '__module__': 'pyrit.orchestrator.single_turn.prompt_sending_orchestrator', 'id': 'e7c4e60d-105c-4fdc-83a2-c56fc7dbeb0e'}, 'scorer_identifier': {}, 'original_value_data_type': 'text', 'original_value': '******', 'original_value_sha256': '1e9be34e7c154aee0bf89b326fc98994d2dffa3a5ddac43ee2927ae04defc5ab', 'converted_value_data_type': 'text', 'converted_value': '******', 'converted_value_sha256': '1e9be34e7c154aee0bf89b326fc98994d2dffa3a5ddac43ee2927ae04defc5ab', 'response_error': 'none', 'originator': 'undefined', 'original_prompt_id': 'a262c94d-88ea-4466-b4e2-030dbd81c078', 'scores': []}
-        """
-        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)]
+        # Group conversations by conversation_id
+        grouped_conversations = {}
+        for item in prompts_request_pieces:
+            item_dict = item.to_dict()
+            conv_id = item_dict.get("conversation_id")
+            if conv_id not in grouped_conversations:
+                grouped_conversations[conv_id] = []
+            grouped_conversations[conv_id].append(item_dict)
+        
+        # Convert grouped conversations to list format for counting
+        conversations = list(grouped_conversations.values())
+        
         # Check if we should overwrite existing file with more conversations
         if os.path.exists(output_path):
             existing_line_count = 0
@@ -980,12 +985,27 @@ class RedTeam():
                     self.logger.debug(f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content.")
                     #Convert to json lines
                     json_lines = ""
-                    for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id):
-                        conversation = [item.to_chat_message() for item in group]
+                    for conv_id, messages in grouped_conversations.items():
+                        # Convert each message to a chat message with prompt_group_id
+                        conversation_messages = []
+                        for msg in messages:
+                            # Get the basic chat message using the existing utility
+                            chat_msg = self._message_to_dict(item.to_chat_message())
+                            
+                            # Add prompt_group_id if it exists in prompt_metadata
+                            prompt_metadata = msg.get("prompt_metadata", {})
+                            prompt_group_id = prompt_metadata.get("prompt_group_id", "")
+                            if prompt_group_id:
+                                chat_msg["prompt_group_id"] = prompt_group_id
+                            
+                            conversation_messages.append(chat_msg)
+                        
+                        # Add the conversation as a JSON line
                         json_lines += json.dumps({
-                            "conversation_id": conv_id,
-                            "conversation": {"messages": [self._message_to_dict(message) for message in conversation]}
+                            "conversation": {"messages": conversation_messages},
+                            "conversation_id": conv_id
                         }) + "\n"
+                    
                     with Path(output_path).open("w") as f:
                         f.writelines(json_lines)
                     self.logger.debug(f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}")
@@ -998,12 +1018,39 @@ class RedTeam():
             self.logger.debug(f"Creating new file: {output_path}")
             #Convert to json lines
             json_lines = ""
-            for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id):
-                conversation = [item.to_chat_message() for item in group]
+            for conv_id, messages in grouped_conversations.items():
+                # Convert each message to a chat message with prompt_group_id
+                conversation_messages = []
+                for msg in messages:
+                    # Get the basic message data
+                    role = msg.get("role", "")
+                    content = ""
+                    
+                    # Handle different data types (text or error)
+                    if msg.get("original_value_data_type") == "text":
+                        content = msg.get("original_value", "")
+                    elif msg.get("original_value_data_type") == "error":
+                        content = msg.get("original_value", "")
+                    
+                    chat_msg = {
+                        "role": role,
+                        "content": content
+                    }
+                    
+                    # Add prompt_group_id if it exists in prompt_metadata
+                    prompt_metadata = msg.get("prompt_metadata", {})
+                    prompt_group_id = prompt_metadata.get("prompt_group_id", "")
+                    if prompt_group_id:
+                        chat_msg["prompt_group_id"] = prompt_group_id
+                    
+                    conversation_messages.append(chat_msg)
+                
+                # Add the conversation as a JSON line
                 json_lines += json.dumps({
-                    "conversation_id": conv_id,
-                    "conversation": {"messages": [self._message_to_dict(message) for message in conversation]}
+                    "conversation": {"messages": conversation_messages},
+                    "conversation_id": conv_id
                 }) + "\n"
+                
             with Path(output_path).open("w") as f:
                 f.writelines(json_lines)
             self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
