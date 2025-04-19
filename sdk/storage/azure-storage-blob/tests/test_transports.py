@@ -53,7 +53,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         assert resp is None
 
     @BlobPreparer()
-    def test_legacy_transport_old_response_with_content_validation(self, **kwargs):
+    def test_legacy_transport_old_response_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
