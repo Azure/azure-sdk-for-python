@@ -50,6 +50,8 @@ extends:
     #    Selection: sparse
     #    GenerateVMJobs: true
     Artifacts:
+    - name: azure-ai-assistants
+      safeName: azureaiassistants
     - name: azure-ai-projects
       safeName: azureaiprojects
     - name: azure-ai-inference
