@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
+import warnings
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -27,12 +28,28 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
+from .model_batch_deployment_settings import ModelBatchDeploymentSettings as BatchDeploymentSettings
 
 module_logger = logging.getLogger(__name__)
+
+SETTINGS_ATTRIBUTES = [
+    "output_action",
+    "output_file_name",
+    "error_threshold",
+    "retry_settings",
+    "logging_level",
+    "mini_batch_size",
+    "max_concurrency_per_instance",
+    "environment_variables",
+]
 
 
 class BatchDeployment(Deployment):
     """Batch endpoint deployment entity.
+
+    **Warning** This class should not be used directly.
+    Please use one of the child implementations, :class:`~azure.ai.ml.entities.ModelBatchDeployment` or
+    :class:`azure.ai.ml.entities.PipelineComponentBatchDeployment`.
 
     :param name: the name of the batch deployment
     :type name: str
@@ -112,10 +129,19 @@ class BatchDeployment(Deployment):
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs: Any,
     ) -> None:
+        _type = kwargs.pop("_type", None)
+        if _type is None:
+            warnings.warn(
+                "This class is intended as a base class and it's direct usage is deprecated. "
+                "Use one of the concrete implementations instead:\n"
+                "* ModelBatchDeployment - For model-based batch deployments\n"
+                "* PipelineComponentBatchDeployment - For pipeline component-based batch deployments"
+            )
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
+            type=_type,
             endpoint_name=endpoint_name,
             properties=properties,
             tags=tags,
@@ -123,7 +149,6 @@ class BatchDeployment(Deployment):
             model=model,
             code_configuration=code_configuration,
             environment=environment,
-            environment_variables=environment_variables,
             code_path=code_path,
             scoring_script=scoring_script,
             **kwargs,
@@ -131,16 +156,41 @@ class BatchDeployment(Deployment):
 
         self.compute = compute
         self.resources = resources
-        self.output_action = output_action
-        self.output_file_name = output_file_name
-        self.error_threshold = error_threshold
-        self.retry_settings = retry_settings
-        self.logging_level = logging_level
-        self.mini_batch_size = mini_batch_size
-        self.max_concurrency_per_instance = max_concurrency_per_instance
 
-        if self.resources and instance_count:
-            msg = "Can't set instance_count when resources is provided."
+        settings = kwargs.pop("settings", None)
+        self._settings = (
+            settings
+            if settings
+            else BatchDeploymentSettings(
+                mini_batch_size=mini_batch_size,
+                instance_count=instance_count,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                output_action=output_action,
+                output_file_name=output_file_name,
+                retry_settings=retry_settings,
+                environment_variables=environment_variables,
+                error_threshold=error_threshold,
+                logging_level=logging_level,
+            )
+        )
+
+        self._setup_instance_count(instance_count)
+
+    def _setup_instance_count(self, instance_count: Optional[int]) -> None:
+        # Check if instance_count is being set from multiple sources
+        instance_count_sources = []
+        if self.resources and self.resources.instance_count is not None:
+            instance_count_sources.append("resources.instance_count")
+        if self._settings.instance_count is not None:
+            instance_count_sources.append("settings.instance_count")
+        if instance_count is not None:
+            instance_count_sources.append("instance_count")
+
+        if len(instance_count_sources) > 1:
+            msg = (
+                f"Instance count can only be set from one source. "
+                f"Found multiple sources: {', '.join(instance_count_sources)}"
+            )
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.BATCH_DEPLOYMENT,
@@ -149,8 +199,34 @@ class BatchDeployment(Deployment):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-        if not self.resources and instance_count:
-            self.resources = ResourceConfiguration(instance_count=instance_count)
+        if not self.resources:
+            instance_count_value = instance_count or self._settings.instance_count
+            if instance_count_value:
+                # Set resources with instance_count if provided
+                self.resources = ResourceConfiguration(instance_count=instance_count_value)
+        # Update resources.instance_count if resources exists but instance_count not set
+        elif self.resources.instance_count is None and (instance_count or self._settings.instance_count):
+            self.resources.instance_count = instance_count or self._settings.instance_count
+
+    def __getattr__(self, name: str) -> Optional[Any]:
+        # Support backwards compatibility with old BatchDeployment properties.
+        if name in SETTINGS_ATTRIBUTES:
+            try:
+                return getattr(self._settings, name)
+            except AttributeError:
+                pass
+        return super().__getattribute__(name)
+
+    def __setattr__(self, name, value):
+        # Support backwards compatibility with old BatchDeployment properties.
+        if name in SETTINGS_ATTRIBUTES:
+            try:
+                # First confirm that this object has a compatible attr
+                getattr(self._settings, name)
+                setattr(self._settings, name, value)
+            except AttributeError:
+                pass
+        super().__setattr__(name, value)
 
     @property
     def instance_count(self) -> Optional[int]:
@@ -209,42 +285,28 @@ class BatchDeployment(Deployment):
         environment = self.environment
 
         batch_deployment: RestBatchDeployment = None
-        if isinstance(self.output_action, str):
-            batch_deployment = RestBatchDeployment(
-                compute=self.compute,
-                description=self.description,
-                resources=self.resources._to_rest_object() if self.resources else None,
-                code_configuration=code_config,
-                environment_id=environment,
-                model=model,
-                output_file_name=self.output_file_name,
-                output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
-                error_threshold=self.error_threshold,
-                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
-                logging_level=self.logging_level,
-                mini_batch_size=self.mini_batch_size,
-                max_concurrency_per_instance=self.max_concurrency_per_instance,
-                environment_variables=self.environment_variables,
-                properties=self.properties,
-            )
-        else:
-            batch_deployment = RestBatchDeployment(
-                compute=self.compute,
-                description=self.description,
-                resources=self.resources._to_rest_object() if self.resources else None,
-                code_configuration=code_config,
-                environment_id=environment,
-                model=model,
-                output_file_name=self.output_file_name,
-                output_action=None,
-                error_threshold=self.error_threshold,
-                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
-                logging_level=self.logging_level,
-                mini_batch_size=self.mini_batch_size,
-                max_concurrency_per_instance=self.max_concurrency_per_instance,
-                environment_variables=self.environment_variables,
-                properties=self.properties,
-            )
+        # Create base RestBatchDeployment object with common properties
+        batch_deployment = RestBatchDeployment(
+            compute=self.compute,
+            description=self.description,
+            resources=self.resources._to_rest_object() if self.resources else None,
+            code_configuration=code_config,
+            environment_id=environment,
+            model=model,
+            output_file_name=self.output_file_name,
+            output_action=(
+                BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action)
+                if isinstance(self.output_action, str)
+                else None
+            ),
+            error_threshold=self.error_threshold,
+            retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+            logging_level=self.logging_level,
+            mini_batch_size=self.mini_batch_size,
+            max_concurrency_per_instance=self.max_concurrency_per_instance,
+            environment_variables=self.environment_variables,
+            properties=self.properties,
+        )
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
