@@ -3,12 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
+from collections import deque
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional
 
 from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
+from aiohttp.streams import StreamReader
+from aiohttp.client_proto import ResponseHandler
+from urllib3 import HTTPResponse
+from requests import Response
 
 
 class ProgressTracker:
@@ -82,11 +88,15 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
+        self.content = StreamReader(ResponseHandler(asyncio.new_event_loop()), 65535)
+        self.content.total_bytes = len(body_bytes)
+        self.content._buffer = deque([body_bytes])
+        self.content._eof = True
 
 
-class MockStorageTransport(AsyncHttpTransport):
+class MockLegacyTransport(AsyncHttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is 
+    This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
@@ -155,7 +165,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
         await rest_response.load_body()
         return rest_response
