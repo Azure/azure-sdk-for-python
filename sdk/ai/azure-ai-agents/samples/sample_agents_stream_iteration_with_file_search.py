@@ -25,7 +25,7 @@ USAGE:
 import os
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import AgentStreamEvent, FileSearchTool, RunStepDeltaChunk
-from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
+from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun, FilePurpose
 from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(
@@ -37,7 +37,7 @@ with agents_client:
 
     # Upload file and create vector store
     # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
-    file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose="agents")
+    file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
     vector_store = agents_client.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")

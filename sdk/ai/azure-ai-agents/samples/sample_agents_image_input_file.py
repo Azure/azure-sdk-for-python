@@ -31,6 +31,7 @@ from azure.ai.agents.models import (
     MessageImageFileParam,
     MessageInputTextBlock,
     MessageInputImageFileBlock,
+    FilePurpose,
 )
 
 
@@ -51,7 +52,7 @@ with agents_client:
     thread = agents_client.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    image_file = agents_client.upload_file_and_poll(file_path="image_file.png", purpose="agents")
+    image_file = agents_client.upload_file_and_poll(file_path="image_file.png", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {image_file.id}")
 
     input_message = "Hello, what is in the image ?"
