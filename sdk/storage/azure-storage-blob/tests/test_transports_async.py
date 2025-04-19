@@ -43,6 +43,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             blob_name='blob',
             credential=storage_account_key,
             transport=transport,
+            retry_total=0
         )
 
         data = b"Hello Async World!"
@@ -51,7 +52,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         assert resp is not None
 
         blob_data = await (await blob_client.download_blob()).read()
-        assert blob_data == b"Hello Async World!"
+        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 
         resp = await blob_client.delete_blob()
         assert resp is None
@@ -68,6 +69,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             blob_name='blob',
             credential=storage_account_key,
             transport=transport,
+            retry_total=0
         )
 
         data = b"Hello Async World!"
@@ -76,7 +78,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         assert resp is not None
 
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
-        assert blob_data == b"Hello Async World!"
+        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 
         resp = await blob_client.delete_blob()
         assert resp is None
@@ -95,8 +97,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello Async World!"
@@ -124,8 +125,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello Async World!"
@@ -153,8 +153,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello Async World!"
@@ -182,8 +181,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello Async World!"

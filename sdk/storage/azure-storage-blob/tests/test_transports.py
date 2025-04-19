@@ -91,8 +91,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello World!"
@@ -119,8 +118,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
             credential=storage_account_key,
-            transport=transport,
-            retry_total=0
+            transport=transport
         )
 
         data = b"Hello World!"
