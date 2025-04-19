@@ -33,8 +33,10 @@ async def process_content(data: Any) -> bytes:
         raise ValueError("Response cannot be None.")
 
     try:
-        await data.response.load_body()
-        return cast(bytes, data.response.body())
+        if hasattr(data.response, "is_stream_consumed") and data.response.is_stream_consumed:
+            content = data.response.content
+        else:
+            content = b"".join([d async for d in data])
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
