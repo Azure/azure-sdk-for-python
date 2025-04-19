@@ -281,7 +281,8 @@ class AssistantsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
      Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", and "bing_custom_search".
+     "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", "bing_custom_search", and
+     "connected_agent".
     :vartype type: str or ~azure.ai.assistants.models.AssistantsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.assistants.models.FunctionName
@@ -292,8 +293,8 @@ class AssistantsNamedToolChoice(_model_base.Model):
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"fabric_dataagent\", \"sharepoint_grounding\", \"azure_ai_search\", and
-     \"bing_custom_search\"."""
+     \"fabric_dataagent\", \"sharepoint_grounding\", \"azure_ai_search\", \"bing_custom_search\",
+     and \"connected_agent\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -470,9 +471,9 @@ class ToolDefinition(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
-    BingGroundingToolDefinition, CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition,
-    FileSearchToolDefinition, FunctionToolDefinition, OpenApiToolDefinition,
-    SharepointToolDefinition
+    BingGroundingToolDefinition, CodeInterpreterToolDefinition, ConnectedAgentToolDefinition,
+    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
+    OpenApiToolDefinition, SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -825,6 +826,83 @@ class CodeInterpreterToolResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ConnectedAgentDetails(_model_base.Model):
+    """Information for connecting one agent to another as a tool.
+
+    :ivar id: The identifier of the child agent. Required.
+    :vartype id: str
+    :ivar name: The name of the agent to be called. Required.
+    :vartype name: str
+    :ivar description: A description of what the agent does, used by the model to choose when and
+     how to call the agent. Required.
+    :vartype description: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the child agent. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent to be called. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of what the agent does, used by the model to choose when and how to call the
+     agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectedAgentToolDefinition(ToolDefinition, discriminator="connected_agent"):
+    """The input definition information for a connected agent tool which defines a domain specific
+    sub-agent.
+
+    :ivar type: The object type, which is always 'connected_agent'. Required. Default value is
+     "connected_agent".
+    :vartype type: str
+    :ivar connected_agent: The sub-agent to connect. Required.
+    :vartype connected_agent: ~azure.ai.assistants.models.ConnectedAgentDetails
+    """
+
+    type: Literal["connected_agent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'connected_agent'. Required. Default value is
+     \"connected_agent\"."""
+    connected_agent: "_models.ConnectedAgentDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sub-agent to connect. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connected_agent: "_models.ConnectedAgentDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="connected_agent", **kwargs)
 
 
 class FileDeletionStatus(_model_base.Model):
@@ -2649,6 +2727,56 @@ class OpenAIPageableListOfAssistant(_model_base.Model):
         self,
         *,
         data: List["_models.Assistant"],
+        first_id: str,
+        last_id: str,
+        has_more: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["list"] = "list"
+
+
+class OpenAIPageableListOfAssistantThread(_model_base.Model):
+    """The response data for a requested list of items.
+
+    :ivar object: The object type, which is always list. Required. Default value is "list".
+    :vartype object: str
+    :ivar data: The requested list of items. Required.
+    :vartype data: list[~azure.ai.assistants.models.AssistantThread]
+    :ivar first_id: The first ID represented in this list. Required.
+    :vartype first_id: str
+    :ivar last_id: The last ID represented in this list. Required.
+    :vartype last_id: str
+    :ivar has_more: A value indicating whether there are additional values available not captured
+     in this list. Required.
+    :vartype has_more: bool
+    """
+
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always list. Required. Default value is \"list\"."""
+    data: List["_models.AssistantThread"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The requested list of items. Required."""
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first ID represented in this list. Required."""
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last ID represented in this list. Required."""
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether there are additional values available not captured in this list.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: List["_models.AssistantThread"],
         first_id: str,
         last_id: str,
         has_more: bool,

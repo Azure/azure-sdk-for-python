@@ -279,6 +279,40 @@ def build_assistants_delete_thread_request(thread_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_assistants_list_threads_request(
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_assistants_create_message_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2320,6 +2354,92 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_threads(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.OpenAIPageableListOfAssistantThread:
+        """Gets a list of threads that were previously created.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.assistants.models.ListSortOrder
+        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
+         list. Default value is None.
+        :paramtype after: str
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: OpenAIPageableListOfAssistantThread. The OpenAIPageableListOfAssistantThread is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.OpenAIPageableListOfAssistantThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OpenAIPageableListOfAssistantThread] = kwargs.pop("cls", None)
+
+        _request = build_assistants_list_threads_request(
+            limit=limit,
+            order=order,
+            after=after,
+            before=before,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.OpenAIPageableListOfAssistantThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

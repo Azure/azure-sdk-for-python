@@ -85,7 +85,7 @@ assistantClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_assistants",
     # TODO: uncomment this endpoint when re running with 1DP
-    #azure_ai_assistants_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
+    # azure_ai_assistants_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
     # TODO: remove this endpoint when re running with 1DP
     azure_ai_assistants_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
     azure_ai_assistants_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
@@ -640,9 +640,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         if body:
             message = client.create_message(thread_id=thread.id, body=body)
         else:
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         assert message.id
         print("Created message, message ID", message.id)
 
@@ -667,19 +665,13 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create messages
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
-            message2 = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me another joke"
-            )
+            message2 = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
             assert message2.id
             print("Created message, message ID", message2.id)
-            message3 = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a third joke"
-            )
+            message3 = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
 
@@ -713,27 +705,21 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert messages0.data.__len__() == 0
 
             # create messages and check message list for each one
-            message1 = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message1 = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message1.id
             print("Created message, message ID", message1.id)
             messages1 = client.list_messages(thread_id=thread.id)
             assert messages1.data.__len__() == 1
             assert messages1.data[0].id == message1.id
 
-            message2 = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me another joke"
-            )
+            message2 = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
             assert message2.id
             print("Created message, message ID", message2.id)
             messages2 = client.list_messages(thread_id=thread.id)
             assert messages2.data.__len__() == 2
             assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
 
-            message3 = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a third joke"
-            )
+            message3 = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = client.list_messages(thread_id=thread.id)
@@ -769,9 +755,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -992,9 +976,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1057,9 +1039,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 # wait for a second
                 time.sleep(1)
                 run = client.get_run(thread_id=thread.id, run_id=run.id)
-            run = client.update_run(
-                thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"}
-            )
+            run = client.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"})
             assert run.metadata == {"key1": "value1", "key2": "value2"}
 
             # delete assistant and close client
@@ -1238,9 +1218,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                             body = io.BytesIO(binary_body)
                         client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
                     else:
-                        client.submit_tool_outputs_to_run(
-                            thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                        )
+                        client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
             print("Current run status:", run.status)
 
@@ -1563,9 +1541,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1636,9 +1612,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1677,9 +1651,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1723,9 +1695,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = client.create_message(
-                thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
-            )
+            message = client.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1734,9 +1704,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             binary_body = json.dumps(body).encode("utf-8")
 
             # create stream
-            with client.create_stream(
-                thread_id=thread.id, body=io.BytesIO(binary_body), stream=True
-            ) as stream:
+            with client.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
                 for event_type, event_data, _ in stream:
                     assert (
                         isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep))
@@ -2095,9 +2063,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
                 print("Tool outputs:", tool_outputs)
                 if tool_outputs:
-                    client.submit_tool_outputs_to_run(
-                        thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                    )
+                    client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
             print("Current run status:", run.status)
 
@@ -2237,9 +2203,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         openai_file = client.upload_file_and_poll(file_path=file_path, purpose="assistants")
         print(f"Uploaded file, file ID: {openai_file.id}")
 
-        openai_vectorstore = client.create_vector_store_and_poll(
-            file_ids=[openai_file.id], name="my_vectorstore"
-        )
+        openai_vectorstore = client.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
         print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
         file_search.add_vector_store(openai_vectorstore.id)
@@ -2369,9 +2333,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-        vector_store = ai_client.create_vector_store_and_poll(
-            file_ids=file_ids, data_sources=ds, name="my_vectorstore"
-        )
+        vector_store = ai_client.create_vector_store_and_poll(file_ids=file_ids, data_sources=ds, name="my_vectorstore")
         assert vector_store.id
         self._test_file_search(ai_client, vector_store, file_id, streaming)
 
@@ -2411,9 +2373,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         thread = ai_client.create_thread(tool_resources=ToolResources(file_search=fs))
         assert thread.id
         # create message
-        message = ai_client.create_message(
-            thread_id=thread.id, role="user", content="What does the attachment say?"
-        )
+        message = ai_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?")
         assert message.id, "The message was not created."
 
         run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
@@ -2543,9 +2503,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert thread.id
 
         # create message
-        message = ai_client.create_message(
-            thread_id=thread.id, role="user", content="What does the attachment say?"
-        )
+        message = ai_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?")
         assert message.id, "The message was not created."
 
         if streaming:
@@ -2666,9 +2624,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
-            )
+            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2690,9 +2646,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         thread = ai_client.create_thread()
         assert thread.id, "The thread was not created."
 
-        message = ai_client.create_message(
-            thread_id=thread.id, role="user", content="What does the attachment say?"
-        )
+        message = ai_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?")
         assert message.id, "The message was not created."
 
         run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
@@ -2730,9 +2684,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
-            )
+            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2753,9 +2705,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         thread = ai_client.create_thread(tool_resources=tr)
         assert thread.id, "The thread was not created."
 
-        message = ai_client.create_message(
-            thread_id=thread.id, role="user", content="What does the attachment say?"
-        )
+        message = ai_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?")
         assert message.id, "The message was not created."
 
         run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
@@ -2803,9 +2753,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         thread = ai_client.create_thread()
         assert thread.id
         # create message
-        message = ai_client.create_message(
-            thread_id=thread.id, role="user", content="What does the attachment say?"
-        )
+        message = ai_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?")
         assert message.id, "The message was not created."
 
         run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
@@ -2882,9 +2830,7 @@ class TestAssistantClient(AzureRecordedTestCase):
             assert isinstance(client, AssistantsClient)
 
             # Create AzureAISearchTool
-            conn_id = kwargs.pop(
-                "azure_ai_assistants_tests_search_connection_id", "my-search-connection-ID"
-            )
+            conn_id = kwargs.pop("azure_ai_assistants_tests_search_connection_id", "my-search-connection-ID")
             index_name = kwargs.pop("azure_ai_assistants_tests_search_index_name", "my-search-index")
 
             azure_search_tool = AzureAISearchTool(
@@ -2952,9 +2898,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-            vector_store = ai_client.create_vector_store_and_poll(
-                file_ids=[], data_sources=ds, name="my_vectorstore"
-            )
+            vector_store = ai_client.create_vector_store_and_poll(file_ids=[], data_sources=ds, name="my_vectorstore")
             # vector_store = await ai_client.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
             assert vector_store.id
 
@@ -2981,9 +2925,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
             if use_stream:
                 run = None
-                with ai_client.create_stream(
-                    thread_id=thread.id, assistant_id=assistant.id, include=include
-                ) as stream:
+                with ai_client.create_stream(thread_id=thread.id, assistant_id=assistant.id, include=include) as stream:
                     for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
                             run = event_data
@@ -2991,17 +2933,13 @@ class TestAssistantClient(AzureRecordedTestCase):
                             print("Stream completed.")
                             break
             else:
-                run = ai_client.create_and_process_run(
-                    thread_id=thread.id, assistant_id=assistant.id, include=include
-                )
+                run = ai_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, include=include)
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
             steps = ai_client.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)
             # The 1st (not 0th) step is a tool call.
             step_id = steps.data[1].id
-            one_step = ai_client.get_run_step(
-                thread_id=thread.id, run_id=run.id, step_id=step_id, include=include
-            )
+            one_step = ai_client.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step_id, include=include)
             self._assert_file_search_valid(one_step.step_details.tool_calls[0], include_content)
             self._assert_file_search_valid(steps.data[1].step_details.tool_calls[0], include_content)
 
@@ -3101,9 +3039,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     def _get_file_id_maybe(self, ai_client: AssistantsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS
-            )
+            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.ASSISTANTS)
             assert file.id, "The file was not uploaded."
             return file.id
         return None
@@ -3130,9 +3066,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
 
-                file: OpenAIFile = client.upload_file_and_poll(
-                    file_path=test_file_path, purpose=FilePurpose.ASSISTANTS
-                )
+                file: OpenAIFile = client.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.ASSISTANTS)
 
                 # create assistant
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])

@@ -47,6 +47,8 @@ class AssistantsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Tool type ``azure_ai_search``"""
     BING_CUSTOM_SEARCH = "bing_custom_search"
     """Tool type ``bing_custom_search``"""
+    CONNECTED_AGENT = "connected_agent"
+    """Tool type ``connected_agent``"""
 
 
 class AssistantStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
