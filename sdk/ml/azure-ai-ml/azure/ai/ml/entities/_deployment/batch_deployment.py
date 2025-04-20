@@ -174,39 +174,26 @@ class BatchDeployment(Deployment):
             )
         )
 
-        self._setup_instance_count(instance_count)
+        self._setup_instance_count()
 
-    def _setup_instance_count(self, instance_count: Optional[int]) -> None:
-        # Check if instance_count is being set from multiple sources
-        instance_count_sources = []
-        if self.resources and self.resources.instance_count is not None:
-            instance_count_sources.append("resources.instance_count")
-        if self._settings.instance_count is not None:
-            instance_count_sources.append("settings.instance_count")
-        if instance_count is not None:
-            instance_count_sources.append("instance_count")
+    def _setup_instance_count(
+        self,
+    ) -> None:  # No need to check instance_count here as it's already set in self._settings during initialization
+        if self.resources is not None:
+            if self.resources.instance_count is None and self._settings.instance_count is not None:
+                self.resources.instance_count = self._settings.instance_count
+            elif self.resources.instance_count is not None and self._settings.instance_count is not None:
+                msg = "Can't set instance_count when resources.instance_count is provided."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.BATCH_DEPLOYMENT,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
 
-        if len(instance_count_sources) > 1:
-            msg = (
-                f"Instance count can only be set from one source. "
-                f"Found multiple sources: {', '.join(instance_count_sources)}"
-            )
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.BATCH_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-
-        if not self.resources:
-            instance_count_value = instance_count or self._settings.instance_count
-            if instance_count_value:
-                # Set resources with instance_count if provided
-                self.resources = ResourceConfiguration(instance_count=instance_count_value)
-        # Update resources.instance_count if resources exists but instance_count not set
-        elif self.resources.instance_count is None and (instance_count or self._settings.instance_count):
-            self.resources.instance_count = instance_count or self._settings.instance_count
+        if not self.resources and self._settings.instance_count:
+            self.resources = ResourceConfiguration(instance_count=self._settings.instance_count)
 
     def __getattr__(self, name: str) -> Optional[Any]:
         # Support backwards compatibility with old BatchDeployment properties.
