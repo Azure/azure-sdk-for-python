@@ -184,7 +184,7 @@ class Deployment(Resource, RestTranslatableMixin):
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
 
-    def _to_rest_object(self) -> Any:
+    def _to_rest_object(self, location: Optional[str] = None) -> Any:
         pass
 
     def _merge_with(self, other: "Deployment") -> None:
