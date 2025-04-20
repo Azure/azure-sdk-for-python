@@ -101,7 +101,7 @@ class ModelBatchDeployment(BatchDeployment):
         self._settings = value
 
     # pylint: disable=arguments-differ
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore[override]
         self._validate()
         code_config = (
             RestCodeConfiguration(

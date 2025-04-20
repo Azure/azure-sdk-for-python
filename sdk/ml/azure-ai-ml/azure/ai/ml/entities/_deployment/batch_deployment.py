@@ -258,7 +258,7 @@ class BatchDeployment(Deployment):
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
     # pylint: disable=arguments-differ
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore[override]
         self._validate()
         code_config = (
             RestCodeConfiguration(
