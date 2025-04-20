@@ -52,7 +52,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
     async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         print(request.headers)
-        print(request)
         target_container_link = None
         partition_key = None
         # TODO: @tvaron3 see if the container link is absolutely necessary or change container cache

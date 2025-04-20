@@ -30,6 +30,7 @@ from ._constants import _Constants as Constants
 
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+MAX_UNAVAILABLE_TIME = 1800 * 1000 # milliseconds
 REFRESH_INTERVAL = 60 * 1000 # milliseconds
 INITIAL_UNAVAILABLE_TIME = 60 * 1000 # milliseconds
 # partition is unhealthy if sdk tried to recover and failed

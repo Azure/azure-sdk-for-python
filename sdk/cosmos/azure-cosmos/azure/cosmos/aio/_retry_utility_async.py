@@ -289,9 +289,9 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if (not _has_database_account_header(request.http_request.headers)
-                        and not global_endpoint_manager.is_healthy_tentative(request_params)):
-                    await global_endpoint_manager.record_failure(request_params)
+                        and not await global_endpoint_manager.is_healthy_tentative(request_params)):
                     if retry_settings['connect'] > 0:
+                        await global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
                             await self.sleep(retry_settings, request.context.transport)
@@ -300,7 +300,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 if (_has_database_account_header(request.http_request.headers) or
-                        global_endpoint_manager.is_healthy_tentative(request_params)):
+                        await global_endpoint_manager.is_healthy_tentative(request_params)):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:
@@ -309,9 +309,9 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         ClientConnectionError)
                     if (isinstance(err.inner_exception, ClientConnectionError)
                             or _has_read_retryable_headers(request.http_request.headers)):
-                        await global_endpoint_manager.record_failure(request_params)
                         # This logic is based on the _retry.py file from azure-core
                         if retry_settings['read'] > 0:
+                            await global_endpoint_manager.record_failure(request_params)
                             retry_active = self.increment(retry_settings, response=request, error=err)
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
