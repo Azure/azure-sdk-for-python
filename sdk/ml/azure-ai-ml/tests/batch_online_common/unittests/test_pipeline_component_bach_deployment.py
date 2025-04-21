@@ -2,23 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import pytest
 import json
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import (
-    PipelineComponentBatchDeployment,
-)
-from azure.ai.ml.entities import PipelineComponent
-from azure.ai.ml.entities._load_functions import (
-    load_pipeline_component_batch_deployment,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    BatchDeployment as RestBatchDeployment,
-    IdAssetReference,
-    BatchPipelineComponentDeploymentConfiguration as RestBatchPipelineComponentDeploymentConfiguration,
-)
+
+import pytest
+
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     BatchDeploymentProperties as RestBatchDeploymentProperties,
 )
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    BatchPipelineComponentDeploymentConfiguration as RestBatchPipelineComponentDeploymentConfiguration,
+)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
+from azure.ai.ml.entities import PipelineComponent
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from azure.ai.ml.entities._load_functions import load_pipeline_component_batch_deployment
 
 
 @pytest.mark.unittest
@@ -30,6 +28,7 @@ class TestPipelineComponentBatchDeployment:
         pipeline_component = load_pipeline_component_batch_deployment(
             TestPipelineComponentBatchDeployment.HELLO_BATCH_DEPLOYMENT
         )
+        assert pipeline_component.type == "pipeline"
         pipeline_component_rest = pipeline_component._to_rest_object(location="eastus")
         assert pipeline_component_rest.properties.deployment_configuration.settings == pipeline_component.settings
         assert (

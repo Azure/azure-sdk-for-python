@@ -150,6 +150,7 @@ class BatchDeployment(Deployment):
             model=model,
             code_configuration=code_configuration,
             environment=environment,
+            environment_variables=environment_variables,  # needed, otherwise Deployment.__init__() will set it to {}
             code_path=code_path,
             scoring_script=scoring_script,
             **kwargs,

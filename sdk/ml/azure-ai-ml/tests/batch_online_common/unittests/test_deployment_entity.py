@@ -1,44 +1,44 @@
 import copy
+import json
 
 import pytest
 import yaml
-import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    BatchOutputAction,
-    EndpointComputeType,
-    BatchDeployment as BatchDeploymentData,
-)
+from azure.ai.ml._restclient.v2022_10_01.models import BatchDeployment as BatchDeploymentData
+from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    OnlineDeployment as RestOnlineDeploymentData,
-    ManagedOnlineDeployment as RestManagedOnlineDeployment,
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
-    BatchPipelineComponentDeploymentConfiguration,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
+from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
-    Deployment,
     CodeConfiguration,
     DefaultScaleSettings,
+    Deployment,
     KubernetesOnlineDeployment,
     ManagedOnlineDeployment,
     OnlineDeployment,
     OnlineEndpoint,
+    OnlineRequestSettings,
     ProbeSettings,
     ResourceRequirementsSettings,
     ResourceSettings,
     TargetUtilizationScaleSettings,
-    OnlineRequestSettings,
 )
-from azure.ai.ml.constants._common import ArmConstants
-from azure.ai.ml.exceptions import DeploymentException, ValidationException
-from azure.ai.ml.entities._assets import Environment, Model, Code
+from azure.ai.ml.entities._assets import Code, Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._deployment.model_batch_deployment_settings import (
+    ModelBatchDeploymentSettings as BatchDeploymentSettings,
+)
 from azure.ai.ml.entities._deployment.run_settings import RunSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.exceptions import DeploymentException, ValidationException
 
 
 @pytest.mark.production_experiences_test
@@ -473,6 +473,14 @@ class TestBatchDeploymentSDK:
             load_batch_deployment, simple_batch_deployment_validation, TestBatchDeploymentSDK.DEPLOYMENT
         )
 
+    def test_batch_endpoint_deployment_deprecated_warning(self):
+        # Test for warning when using deprecated BatchDeployment class
+        with pytest.warns(
+            UserWarning, match="This class is intended as a base class and it's direct usage is deprecated"
+        ):
+            deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
+            assert deployment._type is None
+
     def test_batch_endpoint_deployment_to_rest_object(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
@@ -487,6 +495,73 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
+
+    def test_batch_deployment_attributes_access(self) -> None:
+        # Create a deployment with settings properties
+        deployment = BatchDeployment(
+            name="attribute-test-deployment",
+            output_action=BatchDeploymentOutputAction.APPEND_ROW,
+            output_file_name="test.csv",
+            error_threshold=10,
+            retry_settings=BatchRetrySettings(max_retries=5, timeout=60),
+            logging_level="info",
+            mini_batch_size=20,
+            max_concurrency_per_instance=4,
+            environment_variables={"key1": "value1"},
+        )
+        assert isinstance(
+            deployment._settings, BatchDeploymentSettings
+        )  # Test accessing settings attributes through __getattr__
+        assert deployment.output_action == BatchDeploymentOutputAction.APPEND_ROW
+        assert deployment.output_file_name == "test.csv"
+        assert deployment.error_threshold == 10
+        assert deployment.retry_settings.max_retries == 5
+        assert deployment.retry_settings.timeout == 60
+        assert deployment.logging_level == "info"
+        assert deployment.mini_batch_size == 20
+        assert deployment.max_concurrency_per_instance == 4
+        assert deployment.environment_variables == {"key1": "value1"}
+
+        # Test setting settings attributes through __setattr__
+        deployment.output_action = BatchDeploymentOutputAction.SUMMARY_ONLY
+        deployment.output_file_name = "new.csv"
+        deployment.error_threshold = 20
+        deployment.retry_settings = BatchRetrySettings(max_retries=10, timeout=120)
+        deployment.logging_level = "debug"
+        deployment.mini_batch_size = 30
+        deployment.max_concurrency_per_instance = 8
+        deployment.environment_variables = {"key2": "value2"}
+
+        # Verify attributes were updated correctly
+        assert deployment.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
+        assert deployment._settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
+        assert deployment.output_file_name == "new.csv"
+        assert deployment._settings.output_file_name == "new.csv"
+        assert deployment.error_threshold == 20
+        assert deployment._settings.error_threshold == 20
+        assert deployment.retry_settings.max_retries == 10
+        assert deployment._settings.retry_settings.max_retries == 10
+        assert deployment.retry_settings.timeout == 120
+        assert deployment._settings.retry_settings.timeout == 120
+        assert deployment.logging_level == "debug"
+        assert deployment._settings.logging_level == "debug"
+        assert deployment.mini_batch_size == 30
+        assert deployment._settings.mini_batch_size == 30
+        assert deployment.max_concurrency_per_instance == 8
+        assert deployment._settings.max_concurrency_per_instance == 8
+        assert deployment.environment_variables == {"key2": "value2"}
+        assert deployment._settings.environment_variables == {"key2": "value2"}
+
+        # Test accessing non-settings attributes
+        assert deployment.name == "attribute-test-deployment"
+
+        # Test setting non-settings attributes
+        deployment.name = "updated-deployment"
+        assert deployment.name == "updated-deployment"
+
+        # Ensure setting a non-existent attribute doesn't raise an exception
+        deployment.new_attribute = "test"
+        assert deployment.new_attribute == "test"
 
     def test_to_rest_invalid_when_output_action_summary_and_file_name_provided(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
@@ -817,13 +892,11 @@ class TestOnlineDeploymentSDK:
             assert str(exc.value) == "Unsupported online scale setting type Other."
 
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchRetrySettings as RestBatchRetrySettings,
-    CodeConfiguration as RestCodeConfiguration,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
-from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 
 
