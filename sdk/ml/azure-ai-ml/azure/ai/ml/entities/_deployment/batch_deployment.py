@@ -179,18 +179,15 @@ class BatchDeployment(Deployment):
     def _setup_instance_count(
         self,
     ) -> None:  # No need to check instance_count here as it's already set in self._settings during initialization
-        if self.resources is not None:
-            if self.resources.instance_count is None and self._settings.instance_count is not None:
-                self.resources.instance_count = self._settings.instance_count
-            elif self.resources.instance_count is not None and self._settings.instance_count is not None:
-                msg = "Can't set instance_count when resources.instance_count is provided."
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.BATCH_DEPLOYMENT,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
+        if self.resources and self._settings.instance_count:
+            msg = "Can't set instance_count when resources is provided."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.BATCH_DEPLOYMENT,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
 
         if not self.resources and self._settings.instance_count:
             self.resources = ResourceConfiguration(instance_count=self._settings.instance_count)
