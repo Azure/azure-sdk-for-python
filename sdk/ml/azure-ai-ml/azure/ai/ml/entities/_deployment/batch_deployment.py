@@ -205,8 +205,6 @@ class BatchDeployment(Deployment):
         # Support backwards compatibility with old BatchDeployment properties.
         if name in SETTINGS_ATTRIBUTES:
             try:
-                # First confirm that this object has a compatible attr
-                getattr(self._settings, name)
                 setattr(self._settings, name, value)
             except AttributeError:
                 pass
