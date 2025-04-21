@@ -18,9 +18,9 @@
   - Added model `PreValidationResponse`
   - Added model `VolumeNameList`
   - Added enum `XMsAccessSoftDeletedResources`
-  - Model `VolumesOperations` added method `begin_pre_backup`
-  - Model `VolumesOperations` added method `begin_pre_restore`
-  - Added model `ElasticSanMgmtClientOperationsMixin`
+  - Operation group `VolumesOperations` added method `begin_pre_backup`
+  - Operation group `VolumesOperations` added method `begin_pre_restore`
+  - Added operation group `ElasticSanMgmtClientOperationsMixin`
 
 ## 1.2.0b1 (2024-10-20)
 
