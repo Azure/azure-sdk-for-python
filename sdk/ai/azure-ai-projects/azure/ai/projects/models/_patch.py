@@ -55,6 +55,8 @@ from ._models import (
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
+    ConnectedAgentToolDefinition,
+    ConnectedAgentDetails,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
@@ -1086,6 +1088,48 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     def execute(self, tool_call: Any) -> Any:
         pass
 
+class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
+    """
+    A tool that connects to a sub-agent, with a description describing the conditions
+    or domain where the sub-agent would be called.
+    """
+    def __init__(self, id: str, name: str, description: str):
+        """
+        Initialize ConnectedAgentTool with an id, name, and description. 
+        
+        :param id: The ID of the connected agent.
+        :param name: The name of the connected agent.
+        :param description: The description of the connected agent, used by the calling agent
+           to determine when to call the connected agent.
+        """
+        self.connected_agent = ConnectedAgentDetails(id=id, name=name, description=description)
+
+    @property
+    def definitions(self) -> List[ConnectedAgentToolDefinition]:
+        """
+        Get the connected agent tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ConnectedAgentToolDefinition(connected_agent=self.connected_agent)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: An empty ToolResources as ConnectedAgentTool doesn't have specific resources.
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> None:
+        """
+        ConnectedAgentTool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
@@ -1917,6 +1961,7 @@ __all__: List[str] = [
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
     "CodeInterpreterTool",
+    "ConnectedAgentTool",
     "ConnectionProperties",
     "AsyncAgentEventHandler",
     "OpenAIPageableListOfThreadMessage",
