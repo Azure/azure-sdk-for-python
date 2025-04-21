@@ -298,3 +298,39 @@ class TestSafetyEvaluation:
         # Verify that _simulate was called with the async target
         mock_simulate.assert_called_once()
         assert mock_simulate.call_args[1]["target"] == mock_async_target
+
+    def test_get_scenario_code_vulnerability(self, safety_eval):
+        scenario = safety_eval._get_scenario([_SafetyEvaluator.CODE_VULNERABILITY])
+        assert scenario == AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY
+
+    def test_get_scenario_ungrounded_attributes(self, safety_eval):
+        scenario = safety_eval._get_scenario([_SafetyEvaluator.UNGROUNDED_ATTRIBUTES])
+        assert scenario == AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES
+
+    def test_get_evaluators_code_vulnerability(self, safety_eval):
+        evaluators = safety_eval._get_evaluators([_SafetyEvaluator.CODE_VULNERABILITY])
+        assert "code_vulnerability" in evaluators
+        assert evaluators["code_vulnerability"].__class__.__name__ == "CodeVulnerabilityEvaluator"
+
+    def test_get_evaluators_ungrounded_attributes(self, safety_eval):
+        evaluators = safety_eval._get_evaluators([_SafetyEvaluator.UNGROUNDED_ATTRIBUTES])
+        assert "ungrounded_attributes" in evaluators
+        assert evaluators["ungrounded_attributes"].__class__.__name__ == "UngroundedAttributesEvaluator"
+
+    def test_validate_inputs_code_vulnerability_multi_turn(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.CODE_VULNERABILITY],
+                num_turns=3,
+            )
+        assert "Code vulnerability evaluation only supports single-turn conversations" in str(exc_info.value)
+
+    def test_validate_inputs_ungrounded_attributes_multi_turn(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.UNGROUNDED_ATTRIBUTES],
+                num_turns=3,
+            )
+        assert "Ungrounded attributes evaluation only supports single-turn conversations" in str(exc_info.value)
