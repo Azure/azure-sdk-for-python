@@ -31,6 +31,8 @@ SHORT_RENEW_SCALING_FACTOR = 0.75  # In this situation we need a "Short renew" a
 
 class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     """Auto renew locks for messages and sessions using a background thread pool.
+    When handling multiple messages or sessions concurrently,
+    set `max_workers` high or pass a ThreadPoolExecutor with sufficient `max_workers`.
 
     :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
      should be maintained for. Default value is 300 (5 minutes).
@@ -71,24 +73,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         executor: Optional[ThreadPoolExecutor] = None,
         max_workers: Optional[int] = None,
     ) -> None:
-        """Auto renew locks for messages and sessions using a background thread pool. It is recommended
-        setting max_worker to a large number or passing ThreadPoolExecutor of large max_workers number when
-        AutoLockRenewer is supposed to deal with multiple messages or sessions simultaneously.
-
-        :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
-         should be maintained for. Default value is 300 (5 minutes).
-        :type max_lock_renewal_duration: float
-        :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
-         that is being registered. Default value is None (no callback).
-        :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
-        :param executor: A user-specified thread pool. This cannot be combined with
-         setting `max_workers`.
-        :type executor: Optional[~concurrent.futures.ThreadPoolExecutor]
-        :param max_workers: Specify the maximum workers in the thread pool. If not
-         specified the number used will be derived from the core count of the environment.
-         This cannot be combined with `executor`.
-        :type max_workers: Optional[int]
-        """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         # None indicates it's unknown whether the provided executor has max workers > 1
         self._is_max_workers_greater_than_one = None if executor else (max_workers is None or max_workers > 1)

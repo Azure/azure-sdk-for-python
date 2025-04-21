@@ -3,6 +3,7 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
+- New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
 
 ### Breaking Changes
 

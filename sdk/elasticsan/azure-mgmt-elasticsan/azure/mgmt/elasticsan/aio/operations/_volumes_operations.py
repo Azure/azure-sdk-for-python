@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -37,13 +37,15 @@ from ...operations._volumes_operations import (
     build_delete_request,
     build_get_request,
     build_list_by_volume_group_request,
+    build_pre_backup_request,
+    build_pre_restore_request,
     build_update_request,
 )
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -76,7 +78,7 @@ class VolumesOperations:
         parameters: Union[_models.Volume, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -294,7 +296,7 @@ class VolumesOperations:
         parameters: Union[_models.VolumeUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -515,9 +517,10 @@ class VolumesOperations:
         volume_name: str,
         x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
         x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        delete_type: Optional[Union[str, _models.DeleteType]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -539,6 +542,7 @@ class VolumesOperations:
             subscription_id=self._config.subscription_id,
             x_ms_delete_snapshots=x_ms_delete_snapshots,
             x_ms_force_delete=x_ms_force_delete,
+            delete_type=delete_type,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -582,6 +586,7 @@ class VolumesOperations:
         volume_name: str,
         x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
         x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        delete_type: Optional[Union[str, _models.DeleteType]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an Volume.
@@ -603,6 +608,10 @@ class VolumesOperations:
          value are only true or false. Default value is false. Known values are: "true" and "false".
          Default value is None.
         :type x_ms_force_delete: str or ~azure.mgmt.elasticsan.models.XMsForceDelete
+        :param delete_type: Optional. Specifies that the delete operation should be a permanent delete
+         for the soft deleted volume. The value of deleteType can only be 'permanent'. "permanent"
+         Default value is None.
+        :type delete_type: str or ~azure.mgmt.elasticsan.models.DeleteType
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -623,6 +632,7 @@ class VolumesOperations:
                 volume_name=volume_name,
                 x_ms_delete_snapshots=x_ms_delete_snapshots,
                 x_ms_force_delete=x_ms_force_delete,
+                delete_type=delete_type,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -672,7 +682,7 @@ class VolumesOperations:
         :rtype: ~azure.mgmt.elasticsan.models.Volume
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -719,7 +729,12 @@ class VolumesOperations:
 
     @distributed_trace
     def list_by_volume_group(
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        x_ms_access_soft_deleted_resources: Optional[Union[str, _models.XMsAccessSoftDeletedResources]] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.Volume"]:
         """List Volumes in a VolumeGroup.
 
@@ -730,6 +745,11 @@ class VolumesOperations:
         :type elastic_san_name: str
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
+        :param x_ms_access_soft_deleted_resources: Optional, returns only soft deleted volumes if set
+         to true. If set to false or if not specified, returns only active volumes. Known values are:
+         "true" and "false". Default value is None.
+        :type x_ms_access_soft_deleted_resources: str or
+         ~azure.mgmt.elasticsan.models.XMsAccessSoftDeletedResources
         :return: An iterator like instance of either Volume or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.elasticsan.models.Volume]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -740,7 +760,7 @@ class VolumesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VolumeList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -756,6 +776,7 @@ class VolumesOperations:
                     elastic_san_name=elastic_san_name,
                     volume_group_name=volume_group_name,
                     subscription_id=self._config.subscription_id,
+                    x_ms_access_soft_deleted_resources=x_ms_access_soft_deleted_resources,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -803,3 +824,434 @@ class VolumesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    async def _pre_backup_initial(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: Union[_models.VolumeNameList, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "VolumeNameList")
+
+        _request = build_pre_backup_request(
+            resource_group_name=resource_group_name,
+            elastic_san_name=elastic_san_name,
+            volume_group_name=volume_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_pre_backup(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: _models.VolumeNameList,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a disk snapshot backup can be taken for list of volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Volume Name List (currently only one volume name in the list is supported.
+         Server would return error if list is bigger). Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeNameList
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_pre_backup(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a disk snapshot backup can be taken for list of volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Volume Name List (currently only one volume name in the list is supported.
+         Server would return error if list is bigger). Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_pre_backup(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: Union[_models.VolumeNameList, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a disk snapshot backup can be taken for list of volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Volume Name List (currently only one volume name in the list is supported.
+         Server would return error if list is bigger). Is either a VolumeNameList type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeNameList or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PreValidationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._pre_backup_initial(
+                resource_group_name=resource_group_name,
+                elastic_san_name=elastic_san_name,
+                volume_group_name=volume_group_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("PreValidationResponse", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PreValidationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PreValidationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _pre_restore_initial(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: Union[_models.DiskSnapshotList, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "DiskSnapshotList")
+
+        _request = build_pre_restore_request(
+            resource_group_name=resource_group_name,
+            elastic_san_name=elastic_san_name,
+            volume_group_name=volume_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_pre_restore(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: _models.DiskSnapshotList,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a list of backed up disk snapshots can be restored into ElasticSan volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Disk Snapshot List (currently only one Disk Snapshot in the list is
+         supported and that the Disk Snapshot must be in same azure region as the ElasticSan. Server
+         would return error if list is bigger). Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.DiskSnapshotList
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_pre_restore(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a list of backed up disk snapshots can be restored into ElasticSan volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Disk Snapshot List (currently only one Disk Snapshot in the list is
+         supported and that the Disk Snapshot must be in same azure region as the ElasticSan. Server
+         would return error if list is bigger). Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_pre_restore(
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        parameters: Union[_models.DiskSnapshotList, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PreValidationResponse]:
+        """Validate whether a list of backed up disk snapshots can be restored into ElasticSan volumes.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param parameters: Disk Snapshot List (currently only one Disk Snapshot in the list is
+         supported and that the Disk Snapshot must be in same azure region as the ElasticSan. Server
+         would return error if list is bigger). Is either a DiskSnapshotList type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.DiskSnapshotList or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either PreValidationResponse or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PreValidationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._pre_restore_initial(
+                resource_group_name=resource_group_name,
+                elastic_san_name=elastic_san_name,
+                volume_group_name=volume_group_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("PreValidationResponse", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PreValidationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PreValidationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

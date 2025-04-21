@@ -433,8 +433,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
-
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
+            locational_endpoint = self.host.replace("localhost", "127.0.0.1")
             write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
         multi_write = False
 
