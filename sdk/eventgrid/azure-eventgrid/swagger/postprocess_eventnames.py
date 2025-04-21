@@ -26,6 +26,7 @@ def extract(definitions):
                     val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", txt)
                     tups.append((key, val[0]))
                 except:
+                    print(event)
                     warnings.warn("Unable to generate the event mapping for {}".format(event[0]))
                     sys.exit(1)
     return tups

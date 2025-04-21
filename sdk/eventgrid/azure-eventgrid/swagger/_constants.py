@@ -3,8 +3,8 @@
 #############################################################################
 files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AVS/stable/2018-01-01/PrivateCloud.json",
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2737fdb8c444c5f7f131b5319c3a3ab88affdfd5/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2737fdb8c444c5f7f131b5319c3a3ab88affdfd5/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AppConfiguration/stable/2018-01-01/AppConfiguration.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ContainerRegistry/stable/2018-01-01/ContainerRegistry.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ContainerService/stable/2018-01-01/ContainerService.json",
@@ -30,6 +30,7 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.HealthcareApis/stable/2018-01-01/HealthcareApis.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiCenter/stable/2018-01-01/ApiCenter.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2737fdb8c444c5f7f131b5319c3a3ab88affdfd5/specification/eventgrid/data-plane/Microsoft.Edge/stable/2018-01-01/Edge.json",
 ]
 
 
@@ -80,6 +81,7 @@ EXCEPTIONS = [
     "AvsPrivateCloudEventData",
     "AvsScriptExecutionEventData",
     "AcsMessageEventData",
+    "AcsCallParticipantEventData"
 ]
 
 NAMING_CHANGES = ["AcsMessageDeliveryStatusUpdatedEventName", "AcsMessageReceivedEventName"]

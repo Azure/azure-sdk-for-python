@@ -61,6 +61,16 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsAdvancedMessageReceivedEventName = "Microsoft.Communication.AdvancedMessageReceived"
 
+    AcsCallEndedEventName = "Microsoft.Communication.CallEnded"
+
+    AcsCallParticipantAddedEventName = "Microsoft.Communication.CallParticipantAdded"
+
+    AcsCallParticipantRemovedEventName = "Microsoft.Communication.CallParticipantRemoved"
+
+    AcsCallStartedEventName = "Microsoft.Communication.CallStarted"
+
+    AcsChatAzureBotCommandReceivedInThreadEventName = "Microsoft.Communication.ChatAzureBotCommandReceivedInThread"
+
     AcsChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
 
     AcsChatMessageDeletedInThreadEventName = "Microsoft.Communication.ChatMessageDeletedInThread"
@@ -92,6 +102,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AcsChatThreadPropertiesUpdatedPerUserEventName = "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
 
     AcsChatThreadWithUserDeletedEventName = "Microsoft.Communication.ChatThreadWithUserDeleted"
+
+    AcsChatTypingIndicatorReceivedInThreadEventName = "Microsoft.Communication.ChatTypingIndicatorReceivedInThread"
 
     AcsEmailDeliveryReportReceivedEventName = "Microsoft.Communication.EmailDeliveryReportReceived"
 
@@ -167,6 +179,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementApiUpdatedEventName = "Microsoft.ApiManagement.APIUpdated"
 
+    ApiManagementCircuitBreakerClosedEventName = "Microsoft.ApiManagement.CircuitBreaker.Closed"
+
+    ApiManagementCircuitBreakerOpenedEventName = "Microsoft.ApiManagement.CircuitBreaker.Opened"
+
     ApiManagementGatewayApiAddedEventName = "Microsoft.ApiManagement.GatewayAPIAdded"
 
     ApiManagementGatewayApiRemovedEventName = "Microsoft.ApiManagement.GatewayAPIRemoved"
@@ -186,6 +202,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ApiManagementGatewayHostnameConfigurationDeletedEventName = "Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted"
 
     ApiManagementGatewayHostnameConfigurationUpdatedEventName = "Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated"
+
+    ApiManagementGatewayTokenExpiredEventName = "Microsoft.ApiManagement.GatewayTokenExpired"
+
+    ApiManagementGatewayTokenNearExpiryEventName = "Microsoft.ApiManagement.GatewayTokenNearExpiry"
 
     ApiManagementGatewayUpdatedEventName = "Microsoft.ApiManagement.GatewayUpdated"
 
@@ -504,4 +524,3 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ContainerRegistryEventName = "Microsoft.ContainerRegistry.ChartPushed"
 
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
-
