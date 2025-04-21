@@ -33,13 +33,13 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-connected_agent_name = "stock-price-bot"
+connected_agent_name = "stock_price_bot"
 
 stock_price_agent = project_client.agents.create_agent( 
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name=connected_agent_name, 
     instructions=( 
-        "Your job is to get the stock price of a company. " 
+        "Your job is to get the stock price of a company. If you don't know the realting stock price, return the last known stock price." 
     ), 
 ) 
 
@@ -78,9 +78,13 @@ with project_client:
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # Delete the assistant when done
+    # Delete the Agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
+
+    # Delete the connected Agent when done
+    project_client.agents.delete_agent(stock_price_agent.id)
+    print("Deleted connected agent")
 
     # Print the Agent's response message with optional citation
     response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_message_by_role(
