@@ -22,7 +22,7 @@ from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
     Prefixes,
-    _InternalEvaluationMetrics,
+    _InternalEvaluationMetrics
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
@@ -819,8 +819,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = None
     if trace_destination:
+        name_map = _map_names_to_builtins(evaluators, graders)
         studio_url = _log_metrics_and_instance_results(
-            metrics, results_df, trace_destination, None, evaluation_name, **kwargs
+            metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
         )
 
     result_df_dict = results_df.to_dict("records")
@@ -980,3 +981,40 @@ def _run_callable_evaluators(
     eval_metrics.update(evaluators_metric)
 
     return eval_result_df, eval_metrics, per_evaluator_results
+
+def _map_names_to_builtins(
+        evaluators: Dict[str, Callable],
+        graders: Dict[str, AoaiGrader],
+    ) -> Dict[str, str]:
+    """
+    Construct a mapping from user-supplied evaluator names to which known, built-in
+    evaluator or grader they refer to. Custom or otherwise unknown evaluators are
+    mapped to the "unknown" value.
+
+    :param evaluators: The dictionary of evaluators.
+    :type evaluators: Dict[str, Callable]
+    :param graders: The dictionary of graders.
+    :type graders: Dict[str, AoaiGrader]
+    :param evaluator_config: The configuration for evaluators.
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    
+    """
+    from .._eval_mapping import EVAL_CLASS_MAP
+    name_map = {}
+
+    for name, evaluator in evaluators.items():
+        # Check if the evaluator is a known built-in evaluator
+        found_eval = False
+        for eval_class, eval_id in EVAL_CLASS_MAP.items():
+            if isinstance(evaluator, eval_class):
+                name_map[name] = eval_id
+                found_eval = True
+                break
+        if not found_eval:
+            # If not found, map to "unknown"
+            name_map[name] = "unknown"
+    
+    for  name, grader in graders.items():
+        name_map[name] = grader.id
+
+    return name_map

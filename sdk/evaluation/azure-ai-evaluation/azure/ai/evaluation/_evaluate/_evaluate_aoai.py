@@ -6,7 +6,7 @@ import logging
 
 from openai import AzureOpenAI, OpenAI
 import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type
+from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
@@ -14,6 +14,7 @@ from ._batch_run import CodeClient, ProxyClient
 #import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
+from .._model_configurations import EvaluatorConfig
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
@@ -51,7 +52,7 @@ def _begin_aoai_evaluation(
     for name, grader in graders.items():
         grader_name_list.append(name)
         grader_list.append(grader.get_grader_config())
-    data_source_config = _generate_default_data_source_config(data)
+    data_source_config = _generate_default_data_source_config(data, None) # TODO pass eval config into this
 
     # Create eval group
     eval_group_info = client.evals.create(
@@ -231,7 +232,7 @@ def _get_grader_class(model_id: str) -> Type[AoaiGrader]:
         target=ErrorTarget.AOAI_GRADER,
     )
 
-def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[str, Any]:
+def _generate_default_data_source_config(input_data_df: pd.DataFrame, evaluator_config: Optional[Dict[str, EvaluatorConfig]]) -> Dict[str, Any]:
     """Produce a data source config that naively maps all columns from the supplied data source into
     the OAI API.
     
@@ -351,4 +352,3 @@ def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: 
                 target=ErrorTarget.AOAI_GRADER,
             )
         
-    

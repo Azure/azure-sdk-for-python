@@ -62,6 +62,7 @@ class EvaluationRunProperties:
     RUN_TYPE = "runType"
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
+    NAME_MAP = "_azureml.evaluation_name_map"
 
 
 @experimental
