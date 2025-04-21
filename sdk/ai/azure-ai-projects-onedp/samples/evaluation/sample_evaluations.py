@@ -23,9 +23,11 @@ USAGE:
 """
 
 import os
+from typing import List
+
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
-from azure.ai.projects.onedp.models import Evaluation, InputDataset, EvaluatorConfiguration, EvaluationMetrics
+from azure.ai.projects.onedp.models import Evaluation, InputDataset, EvaluatorConfiguration, EvaluatorIds, DatasetVersion
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,9 +41,10 @@ with AIProjectClient(
 ) as project_client:
 
     # [START evaluations_sample]
-    print(
-        "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
-    )
+    # TODO : Uncomment the following lines once dataset creation works
+    # print(
+    #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+    # )
     # dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
     #     name=dataset_name,
     #     version="1",
@@ -50,33 +53,32 @@ with AIProjectClient(
     # print(dataset)
 
     print("Create an evaluation")
-    # evaluation = Evaluation(
-    #     display_name="Sample Evaluation",
-    #     data=InputDataset(id="azureml://locations/centraluseuap/workspaces/abc/data/abc/versions/11"),
-    #     evaluators={
-    #         "relevance": EvaluatorConfiguration(
-    #             id=f"aiservices:{EvaluationMetrics.Relevance.value}",
-    #             # id="azureml://registries/azureml/models/Retrieval-Evaluator/versions/4",
-    #             # either client or service (TBD) resolves to azureml://registries/azureml/models/Retrieval-Evaluator/versions/...
-    #             init_params={
-    #                 "deployment_name": "gpt-4o",
-    #             },
-    #         ),
-    #         "hate_unfairness": EvaluatorConfiguration(
-    #             # id=f"aiservices:{EvaluationMetrics.HateUnfairness.value}",
-    #             id="azureml://registries/azureml/models/Retrieval-Evaluator/versions/4",
-    #             # either client or service (TBD) resolves to azureml://registries/azureml/models/Hate-Unfairness-Evaluator/versions/...
-    #             init_params={
-    #                 "azure_ai_project": endpoint,
-    #             },
-    #         ),
-    #     },
-    # )
-    #
-    # evaluation_respone = project_client.evaluations.create_run(evaluation)
+    evaluation: Evaluation = Evaluation(
+        display_name="Sample Evaluation",
+        description="Sample evaluation for testing", # TODO: Can we optional once bug 4115256 is fixed
+        data=InputDataset(id="azureai://accounts/anksingtest1rp/projects/anksingtest1rpproject/data/evaltest/versions/1"),
+        evaluators={
+            "relevance": EvaluatorConfiguration(
+                id=EvaluatorIds.RELEVANCE.value, # TODO: update this to use the correct id
+                init_params={
+                    "deployment_name": "gpt-4o",
+                },
+            ),
+        },
+    )
+
+    evaluation_response: Evaluation = project_client.evaluations.create_run(evaluation)
+    print(evaluation_response)
 
     print("Get evaluation")
-    # get_evaluation_response = project_client.evaluations.get(evaluation_respone.id)
-    # print(get_evaluation_response)
+    get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.id)
+
+    print(get_evaluation_response)
+
+    print("List evaluations")
+    evaluations_list_response: List[Evaluation] = project_client.evaluations.list()
+
+    for evaluation in evaluations_list_response:
+        print(evaluation)
 
     # [END evaluations_sample]

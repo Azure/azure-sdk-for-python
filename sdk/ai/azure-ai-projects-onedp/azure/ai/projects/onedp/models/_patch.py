@@ -7,10 +7,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-from ._patch_evaluations import EvaluationMetrics
+from ._patch_evaluations import EvaluatorIds
 
 __all__: List[str] = [
-    "EvaluationMetrics",
+    "EvaluatorIds",
 ]  # Add all objects you want publicly available to users at this package level
 
 
