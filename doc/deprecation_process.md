@@ -169,16 +169,7 @@ You may see tests/mypy/pylint or other checks failing on other packages in the C
 
 Check to make sure that the new version of the package has been released on PyPI and that the release has been tagged in the `azure-sdk-for-python` repo with `azure-mypackage_<version>`.
 
-**NOTE: If your package has been released, there should be a corresponding GitHub release tag. If there is not, you can manually add a release tag:**
-- Navigate to the releases page: https://github.com/Azure/azure-sdk-for-python/releases
-- Click on the "Draft a new release" button.
-- Fill in the Release details:
-  - Tag version: Enter the tag name in the format `azure-mypackage_<version>` (e.g., azure-mypackage_1.2.4).
-  - Target: Select the branch or commit you want to tag (usually main or the commit corresponding to the release).
-  - Release title: Should be the same as the release tag (e.g., azure-mypackage_1.2.4).
-  - Description: Add the section from the CHANGELOG.md corresponding to the release.
-  - Attach the sdist and zip files from the release (which can be downloaded from PyPI).
-  - Click "Publish release"
+**NOTE: If your package has been released, there should be a corresponding [GitHub release tag](https://github.com/Azure/azure-sdk-for-python/tags). If there is not, create a post in the [Engineering System channel](https://teams.microsoft.com/l/channel/19%3A59dbfadafb5e41c4890e2cd3d74cc7ba%40thread.skype/Engineering%20System%20%F0%9F%9B%A0%EF%B8%8F?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) that the release tag cannot be found and add a link to the release build.**
 
 Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https://github.com/Azure/azure-sdk-for-python/releases/tag/azure-cognitiveservices-language-spellcheck_2.0.1)
 
