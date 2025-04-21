@@ -2228,4 +2228,8 @@ class RedTeam():
         
         print(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
+        for handler in self.logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                self.logger.removeHandler(handler)
         return output
