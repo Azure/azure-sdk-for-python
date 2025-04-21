@@ -10,5 +10,5 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-def foo() -> Any:
+def create_number() -> Any:
     return 42

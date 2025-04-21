@@ -8,5 +8,5 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 class Some2Client():
 
     @distributed_trace_async
-    def get_thing(self) -> List[str]:
+    def get_thing(self, **kwargs) -> List[str]:
         return []

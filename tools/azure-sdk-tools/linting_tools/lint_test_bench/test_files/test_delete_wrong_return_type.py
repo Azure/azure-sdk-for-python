@@ -9,4 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 class MyClient():
     @distributed_trace
     def delete_some_function(self, **kwargs) -> str:
-        return kwargs.get("some_key")
+        client = kwargs.get("some_client")
+        client.delete()
+        # Do something with the key
+        return self
