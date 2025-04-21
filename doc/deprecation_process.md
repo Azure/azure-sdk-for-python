@@ -184,14 +184,12 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
 
 # Step 5: Create a new PR to remove the package from the main branch
 
-- Delete all files under `sdk/mypackage/azure-mypackage` EXCEPT for the README.md.
-- Add a note to the README that the package has been moved under the latest release tag. E.g.
+- Append the following to the end of the existing README.md.
   ```md
-  # Microsoft Azure SDK for Python
-
-  **NOTE**: This package has been deprecated and moved to [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage). This package will only receive security fixes until <EOLDate> and will no longer be maintained after then.
+  Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage).
   ```
-- You will see an `Artifacts` parameter in the `mypackage/ci.yml`.
+- Delete all files under `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package root.
+- You will see an `Artifacts` parameter in `mypackage/ci.yml`.
   ```yml
   extends:
     parameters:
@@ -208,12 +206,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
-    ```yml
-    extends:
-      parameters:
-        ...
-    ```
+  - If the only package listed is `azure-mypackage`, all packages in the `mypackage` folder should be deprecated. Remove any and all of the following files from `mypackage`: `ci.yml`, `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
