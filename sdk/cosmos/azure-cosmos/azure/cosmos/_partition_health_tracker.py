@@ -32,7 +32,7 @@ from ._constants import _Constants as Constants
 
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-MAX_UNAVAILABLE_TIME = 1800 * 1000 # milliseconds
+MAX_UNAVAILABLE_TIME = 1200 * 1000 # milliseconds
 REFRESH_INTERVAL = 60 * 1000 # milliseconds
 INITIAL_UNAVAILABLE_TIME = 60 * 1000 # milliseconds
 # partition is unhealthy if sdk tried to recover and failed
@@ -40,19 +40,9 @@ UNHEALTHY = "unhealthy"
 # partition is unhealthy tentative when it initially marked unavailable
 UNHEALTHY_TENTATIVE = "unhealthy_tentative"
 # unavailability info keys
+UNAVAILABLE_INTERVAL = "unavailableInterval"
 LAST_UNAVAILABILITY_CHECK_TIME_STAMP = "lastUnavailabilityCheckTimeStamp"
 HEALTH_STATUS = "healthStatus"
-
-
-def _has_exceeded_failure_rate_threshold(
-        successes: int,
-        failures: int,
-        failure_rate_threshold: int,
-) -> bool:
-    if successes + failures < MINIMUM_REQUESTS_FOR_FAILURE_RATE:
-        return False
-    failure_rate = failures / (failures + successes) * 100
-    return failure_rate >= failure_rate_threshold
 
 class _PartitionHealthInfo(object):
     """
@@ -77,6 +67,22 @@ class _PartitionHealthInfo(object):
         self.read_consecutive_failure_count = 0
         self.write_consecutive_failure_count = 0
 
+    def transition_health_status(self, target_health_status: str, curr_time: int) -> None:
+        if target_health_status == UNHEALTHY :
+            self.unavailability_info[HEALTH_STATUS] = UNHEALTHY
+            # reset the last unavailability check time stamp
+            self.unavailability_info[UNAVAILABLE_INTERVAL] = \
+                min(self.unavailability_info[UNAVAILABLE_INTERVAL] * 2,
+                    MAX_UNAVAILABLE_TIME)
+            self.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] \
+                = curr_time
+        elif target_health_status == UNHEALTHY_TENTATIVE :
+            self.unavailability_info = {
+                LAST_UNAVAILABILITY_CHECK_TIME_STAMP: curr_time,
+                UNAVAILABLE_INTERVAL: INITIAL_UNAVAILABLE_TIME,
+                HEALTH_STATUS: UNHEALTHY_TENTATIVE
+            }
+
     def __str__(self) -> str:
         return (f"{self.__class__.__name__}: {self.unavailability_info}\n"
                 f"write failure count: {self.write_failure_count}\n"
@@ -86,10 +92,21 @@ class _PartitionHealthInfo(object):
                 f"write consecutive failure count: {self.write_consecutive_failure_count}\n"
                 f"read consecutive failure count: {self.read_consecutive_failure_count}\n")
 
+def _has_exceeded_failure_rate_threshold(
+        successes: int,
+        failures: int,
+        failure_rate_threshold: int,
+) -> bool:
+    if successes + failures < MINIMUM_REQUESTS_FOR_FAILURE_RATE:
+        return False
+    failure_rate = failures / (failures + successes) * 100
+    return failure_rate >= failure_rate_threshold
+
 def _should_mark_healthy_tentative(partition_health_info: _PartitionHealthInfo, curr_time: int) -> bool:
-    elapsed_time = (current_time -
+    elapsed_time = (curr_time -
                     partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
     current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
+    stale_partition_unavailability_check = partition_health_info.unavailability_info[UNAVAILABLE_INTERVAL]
     # check if the partition key range is still unavailable
     return ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
             or (current_health_status == UNHEALTHY_TENTATIVE and  elapsed_time > INITIAL_UNAVAILABLE_TIME))
@@ -122,10 +139,7 @@ class _PartitionHealthTracker(object):
         if pk_range_wrapper not in self.pk_range_wrapper_to_health_info:
             # healthy -> unhealthy tentative
             partition_health_info = _PartitionHealthInfo()
-            partition_health_info.unavailability_info = {
-                LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
-                HEALTH_STATUS: UNHEALTHY_TENTATIVE
-            }
+            partition_health_info.transition_health_status(UNHEALTHY_TENTATIVE, current_time)
             self.pk_range_wrapper_to_health_info[pk_range_wrapper] = {
                 location: partition_health_info
             }
@@ -133,20 +147,16 @@ class _PartitionHealthTracker(object):
             region_to_partition_health = self.pk_range_wrapper_to_health_info[pk_range_wrapper]
             if location in region_to_partition_health and region_to_partition_health[location].unavailability_info:
                 # healthy tentative -> unhealthy
+                region_to_partition_health[location].transition_health_status(UNHEALTHY, current_time)
                 # if the operation type is not empty, we are in the healthy tentative state
-                region_to_partition_health[location].unavailability_info[HEALTH_STATUS] = UNHEALTHY
-                # reset the last unavailability check time stamp
-                region_to_partition_health[location].unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] \
-                    = current_time
             else:
                 # healthy -> unhealthy tentative
                 # if the operation type is empty, we are in the unhealthy tentative state
                 partition_health_info = _PartitionHealthInfo()
-                partition_health_info.unavailability_info = {
-                    LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
-                    HEALTH_STATUS: UNHEALTHY_TENTATIVE
-                }
+                partition_health_info.transition_health_status(UNHEALTHY_TENTATIVE, current_time)
                 self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = partition_health_info
+
+
 
     def _transition_health_status_on_success(
             self,
@@ -164,18 +174,16 @@ class _PartitionHealthTracker(object):
     ) -> None:
         current_time = current_time_millis()
 
-        stale_partition_unavailability_check = int(os.environ.get(Constants.STALE_PARTITION_UNAVAILABILITY_CHECK,
-                                                         Constants.STALE_PARTITION_UNAVAILABILITY_CHECK_DEFAULT)) * 1000
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if partition_health_info.unavailability_info:
-                    if self._should_mark_healthy_tentative(partition_health_info, current_time):
+                    if _should_mark_healthy_tentative(partition_health_info, current_time):
                         # unhealthy or unhealthy tentative -> healthy tentative
+                        # only one request should be used to recover
                         with (self.stale_partiton_lock):
-                            if self._should_mark_healthy_tentative(partition_health_info, current_time):
+                            if _should_mark_healthy_tentative(partition_health_info, current_time):
                                 # this will trigger one attempt to recover
-                                partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] = current_time
-                                partition_health_info.unavailability_info[HEALTH_STATUS] = UNHEALTHY
+                                partition_health_info.transition_health_status(UNHEALTHY, current_time)
                                 request.healthy_tentative_location = location
 
         if current_time - self.last_refresh > REFRESH_INTERVAL:
