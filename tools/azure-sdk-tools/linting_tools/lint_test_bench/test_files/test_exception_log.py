@@ -10,7 +10,9 @@ def add(a, b):
     """
     Add two numbers together.
     :param a: The first number.
+    :type a: int or float
     :param b: The second number.
+    :type b: int or float
     :return: The sum of the two numbers.
     """
     logging.debug("Adding %s and %s", a, b)
