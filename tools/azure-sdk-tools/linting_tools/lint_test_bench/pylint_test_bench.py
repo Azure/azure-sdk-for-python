@@ -8,7 +8,7 @@ import azure.core
 from azure.identity import get_bearer_token_provider
 from pathlib import Path
 from datetime import datetime
-from azure.ai.evaluation import GroundednessEvaluator
+from azure.ai.evaluation import GroundednessEvaluator, TaskAdherenceEvaluator
 from pylint.lint import Run
 
 token_provider = get_bearer_token_provider(
@@ -229,9 +229,12 @@ def evaluate_fixes(file_path, original_content, fixed_content):
 
     # Use the evaluate function with the JSONL file
     eval = GroundednessEvaluator(model_config=model_config)
+    adehere = TaskAdherenceEvaluator(model_config=model_config, threshold=3)
+
 
     evaluation_result = eval(context=FILE_PROMPT + f"Fix pylint issues in this code:\n\n{original_content}", response=fixed_content) 
-    EVAL_RESULTS[pylint_name] = evaluation_result
+    adherence_result = adehere(query=FILE_PROMPT + f"Fix pylint issues in this code:\n\n{original_content}", response=fixed_content)
+    EVAL_RESULTS[pylint_name] = evaluation_result , adherence_result
 
 # Example usage
 if __name__ == "__main__":
@@ -278,8 +281,9 @@ if __name__ == "__main__":
                 if key in EVAL_RESULTS:
                     f.write(f"Evaluation Results for {key}:")
                     f.write("\n")
-                    f.write(f"Groundedness Score: {EVAL_RESULTS[key]}")
+                    f.write(f"Evaluation Score: {EVAL_RESULTS[key][0]}")
                     f.write("\n")
+                    f.write(f"Evaluation Score: {EVAL_RESULTS[key][1]}")
                 f.write("\n")
                 f.write("-----"*80)
                 f.write("\n")
