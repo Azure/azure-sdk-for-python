@@ -39,7 +39,7 @@ stock_price_agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name=connected_agent_name, 
     instructions=( 
-        "Your job is to get the stock price of a company. If you don't know the realting stock price, return the last known stock price." 
+        "Your job is to get the stock price of a company. If you don't know the realtime stock price, return the last known stock price." 
     ), 
 ) 
 
