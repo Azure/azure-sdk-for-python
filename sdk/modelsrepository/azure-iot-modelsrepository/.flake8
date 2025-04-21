@@ -1,7 +1,0 @@
-[flake8]
-# E501: line length (black formatting will handle)
-# W503, E203: Not PEP8 compliant (incompatible with black formatting)
-ignore = E501,W503,E203
-exclude =
-    .git,
-    __pycache__,
