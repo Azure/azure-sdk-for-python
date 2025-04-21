@@ -618,7 +618,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")
+    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z0-9_]+\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
