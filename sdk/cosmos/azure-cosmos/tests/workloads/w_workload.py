@@ -1,3 +1,5 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import sys
 
@@ -11,7 +13,6 @@ sys.path.append(r"./")
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
 
-import time
 from datetime import datetime
 
 async def run_workload(client_id, client_logger):

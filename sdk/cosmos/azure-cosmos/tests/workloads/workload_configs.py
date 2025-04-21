@@ -1,4 +1,5 @@
-
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Replace with your Cosmos DB details
 PREFERRED_LOCATIONS = []
 COSMOS_PROXY_URI = "http://0.0.0.0:5100"

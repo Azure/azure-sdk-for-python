@@ -1,4 +1,5 @@
 #!/bin/bash
+# cspell:disable
 # Kill all python3 processes
 pkill -f "python3 r_"
 pkill -f "python3 w_"

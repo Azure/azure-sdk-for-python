@@ -1,3 +1,5 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import sys
 
@@ -10,7 +12,6 @@ sys.path.append(r"./")
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
 
-import time
 from datetime import datetime
 
 async def write_item_concurrently_initial(container, num_upserts):

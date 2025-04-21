@@ -1,3 +1,5 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import sys
 
