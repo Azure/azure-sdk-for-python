@@ -751,7 +751,7 @@ To list all threads attached to a given agent, use the list_threads API:
 <!-- SNIPPET:sample_assistants_basics.list_threads -->
 
 ```python
-threads = project_client.agents.list_threads()
+threads = assistants_client.list_threads()
 ```
 
 <!-- END SNIPPET -->

@@ -869,7 +869,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     """
     A tool that searches for information using Bing Custom Search.
     """
- 
+
     def __init__(self, connection_id: str, instance_name: str):
         """
         Initialize Bing Custom Search with a connection_id.
@@ -878,7 +878,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :param instance_name: Config instance name used by tool. 
         """
         self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
- 
+
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
         """
@@ -893,7 +893,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
                 )
             )
         ]
- 
+
     @property
     def resources(self) -> ToolResources:
         """
@@ -902,7 +902,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :rtype: ToolResources
         """
         return ToolResources()
- 
+
     def execute(self, tool_call: Any) -> Any:
         pass
 
