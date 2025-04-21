@@ -43,6 +43,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.last_routed_location_endpoint_within_region: Optional[str] = None
         self.excluded_locations: Optional[List[str]] = None
         self.excluded_locations_circuit_breaker: List[str] = []
+        self.healthy_tentative_location: Optional[str] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,

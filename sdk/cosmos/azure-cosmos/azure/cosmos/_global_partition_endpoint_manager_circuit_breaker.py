@@ -75,7 +75,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
     def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> str:
-        # TODO: @tvaron3 check here if it is healthy tentative and move it back to Unhealthy
         if self.is_circuit_breaker_applicable(request):
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)

@@ -20,6 +20,20 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 REGION_1 = "West US 3"
 REGION_2 = "Mexico Central" # "West US"
+CHANGE_FEED = "changefeed"
+CHANGE_FEED_PK = "changefeed_pk"
+CHANGE_FEED_EPK = "changefeed_epk"
+READ = "read"
+CREATE = "create"
+READ_ALL_ITEMS = "read_all_items"
+DELETE_ALL_ITEMS_BY_PARTITION_KEY = "delete_all_items_by_partition_key"
+QUERY = "query"
+QUERY_PK = "query_pk"
+BATCH = "batch"
+UPSERT = "upsert"
+REPLACE = "replace"
+PATCH = "patch"
+DELETE = "delete"
 
 
 COLLECTION = "created_collection"
@@ -40,7 +54,7 @@ async def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 def write_operations_and_errors():
-    write_operations = ["create", "upsert", "replace", "delete", "patch", "batch"] # "delete_all_items_by_partition_key"]
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]# "delete_all_items_by_partition_key"]
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -56,7 +70,7 @@ def write_operations_and_errors():
     return params
 
 def read_operations_and_errors():
-    read_operations = ["read", "query", "query_pk", "changefeed", "changefeed_pk", "changefeed_epk", "read_all_items"]
+    read_operations = [READ, QUERY, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS]
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -71,6 +85,15 @@ def read_operations_and_errors():
 
     return params
 
+def operations():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    read_operations = [READ, QUERY_PK, CHANGE_FEED_PK, CHANGE_FEED_EPK]
+    operations = []
+    for i, write_operation in enumerate(write_operations):
+        operations.append((read_operations[i % len(read_operations)], write_operation))
+
+    return operations
+
 def validate_response_uri(response, expected_uri):
     request = response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
@@ -80,25 +103,25 @@ async def perform_write_operation(operation, container, fault_injection_containe
            'pk': pk,
            'name': 'sample document',
            'key': 'value'}
-    if operation == "create":
+    if operation == CREATE:
         resp = await fault_injection_container.create_item(body=doc)
-    elif operation == "upsert":
+    elif operation == UPSERT:
         resp = await fault_injection_container.upsert_item(body=doc)
-    elif operation == "replace":
+    elif operation == REPLACE:
         await container.create_item(body=doc)
         new_doc = {'id': doc_id,
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
                    'key': 'value'}
         resp = await fault_injection_container.replace_item(item=doc['id'], body=new_doc)
-    elif operation == "delete":
+    elif operation == DELETE:
         await container.create_item(body=doc)
         resp = await fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
-    elif operation == "patch":
+    elif operation == PATCH:
         await container.create_item(body=doc)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = await fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
-    elif operation == "batch":
+    elif operation == BATCH:
         batch_operations = [
             ("create", (doc, )),
             ("upsert", (doc,)),
@@ -116,38 +139,38 @@ async def perform_write_operation(operation, container, fault_injection_containe
         validate_response_uri(resp, expected_uri)
 
 async def perform_read_operation(operation, container, doc_id, pk, expected_uri):
-    if operation == "read":
+    if operation == READ:
         read_resp = await container.read_item(item=doc_id, partition_key=pk)
         request = read_resp.get_response_headers()["_request"]
         # Validate the response comes from "Read Region" (the most preferred read-only region)
         assert request.url.startswith(expected_uri)
-    elif operation == "query_pk":
+    elif operation == QUERY_PK:
         # partition key filtered query
         query = "SELECT * FROM c WHERE c.id = @id AND c.pk = @pk"
         parameters = [{"name": "@id", "value": doc_id}, {"name": "@pk", "value": pk}]
         async for item in container.query_items(query=query, partition_key=pk, parameters=parameters):
             assert item['id'] == doc_id
         # need to do query with no pk and with feed range
-    elif operation == "query":
+    elif operation == QUERY:
         # cross partition query
         query = "SELECT * FROM c WHERE c.id = @id"
         async for item in container.query_items(query=query):
             assert item['id'] == doc_id
-    elif operation == "changefeed":
+    elif operation == CHANGE_FEED:
         async for _ in container.query_items_change_feed():
             pass
-    elif operation == "changefeed_pk":
+    elif operation == CHANGE_FEED_PK:
         # partition key filtered change feed
         async for _ in container.query_items_change_feed(partition_key=pk):
             pass
-    elif operation == "changefeed_epk":
+    elif operation == CHANGE_FEED_EPK:
         # partition key filtered by feed range
         feed_range = await container.feed_range_from_partition_key(partition_key=pk)
         async for _ in container.query_items_change_feed(feed_range=feed_range):
             pass
-    elif operation == "read_all_items":
-        async for item in container.read_all_items(partition_key=pk):
-            assert item['pk'] == pk
+    elif operation == READ_ALL_ITEMS:
+        async for _ in container.read_all_items():
+            pass
 
 def validate_unhealthy_partitions(global_endpoint_manager,
                                   expected_unhealthy_partitions):
@@ -259,6 +282,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
@@ -304,7 +328,12 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                          expected_uri)
 
         # the partition should have been marked as unavailable after breaking read threshold
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        if read_operation in (CHANGE_FEED, QUERY, READ_ALL_ITEMS):
+            # these operations are cross partition so they would mark both partitions as unavailable
+            expected_unhealthy_partitions = 2
+        else:
+            expected_unhealthy_partitions = 1
+        validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
         # remove faults and reduce initial recover time and perform a read
         original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
         _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
@@ -317,6 +346,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                          uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
@@ -420,20 +450,135 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                               doc['id'],
                                               pk_value,
                                               expected_uri)
+            if read_operation in (CHANGE_FEED, QUERY, READ_ALL_ITEMS):
+                # these operations are cross partition so they would mark both partitions as unavailable
+                expected_unhealthy_partitions = 2
+            else:
+                expected_unhealthy_partitions = 1
 
-            validate_unhealthy_partitions(global_endpoint_manager, 1)
+            validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
         finally:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
         await cleanup_method([custom_setup, setup])
 
-    async def test_service_request_error_async(self):
+    @pytest.mark.parametrize("read_operation, write_operation", operations())
+    async def test_service_request_error_async(self, read_operation, write_operation):
         # the region should be tried 4 times before failing over and mark the partition as unavailable
         # the region should not be marked as unavailable
-        pass
+        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransportAsync()
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        custom_transport.add_fault(predicate,
+                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+        pk_value = "pk1"
+        doc = {'id': str(uuid.uuid4()),
+               'pk': pk_value,
+               'name': 'sample document',
+               'key': 'value'}
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
+        fault_injection_container = custom_setup['col']
+        setup = await self.setup_method(default_endpoint=self.host)
+        container = setup['col']
+        await container.upsert_item(body=doc)
+        await perform_read_operation(read_operation,
+                                     fault_injection_container,
+                                     doc['id'],
+                                     pk_value,
+                                     expected_uri)
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-    # test service request marks only a partition unavailable not an entire region - across operation types
+        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        # there shouldn't be region marked as unavailable
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+
+        # recover partition
+        # remove faults and reduce initial recover time and perform a write
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        custom_transport.faults = []
+        try:
+            await perform_read_operation(read_operation,
+                                          fault_injection_container,
+                                          doc['id'],
+                                          pk_value,
+                                          uri_down)
+        finally:
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
+
+        custom_transport.add_fault(predicate,
+                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+
+        await perform_write_operation(write_operation,
+                                      container,
+                                      fault_injection_container,
+                                      str(uuid.uuid4()),
+                                      pk_value,
+                                      expected_uri)
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+
+        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        # there shouldn't be region marked as unavailable
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+
+
+        await cleanup_method([custom_setup, setup])
+
+
+    # send 5 write concurrent requests when trying to recover
+    # verify that only one failed
+    async def test_recovering_only_fails_one_requests_async(self):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransportAsync()
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        custom_transport.add_fault(predicate,
+                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, CosmosHttpResponseError(
+                                       status_code=502,
+                                       message="Some envoy error."))))
+        pk_value = "pk1"
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
+        fault_injection_container = custom_setup['col']
+        doc = {'id': str(uuid.uuid4()),
+               'pk': pk_value,
+               'name': 'sample document',
+               'key': 'value'}
+
+        for i in range(5):
+            with pytest.raises(CosmosHttpResponseError):
+                await fault_injection_container.create_item(body=doc)
+
+
+        number_of_errors = 0
+
+        async def concurrent_upsert():
+            nonlocal number_of_errors
+            doc = {'id': str(uuid.uuid4()),
+                   'pk': pk_value,
+                   'name': 'sample document',
+                   'key': 'value'}
+            try:
+                await fault_injection_container.upsert_item(doc)
+            except CosmosHttpResponseError as e:
+                number_of_errors += 1
+
+        # attempt to recover partition
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        try:
+            tasks = []
+            for i in range(10):
+                tasks.append(concurrent_upsert())
+            await asyncio.gather(*tasks)
+            assert number_of_errors == 1
+        finally:
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            await cleanup_method([custom_setup])
+
     # test cosmos client timeout
 
 if __name__ == '__main__':

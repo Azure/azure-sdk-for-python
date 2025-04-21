@@ -22,10 +22,12 @@
 """Internal class for partition health tracker for circuit breaker.
 """
 import logging
+import threading
 import os
 from typing import Dict, Any, List
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
+from azure.cosmos._request_object import RequestObject
 from ._constants import _Constants as Constants
 
 
@@ -37,8 +39,6 @@ INITIAL_UNAVAILABLE_TIME = 60 * 1000 # milliseconds
 UNHEALTHY = "unhealthy"
 # partition is unhealthy tentative when it initially marked unavailable
 UNHEALTHY_TENTATIVE = "unhealthy_tentative"
-# partition is healthy tentative when sdk is trying to recover
-HEALTHY_TENTATIVE = "healthy_tentative"
 # unavailability info keys
 LAST_UNAVAILABILITY_CHECK_TIME_STAMP = "lastUnavailabilityCheckTimeStamp"
 HEALTH_STATUS = "healthStatus"
@@ -86,6 +86,14 @@ class _PartitionHealthInfo(object):
                 f"write consecutive failure count: {self.write_consecutive_failure_count}\n"
                 f"read consecutive failure count: {self.read_consecutive_failure_count}\n")
 
+def _should_mark_healthy_tentative(partition_health_info: _PartitionHealthInfo, curr_time: int) -> bool:
+    elapsed_time = (current_time -
+                    partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
+    current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
+    # check if the partition key range is still unavailable
+    return ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
+            or (current_health_status == UNHEALTHY_TENTATIVE and  elapsed_time > INITIAL_UNAVAILABLE_TIME))
+
 logger = logging.getLogger("azure.cosmos._PartitionHealthTracker")
 
 class _PartitionHealthTracker(object):
@@ -98,6 +106,7 @@ class _PartitionHealthTracker(object):
         # partition -> regions -> health info
         self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
+        self.stale_partiton_lock = threading.Lock()
 
     def mark_partition_unavailable(self, pk_range_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
         # mark the partition key range as unavailable
@@ -146,39 +155,46 @@ class _PartitionHealthTracker(object):
     ) -> None:
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             # healthy tentative -> healthy
-            self.pk_range_wrapper_to_health_info[pk_range_wrapper].pop(location, None)
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper][location].unavailability_info = {}
 
-    def _check_stale_partition_info(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+    def _check_stale_partition_info(
+            self,
+            request: RequestObject,
+            pk_range_wrapper: PartitionKeyRangeWrapper
+    ) -> None:
         current_time = current_time_millis()
 
         stale_partition_unavailability_check = int(os.environ.get(Constants.STALE_PARTITION_UNAVAILABILITY_CHECK,
                                                          Constants.STALE_PARTITION_UNAVAILABILITY_CHECK_DEFAULT)) * 1000
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
-            for _, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
+            for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if partition_health_info.unavailability_info:
-                    elapsed_time = (current_time -
-                                    partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
-                    current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
-                    # check if the partition key range is still unavailable
-                    if ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
-                            or (current_health_status == UNHEALTHY_TENTATIVE
-                                and  elapsed_time > INITIAL_UNAVAILABLE_TIME)):
+                    if self._should_mark_healthy_tentative(partition_health_info, current_time):
                         # unhealthy or unhealthy tentative -> healthy tentative
-                        partition_health_info.unavailability_info[HEALTH_STATUS] = HEALTHY_TENTATIVE
+                        with (self.stale_partiton_lock):
+                            if self._should_mark_healthy_tentative(partition_health_info, current_time):
+                                # this will trigger one attempt to recover
+                                partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] = current_time
+                                partition_health_info.unavailability_info[HEALTH_STATUS] = UNHEALTHY
+                                request.healthy_tentative_location = location
 
         if current_time - self.last_refresh > REFRESH_INTERVAL:
             # all partition stats reset every minute
             self._reset_partition_health_tracker_stats()
 
 
-    def get_excluded_locations(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> List[str]:
-        self._check_stale_partition_info(pk_range_wrapper)
+    def get_excluded_locations(
+            self,
+            request: RequestObject,
+            pk_range_wrapper: PartitionKeyRangeWrapper
+        ) -> List[str]:
         excluded_locations = []
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
-                if partition_health_info.unavailability_info:
+                if (partition_health_info.unavailability_info and
+                        not (request.healthy_tentative_location and request.healthy_tentative_location == location)):
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
-                    if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY):
+                    if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY) :
                         excluded_locations.append(location)
         return excluded_locations
 
@@ -200,7 +216,6 @@ class _PartitionHealthTracker(object):
             self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = _PartitionHealthInfo()
 
         health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
-        print(failure_rate_threshold)
 
         # Determine attribute names and environment variables based on the operation type.
         if operation_type == EndpointOperationType.WriteType:
@@ -233,9 +248,9 @@ class _PartitionHealthTracker(object):
             failure_rate_threshold,
             consecutive_failure_threshold
         )
-        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
         print(pk_range_wrapper)
         print(location)
+        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
 
     def _check_thresholds(
             self,
@@ -274,22 +289,13 @@ class _PartitionHealthTracker(object):
         else:
             health_info.read_success_count += 1
             health_info.read_consecutive_failure_count = 0
-        self._transition_health_status_on_success(pk_range_wrapper, operation_type)
-        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
         print(pk_range_wrapper)
         print(location)
+        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
+        self._transition_health_status_on_success(pk_range_wrapper, location)
 
 
     def _reset_partition_health_tracker_stats(self) -> None:
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
                 health_info.reset_health_stats()
-
-    def is_healthy_tentative(self, pk_range_wrapper, location):
-        if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
-            if location in self.pk_range_wrapper_to_health_info[pk_range_wrapper]:
-                health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
-                return health_info.unavailability_info and \
-                    health_info.unavailability_info[HEALTH_STATUS] == HEALTHY_TENTATIVE
-        return False
-

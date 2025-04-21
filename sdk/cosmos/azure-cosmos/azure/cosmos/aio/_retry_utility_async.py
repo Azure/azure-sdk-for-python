@@ -289,7 +289,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if (not _has_database_account_header(request.http_request.headers)
-                        and not await global_endpoint_manager.is_healthy_tentative(request_params)):
+                        and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
                         await global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
@@ -299,8 +299,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
-                        await global_endpoint_manager.is_healthy_tentative(request_params)):
+                if (_has_database_account_header(request.http_request.headers) or request_params.healthy_tentative_location):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:

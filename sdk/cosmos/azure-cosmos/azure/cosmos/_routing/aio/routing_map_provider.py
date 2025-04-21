@@ -82,7 +82,7 @@ class PartitionKeyRangeCache(object):
             collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(
                 [(r, True) for r in collection_pk_ranges], collection_id
             )
-        self._collection_routing_map_by_item[collection_id] = collection_routing_map
+            self._collection_routing_map_by_item[collection_id] = collection_routing_map
 
     async def get_range_by_partition_key_range_id(
             self,
@@ -216,11 +216,3 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             pass
 
         return target_partition_key_ranges
-
-    async def get_range_by_partition_key_range_id(
-            self,
-            collection_link: str,
-            partition_key_range_id: int,
-            **kwargs: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        return await super().get_range_by_partition_key_range_id(collection_link, partition_key_range_id, **kwargs)

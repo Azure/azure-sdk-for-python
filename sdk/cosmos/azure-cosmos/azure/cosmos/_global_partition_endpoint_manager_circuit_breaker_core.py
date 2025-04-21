@@ -82,13 +82,21 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         self.partition_health_tracker.add_failure(pk_range_wrapper, endpoint_operation_type, str(location))
     # TODO: @tvaron3 exponential backoff for recovering
 
+    def check_stale_partition_info(
+            self,
+            request: RequestObject,
+            pk_range_wrapper: PartitionKeyRangeWrapper
+    ) -> None:
+        self.partition_health_tracker._check_stale_partition_info(request, pk_range_wrapper)
+
+
     def add_excluded_locations_to_request(
             self,
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
     ) -> RequestObject:
         request.set_excluded_locations_from_circuit_breaker(
-            self.partition_health_tracker.get_excluded_locations(pk_range_wrapper)
+            self.partition_health_tracker.get_excluded_locations(request, pk_range_wrapper)
         )
         return request
 
@@ -107,6 +115,3 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_success(pk_range_wrapper, endpoint_operation_type, location)
 
-    def is_healthy_tentative(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper):
-        location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
-        return self.partition_health_tracker.is_healthy_tentative(pk_range_wrapper, location)

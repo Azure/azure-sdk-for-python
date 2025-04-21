@@ -68,7 +68,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         if request.headers.get(HttpHeaders.PartitionKey):
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            # TODO: @tvaron3 check different clients and create them in different ways
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
                               .get_overlapping_ranges(target_container_link, epk_range))
@@ -94,8 +93,10 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
 
     def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper):
         if self.is_circuit_breaker_applicable(request):
+            self.global_partition_endpoint_manager_core.check_stale_partition_info(request, pk_range_wrapper)
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)
+        # Todo: @tvaron3 think about how to switch healthy tentative unhealthy tentative
         return (super(_GlobalPartitionEndpointManagerForCircuitBreakerAsync, self)
                 .resolve_service_endpoint(request, pk_range_wrapper))
 
@@ -113,9 +114,3 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         if self.is_circuit_breaker_applicable(request):
             pk_range_wrapper = await self.create_pk_range_wrapper(request)
             self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)
-
-    async def is_healthy_tentative(self, request: RequestObject) -> bool:
-        if self.is_circuit_breaker_applicable(request):
-            pk_range_wrapper = await self.create_pk_range_wrapper(request)
-            return self.global_partition_endpoint_manager_core.is_healthy_tentative(request, pk_range_wrapper)
-        return False

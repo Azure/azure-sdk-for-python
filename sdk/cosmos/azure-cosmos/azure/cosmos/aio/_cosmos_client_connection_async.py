@@ -2859,7 +2859,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :raises SystemError: If the query compatibility mode is undefined.
         """
         if options is None:
-            options: Dict[str, Any] = {}
+            options = {}
 
         if query:
             __GetBodiesFromQueryResult = result_fn
