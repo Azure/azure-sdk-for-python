@@ -34,6 +34,7 @@ UPSERT = "upsert"
 REPLACE = "replace"
 PATCH = "patch"
 DELETE = "delete"
+PK_VALUE = "pk1"
 
 
 COLLECTION = "created_collection"
@@ -68,6 +69,12 @@ def write_operations_and_errors():
             params.append((write_operation, error))
 
     return params
+
+def create_doc():
+    return {'id': str(uuid.uuid4()),
+     'pk': PK_VALUE,
+     'name': 'sample document',
+     'key': 'value'}
 
 def read_operations_and_errors():
     read_operations = [READ, QUERY, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS]
@@ -210,15 +217,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
 
-    async def setup_method(self, default_endpoint=host, **kwargs):
-        client = CosmosClient(default_endpoint, self.master_key,
-                              preferred_locations=[REGION_1, REGION_2],
-                              multiple_write_locations=True,
-                              **kwargs)
-        db = client.get_database_client(self.TEST_DATABASE_ID)
-        container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        return {"client": client, "db": db, "col": container}
-
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     async def test_write_consecutive_failure_threshold_async(self, setup_teardown, write_operation, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -233,7 +231,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         )))
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        setup = await self.setup_method(default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -304,7 +302,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         fault_injection_container = custom_setup['col']
-        setup = await self.setup_method(default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         
@@ -370,7 +368,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         fault_injection_container = custom_setup['col']
-        setup = await self.setup_method(default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
@@ -429,7 +427,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         fault_injection_container = custom_setup['col']
-        setup = await self.setup_method(default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
         await container.upsert_item(body=doc)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -439,6 +437,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
         try:
             if isinstance(error, ServiceResponseError):
                 # service response error retries in region 3 additional times before failing over
+                print("Service response error")
+                print("num operations")
                 num_operations = 2
             else:
                 num_operations = 8
@@ -481,7 +481,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                'key': 'value'}
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         fault_injection_container = custom_setup['col']
-        setup = await self.setup_method(default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
         await container.upsert_item(body=doc)
         await perform_read_operation(read_operation,
