@@ -167,10 +167,30 @@ You may see tests/mypy/pylint or other checks failing on other packages in the C
 
 ## Post-Release
 
-Check to make sure that the new version of the package has been released on PyPI.
+Check to make sure that the new version of the package has been released on PyPI and that the release has been tagged in the `azure-sdk-for-python` repo with `azure-mypackage_<version>`.
 
-# Step 5: Create a new PR to remove the package from CI
+**NOTE: If your package has been released, there should be a corresponding GitHub release tag. If there is not, you can manually add a release tag:**
+- Navigate to the releases page: https://github.com/Azure/azure-sdk-for-python/releases
+- Click on the "Draft a new release" button.
+- Fill in the Release details:
+  - Tag version: Enter the tag name in the format `azure-mypackage_<version>` (e.g., azure-mypackage_1.2.4).
+  - Target: Select the branch or commit you want to tag (usually main or the commit corresponding to the release).
+  - Release title: Should be the same as the release tag (e.g., azure-mypackage_1.2.4).
+  - Description: Add the section from the CHANGELOG.md corresponding to the release.
+  - Attach the sdist and zip files from the release (which can be downloaded from PyPI).
+  - Click "Publish release"
 
+Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https://github.com/Azure/azure-sdk-for-python/releases/tag/azure-cognitiveservices-language-spellcheck_2.0.1)
+
+# Step 5: Create a new PR to remove the package from the main branch
+
+- Delete all files under `sdk/mypackage/azure-mypackage` EXCEPT for the README.md.
+- Add a note to the README that the package has been moved under the latest release tag. E.g.
+  ```md
+  # Microsoft Azure SDK for Python
+
+  **NOTE**: This package has been deprecated and moved to [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage). This package will only receive security fixes until <EOLDate> and will no longer be maintained after then.
+  ```
 - You will see an `Artifacts` parameter in the `mypackage/ci.yml`.
   ```yml
   extends:
@@ -180,13 +200,7 @@ Check to make sure that the new version of the package has been released on PyPI
       - name: azure-mypackage
         safeName: azuremypackage
   ```
- - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
-    ```yml
-    extends:
-      parameters:
-        ...
-    ```
- - If there are multiple packages listed, remove the `name` and corresponding `safeName` lines for only `azure-mypackage`.
+  - If there are multiple packages listed, remove the `name` and corresponding `safeName` lines for only `azure-mypackage`.
     ```yml
     extends:
       parameters:
@@ -194,8 +208,13 @@ Check to make sure that the new version of the package has been released on PyPI
         Artifacts:
           ...
     ```
+  - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
+    ```yml
+    extends:
+      parameters:
+        ...
+    ```
 
-- Add the line `ci_enabled = false` to `azure-mypackage/pyproject.toml`.
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 - Once the PR has been approved by codeowner, merge.
@@ -238,7 +257,7 @@ More detailed instructions on updating the CSV file can be found [here](https://
 
 ## Archive the project in PyPI
 
-If the service is retired and customers should not expect to receive any future updates, including security fixes or maintenance, [your project can be marked as archived](https://blog.pypi.org/posts/2025-01-30-archival/). Before doing so, publish a final release with any necessary updates to the README/CHANGELOG/docs to warn customers that the project will not receive further updates.
+If the service is retired and customers should not expect to receive any future updates, including security fixes or maintenance, [your project can be marked as archived](https://blog.pypi.org/posts/2025-01-30-archival/).
 
 To archive your project, reach out to Laurent Mazuel (lmazuel). You cannot complete this step yourself.
 
