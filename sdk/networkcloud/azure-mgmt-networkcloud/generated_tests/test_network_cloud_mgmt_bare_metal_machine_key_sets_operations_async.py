@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperationsAsync(AzureMgmtRecord
         response = self.client.bare_metal_machine_key_sets.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperationsAsync(AzureMgmtRecord
                     "type": "str",
                     "userListStatus": [{"azureUserName": "str", "status": "str", "statusMessage": "str"}],
                 },
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +101,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 bare_metal_machine_key_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +116,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 bare_metal_machine_key_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
