@@ -27,7 +27,7 @@ async def run_workload(client_id: str):
         db = await client.create_database_if_not_exists(COSMOS_DATABASE)
         cont = await db.create_container_if_not_exists(COSMOS_CONTAINER, PartitionKey("/id"),
                                                        offer_throughput=ThroughputProperties(1000000))
-        time.sleep(1)
+        await asyncio.sleep(1)
 
         try:
             await write_item_concurrently_initial(cont, 10001)  # Number of concurrent upserts
