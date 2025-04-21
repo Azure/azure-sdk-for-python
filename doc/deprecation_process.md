@@ -206,7 +206,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package listed is `azure-mypackage`, all packages in the `mypackage` folder should be deprecated. Remove any and all of the following files from `mypackage`: `ci.yml`, `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
+  - If the only package listed is `azure-mypackage`, all other packages in the `mypackage` folder should already have been deprecated. Remove `ci.yml` from `mypackage` along with the following files, if they exist: `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
