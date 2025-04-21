@@ -18,7 +18,7 @@ async def run_workload(client_id: str):
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=client_id + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S")) as client:
-        time.sleep(1)
+        await asyncio.sleep(1)
 
         while True:
             try:
