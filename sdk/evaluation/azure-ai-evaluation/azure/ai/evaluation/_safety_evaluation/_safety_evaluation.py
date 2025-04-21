@@ -21,6 +21,8 @@ from azure.ai.evaluation._evaluators import (
     _fluency,
     _xpia,
     _coherence,
+    _code_vulnerability,
+    _ungrounded_attributes,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._evaluate import _evaluate
@@ -32,7 +34,7 @@ from azure.ai.evaluation.simulator import (
     AdversarialScenario,
     AdversarialScenarioJailbreak,
     IndirectAttackSimulator,
-    DirectAttackSimulator ,
+    DirectAttackSimulator,
 )
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.ai.evaluation.simulator._utils import JsonLineList
@@ -72,6 +74,7 @@ class _SafetyEvaluator(Enum):
     """
 
     CONTENT_SAFETY = "content_safety"
+    CODE_VULNERABILITY = "code_vulnerability"
     GROUNDEDNESS = "groundedness"
     PROTECTED_MATERIAL = "protected_material"
     RELEVANCE = "relevance"
@@ -81,6 +84,7 @@ class _SafetyEvaluator(Enum):
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
     ECI = "eci"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 @experimental
@@ -380,6 +384,10 @@ class _SafetyEvaluation:
                 )
             if evaluator == _SafetyEvaluator.ECI:
                 return _UnstableAdversarialScenario.ECI
+            if evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                return AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY
+            if evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                return AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES
             if evaluator in [
                 _SafetyEvaluator.GROUNDEDNESS,
                 _SafetyEvaluator.RELEVANCE,
@@ -459,6 +467,14 @@ class _SafetyEvaluation:
                 )
             elif evaluator == _SafetyEvaluator.ECI:
                 evaluators_dict["eci"] = ECIEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                evaluators_dict["code_vulnerability"] = _code_vulnerability.CodeVulnerabilityEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                evaluators_dict["ungrounded_attributes"] = _ungrounded_attributes.UngroundedAttributesEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
                 )
             else:
@@ -597,7 +613,28 @@ class _SafetyEvaluation:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
-    
+        
+        if _SafetyEvaluator.CODE_VULNERABILITY in evaluators and num_turns > 1:
+            self.logger.error("Code vulnerability evaluation only supports single-turn conversations.")
+            msg = "Code vulnerability evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if _SafetyEvaluator.UNGROUNDED_ATTRIBUTES in evaluators and num_turns > 1:
+            self.logger.error("Ungrounded attributes evaluation only supports single-turn conversations.")
+            msg = "Ungrounded attributes evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
         if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1 and scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
             self.logger.error(f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn.")
             msg = f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
