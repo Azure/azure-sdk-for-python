@@ -10,21 +10,24 @@
 #              porting over the code largely as is to remove the Promptflow dependency
 #              as quickly as possible. In phase 2 this code will be heavily refactored.
 
+import inspect
 import re
 import asyncio
+
 from math import floor
 from asyncio import Semaphore
+from concurrent.futures import Executor
+from functools import partial
 from contextlib import contextmanager
-from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Dict, Final, Generator, Mapping, MutableMapping, Optional, Sequence, Set, Tuple
+from datetime import datetime, timezone
+from typing import Any, Callable, Dict, Final, Generator, Mapping, MutableMapping, Optional, Sequence, Set, Tuple, cast
 from uuid import uuid4
 
-from ._utils import get_int_env_var, get_value_from_path
+from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
-from ._logging import log_progress, NodeLogManager
+from .._common._logging import log_progress, NodeLogManager
 from ..._exceptions import ErrorBlame
 from ._exceptions import (
     BatchEngineCanceledError,
@@ -37,6 +40,7 @@ from ._utils_deprecated import (
     async_run_allowing_running_loop,
     convert_eager_flow_output_to_dict,
 )
+from ._openai_injector import CaptureOpenAITokenUsage
 
 
 MAX_WORKER_COUNT: Final[int] = 10
@@ -48,51 +52,37 @@ class BatchEngine:
 
     def __init__(
         self,
-        executor: Callable,
+        func: Callable,
         *,
         storage: Optional[AbstractRunStorage] = None,
         batch_timeout_sec: Optional[int] = None,
         line_timeout_sec: Optional[int] = None,
         max_worker_count: Optional[int] = None,
-        **kwargs: Any,
+        executor: Optional[Executor] = None,
     ):
         """Create a new batch engine instance
 
-        :param Callable executor: The executor to run the flow
+        :param Callable func: The function to run the flow
         :param Optional[AbstractRunStorage] storage: The storage to store execution results
         :param Optional[int] batch_timeout_sec: The timeout of batch run in seconds
         :param Optional[int] line_timeout_sec: The timeout of each line in seconds
         :param Optional[int] max_worker_count: The concurrency limit of batch run
-        :param kwargs: The keyword arguments related to creating the executor proxy class
-        :type kwargs: Any
+        :param Optional[Executor] executor: The executor to run the flow (if needed)
         """
 
-        self._executor = executor
-        # self._working_dir = working_dir
-
-        # self._is_eager_flow = True
-        # self._is_prompty_flow = False
-        # self._program_language = FlowLanguage.Python
-        # self._message_format = MessageFormatType.BASIC
-        # self._multimedia_processor = MultimediaProcessor.create(self._message_format)
-        # self._connections = {}
-
+        self._func: Callable = func
         self._storage: AbstractRunStorage = storage or NoOpRunStorage()
 
         # TODO ralphe: Consume these from the batch context/config instead of from
         #              kwargs or (even worse) environment variables
-        # self._batch_use_async = kwargs.get("batch_use_async", True)
         self._batch_timeout_sec = batch_timeout_sec or get_int_env_var("PF_BATCH_TIMEOUT_SEC")
         self._line_timeout_sec = line_timeout_sec or get_int_env_var("PF_LINE_TIMEOUT_SEC", 600)
         self._max_worker_count = max_worker_count or get_int_env_var("PF_WORKER_COUNT") or MAX_WORKER_COUNT
-        # update kwargs with worker_count and line_timeout_sec
-        kwargs.update({"worker_count": self._max_worker_count, "line_timeout_sec": self._line_timeout_sec})
 
+        self._executor: Optional[Executor] = executor
         self._is_canceled: bool = False
-        self._kwargs: Mapping[str, Any] = kwargs
-        # self._init_kwargs: Mapping[str, Any] = init_kwargs or {}
 
-    def run(
+    async def run(
         self,
         data: Sequence[Mapping[str, Any]],
         column_mapping: Mapping[str, str],
@@ -113,9 +103,7 @@ class BatchEngine:
 
         try:
             id = id or str(uuid4())
-
-            result: BatchResult = async_run_allowing_running_loop(self._exec_in_task, id, batch_inputs, start_time)
-
+            result: BatchResult = await self._exec_in_task(id, batch_inputs, start_time)
             return result
         except Exception as ex:
             raise BatchEngineError(
@@ -136,6 +124,7 @@ class BatchEngine:
 
         inputs: Sequence[Mapping[str, Any]] = []
         line: int = 0
+        defaults = cast(Mapping[str, Any], column_mapping.get(DEFAULTS_KEY, {}))
 
         for input in data:
             line += 1
@@ -143,6 +132,10 @@ class BatchEngine:
             missing_inputs: Set[str] = set()
 
             for key, value in column_mapping.items():
+                if key == DEFAULTS_KEY:
+                    # Skip the defaults key
+                    continue
+
                 if not isinstance(value, str):
                     # All non-string values are literal values.
                     mapped[key] = value
@@ -156,6 +149,9 @@ class BatchEngine:
 
                 dict_path = match.group(1)
                 found, value = get_value_from_path(dict_path, input)
+                if not found:  # try default value
+                    found, value = get_value_from_path(dict_path, defaults)
+
                 if found:
                     mapped[key] = value
                 else:
@@ -306,11 +302,34 @@ class BatchEngine:
 
             try:
                 # TODO ralphe: Handle line timeouts here
-                output: Any = await self._executor(**inputs)
+                with CaptureOpenAITokenUsage() as captured_tokens:
+                    # NOTE: In the legacy code, any synchronous functions were executed in a different process
+                    #       for isolation reasons. However this isolation was violated in the way the code was
+                    #       used by the evaluation SDK (e.g. you need to have the module already loaded to pass the
+                    #       callable into the batch engine, so starting a new process to examine it was redundant).
+                    #       It also came with performance and memory usage costs (each line was processed in a
+                    #       separate process up to a maximum of 4), and these processes were created and torn down
+                    #       too frequently.
+                    #       For now we will just run the function in the current process, but in the future we may
+                    #       want to consider running the function in a separate process for isolation reasons.
+                    output: Any
+                    if is_async_callable(self._func):
+                        output = await self._func(**inputs)
+                    else:
+                        # to maximize the parallelism, we run the synchronous function in a separate thread
+                        # and await its result
+                        output = await asyncio.get_event_loop().run_in_executor(
+                            self._executor,
+                            partial(self._func, **inputs))
+                    
+                    # This should in theory never happen but as an extra precaution, let's check if the output
+                    # is awaitable and await it if it is.
+                    if inspect.isawaitable(output):
+                        output = await output
+
                 details.status = BatchStatus.Completed
                 details.result = convert_eager_flow_output_to_dict(output)
-
-                # TODO figure out how to get the token metrics here
+                details.tokens.update(captured_tokens)
             except Exception as ex:
                 details.status = BatchStatus.Failed
                 details.error = BatchRunError(

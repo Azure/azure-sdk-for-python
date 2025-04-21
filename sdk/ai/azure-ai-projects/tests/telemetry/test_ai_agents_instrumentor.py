@@ -54,16 +54,6 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
-# TODO - remove when https://github.com/Azure/azure-sdk-for-python/issues/40086 is fixed
-class FakeToolSetDict(dict):
-    def __init__(self, toolset=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.toolset = toolset
-
-    def get(self, k, default=None):
-        return self.toolset
-
-
 class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     """Tests for AI agents instrumentor."""
 
@@ -501,7 +491,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+        client.agents.enable_auto_function_calls(toolset=toolset)
 
         thread = client.agents.create_thread()
         message = client.agents.create_message(
@@ -724,7 +714,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+        client.agents.enable_auto_function_calls(toolset=toolset)
 
         thread = client.agents.create_thread()
         message = client.agents.create_message(thread_id=thread.id, role="user", content="Времето в София?")
@@ -826,12 +816,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
+        client.agents.enable_auto_function_calls(toolset=toolset)
+
         agent = client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+        client.agents.enable_auto_function_calls(toolset=toolset)
         thread = client.agents.create_thread()
         message = client.agents.create_message(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
