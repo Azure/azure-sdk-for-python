@@ -219,19 +219,11 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     async def test_write_consecutive_failure_threshold_async(self, setup_teardown, write_operation, error):
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport =  FaultInjectionTransportAsync()
-        pk_value = "pk1"
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
-        )))
-
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        ))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -241,7 +233,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           container,
                                           fault_injection_container,
                                           str(uuid.uuid4()),
-                                          pk_value,
+                                          PK_VALUE,
                                           expected_uri)
         assert exc_info.value == error
 
@@ -254,7 +246,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                               container,
                                               fault_injection_container,
                                               str(uuid.uuid4()),
-                                              pk_value,
+                                              PK_VALUE,
                                               expected_uri)
             assert exc_info.value == error
 
@@ -263,7 +255,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                       container,
                                       fault_injection_container,
                                       str(uuid.uuid4()),
-                                      pk_value,
+                                      PK_VALUE,
                                       expected_uri)
 
         validate_unhealthy_partitions(global_endpoint_manager, 1)
@@ -276,44 +268,48 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           container,
                                           fault_injection_container,
                                           str(uuid.uuid4()),
-                                          pk_value,
+                                          PK_VALUE,
                                           uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 
-    @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
-    async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
+    async def setup_info(self, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport =  FaultInjectionTransportAsync()
-        id_value = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': 'pk1',
-                               'name': 'sample document',
-                               'key': 'value'}
+        custom_transport = FaultInjectionTransportAsync()
+        # two documents targeted to same partition, one will always fail and the other will succeed
+        doc = create_doc()
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+        custom_transport.add_fault(predicate,
+                                   error)
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
+
+
+    @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
+    async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
-        )))
-
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        fault_injection_container = custom_setup['col']
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        ))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
+        fault_injection_container = custom_setup['col']
+
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         
         # create a document to read
-        await container.create_item(body=document_definition)
+        await container.create_item(body=doc)
 
         # reads should fail over and only the relevant partition should be marked as unavailable
         await perform_read_operation(read_operation,
                                      fault_injection_container,
-                                     document_definition['id'],
-                                     document_definition['pk'],
+                                     doc['id'],
+                                     doc['pk'],
                                      expected_uri)
         # partition should not have been marked unavailable after one error
         validate_unhealthy_partitions(global_endpoint_manager, 0)
@@ -321,8 +317,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
         for i in range(10):
             await perform_read_operation(read_operation,
                                          fault_injection_container,
-                                         document_definition['id'],
-                                         document_definition['pk'],
+                                         doc['id'],
+                                         doc['pk'],
                                          expected_uri)
 
         # the partition should have been marked as unavailable after breaking read threshold
@@ -339,8 +335,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
         try:
             await perform_read_operation(read_operation,
                                          fault_injection_container,
-                                         document_definition['id'],
-                                         document_definition['pk'],
+                                         doc['id'],
+                                         doc['pk'],
                                          uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
@@ -349,27 +345,13 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     async def test_write_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport = FaultInjectionTransportAsync()
-        # two documents targeted to same partition, one will always fail and the other will succeed
-        pk_value = "pk1"
-        doc = {'id': str(uuid.uuid4()),
-                 'pk': pk_value,
-                 'name': 'sample document',
-                 'key': 'value'}
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-                                       0,
-                                       error
-                                   )))
-
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        fault_injection_container = custom_setup['col']
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+            0,
+            error
+        ))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
+        fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
@@ -394,7 +376,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                                       container,
                                                       fault_injection_container,
                                                       str(uuid.uuid4()),
-                                                      pk_value,
+                                                      PK_VALUE,
                                                       expected_uri)
                     assert exc_info.value == error
 
@@ -408,27 +390,13 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     async def test_read_failure_rate_threshold_async(self, setup_teardown, read_operation, error):
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport = FaultInjectionTransportAsync()
-        # two documents targeted to same partition, one will always fail and the other will succeed
-        pk_value = "pk1"
-        doc = {'id': str(uuid.uuid4()),
-               'pk': pk_value,
-               'name': 'sample document',
-               'key': 'value'}
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-                                       0,
-                                       error
-                                   )))
-
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        fault_injection_container = custom_setup['col']
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+            0,
+            error
+        ))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
+        fault_injection_container = custom_setup['col']
         await container.upsert_item(body=doc)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
@@ -437,8 +405,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
         try:
             if isinstance(error, ServiceResponseError):
                 # service response error retries in region 3 additional times before failing over
-                print("Service response error")
-                print("num operations")
                 num_operations = 2
             else:
                 num_operations = 8
@@ -448,7 +414,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                 await perform_read_operation(read_operation,
                                               fault_injection_container,
                                               doc['id'],
-                                              pk_value,
+                                              PK_VALUE,
                                               expected_uri)
             if read_operation in (CHANGE_FEED, QUERY, READ_ALL_ITEMS):
                 # these operations are cross partition so they would mark both partitions as unavailable
@@ -467,27 +433,15 @@ class TestPerPartitionCircuitBreakerMMAsync:
     async def test_service_request_error_async(self, read_operation, write_operation):
         # the region should be tried 4 times before failing over and mark the partition as unavailable
         # the region should not be marked as unavailable
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport = FaultInjectionTransportAsync()
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
-        pk_value = "pk1"
-        doc = {'id': str(uuid.uuid4()),
-               'pk': pk_value,
-               'name': 'sample document',
-               'key': 'value'}
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        fault_injection_container = custom_setup['col']
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down())
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
+        fault_injection_container = custom_setup['col']
         await container.upsert_item(body=doc)
         await perform_read_operation(read_operation,
                                      fault_injection_container,
                                      doc['id'],
-                                     pk_value,
+                                     PK_VALUE,
                                      expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
@@ -504,7 +458,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             await perform_read_operation(read_operation,
                                           fault_injection_container,
                                           doc['id'],
-                                          pk_value,
+                                          PK_VALUE,
                                           uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
@@ -517,7 +471,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                       container,
                                       fault_injection_container,
                                       str(uuid.uuid4()),
-                                      pk_value,
+                                      PK_VALUE,
                                       expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
@@ -532,22 +486,12 @@ class TestPerPartitionCircuitBreakerMMAsync:
     # send 5 write concurrent requests when trying to recover
     # verify that only one failed
     async def test_recovering_only_fails_one_requests_async(self):
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport = FaultInjectionTransportAsync()
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, CosmosHttpResponseError(
-                                       status_code=502,
-                                       message="Some envoy error."))))
-        pk_value = "pk1"
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+            0, CosmosHttpResponseError(
+            status_code=502,
+            message="Some envoy error.")))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         fault_injection_container = custom_setup['col']
-        doc = {'id': str(uuid.uuid4()),
-               'pk': pk_value,
-               'name': 'sample document',
-               'key': 'value'}
-
         for i in range(5):
             with pytest.raises(CosmosHttpResponseError):
                 await fault_injection_container.create_item(body=doc)
@@ -558,7 +502,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         async def concurrent_upsert():
             nonlocal number_of_errors
             doc = {'id': str(uuid.uuid4()),
-                   'pk': pk_value,
+                   'pk': PK_VALUE,
                    'name': 'sample document',
                    'key': 'value'}
             try:

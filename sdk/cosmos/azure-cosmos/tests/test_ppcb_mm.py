@@ -103,10 +103,10 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
     elif operation == CHANGE_FEED_EPK:
         # partition key filtered by feed range
         feed_range = container.feed_range_from_partition_key(partition_key=pk)
-        async for _ in container.query_items_change_feed(feed_range=feed_range):
+        for _ in container.query_items_change_feed(feed_range=feed_range):
             pass
     elif operation == READ_ALL_ITEMS:
-        async for _ in container.read_all_items():
+        for _ in container.read_all_items():
             pass
 
 @pytest.mark.cosmosMultiRegion
@@ -128,7 +128,11 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_consecutive_failure_threshold(self, setup_teardown, write_operation, error):
-        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport = self.setup_info(error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            0,
+            error
+        )
+        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = self.setup_info(error_lambda)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
         with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
@@ -179,7 +183,11 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_consecutive_failure_threshold(self, setup_teardown, read_operation, error):
-        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport = self.setup_info(error=error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            0,
+            error
+        )
+        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = self.setup_info(error_lambda)
 
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         
@@ -225,7 +233,11 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_failure_rate_threshold(self, setup_teardown, write_operation, error):
-        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport = self.setup_info(error=error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            0,
+            error
+        )
+        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = self.setup_info(error_lambda)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
@@ -263,7 +275,11 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_failure_rate_threshold(self, setup_teardown, read_operation, error):
-        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport = self.setup_info(error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            0,
+            error
+        )
+        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = self.setup_info(error_lambda)
         container.upsert_item(body=doc)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
@@ -272,8 +288,6 @@ class TestPerPartitionCircuitBreakerMM:
         try:
             if isinstance(error, ServiceResponseError):
                 # service response error retries in region 3 additional times before failing over
-                print("Service response error")
-                print("num operations")
                 num_operations = 2
             else:
                 num_operations = 8
@@ -297,7 +311,7 @@ class TestPerPartitionCircuitBreakerMM:
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
-    async def setup_info(self, error):
+    def setup_info(self, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         custom_transport = FaultInjectionTransport()
@@ -306,35 +320,19 @@ class TestPerPartitionCircuitBreakerMM:
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate,
-                                   lambda r: FaultInjectionTransport.error_after_delay(
-                                       0,
-                                       error
-                                   ))
-        custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        fault_injection_container = custom_setup['col']
-        setup = self.setup_method_with_custom_transport(default_endpoint=self.host)
-        container = setup['col']
-        return container, doc, expected_uri, uri_down, fault_injection_container, custom_transport
-
-    @pytest.mark.parametrize("read_operation, write_operation", operations())
-    async def test_service_request_error_async(self, read_operation, write_operation):
-        # the region should be tried 4 times before failing over and mark the partition as unavailable
-        # the region should not be marked as unavailable
-        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        custom_transport = FaultInjectionTransport()
-        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   lambda r: FaultInjectionTransport.error_region_down())
-        doc = {'id': str(uuid.uuid4()),
-               'pk': PK_VALUE,
-               'name': 'sample document',
-               'key': 'value'}
+                                   error)
         custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         fault_injection_container = custom_setup['col']
         setup = self.setup_method_with_custom_transport(None, default_endpoint=self.host)
         container = setup['col']
+        return container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate
+
+    @pytest.mark.parametrize("read_operation, write_operation", operations())
+    def test_service_request_error(self, read_operation, write_operation):
+        # the region should be tried 4 times before failing over and mark the partition as unavailable
+        # the region should not be marked as unavailable
+        error_lambda = lambda r: FaultInjectionTransport.error_region_down()
+        container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = self.setup_info(error_lambda)
         container.upsert_item(body=doc)
         perform_read_operation(read_operation,
                                      fault_injection_container,
