@@ -24,6 +24,7 @@ from .._constants import (
     DefaultOpenEncoding,
     Prefixes,
     _InternalEvaluationMetrics,
+    BINARY_AGGREGATE_SUFFIX,
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
@@ -246,7 +247,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             proportion = pass_count / total_rows if total_rows > 0 else 0.0
 
             # Set the result with the evaluator name as the key
-            result_key = f"{evaluator_name}.binary_aggregate"
+            result_key = f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"
             results[result_key] = round(proportion, 2)
 
     return results
