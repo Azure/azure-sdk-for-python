@@ -47,7 +47,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/quotaLimits"
+        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/usages"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -65,7 +65,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(location: str, quota_limit_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(location: str, usage_type: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -75,12 +75,12 @@ def build_get_request(location: str, quota_limit_name: str, subscription_id: str
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/quotaLimits/{quotaLimitName}",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/usages/{usageType}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "quotaLimitName": _SERIALIZER.url("quota_limit_name", quota_limit_name, "str"),
+        "usageType": _SERIALIZER.url("usage_type", usage_type, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -94,14 +94,14 @@ def build_get_request(location: str, quota_limit_name: str, subscription_id: str
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class NetAppResourceQuotaLimitsOperations:
+class NetAppResourceUsagesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
-        :attr:`net_app_resource_quota_limits` attribute.
+        :attr:`net_app_resource_usages` attribute.
     """
 
     models = _models
@@ -114,23 +114,22 @@ class NetAppResourceQuotaLimitsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> Iterable["_models.SubscriptionQuotaItem"]:
-        """Get quota limits.
+    def list(self, location: str, **kwargs: Any) -> Iterable["_models.UsageResult"]:
+        """Get usages.
 
-        Get the default and current limits for quotas.
+        Get current subscription usages.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :return: An iterator like instance of either SubscriptionQuotaItem or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.SubscriptionQuotaItem]
+        :return: An iterator like instance of either UsageResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.UsageResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SubscriptionQuotaItemList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UsagesListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -170,11 +169,11 @@ class NetAppResourceQuotaLimitsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("SubscriptionQuotaItemList", pipeline_response)
+            deserialized = self._deserialize("UsagesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -195,17 +194,17 @@ class NetAppResourceQuotaLimitsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, location: str, quota_limit_name: str, **kwargs: Any) -> _models.SubscriptionQuotaItem:
-        """Get quota limits.
+    def get(self, location: str, usage_type: str, **kwargs: Any) -> _models.UsageResult:
+        """Get specific type of usage.
 
-        Get the default and current subscription quota limit.
+        Get current subscription usage of the specific type.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param quota_limit_name: The name of the Quota Limit. Required.
-        :type quota_limit_name: str
-        :return: SubscriptionQuotaItem or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.SubscriptionQuotaItem
+        :param usage_type: The type of usage. Required.
+        :type usage_type: str
+        :return: UsageResult or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.UsageResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -220,11 +219,11 @@ class NetAppResourceQuotaLimitsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SubscriptionQuotaItem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UsageResult] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             location=location,
-            quota_limit_name=quota_limit_name,
+            usage_type=usage_type,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -244,7 +243,7 @@ class NetAppResourceQuotaLimitsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SubscriptionQuotaItem", pipeline_response.http_response)
+        deserialized = self._deserialize("UsageResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
