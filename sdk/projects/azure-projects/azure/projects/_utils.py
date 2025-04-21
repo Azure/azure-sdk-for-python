@@ -75,14 +75,13 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
         else:
             return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
     except RuntimeError:
-        if 'trio' in sys.modules:
-            import trio  # pylint: disable=networking-import-outside-azure-core-transport
+        if "trio" in sys.modules:
+            import trio  # pylint: disable=networking-import-outside-azure-core-transport, import-error
 
             # TODO: This needs testing - I think trio is different to asyncio in that it requires
             # the callable to be passed in rather than the awaitable.
             return trio.run(coroutine)
         return asyncio.run(coroutine)
-
 
 
 def resolve_properties(
