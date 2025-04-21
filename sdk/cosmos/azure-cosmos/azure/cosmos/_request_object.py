@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any, Dict, Set, List
+from typing import Optional, Mapping, Any, Dict, List
 from . import http_constants
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes

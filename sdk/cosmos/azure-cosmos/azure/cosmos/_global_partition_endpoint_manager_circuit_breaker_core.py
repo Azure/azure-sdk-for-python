@@ -87,7 +87,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
     ) -> None:
-        self.partition_health_tracker._check_stale_partition_info(request, pk_range_wrapper)
+        self.partition_health_tracker.check_stale_partition_info(request, pk_range_wrapper)
 
 
     def add_excluded_locations_to_request(
@@ -114,4 +114,3 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType # pylint: disable=protected-access
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_success(pk_range_wrapper, endpoint_operation_type, location)
-

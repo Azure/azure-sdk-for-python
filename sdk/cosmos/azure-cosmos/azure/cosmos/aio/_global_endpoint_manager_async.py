@@ -103,7 +103,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 await self.refresh_task
                 self.refresh_task = None
-            except (Exception, asyncio.CancelledError) as exception:
+            except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
         if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
@@ -213,5 +213,5 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.refresh_task.cancel()
             try:
                 await self.refresh_task
-            except (Exception, asyncio.CancelledError) :
+            except (Exception, asyncio.CancelledError) : #pylint: disable=broad-exception-caught
                 pass

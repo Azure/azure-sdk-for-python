@@ -25,7 +25,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import time
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import _default_retry_policy, _database_account_retry_policy
@@ -299,7 +299,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or request_params.healthy_tentative_location):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:

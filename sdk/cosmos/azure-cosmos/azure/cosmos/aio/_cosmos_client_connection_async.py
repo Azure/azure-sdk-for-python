@@ -2923,12 +2923,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         isPrefixPartitionQuery = False
         partition_key_definition = None
         if cont_prop and partition_key:
-                pk_properties = cont_prop["partitionKey"]
-                partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-                if partition_key_definition.kind == "MultiHash" and \
-                        (isinstance(partition_key, List) and \
-                         len(partition_key_definition['paths']) != len(partition_key)):
-                    isPrefixPartitionQuery = True
+            pk_properties = cont_prop["partitionKey"]
+            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            if partition_key_definition.kind == "MultiHash" and \
+                    (isinstance(partition_key, List) and \
+                     len(partition_key_definition['paths']) != len(partition_key)):
+                isPrefixPartitionQuery = True
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ,

@@ -61,11 +61,11 @@ class PartitionKeyRangeCache(object):
         :rtype: list
         """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        await self.initialize_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
+        await self.init_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
 
         return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
 
-    async def initialize_collection_routing_map_if_needed(
+    async def init_collection_routing_map_if_needed(
             self,
             collection_link: str,
             collection_id: str,
@@ -91,9 +91,10 @@ class PartitionKeyRangeCache(object):
             **kwargs: Dict[str, Any]
     ) -> Dict[str, Any]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        await self.initialize_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
+        await self.init_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
 
-        return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(partition_key_range_id)
+        return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(
+            partition_key_range_id)
 
     @staticmethod
     def _discard_parent_ranges(partitionKeyRanges):

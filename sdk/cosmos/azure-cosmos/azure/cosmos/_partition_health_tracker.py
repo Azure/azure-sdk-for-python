@@ -167,7 +167,7 @@ class _PartitionHealthTracker(object):
             # healthy tentative -> healthy
             self.pk_range_wrapper_to_health_info[pk_range_wrapper][location].unavailability_info = {}
 
-    def _check_stale_partition_info(
+    def check_stale_partition_info(
             self,
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
@@ -180,7 +180,7 @@ class _PartitionHealthTracker(object):
                     if _should_mark_healthy_tentative(partition_health_info, current_time):
                         # unhealthy or unhealthy tentative -> healthy tentative
                         # only one request should be used to recover
-                        with (self.stale_partiton_lock):
+                        with self.stale_partiton_lock:
                             if _should_mark_healthy_tentative(partition_health_info, current_time):
                                 # this will trigger one attempt to recover
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)
