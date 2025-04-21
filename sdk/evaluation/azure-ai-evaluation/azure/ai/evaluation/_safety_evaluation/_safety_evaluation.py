@@ -6,9 +6,10 @@ from enum import Enum
 import os
 import inspect
 import logging
+import asyncio
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Union, cast, Coroutine, TypeVar, Awaitable
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
 from azure.ai.evaluation._evaluators import (
@@ -192,10 +193,17 @@ class _SafetyEvaluation:
             context = latest_message.get("context", None)
             latest_context = None
             try:
+                is_async = self._is_async_function(target)
                 if self._check_target_returns_context(target):
-                    response, latest_context = target(query=application_input)
+                    if is_async:
+                        response, latest_context = await target(query=application_input)
+                    else:
+                        response, latest_context = target(query=application_input)
                 else:
-                    response = target(query=application_input)
+                    if is_async:
+                        response = await target(query=application_input)
+                    else:
+                        response = target(query=application_input)
             except Exception as e:
                 response = f"Something went wrong {e!s}"
 
@@ -465,7 +473,7 @@ class _SafetyEvaluation:
                     blame=ErrorBlame.USER_ERROR,
                 )
         return evaluators_dict
-
+    
     @staticmethod
     def _check_target_returns_context(target: Callable) -> bool:
         """
@@ -478,6 +486,15 @@ class _SafetyEvaluation:
         ret_type = sig.return_annotation
         if ret_type == inspect.Signature.empty:
             return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+        
         if ret_type is tuple:
             return True
         return False
@@ -494,13 +511,33 @@ class _SafetyEvaluation:
         ret_type = sig.return_annotation
         if ret_type == inspect.Signature.empty:
             return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+                
         if ret_type is str:
             return True
         return False
     
-     
     @staticmethod
-    def _check_target_is_callback(target:Callable) -> bool:
+    def _is_async_function(target: Callable) -> bool:
+        """
+        Checks if the target function is an async function.
+        
+        :param target: The target function to check.
+        :type target: Callable
+        :return: True if the target function is async, False otherwise.
+        :rtype: bool
+        """
+        return asyncio.iscoroutinefunction(target)
+    
+    @staticmethod
+    def _check_target_is_callback(target: Callable) -> bool:
         sig = inspect.signature(target)
         param_names = list(sig.parameters.keys())
         return 'messages' in param_names and 'stream' in param_names and 'session_state' in param_names and 'context' in param_names
@@ -630,7 +667,7 @@ class _SafetyEvaluation:
     
     async def __call__(
             self,
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+            target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
@@ -644,12 +681,12 @@ class _SafetyEvaluation:
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None,
             data_paths: Optional[Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]] = None
-        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
+        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:        
         '''
         Evaluates the target function based on the provided parameters.
 
-        :param target: The target function to call during the evaluation.
-        :type target: Callable
+        :param target: The target function to call during the evaluation. This can be a synchronous or asynchronous function.
+        :type target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
         :param evaluators: A list of SafetyEvaluator.
         :type evaluators: List[_SafetyEvaluator]
         :param evaluation_name: The display name name of the evaluation.
