@@ -3,7 +3,6 @@ This directory contains the scale testing workloads for the SDK. The workloads a
 and scalability of the SDK under various conditions. There are different types of workloads and each will create a log 
 file when run. These logs are named in this format `<file name>-<process id>-<date time>.log`. 
 
-## Getting started
 ### Setup VM
 1. Create a VM in Azure with the following configuration:
    - 8 vCPUs
