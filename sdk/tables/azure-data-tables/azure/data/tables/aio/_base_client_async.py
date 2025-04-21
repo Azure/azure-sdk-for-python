@@ -30,7 +30,7 @@ from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
 from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from .._generated.aio import AzureTable
-from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version
+from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version, AudienceType
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
@@ -57,7 +57,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
-        audience: Optional[str] = None,
+        audience: Optional[AudienceType] = None,
         api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:

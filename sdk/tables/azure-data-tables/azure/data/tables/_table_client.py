@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from ._encoder import TableEntityEncoder, EncoderMapType
 from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
-from ._base_client import parse_connection_str, TablesBaseClient
+from ._base_client import parse_connection_str, TablesBaseClient, AudienceType
 from ._entity import TableEntity
 from ._error import (
     _decode_error,
@@ -73,7 +73,7 @@ class TableClient(TablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
-        audience: Optional[str] = None,
+        audience: Optional[AudienceType] = None,
         api_version: Optional[str] = None,
         encoder_map: Optional[EncoderMapType] = None,
         decoder_map: Optional[DecoderMapType] = None,

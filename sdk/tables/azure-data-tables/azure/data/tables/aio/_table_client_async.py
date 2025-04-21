@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
-from .._base_client import parse_connection_str
+from .._base_client import parse_connection_str, AudienceType
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
@@ -74,7 +74,7 @@ class TableClient(AsyncTablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
-        audience: Optional[str] = None,
+        audience: Optional[AudienceType] = None,
         api_version: Optional[str] = None,
         encoder_map: Optional[EncoderMapType] = None,
         decoder_map: Optional[DecoderMapType] = None,

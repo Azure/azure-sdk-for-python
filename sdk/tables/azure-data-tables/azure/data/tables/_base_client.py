@@ -7,7 +7,7 @@
 import os
 from uuid import uuid4
 from urllib.parse import parse_qs, quote, urlparse
-from typing import Any, List, Optional, Mapping, Union
+from typing import Any, List, Optional, Mapping, Union, Literal
 from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
@@ -48,6 +48,18 @@ _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1"  # pylint: disable=line-too-long
 
+AudienceType = Union[
+    str,
+    Literal[
+        "https://storage.azure.com",
+        "https://storage.azure.us",
+        "https://storage.azure.cn",
+        "https://cosmos.azure.com",
+        "https://cosmos.azure.us",
+        "https://cosmos.azure.cn",
+    ],
+]
+
 
 def get_api_version(api_version: Optional[str], default: str) -> str:
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
@@ -71,7 +83,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
-        audience: Optional[str] = None,
+        audience: Optional[AudienceType] = None,
         **kwargs: Any,
     ) -> None:
         """
