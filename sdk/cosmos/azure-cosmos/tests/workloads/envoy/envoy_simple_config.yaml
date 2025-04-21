@@ -1,5 +1,3 @@
-acct_name: &acct ""
-acct_addr: &addr "<>.documents.azure.com"
 static_resources:
 
   listeners:
@@ -31,21 +29,21 @@ static_resources:
               - match:
                   prefix: "/"
                 route:
-                  host_rewrite_literal: *addr
-                  cluster: *acct
+                  host_rewrite_literal: <>.documents.azure.com
+                  cluster: <>
 
   clusters:
-  - name: *acct
+  - name: <>
     type: LOGICAL_DNS
     dns_lookup_family: V4_ONLY
     load_assignment:
-      cluster_name: *acct
+      cluster_name: <>
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: *addr
+                address: <>.documents.azure.com
                 port_value: 443
     transport_socket:
       name: envoy.transport_sockets.tls
