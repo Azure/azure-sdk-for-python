@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Dict, Any
+from typing import Tuple
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
@@ -52,8 +52,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
+            self.PreferredLocations,
             self.DefaultEndpoint,
-            client.connection_policy
+            self.EnableEndpointDiscovery,
+            client.connection_policy.UseMultipleWriteLocations
         )
         self.startup = True
         self.refresh_task = None
@@ -134,33 +136,33 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._endpoints_health_check(**kwargs)
                     self.startup = False
 
-    async def _database_account_check(self, endpoint: str, **kwargs: Dict[str, Any]):
-        try:
-            await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
-            self.location_cache.mark_endpoint_available(endpoint)
-        except (exceptions.CosmosHttpResponseError, AzureError) as e:
-            logger.info("Exception in health check for endpoint %s: %s", endpoint, e)
-            self.mark_endpoint_unavailable_for_read(endpoint, False)
-            self.mark_endpoint_unavailable_for_write(endpoint, False)
-
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
+        endpoints_attempted = set()
         # get the database account from the default endpoint first
         database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
-        database_account_checks = []
+        success_count = 0
         for endpoint in endpoints:
-            if endpoint != attempted_endpoint:
-                database_account_checks.append(self._database_account_check(endpoint, **kwargs))
-        await asyncio.gather(*database_account_checks)
-
+            if endpoint not in endpoints_attempted:
+                # health check continues until 4 successes or all endpoints are checked
+                if success_count >= 4:
+                    break
+                endpoints_attempted.add(endpoint)
+                try:
+                    await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                    success_count += 1
+                    self.location_cache.mark_endpoint_available(endpoint)
+                except (exceptions.CosmosHttpResponseError, AzureError):
+                    self.mark_endpoint_unavailable_for_read(endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(endpoint, False)
         self.location_cache.update_location_cache()
-        logger.info("Location cache unavailability info in end of health check : %s", self.location_cache.location_unavailability_info_by_endpoint)
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
@@ -183,8 +185,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except (exceptions.CosmosHttpResponseError, AzureError) as e:
-            logger.info("Exception in health check for endpoint %s: %s", self.DefaultEndpoint, e)
+        except (exceptions.CosmosHttpResponseError, AzureError):
             self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
             self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
@@ -194,8 +195,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
-                except (exceptions.CosmosHttpResponseError, AzureError) as e:
-                    logger.info("Exception in health check for endpoint %s: %s", locational_endpoint, e)
+                except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
                     self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise

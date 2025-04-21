@@ -26,7 +26,6 @@
 import json
 import logging
 import time
-from datetime import datetime
 from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping
 import types
 
@@ -122,9 +121,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     resource_type = self._resource_map['docs']
             if self._should_log(verb=verb,database_name=database_name,collection_name=collection_name,
                                 resource_type=resource_type, is_request=True):
-                # self._log_client_settings()
-                # self._log_database_account_settings()
-                # super().on_request(request)
+                self._log_client_settings()
+                self._log_database_account_settings()
+                super().on_request(request)
                 self.__request_already_logged = True
 
     # pylint: disable=too-many-statements
@@ -175,39 +174,25 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                             verb=verb, http_version=http_version_obj, database_name=database_name,
                             collection_name=collection_name, resource_type=resource_type, is_request=False):
             if not self.__request_already_logged:
-                # self._log_client_settings()
-                # self._log_database_account_settings()
-                # super().on_request(request)
-                self.__request_already_logged = True
+                self._log_client_settings()
+                self._log_database_account_settings()
+                super().on_request(request)
             else:
                 self.__request_already_logged = False
-            # super().on_response(request, response)
+            super().on_response(request, response)
             if self._enable_diagnostics_logging:
                 http_response = response.http_response
                 options = response.context.options
                 logger = request.context.setdefault("logger", options.pop("logger", self.logger))
                 try:
-                    logger.info("{} - Response status code: {}".format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                                                                       http_response.status_code))
-                    logger.info("{} - Response URL: {}".format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                                                               request.http_request.url))
-                    # Thin Client headers
-                    ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
-                    ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
-                    logger.info("{} - Operation type: {}".format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                        request.http_request.headers[ThinClientProxyOperationType]))
-                    logger.info("{} - Resource type: {}".format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                        request.http_request.headers[ThinClientProxyResourceType]))
-                    # if "start_time" in request.context:
-                    #     logger.info("Elapsed time in seconds: {}".format(duration))
-                    # else:
-                    #     logger.info("Elapsed time in seconds: unknown")
+                    if "start_time" in request.context:
+                        logger.info("Elapsed time in seconds: {}".format(duration))
+                    else:
+                        logger.info("Elapsed time in seconds: unknown")
                     if http_response.status_code >= 400:
-                        logger.info("Response error message: %r",
-                                    _format_error(http_response.text()))
+                        logger.info("Response error message: %r", _format_error(http_response.text()))
                 except Exception as err:  # pylint: disable=broad-except
-                    logger.warning("Failed to log request: %s",
-                                   repr(err))  # pylint: disable=do-not-log-exceptions
+                    logger.warning("Failed to log request: %s", repr(err)) # pylint: disable=do-not-log-exceptions
 
     # pylint: disable=unused-argument
     def _default_should_log(

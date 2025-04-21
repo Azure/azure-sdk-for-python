@@ -15,10 +15,6 @@ import asyncio
 import time
 from datetime import datetime
 
-def get_random_item():
-    random_int = random.randint(1, 10000)
-    return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
-
 async def run_workload(client_id, client_logger):
 
     connectionPolicy = documents.ConnectionPolicy()

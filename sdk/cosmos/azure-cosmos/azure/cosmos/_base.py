@@ -40,7 +40,6 @@ from . import _runtime_constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
-from azure.cosmos.documents import _OperationType
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -64,7 +63,6 @@ _COMMON_OPTIONS = {
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
     'max_item_count': 'maxItemCount',
-    'excluded_locations': 'excludedLocations',
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -188,9 +186,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # set session token if required
-    # skipping session token for writes because of large session token issue seen in testing
-    if (is_session_consistency is True and not IsMasterResource(resource_type) and
-            _OperationType.IsReadOnlyOperation(operation_type)):
+    if is_session_consistency is True and not IsMasterResource(resource_type):
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]

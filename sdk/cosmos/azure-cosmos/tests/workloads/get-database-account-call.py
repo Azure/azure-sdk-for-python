@@ -12,7 +12,6 @@ import asyncio
 import time
 from datetime import datetime
 
-# Replace with your Cosmos DB details
 
 async def run_workload(client_id: str):
     async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,

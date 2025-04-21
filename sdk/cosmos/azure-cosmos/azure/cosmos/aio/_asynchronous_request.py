@@ -50,6 +50,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     """
     # pylint: disable=protected-access
+
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -75,7 +76,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
-
 
     parse_result = urlparse(request.url)
 
