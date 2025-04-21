@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import asyncio
 import abc
 from collections.abc import AsyncIterator
 from typing import (
@@ -168,4 +167,6 @@ class AsyncHttpTransport(
 
         :param float duration: The number of seconds to sleep.
         """
+        import asyncio  # pylint: disable=do-not-import-asyncio
+
         await asyncio.sleep(duration)

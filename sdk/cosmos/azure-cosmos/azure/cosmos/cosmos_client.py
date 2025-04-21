@@ -93,6 +93,8 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
     policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
+    policy.ExcludedLocations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
@@ -181,6 +183,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
+        in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+        If all preferred locations were excluded, primary/hub location will be used.
     :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client

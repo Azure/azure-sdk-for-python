@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint:disable=unreachable
 
 from ._setup import enable_internal_components_in_pipeline
 from .entities import (
@@ -50,4 +51,4 @@ __all__ = [
     "Pipeline",
     "Hemera",
     "InternalInput",
-]
+]  # pylint: disable=unreachable
