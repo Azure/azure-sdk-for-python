@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from concurrent.futures import ThreadPoolExecutor
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import threading
 import importlib.util
 import sys
@@ -66,17 +66,23 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
 
     try:
         loop = asyncio.get_running_loop()
+        if threading.current_thread() is threading.main_thread():
+            if not loop.is_running():
+                return loop.run_until_complete(coroutine)
+            with ThreadPoolExecutor() as pool:
+                future = pool.submit(run_in_new_loop)
+                return future.result(timeout=timeout)
+        else:
+            return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
     except RuntimeError:
+        if 'trio' in sys.modules:
+            import trio  # pylint: disable=networking-import-outside-azure-core-transport
+
+            # TODO: This needs testing - I think trio is different to asyncio in that it requires
+            # the callable to be passed in rather than the awaitable.
+            return trio.run(coroutine)
         return asyncio.run(coroutine)
 
-    if threading.current_thread() is threading.main_thread():
-        if not loop.is_running():
-            return loop.run_until_complete(coroutine)
-        with ThreadPoolExecutor() as pool:
-            future = pool.submit(run_in_new_loop)
-            return future.result(timeout=timeout)
-    else:
-        return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
 
 
 def resolve_properties(

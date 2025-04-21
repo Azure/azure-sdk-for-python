@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=import-error
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import inspect
 from argparse import ArgumentParser

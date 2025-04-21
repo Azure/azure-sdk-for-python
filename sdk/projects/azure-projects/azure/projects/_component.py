@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
 import sys
 import keyword
 import types
@@ -591,4 +590,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         run_coroutine_sync(self.aclose())
 
     async def aclose(self) -> None:
-        await asyncio.gather(*[self._close_client(c) for c in self._closeables])
+        # This would be more efficient if we used something like asyncio.gather, but that would
+        # exclude trio compatibility, and would prefer to avoid dependency on anyio.
+        for closeable in self._closeables:
+            await self._close_client(closeable)
