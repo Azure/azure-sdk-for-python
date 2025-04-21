@@ -29,29 +29,29 @@ class ModelBatchDeployment(BatchDeployment):
     :param name: Name of the deployment resource.
     :type name: str
     :param endpoint_name: Name of the endpoint.
-    :type endpoint_name: str
+    :type endpoint_name: Optional[str]
     :param environment: Environment to use for deployment.
-    :type environment: Union[str, Environment]
+    :type environment: Optional[Union[str, Environment]]
     :param properties: The asset property dictionary.
-    :type properties: Dict[str, str]
+    :type properties: Optional[Dict[str, str]]
     :param model: Model to deploy.
-    :type model: Union[str, Model]
+    :type model: Optional[Union[str, Model]]
     :param description: Deployment description.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Deployment tags.
-    :type tags: Dict[str, Any]
+    :type tags: Optional[Dict[str, Any]]
     :param settings: Deployment settings.
-    :type settings: ModelBatchDeploymentSettings
+    :type settings: Optional[ModelBatchDeploymentSettings]
     :param resources: Resource configuration.
-    :type resources: ResourceConfiguration
+    :type resources: Optional[ResourceConfiguration]
     :param compute: Compute target to use.
-    :type compute: str
+    :type compute: Optional[str]
     :param code_configuration: Code configuration for deployment.
-    :type code_configuration: CodeConfiguration
+    :type code_configuration: Optional[CodeConfiguration]
     :param code_path: Path to the code directory.
-    :type code_path: Union[str, PathLike]
+    :type code_path: Optional[Union[str, PathLike]]
     :param scoring_script: Path to the scoring script.
-    :type scoring_script: Union[str, PathLike]
+    :type scoring_script: Optional[Union[str, PathLike]]
     """
 
     def __init__(
