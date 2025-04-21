@@ -1,44 +1,41 @@
 import copy
+import json
 
 import pytest
 import yaml
-import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    BatchOutputAction,
-    EndpointComputeType,
-    BatchDeployment as BatchDeploymentData,
-)
+from azure.ai.ml._restclient.v2022_10_01.models import BatchDeployment as BatchDeploymentData
+from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    OnlineDeployment as RestOnlineDeploymentData,
-    ManagedOnlineDeployment as RestManagedOnlineDeployment,
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
-    BatchPipelineComponentDeploymentConfiguration,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
+from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
-    Deployment,
     CodeConfiguration,
     DefaultScaleSettings,
+    Deployment,
     KubernetesOnlineDeployment,
     ManagedOnlineDeployment,
     OnlineDeployment,
     OnlineEndpoint,
+    OnlineRequestSettings,
     ProbeSettings,
     ResourceRequirementsSettings,
     ResourceSettings,
     TargetUtilizationScaleSettings,
-    OnlineRequestSettings,
 )
-from azure.ai.ml.constants._common import ArmConstants
-from azure.ai.ml.exceptions import DeploymentException, ValidationException
-from azure.ai.ml.entities._assets import Environment, Model, Code
+from azure.ai.ml.entities._assets import Code, Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._deployment.run_settings import RunSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.exceptions import DeploymentException, ValidationException
 
 
 @pytest.mark.production_experiences_test
@@ -661,7 +658,7 @@ class TestBatchDeploymentSDK:
             BatchDeployment(
                 name="non-mlflow-deployment", instance_count=2, resources=ResourceConfiguration(instance_count=2)
             )
-        assert "Can't set instance_count when resources is provided." == str(exc.value)
+        assert "Can't set instance_count when resources.instance_count is provided." == str(exc.value)
 
 
 @pytest.mark.unittest
@@ -817,13 +814,11 @@ class TestOnlineDeploymentSDK:
             assert str(exc.value) == "Unsupported online scale setting type Other."
 
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchRetrySettings as RestBatchRetrySettings,
-    CodeConfiguration as RestCodeConfiguration,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
-from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 
 

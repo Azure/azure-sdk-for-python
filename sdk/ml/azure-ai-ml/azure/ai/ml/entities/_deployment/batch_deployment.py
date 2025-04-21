@@ -139,6 +139,7 @@ class BatchDeployment(Deployment):
             )
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
+        settings = kwargs.pop("settings", None)
         super(BatchDeployment, self).__init__(
             name=name,
             type=_type,
@@ -157,7 +158,6 @@ class BatchDeployment(Deployment):
         self.compute = compute
         self.resources = resources
 
-        settings = kwargs.pop("settings", None)
         self._settings = (
             settings
             if settings
