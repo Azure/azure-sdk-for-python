@@ -206,14 +206,18 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package listed is `azure-mypackage`, all other packages in the `mypackage` folder should already have been deprecated. Remove `ci.yml` from `mypackage` along with the following files, if they exist: `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
+  - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
+    ```yml
+    extends:
+      parameters:
+        ...
+    ```
+  - If the only package listed is `azure-mypackage`, the service is retired, and customers should not expect to receive ANY future updates, remove the following files from `mypackage`: `ci.yml`, `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 - Once the PR has been approved by codeowner, merge.
 - You're responsible for fixing any CI issues related to this PR.
-
-Example post-deprecation PR for azure-cognitiveservices-language-spellcheck [here](https://github.com/Azure/azure-sdk-for-python/pull/37459/files).
 
 # Step 6: Update API Documentation
 
@@ -254,7 +258,7 @@ If the service is retired and customers should not expect to receive any future 
 
 To archive your project, reach out to Laurent Mazuel (lmazuel). You cannot complete this step yourself.
 
-Note: Project archival is not deletion. Archiving a project does not remove it from the index, and does not prevent users from installing it.
+Note: Project archival is not deletion. Archiving a project does not remove it from the index, and does not prevent users from installing it. Before doing so, publish a final release with any necessary updates to the README/CHANGELOG/docs to warn customers that the project will not receive further updates.
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
