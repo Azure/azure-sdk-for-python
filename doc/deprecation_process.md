@@ -180,7 +180,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
 
   If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.
   ```
-- Delete all files under `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package root.
+- Delete all files in the package directory `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package directory root.
 - You will see an `Artifacts` parameter in `mypackage/ci.yml`.
   ```yml
   extends:
@@ -198,7 +198,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package in the `mypackage` directory is `azure-mypackage`, delete all files -- _not subdirectories_-- in `mypackage` (i.e. `ci.yml`, `tests.yml`, `test-resources.bicep`, etc.).
+  - If the only package in the `mypackage` service directory is `azure-mypackage`, delete all files -- _not package subdirectories_-- in the `mypackage` service directory (i.e. `ci.yml`, `tests.yml`, `test-resources.bicep`, etc.).
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
