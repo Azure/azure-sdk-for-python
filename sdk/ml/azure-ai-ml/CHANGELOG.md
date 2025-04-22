@@ -1,13 +1,17 @@
 # Release History
+
 ## 1.27.0 (unreleased)
 
 ### Bugs Fixed
- - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
- - Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
- - Fix deployment creation for registry models
 
- ### Other Changes
-  - Hub and Project are officially GA'd and no longer experimental.
+- Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
+- Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
+- Fix deployment creation for registry models
+
+### Other Changes
+
+- Hub and Project are officially GA'd and no longer experimental.
+- Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
 
 ## 1.26.3 (2025-04-17)
 
