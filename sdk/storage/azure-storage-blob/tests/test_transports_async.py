@@ -8,11 +8,7 @@ import pytest
 
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.core.exceptions import ResourceExistsError
-from azure.core.pipeline.transport import (
-    AioHttpTransport,
-    AioHttpTransportResponse,
-    AsyncioRequestsTransport
-)
+from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
