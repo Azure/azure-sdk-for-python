@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Extend version range for `psutil` to include 7.x
+  ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
+
 ## 1.0.0b36 (2025-04-07)
 
 ### Features Added
