@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 from urllib.parse import urljoin, urlparse
 import base64
 import json
@@ -33,7 +33,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        self, azure_ai_project: AzureAIProject, token_manager: APITokenManager
+        self, azure_ai_project: Union[str, AzureAIProject], token_manager: APITokenManager
     ) -> None:
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager

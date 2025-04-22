@@ -40,13 +40,9 @@ def questions_file():
 @pytest.mark.localtest
 class TestSimAndEval:
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Skip as it only failed in CI pipeline. Will re-enable once the CI issue is fixed")
-    def test_protected_material_sim_into_eval(self, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
+    ## TODO: Need to use parametrize for onedp project_scope and cred.
+    def test_protected_material_sim_into_eval_onedp(self, project_scope_onedp, azure_cred_onedp):
+        azure_ai_project = project_scope_onedp
         # Simple First message-only echo callback
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
@@ -61,7 +57,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred_onedp)
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
@@ -96,7 +92,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        violence_eval = ViolenceEvaluator(DefaultAzureCredential(), project_scope)
+        violence_eval = ViolenceEvaluator(credential=azure_cred_onedp, project_scope=project_scope_onedp)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
@@ -457,6 +453,93 @@ class TestSimAndEval:
 
         # Evaluator simulator output
         code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
+        # run the evaluation
+        eval_output = evaluate(
+            data=file_name,
+            evaluators={"code_vulnerability": code_vuln_eval},
+        )
+
+        # validate the results
+        assert eval_output is not None
+        assert eval_output["rows"] is not None
+        assert len(eval_output["rows"]) == 1
+        
+        # verifying rows
+        row_result_df = pd.DataFrame(eval_output["rows"])
+        
+        assert "inputs.query" in row_result_df.columns.to_list()
+        assert "inputs.response" in row_result_df.columns.to_list()
+        assert "outputs.code_vulnerability.code_vulnerability_label" in row_result_df.columns.to_list()
+        assert "outputs.code_vulnerability.code_vulnerability_reason" in row_result_df.columns.to_list()
+        assert "outputs.code_vulnerability.code_vulnerability_details" in row_result_df.columns.to_list()
+
+        assert eval_output["rows"][0]["inputs.query"] == simulator_output[0]["messages"][0]["content"]
+        assert eval_output["rows"][0]["inputs.response"] == simulator_output[0]["messages"][1]["content"]
+        assert eval_output["rows"][0]["outputs.code_vulnerability.code_vulnerability_label"] is True
+        assert eval_output["rows"][0]["outputs.code_vulnerability.code_vulnerability_details"]["sql_injection"] is True
+        
+        # verifying metrics
+        metrics = eval_output["metrics"]
+        assert metrics is not None
+        assert "code_vulnerability.code_vulnerability_defect_rate" in metrics.keys()
+        assert metrics["code_vulnerability.code_vulnerability_defect_rate"] is not None
+        assert metrics.get("code_vulnerability.code_vulnerability_defect_rate") >= 0.0
+        
+        # Cleanup file
+        os.remove(file_name)
+    
+    ## TODO: Need to use parametrize for onedp project_scope and cred.
+    @pytest.mark.azuretest
+    def test_code_vulnerability_sim_and_eval_onedp(self, project_scope_onedp, azure_cred_onedp):
+        # Simple First message-only echo callback
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Dict[str, Any] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            response_from_llm = "SELECT * FROM users WHERE username = {user_input};" 
+            temperature = 0.0
+            formatted_response = {
+                "content": response_from_llm,
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=project_scope_onedp, credential=azure_cred_onedp)
+        
+        simulator_output = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+            )
+        )
+        assert len(simulator_output) == 1
+        assert len(simulator_output[0]["messages"]) == 2
+        assert simulator_output[0]["messages"][0]["content"] is not None
+        assert simulator_output[0]["messages"][1]["content"] is not None
+        
+        # Write simulator output to file
+        file_name = "eval_code_vuln_test.jsonl"
+        
+        # Write the output to the file
+        with open(file_name, "w") as file:
+            file.write(JsonLineChatProtocol(simulator_output[0]).to_eval_qr_json_lines())    
+
+        # Evaluator simulator output
+        code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred_onedp, project_scope_onedp)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,

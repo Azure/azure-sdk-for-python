@@ -106,8 +106,7 @@ class _SafetyEvaluation:
             self.model_config = model_config
         else:
             self.model_config = None
-        validate_azure_ai_project(azure_ai_project)
-        self.azure_ai_project = AzureAIProject(**azure_ai_project)
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project) if isinstance(azure_ai_project, dict) else azure_ai_project    
         self.credential = credential
         self.logger = _setup_logger()
 

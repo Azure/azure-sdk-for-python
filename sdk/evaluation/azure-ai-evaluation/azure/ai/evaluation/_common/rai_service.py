@@ -12,6 +12,7 @@ from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 
 import jwt
 
@@ -41,6 +42,8 @@ USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
+ML_WORKSPACE  = "https://management.azure.com/.default"
+COG_SRV_WORKSPACE = "https://cognitiveservices.azure.com/.default"
 
 INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
 
@@ -99,11 +102,7 @@ def get_common_headers(token: str, evaluator_name: Optional[str] = None) -> Dict
     user_agent = f"{USER_AGENT} (type=evaluator; subtype={evaluator_name})" if evaluator_name else USER_AGENT
     return {
         "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
         "User-Agent": user_agent,
-        # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
-        # https://github.com/encode/httpx/discussions/2959
-        "Connection": "close",
     }
 
 
@@ -231,6 +230,40 @@ async def submit_request(
     return operation_id
 
 
+async def submit_request_onedp(
+    client: AIProjectClient, 
+    data: dict, 
+    metric: str, 
+    token: str, 
+    annotation_task: str, 
+    evaluator_name: str
+) -> str:
+    """Submit request to Responsible AI service for evaluation and return operation ID
+
+    :param data: The data to evaluate.
+    :type data: dict
+    :param metric: The evaluation metric to use.
+    :type metric: str
+    :param rai_svc_url: The Responsible AI service URL.
+    :type rai_svc_url: str
+    :param token: The Azure authentication token.
+    :type token: str
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param evaluator_name: The evaluator name.
+    :type evaluator_name: str
+    :return: The operation ID.
+    :rtype: str
+    """
+    normalized_user_text = get_formatted_template(data, annotation_task)
+    payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
+    headers = get_common_headers(token, evaluator_name)
+    response = client.evaluations.submit_annotation(payload, headers=headers)
+    result = json.loads(response)
+    operation_id = result["location"].split("/")[-1]
+    return operation_id
+
+
 async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCredential, token: str) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
@@ -256,6 +289,38 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         async with get_async_http_client_with_timeout() as client:
             response = await client.get(url, headers=headers)
 
+        if response.status_code == 200:
+            return response.json()
+
+        request_count += 1
+        time_elapsed = time.time() - start
+        if time_elapsed > RAIService.TIMEOUT:
+            raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
+
+        sleep_time = RAIService.SLEEP_TIME**request_count
+        await asyncio.sleep(sleep_time)
+
+async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: str) -> Dict:
+    """Fetch the annotation result from Responsible AI service
+
+    :param operation_id: The operation ID.
+    :type operation_id: str
+    :param rai_svc_url: The Responsible AI service URL.
+    :type rai_svc_url: str
+    :param credential: The Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param token: The Azure authentication token.
+    :type token: str
+    :return: The annotation result.
+    :rtype: Dict
+    """
+    start = time.time()
+    request_count = 0
+
+    while True:
+        headers = get_common_headers(token)
+        response = client.evaluations.get_operation_result(operation_id, headers=headers)
+        
         if response.status_code == 200:
             return response.json()
 
@@ -500,7 +565,7 @@ async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
     return rai_url
 
 
-async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str] = None) -> str:
+async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str] = None, workspace: Optional[str] = ML_WORKSPACE) -> str:
     """Get token. Fetch a new token if the current token is near expiry
 
        :param credential: The Azure authentication credential.
@@ -524,13 +589,13 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
             if (exp_time - current_time) >= 300:
                 return token
 
-    return credential.get_token("https://management.azure.com/.default").token
+    return credential.get_token(workspace).token
 
 
 async def evaluate_with_rai_service(
     data: dict,
     metric_name: str,
-    project_scope: AzureAIProject,
+    project_scope: Union[str, AzureAIProject],
     credential: TokenCredential,
     annotation_task: str = Tasks.CONTENT_HARM,
     metric_display_name=None,
@@ -556,18 +621,26 @@ async def evaluate_with_rai_service(
     :rtype: Dict[str, Union[str, float]]
     """
 
-    # Get RAI service URL from discovery service and check service availability
-    token = await fetch_or_reuse_token(credential)
-    rai_svc_url = await get_rai_svc_url(project_scope, token)
-    await ensure_service_availability(rai_svc_url, token, annotation_task)
+    if isinstance(project_scope, dict):
+        # Get RAI service URL from discovery service and check service availability
+        token = await fetch_or_reuse_token(credential)
+        rai_svc_url = await get_rai_svc_url(project_scope, token)
+        await ensure_service_availability(rai_svc_url, token, annotation_task)
 
-    # Submit annotation request and fetch result
-    operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task, evaluator_name)
-    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-    result = parse_response(annotation_response, metric_name, metric_display_name)
+        # Submit annotation request and fetch result
+        operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task, evaluator_name)
+        annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
+        result = parse_response(annotation_response, metric_name, metric_display_name)
 
-    return result
-
+        return result
+    else:
+        
+        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
+        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        result = parse_response(annotation_response, metric_name, metric_display_name)
+        return result
 
 def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
     """Generate the payload for the annotation request
@@ -599,7 +672,6 @@ def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dic
         "Contents": [{"messages": messages}],
         "AnnotationTask": task,
     }
-
 
 async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
@@ -646,6 +718,36 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
+async def submit_multimodal_request_onedp(client: AIProjectClient, messages, metric: str, token: str) -> str:
+    
+    #  handle inference sdk strongly type messages
+    if len(messages) > 0 and not isinstance(messages[0], dict):
+        try:
+            from azure.ai.inference.models import ChatRequestMessage
+        except ImportError as ex:
+            error_message = (
+                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            )
+            raise MissingRequiredPackage(message=error_message) from ex
+        if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
+            messages = [message.as_dict() for message in messages]
+
+    ## fetch system and assistant messages from the list of messages
+    filtered_messages = [message for message in messages if message["role"] != "system"]
+    assistant_messages = [message for message in messages if message["role"] == "assistant"]
+    
+    ## prepare for request
+    content_type = retrieve_content_type(assistant_messages, metric)
+    payload = generate_payload_multimodal(content_type, filtered_messages, metric)
+    headers = get_common_headers(token)
+    
+    params = {}
+    params["api-version"] = "latest"
+    response = client.evaluations.submit_annotation(payload, headers=headers, params=params)
+    
+    result = json.loads(response)
+    operation_id = result["location"].split("/")[-1]
+    return operation_id
 
 async def evaluate_with_rai_service_multimodal(
     messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
@@ -664,12 +766,19 @@ async def evaluate_with_rai_service_multimodal(
        :rtype: List[List[Dict]]
     """
 
-    # Get RAI service URL from discovery service and check service availability
-    token = await fetch_or_reuse_token(credential)
-    rai_svc_url = await get_rai_svc_url(project_scope, token)
-    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
-    # Submit annotation request and fetch result
-    operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
-    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-    result = parse_response(annotation_response, metric_name)
-    return result
+    if isinstance(project_scope, dict):
+        token = await fetch_or_reuse_token(credential)
+        rai_svc_url = await get_rai_svc_url(project_scope, token)
+        await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+        # Submit annotation request and fetch result
+        operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
+        annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
+        result = parse_response(annotation_response, metric_name)
+        return result
+    else:
+        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
+        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        result = parse_response(annotation_response, metric_name)
+        return result

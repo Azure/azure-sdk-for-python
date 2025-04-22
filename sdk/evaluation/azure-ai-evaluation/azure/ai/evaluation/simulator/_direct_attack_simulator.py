@@ -12,6 +12,7 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator
@@ -44,24 +45,35 @@ class DirectAttackSimulator:
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
-
-        try:
-            self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
-        except EvaluationException as e:
-            raise EvaluationException(
-                message=e.message,
-                internal_message=e.internal_message,
-                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-                category=e.category,
-                blame=e.blame,
-            ) from e
-        self.credential = cast(TokenCredential, credential)
-        self.token_manager = ManagedIdentityAPITokenManager(
-            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("AdversarialSimulator"),
-            credential=self.credential,
-        )
-        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        
+        if isinstance(azure_ai_project, dict):
+            try:
+                self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
+            except EvaluationException as e:
+                raise EvaluationException(
+                    message=e.message,
+                    internal_message=e.internal_message,
+                    target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                    category=e.category,
+                    blame=e.blame,
+                ) from e
+            self.credential = cast(TokenCredential, credential)    
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        else:
+            self.azure_ai_project = azure_ai_project
+            self.credential=cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential
+            )
+            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+        
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )

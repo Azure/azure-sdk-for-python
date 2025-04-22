@@ -342,10 +342,16 @@ def mock_project_scope() -> Dict[str, str]:
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
     }
 
+@pytest.fixture(scope="session")
+def mock_onedp_project_scope() -> Dict[str, str]:
+    return {
+        "azure_ai_one_dp_project_scope": "https://Sanitized.cognitiveservices.azure.com",
+    }
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
 KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
+KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
 
 
 @pytest.fixture(scope="session")
@@ -395,6 +401,10 @@ def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[s
     config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
     return config
 
+@pytest.fixture
+def project_scope_onedp(connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE) if is_live() else mock_onedp_project_scope
+    return config
 
 @pytest.fixture
 def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
@@ -488,6 +498,25 @@ def azure_cred() -> TokenCredential:
     assert token is not None
     return credential
 
+@pytest.fixture
+def azure_cred_onedp() -> TokenCredential:
+    from azure.identity import AzureCliCredential, DefaultAzureCredential
+
+    """get credential for azure tests"""
+    # resolve requests
+    if not is_live():
+        return FakeTokenCredential()
+
+    try:
+        credential = AzureCliCredential()
+        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+    except Exception:
+        credential = DefaultAzureCredential()
+        # ensure we can get token
+        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        
+    assert token is not None
+    return credential
 
 @pytest.fixture
 def user_object_id(azure_cred: TokenCredential) -> str:

@@ -23,6 +23,7 @@ class TokenScope(Enum):
     """Token scopes for Azure endpoints"""
 
     DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
+    COGNITIVE_SERVICES_MANAGEMENT = "https://cognitiveservices.azure.com/.default"
 
 
 class APITokenManager(ABC):

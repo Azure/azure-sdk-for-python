@@ -50,7 +50,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     def __init__(
         self,
         eval_metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
-        azure_ai_project: dict,
+        azure_ai_project: Union[dict, str],
         credential: TokenCredential,
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
@@ -59,7 +59,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     ):
         super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
         self._eval_metric = eval_metric
-        self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
+        self._azure_ai_project = validate_azure_ai_project(azure_ai_project) if isinstance(azure_ai_project, dict) else azure_ai_project
         self._credential = credential
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
