@@ -4,8 +4,8 @@ import os
 import sys
 
 from azure.cosmos import documents
-from tests.workloads.workload_utils import create_logger, upsert_item_concurrently
-from tests.workloads.workload_configs import (PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS,
+from workload_utils import create_logger, upsert_item_concurrently
+from workload_configs import (PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS,
                                               CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
 
 sys.path.append(r"/")

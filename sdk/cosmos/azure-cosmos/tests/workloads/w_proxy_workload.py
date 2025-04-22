@@ -6,8 +6,8 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from tests.workloads.workload_utils import upsert_item_concurrently, create_logger
-from tests.workloads.workload_configs import (COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER,
+from workload_utils import upsert_item_concurrently, create_logger
+from workload_configs import (COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER,
                                               COSMOS_DATABASE)
 
 sys.path.append(r"/")
