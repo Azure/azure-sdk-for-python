@@ -1,0 +1,5 @@
+azure-identity
+openai
+pylint==3.2.7
+azure-core
+../../../../../azure-sdk-tools/tools/pylint-extensions/azure-pylint-guidelines-checker/ -e .
