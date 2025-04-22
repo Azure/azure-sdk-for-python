@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -57,7 +57,7 @@ async def sample_evaluations_async() -> None:
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation",
             description="Sample evaluation for testing", # TODO: Can we optional once bug 4115256 is fixed
-            data=InputDataset(id="azureai://accounts/anksingtest1rp/projects/anksingtest1rpproject/data/evaltest/versions/1"),
+            data=InputDataset(id="<dataset_id>"), # TODO: update this to use the correct id
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value, # TODO: update this to use the correct id
