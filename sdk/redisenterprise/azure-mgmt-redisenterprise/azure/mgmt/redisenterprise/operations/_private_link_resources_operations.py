@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Iterable, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -31,7 +30,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +44,7 @@ def build_list_by_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -57,7 +56,9 @@ def build_list_by_cluster_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[A-Za-z0-9]{1,60}$"),
+        "clusterName": _SERIALIZER.url(
+            "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
@@ -100,7 +101,9 @@ class PrivateLinkResourcesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Required.
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
         :type cluster_name: str
         :return: An iterator like instance of either PrivateLinkResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
@@ -112,7 +115,7 @@ class PrivateLinkResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -17,28 +17,51 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from ._configuration import NeonPostgresMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import Operations, OrganizationsOperations
+from .operations import (
+    BranchesOperations,
+    ComputesOperations,
+    EndpointsOperations,
+    ModelsOperations,
+    NeonDatabasesOperations,
+    NeonRolesOperations,
+    Operations,
+    OrganizationsOperations,
+    ProjectsOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NeonPostgresMgmtClient:
+class NeonPostgresMgmtClient:  # pylint: disable=too-many-instance-attributes
     """NeonPostgresMgmtClient.
 
+    :ivar models: ModelsOperations operations
+    :vartype models: azure.mgmt.neonpostgres.operations.ModelsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.neonpostgres.operations.Operations
     :ivar organizations: OrganizationsOperations operations
     :vartype organizations: azure.mgmt.neonpostgres.operations.OrganizationsOperations
+    :ivar projects: ProjectsOperations operations
+    :vartype projects: azure.mgmt.neonpostgres.operations.ProjectsOperations
+    :ivar branches: BranchesOperations operations
+    :vartype branches: azure.mgmt.neonpostgres.operations.BranchesOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.neonpostgres.operations.ComputesOperations
+    :ivar neon_databases: NeonDatabasesOperations operations
+    :vartype neon_databases: azure.mgmt.neonpostgres.operations.NeonDatabasesOperations
+    :ivar neon_roles: NeonRolesOperations operations
+    :vartype neon_roles: azure.mgmt.neonpostgres.operations.NeonRolesOperations
+    :ivar endpoints: EndpointsOperations operations
+    :vartype endpoints: azure.mgmt.neonpostgres.operations.EndpointsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-08-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2025-03-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -78,8 +101,15 @@ class NeonPostgresMgmtClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.models = ModelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.branches = BranchesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.neon_databases = NeonDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.neon_roles = NeonRolesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

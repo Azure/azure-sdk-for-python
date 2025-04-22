@@ -1,5 +1,69 @@
 # Release History
 
+## 3.2.0 (2025-04-20)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added operation group `java_components`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_session_pools`
+  - Model `CertificateProperties` added property `certificate_key_vault_properties`
+  - Model `Configuration` added property `runtime`
+  - Model `Configuration` added property `identity_settings`
+  - Model `ContainerApp` added property `running_status`
+  - Model `CustomDomainConfiguration` added property `certificate_key_vault_properties`
+  - Model `CustomScaleRule` added property `identity`
+  - Model `HttpScaleRule` added property `identity`
+  - Model `JobConfiguration` added property `identity_settings`
+  - Model `JobScaleRule` added property `identity`
+  - Model `ManagedEnvironment` added property `identity`
+  - Model `ManagedEnvironmentStorageProperties` added property `nfs_azure_file`
+  - Model `QueueScaleRule` added property `account_name`
+  - Model `QueueScaleRule` added property `identity`
+  - Model `Scale` added property `cooldown_period`
+  - Model `Scale` added property `polling_interval`
+  - Enum `StorageType` added member `NFS_AZURE_FILE`
+  - Model `TcpScaleRule` added property `identity`
+  - Added model `CertificateKeyVaultProperties`
+  - Added enum `ContainerAppRunningStatus`
+  - Added enum `ContainerType`
+  - Added model `CustomContainerTemplate`
+  - Added model `DynamicPoolConfiguration`
+  - Added model `IdentitySettings`
+  - Added enum `IdentitySettingsLifeCycle`
+  - Added model `JavaComponent`
+  - Added model `JavaComponentConfigurationProperty`
+  - Added model `JavaComponentIngress`
+  - Added model `JavaComponentProperties`
+  - Added model `JavaComponentPropertiesScale`
+  - Added enum `JavaComponentProvisioningState`
+  - Added model `JavaComponentServiceBind`
+  - Added enum `JavaComponentType`
+  - Added model `JavaComponentsCollection`
+  - Added model `LifecycleConfiguration`
+  - Added enum `LifecycleType`
+  - Added model `ManagedIdentitySetting`
+  - Added model `NfsAzureFileProperties`
+  - Added enum `PoolManagementType`
+  - Added model `Runtime`
+  - Added model `RuntimeJava`
+  - Added model `ScaleConfiguration`
+  - Added model `SessionContainer`
+  - Added model `SessionContainerResources`
+  - Added model `SessionIngress`
+  - Added model `SessionNetworkConfiguration`
+  - Added enum `SessionNetworkStatus`
+  - Added model `SessionPool`
+  - Added model `SessionPoolCollection`
+  - Added enum `SessionPoolProvisioningState`
+  - Added model `SessionPoolSecret`
+  - Added model `SessionPoolUpdatableProperties`
+  - Added model `SessionRegistryCredentials`
+  - Added model `SpringBootAdminComponent`
+  - Added model `SpringCloudConfigComponent`
+  - Added model `SpringCloudEurekaComponent`
+  - Added operation group `ContainerAppsSessionPoolsOperations`
+  - Added operation group `JavaComponentsOperations`
+
 ## 3.2.0b1 (2024-10-28)
 
 ### Features Added

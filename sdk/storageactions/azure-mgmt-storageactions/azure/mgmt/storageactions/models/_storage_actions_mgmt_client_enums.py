@@ -61,6 +61,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     VALIDATE_SUBSCRIPTION_QUOTA_BEGIN = "ValidateSubscriptionQuotaBegin"
     VALIDATE_SUBSCRIPTION_QUOTA_END = "ValidateSubscriptionQuotaEnd"
+    ACCEPTED = "Accepted"
     CREATING = "Creating"
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
