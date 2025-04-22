@@ -300,9 +300,12 @@ class IssueProcess:
         comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in
                     self.issue_package.issue.get_comments()]
         comments.sort()
-        latest_comments = comments[-1][1]
-        if latest_comments not in self.language_owner:
-            self.bot_advice.append('new comment.')
+        try:
+            latest_comments = comments[-1][1]
+            if latest_comments not in self.language_owner:
+                self.bot_advice.append('new comment.')
+        except Exception:
+            self.log('Error happened when getting latest comment.')
 
     def multi_link_policy(self):
         if self.has_label(MULTI_LINK_LABEL):
