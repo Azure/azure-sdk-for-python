@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-03-01/StandbyVirtualMachinePools_ListByResourceGroup.json
+# x-ms-original-file: 2025-03-01/StandbyVirtualMachinePools_ListByResourceGroup.json
 if __name__ == "__main__":
     main()
