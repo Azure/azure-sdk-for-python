@@ -19,6 +19,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.skip("denied due to internal policy")
 @pytest.mark.live_test_only
 class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
 
