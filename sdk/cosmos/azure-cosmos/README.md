@@ -886,7 +886,7 @@ This ensures that no single workload consumes excessive throughput and impacts o
 Throughput bucket configurations can be changed once every 10 minutes, otherwise the request is throttled with an HTTP 429 status code and substatus code 3213.
 Also, requests with an invalid bucket ID (less than 1 or greater than 5) results in an error, as only bucket IDs 1 to 5 are valid.
 
-See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the portal.
+See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
 After throughput buckets have been configured you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
 
 ## Troubleshooting
