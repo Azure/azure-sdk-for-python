@@ -9,7 +9,7 @@ import uuid
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos import http_constants, DatabaseProxy, _endpoint_discovery_retry_policy
 from azure.cosmos.partition_key import PartitionKey
 
@@ -313,6 +313,20 @@ class TestHeaders(unittest.TestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
+        self.database.delete_container(created_collection)
+
+    def test_container_read_item_negative_throughput_bucket(self):
+        # Creates an item and then tries to read item with an invalid throughput bucket
+        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        try:
+            self.container.read_item(
+                 item=created_document['id'],
+                 partition_key="mypk",
+                 throughput_bucket=256)
+            pytest.fail("Read Item should have failed invalid throughput bucket.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
 
 if __name__ == "__main__":
     unittest.main()

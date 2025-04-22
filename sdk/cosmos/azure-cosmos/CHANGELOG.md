@@ -3,6 +3,7 @@
 ### 4.10.0b5 (Unreleased)
 
 #### Features Added
+* Added ability to set `throughput_bucket` at the client level and for all requests. See [PR 40340](https://github.com/Azure/azure-sdk-for-python/pull/40340).
 
 #### Breaking Changes
 
