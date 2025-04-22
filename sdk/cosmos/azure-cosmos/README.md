@@ -1060,8 +1060,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
 [cosmos_fts]: https://aka.ms/cosmosfulltextsearch
 [cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
-[cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket.py
-[cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_async.py
+[cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
+[cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
 [cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
 
 ## Contributing
