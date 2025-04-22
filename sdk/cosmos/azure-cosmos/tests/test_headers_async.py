@@ -266,6 +266,8 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(created_collection)
 
+    # TODO Re-enable once Throughput Bucket Validation Changes are rolled out
+    """
     async def test_container_read_item_negative_throughput_bucket_async(self):
         # Creates an item and then tries to read item with an invalid throughput bucket
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
@@ -278,6 +280,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
+    """
 
 if __name__ == "__main__":
     unittest.main()
