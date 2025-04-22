@@ -3,11 +3,12 @@
 import os
 import sys
 
-from workload_utils import create_logger, get_random_item
-from workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
-                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
+from ..workload_utils import create_logger, get_random_item
+from ..workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
+                                CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER, CONCURRENT_QUERIES,
+                                PARTITION_KEY)
 
-sys.path.append(r"./")
+sys.path.append(r"../")
 
 from azure.cosmos import CosmosClient, documents
 
@@ -22,7 +23,7 @@ def upsert_item(container, num_upserts):
 def read_item(container, num_reads):
     for _ in range(num_reads):
         item = get_random_item()
-        container.read_item(item["id"], item["id"], etag=None, match_condition=None)
+        container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None)
 
 
 def query_items(container, num_queries):
@@ -35,7 +36,7 @@ def perform_query(container):
     results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                     parameters=[{"name": "@id", "value": random_item["id"]},
                                                 {"name": "@pk", "value": random_item["pk"]}],
-                                    partition_key=random_item["id"])
+                                    partition_key=random_item[PARTITION_KEY])
     items = [item for item in results]
 
 
@@ -55,7 +56,7 @@ def run_workload(client_id, client_logger):
             try:
                 upsert_item(cont, CONCURRENT_REQUESTS)
                 read_item(cont, CONCURRENT_REQUESTS)
-                query_items(cont, 2)
+                query_items(cont, CONCURRENT_QUERIES)
             except Exception as e:
                 client_logger.info("Exception in application layer")
                 client_logger.error(e)
@@ -63,5 +64,5 @@ def run_workload(client_id, client_logger):
 
 if __name__ == "__main__":
     file_name = os.path.basename(__file__)
-    first_name, logger = create_logger(file_name)
-    run_workload(first_name, logger)
+    prefix, logger = create_logger(file_name)
+    run_workload(prefix, logger)

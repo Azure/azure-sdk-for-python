@@ -6,10 +6,11 @@ import os
 import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
+from workload_configs import NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY
 
 
 def get_random_item():
-    random_int = random.randint(1, 10000)
+    random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
     return {"id": "test-" + str(random_int), "pk": "pk-" + str(random_int)}
 
 async def upsert_item_concurrently(container, num_upserts):
@@ -23,7 +24,7 @@ async def read_item_concurrently(container, num_reads):
     tasks = []
     for _ in range(num_reads):
         item = get_random_item()
-        tasks.append(container.read_item(item["id"], item["id"], etag=None, match_condition=None))
+        tasks.append(container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None))
     await asyncio.gather(*tasks)
 
 
@@ -39,18 +40,18 @@ async def perform_query(container):
     results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                     parameters=[{"name": "@id", "value": random_item["id"]},
                                                 {"name": "@pk", "value": random_item["pk"]}],
-                                    partition_key=random_item["id"])
+                                    partition_key=random_item[PARTITION_KEY])
     items = [item async for item in results]
 
 def create_logger(file_name):
     logger = logging.getLogger('azure.cosmos')
-    first_name = file_name.split(".")[0] + "-" + str(os.getpid())
+    prefix = os.path.splitext(file_name)[0] + "-" + str(os.getpid())
     # Create a rotating file handler
     handler = RotatingFileHandler(
-        "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
+        "log-" + prefix + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
         maxBytes=1024 * 1024 * 10, # 10 mb
         backupCount=3
     )
     logger.setLevel(logging.DEBUG)
     logger.addHandler(handler)
-    return first_name, logger
+    return prefix, logger

@@ -26,7 +26,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
     - `cd tests/workloads`
 8. Fill out relevant configs in `workload_configs.py`: key, host, etc
 9. Install envoy proxy https://www.envoyproxy.io/docs/envoy/latest/start/install
-10. Update envoy_simple_config.yaml to have the correct account info
+10. Update envoy_simple_config.yaml to have the correct account info. Replace <> with account name.
 11. Go to envoy folder and start envoy
     - `cd envoy`
     - `mkdir logs`
@@ -34,7 +34,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
 12. Run the setup workload to create the database and containers and insert data
     - `python3 initial-setup.py`
 13. Run the scale workloads
-    - `python3 run_workloads.sh`
+    - `./run_workloads.sh <number of clients per workload>`
 
 ### Monitor Run
 - `ps -eaf | grep "python3"` to see the running processes

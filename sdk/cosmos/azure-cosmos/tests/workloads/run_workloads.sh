@@ -5,31 +5,12 @@ if [ $# -eq 0 ]; then
 fi
 
 num_runs=$1
+# Get the directory where the script is located
+WORKLOAD_DIR="core_workloads"
 
-for (( i=0; i<num_runs; i++ )); do
-    python3 r_proxy_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 r_w_q_proxy_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 r_w_q_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 r_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 w_proxy_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 w_workload.py &
-done
-
-for (( i=0; i<num_runs; i++ )); do
-    python3 r_w_q_workload_sync.py &
+# Loop over each Python file in the directory and run it num_runs times in background.
+for file in "$WORKLOAD_DIR"/*.py; do
+    for (( i=0; i<num_runs; i++ )); do
+        python3 "$file" &
+    done
 done

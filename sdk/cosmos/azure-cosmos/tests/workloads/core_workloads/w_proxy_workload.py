@@ -6,11 +6,11 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from workload_utils import create_logger, read_item_concurrently, query_items_concurrently
-from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER, COSMOS_DATABASE
-from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
+from ..workload_utils import upsert_item_concurrently, create_logger
+from ..workload_configs import (COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER,
+                              COSMOS_DATABASE)
 
-sys.path.append(r"./")
+sys.path.append(r"../")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.core.pipeline.transport import AioHttpTransport
@@ -20,9 +20,9 @@ from datetime import datetime
 
 async def run_workload(client_id, client_logger):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
-        connectionPolicy = documents.ConnectionPolicy()
-        connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
 
+        connectionPolicy = documents.ConnectionPolicy()
+        connectionPolicy.ProxyConfiguration = documents.ProxyConfiguration()
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
         async with AsyncClient(COSMOS_PROXY_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=client_logger, transport=transport,
@@ -34,8 +34,7 @@ async def run_workload(client_id, client_logger):
 
             while True:
                 try:
-                    await read_item_concurrently(cont, CONCURRENT_REQUESTS)
-                    await query_items_concurrently(cont, 2)
+                    await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
                 except Exception as e:
                     client_logger.info("Exception in application layer")
                     client_logger.error(e)
@@ -43,5 +42,5 @@ async def run_workload(client_id, client_logger):
 
 if __name__ == "__main__":
     file_name = os.path.basename(__file__)
-    first_name, logger = create_logger(file_name)
-    asyncio.run(run_workload(first_name, logger))
+    prefix, logger = create_logger(file_name)
+    asyncio.run(run_workload(prefix, logger))

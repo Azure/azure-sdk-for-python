@@ -39,5 +39,5 @@ async def run_workload(client_id: str):
 
 if __name__ == "__main__":
     file_name = os.path.basename(__file__)
-    first_name, logger = create_logger(file_name)
-    asyncio.run(run_workload(first_name))
+    prefix, logger = create_logger(file_name)
+    asyncio.run(run_workload(prefix))

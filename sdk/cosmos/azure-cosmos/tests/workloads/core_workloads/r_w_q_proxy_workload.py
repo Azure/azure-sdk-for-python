@@ -6,11 +6,11 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from workload_utils import create_logger, upsert_item_concurrently, read_item_concurrently, query_items_concurrently
-from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, \
-    CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER, COSMOS_DATABASE
+from ..workload_utils import create_logger, upsert_item_concurrently, read_item_concurrently, query_items_concurrently
+from ..workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, \
+    CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER, COSMOS_DATABASE, CONCURRENT_QUERIES
 
-sys.path.append(r"./")
+sys.path.append(r"../")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.core.pipeline.transport import AioHttpTransport
@@ -37,7 +37,7 @@ async def run_workload(client_id, client_logger):
                 try:
                     await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
                     await read_item_concurrently(cont, CONCURRENT_REQUESTS)
-                    await query_items_concurrently(cont, 2)
+                    await query_items_concurrently(cont, CONCURRENT_QUERIES)
                 except Exception as e:
                     client_logger.info("Exception in application layer")
                     client_logger.error(e)
@@ -45,5 +45,5 @@ async def run_workload(client_id, client_logger):
 
 if __name__ == "__main__":
     file_name = os.path.basename(__file__)
-    first_name, logger = create_logger(file_name)
-    asyncio.run(run_workload(first_name, logger))
+    prefix, logger = create_logger(file_name)
+    asyncio.run(run_workload(prefix, logger))
