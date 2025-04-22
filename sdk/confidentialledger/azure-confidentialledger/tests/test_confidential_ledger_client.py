@@ -605,25 +605,25 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
-        role_name = 'modify'
+        role_name = "testRole"
 
-        client.create_user_defined_role([{"role_name": role_name, "role_actions": ["/content/read"]}])
+        client.create_user_defined_role([{"role_name": role_name, "role_actions": ["read"]}])
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
         assert roles[0]["role_name"] == role_name
-        assert roles[0]["role_actions"] == ["/content/read"]
+        assert roles[0]["role_actions"] == ["read"]
 
         client.update_user_defined_role(
             [
-                {"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}
+                {"role_name": role_name, "role_actions": ["write", "read"]}
             ]
         )
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
         assert roles[0]["role_name"] == role_name
-        assert roles[0]["role_actions"] == ["/content/write", "/content/read"]
+        assert roles[0]["role_actions"] == ["write", "read"]
 
         client.delete_user_defined_role(role_name=role_name)
         time.sleep(3)
