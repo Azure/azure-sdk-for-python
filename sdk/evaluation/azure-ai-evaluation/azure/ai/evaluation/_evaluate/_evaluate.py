@@ -8,6 +8,7 @@ import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
+from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
@@ -22,9 +23,11 @@ from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EVALUATION_PASS_FAIL_MAPPING,
     EvaluationMetrics,
+    DefaultOpenEncoding,
     Prefixes,
     _InternalEvaluationMetrics,
     BINARY_AGGREGATE_SUFFIX,
+    DEFAULT_OAI_EVAL_RUN_NAME
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
@@ -44,6 +47,12 @@ from ._utils import (
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
+from ._evaluate_aoai import (
+    _begin_aoai_evaluation,
+    _split_evaluators_and_grader_configs,
+    _get_evaluation_run_results,
+    OAIEvalRunCreationInfo
+)
 LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
@@ -59,6 +68,19 @@ class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
     metrics: Dict[str, Any]
     run_summary: Dict[str, Any]
+
+class __ValidatedData(TypedDict):
+    '''
+    Simple dictionary that contains ALL pre-processed data and
+    the resultant objects that are needed for downstream evaluation.
+    '''
+    evaluators: Dict[str, Callable]
+    graders: Dict[str, AoaiGrader]
+    input_data_df: pd.DataFrame
+    column_mapping: Dict[str, Dict[str, str]]
+    target_run: Optional[BatchClientRun]
+    batch_run_client: BatchClient
+    batch_run_data: Union[str, os.PathLike, pd.DataFrame]
 
 
 def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, float]]:
@@ -802,31 +824,44 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if fail_on_evaluator_errors:
         _print_fail_flag_warning()
     
-    # Split normal evaluators and OAI graders
-    from ._evaluate_aoai import (
-        _begin_aoai_evaluation,
-        _split_evaluators_and_grader_configs,
-        _get_evaluation_run_results
+    # Turn inputted mess of data into a dataframe, apply targets if needed
+    # split graders and evaluators, and verify that column mappings are sensible.
+    validated_data = _preprocess_data(
+        data=data,
+        evaluators_and_graders=evaluators_and_graders,
+        evaluator_config=evaluator_config,
+        target=target,
+        output_path=output_path,
+        azure_ai_project=azure_ai_project,
+        evaluation_name=evaluation_name,
+        **kwargs,
     )
-    evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
+    
+    # extract relevant info from validated data
+    column_mapping = validated_data["column_mapping"]
+    evaluators = validated_data["evaluators"]
+    graders = validated_data["graders"]
+    input_data_df = validated_data["input_data_df"]
+    results_df = pd.DataFrame()
+    metrics: Dict[str, float] = {}
+    oai_client: Optional[Union[OpenAI, AzureOpenAI]] = None
+    eval_run_info_list: List[OAIEvalRunCreationInfo] = []
 
-    results_df: pd.DataFrame = pd.DataFrame()
-    metrics: Dict[str, Any] = {}
-
-
-    input_data_df = _validate_and_load_data(target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name)
-    eval_run_id = "not set yet"
-    eval_group_id = "not set yet"
-    grader_name_map = {}
-    oai_client = None
+    # Start OAI eval runs if any graders are present.
     if len(graders) > 0:
         for grader in graders.values():
             if isinstance(grader, AoaiGrader):
                 oai_client = grader.get_client()
                 break
         try:
-            aoi_name = evaluation_name if evaluation_name else "oai_run"
-            eval_group_id, eval_run_id, grader_name_map = _begin_aoai_evaluation(oai_client, graders, input_data_df, aoi_name)
+            aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
+            eval_run_info_list = _begin_aoai_evaluation(
+                oai_client, # type: ignore
+                graders,
+                column_mapping,
+                input_data_df,
+                aoi_name
+            )
         except EvaluationException as e:
             # TODO, check if there's normal evaluations to be done, if so, do them, but print this as a warning.
             raise e
@@ -834,14 +869,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
     if len(evaluators) > 0:
         eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
-            evaluators=evaluators,
-            input_data_df=input_data_df,
-            data=data,
-            evaluation_name=evaluation_name,
-            target=target,
-            evaluator_config=evaluator_config,
-            azure_ai_project=azure_ai_project,
-            output_path=output_path,
+            validated_data=validated_data,
             fail_on_evaluator_errors=fail_on_evaluator_errors
         )
         results_df = eval_result_df
@@ -849,9 +877,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         # TODO figure out how to update this printing to include OAI results?
         _print_summary(per_evaluator_results)
 
-    # Evaluate AOAI graders
+    # Retrieve OAI eval run results if needed.
     if len(graders) > 0:
-        aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_group_id, eval_run_id, grader_name_map)
+        aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_run_info_list) # type: ignore
         # aoai_results, aoai_metrics = _temp_get_dummy_aoai_data(graders, input_data_df)
         # Combine results if both evaluators and graders are present
         if len(evaluators) > 0:
@@ -865,7 +893,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Done with all evaluations, message outputs into final forms, and log results if needed.
 
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    target_run: Optional[Run] = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = None
     if trace_destination:
@@ -882,23 +909,21 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     return result
 
-def _run_callable_evaluators(
-    evaluators: Dict[str, Callable],
-    input_data_df: pd.DataFrame,
+
+def _preprocess_data(
     data: Union[str, os.PathLike],
-    evaluation_name: Optional[str] = None,
-    target: Optional[Callable] = None,
+    evaluators_and_graders: Dict[str, Union[Callable, AoaiGrader]],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
-    azure_ai_project: Optional[AzureAIProject] = None,
+    target: Optional[Callable] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
-    fail_on_evaluator_errors: bool = False,
+    azure_ai_project: Optional[AzureAIProject] = None,
+    evaluation_name: Optional[str] = None,
     **kwargs,
-
-) -> Tuple[pd.DataFrame, Dict[str, Any], Dict[str, __EvaluatorInfo]]:
-
+    ) -> __ValidatedData:
     # Process evaluator config to replace ${target.} with ${data.}
     if evaluator_config is None:
         evaluator_config = {}
+
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
     column_mapping = _process_column_mappings(
         {
@@ -907,13 +932,24 @@ def _run_callable_evaluators(
         }
     )
 
-    if target is not None:
-        _validate_columns_for_target(input_data_df, target)
-
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
     column_mapping = column_mapping or {}
     column_mapping.setdefault("default", {})
+
+    # Split normal evaluators and OAI graders
+    evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
+
+    input_data_df = _validate_and_load_data(
+        target,
+        data,
+        evaluators_and_graders,
+        output_path,
+        azure_ai_project,
+        evaluation_name
+    )
+    if target is not None:
+        _validate_columns_for_target(input_data_df, target)
 
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
@@ -964,6 +1000,29 @@ def _run_callable_evaluators(
             if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
                 column_mapping["default"][col] = f"${{data.{col}}}"
 
+    return __ValidatedData(
+        evaluators=evaluators,
+        graders=graders,
+        input_data_df=input_data_df,
+        column_mapping=column_mapping,
+        target_run=target_run,
+        batch_run_client=batch_run_client,
+        batch_run_data=batch_run_data,
+    )
+
+
+def _run_callable_evaluators(
+    validated_data: __ValidatedData,
+    fail_on_evaluator_errors: bool = False,
+    **kwargs,
+) -> Tuple[pd.DataFrame, Dict[str, Any], Dict[str, __EvaluatorInfo]]:
+
+    # Extract needed values
+    batch_run_client = validated_data["batch_run_client"]
+    target_run = validated_data["target_run"]
+    batch_run_data = validated_data["batch_run_data"]
+    column_mapping = validated_data["column_mapping"]
+    evaluators = validated_data["evaluators"]
     with EvalRunContext(batch_run_client):
         runs = {
             evaluator_name: batch_run_client.run(
@@ -1024,7 +1083,8 @@ def _run_callable_evaluators(
     # Rename columns, generated by target function to outputs instead of inputs.
     # If target generates columns, already present in the input data, these columns
     # will be marked as outputs already so we do not need to rename them.
-    input_data_df = _rename_columns_conditionally(input_data_df)
+
+    input_data_df = _rename_columns_conditionally(validated_data["input_data_df"])
 
     eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
@@ -1068,3 +1128,19 @@ def _map_names_to_builtins(
         name_map[name] = grader.id
 
     return name_map
+
+def _turn_error_logs_into_exception(log_path: str) -> None:
+    """Produce an EvaluationException using the contents of the inputted
+    file as the error message.
+
+    :param log_path: The path to the error log file.
+    :type log_path: str
+    """
+    with open(log_path, "r", encoding=DefaultOpenEncoding.READ) as file:
+        error_message = file.read()
+    raise EvaluationException(
+        message=error_message,
+        target=ErrorTarget.EVALUATE,
+        category=ErrorCategory.FAILED_EXECUTION,
+        blame=ErrorBlame.UNKNOWN,
+    )
