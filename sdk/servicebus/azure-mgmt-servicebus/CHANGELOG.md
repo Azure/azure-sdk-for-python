@@ -1,5 +1,13 @@
 # Release History
 
+## 9.0.0 (2025-04-22)
+
+### Breaking Changes
+
+  - Removed operation group EventHubsOperations
+  - Removed operation group PremiumMessagingRegionsOperations
+  - Removed operation group RegionsOperations
+
 ## 8.2.1 (2024-11-05)
 
 ### Other Changes
