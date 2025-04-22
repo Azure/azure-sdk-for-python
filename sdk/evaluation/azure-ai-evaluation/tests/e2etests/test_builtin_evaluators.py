@@ -217,6 +217,14 @@ class TestBuiltInEvaluators:
         assert score2["retrieval"] > 0
         assert score2["evaluation_per_turn"]["retrieval"][0] > 0
 
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
         score = eval_fn(
@@ -287,6 +295,14 @@ class TestBuiltInEvaluators:
         assert "tarslip" in details and details["tarslip"] is False
         assert "reflected_xss" in details and details["reflected_xss"] is False
 
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_ungrounded_attributes_evaluator(self, project_scope, azure_cred):
         ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
         
@@ -311,6 +327,14 @@ class TestBuiltInEvaluators:
         assert "protected_class" in details and details["protected_class"] is False
         assert "groundedness" in details and details["groundedness"] is True
 
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
         eval_fn = SexualEvaluator(azure_cred, project_scope)
         score = eval_fn(
@@ -534,6 +558,14 @@ class TestBuiltInEvaluators:
         assert per_turn["hate_unfairness_reason"][0], "hate_unfairness_reason must not be None or empty."
         assert per_turn["hate_unfairness_reason"][1], "hate_unfairness_reason must not be None or empty."
 
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_protected_material_evaluator(self, project_scope, azure_cred, simple_conversation):
         ip_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         good_result = ip_eval(
