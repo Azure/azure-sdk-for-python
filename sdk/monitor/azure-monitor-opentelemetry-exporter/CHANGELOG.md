@@ -1,3 +1,5 @@
+# cSpell:disable
+
 # Release History
 
 ## 1.0.0b37 (Unreleased)
@@ -574,3 +576,5 @@
 ## 0.1a.0 (2019-11-06)
 
 - Initial alpha release
+
+# cSpell:enable
