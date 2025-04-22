@@ -291,7 +291,7 @@ class _AIAgentsInstrumentorPreview:
             if isinstance(created_at, datetime):
                 attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = created_at.isoformat()
             else:
-                # fallback in case int or string gets passed
+                # fallback in case integer or string gets passed
                 attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = str(created_at)
 
         end_timestamp = None
