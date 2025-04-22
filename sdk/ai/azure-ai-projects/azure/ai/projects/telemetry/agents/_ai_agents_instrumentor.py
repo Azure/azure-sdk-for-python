@@ -390,7 +390,7 @@ class _AIAgentsInstrumentorPreview:
                 tool_call = {
                     "id": t.id,
                     "type": t.type,
-                    t.type: {"bing_grounding": t.bing_grounding},
+                    t.type: t.bing_grounding,
                 }
             else:
                 tool_details = t.as_dict()[t.type]
