@@ -1088,15 +1088,17 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     def execute(self, tool_call: Any) -> Any:
         pass
 
+
 class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
     """
     A tool that connects to a sub-agent, with a description describing the conditions
     or domain where the sub-agent would be called.
     """
+
     def __init__(self, id: str, name: str, description: str):
         """
-        Initialize ConnectedAgentTool with an id, name, and description. 
-        
+        Initialize ConnectedAgentTool with an id, name, and description.
+
         :param id: The ID of the connected agent.
         :param name: The name of the connected agent.
         :param description: The description of the connected agent, used by the calling agent
@@ -1130,6 +1132,7 @@ class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
         """
+
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
