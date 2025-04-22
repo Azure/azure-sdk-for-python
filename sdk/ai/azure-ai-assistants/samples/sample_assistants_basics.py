@@ -54,6 +54,11 @@ with assistants_client:
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
+    # List all threads for the agent
+    # [START list_threads]
+    threads = assistants_client.list_threads()
+    # [END list_threads]
+
     # [START create_run]
     run = assistants_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
 

@@ -652,7 +652,7 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize assistant OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
+    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth, default_parameters=["format"]
 )
 openapi_tool.add_definition(
     name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
@@ -743,6 +743,19 @@ thread = assistants_client.create_thread(tool_resources=file_search.resources)
 ```
 
 <!-- END SNIPPET -->
+
+#### List Threads
+
+To list all threads attached to a given agent, use the list_threads API:
+
+<!-- SNIPPET:sample_assistants_basics.list_threads -->
+
+```python
+threads = assistants_client.list_threads()
+```
+
+<!-- END SNIPPET -->
+
 ### Create Message
 
 To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
