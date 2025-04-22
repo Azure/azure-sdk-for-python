@@ -6,7 +6,7 @@ Use the AI Projects client library (in preview) to:
 * **Enumerate connected Azure resources** and get their properties.
 * **Upload documents and create Datasets** to reference them.
 * **Create and enumerate search Indexes**.
-* **Get an authenticated Assistant client**.
+* **Get an authenticated Agents client**.
 * **Get an authenticated Inference client** (Azure OpenAI or Azure AI Inference) for chat completions, text or image embeddings.
 * **Read a Prompty file or string** and render messages for inference clients.
 * **Run Evaluations** to assess the performance of generative AI applications.
@@ -82,16 +82,16 @@ project_client = AIProjectClient.from_connection_string(
 
 ## Examples
 
-### Getting an authenticated Assistant client
+### Getting an authenticated Agents client
 
-Below is a code example of how to get an authenticated `AssistantsClient` from the `azure-ai-assistants` package.
-Full samples can be found under the `assistants` folder in the [package samples][samples].
+Below is a code example of how to get an authenticated `AgentsClient` from the `azure-ai-agents` package.
+Full samples can be found under the `agents` folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_get_assistants_client.assistants_sample -->
+<!-- SNIPPET:sample_get_agents_client.agents_sample -->
 
 ```python
-with project_client.assistants.get_client() as client:
-    # TODO: Do something with the assistants client...
+with project_client.agents.get_client() as client:
+    # TODO: Do something with the agents client...
     pass
 ```
 

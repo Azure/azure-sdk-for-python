@@ -6,15 +6,15 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    AssistantsClient from the azure.ai.assistants package. For more information on 
-    the azure.ai.assistants package see https://pypi.org/project/azure-ai-assistants/.
+    AgentsClient from the azure.ai.agents package. For more information on 
+    the azure.ai.agents package see https://pypi.org/project/azure-ai-agents/.
 
 USAGE:
-    python sample_get_assistants_client.py
+    python sample_get_agents_client.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-assistants azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -32,8 +32,8 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
-    # [START assistants_sample]
-    with project_client.assistants.get_client() as client:
-        # TODO: Do something with the assistants client...
+    # [START agents_sample]
+    with project_client.agents.get_client() as client:
+        # TODO: Do something with the agents client...
         pass
     # [END sample]

@@ -8,16 +8,16 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-from ._patch_assistants_async import AssistantsOperations
+from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_inference_async import InferenceOperations
 from ._patch_telemetry_async import TelemetryOperations
 
 __all__: List[str] = [
     "InferenceOperations",
-    "DatasetsOperations",
-    "AssistantsOperations",
     "TelemetryOperations",
+    "DatasetsOperations",
+    "AgentsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

@@ -6,15 +6,15 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    asynchronous AssistantsClient from the azure.ai.assistants package. For more information on 
-    the azure.ai.assistants package see https://pypi.org/project/azure-ai-assistants/.
+    asynchronous AgentsClient from the azure.ai.agents package. For more information on 
+    the azure.ai.agents package see https://pypi.org/project/azure-ai-agents/.
 
 USAGE:
-    python sample_get_assistants_client_async.py
+    python sample_get_agents_client_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-assistants aiohttp azure-identity
+    pip install azure-ai-projects azure-ai-agents aiohttp azure-identity
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -27,7 +27,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
 
 
-async def sample_get_assistants_client_async():
+async def sample_get_agents_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
 
@@ -36,13 +36,13 @@ async def sample_get_assistants_client_async():
         credential=DefaultAzureCredential(),
     ) as project_client:
 
-        async with project_client.assistants.get_client() as client:
-            # TODO: Do something with the assistant client...
+        async with project_client.agents.get_client() as client:
+            # TODO: Do something with the agents client...
             pass
 
 
 async def main():
-    await sample_get_assistants_client_async()
+    await sample_get_agents_client_async()
 
 
 if __name__ == "__main__":

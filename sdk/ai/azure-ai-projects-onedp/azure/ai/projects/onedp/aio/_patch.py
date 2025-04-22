@@ -10,7 +10,7 @@ from typing import List, Optional, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import InferenceOperations, AssistantsOperations, TelemetryOperations
+from .operations import InferenceOperations, AgentsOperations, TelemetryOperations
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -18,8 +18,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.aio.operations.ConnectionsOperations
-    :ivar assistants: AssistantsOperations operations
-    :vartype assistants: azure.ai.projects.onedp.aio.operations.AssistantsOperations
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.projects.onedp.aio.operations.AgentsOperations
     :ivar inference: InferenceOperations operations
     :vartype inference: azure.ai.projects.onedp.aio.operations.InferenceOperations
     :ivar telemetry: TelemetryOperations operations
@@ -54,7 +54,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
-        self.assistants = AssistantsOperations(self)
+        self.agents = AgentsOperations(self)
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

@@ -42,7 +42,7 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_BLOB_STORAGE = "AzureBlob"
     """Azure Blob Storage, with specified container"""
     AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
-    """Azure Blob Storage, with container not specified (used by Assistants)"""
+    """Azure Blob Storage, with container not specified (used by Agents)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
     COSMOS_DB = "CosmosDB"

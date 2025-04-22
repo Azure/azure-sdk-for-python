@@ -140,7 +140,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                     logger.debug("[upload_file_and_create] Done uploading")
 
-                    dataset_version = await self.create_version(
+                    dataset_version = await self.create_version(  # TODO: Change this to self.create_or_update_version
                         name=name,
                         version=output_version,
                         body=DatasetVersion(
@@ -203,7 +203,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             if not files_uploaded:
                 raise ValueError("The provided folder is empty.")
 
-            dataset_version = await self.create_version(
+            dataset_version = await self.create_version(  # TODO: Change this to self.create_or_update_version
                 name=name,
                 version=output_version,
                 body=DatasetVersion(
