@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import requests
 import tempfile
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from io import BytesIO
-from typing import Any, Dict, Tuple
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -25,14 +25,18 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     StandardBlobTier,
 )
-from azure.storage.blob._serialize import get_api_version
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
-from test_helpers import NonSeekableStream, ProgressTracker
+from test_helpers import (
+    NonSeekableStream,
+    ProgressTracker,
+    _build_base_file_share_headers,
+    _create_file_share_oauth
+)
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -83,44 +87,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
     def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
         return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
 
-    def _build_base_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
-        return {
-            'Authorization': bearer_token_string,
-            'Content-Length': str(content_length),
-            'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
-            'x-ms-version': get_api_version({}),
-            'x-ms-file-request-intent': 'backup',
-        }
-
-    def _create_file_share_oauth(
-        self, bearer_token_string: str,
-        storage_account_name: str,
-        data: bytes
-    ) -> Tuple[str, str]:
-        share_name = self.get_resource_name('utshare')
-        file_name = self.get_resource_name('file')
-        base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
-
-        # Creates file share
-        with requests.Session() as session:
-            session.put(
-                url=base_url,
-                headers=self._build_base_file_share_headers(bearer_token_string),
-                params={'restype': 'share'}
-            )
-
-            # Creates the file itself
-            headers = self._build_base_file_share_headers(bearer_token_string)
-            headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
-            session.put(url=base_url + "/" + file_name, headers=headers)
-
-            # Upload the supplied data to the file
-            headers = self._build_base_file_share_headers(bearer_token_string, 1024)
-            headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-            session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={'comp': 'range'})
-
-        return file_name, base_url
-
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
@@ -160,7 +126,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Set up source file share with random data
         source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        file_name, base_url = self._create_file_share_oauth(
+        file_name, base_url = _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
             source_data
@@ -190,7 +158,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         finally:
             requests.delete(
                 url=base_url,
-                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                headers=_build_base_file_share_headers(bearer_token_string, 0),
                 params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
@@ -207,7 +175,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Set up source file share with random data
         source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        file_name, base_url = self._create_file_share_oauth(
+        file_name, base_url = _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
             source_data
@@ -241,113 +211,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         finally:
             requests.delete(
                 url=base_url,
-                headers=self._build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_copy_from_file_to_blob_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        bearer_token_string = self._get_bearer_token_string()
-
-        # Set up source file share with random data
-        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        file_name, base_url = self._create_file_share_oauth(
-            bearer_token_string,
-            storage_account_name,
-            source_data
-        )
-
-        # Set up destination blob without data
-        blob_service_client = BlobServiceClient(
-            account_url=self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
-        )
-        destination_blob_client = blob_service_client.get_blob_client(
-            container=self.source_container_name,
-            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
-        )
-
-        try:
-            # Act
-            with pytest.raises(ValueError):
-                destination_blob_client.start_copy_from_url(
-                    source_url=base_url + "/" + file_name,
-                    source_authorization=bearer_token_string,
-                    source_token_intent='backup',
-                    requires_sync=False
-                )
-            destination_blob_client.start_copy_from_url(
-                source_url=base_url + "/" + file_name,
-                source_authorization=bearer_token_string,
-                source_token_intent='backup',
-                requires_sync=True
-            )
-            destination_blob_data = destination_blob_client.download_blob().readall()
-
-            # Assert
-            assert destination_blob_data == source_data
-        finally:
-            requests.delete(
-                url=base_url,
-                headers=self._build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_append_block_from_file_to_blob_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        bearer_token_string = self._get_bearer_token_string()
-
-        # Set up source file share with random data
-        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        file_name, base_url = self._create_file_share_oauth(
-            bearer_token_string,
-            storage_account_name,
-            source_data
-        )
-
-        # Set up destination blob without data
-        account_url = self.account_url(storage_account_name, "blob")
-        blob_service_client = BlobServiceClient(
-            account_url=account_url,
-            credential=storage_account_key
-        )
-        destination_blob_client = BlobClient(
-            account_url=account_url,
-            container_name=self.source_container_name,
-            blob_name=self.get_resource_name(TEST_BLOB_PREFIX + "1"),
-            credential=storage_account_key
-        )
-        destination_blob_client.create_append_blob()
-
-        try:
-            # Act
-            destination_blob_client.append_block_from_url(
-                copy_source_url=base_url + "/" + file_name,
-                source_authorization=bearer_token_string,
-                source_token_intent='backup'
-            )
-            destination_blob_data = destination_blob_client.download_blob().readall()
-
-            # Assert
-            assert destination_blob_data == source_data
-        finally:
-            requests.delete(
-                url=base_url,
-                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                headers=_build_base_file_share_headers(bearer_token_string, 0),
                 params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
