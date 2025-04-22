@@ -189,6 +189,7 @@ class HttpHeaders:
     DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"
     IsRUPerMinuteUsed = "x-ms-documentdb-is-ru-per-minute-used"
     OfferIsRUPerMinuteThroughputEnabled = "x-ms-offer-is-ru-per-minute-throughput-enabled"
+    ThroughputBucket = "x-ms-cosmos-throughput-bucket"
 
     # Partitioned collection headers
     PartitionKey = "x-ms-documentdb-partitionkey"
