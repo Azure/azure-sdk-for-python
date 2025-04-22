@@ -20,11 +20,11 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_databases_list_by_cluster(self, resource_group):
         response = self.client.databases.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_databases_begin_create(self, resource_group):
         response = self.client.databases.begin_create(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -62,7 +62,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
                 },
                 "type": "str",
             },
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_databases_begin_update(self, resource_group):
         response = self.client.databases.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -89,7 +89,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
                 "redisVersion": "str",
                 "resourceState": "str",
             },
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,12 +97,12 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_databases_get(self, resource_group):
         response = self.client.databases.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -110,12 +110,12 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_databases_begin_delete(self, resource_group):
         response = self.client.databases.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,12 +123,12 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_keys(self, resource_group):
+    def test_databases_list_keys(self, resource_group):
         response = self.client.databases.list_keys(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -136,13 +136,13 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_regenerate_key(self, resource_group):
+    def test_databases_begin_regenerate_key(self, resource_group):
         response = self.client.databases.begin_regenerate_key(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
             parameters={"keyType": "str"},
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -150,13 +150,13 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_import_method(self, resource_group):
+    def test_databases_begin_import_method(self, resource_group):
         response = self.client.databases.begin_import_method(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
             parameters={"sasUris": ["str"]},
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -164,13 +164,13 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export(self, resource_group):
+    def test_databases_begin_export(self, resource_group):
         response = self.client.databases.begin_export(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
             parameters={"sasUri": "str"},
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -178,13 +178,13 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_force_unlink(self, resource_group):
+    def test_databases_begin_force_unlink(self, resource_group):
         response = self.client.databases.begin_force_unlink(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
             parameters={"ids": ["str"]},
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -192,13 +192,13 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_force_link_to_replication_group(self, resource_group):
+    def test_databases_begin_force_link_to_replication_group(self, resource_group):
         response = self.client.databases.begin_force_link_to_replication_group(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            parameters={"groupNickname": "str", "linkedDatabases": [{"id": "str", "state": "str"}]},
-            api_version="2024-09-01-preview",
+            parameters={"geoReplication": {"groupNickname": "str", "linkedDatabases": [{"id": "str", "state": "str"}]}},
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -206,13 +206,12 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_flush(self, resource_group):
+    def test_databases_begin_flush(self, resource_group):
         response = self.client.databases.begin_flush(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            parameters={"ids": ["str"]},
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -220,12 +219,12 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_upgrade_db_redis_version(self, resource_group):
+    def test_databases_begin_upgrade_db_redis_version(self, resource_group):
         response = self.client.databases.begin_upgrade_db_redis_version(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
