@@ -10,14 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from azure.core.tracing.decorator import distributed_trace
 
 
-class AssistantsOperations:
+class AgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
-        :attr:`assistants` attribute.
+        :attr:`agents` attribute.
     """
 
     # TODO: Merge all code related to handling user-agent, into a single place.
@@ -38,29 +38,28 @@ class AssistantsOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_client(self, **kwargs) -> "AssistantsClient":  # type: ignore[name-defined]
-        """Get an authenticated asynchronous AssistantsClient (from the package azure-ai-assistants) to use with
+    def get_client(self, **kwargs) -> "AgentsClient":  # type: ignore[name-defined]
+        """Get an authenticated asynchronous AgentsClient (from the package azure-ai-agents) to use with
         your AI Foundry Project. Keyword arguments are passed to the constructor of
-        ChatCompletionsClient.
+        AgentsClient.
 
-        .. note:: The package `azure-ai-assistants` must be installed prior to calling this method.
+        .. note:: The package `azure-ai-agents` must be installed prior to calling this method.
 
-        :return: An authenticated Assistant Client.
-        :rtype: ~azure.ai.assistants.AssistantsClient
+        :return: An authenticated Agents Client.
+        :rtype: ~azure.ai.agents.AgentsClient
 
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-assistants` package
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-agents` package
          is not installed.
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         try:
-            from azure.ai.assistants.aio import AssistantsClient
+            from azure.ai.agents.aio import AgentsClient
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                "Azure AI Assistant SDK is not installed. Please install it using 'pip install azure-ai-assistants'"
+                "Azure AI Agents SDK is not installed. Please install it using 'pip install azure-ai-agents'"
             ) from e
 
-        client = AssistantsClient(
+        client = AgentsClient(
             endpoint=self._outer_instance._config.endpoint,  # pylint: disable=protected-access
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             user_agent=kwargs.pop("user_agent", self._user_agent),
