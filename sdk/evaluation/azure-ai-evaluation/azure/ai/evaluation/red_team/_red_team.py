@@ -54,7 +54,7 @@ from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.memory import CentralMemory
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator import Orchestrator, CrescendoOrchestrator
+from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 
@@ -75,7 +75,6 @@ from ._utils.logging_utils import (
     setup_logger, log_section_header, log_subsection_header,
     log_strategy_start, log_strategy_completion, log_error
 )
-from ._utils.rai_service_target import AzureRAIServiceTarget
 
 @experimental
 class RedTeam():
@@ -940,20 +939,6 @@ class RedTeam():
     def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         call_to_orchestrators = []
-        
-        # Special handling for Crescendo strategy
-        if AttackStrategy.Crescendo in attack_strategy:
-            self.logger.debug("Using Crescendo orchestrator for Crescendo strategy")
-            
-            # Include both Crescendo orchestrator for the Crescendo strategy
-            # and PromptSendingOrchestrator for baseline testing
-            call_to_orchestrators.extend([
-                self._crescendo_orchestrator,  # For Crescendo strategy
-                self._prompt_sending_orchestrator  # For baseline testing
-            ])
-            return call_to_orchestrators
-            
-        # Default handling for other strategies
         # Sending PromptSendingOrchestrator for each complexity level
         if AttackStrategy.EASY in attack_strategy:
             call_to_orchestrators.extend([self._prompt_sending_orchestrator])
@@ -1631,8 +1616,7 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120,
-            skip_baseline: bool = False
+            timeout: int = 120
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1918,29 +1902,21 @@ class RedTeam():
                 
                 self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
                 
-                # Skip baseline task if skip_baseline is True and this is a baseline strategy
-                if skip_baseline and strategy == AttackStrategy.Baseline:
-                    self.logger.info(f"Skipping baseline task for {risk_category.value} as skip_baseline=True")
-                    async with progress_bar_lock:
-                        progress_bar.update(1)
-                    # Mark as completed in tracking dictionary
-                    self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
-                else:
-                    orchestrator_tasks.append(
-                        self._process_attack(
-                            target=target,
-                            call_orchestrator=call_orchestrator,
-                            all_prompts=objectives,
-                            strategy=strategy,
-                            progress_bar=progress_bar,
-                            progress_bar_lock=progress_bar_lock,
-                            scan_name=scan_name,
-                            data_only=data_only,
-                            output_path=output_path,
-                            risk_category=risk_category,
-                            timeout=timeout
-                        )
+                orchestrator_tasks.append(
+                    self._process_attack(
+                        target=target,
+                        call_orchestrator=call_orchestrator,
+                        all_prompts=objectives,
+                        strategy=strategy,
+                        progress_bar=progress_bar,
+                        progress_bar_lock=progress_bar_lock,
+                        scan_name=scan_name,
+                        data_only=data_only,
+                        output_path=output_path,
+                        risk_category=risk_category,
+                        timeout=timeout
                     )
+                )
                 
             # Process tasks in parallel with optimized batching
             if parallel_execution and orchestrator_tasks:
