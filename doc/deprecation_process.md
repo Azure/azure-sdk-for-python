@@ -29,14 +29,14 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 A disclaimer should be added indicating end-of-life date (EOLDate) of the package and directing to a replacement package and migration guide as necessary.
   - The EOLDate should be in the format `MM-DD-YYYY`.
-    - If there is no replacement package, the package EOLDate should be the service retirement date. This does not necessarily need to be the same as the release date in the CHANGELOG.md, since the package may be deprecated before/after the service is retired.
+    - If there is no replacement package, the package EOLDate should be the service retirement date.
     - If there is a replacement package (or repo), the EOLDate should be the same as the deprecation release date of the old package in the CHANGELOG.md.
     - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
   - The link to the migration guide should be a link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this aka.ms link, follow the "How to create aka.ms links" section [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/233/Azure-SDK-AKA.ms-Links?anchor=how-to-create-aka.ms-links).
     - **NOTE**: You may decide to postpone or skip writing a migration guide based on downloads numbers (found on [pypistats](https://pypistats.org/), [pepy.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 
-The disclaimer should be added at the very top of the README.md before any other text in the following format.
+Replace ALL existing text with a disclaimer in the following format.
 
   - If a replacement package and migration guide exist:
 
@@ -79,6 +79,22 @@ The disclaimer should be added at the very top of the README.md before any other
   - This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
   ```
 
+## Remove all links pointing to the package in the main branch
+
+Ensure all links in the samples/README.md and other files that point to the package in the main branch are removed or redirected, as the package will be deleted from main after release.
+
+E.g. In `samples/README.md`, update:
+
+```md
+[send.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/mypackage/azure-mypackage/samples/sync/send.py) - Example of sending data.
+```
+
+to
+
+```md
+sync/send.py - Example of sending data.
+```
+
 ## sdk_packaging.toml
 
 - Add `auto_update = false` if not already present to avoid the bot overriding your changes.
@@ -104,7 +120,6 @@ The disclaimer should be added at the very top of the README.md before any other
       - name: azure-mypackage
         safeName: azuremypackage
   ```
-
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
