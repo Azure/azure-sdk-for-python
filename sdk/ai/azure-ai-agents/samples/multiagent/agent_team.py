@@ -201,9 +201,7 @@ class AgentTeam:
         """
         toolset = ToolSet()
         toolset.add(default_function_tool)
-        instructions = (
-            self.TEAM_LEADER_INSTRUCTIONS.format(agent_name="TeamLeader", team_name=self.team_name) + "\n"
-        )
+        instructions = self.TEAM_LEADER_INSTRUCTIONS.format(agent_name="TeamLeader", team_name=self.team_name) + "\n"
         # List all agents (will be empty at this moment if you haven't added any, or you can append after they're added)
         for member in self._members:
             instructions += f"- {member.name}: {member.instructions}\n"
@@ -334,9 +332,7 @@ class AgentTeam:
                         messages = self._agents_client.list_messages(thread_id=self._agent_thread.id)
                         text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
                         if text_message and text_message.text:
-                            print(
-                                f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}"
-                            )
+                            print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
                             if self._current_task_span is not None:
                                 self._add_task_completion_event(self._current_task_span, result=text_message.text.value)
 

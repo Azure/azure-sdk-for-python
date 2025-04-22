@@ -89,9 +89,7 @@ with agents_client:
     message = agents_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print(f"Created message, message ID {message.id}")
 
-    with agents_client.create_stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
+    with agents_client.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
         for chunk in stream.get_stream_chunks():
             print(chunk)
 

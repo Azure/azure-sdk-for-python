@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -72,7 +73,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 f"/Microsoft.MachineLearningServices/workspaces/{project_name}"
             )
             # Override the credential scope with the legacy one.
-            kwargs['credential_scopes'] =  ["https://management.azure.com/.default"]
+            kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
         self._function_tool = _models.FunctionTool(set())
@@ -201,9 +202,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
 
     @overload
-    def create_agent(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -217,9 +216,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
 
     @overload
-    def create_agent(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -1748,9 +1745,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
-    def _handle_submit_tool_outputs(
-        self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler
-    ) -> None:
+    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:

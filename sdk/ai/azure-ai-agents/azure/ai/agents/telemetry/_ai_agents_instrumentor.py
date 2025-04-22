@@ -534,9 +534,7 @@ class _AIAgentsInstrumentorPreview:
     ) -> "Optional[AbstractSpan]":
         run_span = event_handler.span if isinstance(event_handler, _AgentEventHandlerTraceWrapper) else None
         if run_span is None:
-            run_span = (
-                event_handler.span if isinstance(event_handler, _AsyncAgentEventHandlerTraceWrapper) else None
-            )
+            run_span = event_handler.span if isinstance(event_handler, _AsyncAgentEventHandlerTraceWrapper) else None
 
         if run_span:
             recorded = self._add_tool_message_events(run_span, tool_outputs)

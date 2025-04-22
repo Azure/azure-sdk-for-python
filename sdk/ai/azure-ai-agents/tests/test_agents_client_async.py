@@ -82,7 +82,7 @@ agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_agents",
     # TODO: uncomment this endpoint when re running with 1DP
-    #azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
+    # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
     # TODO: remove this endpoint when re running with 1DP
     azure_ai_agents_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
     azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
@@ -197,9 +197,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -304,9 +302,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
 
             # create body for agent
@@ -372,9 +368,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -468,9 +462,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -498,9 +490,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -600,9 +590,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -638,9 +626,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -650,9 +636,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -719,9 +703,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -731,9 +713,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create messages
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
             message2 = await client.create_message(
@@ -761,9 +741,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -778,9 +756,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert messages0.data.__len__() == 0
 
             # create messages and check message list for each one
-            message1 = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message1 = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message1.id
             print("Created message, message ID", message1.id)
             messages1 = await client.list_messages(thread_id=thread.id)
@@ -823,9 +799,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -835,9 +809,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -865,9 +837,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -894,9 +864,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -924,9 +892,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -958,9 +924,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -988,9 +952,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1021,9 +983,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1055,9 +1015,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1090,9 +1048,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1126,9 +1082,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1138,9 +1092,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1232,9 +1184,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1271,9 +1221,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1313,9 +1261,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1356,9 +1302,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1421,9 +1365,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, what time is it?"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1513,9 +1455,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, what time is it?"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1558,9 +1498,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
                         body = {"tool_outputs": tool_outputs}
-                        await client.submit_tool_outputs_to_run(
-                            thread_id=thread.id, run_id=run.id, body=body
-                        )
+                        await client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
 
                 print("Current run status:", run.status)
 
@@ -1608,9 +1546,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.create_message(
-                thread_id=thread.id, role="user", content="Hello, what time is it?"
-            )
+            message = await client.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1911,9 +1847,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1963,9 +1897,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -2023,9 +1955,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -2149,9 +2079,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-            )
+            agent = await client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -2381,9 +2309,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         if streaming:
             thread_run = None
-            async with await ai_client.create_stream(
-                thread_id=thread.id, agent_id=agent.id
-            ) as stream:
+            async with await ai_client.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
                 async for _, event_data, _ in stream:
                     if isinstance(event_data, ThreadRun):
                         thread_run = event_data
@@ -2548,9 +2474,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
-            )
+            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2613,9 +2537,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
-            )
+            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2932,9 +2854,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                             print("Stream completed.")
                             break
             else:
-                run = await ai_client.create_and_process_run(
-                    thread_id=thread.id, agent_id=agent.id, include=include
-                )
+                run = await ai_client.create_and_process_run(thread_id=thread.id, agent_id=agent.id, include=include)
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
             steps = await ai_client.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)
@@ -3042,9 +2962,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     async def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(
-                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
-            )
+            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             return file.id
         return None

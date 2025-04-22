@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -74,7 +75,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 f"/Microsoft.MachineLearningServices/workspaces/{project_name}"
             )
             # Override the credential scope with the legacy one.
-            kwargs['credential_scopes'] =  ["https://management.azure.com/.default"]
+            kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
         self._function_tool = _models.AsyncFunctionTool(set())
@@ -203,9 +204,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
 
     @overload
-    async def create_agent(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
+    async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.

@@ -38,9 +38,7 @@ with agents_client:
 
     # Upload a file and wait for it to be processed
     # [START upload_file_and_create_agent_with_code_interpreter]
-    file = agents_client.upload_file_and_poll(
-        file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-    )
+    file = agents_client.upload_file_and_poll(file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
     code_interpreter = CodeInterpreterTool(file_ids=[file.id])

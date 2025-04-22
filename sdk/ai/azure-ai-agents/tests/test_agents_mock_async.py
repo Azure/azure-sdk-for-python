@@ -391,9 +391,7 @@ class TestAgentsMock:
 
             self._set_toolcalls(agents_client, toolset1, toolset2)
             # Create run with new tool set, which also can be none.
-            await agents_client.create_and_process_run(
-                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2
-            )
+            await agents_client.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2)
             if toolset2 is not None:
                 self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset2)
             else:

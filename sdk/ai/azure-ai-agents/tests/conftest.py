@@ -135,11 +135,11 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         json_path="data_source.uri",
         value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
     )
-    
+
     add_body_key_sanitizer(
         json_path="tool_resources.azure_ai_search.indexes[*].index_connection_id",
-        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex"
-    ) 
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    )
 
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")

@@ -55,9 +55,7 @@ class TestSignatures:
             ),
         ), patch(
             "azure.ai.agents._operations.AgentsClientOperationsMixin.get_vector_store",
-            wraps=get_mock_fn(
-                agent.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})
-            ),
+            wraps=get_mock_fn(agent.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})),
         ):
 
             agent.create_vector_store_and_poll(file_ids=file_ids, sleep_interval=0)
@@ -103,9 +101,7 @@ class TestSignatures:
     @pytest.mark.asyncio
     @pytest.mark.skip("Defect: during body as JSON and IO Bytes don't, backend not called with stream=False")
     @assert_same_http_requests
-    async def test_create_run(
-        self, agent: AgentsClient, async_agent: AsyncAgentsClient, assertion: OverloadAssertion
-    ):
+    async def test_create_run(self, agent: AgentsClient, async_agent: AsyncAgentsClient, assertion: OverloadAssertion):
         thread_id = "thread_id"
         agent_id = "agent_id"
         body = {"agent_id": agent_id}

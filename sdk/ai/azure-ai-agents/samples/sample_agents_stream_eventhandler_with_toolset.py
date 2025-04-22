@@ -97,9 +97,7 @@ with agents_client:
     )
     print(f"Created message, message ID {message.id}")
 
-    with agents_client.create_stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
+    with agents_client.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
         stream.until_done()
 
     agents_client.delete_agent(agent.id)
