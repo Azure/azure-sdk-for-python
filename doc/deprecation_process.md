@@ -79,22 +79,6 @@ Replace ALL existing text with a disclaimer in the following format.
   - This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
   ```
 
-## Remove all links pointing to the package in the main branch
-
-Ensure all links in the samples/README.md and other files that point to the package in the main branch are removed or redirected, as the package will be deleted from main after release.
-
-E.g. In `samples/README.md`, update:
-
-```md
-[send.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/mypackage/azure-mypackage/samples/sync/send.py) - Example of sending data.
-```
-
-to
-
-```md
-sync/send.py - Example of sending data.
-```
-
 ## sdk_packaging.toml
 
 - Add `auto_update = false` if not already present to avoid the bot overriding your changes.
@@ -192,7 +176,9 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
 
 - Append the following to the end of the existing README.md.
   ```md
-  Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage).
+  Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage). The latest release can be found on [PyPI](https://pypi.org/project/azure-mypackage/).
+
+  If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.
   ```
 - Delete all files under `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package root.
 - You will see an `Artifacts` parameter in `mypackage/ci.yml`.
@@ -212,7 +198,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package listed is `azure-mypackage`, remove the following files from `mypackage`: `ci.yml`, `tests.yml`, `test-resources.bicep`, `test-resources.json`, `perf.yml`, `perf-tests.yml`, `perf-resources.bicep`.
+  - If the only package in the `mypackage` directory is `azure-mypackage`, delete all files -- _not subdirectories_-- in `mypackage` (i.e. `ci.yml`, `tests.yml`, `test-resources.bicep`, etc.).
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
