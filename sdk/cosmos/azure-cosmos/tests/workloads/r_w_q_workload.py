@@ -4,10 +4,10 @@ import os
 import sys
 
 from azure.cosmos import documents
-from ..workload_utils import upsert_item_concurrently, read_item_concurrently, query_items_concurrently, create_logger
-from ..workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
-                                CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER, CONCURRENT_QUERIES)
-sys.path.append(r"../")
+from tests.workloads.workload_utils import upsert_item_concurrently, read_item_concurrently, query_items_concurrently, create_logger
+from tests.workloads.workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
+                                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER, CONCURRENT_QUERIES)
+sys.path.append(r"/")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio

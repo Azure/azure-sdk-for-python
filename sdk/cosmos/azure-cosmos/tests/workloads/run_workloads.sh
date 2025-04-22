@@ -5,11 +5,9 @@ if [ $# -eq 0 ]; then
 fi
 
 num_runs=$1
-# Get the directory where the script is located
-WORKLOAD_DIR="core_workloads"
 
-# Loop over each Python file in the directory and run it num_runs times in background.
-for file in "$WORKLOAD_DIR"/*.py; do
+# Loop over each Python file in the current directory ending with _workload.py
+for file in ./*_workload.py; do
     for (( i=0; i<num_runs; i++ )); do
         python3 "$file" &
     done

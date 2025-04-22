@@ -3,12 +3,12 @@
 import os
 import sys
 
-from ..workload_utils import create_logger, get_random_item
-from ..workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
-                                CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER, CONCURRENT_QUERIES,
-                                PARTITION_KEY)
+from tests.workloads.workload_utils import create_logger, get_random_item
+from tests.workloads.workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
+                                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER, CONCURRENT_QUERIES,
+                                              PARTITION_KEY)
 
-sys.path.append(r"../")
+sys.path.append(r"/")
 
 from azure.cosmos import CosmosClient, documents
 
