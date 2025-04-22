@@ -131,11 +131,6 @@
               "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
-              },
-              "deleteRetentionPolicy": {
-                "allowPermanentDelete": false,
-                "enabled": true,
-                "days": 1
               }
             },
         "dependsOn": [
@@ -443,6 +438,7 @@
           "name": "[concat(variables('dataLakeSoftDeleteAccountName'), '/default')]",
           "properties": {
             "deleteRetentionPolicy": {
+              "allowPermanentDelete": false,
               "enabled": true,
               "days": 1
             },
