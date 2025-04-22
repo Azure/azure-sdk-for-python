@@ -559,9 +559,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "requires_action",
-                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
-                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 },
             },
@@ -779,9 +781,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "requires_action",
-                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
-                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 },
             },

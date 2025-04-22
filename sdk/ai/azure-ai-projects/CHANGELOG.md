@@ -4,6 +4,9 @@
 
 ### Features added
 
+* Added agent tool call tracing support for all tool call types when streaming with AgentEventHandler based event handler
+* Added tracing for listing agent run steps
+
 ### Sample updates
 
 ### Bugs Fixed
