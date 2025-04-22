@@ -5,3 +5,6 @@ extends:
     parameters:
       ServiceDirectory: core
       BuildTargetingString: '*'
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'true'

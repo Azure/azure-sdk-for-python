@@ -377,6 +377,7 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prompty",
     "pschema",
     "PSECRET",
     "pydantic",
@@ -1413,6 +1414,8 @@
         "Inadherent",
         "nbformat",
         "nbconvert",
+        "onedp",
+        "azureai",
       ]
     },
     {
@@ -1842,6 +1845,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

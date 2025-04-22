@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-lines
+# pylint: disable=protected-access,too-many-lines,unreachable
 import copy
 import decimal
 import hashlib
@@ -1083,7 +1083,7 @@ def try_enable_internal_components(*, force=False) -> bool:
 
         enable_internal_components_in_pipeline(force=force)
 
-        return True
+        return True  # pylint: disable=unreachable
     return False
 
 

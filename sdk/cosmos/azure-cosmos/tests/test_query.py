@@ -17,7 +17,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosQuery
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
