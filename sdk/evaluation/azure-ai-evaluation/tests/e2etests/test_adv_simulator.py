@@ -866,6 +866,14 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_jailbreak_sim_order_randomness(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, DirectAttackSimulator
@@ -894,82 +902,6 @@ class TestAdvSimulator:
             }
 
         simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
-
-        outputs1 = asyncio.run(
-            simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_REWRITE,
-                max_conversation_turns=1,
-                max_simulation_results=1,
-                target=callback,
-                api_call_retry_limit=3,
-                api_call_retry_sleep_sec=1,
-                api_call_delay_sec=30,
-                concurrent_async_task=1,
-                randomization_seed=1,
-            )
-        )
-
-        outputs2 = asyncio.run(
-            simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_REWRITE,
-                max_conversation_turns=1,
-                max_simulation_results=1,
-                target=callback,
-                api_call_retry_limit=3,
-                api_call_retry_sleep_sec=1,
-                api_call_delay_sec=30,
-                concurrent_async_task=1,
-                randomization_seed=1,
-            )
-        )
-
-        outputs3 = asyncio.run(
-            simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_REWRITE,
-                max_conversation_turns=1,
-                max_simulation_results=1,
-                target=callback,
-                api_call_retry_limit=3,
-                api_call_retry_sleep_sec=1,
-                api_call_delay_sec=30,
-                concurrent_async_task=1,
-                randomization_seed=2,
-            )
-        )
-        # Make sure the regular prompt exists within the jailbroken equivalent, but also that they aren't identical.
-        outputs1["regular"][0]["messages"][0]["content"] in outputs1["jailbreak"][0]["messages"][0]["content"]
-        outputs1["regular"][0]["messages"][0]["content"] != outputs1["jailbreak"][0]["messages"][0]["content"]
-        # Check that outputs1 and outputs2 are identical, but not identical to outputs3
-        outputs1["regular"][0]["messages"][0]["content"] == outputs2["regular"][0]["messages"][0]["content"]
-        outputs1["jailbreak"][0]["messages"][0]["content"] == outputs2["jailbreak"][0]["messages"][0]["content"]
-        outputs1["regular"][0]["messages"][0]["content"] != outputs3["regular"][0]["messages"][0]["content"]
-        outputs1["jailbreak"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
-        # Check that outputs3 has the same equivalency as outputs1, even without a provided seed.
-        outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
-        outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
-
-    def test_jailbreak_sim_order_randomness(self, azure_cred_onedp, project_scope_onedp):
-        os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, DirectAttackSimulator
-
-        async def callback(
-            messages: List[Dict],
-            stream: bool = False,
-            session_state: Any = None,
-            context: Optional[Dict[str, Any]] = None,
-        ) -> dict:
-            query = messages["messages"][0]["content"]
-
-            formatted_response = {"content": query, "role": "assistant"}
-            messages["messages"].append(formatted_response)
-            return {
-                "messages": messages["messages"],
-                "stream": stream,
-                "session_state": session_state,
-                "context": context,
-            }
-
-        simulator = DirectAttackSimulator(azure_ai_project=project_scope_onedp, credential=azure_cred_onedp)
 
         outputs1 = asyncio.run(
             simulator(

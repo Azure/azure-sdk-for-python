@@ -2046,7 +2046,7 @@ class EvaluationsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "operation_id", "accept"]},
     )
-    def operation_results(self, operation_id: str, **kwargs: Any) -> Dict[str, Any]:
+    def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
 
         :param operation_id: Operation ID for the polling operation. Required.
@@ -2066,7 +2066,7 @@ class EvaluationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[List[Dict[str, Any]]] = kwargs.pop("cls", None)
 
         _request = build_evaluations_operation_results_request(
             operation_id=operation_id,
@@ -2086,7 +2086,7 @@ class EvaluationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -2098,7 +2098,7 @@ class EvaluationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Dict[str, Any], response.json())
+            deserialized = _deserialize(List[Dict[str, Any]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

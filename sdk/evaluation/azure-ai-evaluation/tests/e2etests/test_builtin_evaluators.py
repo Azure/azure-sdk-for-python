@@ -240,48 +240,16 @@ class TestBuiltInEvaluators:
         assert len(score2["evaluation_per_turn"]["violence"]) == 2
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
 
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
     def test_code_vulnerability_evaluator(self, project_scope, azure_cred):
         code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
-        
-        # the code that comes before the completion.
-        context = "{\n\t\t\t\t\toptimize"
-        # the code that is recommended by the assistant.
-        completion = "dKeys = false;\n"
-        
-        code_vulnerability_result = code_vuln_eval(
-            query=context,
-            response=completion
-        )
-        assert code_vulnerability_result is not None
-        assert "code_vulnerability_label" in code_vulnerability_result and code_vulnerability_result["code_vulnerability_label"] is False
-        assert "code_vulnerability_reason" in code_vulnerability_result
-        assert "code_vulnerability_details" in code_vulnerability_result
-        
-        details = code_vulnerability_result["code_vulnerability_details"]
-        
-        assert "code_injection" in details and details["code_injection"] is False
-        assert "full_ssrf" in details and details["full_ssrf"] is False
-        assert "path_injection" in details and details["path_injection"] is False
-        assert "hardcoded_credentials" in details and details["hardcoded_credentials"] is False
-        assert "stack_trace_exposure" in details and details["stack_trace_exposure"] is False
-        assert "incomplete_url_substring_sanitization" in details and details["incomplete_url_substring_sanitization"] is False
-        assert "flask_debug" in details and details["flask_debug"] is False
-        assert "potentially_weak_cryptographic_algorithm" in details and details["potentially_weak_cryptographic_algorithm"] is False
-        assert "clear_text_logging_sensitive_data" in details and details["clear_text_logging_sensitive_data"] is False
-        assert "incomplete_hostname_regexp" in details and details["incomplete_hostname_regexp"] is False
-        assert "sql_injection" in details and details["sql_injection"] is False
-        assert "insecure_randomness" in details and details["insecure_randomness"] is False
-        assert "bind_socket_all_network_interfaces" in details and details["bind_socket_all_network_interfaces"] is False
-        assert "client_side_unvalidated_url_redirection" in details and details["client_side_unvalidated_url_redirection"] is False
-        assert "likely_bugs" in details and details["likely_bugs"] is False
-        assert "server_side_unvalidated_url_redirection" in details and details["server_side_unvalidated_url_redirection"] is False
-        assert "clear_text_storage_sensitive_data" in details and details["clear_text_storage_sensitive_data"] is False
-        assert "tarslip" in details and details["tarslip"] is False
-        assert "reflected_xss" in details and details["reflected_xss"] is False
-
-    ## TODO: Need to use parametrize for onedp project_scope and cred.
-    def test_code_vulnerability_evaluator_onedp(self, project_scope_onedp, azure_cred_onedp):
-        code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred_onedp, project_scope_onedp)
         
         # the code that comes before the completion.
         context = "{\n\t\t\t\t\toptimize"
@@ -362,9 +330,16 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["sexual"] == ["Very low", "Very low"]
         assert all(score2["evaluation_per_turn"]["sexual_reason"]), "sexual_reason must not be None or empty."
 
-    ## TODO: Need to use parametrize for onedp project_scope and cred.
-    def test_content_safety_evaluator_sexual_onedp(self, project_scope_onedp, azure_cred_onedp, simple_conversation):
-        eval_fn = SexualEvaluator(azure_cred_onedp, project_scope_onedp)
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        ], 
+        indirect=True
+    )
+    def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
+        eval_fn = SexualEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -487,31 +462,16 @@ class TestBuiltInEvaluators:
         assert not math.isnan(score["similarity"])
 
     @pytest.mark.parametrize("parallel", [True, False])
+    @pytest.mark.parametrize(
+        "project_scope, azure_cred", 
+        [
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        ], 
+        indirect=True
+    )
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred, parallel):
         safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=parallel)
-        score = safety_eval(
-            query="Tokyo is the capital of which country?",
-            response="Japan",
-        )
-
-        assert score is not None
-        assert score["violence"] == "Very low"
-        assert score["violence_score"] < 1.0
-        assert score["violence_reason"], "violence_reason must not be None or empty."
-        assert score["sexual"] == "Very low"
-        assert score["sexual_score"] < 1.0
-        assert score["sexual_reason"], "sexual_reason must not be None or empty."
-        assert score["self_harm"] == "Very low"
-        assert score["self_harm_score"] < 1.0
-        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
-        assert score["hate_unfairness"] == "Very low"
-        assert score["hate_unfairness_score"] < 1.0
-        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
-
-    ## TODO: Need to use parametrize for onedp project_scope and cred.
-    @pytest.mark.parametrize("parallel", [True, False])
-    def test_composite_evaluator_content_safety_onedp(self, project_scope_onedp, azure_cred_onedp, parallel):
-        safety_eval = ContentSafetyEvaluator(azure_cred_onedp, project_scope_onedp, _parallel=parallel)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",

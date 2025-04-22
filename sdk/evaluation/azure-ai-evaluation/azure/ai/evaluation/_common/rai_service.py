@@ -13,6 +13,7 @@ from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.core.exceptions import HttpResponseError
 
 import jwt
 
@@ -319,18 +320,16 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
 
     while True:
         headers = get_common_headers(token)
-        response = client.evaluations.operation_results(operation_id, headers=headers)
-        
-        if response.status_code == 200:
-            return response.json()
+        try:
+            return client.evaluations.operation_results(operation_id, headers=headers)
+        except HttpResponseError:
+            request_count += 1
+            time_elapsed = time.time() - start
+            if time_elapsed > RAIService.TIMEOUT:
+                raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
 
-        request_count += 1
-        time_elapsed = time.time() - start
-        if time_elapsed > RAIService.TIMEOUT:
-            raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
-
-        sleep_time = RAIService.SLEEP_TIME**request_count
-        await asyncio.sleep(sleep_time)
+            sleep_time = RAIService.SLEEP_TIME**request_count
+            await asyncio.sleep(sleep_time)
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
