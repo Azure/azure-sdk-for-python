@@ -207,7 +207,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             request_count = 0
             flag = True
             while flag:
-                response = session.red_teams.get_operation_result(operation_id, headers=headers)
+                response = session.evaluations.operation_results(operation_id, headers=headers)
                 if response.status_code == 200:
                     response_data = cast(List[Dict], response.json())
                     flag = False
@@ -268,22 +268,3 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "time_taken": time_taken,
             "full_response": full_response,
         }
-        
-    async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: str) -> Dict:
-        start = time.time()
-        request_count = 0
-
-        while True:
-            headers = get_common_headers(token)
-            response = client.evaluations.get_operation_result(operation_id, headers=headers)
-            
-            if response.status_code == 200:
-                return response.json()
-
-            request_count += 1
-            time_elapsed = time.time() - start
-            if time_elapsed > RAIService.TIMEOUT:
-                raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
-
-            sleep_time = RAIService.SLEEP_TIME**request_count
-            await asyncio.sleep(sleep_time)

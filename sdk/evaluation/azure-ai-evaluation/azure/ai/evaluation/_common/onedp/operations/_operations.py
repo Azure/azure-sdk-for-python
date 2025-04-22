@@ -272,7 +272,7 @@ def build_evaluations_operation_results_request(  # pylint: disable=name-too-lon
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")

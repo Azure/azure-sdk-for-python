@@ -319,7 +319,7 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
 
     while True:
         headers = get_common_headers(token)
-        response = client.evaluations.get_operation_result(operation_id, headers=headers)
+        response = client.evaluations.operation_results(operation_id, headers=headers)
         
         if response.status_code == 200:
             return response.json()
