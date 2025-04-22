@@ -32,11 +32,11 @@ def main():
 
     response = client.container_apps_diagnostics.get_root(
         resource_group_name="rg",
-        container_app_name="testcontainerApp0",
+        container_app_name="testcontainerapp0",
     )
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-08-02-preview/examples/ContainerApps_Get.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Get.json
 if __name__ == "__main__":
     main()

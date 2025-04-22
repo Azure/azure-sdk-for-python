@@ -64,6 +64,7 @@ _COMMON_OPTIONS = {
     'no_response': 'responsePayloadOnWriteDisabled',
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket'
+    'excluded_locations': 'excludedLocations',
 }
 
 # Cosmos resource ID validation regex breakdown:

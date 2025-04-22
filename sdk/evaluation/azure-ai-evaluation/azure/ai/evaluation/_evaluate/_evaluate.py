@@ -9,6 +9,7 @@ import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
+from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
@@ -18,10 +19,12 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
+    EVALUATION_PASS_FAIL_MAPPING,
     EvaluationMetrics,
     DefaultOpenEncoding,
     Prefixes,
     _InternalEvaluationMetrics,
+    BINARY_AGGREGATE_SUFFIX,
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
@@ -40,7 +43,7 @@ from ._utils import (
     _write_output,
     DataLoaderFactory,
 )
-from ._batch_run.batch_clients import BatchClient
+from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
 LOGGER = logging.getLogger(__name__)
 
@@ -208,6 +211,48 @@ def _process_rows(row, detail_defect_rates):
     return detail_defect_rates
 
 
+def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
+    """
+    Aggregate binary output results (pass/fail) from evaluation dataframe.
+
+    For each evaluator, calculates the proportion of "pass" results.
+
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: A dictionary mapping evaluator names to the proportion of pass results.
+    :rtype: Dict[str, float]
+    """
+    results = {}
+
+    # Find all columns that end with "_result"
+    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
+
+    for col in result_columns:
+        # Extract the evaluator name from the column name
+        # (outputs.<evaluator>.<metric>_result)
+        parts = col.split(".")
+        evaluator_name = None
+        if len(parts) >= 3:
+            evaluator_name = parts[1]
+        else:
+            LOGGER.warning("Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col)
+            continue
+        if evaluator_name:
+            # Count the occurrences of each unique value (pass/fail)
+            value_counts = df[col].value_counts().to_dict()
+
+            # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
+            total_rows = len(df)
+            pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
+            proportion = pass_count / total_rows if total_rows > 0 else 0.0
+
+            # Set the result with the evaluator name as the key
+            result_key = f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"
+            results[result_key] = round(proportion, 2)
+
+    return results
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -221,6 +266,8 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     :return: The aggregated metrics.
     :rtype: Dict[str, float]
     """
+    binary_metrics = _aggregation_binary_output(df)
+
     df.rename(columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True)
 
     handled_columns = []
@@ -248,6 +295,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     metrics = mean_value.to_dict()
     # Add defect rates back into metrics
     metrics.update(defect_rates)
+
+    # Add binary threshold metrics based on pass/fail results
+    metrics.update(binary_metrics)
+
     return metrics
 
 
@@ -486,12 +537,12 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 
 def _apply_target_to_data(
     target: Callable,
-    data: Union[str, os.PathLike],
+    data: Union[str, os.PathLike, pd.DataFrame],
     batch_client: BatchClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,
-) -> Tuple[pd.DataFrame, Set[str], Run]:
+) -> Tuple[pd.DataFrame, Set[str], BatchClientRun]:
     """
     Apply the target function to the data set and return updated data and generated columns.
 
@@ -509,24 +560,18 @@ def _apply_target_to_data(
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
 
-    if not isinstance(batch_client, ProxyClient):
-        raise ValueError("Only ProxyClient supports target runs for now.")
-
     _run_name = kwargs.get("_run_name")
-    with TargetRunContext():
-        run = cast(
-            ProxyRun,
-            batch_client.run(
-                flow=target,
-                display_name=evaluation_name,
-                data=data,
-                stream=True,
-                name=_run_name,
-            ),
+    with TargetRunContext(batch_client):
+        run: BatchClientRun = batch_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            stream=True,
+            name=_run_name,
+            evaluator_name=getattr(target, "__qualname__", "TARGET"),
         )
-
-    target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
-    run_summary = batch_client.get_run_summary(run)
+        target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
+        run_summary = batch_client.get_run_summary(run)
 
     if run_summary["completed_lines"] == 0:
         msg = (
@@ -557,7 +602,7 @@ def _apply_target_to_data(
     # Concatenate output to input
     target_output = pd.concat([target_output, initial_data], axis=1)
 
-    return target_output, generated_columns, run.run.result()
+    return target_output, generated_columns, run
 
 
 def _process_column_mappings(
@@ -573,7 +618,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")
+    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z0-9_]+\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -777,19 +822,27 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     column_mapping = column_mapping or {}
     column_mapping.setdefault("default", {})
 
-    target_run: Optional[Run] = None
+    target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
+    if kwargs.pop("_use_run_submitter_client", False):
+        batch_run_client = RunSubmitterClient()
+        batch_run_data = input_data_df
+    elif kwargs.pop("_use_pf_client", True):
+        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
+        # multiple evaluators. If the path is already absolute, abspath will return the original path.
+        batch_run_data = os.path.abspath(data)
+    else:
+        batch_run_client = CodeClient()
+        batch_run_data = input_data_df
+
     # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
-        # Right now, only the ProxyClient that uses Promptflow supports a target function
-        batch_run_client = ProxyClient(user_agent=USER_AGENT)
-        batch_run_data = os.path.abspath(data)
-
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, batch_run_client, input_data_df, evaluation_name, **kwargs
+            target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():
@@ -803,17 +856,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 # customer did not mapped target output.
                 if col not in mapping and run_output not in mapped_to_values:
                     column_mapping[evaluator_name][col] = run_output  # pylint: disable=unnecessary-dict-index-lookup
-    elif kwargs.pop("_use_run_submitter_client", False):
-        batch_run_client = RunSubmitterClient()
-        batch_run_data = input_data_df
-    elif kwargs.pop("_use_pf_client", True):
-        batch_run_client = ProxyClient(user_agent=USER_AGENT)
-        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
-        # multiple evaluators. If the path is already absolute, abspath will return the original path.
-        batch_run_data = os.path.abspath(data)
-    else:
-        batch_run_client = CodeClient()
-        batch_run_data = input_data_df
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
     _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
@@ -896,12 +938,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     metrics.update(evaluators_metric)
 
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    target_run: Optional[Run] = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = None
     if trace_destination:
         studio_url = _log_metrics_and_instance_results(
-            metrics, result_df, trace_destination, target_run, evaluation_name, **kwargs
+            metrics, result_df, trace_destination, None, evaluation_name, **kwargs
         )
 
     result_df_dict = result_df.to_dict("records")

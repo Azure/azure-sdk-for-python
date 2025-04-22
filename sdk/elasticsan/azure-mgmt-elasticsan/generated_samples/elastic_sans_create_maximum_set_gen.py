@@ -44,18 +44,18 @@ def main():
                         "unusedSizeTiB": 24,
                     }
                 },
-                "availabilityZones": ["xoz"],
-                "baseSizeTiB": 1,
-                "extendedCapacitySizeTiB": 3,
+                "availabilityZones": ["1"],
+                "baseSizeTiB": 5,
+                "extendedCapacitySizeTiB": 25,
                 "publicNetworkAccess": "Enabled",
                 "sku": {"name": "Premium_LRS", "tier": "Premium"},
             },
-            "tags": {"key9706": "haitqqakcntcpalkzqmjmcnifnhd"},
+            "tags": {"key9316": "ihndtieqibtob"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/ElasticSans_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-07-01-preview/examples/ElasticSans_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

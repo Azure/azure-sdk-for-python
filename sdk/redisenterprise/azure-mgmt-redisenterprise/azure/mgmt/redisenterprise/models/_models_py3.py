@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -256,7 +255,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Cluster(TrackedResource):
     """Describes the Redis Enterprise cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -275,6 +274,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar kind: Distinguishes the kind of cluster. Read-only. Known values are: "v1" and "v2".
+    :vartype kind: str or ~azure.mgmt.redisenterprise.models.Kind
     :ivar sku: The SKU to create, which affects price, performance, and features. Required.
     :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
     :ivar zones: The Availability Zones where this cluster will be deployed.
@@ -302,7 +303,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype redundancy_mode: str or ~azure.mgmt.redisenterprise.models.RedundancyMode
     :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
-     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", and "ScalingFailed".
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
     :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
     :vartype redis_version: str
@@ -317,6 +319,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "location": {"required": True},
+        "kind": {"readonly": True},
         "sku": {"required": True},
         "host_name": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -332,6 +335,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "zones": {"key": "zones", "type": "[str]"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
@@ -386,6 +390,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.kind = None
         self.sku = sku
         self.zones = zones
         self.identity = identity
@@ -515,7 +520,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
     used to auth to Key Vault.
 
     :ivar user_assigned_identity_resource_id: User assigned identity to use for accessing key
-     encryption key Url. Ex: /subscriptions/:code:`<sub uuid>`/resourceGroups/:code:`<resource
+     encryption key Url. Ex: /subscriptions/\\ :code:`<sub uuid>`/resourceGroups/\\ :code:`<resource
      group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
     :vartype user_assigned_identity_resource_id: str
     :ivar identity_type: Only userAssignedIdentity is supported in this API version; other types
@@ -538,7 +543,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
     ) -> None:
         """
         :keyword user_assigned_identity_resource_id: User assigned identity to use for accessing key
-         encryption key Url. Ex: /subscriptions/:code:`<sub uuid>`/resourceGroups/:code:`<resource
+         encryption key Url. Ex: /subscriptions/\\ :code:`<sub uuid>`/resourceGroups/\\ :code:`<resource
          group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
         :paramtype user_assigned_identity_resource_id: str
         :keyword identity_type: Only userAssignedIdentity is supported in this API version; other types
@@ -551,7 +556,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
         self.identity_type = identity_type
 
 
-class ClusterUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ClusterUpdate(_serialization.Model):
     """A partial update to the Redis Enterprise cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -583,7 +588,8 @@ class ClusterUpdate(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype redundancy_mode: str or ~azure.mgmt.redisenterprise.models.RedundancyMode
     :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
-     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", and "ScalingFailed".
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
     :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
     :vartype redis_version: str
@@ -726,7 +732,7 @@ class ProxyResource(ResourceAutoGenerated):
     """
 
 
-class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Database(ProxyResource):
     """Describes a database on the Redis Enterprise cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -754,11 +760,13 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
     :ivar resource_state: Current resource status of the database. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
-     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", and "ScalingFailed".
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
-    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property must be
-     chosen at create time, and cannot be changed without deleting the database. Known values are:
-     "EnterpriseCluster" and "OSSCluster".
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
+     updated only if the current value is NoCluster. If the value is OSSCluster or
+     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+     "EnterpriseCluster", "OSSCluster", and "NoCluster".
     :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
     :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
      "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
@@ -836,9 +844,10 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :keyword port: TCP port of the database endpoint. Specified at create time. Defaults to an
          available port.
         :paramtype port: int
-        :keyword clustering_policy: Clustering policy - default is OSSCluster. This property must be
-         chosen at create time, and cannot be changed without deleting the database. Known values are:
-         "EnterpriseCluster" and "OSSCluster".
+        :keyword clustering_policy: Clustering policy - default is OSSCluster. This property can be
+         updated only if the current value is NoCluster. If the value is OSSCluster or
+         EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+         "EnterpriseCluster", "OSSCluster", and "NoCluster".
         :paramtype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
         :keyword eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
          "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
@@ -939,7 +948,7 @@ class DatabasePropertiesGeoReplication(_serialization.Model):
         self.linked_databases = linked_databases
 
 
-class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DatabaseUpdate(_serialization.Model):
     """A partial update to the Redis Enterprise database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -956,11 +965,13 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
     :ivar resource_state: Current resource status of the database. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
-     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", and "ScalingFailed".
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
-    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property must be
-     chosen at create time, and cannot be changed without deleting the database. Known values are:
-     "EnterpriseCluster" and "OSSCluster".
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
+     updated only if the current value is NoCluster. If the value is OSSCluster or
+     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+     "EnterpriseCluster", "OSSCluster", and "NoCluster".
     :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
     :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
      "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
@@ -1030,9 +1041,10 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword port: TCP port of the database endpoint. Specified at create time. Defaults to an
          available port.
         :paramtype port: int
-        :keyword clustering_policy: Clustering policy - default is OSSCluster. This property must be
-         chosen at create time, and cannot be changed without deleting the database. Known values are:
-         "EnterpriseCluster" and "OSSCluster".
+        :keyword clustering_policy: Clustering policy - default is OSSCluster. This property can be
+         updated only if the current value is NoCluster. If the value is OSSCluster or
+         EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+         "EnterpriseCluster", "OSSCluster", and "NoCluster".
         :paramtype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
         :keyword eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
          "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
@@ -1142,6 +1154,49 @@ class ErrorDetail(_serialization.Model):
         self.additional_info = None
 
 
+class ErrorDetailAutoGenerated(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.redisenterprise.models.ErrorDetailAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.redisenterprise.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
 class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
@@ -1158,6 +1213,27 @@ class ErrorResponse(_serialization.Model):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.redisenterprise.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.redisenterprise.models.ErrorDetailAutoGenerated
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.redisenterprise.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1217,33 +1293,59 @@ class ForceLinkParameters(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar group_nickname: The name of the group of linked database resources. This should match the
-     existing replication group name. Required.
-    :vartype group_nickname: str
-    :ivar linked_databases: The resource IDs of the databases that are expected to be linked and
-     included in the replication group. This parameter is used to validate that the linking is to
-     the expected (unlinked) part of the replication group, if it is splintered. Required.
-    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+    :ivar geo_replication: Properties to configure geo replication for this database. Required.
+    :vartype geo_replication: ~azure.mgmt.redisenterprise.models.ForceLinkParametersGeoReplication
     """
 
     _validation = {
-        "group_nickname": {"required": True},
-        "linked_databases": {"required": True},
+        "geo_replication": {"required": True},
     }
+
+    _attribute_map = {
+        "geo_replication": {"key": "geoReplication", "type": "ForceLinkParametersGeoReplication"},
+    }
+
+    def __init__(self, *, geo_replication: "_models.ForceLinkParametersGeoReplication", **kwargs: Any) -> None:
+        """
+        :keyword geo_replication: Properties to configure geo replication for this database. Required.
+        :paramtype geo_replication:
+         ~azure.mgmt.redisenterprise.models.ForceLinkParametersGeoReplication
+        """
+        super().__init__(**kwargs)
+        self.geo_replication = geo_replication
+
+
+class ForceLinkParametersGeoReplication(_serialization.Model):
+    """Properties to configure geo replication for this database.
+
+    :ivar group_nickname: The name of the group of linked database resources. This should match the
+     existing replication group name.
+    :vartype group_nickname: str
+    :ivar linked_databases: The resource IDs of the databases that are expected to be linked and
+     included in the replication group. This parameter is used to validate that the linking is to
+     the expected (unlinked) part of the replication group, if it is splintered.
+    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+    """
 
     _attribute_map = {
         "group_nickname": {"key": "groupNickname", "type": "str"},
         "linked_databases": {"key": "linkedDatabases", "type": "[LinkedDatabase]"},
     }
 
-    def __init__(self, *, group_nickname: str, linked_databases: List["_models.LinkedDatabase"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        group_nickname: Optional[str] = None,
+        linked_databases: Optional[List["_models.LinkedDatabase"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_nickname: The name of the group of linked database resources. This should match
-         the existing replication group name. Required.
+         the existing replication group name.
         :paramtype group_nickname: str
         :keyword linked_databases: The resource IDs of the databases that are expected to be linked and
          included in the replication group. This parameter is used to validate that the linking is to
-         the expected (unlinked) part of the replication group, if it is splintered. Required.
+         the expected (unlinked) part of the replication group, if it is splintered.
         :paramtype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
         """
         super().__init__(**kwargs)
@@ -1252,7 +1354,7 @@ class ForceLinkParameters(_serialization.Model):
 
 
 class ForceUnlinkParameters(_serialization.Model):
-    """Parameters for a redis enterprise active geo-replication force unlink operation.
+    """Parameters for a Redis Enterprise Active Geo Replication Force Unlink operation.
 
     All required parameters must be populated in order to send to server.
 
@@ -1995,6 +2097,54 @@ class Sku(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.capacity = capacity
+
+
+class SkuDetails(_serialization.Model):
+    """Details of a Redis Enterprise cluster SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the SKU.
+    :vartype name: str
+    :ivar customer_facing_size_in_gb: The cache size in GB.
+    :vartype customer_facing_size_in_gb: float
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "customer_facing_size_in_gb": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "customer_facing_size_in_gb": {"key": "customerFacingSizeInGB", "type": "float"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.customer_facing_size_in_gb = None
+
+
+class SkuDetailsList(_serialization.Model):
+    """The response of a listSkusForScaling operation.
+
+    :ivar skus: List of SKUS available to scale up or scale down.
+    :vartype skus: list[~azure.mgmt.redisenterprise.models.SkuDetails]
+    """
+
+    _attribute_map = {
+        "skus": {"key": "skus", "type": "[SkuDetails]"},
+    }
+
+    def __init__(self, *, skus: Optional[List["_models.SkuDetails"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword skus: List of SKUS available to scale up or scale down.
+        :paramtype skus: list[~azure.mgmt.redisenterprise.models.SkuDetails]
+        """
+        super().__init__(**kwargs)
+        self.skus = skus
 
 
 class SystemData(_serialization.Model):
