@@ -23,7 +23,7 @@
 """
 from typing import TYPE_CHECKING
 
-from azure.cosmos import PartitionKey
+from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
 

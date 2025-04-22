@@ -257,6 +257,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type properties:  Optional[Dict[str, Any]]"""
         if properties:
             self.__container_properties_cache[container_link] = properties
+            self.__container_properties_cache[properties["_rid"]] = properties
         else:
             self.__container_properties_cache[container_link] = {}
 
@@ -1294,7 +1295,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if base.IsItemContainerLink(database_or_container_link):
             options = self._AddPartitionKey(database_or_container_link, document, options)
-        return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
+        return self.Create(document,
+                           path,
+                           "docs",
+                           collection_id,
+                           None,
+                           options,
+                           container_link=database_or_container_link,
+                           **kwargs)
 
     def UpsertItem(
         self,
@@ -1330,7 +1338,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
         )
-        return self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
+        return self.Upsert(document,
+                           path,
+                           "docs",
+                           collection_id,
+                           None,
+                           options,
+                           container_link=database_or_container_link,
+                           **kwargs)
 
     PartitionResolverErrorMessage = (
             "Couldn't find any partition resolvers for the database link provided. "
@@ -1977,6 +1992,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
+        container_link: Optional[str] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces a document and returns it.
@@ -1986,6 +2002,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict new_document:
         :param dict options:
             The request options for the request.
+        :param str container_link:
 
         :return:
             The new Document.
@@ -2011,12 +2028,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link = base.GetItemContainerLink(document_link)
         options = self._AddPartitionKey(collection_link, new_document, options)
 
-        return self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
+        return self.Replace(new_document,
+                            path,
+                            "docs",
+                            document_id,
+                            None,
+                            options,
+                            container_link=container_link,
+                            **kwargs)
 
     def PatchItem(
         self,
         document_link: str,
         operations: List[Dict[str, Any]],
+        container_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -2024,6 +2049,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str document_link: The link to the document.
         :param list operations: The operations for the patch request.
+        :param str container_link: The container name.
         :param dict options: The request options for the request.
 
         :return:
@@ -2042,7 +2068,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, self.default_headers, "patch", path, document_id, resource_type,
                                   documents._OperationType.Patch, options)
         # Patch will use WriteEndpoint since it uses PUT operation
-        request_params = RequestObject(resource_type, documents._OperationType.Patch, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Patch,
+                                       headers,
+                                       container_link=container_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         request_data = {}
@@ -2088,6 +2117,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         results, last_response_headers = self._Batch(
             formatted_operations,
             path,
+            collection_link,
             collection_id,
             options,
             **kwargs
@@ -2124,6 +2154,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         batch_operations: List[Dict[str, Any]],
         path: str,
+        container_link: str,
         collection_id: Optional[str],
         options: Mapping[str, Any],
         **kwargs: Any
@@ -2132,7 +2163,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         base._populate_batch_headers(initial_headers)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs",
                                   documents._OperationType.Batch, options)
-        request_params = RequestObject("docs", documents._OperationType.Batch, headers)
+        request_params = RequestObject("docs",
+                                       documents._OperationType.Batch,
+                                       headers,
+                                       container_link=container_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         return cast(
@@ -2196,7 +2230,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                   http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options)
         request_params = RequestObject(http_constants.ResourceType.PartitionKey,
                                        documents._OperationType.Delete,
-                                       headers)
+                                       headers,
+                                       container_link=collection_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         _, last_response_headers = self.__Post(
@@ -2627,6 +2662,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        container_link: Optional[str] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Creates an Azure Cosmos resource and returns it.
@@ -2638,6 +2674,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param str container_link:
 
         :return:
             The created Azure Cosmos resource.
@@ -2654,7 +2691,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                   options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request_params = RequestObject(typ, documents._OperationType.Create, headers)
+        request_params = RequestObject(typ, documents._OperationType.Create, headers, container_link=container_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
@@ -2674,6 +2711,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        container_link: Optional[str] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Upserts an Azure Cosmos resource and returns it.
@@ -2685,6 +2723,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param str container_link:
 
         :return:
             The upserted Azure Cosmos resource.
@@ -2702,7 +2741,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request_params = RequestObject(typ, documents._OperationType.Upsert, headers)
+        request_params = RequestObject(typ, documents._OperationType.Upsert, headers, container_link=container_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
@@ -2721,6 +2760,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        container_link: Optional[str] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces an Azure Cosmos resource and returns it.
@@ -2732,6 +2772,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param str container_link:
 
         :return:
             The new Azure Cosmos resource.
@@ -2747,7 +2788,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, documents._OperationType.Replace,
                                   options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request_params = RequestObject(typ, documents._OperationType.Replace, headers)
+        request_params = RequestObject(typ, documents._OperationType.Replace, headers, container_link=container_link)
         request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)

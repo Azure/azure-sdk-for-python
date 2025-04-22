@@ -25,7 +25,7 @@ import json
 import time
 from typing import Optional
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -220,6 +220,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
+                global_endpoint_manager.record_failure(args[0])
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):

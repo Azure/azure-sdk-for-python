@@ -791,7 +791,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties()
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
-                document_link=item_link, new_document=body, options=request_options, **kwargs)
+            document_link=item_link,
+            new_document=body,
+            options=request_options,
+            container_link=self.container_link,
+            **kwargs)
         return result
 
     @distributed_trace
@@ -1049,7 +1053,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
-                document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+            document_link=item_link,
+            operations=patch_operations,
+            container_link=self.container_link,
+            options=request_options, **kwargs)
         return result
 
     @distributed_trace

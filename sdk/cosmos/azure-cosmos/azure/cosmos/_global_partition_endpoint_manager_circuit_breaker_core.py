@@ -80,7 +80,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             else EndpointOperationType.ReadType)
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_failure(pk_range_wrapper, endpoint_operation_type, str(location))
-    # TODO: @tvaron3 exponential backoff for recovering
 
     def check_stale_partition_info(
             self,
