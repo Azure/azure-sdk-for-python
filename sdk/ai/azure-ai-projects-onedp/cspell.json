@@ -4,6 +4,7 @@
         "aiproject",
         "Prompty",
         "azureopenai",
+        "GLEU",
     ],
     "ignorePaths": [
     ]
