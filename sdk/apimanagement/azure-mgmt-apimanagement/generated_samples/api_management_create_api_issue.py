@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.apimanagement import ApiManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.api_issue.create_or_update(
@@ -43,13 +41,13 @@ def main():
                 "description": "New API issue description",
                 "state": "open",
                 "title": "New API issue",
-                "userId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.ApiManagement/service/apimService1/users/1",
+                "userId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ApiManagement/service/apimService1/users/1",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateApiIssue.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2024-05-01/examples/ApiManagementCreateApiIssue.json
 if __name__ == "__main__":
     main()
