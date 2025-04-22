@@ -82,7 +82,6 @@ class TestModelBatchDeployment:
             compute="azureml:cpu-cluster",
             resources={"instance_count": 2},
         )
-        breakpoint()
         assert deployment.compute == "azureml:cpu-cluster"
         assert deployment.resources["instance_count"] == 2
 

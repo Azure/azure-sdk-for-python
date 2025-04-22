@@ -58,8 +58,11 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         description: Optional[str] = None,
         **kwargs: Any,
     ):
+        # If type not removed from kwargs, it can lead to dual type params passed to Deployment class
+        # Get type from kwargs if present, otherwise use the default type defined above
+        _type = kwargs.pop("type", type)
         super().__init__(
-            name=name, _type=type, endpoint_name=endpoint_name, tags=tags, description=description, **kwargs
+            name=name, _type=_type, endpoint_name=endpoint_name, tags=tags, description=description, **kwargs
         )
         self.component = component
         self.settings = settings
