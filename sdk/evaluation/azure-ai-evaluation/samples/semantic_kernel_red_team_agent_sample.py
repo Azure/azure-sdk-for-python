@@ -1,4 +1,4 @@
-git # ------------------------------------
+# ------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ------------------------------------
 
@@ -10,7 +10,7 @@ import re
 from typing import Optional
 
 from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
-from semantic_kernel.connectors.ai.open_ai import AzureOpenAIChatCompletion
+from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
 """
 The following sample demonstrates how to create a red team agent using Semantic Kernel.
@@ -26,7 +26,7 @@ def call_ollama(query: str) -> str:
     Call the Ollama API with a prompt and return the response.
     """
     url = "http://localhost:11434/api/generate"
-    payload = {"model": "<model>", "prompt": query, "stream": False}
+    payload = {"model": "<model_name>", "prompt": query, "stream": False}
 
     response = requests.post(url, json=payload, timeout=60)
     try:
@@ -51,13 +51,12 @@ async def main():
     api_key = os.environ.get("AZURE_OPENAI_API_KEY")
     
     # Get Azure AI Project details from environment variables
-    ai_endpoint = os.environ.get("AZURE_AI_ENDPOINT")
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
     resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
     project_name = os.environ.get("AZURE_PROJECT_NAME")
     
     # Initialize the service
-    service = AzureOpenAIChatCompletion(
+    service = AzureChatCompletion(
         deployment_name=deployment,
         endpoint=endpoint,
         api_key=api_key
@@ -65,20 +64,12 @@ async def main():
     
     # Initialize the RedTeamPlugin with the target function
     red_team_plugin = RedTeamPlugin(
-        endpoint=ai_endpoint,
         subscription_id=subscription_id,
         resource_group=resource_group,
         project_name=project_name,
         target_func=call_ollama
     )
-    
-    # Alternative method using connection string if needed
-    # connection_string = f"{ai_endpoint};{subscription_id};{resource_group};{project_name}"
-    # red_team_plugin = RedTeamPlugin.from_connection_string(
-    #     projects_connection_string=connection_string,
-    #     target_func=call_ollama
-    # )
-    
+
     # Create the agent with the plugin
     agent = ChatCompletionAgent(
         service=service,
@@ -90,50 +81,13 @@ async def main():
     # Create a thread to hold the conversation
     thread: Optional[ChatHistoryAgentThread] = None
     
-    # Last fetched prompt to track for sending to target
-    last_fetched_prompt = None
     
     # Simulate a conversation with the agent
     for user_input in USER_INPUTS:
         print(f"\n# User: {user_input}")
-        
-        # Track if the user wants to send "that prompt" to the target
-        if "send that prompt" in user_input.lower():
-            # Add the last fetched prompt to the user input to make it explicit
-            if last_fetched_prompt:
-                if "converted" in user_input.lower():
-                    user_input = f"Send this converted prompt to my target model: {last_fetched_prompt}"
-                else:
-                    user_input = f"Send this prompt to my target model: {last_fetched_prompt}"
-        
-        # Invoke the agent for a response
         response = await agent.get_response(messages=user_input, thread=thread)
-        print(f"# {response.name}: {response}")
-        
-        # Update the thread
+        print(f"# {response.name}: {response} ")
         thread = response.thread
-        
-        # Check if the response contains a prompt (for tracking "that prompt")
-        try:
-            response_text = str(response)
-            if "prompt" in response_text and "status" in response_text:
-                # Try to parse JSON from the response
-                try:
-                    data = json.loads(response_text)
-                    if "prompt" in data:
-                        last_fetched_prompt = data["prompt"]
-                    elif "converted_prompt" in data:
-                        last_fetched_prompt = data["converted_prompt"]
-                except:
-                    # If we can't parse JSON, try to find the prompt in the text
-                    match = re.search(r'"prompt":\s*"([^"]+)"', response_text)
-                    if match:
-                        last_fetched_prompt = match.group(1)
-                    match = re.search(r'"converted_prompt":\s*"([^"]+)"', response_text)
-                    if match:
-                        last_fetched_prompt = match.group(1)
-        except Exception as e:
-            print(f"Error extracting prompt: {e}")
     
     # Clean up
     if thread:

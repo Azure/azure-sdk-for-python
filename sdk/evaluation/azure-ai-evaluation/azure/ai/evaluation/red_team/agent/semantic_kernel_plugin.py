@@ -13,7 +13,7 @@ from typing import Annotated, Dict, Any, Optional, Callable
 
 from semantic_kernel.functions import kernel_function
 
-from azure.ai.evaluation.red_team import RedTeamToolProvider
+from azure.ai.evaluation.red_team.agent import RedTeamToolProvider
 from azure.identity import DefaultAzureCredential
 
 class RedTeamPlugin:
@@ -49,9 +49,9 @@ class RedTeamPlugin:
         ```
     """
     
-    def __init__(self, endpoint: str, subscription_id: str, resource_group: str, 
-                 project_name: str, target_func: Optional[Callable[[str], str]] = None,
-                 application_scenario: str = "A customer service chatbot for a retail website"):
+    def __init__(self, subscription_id: str, resource_group: str, 
+                 project_name: str, target_func: Optional[Callable[[str], str]] = None, *,
+                 application_scenario: str = "", **kwargs):
         """
         Initialize the RedTeamPlugin with the necessary configuration components.
         
@@ -64,7 +64,6 @@ class RedTeamPlugin:
         """
         # Set up project details
         azure_ai_project = {
-            "endpoint": endpoint,
             "subscription_id": subscription_id,
             "resource_group_name": resource_group,
             "project_name": project_name
@@ -101,22 +100,21 @@ class RedTeamPlugin:
         if len(parts) < 4:
             raise ValueError("Invalid connection string format. Expected format: 'endpoint;subscription_id;resource_group;project_name'")
             
-        endpoint = parts[0]
+        endpoint = parts[0] # type: ignore
         subscription_id = parts[1]
         resource_group = parts[2]
         project_name = parts[3]
         
         return cls(
-            endpoint=endpoint, 
-            subscription_id=subscription_id, 
-            resource_group=resource_group, 
+            subscription_id=subscription_id,
+            resource_group=resource_group,
             project_name=project_name,
             target_func=target_func,
             application_scenario=application_scenario
         )
     
     @kernel_function(description="Fetch a harmful prompt for a specific risk category to test content filters")
-    def fetch_harmful_prompt(
+    async def fetch_harmful_prompt(
         self, 
         risk_category: Annotated[str, "The risk category (e.g., 'violence', 'hate_unfairness', 'sexual', 'self_harm')"],
         strategy: Annotated[str, "Attack strategy to use (e.g., 'baseline', 'jailbreak')"] = "baseline",
@@ -134,12 +132,12 @@ class RedTeamPlugin:
         if not convert_with_strategy:
             convert_with_strategy = None
             
-        # Run the async method in a new event loop
-        result = asyncio.run(self.tool_provider.fetch_harmful_prompt(
+        # Directly await the async method instead of using asyncio.run()
+        result = await self.tool_provider.fetch_harmful_prompt(
             risk_category_text=risk_category,
             strategy=strategy,
             convert_with_strategy=convert_with_strategy
-        ))
+        )
         
         # Store the prompt for later conversion if successful
         if result["status"] == "success" and "prompt_id" in result:
@@ -152,7 +150,7 @@ class RedTeamPlugin:
         return json.dumps(result)
     
     @kernel_function(description="Convert a prompt using a specified strategy")
-    def convert_prompt(
+    async def convert_prompt(
         self,
         prompt_or_id: Annotated[str, "Either a prompt text or a prompt ID from a previous fetch"],
         strategy: Annotated[str, "The strategy to use for conversion"]
@@ -169,16 +167,16 @@ class RedTeamPlugin:
             # Update the provider's cache
             self.tool_provider._fetched_prompts[prompt_or_id] = self.fetched_prompts[prompt_or_id]
         
-        # Run the async method in a new event loop
-        result = asyncio.run(self.tool_provider.convert_prompt(
+        # Directly await the async method instead of using asyncio.run()
+        result = await self.tool_provider.convert_prompt(
             prompt_or_id=prompt_or_id,
             strategy=strategy
-        ))
+        )
         
         return json.dumps(result)
     
     @kernel_function(description="Get a harmful prompt for a specific risk category and optionally convert it")
-    def red_team_unified(
+    async def red_team_unified(
         self,
         category: Annotated[str, "The risk category (e.g., 'violence', 'hate_unfairness', 'sexual', 'self_harm')"],
         strategy: Annotated[str, "Optional strategy to convert the prompt"] = ""
@@ -193,11 +191,11 @@ class RedTeamPlugin:
         # Convert empty string to None
         strategy_param = strategy if strategy else None
             
-        # Run the async method in a new event loop
-        result = asyncio.run(self.tool_provider.red_team(
+        # Directly await the async method instead of using asyncio.run()
+        result = await self.tool_provider.red_team(
             category=category,
             strategy=strategy_param
-        ))
+        )
         
         # Store the prompt for later conversion if it's a success and we didn't convert it
         if result["status"] == "success":
@@ -210,12 +208,14 @@ class RedTeamPlugin:
         return json.dumps(result)
     
     @kernel_function(description="Get a list of all available prompt conversion strategies")
-    def get_available_strategies(self) -> Annotated[str, "A JSON string with available conversion strategies"]:
+    async def get_available_strategies(self) -> Annotated[str, "A JSON string with available conversion strategies"]:
         """
         Get a list of all available prompt conversion strategies.
         
         :return: A JSON string with available conversion strategies
         """
+        # This method calls a synchronous function, but we make the method itself async
+        # for consistency with the rest of the interface
         strategies = self.tool_provider.get_available_strategies()
         
         return json.dumps({
@@ -224,12 +224,14 @@ class RedTeamPlugin:
         })
     
     @kernel_function(description="Explain the purpose and responsible use of red teaming tools")
-    def explain_purpose(self) -> Annotated[str, "A JSON string with information about red teaming tools"]:
+    async def explain_purpose(self) -> Annotated[str, "A JSON string with information about red teaming tools"]:
         """
         Explain the purpose and responsible use of red teaming tools.
         
         :return: A JSON string with information about red teaming tools
         """
+        # This method doesn't use any async functions, but we make it async
+        # for consistency with the rest of the interface
         explanation = {
             "purpose": "Red teaming tools are designed to test AI systems for vulnerabilities and safety issues.",
             "responsible_use": [
@@ -249,7 +251,7 @@ class RedTeamPlugin:
         return json.dumps(explanation)
     
     @kernel_function(description="Send a prompt to the target function and return the response")
-    def send_to_target(
+    async def send_to_target(
         self,
         prompt: Annotated[str, "The prompt text to send to the target function"]
     ) -> Annotated[str, "A JSON string with the response from the target"]:
@@ -259,6 +261,8 @@ class RedTeamPlugin:
         :param prompt: The prompt text to send to the target function
         :return: A JSON string with the response from the target
         """
+        # This method doesn't use any async functions, but we make it async
+        # for consistency with the rest of the interface
         if self.target_function is None:
             return json.dumps({
                 "status": "error",
