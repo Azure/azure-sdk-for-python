@@ -5,8 +5,7 @@ from azure.ai.evaluation.red_team.agent.agent_functions import initialize_tool_p
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
-from typing import Any
-from pathlib import Path
+
 import os
 import json
 import requests
@@ -21,7 +20,7 @@ project_client = AIProjectClient.from_connection_string(
 
 def call_ollama(query: str) -> str:
     url = "http://localhost:11434/api/generate"
-    payload = {"model": "<model_name>", "prompt": query, "stream": False}
+    payload = {"model": "<model>", "prompt": query, "stream": False}
 
     response = requests.post(url, json=payload, timeout=60)
     try:
