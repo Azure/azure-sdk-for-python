@@ -796,59 +796,46 @@ class RedTeam():
                             content = message["content"]
                             objective_ids[content] = obj_id
             self.logger.debug(f"Objective IDs for {strategy_name}/{risk_category}: {list(objective_ids.values())}")
-            # Create normalizer requests for each prompt with appropriate conversation IDs
+           
+            # Create normalizer requests for each prompt with appropriate conversation IDs 
             async def create_normalizer_requests(prompts):
                 normalizer_requests = []
-                temp_orch = orchestrator  # Create a copy of the orchestrator for each batch
-                
                 for prompt in prompts:
+                    # Get conversation ID from objective ID if possible
                     conversation_id = objective_ids.get(prompt, f"conv-{uuid.uuid4()}")
-                    nr = temp_orch._create_normalizer_request(
-                        prompt_text=prompt,
-                        prompt_type="text",
-                        converters=converter_list,
+                    
+                    # Create a SeedPromptGroup with the prompt
+                    from pyrit.models import ChatMessage, SeedPromptGroup, SeedPrompt
+                    self.logger.debug(f"Creating SeedPrompt for prompt_group_id: {conversation_id}")
+                    seed_prompt = SeedPrompt(
+                        prompt_group_id=conversation_id,
+                        value=prompt,
+                        data_type="text",
                         metadata={
                             "prompt_group_id": conversation_id,
-                        },
+                        }
                     )
-                    normalizer_requests.append(nr)
-                # for prompt in prompts:
-                #     # Get conversation ID from objective ID if possible
-                #     conversation_id = objective_ids.get(prompt, f"conv-{uuid.uuid4()}")
+                    seed_group = SeedPromptGroup(
+                        prompts=[seed_prompt]
+                    )
                     
-                #     # Create a SeedPromptGroup with the prompt
-                #     from pyrit.models import ChatMessage, SeedPromptGroup, SeedPrompt
-                #     self.logger.debug(f"Creating SeedPrompt for prompt_group_id: {conversation_id}")
-                #     seed_prompt = SeedPrompt(
-                #         prompt_group_id=conversation_id,
-                #         value=prompt,
-                #         data_type="text",
-                #         metadata={
-                #             "prompt_group_id": conversation_id,
-                #         }
-                #     )
-                #     seed_group = SeedPromptGroup(
-                #         prompts=[seed_prompt]
-                #     )
+                    # Create converter configurations
+                    from pyrit.prompt_normalizer import PromptConverterConfiguration
+                    request_converter_configs = []
+                    if converter_list:
+                        config = PromptConverterConfiguration(converters=converter_list, prompt_data_types_to_apply=["text"])
+                        request_converter_configs.append(config)
                     
-                #     # Create converter configurations
-                #     from pyrit.prompt_normalizer import PromptConverterConfiguration
-                #     import pdb;pdb.set_trace()
-                #     request_converter_configs = []
-                #     if converter_list:
-                #         config = PromptConverterConfiguration(converters=converter_list, prompt_data_types_to_apply=["text"])
-                #         request_converter_configs.append(config)
-                    
-                #     # Create the NormalizerRequest
-                #     from pyrit.prompt_normalizer import NormalizerRequest
-                #     self.logger.debug(f"Creating NormalizerRequest for prompt_group_id: {conversation_id}")
-                #     request = NormalizerRequest(
-                #         seed_prompt_group=seed_group,
-                #         request_converter_configurations=request_converter_configs,
-                #         response_converter_configurations=[],
-                #         conversation_id=conversation_id
-                #     )
-                #     normalizer_requests.append(request)
+                    # Create the NormalizerRequest
+                    from pyrit.prompt_normalizer import NormalizerRequest
+                    self.logger.debug(f"Creating NormalizerRequest for prompt_group_id: {conversation_id}")
+                    request = NormalizerRequest(
+                        seed_prompt_group=seed_group,
+                        request_converter_configurations=request_converter_configs,
+                        response_converter_configurations=[],
+                        conversation_id=conversation_id
+                    )
+                    normalizer_requests.append(request)
                 return normalizer_requests
             
             # Process normalizer requests concurrently within each batch
