@@ -25,6 +25,7 @@ from typing import Optional, Mapping, Any, Dict, List
 from . import http_constants
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
+    # TODO: @tvaron3 add container link here
     def __init__(
             self,
             resource_type: str,

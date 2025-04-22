@@ -77,6 +77,8 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             range = await (self.client._routing_map_provider
                                       .get_range_by_partition_key_range_id(target_container_link, pk_range_id))
             partition_range = Range.PartitionKeyRangeToRange(range)
+        else:
+            raise RuntimeError("Illegal state: the request does not contain partition information.")
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 
@@ -96,7 +98,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             self.global_partition_endpoint_manager_core.check_stale_partition_info(request, pk_range_wrapper)
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)
-        # Todo: @tvaron3 think about how to switch healthy tentative unhealthy tentative
         return (super(_GlobalPartitionEndpointManagerForCircuitBreakerAsync, self)
                 .resolve_service_endpoint(request, pk_range_wrapper))
 

@@ -164,8 +164,6 @@ class ContainerProxy:
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -231,7 +229,6 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled

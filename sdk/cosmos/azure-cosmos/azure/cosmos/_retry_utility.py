@@ -63,7 +63,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
     database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
         client.connection_policy
@@ -212,6 +212,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
+                global_endpoint_manager.record_failure(args[0])
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -322,9 +323,10 @@ class ConnectionRetryPolicy(RetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 # This logic is based on the _retry.py file from azure-core
-                if not _has_database_account_header(request.http_request.headers):
-                    global_endpoint_manager.record_failure(request_params)
+                if (not _has_database_account_header(request.http_request.headers)
+                        and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
+                        global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
                             self.sleep(retry_settings, request.context.transport)
@@ -334,21 +336,11 @@ class ConnectionRetryPolicy(RetryPolicy):
                 retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
                 if (not _has_read_retryable_headers(request.http_request.headers) or
-                        _has_database_account_header(request.http_request.headers)):
+                        _has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
-                global_endpoint_manager.record_failure(request_params)
                 # This logic is based on the _retry.py file from azure-core
                 if retry_settings['read'] > 0:
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            except AzureError as err:
-                retry_error = err
-                if _has_database_account_header(request.http_request.headers):
-                    raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
                     global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:

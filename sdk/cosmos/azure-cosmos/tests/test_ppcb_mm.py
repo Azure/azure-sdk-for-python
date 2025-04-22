@@ -5,7 +5,6 @@ import unittest
 import uuid
 
 import pytest
-from azure.core.pipeline import HttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
@@ -117,7 +116,7 @@ class TestPerPartitionCircuitBreakerMM:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
 
-    def setup_method_with_custom_transport(self, custom_transport: HttpTransport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key,
                               preferred_locations=[REGION_1, REGION_2],
                               multiple_write_locations=True,
