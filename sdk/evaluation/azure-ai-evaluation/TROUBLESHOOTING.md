@@ -6,11 +6,18 @@ This guide walks you through how to investigate failures, common errors in the `
 
 - [Handle Evaluate API Errors](#handle-evaluate-api-errors)
   - [Troubleshoot Remote Tracking Issues](#troubleshoot-remote-tracking-issues)
+  - [Troubleshoot Column Mapping Issues](#troubleshoot-column-mapping-issues)
   - [Troubleshoot Safety Evaluator Issues](#troubleshoot-safety-evaluator-issues)
+  - [Troubleshoot Quality Evaluator Issues](#troubleshoot-quality-evaluator-issues)
 - [Handle Simulation Errors](#handle-simulation-errors)
   - [Adversarial Simulation Supported Regions](#adversarial-simulation-supported-regions)
+  - [Need to generate simulations for specific harm type](#need-to-generate-simulations-for-specific-harm-type)
+  - [Simulator is slow](#simulator-is-slow)
+- [Handle RedTeam Errors](#handle-redteam-errors)
+  - [Target resource not found](#target-resource-not-found)
+  - [Insufficient Storage Permissions](#insufficient-storage-permissions)
 - [Logging](#logging)
-- [Get additional help](#get-additional-help)
+- [Get Additional Help](#get-additional-help)
 
 ## Handle Evaluate API Errors
 
@@ -29,6 +36,10 @@ This guide walks you through how to investigate failures, common errors in the `
     ```
 
 - Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
+
+### Troubleshoot Column Mapping Issues
+
+- When using `column_mapping` parameter in evaluators, ensure all keys and values are non-empty strings and contain only alphanumeric characters. Empty strings, non-string values, or non-alphanumeric characters can cause serialization errors and issues in downstream applications. Example of valid mapping: `{"query": "${data.query}", "response": "${data.response}"}`.
 
 ### Troubleshoot Safety Evaluator Issues
 
@@ -53,6 +64,30 @@ The Adversarial simulator does not support selecting individual harms, instead w
 
 Identify the type of simulations being run (adversarial or non-adversarial).
 Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute.
+
+## Handle RedTeam errors
+
+### Target resource not found
+When initializing an Azure OpenAI model directly as `target` for a `RedTeam` scan, ensure `azure_endpoint` is specified in the format `https://<hub>.openai.azure.com/openai/deployments/<deployment_name>/chat/completions?api-version=2025-01-01-preview`. If using `AzureOpenAI`, `endpoint` should be specified in the format `https://<hub>.openai.azure.com/`. 
+
+### Insufficient Storage Permissions
+If you see an error like `WARNING: Failed to log artifacts to MLFlow: (UserError) Failed to upload evaluation run to the cloud due to insufficient permission to access the storage`, you need to ensure that proper permissions are assigned to the storage account linked to your Azure AI Project.
+
+To fix this issue:
+1. Open the associated resource group being used in your Azure AI Project in the Azure Portal
+2. Look up the storage accounts associated with that resource group
+3. Open each storage account and click on "Access control (IAM)" on the left side navigation
+4. Add permissions for the desired users with the "Storage Blob Data Contributor" role
+
+If you have Azure CLI, you can use the following command:
+
+```Shell
+# <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
+# <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
+# <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
+
+az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
+```
 
 ## Logging
 
