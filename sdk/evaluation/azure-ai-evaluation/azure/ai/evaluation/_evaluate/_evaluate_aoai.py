@@ -13,6 +13,7 @@ from ._batch_run import CodeClient, ProxyClient
 
 #import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
 from .._model_configurations import EvaluatorConfig
 
@@ -134,6 +135,7 @@ def _begin_single_aoai_evaluation(
     data_source_config = _generate_data_source_config(data, column_mapping)
 
     # Create eval group
+    # import pdb; pdb.set_trace()
     eval_group_info = client.evals.create(
         data_source_config=data_source_config,
         testing_criteria=grader_list,
@@ -251,6 +253,12 @@ def _get_single_run_results(
             for name, value in single_grader_row_result.items():
                 if name in ["name"]: # Todo decide if we also want to exclude "sample"
                     continue
+                if name.lower() == "passed":
+                    # create a `_result` column for each grader
+                    result_column_name = f"outputs.{grader_name}.{grader_name}_result"
+                    if len(result_column_name) < 50: #TODO: is this the limit? Should we keep "passed"?
+                        listed_results[result_column_name] = EVALUATION_PASS_FAIL_MAPPING[value]
+
                 formatted_column_name = f"outputs.{grader_name}.{name}"
                 if (formatted_column_name not in listed_results):
                     listed_results[formatted_column_name] = []
