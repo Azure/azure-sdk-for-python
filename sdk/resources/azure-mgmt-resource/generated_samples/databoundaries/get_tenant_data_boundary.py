@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resource import DataBoundaryMgmtClient
+from azure.mgmt.resource.databoundaries import DataBoundaryMgmtClient
 
 """
 # PREREQUISITES

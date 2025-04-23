@@ -95,8 +95,8 @@ class ManagementLockObject(_serialization.Model):
         :paramtype notes: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
         self.name = name
         self.level = level
         self.notes = notes

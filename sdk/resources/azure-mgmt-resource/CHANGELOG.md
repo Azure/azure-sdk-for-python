@@ -1,5 +1,28 @@
 # Release History
 
+## 23.4.0 (2025-05-19)
+
+### Features Added
+
+  - Model Deployment has a new parameter identity
+  - Model DeploymentParameter has a new parameter expression
+  - Model DeploymentProperties has a new parameter extension_configs
+  - Model DeploymentProperties has a new parameter external_input_definitions
+  - Model DeploymentProperties has a new parameter external_inputs
+  - Model DeploymentPropertiesExtended has a new parameter extensions
+  - Model DeploymentWhatIfProperties has a new parameter extension_configs
+  - Model DeploymentWhatIfProperties has a new parameter external_input_definitions
+  - Model DeploymentWhatIfProperties has a new parameter external_inputs
+  - Model ResourceReference has a new parameter api_version
+  - Model ResourceReference has a new parameter extension
+  - Model ResourceReference has a new parameter identifiers
+  - Model ResourceReference has a new parameter resource_type
+  - Model TargetResource has a new parameter api_version
+  - Model TargetResource has a new parameter extension
+  - Model TargetResource has a new parameter identifiers
+  - Model TargetResource has a new parameter symbolic_name
+  - Model WhatIfChange has a new parameter extension
+
 ## 23.3.0 (2025-02-24)
 
 ### Features Added
