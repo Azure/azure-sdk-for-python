@@ -180,8 +180,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             **kwargs
         )
         self._api_version = get_api_version(api_version)
-        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._api_version = get_api_version(api_version)
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
