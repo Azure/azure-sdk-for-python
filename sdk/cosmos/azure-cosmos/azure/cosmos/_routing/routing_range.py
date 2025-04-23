@@ -100,10 +100,10 @@ class Range(object):
         normalized_max = self.max
 
         if not self.isMinInclusive:
-            normalized_min = self.add_to_effective_partition_key(self.min, -1).upper()
+            normalized_min = self.add_to_effective_partition_key(self.min, -1)
 
         if self.isMaxInclusive:
-            normalized_max = self.add_to_effective_partition_key(self.max, 1).upper()
+            normalized_max = self.add_to_effective_partition_key(self.max, 1)
 
         return Range(normalized_min, normalized_max, True, False)
 
@@ -180,9 +180,11 @@ class Range(object):
         )
 
     @staticmethod
-    def _compare_helper(a, b):
+    def _compare_helper(a: str, b: str):
+        normalized_a = a.upper()
+        normalized_b = b.upper()
         # python 3 compatible
-        return (a > b) - (a < b)
+        return (normalized_a > normalized_b) - (normalized_a < normalized_b)
 
     @staticmethod
     def overlaps(range1, range2):
