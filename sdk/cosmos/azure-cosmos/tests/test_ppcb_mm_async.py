@@ -137,11 +137,11 @@ async def perform_write_operation(operation, container, fault_injection_containe
         ]
         resp = await fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
-    # elif operation == "delete_all_items_by_partition_key":
-    #     await container.create_item(body=doc)
-    #     await container.create_item(body=doc)
-    #     await container.create_item(body=doc)
-    #     resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
+    elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
+        await container.create_item(body=doc)
+        await container.create_item(body=doc)
+        await container.create_item(body=doc)
+        resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
     if resp:
         validate_response_uri(resp, expected_uri)
 
