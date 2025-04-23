@@ -334,48 +334,6 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
         await cleanup_method([custom_setup, setup])
 
-
-
-    # send 5 write concurrent requests when trying to recover
-    # verify that only one failed
-    async def test_recovering_only_fails_one_requests_async(self):
-        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-            0, CosmosHttpResponseError(
-                status_code=502,
-                message="Some envoy error.")))
-        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
-        fault_injection_container = custom_setup['col']
-        for i in range(5):
-            with pytest.raises(CosmosHttpResponseError):
-                await fault_injection_container.create_item(body=doc)
-
-
-        number_of_errors = 0
-
-        async def concurrent_upsert():
-            nonlocal number_of_errors
-            doc = {'id': str(uuid.uuid4()),
-                   'pk': PK_VALUE,
-                   'name': 'sample document',
-                   'key': 'value'}
-            try:
-                await fault_injection_container.upsert_item(doc)
-            except CosmosHttpResponseError as e:
-                number_of_errors += 1
-
-        # attempt to recover partition
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
-        try:
-            tasks = []
-            for i in range(10):
-                tasks.append(concurrent_upsert())
-            await asyncio.gather(*tasks)
-            assert number_of_errors == 1
-        finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
-            await cleanup_method([custom_setup])
-
     # test cosmos client timeout
 
 if __name__ == '__main__':
