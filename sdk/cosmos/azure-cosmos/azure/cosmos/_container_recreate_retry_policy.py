@@ -72,10 +72,7 @@ class ContainerRecreateRetryPolicy:
     def __find_container_link_with_rid(self, container_properties_caches: Optional[Dict[str, Any]], rid: str) -> \
             Optional[str]:
         if container_properties_caches:
-            for key, inner_dict in container_properties_caches.items():
-                is_match = next((k for k, v in inner_dict.items() if v == rid), None)
-                if is_match:
-                    return key
+            return container_properties_caches.get(rid)
         # If we cannot get the container link at all it might mean the cache was somehow deleted, this isn't
         # a container request so this retry is not needed. Return None.
         return None

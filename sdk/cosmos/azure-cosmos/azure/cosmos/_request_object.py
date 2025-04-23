@@ -25,19 +25,16 @@ from typing import Optional, Mapping, Any, Dict, List
 from . import http_constants
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
-    # TODO: @tvaron3 add container link here
     def __init__(
             self,
             resource_type: str,
             operation_type: str,
             headers: Dict[str, Any],
-            container_link: Optional[str] = None,
             endpoint_override: Optional[str] = None,
     ) -> None:
         self.resource_type = resource_type
         self.operation_type = operation_type
         self.endpoint_override = endpoint_override
-        self.container_link = container_link
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
         self.use_preferred_locations: Optional[bool] = None

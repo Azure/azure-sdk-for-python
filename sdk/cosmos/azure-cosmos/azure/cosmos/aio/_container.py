@@ -94,7 +94,8 @@ class ContainerProxy:
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))
+                                                                   _set_properties_cache(properties,
+                                                                                         self.container_link))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -192,7 +193,8 @@ class ContainerProxy:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        self.client_connection._set_container_properties_cache(self.container_link, # pylint: disable=protected-access
+                                                               _set_properties_cache(container, self.container_link))
         return container
 
     @distributed_trace_async

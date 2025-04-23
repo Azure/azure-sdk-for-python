@@ -28,19 +28,6 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 
-    # def test_lowercased_range(self):
-    #     partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'},
-    #                             {u'id': u'1', u'minInclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', u'maxExclusive': u'FF'}]
-    #     partitionRangeWithInfo = [(r, True) for r in partition_key_ranges]
-    #     expected_partition_key_range = routing_range.Range("", "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", True, False)
-    #
-    #     pkRange = routing_range.Range("1EC0C2CBE45DBC919CF2B65D399C2673", "1ec0c2cbe45dbc919cf2b65d399c2674", True, True)
-    #     collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
-    #     overlapping_partition_key_ranges = collection_routing_map.get_overlapping_ranges(pkRange)
-    #
-    #     self.assertEqual(len(overlapping_partition_key_ranges), 1)
-    #     self.assertEqual(expected_partition_key_range, overlapping_partition_key_ranges[0])
-
     def test_partition_key_ranges_parent_filter(self):
         # for large collection with thousands of partitions, a split may complete between the read partition key ranges query pages,
         # causing the return map to have both the new children ranges and their ranges. This test is to verify the fix for that.

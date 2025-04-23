@@ -3211,7 +3211,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # If container properties cache is stale, refresh it by reading the container.
         container = await self.ReadContainer(container_link, options=None)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self._set_container_properties_cache(container_link, _set_properties_cache(container))
+        self._set_container_properties_cache(container_link, _set_properties_cache(container, container_link))
 
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
@@ -3308,5 +3308,5 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             container = await self.ReadContainer(collection_link)
             partition_key_definition = container.get("partitionKey")
-            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
+            self._set_container_properties_cache(collection_link, _set_properties_cache(container, collection_link))
         return partition_key_definition

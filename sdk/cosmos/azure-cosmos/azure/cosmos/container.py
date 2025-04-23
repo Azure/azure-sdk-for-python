@@ -92,7 +92,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))
+                                                                   _set_properties_cache(properties,
+                                                                                         self.container_link))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -198,7 +199,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQuotaInfo"] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        self.client_connection._set_container_properties_cache(self.container_link, # pylint: disable=protected-access
+                                                               _set_properties_cache(container, self.container_link))
         return container
 
     @distributed_trace
@@ -792,7 +794,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             document_link=item_link,
             new_document=body,
             options=request_options,
-            container_link=self.container_link,
             **kwargs)
         return result
 
@@ -1053,7 +1054,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         result = self.client_connection.PatchItem(
             document_link=item_link,
             operations=patch_operations,
-            container_link=self.container_link,
             options=request_options, **kwargs)
         return result
 

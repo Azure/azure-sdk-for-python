@@ -52,30 +52,23 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
     async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         print(request.headers)
-        target_container_link = None
-        partition_key = None
-        # TODO: @tvaron3 see if the container link is absolutely necessary or change container cache
-        for container_link, properties in self.client._container_properties_cache.items():
-            if properties["_rid"] == container_rid:
-                target_container_link = container_link
-                partition_key_definition = properties["partitionKey"]
-                partition_key = PartitionKey(path=partition_key_definition["paths"],
-                                             kind=partition_key_definition["kind"])
-
-        if not target_container_link or not partition_key:
-            raise RuntimeError("Illegal state: the container cache is not properly initialized.")
+        properties = self.client._container_properties_cache[container_rid]
+        # get relevant information from container cache to get the overlapping ranges
+        container_link = properties["container_link"]
+        partition_key_definition = properties["partitionKey"]
+        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
 
         if request.headers.get(HttpHeaders.PartitionKey):
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
-                              .get_overlapping_ranges(target_container_link, epk_range))
+                                      .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif request.headers.get(HttpHeaders.PartitionKeyRangeID):
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             range = await (self.client._routing_map_provider
-                                      .get_range_by_partition_key_range_id(target_container_link, pk_range_id))
+                           .get_range_by_partition_key_range_id(container_link, pk_range_id))
             partition_range = Range.PartitionKeyRangeToRange(range)
         else:
             raise RuntimeError("Illegal state: the request does not contain partition information.")
