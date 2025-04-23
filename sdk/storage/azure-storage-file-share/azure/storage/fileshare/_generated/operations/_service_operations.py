@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -188,7 +189,6 @@ class ServiceOperations:
     def set_properties(  # pylint: disable=inconsistent-return-statements
         self, storage_service_properties: _models.StorageServiceProperties, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Sets properties for a storage account's File service endpoint, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -196,7 +196,7 @@ class ServiceOperations:
         :type storage_service_properties: ~azure.storage.fileshare.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -256,13 +256,12 @@ class ServiceOperations:
 
     @distributed_trace
     def get_properties(self, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
-        # pylint: disable=line-too-long
         """Gets the properties of a storage account's File service, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: StorageServiceProperties or the result of cls(response)
@@ -329,7 +328,6 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ListSharesResponse:
-        # pylint: disable=line-too-long
         """The List Shares Segment operation returns a list of the shares and share snapshots under the
         specified account.
 
@@ -350,7 +348,7 @@ class ServiceOperations:
         :type include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: ListSharesResponse or the result of cls(response)
