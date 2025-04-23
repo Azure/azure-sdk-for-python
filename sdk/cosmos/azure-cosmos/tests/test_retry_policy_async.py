@@ -17,7 +17,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio import DatabaseProxy, ContainerProxy
 import azure.cosmos.aio._retry_utility_async as _retry_utility
 from azure.cosmos._retry_options import RetryOptions
-from tests._fault_injection_transport_async import FaultInjectionTransportAsync
+from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 
 class ConnectionMode:

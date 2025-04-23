@@ -12,7 +12,7 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey, documents
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-from tests._fault_injection_transport import FaultInjectionTransport
+from _fault_injection_transport import FaultInjectionTransport
 
 
 def setup_method_with_custom_transport(
@@ -454,7 +454,7 @@ class TestRetryPolicy(unittest.TestCase):
             finally:
                 _retry_utility.ExecuteFunction = self.original_execute_function
 
-    def test_patch_replace_no_retry_async(self):
+    def test_patch_replace_no_retry(self):
         doc = {'id': str(uuid.uuid4()),
                'pk': str(uuid.uuid4()),
                'name': 'sample document',
