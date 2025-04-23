@@ -1,22 +1,20 @@
 # Release History
 
-## 1.0.0b10 (Unreleased)
+## 1.0.0b10 (2025-04-23)
 
 ### Features added
 
-* Added agent tool call tracing support for all tool call types when streaming with AgentEventHandler based event handler
-* Added tracing for listing agent run steps
-* Added ConnectedAgentTool class for better connected agent support
+* Added `ConnectedAgentTool` class for better connected Agent support.
+* Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
+* Added tracing for listing Agent run steps.
 
 ### Sample updates
 
-* Added connected agent tool sample
+* Added connected Agent tool sample.
 
 ### Bugs Fixed
 
-* Fix for filtering of messages by run ID [see GitHub issue issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513).
-
-### Breaking Changes
+* Fix for filtering of messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
 
 ## 1.0.0b9 (2025-04-16)
 

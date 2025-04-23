@@ -1016,7 +1016,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    # Need a recordig for this test
+    # Need a recording for this test
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
     @recorded_by_proxy
