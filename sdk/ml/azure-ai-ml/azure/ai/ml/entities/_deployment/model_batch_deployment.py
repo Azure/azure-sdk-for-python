@@ -74,9 +74,12 @@ class ModelBatchDeployment(BatchDeployment):
         ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs: Any,
     ):
+        # If type not removed from kwargs, it can lead to dual type params passed to Deployment class
+        # Get type from kwargs if present, otherwise use the default type defined above
+        _type = kwargs.pop("type", type)
         super().__init__(
             name=name,
-            _type=type,
+            _type=_type,
             endpoint_name=endpoint_name,
             properties=properties,
             code_path=code_path,
