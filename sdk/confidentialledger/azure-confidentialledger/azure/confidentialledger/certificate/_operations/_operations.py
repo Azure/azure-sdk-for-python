@@ -61,7 +61,7 @@ def build_confidential_ledger_certificate_get_ledger_identity_request(  # pylint
 
 
 class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[PipelineClient, ConfidentialLedgerCertificateClientConfiguration]
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConfidentialLedgerCertificateClientConfiguration]
 ):
 
     @distributed_trace

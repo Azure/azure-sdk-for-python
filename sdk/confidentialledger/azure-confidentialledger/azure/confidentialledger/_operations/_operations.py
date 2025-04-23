@@ -817,7 +817,7 @@ def build_confidential_ledger_delete_user_defined_role_request(  # pylint: disab
 
 
 class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-public-methods
-    ClientMixinABC[PipelineClient, ConfidentialLedgerClientConfiguration]
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConfidentialLedgerClientConfiguration]
 ):
 
     @distributed_trace
