@@ -1,4 +1,4 @@
-# Azure Onlineexperimentation client library for Python
+# Azure Online Experimentation client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -16,6 +16,7 @@ python -m pip install azure-onlineexperimentation
 - An existing Azure Onlineexperimentation instance.
 
 #### Create with an Azure Active Directory Credential
+
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
