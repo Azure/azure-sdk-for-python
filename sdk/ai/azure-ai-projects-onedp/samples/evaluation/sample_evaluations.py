@@ -27,7 +27,13 @@ from typing import List
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
-from azure.ai.projects.onedp.models import Evaluation, InputDataset, EvaluatorConfiguration, EvaluatorIds, DatasetVersion
+from azure.ai.projects.onedp.models import (
+    Evaluation,
+    InputDataset,
+    EvaluatorConfiguration,
+    EvaluatorIds,
+    DatasetVersion,
+)
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -55,11 +61,11 @@ with AIProjectClient(
     print("Create an evaluation")
     evaluation: Evaluation = Evaluation(
         display_name="Sample Evaluation",
-        description="Sample evaluation for testing", # TODO: Can we optional once bug 4115256 is fixed
-        data=InputDataset(id="<dataset_id>"), # TODO: update this to use the correct id
+        description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
+        data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
         evaluators={
             "relevance": EvaluatorConfiguration(
-                id=EvaluatorIds.RELEVANCE.value, # TODO: update this to use the correct id
+                id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
                 init_params={
                     "deployment_name": "gpt-4o",
                 },

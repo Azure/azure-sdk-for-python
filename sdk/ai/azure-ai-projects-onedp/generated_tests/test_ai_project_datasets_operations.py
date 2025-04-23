@@ -58,9 +58,9 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_create_version(self, aiproject_endpoint):
+    def test_datasets_create_or_update_version(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.create_version(
+        response = client.datasets.create_or_update_version(
             name="str",
             version="str",
             body={

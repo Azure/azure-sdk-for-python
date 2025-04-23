@@ -43,12 +43,3 @@ class TestAIProjectConnectionsOperationsAsync(AIProjectClientTestBaseAsync):
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_connections_list_with_credentials(self, aiproject_endpoint):
-        client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = client.connections.list_with_credentials()
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...

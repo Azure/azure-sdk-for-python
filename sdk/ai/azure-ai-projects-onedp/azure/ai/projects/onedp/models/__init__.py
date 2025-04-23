@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AgentEvaluation,
+    AgentEvaluationRedactionConfiguration,
+    AgentEvaluationRequest,
+    AgentEvaluationResult,
+    AgentEvaluationSamplingConfiguration,
     ApiKeyCredentials,
     AssetCredentialResponse,
     AzureAISearchIndex,
@@ -60,6 +65,11 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AgentEvaluation",
+    "AgentEvaluationRedactionConfiguration",
+    "AgentEvaluationRequest",
+    "AgentEvaluationResult",
+    "AgentEvaluationSamplingConfiguration",
     "ApiKeyCredentials",
     "AssetCredentialResponse",
     "AzureAISearchIndex",

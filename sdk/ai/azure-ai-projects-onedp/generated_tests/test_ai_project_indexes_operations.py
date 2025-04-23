@@ -58,9 +58,9 @@ class TestAIProjectIndexesOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_indexes_create_version(self, aiproject_endpoint):
+    def test_indexes_create_or_update_version(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.indexes.create_version(
+        response = client.indexes.create_or_update_version(
             name="str",
             version="str",
             body={

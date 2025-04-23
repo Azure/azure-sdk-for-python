@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
 def enable_telemetry(
-    *, destination: Union[TextIO, str, None] = None, **kwargs
-) -> None:  # pylint: disable=unused-argument
+    *, destination: Union[TextIO, str, None] = None, **kwargs  # pylint: disable=unused-argument
+) -> None:
     """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
 
     Following instrumentations are enabled (when corresponding packages are installed):
@@ -72,7 +72,7 @@ def enable_telemetry(
         )
 
     try:
-        from azure.ai.agents.tracing import AIAgentsInstrumentor
+        from azure.ai.agents.tracing import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
 
         agents_instrumentor = AIAgentsInstrumentor()
         if not agents_instrumentor.is_instrumented():

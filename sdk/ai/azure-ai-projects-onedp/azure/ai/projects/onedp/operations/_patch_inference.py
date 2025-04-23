@@ -61,7 +61,8 @@ class InferenceOperations:
         parsed = urlparse(input_url)
         if parsed.scheme != "https" or not parsed.netloc:
             raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
-        new_url = f"https://{parsed.netloc}/api/models"
+        #new_url = f"https://{parsed.netloc}/api/models"
+        new_url = f"https://{parsed.netloc}/models"
         return new_url
 
     @distributed_trace

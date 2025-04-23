@@ -52,3 +52,21 @@ class TestAIProjectEvaluationsOperationsAsync(AIProjectClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
+
+    @AIProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_create_agent_evaluation(self, aiproject_endpoint):
+        client = self.create_async_client(endpoint=aiproject_endpoint)
+        response = await client.evaluations.create_agent_evaluation(
+            evaluation={
+                "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
+                "runId": "str",
+                "appInsightsConnectionString": "str",
+                "redactionConfiguration": {"redactScoreProperties": bool},
+                "samplingConfiguration": {"maxRequestRate": 0.0, "name": "str", "samplingPercent": 0.0},
+                "threadId": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...

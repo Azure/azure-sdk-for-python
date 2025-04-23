@@ -59,9 +59,9 @@ class TestAIProjectDatasetsOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_datasets_create_version(self, aiproject_endpoint):
+    async def test_datasets_create_or_update_version(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.datasets.create_version(
+        response = await client.datasets.create_or_update_version(
             name="str",
             version="str",
             body={
