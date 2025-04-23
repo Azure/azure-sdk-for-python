@@ -89,11 +89,11 @@ class TestCollectionRoutingMap(unittest.TestCase):
                                 {u'id': u'1', u'minInclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', u'maxExclusive': u'FF'}]
         partitionRangeWithInfo = [(r, True) for r in partition_key_ranges]
         expected_partition_key_range = routing_range.Range("", "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", True, False)
-        pkRange = routing_range.Range("1EC0C2CBE45DBC919CF2B65D399C2673", "1EC0C2CBE45DBC919CF2B65D399C2673", True, True)
-        normalized_pkrange = pkRange.to_normalized_range()
+        pk_range = routing_range.Range("1EC0C2CBE45DBC919CF2B65D399C2673", "1EC0C2CBE45DBC919CF2B65D399C2673", True, True)
+        normalized_pk_range = pk_range.to_normalized_range()
 
         collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
-        overlapping_partition_key_ranges = collection_routing_map.get_overlapping_ranges(normalized_pkrange)
+        overlapping_partition_key_ranges = collection_routing_map.get_overlapping_ranges(normalized_pk_range)
 
         # a partition key feed range should only map to one physical partition
         self.assertEqual(1, len(overlapping_partition_key_ranges))
