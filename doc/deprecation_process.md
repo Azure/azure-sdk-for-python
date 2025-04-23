@@ -41,25 +41,25 @@ Replace ALL existing text with a disclaimer in the following format.
   - If a replacement package and migration guide exist:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
     ```
 
   - If a migration guide is not provided:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
     ```
 
   - If a replacement package does not exist:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
     ```
 
   - If a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
     
     For additional support, open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
     ```
@@ -174,12 +174,18 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
 
 # Step 5: Create a new PR to remove the package from the main branch
 
-- Append the following to the end of the existing README.md.
+Append a note to the README.md deprecation message stating the package has been removed from the main branch, a link to the latest GitHub release tag and package on PyPI, and contact info for questions. The full README text should now look like the following:
+
   ```md
+  # Microsoft Azure SDK for Python
+
+  This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
+
   Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage). The latest release can be found on [PyPI](https://pypi.org/project/azure-mypackage/).
 
   If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.
   ```
+
 - Delete all files in the package directory `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package directory root.
 - You will see an `Artifacts` parameter in `mypackage/ci.yml`.
   ```yml
@@ -198,7 +204,7 @@ Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https:/
         Artifacts:
           ...
     ```
-  - If the only package in the `mypackage` service directory is `azure-mypackage`, delete all files -- _not package subdirectories_-- in the `mypackage` service directory (i.e. `ci.yml`, `tests.yml`, `test-resources.bicep`, etc.).
+  - If the only package listed is `azure-mypackage`, delete `ci.yml` and all files -- _not package subdirectories_-- in the `mypackage` service directory (i.e. `tests.yml`, `test-resources.bicep`, etc.).
 
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
