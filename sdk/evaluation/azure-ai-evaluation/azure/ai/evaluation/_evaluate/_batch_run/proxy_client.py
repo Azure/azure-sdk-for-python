@@ -8,15 +8,21 @@ import inspect
 import logging
 import math
 import os
+from datetime import datetime
 from collections import OrderedDict
 from concurrent.futures import Future
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union, cast
 
+from azure.ai.evaluation._legacy._adapters.entities import Run
+from azure.ai.evaluation._legacy._adapters._configuration import Configuration
+from azure.ai.evaluation._legacy._adapters.client import PFClient
+from azure.ai.evaluation._legacy._adapters.tracing import ThreadPoolExecutorWithContext
 import pandas as pd
-from promptflow.client import PFClient
-from promptflow.entities import Run
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable
+
+
+Configuration.get_instance().set_config("trace.destination", "none")
 LOGGER = logging.getLogger(__name__)
 
 
@@ -26,46 +32,61 @@ class ProxyRun:
 
 
 class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        self, pf_client: PFClient
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self,
+        **kwargs: Any,
     ) -> None:
-        self._pf_client = pf_client
-        self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
+        self._pf_client = PFClient(**kwargs)
+        self._thread_pool = ThreadPoolExecutorWithContext(thread_name_prefix="evaluators_thread")
 
     def run(
         self,
-        flow: Union[str, os.PathLike, Callable],
-        data: Union[str, os.PathLike],
+        flow: Callable,
+        data: Union[str, os.PathLike, pd.DataFrame],
         column_mapping: Optional[Dict[str, str]] = None,
-        **kwargs
+        evaluator_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> ProxyRun:
-        flow_to_run = flow
-        if os.getenv("AI_EVALS_BATCH_USE_ASYNC", "true").lower() == "true" and hasattr(flow, "_to_async"):
+        if isinstance(data, pd.DataFrame):
+            raise ValueError("Data cannot be a pandas DataFrame")
+
+        flow_to_run: Callable = flow
+        if os.getenv("AI_EVALS_BATCH_USE_ASYNC", "true").lower() == "true" and isinstance(flow, HasAsyncCallable):
             flow_to_run = flow._to_async()  # pylint: disable=protected-access
+
+        name: str = kwargs.pop("name", "")
+        if not name:
+            name = f"azure_ai_evaluation_evaluators_{evaluator_name}_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
+
+        # Pass the correct previous run to the evaluator
+        run: Optional[BatchClientRun] = kwargs.pop("run", None)
+        if run:
+            kwargs["run"] = self.get_result(run)
 
         batch_use_async = self._should_batch_use_async(flow_to_run)
         eval_future = self._thread_pool.submit(
             self._pf_client.run,
             flow_to_run,
             data=data,
-            column_mapping=column_mapping,
+            column_mapping=column_mapping,  # type: ignore
             batch_use_async=batch_use_async,
-            **kwargs
+            name=name,
+            **kwargs,
         )
         return ProxyRun(run=eval_future)
 
-    def get_details(self, proxy_run: ProxyRun, all_results: bool = False) -> pd.DataFrame:
-        run: Run = proxy_run.run.result()
+    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+        run: Run = self.get_result(client_run)
         result_df = self._pf_client.get_details(run, all_results=all_results)
         result_df.replace("(Failed)", math.nan, inplace=True)
         return result_df
 
-    def get_metrics(self, proxy_run: ProxyRun) -> Dict[str, Any]:
-        run: Run = proxy_run.run.result()
+    def get_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
+        run: Run = self.get_result(client_run)
         return self._pf_client.get_metrics(run)
 
-    def get_run_summary(self, proxy_run: ProxyRun) -> Dict[str, Any]:
-        run = proxy_run.run.result()
+    def get_run_summary(self, client_run: BatchClientRun) -> Dict[str, Any]:
+        run: Run = self.get_result(client_run)
 
         # pylint: disable=protected-access
         completed_lines = run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")
@@ -81,12 +102,16 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         return OrderedDict(
             [
                 ("status", status),
-                ("duration", str(run._end_time - run._created_on)),
+                ("duration", str((run._end_time or run._created_on) - run._created_on)),
                 ("completed_lines", completed_lines),
                 ("failed_lines", failed_lines),
                 ("log_path", str(run._output_path)),
             ]
         )
+
+    @staticmethod
+    def get_result(run: BatchClientRun) -> Run:
+        return cast(ProxyRun, run).run.result()
 
     @staticmethod
     def _should_batch_use_async(flow):

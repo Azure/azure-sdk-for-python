@@ -1,12 +1,12 @@
 {
-  "commit": "690a7656d65a03b134fa44fc7bb8013dc18a15b5",
+  "commit": "d2457f3dae10d48a6a74d867b335d96b229b2b03",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.19.0",
+    "@autorest/python@6.33.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/servicebus/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/servicebus/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.33.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/servicebus/resource-manager/readme.md",
   "package-2022-10-preview": "2023-04-13 07:43:12 +0530 9bc5a13776661d0bc699efadece14870e2846d7f Microsoft.ServiceBus/preview/2022-10-01-preview/migrationconfigs.json",
   "package-2022-01-preview": "2023-04-13 07:43:12 +0530 9bc5a13776661d0bc699efadece14870e2846d7f Microsoft.ServiceBus/preview/2022-01-01-preview/migrationconfigs.json",

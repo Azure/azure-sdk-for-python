@@ -1,0 +1,84 @@
+---
+name: Completeness
+description: Evaluates Completeness score for QA scenario
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    seed: 123
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  response:
+    type: string
+  ground_truth:
+    type: string
+
+---
+system:
+# Instruction
+## Goal
+### You are an expert in evaluating the quality of a Response from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include Response and Ground Truth.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+
+user:
+# Definition
+**Completeness** refers to how accurately and thoroughly a response represents the information provided in the ground truth. It considers both the inclusion of all relevant statements and the correctness of those statements. Each statement in the ground truth should be evaluated individually to determine if it is accurately reflected in the response without missing any key information. The scale ranges from 1 to 5, with higher numbers indicating greater completeness.
+
+# Ratings
+## [Completeness: 1] (Fully Incomplete)
+**Definition:** A response that does not contain any of the necessary and relevant information with respect to the ground truth. It completely misses all the information, especially claims and statements, established in the ground truth.
+
+**Examples:**
+  **Response:** "Flu shot cannot cure cancer. Stay healthy requires sleeping exactly 8 hours a day. A few hours of exercise per week will have little benefits for physical and mental health. Physical and mental health benefits are separate topics. Scientists have not studied any of them."
+  **Ground Truth:** "Flu shot can prevent flu-related illnesses. Staying healthy requires proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+## [Completeness: 2] (Barely Complete)
+**Definition:** A response that contains only a small percentage of all the necessary and relevant information with respect to the ground truth. It misses almost all the information, especially claims and statements, established in the ground truth.
+
+**Examples:**
+  **Response:** "Flu shot can prevent flu-related illnesses. Staying healthy requires 2 meals a day. Exercise per week makes no difference to physical and mental health. This is because physical and mental health benefits have low correlation through scientific studies. Scientists are making this observation in studies."
+  **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+## [Completeness: 3] (Moderately Complete)
+**Definition:** A response that contains half of the necessary and relevant information with respect to the ground truth. It misses half of the information, especially claims and statements, established in the ground truth.
+
+**Examples:**
+  **Response:** "Flu shot can prevent flu-related illnesses. Staying healthy requires a few dollars of investments a day. Even a few dollars of investments per week will not make an impact on physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Fiction writers are starting to discover them through their works."
+  **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+## [Completeness: 4] (Mostly Complete)
+**Definition:** A response that contains most of the necessary and relevant information with respect to the ground truth. It misses some minor information, especially claims and statements, established in the ground truth.
+
+**Examples:**
+  **Response:** "Flu shot can prevent flu-related illnesses. Staying healthy requires keto diet and rigorous athletic training. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+  **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+## [Completeness: 5] (Fully Complete)
+**Definition:** A response that perfectly contains all the necessary and relevant information with respect to the ground truth. It does not miss any information from statements and claims in the ground truth.
+
+**Examples:**
+  **Response:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+  **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+
+# Data
+Response: {{response}}
+Ground Truth: {{ground_truth}}
+
+
+# Tasks
+## Please provide your assessment Score for the previous RESPONSE in relation to the GROUND TRUTH based on the Definitions above. Your output should include the following information:
+- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
+- **Explanation**: a very short explanation of why you think the input data should get that Score.
+- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be an integer score (i.e., "1", "2"...) based on the levels of the definitions.
+
+## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your score</S2>.
+# Output

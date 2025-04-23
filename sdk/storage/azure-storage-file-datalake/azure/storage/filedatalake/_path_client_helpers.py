@@ -46,7 +46,7 @@ def _parse_url(account_url: str) -> "ParseResult":
 def _format_url(scheme: str, hostname: str, file_system_name: Union[str, bytes], path_name: str, query_str: str) -> str:
     if isinstance(file_system_name, str):
         file_system_name = file_system_name.encode('UTF-8')
-    return f"{scheme}://{hostname}/{quote(file_system_name)}/{quote(path_name, safe='~')}{query_str}"
+    return f"{scheme}://{hostname}/{quote(file_system_name)}/{quote(path_name, safe='~/')}{query_str}"
 
 
 def _create_path_options(

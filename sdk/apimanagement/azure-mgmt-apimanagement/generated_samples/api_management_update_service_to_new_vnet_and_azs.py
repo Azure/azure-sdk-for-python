@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.apimanagement import ApiManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.api_management_service.begin_update(
@@ -40,17 +38,17 @@ def main():
                 "additionalLocations": [
                     {
                         "location": "Australia East",
-                        "publicIpAddressId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/publicIPAddresses/apim-australia-east-publicip",
+                        "publicIpAddressId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/publicIPAddresses/apim-australia-east-publicip",
                         "sku": {"capacity": 3, "name": "Premium"},
                         "virtualNetworkConfiguration": {
-                            "subnetResourceId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/apimaeavnet/subnets/default"
+                            "subnetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/apimaeavnet/subnets/default"
                         },
                         "zones": ["1", "2", "3"],
                     }
                 ],
-                "publicIpAddressId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/publicIPAddresses/publicip-apim-japan-east",
+                "publicIpAddressId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/publicIPAddresses/publicip-apim-japan-east",
                 "virtualNetworkConfiguration": {
-                    "subnetResourceId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet-apim-japaneast/subnets/apim2"
+                    "subnetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet-apim-japaneast/subnets/apim2"
                 },
                 "virtualNetworkType": "External",
             },
@@ -61,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementUpdateServiceToNewVnetAndAZs.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2024-05-01/examples/ApiManagementUpdateServiceToNewVnetAndAZs.json
 if __name__ == "__main__":
     main()

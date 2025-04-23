@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Literal, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -17,13 +17,14 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -31,12 +32,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import SearchManagementClientMixinABC, _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,7 +55,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -96,7 +96,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -137,7 +137,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -177,7 +177,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +212,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -244,7 +244,7 @@ def build_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -272,10 +272,9 @@ def build_check_name_availability_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
-    type = "searchServices"
 
     # Construct URL
     _url = kwargs.pop(
@@ -295,6 +294,39 @@ def build_check_name_availability_request(
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_upgrade_request(
+    resource_group_name: str, search_service_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/upgrade",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -326,8 +358,8 @@ class ServicesOperations:
         service: Union[_models.SearchService, IO[bytes]],
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
-    ) -> _models.SearchService:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -340,7 +372,7 @@ class ServicesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -365,10 +397,10 @@ class ServicesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -376,14 +408,14 @@ class ServicesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SearchService", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SearchService", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -414,8 +446,8 @@ class ServicesOperations:
          service names must only contain lowercase letters, digits or dashes, cannot use dash as the
          first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
          60 characters in length. Search service names must be globally unique since they are part of
-         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
-         after the service is created. Required.
+         the service URI (https://\\ :code:`<name>`.search.windows.net). You cannot change the service
+         name after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Required.
         :type service: ~azure.mgmt.search.models.SearchService
@@ -455,8 +487,8 @@ class ServicesOperations:
          service names must only contain lowercase letters, digits or dashes, cannot use dash as the
          first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
          60 characters in length. Search service names must be globally unique since they are part of
-         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
-         after the service is created. Required.
+         the service URI (https://\\ :code:`<name>`.search.windows.net). You cannot change the service
+         name after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Required.
         :type service: IO[bytes]
@@ -494,8 +526,8 @@ class ServicesOperations:
          service names must only contain lowercase letters, digits or dashes, cannot use dash as the
          first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
          60 characters in length. Search service names must be globally unique since they are part of
-         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
-         after the service is created. Required.
+         the service URI (https://\\ :code:`<name>`.search.windows.net). You cannot change the service
+         name after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Is either a
          SearchService type or a IO[bytes] type. Required.
@@ -530,10 +562,11 @@ class ServicesOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SearchService", pipeline_response)
+            deserialized = self._deserialize("SearchService", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -652,7 +685,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -690,7 +723,6 @@ class ServicesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -704,7 +736,7 @@ class ServicesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SearchService", pipeline_response)
+        deserialized = self._deserialize("SearchService", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -737,7 +769,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -764,7 +796,6 @@ class ServicesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -778,7 +809,7 @@ class ServicesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SearchService", pipeline_response)
+        deserialized = self._deserialize("SearchService", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -811,7 +842,7 @@ class ServicesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -838,7 +869,6 @@ class ServicesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -883,7 +913,7 @@ class ServicesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SearchServiceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -905,7 +935,6 @@ class ServicesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -921,7 +950,6 @@ class ServicesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -972,7 +1000,7 @@ class ServicesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SearchServiceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -993,7 +1021,6 @@ class ServicesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1009,7 +1036,6 @@ class ServicesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1046,8 +1072,8 @@ class ServicesOperations:
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Checks whether or not the given search service name is available for use. Search service names
-        must be globally unique since they are part of the service URI
-        (https://:code:`<name>`.search.windows.net).
+        must be globally unique since they are part of the service URI (https://\\
+        :code:`<name>`.search.windows.net).
 
         .. seealso::
            - https://aka.ms/search-manage
@@ -1063,7 +1089,7 @@ class ServicesOperations:
         :rtype: ~azure.mgmt.search.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1094,7 +1120,6 @@ class ServicesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1108,9 +1133,124 @@ class ServicesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
+        deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    def _upgrade_initial(self, resource_group_name: str, search_service_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_upgrade_request(
+            resource_group_name=resource_group_name,
+            search_service_name=search_service_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_upgrade(
+        self, resource_group_name: str, search_service_name: str, **kwargs: Any
+    ) -> LROPoller[_models.SearchService]:
+        """Upgrades the Azure AI Search service to the latest version available.
+
+        :param resource_group_name: The name of the resource group within the current subscription. You
+         can obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param search_service_name: The name of the Azure AI Search service associated with the
+         specified resource group. Required.
+        :type search_service_name: str
+        :return: An instance of LROPoller that returns either SearchService or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.search.models.SearchService]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.SearchService] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._upgrade_initial(
+                resource_group_name=resource_group_name,
+                search_service_name=search_service_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("SearchService", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.SearchService].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.SearchService](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

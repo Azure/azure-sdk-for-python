@@ -64,19 +64,18 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
+        *,
         threshold: int = 5,
-        _higher_is_better: bool = True,
         **kwargs,
     ):
         self.threshold = threshold
-        self._higher_is_better = _higher_is_better
+        self._higher_is_better = True
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
             azure_ai_project=azure_ai_project,
             credential=credential,
             threshold=self.threshold,
-            _higher_is_better=self._higher_is_better,
             **kwargs,
         )
 

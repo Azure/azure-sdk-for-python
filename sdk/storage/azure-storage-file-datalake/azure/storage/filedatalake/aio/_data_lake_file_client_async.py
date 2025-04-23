@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -256,7 +256,7 @@ class DataLakeFileClient(PathClient):
         return await self._exists(**kwargs)
 
     @distributed_trace_async
-    async def delete_file(self, **kwargs: Any) -> Dict[str, Any]:
+    async def delete_file(self, **kwargs: Any) -> None:
         """
         Marks the specified file for deletion.
 
@@ -299,7 +299,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Delete file.
         """
-        return await self._delete(**kwargs)
+        return await self._delete(**kwargs)  # type: ignore [return-value]
 
     @distributed_trace_async
     async def get_file_properties(self, **kwargs: Any) -> FileProperties:
@@ -395,7 +395,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def upload_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         **kwargs: Any
@@ -404,7 +404,7 @@ class DataLakeFileClient(PathClient):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
@@ -473,7 +473,12 @@ class DataLakeFileClient(PathClient):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :return: A dictionary of response headers.
+        :keyword progress_hook:
+            A callback to track the progress of a long-running upload. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
+        :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """
         options = _upload_options(
@@ -489,7 +494,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
@@ -497,7 +502,7 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int offset: start position of the data to be appended to.
         :param length: Size of the data in bytes.
         :type length: int or None
@@ -699,6 +704,11 @@ class DataLakeFileClient(PathClient):
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
+        :keyword progress_hook:
+            A callback to track the progress of a long-running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

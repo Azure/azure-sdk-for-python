@@ -54,27 +54,23 @@ class AzureMLOnBehalfOfCredential(object):
     def __exit__(self, *args: Any) -> None:
         self._credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
 
 class _AzureMLOnBehalfOfCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
         client_args = _get_client_args(**kwargs)
         if client_args:
             return ManagedIdentityClient(**client_args)
         return None
 
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self) -> str:
         return "AzureML On Behalf of credentials not available in this environment"
 
 
-def _get_client_args(**kwargs):
-    # type: (dict) -> Optional[dict]
+def _get_client_args(**kwargs) -> Optional[dict]:
 
     url = os.environ.get("OBO_ENDPOINT")
     if not url:
@@ -87,8 +83,7 @@ def _get_client_args(**kwargs):
     )
 
 
-def _get_request(url, resource):
-    # type: (str, str) -> HttpRequest
+def _get_request(url: str, resource: str) -> HttpRequest:
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"resource": resource}))
     return request

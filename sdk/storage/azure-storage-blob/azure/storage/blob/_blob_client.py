@@ -432,7 +432,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             version_id=version_id,
             audience=audience,
             api_version=api_version,
-            secondary_hostname=secondary or secondary_hostname,
+            secondary_hostname=secondary_hostname or secondary,
             max_block_size=max_block_size,
             max_page_size=max_page_size,
             max_chunk_get_size=max_chunk_get_size,
@@ -580,6 +580,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Blob-updated property Dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
@@ -2244,6 +2253,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.9.0
 
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -2619,6 +2637,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Blob property dict.
         :rtype: Dict[str, Any]
         """
@@ -3064,7 +3094,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         warnings.warn(
             "get_page_ranges is deprecated, use list_page_ranges instead",
@@ -3273,7 +3303,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         options = _get_page_ranges_options(
             snapshot=self.snapshot,
@@ -3707,6 +3737,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Response after uploading pages from specified URL.
         :rtype: Dict[str, Any]
         """
@@ -4089,6 +4131,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Result after appending a new block.
         :rtype: Dict[str, Union[str, datetime, int]]
         """

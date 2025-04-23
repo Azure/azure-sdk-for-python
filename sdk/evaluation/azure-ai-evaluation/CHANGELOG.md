@@ -1,6 +1,30 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.6.0 (Unreleased)
+
+### Features Added
+- New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
+    ```
+    "query1": "some query", "response: "some response"
+    ```
+    throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
+    Now, users may import data containing fields with numeric characters. 
+
+
+### Other Changes
+
+## 1.5.0 (2025-04-04)
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
+## 1.4.0 (2025-03-27)
 
 ### Features Added
 - Enhanced binary evaluation results with customizable thresholds
@@ -45,13 +69,15 @@
     - emotional_state
     - protected_class
     - groundedness
-
-### Breaking Changes
+- New Built-in evaluators for Agent Evaluation (Preview)
+  - IntentResolutionEvaluator - Evaluates the intent resolution of an agent's response to a user query.
+  - ResponseCompletenessEvaluator - Evaluates the response completeness of an agent's response to a user query.
+  - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
+  - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
 
 ### Bugs Fixed
 - Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
-
-### Other Changes
+- Uploading local evaluation results from `evaluate` with the same run name will no longer result in each online run sharing (and bashing) result files.
 
 ## 1.3.0 (2025-02-28)
 
