@@ -848,7 +848,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_run_info_list: List[OAIEvalRunCreationInfo] = []
 
     # Start OAI eval runs if any graders are present.
-    if len(graders) > 0:
+    need_oai_run = len(graders) > 0
+    need_local_run = len(evaluators) > 0
+    need_get_oai_results = False
+    got_local_results = False
+    if need_oai_run:
         for grader in graders.values():
             if isinstance(grader, AoaiGrader):
                 oai_client = grader.get_client()
@@ -862,33 +866,58 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 input_data_df,
                 aoi_name
             )
+            need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
-            # TODO, check if there's normal evaluations to be done, if so, do them, but print this as a warning.
-            raise e
+            if need_local_run and not fail_on_oai_errors:
+                # If there are normal evaluators, don't stop execution and try to run
+                # those.
+                LOGGER.warning("Remote AOAI grader evaluations failed during run creation." +
+                               " Continuing with local evaluators.")
+                LOGGER.warning(e)
+            else:
+                raise e
     
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
-    if len(evaluators) > 0:
-        eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
-            validated_data=validated_data,
-            fail_on_evaluator_errors=fail_on_evaluator_errors
-        )
-        results_df = eval_result_df
-        metrics = eval_metrics
-        # TODO figure out how to update this printing to include OAI results?
-        _print_summary(per_evaluator_results)
+    if need_local_run:
+        try:
+            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
+                validated_data=validated_data,
+                fail_on_evaluator_errors=fail_on_evaluator_errors
+            )
+            results_df = eval_result_df
+            metrics = eval_metrics
+            got_local_results = True
+            # TODO figure out how to update this printing to include OAI results?
+            _print_summary(per_evaluator_results)
+        except EvaluationException as e:
+            if need_get_oai_results:
+                # If there are OAI graders, we only print a warning on local failures.
+                LOGGER.warning("Local evaluations failed. Will still attempt to retrieve online grader results.")
+                LOGGER.warning(e)
+            else:
+                raise e
 
     # Retrieve OAI eval run results if needed.
-    if len(graders) > 0:
-        aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_run_info_list) # type: ignore
-        # aoai_results, aoai_metrics = _temp_get_dummy_aoai_data(graders, input_data_df)
-        # Combine results if both evaluators and graders are present
-        if len(evaluators) > 0:
-            results_df = pd.concat([results_df, aoai_results], axis=1)
-            metrics.update(aoai_metrics)
-        else:
-            # Otherwise combine aoai results with input data df to include input columns in outputs.
-            results_df = pd.concat([input_data_df, aoai_results], axis=1)
-            metrics = aoai_metrics
+    if need_get_oai_results:
+        try:
+            aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_run_info_list) # type: ignore
+            # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
+
+            # Combine results if both evaluators and graders are present
+            if len(evaluators) > 0:
+                results_df = pd.concat([results_df, aoai_results], axis=1)
+                metrics.update(aoai_metrics)
+            else:
+                # Otherwise combine aoai results with input data df to include input columns in outputs.
+                results_df = pd.concat([input_data_df, aoai_results], axis=1)
+                metrics = aoai_metrics
+        except EvaluationException as e:
+            if got_local_results:
+                # If there are local eval results, we only print a warning on OAI failure.
+                LOGGER.warning("Remote AOAI grader evaluations failed. Still returning local results.")
+                LOGGER.warning(e)
+            else:
+                raise e
 
     # Done with all evaluations, message outputs into final forms, and log results if needed.
 

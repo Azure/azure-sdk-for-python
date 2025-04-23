@@ -528,7 +528,8 @@ def _begin_eval_run(
     )
     return eval_run.id
 
-def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str) -> Any:
+# Post built TODO: replace with _red_team.py's retry logic?
+def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str, max_wait_seconds = 21600) -> Any:
     """
     Perform exponential backoff polling to get the results of an AOAI evaluation run.
     Raises an EvaluationException if max attempts are reached without receiving a concluding status.
@@ -539,28 +540,33 @@ def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: 
     :type eval_group_id: str
     :param eval_run_id: The evaluation run ID to get the results of.
     :type eval_run_id: str
+    :param max_wait_seconds: The maximum amount of time to wait for the evaluation run to complete.
+    :type max_wait_seconds: int
+    :return: The results of the evaluation run.
+    :rtype: Any
     """
 
-
     print(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...\n")
+    total_wait = 0
     iters = 0
+    # start with ~51 minutes of exponential backoff
     # max wait time = 2^10 * 3 = 3072 seconds ~= 51 minutes
-    max_iters = 10 # TODO assign as a constant somewhere? Make configurable?
-    wait_interval = 3 # Seconds. TODO assign as a constant somewhere? Make configurable?
-    # Max wait is 
-    while(iters < max_iters):
-        iters += 1
-        wait_interval *= 2
+    wait_interval = 3 # Seconds.
+    while(True):
+        wait_interval *= 1.5
+        total_wait += wait_interval
+        # Reduce last wait interval if total wait time exceeds max wait time
+        if total_wait > max_wait_seconds:
+            wait_interval -= total_wait - max_wait_seconds
         sleep(wait_interval)
         response = client.evals.runs.retrieve(eval_id=eval_group_id, run_id=eval_run_id)
         if response.status not in  ["queued", "in_progress"]:
             return response
-        if iters > max_iters:
+        if total_wait > max_wait_seconds:
             raise EvaluationException(
-                message=f"Timed out waiting for AOAI evaluation to complete after {max_iters}"
-                 + f" rounds of polling. Final status was {response.status}",
+                message=f"Timed out waiting for AOAI evaluation to complete after {iters}"
+                    + f" rounds of polling. Final status was {response.status}",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.AOAI_GRADER,
             )
-        
