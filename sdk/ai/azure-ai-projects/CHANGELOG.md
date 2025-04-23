@@ -7,6 +7,7 @@
 * Added `ConnectedAgentTool` class for better connected Agent support.
 * Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
 * Added tracing for listing Agent run steps.
+* Add a `max_retry` argument to the `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
 
 ### Sample updates
 
