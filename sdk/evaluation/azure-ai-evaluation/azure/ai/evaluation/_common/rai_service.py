@@ -247,8 +247,6 @@ async def submit_request_onedp(
     :type data: dict
     :param metric: The evaluation metric to use.
     :type metric: str
-    :param rai_svc_url: The Responsible AI service URL.
-    :type rai_svc_url: str
     :param token: The Azure authentication token.
     :type token: str
     :param annotation_task: The annotation task to use.
