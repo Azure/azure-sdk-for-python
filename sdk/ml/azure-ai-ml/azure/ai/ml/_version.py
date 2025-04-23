@@ -2,4 +2,4 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-VERSION = "1.26.4"
+VERSION = "1.26.5"
