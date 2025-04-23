@@ -22,7 +22,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     by the user.
     """
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info):
+    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info, response_hook):
         super(_NonStreamingOrderByContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -33,6 +33,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+        self._response_hook = response_hook
 
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()
@@ -142,6 +143,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             query,
             self._document_producer_comparator,
             self._options,
+            self._response_hook
         )
 
     def _get_target_partition_key_range(self):
