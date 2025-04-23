@@ -28,3 +28,8 @@ section of the project.
 
 
 
+
+
+Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mgmt-logz_1.1.1](https://github.com/Azure/azure-sdk-for-python/tree/azure-mgmt-logz_1.1.1/sdk/logz/azure-mgmt-logz). The latest release can be found on [PyPI](https://pypi.org/project/azure-mgmt-logz/).
+
+If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.
