@@ -518,7 +518,7 @@ class Model(_MyMutableMapping):
         annotations = {
             k: v
             for mro_class in mros
-            if hasattr(mro_class, "__annotations__")
+            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
             for k, v in mro_class.__annotations__.items()
         }
         for attr, rf in attr_to_rest_field.items():
@@ -545,7 +545,7 @@ class Model(_MyMutableMapping):
 
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
-        if not hasattr(cls, "__mapping__"):
+        if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)

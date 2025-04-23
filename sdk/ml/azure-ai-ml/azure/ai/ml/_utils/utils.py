@@ -1083,7 +1083,7 @@ def try_enable_internal_components(*, force=False) -> bool:
 
         enable_internal_components_in_pipeline(force=force)
 
-        return True
+        return True  # pylint: disable=unreachable
     return False
 
 

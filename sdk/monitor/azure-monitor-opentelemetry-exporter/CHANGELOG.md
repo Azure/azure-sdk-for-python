@@ -1,3 +1,5 @@
+# cSpell:disable
+
 # Release History
 
 ## 1.0.0b37 (Unreleased)
@@ -9,6 +11,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Extend version range for `psutil` to include 7.x
+  ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
 
 ## 1.0.0b36 (2025-04-07)
 
@@ -571,3 +576,5 @@
 ## 0.1a.0 (2019-11-06)
 
 - Initial alpha release
+
+# cSpell:enable

@@ -53,9 +53,14 @@ from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import MockStorageTransport
+from test_helpers import (
+    MockStorageTransport,
+    _build_base_file_share_headers,
+    _create_file_share_oauth,
+)
 
 # ------------------------------------------------------------------------------
+SMALL_BLOB_SIZE = 1024
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
@@ -105,6 +110,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
+
+    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
 
     def _create_block_blob(self, standard_blob_tier=None, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
@@ -157,6 +165,63 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob.remaining_retention_days is None
 
     # -- Common test cases for blobs ----------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act
+            with pytest.raises(ValueError):
+                destination_blob_client.start_copy_from_url(
+                    source_url=base_url + "/" + file_name,
+                    source_authorization=bearer_token_string,
+                    source_token_intent='backup',
+                    requires_sync=False
+                )
+            destination_blob_client.start_copy_from_url(
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup',
+                requires_sync=True
+            )
+            destination_blob_data = destination_blob_client.download_blob().readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=_build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
+
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_exists(self, **kwargs):
@@ -1368,7 +1433,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         source_blob_client = self._create_source_blob(data=source_blob_data)
         # Create destination blob
         destination_blob_client = self._create_blob()
-        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
+        token = self._get_bearer_token_string()
 
         with pytest.raises(HttpResponseError):
             destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)

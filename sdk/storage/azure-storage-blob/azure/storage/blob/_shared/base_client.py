@@ -131,6 +131,7 @@ class StorageAccountHostsMixin(object):
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
+
         :returns: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """

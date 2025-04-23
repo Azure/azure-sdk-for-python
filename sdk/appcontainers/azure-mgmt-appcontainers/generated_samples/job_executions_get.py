@@ -32,12 +32,12 @@ def main():
 
     response = client.jobs_executions.list(
         resource_group_name="rg",
-        job_name="testcontainerAppsJob0",
+        job_name="testcontainerappsjob0",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-08-02-preview/examples/Job_Executions_Get.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_Executions_Get.json
 if __name__ == "__main__":
     main()
