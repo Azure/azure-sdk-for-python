@@ -83,6 +83,7 @@ def add_sanitizers(
     test_proxy,
     mock_model_config: AzureOpenAIModelConfiguration,
     mock_project_scope: Dict[str, str],
+    mock_onedp_project_scope: Dict[str, str],
     connection_file: Dict[str, Any],
 ) -> None:
     def azureopenai_connection_sanitizer():
@@ -111,6 +112,9 @@ def add_sanitizers(
         )
         add_general_regex_sanitizer(
             regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"/projects/", value=mock_onedp_project_scope["project_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -346,6 +350,7 @@ def mock_project_scope() -> Dict[str, str]:
 def mock_onedp_project_scope() -> Dict[str, str]:
     return {
         "azure_ai_one_dp_project_scope": "https://Sanitized.cognitiveservices.azure.com",
+        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
