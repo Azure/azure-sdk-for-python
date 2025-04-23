@@ -16,8 +16,6 @@ from azure.storage.blob._serialize import get_api_version
 from aiohttp import ClientResponse
 from aiohttp.streams import StreamReader
 from aiohttp.client_proto import ResponseHandler
-from urllib3 import HTTPResponse
-from requests import Response
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
