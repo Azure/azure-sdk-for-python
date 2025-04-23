@@ -135,8 +135,8 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_asyncio_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -163,8 +163,8 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_asyncio_transport_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
