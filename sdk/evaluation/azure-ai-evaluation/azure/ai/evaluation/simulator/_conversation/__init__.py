@@ -422,7 +422,7 @@ class MultiModalConversationBot(ConversationBot):
                 if(isinstance(self.rai_client, RAIClient)):
                     encoded_image = await self.rai_client.get_image_data(msg)
                 else:
-                    encoded_image = self.rai_client.red_teams.get_template_parameters_image(msg)
+                    encoded_image = self.rai_client.red_teams.get_template_parameters_image(path=msg)
                 contents.append(
                     {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded_image}"}},
                 )

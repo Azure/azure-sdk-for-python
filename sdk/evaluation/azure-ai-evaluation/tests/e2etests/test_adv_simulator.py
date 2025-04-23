@@ -872,22 +872,17 @@ class TestAdvSimulator:
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
+        ("proj_scope", "cred"),
+        (
             ("project_scope", "azure_cred"),
             ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+        )
     )
-    def test_jailbreak_sim_order_randomness(self, azure_cred, project_scope):
+    def test_jailbreak_sim_order_randomness(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, DirectAttackSimulator
-
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
 
         async def callback(
             messages: List[Dict],
@@ -906,7 +901,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = DirectAttackSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs1 = asyncio.run(
             simulator(
