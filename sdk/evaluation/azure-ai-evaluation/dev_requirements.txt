@@ -10,4 +10,3 @@ azure-ai-inference>=1.0.0b4
 azure-ai-projects
 aiohttp
 -e ../azure-ai-evaluation
-pyrit==0.8.1;python_version>='3.10'

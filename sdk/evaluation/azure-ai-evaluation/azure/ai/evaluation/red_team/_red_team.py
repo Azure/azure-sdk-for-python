@@ -308,7 +308,7 @@ class RedTeam():
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if data_only:
                     # In data_only mode, we write the conversations in conversation/messages format
-                    f.write(redteam_result.dumps({"conversations": redteam_result.attack_details or []}))
+                    f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                 elif redteam_result.scan_result:
                     # Create a copy to avoid modifying the original scan result
                     result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
