@@ -26,4 +26,3 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
         )
         result = [r for r in response]
         assert result == []
-        

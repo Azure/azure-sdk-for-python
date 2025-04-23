@@ -156,8 +156,16 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 # api stub files
 *_python.json
 
-# temporary folder to refresh SDK with cadl
+# temporary folder to refresh SDK with TypeSpec
 TempTypeSpecFiles/
+
+# temporary folders and files created by running command 'tsp-client install-dependencies'
+node_modules/
+/package-lock.json
+/package.json
+
+# component detection report
+component-detection-pip-report.json
 
 # Eclipse project files
 **/.project

@@ -63,6 +63,8 @@ _COMMON_OPTIONS = {
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
     'max_item_count': 'maxItemCount',
+    'throughput_bucket': 'throughputBucket',
+    'excluded_locations': 'excludedLocations'
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -316,6 +318,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
+    if options.get("throughputBucket"):
+        headers[http_constants.HttpHeaders.ThroughputBucket] = options["throughputBucket"]
 
     if resource_type == "docs" and verb != "get":
         if "responsePayloadOnWriteDisabled" in options:
