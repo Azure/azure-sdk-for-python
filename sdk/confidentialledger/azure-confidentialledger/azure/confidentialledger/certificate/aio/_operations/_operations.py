@@ -32,7 +32,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[AsyncPipelineClient, ConfidentialLedgerCertificateClientConfiguration]
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConfidentialLedgerCertificateClientConfiguration]
 ):
 
     @distributed_trace_async
