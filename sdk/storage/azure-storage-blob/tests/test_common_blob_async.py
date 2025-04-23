@@ -55,7 +55,6 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers_async import (
     AsyncStream,
-    MockStorageTransport,
     _build_base_file_share_headers,
     _create_file_share_oauth
 )

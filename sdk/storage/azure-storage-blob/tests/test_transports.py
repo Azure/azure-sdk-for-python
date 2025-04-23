@@ -79,7 +79,7 @@ class TestStorageTransports(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_legacy_transport_new_response(self, **kwargs):
+    def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -106,7 +106,7 @@ class TestStorageTransports(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_legacy_transport_new_response_content_validation(self, **kwargs):
+    def test_legacy_transport_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
