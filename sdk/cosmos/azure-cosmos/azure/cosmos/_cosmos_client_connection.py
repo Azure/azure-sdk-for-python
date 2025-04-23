@@ -1301,7 +1301,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                            collection_id,
                            None,
                            options,
-                           container_link=database_or_container_link,
                            **kwargs)
 
     def UpsertItem(
@@ -1344,7 +1343,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                            collection_id,
                            None,
                            options,
-                           container_link=database_or_container_link,
                            **kwargs)
 
     PartitionResolverErrorMessage = (
