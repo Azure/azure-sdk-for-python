@@ -4,7 +4,6 @@ import asyncio
 import os
 import unittest
 import uuid
-from typing import Dict, Any
 
 import pytest
 import pytest_asyncio
@@ -15,9 +14,9 @@ import test_config
 from azure.cosmos import PartitionKey, _partition_health_tracker
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from _fault_injection_transport_async import FaultInjectionTransportAsync
+from tests._fault_injection_transport import FaultInjectionTransport
 from tests.test_ppcb_mm_async import perform_write_operation, create_doc, PK_VALUE, write_operations_and_errors, \
-    cleanup_method, read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
+    read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
 from tests.test_ppcb_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
@@ -33,11 +32,10 @@ def setup_teardown():
     asyncio.sleep(3)
     yield
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    client.close()
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.usefixtures("setup")
+@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -53,27 +51,21 @@ class TestPerPartitionCircuitBreakerSmMrr:
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
 
-    @staticmethod
-    def cleanup_method(initialized_objects: Dict[str, Any]):
-        method_client: CosmosClient = initialized_objects["client"]
-        method_client.close()
-
-
     def create_custom_transport_sm_mrr(self):
-        custom_transport =  FaultInjectionTransportAsync()
+        custom_transport =  FaultInjectionTransport()
         # Inject rule to disallow writes in the read-only region
         is_write_operation_in_read_region_predicate = lambda \
-                r: FaultInjectionTransportAsync.predicate_is_write_operation(r, self.host)
+                r: FaultInjectionTransport.predicate_is_write_operation(r, self.host)
 
         custom_transport.add_fault(
             is_write_operation_in_read_region_predicate,
-            lambda r: FaultInjectionTransportAsync.error_write_forbidden())
+            lambda r: FaultInjectionTransport.error_write_forbidden())
 
         # Inject topology transformation that would make Emulator look like a single write region
         # account with two read regions
-        is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
+        is_get_account_predicate = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
         emulator_as_multi_region_sm_account_transformation = \
-            lambda r, inner: FaultInjectionTransportAsync.transform_topology_swr_mrr(
+            lambda r, inner: FaultInjectionTransport.transform_topology_swr_mrr(
                 write_region_name="Write Region",
                 read_region_name="Read Region",
                 inner=inner)
@@ -88,8 +80,8 @@ class TestPerPartitionCircuitBreakerSmMrr:
         custom_transport = self.create_custom_transport_sm_mrr()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate,
                                    error)
         custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
@@ -98,7 +90,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_consecutive_failure_threshold(self, setup_teardown, write_operation, error):
-        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(0, error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
@@ -118,12 +110,11 @@ class TestPerPartitionCircuitBreakerSmMrr:
                 )
 
         validate_unhealthy_partitions(global_endpoint_manager, 0)
-        cleanup_method([custom_setup, setup])
 
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_consecutive_failure_threshold(self, setup_teardown, read_operation, error):
-        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(0, error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
@@ -169,11 +160,10 @@ class TestPerPartitionCircuitBreakerSmMrr:
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
-        cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_failure_rate_threshold(self, setup_teardown, write_operation, error):
-        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(0, error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
@@ -191,7 +181,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
                     custom_transport.faults = []
                     fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate,
-                                               lambda r: FaultInjectionTransportAsync.error_after_delay(
+                                               lambda r: FaultInjectionTransport.error_after_delay(
                                                    0,
                                                    error
                                                ))
@@ -211,11 +201,10 @@ class TestPerPartitionCircuitBreakerSmMrr:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-        cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_failure_rate_threshold(self, setup_teardown, read_operation, error):
-        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(0, error)
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
@@ -249,14 +238,13 @@ class TestPerPartitionCircuitBreakerSmMrr:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-        cleanup_method([custom_setup, setup])
 
 
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     def test_service_request_error(self, read_operation, write_operation):
         # the region should be tried 4 times before failing over and mark the partition as unavailable
         # the region should not be marked as unavailable
-        error_lambda = lambda r: FaultInjectionTransportAsync.error_region_down()
+        error_lambda = lambda r: FaultInjectionTransport.error_region_down()
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
         fault_injection_container = custom_setup['col']
@@ -288,7 +276,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         custom_transport.add_fault(predicate,
-                                   lambda r: FaultInjectionTransportAsync.error_region_down())
+                                   lambda r: FaultInjectionTransport.error_region_down())
 
         perform_write_operation(write_operation,
                                       container,
@@ -301,7 +289,6 @@ class TestPerPartitionCircuitBreakerSmMrr:
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         # there shouldn't be region marked as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
-        cleanup_method([custom_setup, setup])
 
     # test cosmos client timeout
 
