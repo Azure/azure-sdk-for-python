@@ -15,7 +15,7 @@ from azure.mgmt.servicenetworking import ServiceNetworkingMgmtClient
     pip install azure-identity
     pip install azure-mgmt-servicenetworking
 # USAGE
-    python security_policy_patch.py
+    python ip_access_rules_security_policy_put.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,21 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.security_policies_interface.update(
+    response = client.security_policies_interface.begin_create_or_update(
         resource_group_name="rg1",
         traffic_controller_name="tc1",
         security_policy_name="sp1",
-        properties={
-            "properties": {
-                "wafPolicy": {
-                    "id": "/subscriptions/subid/resourcegroups/rg1/providers/Microsoft.Networking/applicationGatewayWebApplicationFirewallPolicies/wp-0"
-                }
-            }
-        },
-    )
+        resource={"location": "NorthCentralUS", "properties": {"ipAccessRulesPolicy": {"rules": []}}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/SecurityPolicyPatch.json
+# x-ms-original-file: 2025-03-01-preview/IpAccessRulesSecurityPolicyPut.json
 if __name__ == "__main__":
     main()

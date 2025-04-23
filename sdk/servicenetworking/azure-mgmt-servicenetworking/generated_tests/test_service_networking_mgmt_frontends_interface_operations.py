@@ -41,7 +41,14 @@ class TestServiceNetworkingMgmtFrontendsInterfaceOperations(AzureMgmtRecordedTes
                 "location": "str",
                 "id": "str",
                 "name": "str",
-                "properties": {"fqdn": "str", "provisioningState": "str"},
+                "properties": {
+                    "fqdn": "str",
+                    "provisioningState": "str",
+                    "securityPolicyConfigurations": {
+                        "ipAccessRulesSecurityPolicy": {"id": "str"},
+                        "wafSecurityPolicy": {"id": "str"},
+                    },
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -65,7 +72,15 @@ class TestServiceNetworkingMgmtFrontendsInterfaceOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
             frontend_name="str",
-            properties={"tags": {"str": "str"}},
+            properties={
+                "properties": {
+                    "securityPolicyConfigurations": {
+                        "ipAccessRulesSecurityPolicy": {"id": "str"},
+                        "wafSecurityPolicy": {"id": "str"},
+                    }
+                },
+                "tags": {"str": "str"},
+            },
         )
 
         # please add some check logic here by yourself

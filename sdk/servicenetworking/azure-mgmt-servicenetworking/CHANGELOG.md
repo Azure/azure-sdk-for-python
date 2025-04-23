@@ -1,5 +1,36 @@
 # Release History
 
+## 2.1.0b1 (2025-04-23)
+
+### Features Added
+
+  - Model `FrontendProperties` added property `security_policy_configurations`
+  - Model `FrontendUpdate` added property `properties`
+  - Enum `PolicyType` added member `IP_ACCESS_RULES`
+  - Model `SecurityPolicyConfigurations` added property `ip_access_rules_security_policy`
+  - Model `SecurityPolicyProperties` added property `ip_access_rules_policy`
+  - Model `SecurityPolicyUpdateProperties` added property `ip_access_rules_policy`
+  - Added model `FrontendUpdateProperties`
+  - Added model `IpAccessRule`
+  - Added enum `IpAccessRuleAction`
+  - Added model `IpAccessRulesPolicy`
+  - Added model `IpAccessRulesSecurityPolicy`
+  - Method `AssociationSubnetUpdate.__init__` has a new overload `def __init__(self: None, id: Optional[str])`
+  - Method `FrontendProperties.__init__` has a new overload `def __init__(self: None, security_policy_configurations: Optional[_models.SecurityPolicyConfigurations])`
+  - Method `FrontendProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FrontendUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.FrontendUpdateProperties])`
+  - Method `SecurityPolicyConfigurations.__init__` has a new overload `def __init__(self: None, waf_security_policy: Optional[_models.WafSecurityPolicy], ip_access_rules_security_policy: Optional[_models.IpAccessRulesSecurityPolicy])`
+  - Method `SecurityPolicyProperties.__init__` has a new overload `def __init__(self: None, waf_policy: Optional[_models.WafPolicy], ip_access_rules_policy: Optional[_models.IpAccessRulesPolicy])`
+  - Method `SecurityPolicyUpdateProperties.__init__` has a new overload `def __init__(self: None, waf_policy: Optional[_models.WafPolicy], ip_access_rules_policy: Optional[_models.IpAccessRulesPolicy])`
+  - Method `FrontendUpdateProperties.__init__` has a new overload `def __init__(self: None, security_policy_configurations: Optional[_models.SecurityPolicyConfigurations])`
+  - Method `FrontendUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `IpAccessRule.__init__` has a new overload `def __init__(self: None, name: str, priority: int, source_address_prefixes: List[str], action: Union[str, _models.IpAccessRuleAction])`
+  - Method `IpAccessRule.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `IpAccessRulesPolicy.__init__` has a new overload `def __init__(self: None, rules: Optional[List[_models.IpAccessRule]])`
+  - Method `IpAccessRulesPolicy.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `IpAccessRulesSecurityPolicy.__init__` has a new overload `def __init__(self: None, id: str)`
+  - Method `IpAccessRulesSecurityPolicy.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+
 ## 2.0.0 (2025-02-05)
 
 ### Features Added
