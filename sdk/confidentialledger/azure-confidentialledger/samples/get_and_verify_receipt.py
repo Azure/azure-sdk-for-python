@@ -80,44 +80,30 @@ def main():
         )
 
         # Write a ledger entry and wait for the transaction to be committed.
-        try:
-            entry_contents = "Hello world!"
-            post_poller = ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
-                {"contents": entry_contents}
-            )
-            post_entry_result = post_poller.result()
-            transaction_id = post_entry_result["transactionId"]
-            print(
-                f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}."
-            )
-        except HttpResponseError as e:
-            if e.response != None:
-                print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
-            else:
-                print("No response found")
-            raise
+        entry_contents = "Hello world!"
+        post_poller = ledger_client.begin_create_ledger_entry(
+            {"contents": entry_contents}
+        )
+        post_entry_result = post_poller.result()
+        transaction_id = post_entry_result["transactionId"]
+        print(
+            f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}."
+        )
 
         # Get a receipt for a ledger entry.
         # A receipt can be retrieved for any transaction id to provide cryptographic proof of the
         # contents of the transaction.
-        try:
-            print(
-                f"Retrieving a receipt for {transaction_id}. The receipt may be used to "
-                "cryptographically verify the contents of the transaction."
-            )
-            print(
-                "For more information about receipts, please see "
-                "https://microsoft.github.io/CCF/main/audit/receipts.html#receipts"
-            )
-            get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)  # type: ignore[attr-defined]
-            get_receipt_result = get_receipt_poller.result()
-            print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
-        except HttpResponseError as e:
-            if e.response != None:
-                print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
-            else:
-                print("No response found")
-            raise
+        print(
+            f"Retrieving a receipt for {transaction_id}. The receipt may be used to "
+            "cryptographically verify the contents of the transaction."
+        )
+        print(
+            "For more information about receipts, please see "
+            "https://microsoft.github.io/CCF/main/audit/receipts.html#receipts"
+        )
+        get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)
+        get_receipt_result = get_receipt_poller.result()
+        print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
 
         # Read content of service certificate file saved in previous step.
         with open(ledger_cert_file, "r") as service_cert_file:

@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.0b4 (2025-04-23)
+
+### Breaking Changes
+
+  - Model `SkuDetails` renamed its instance variable `customer_facing_size_in_gb` to `size_in_gb`
+
 ## 3.1.0b3 (2025-04-20)
 
 ### Features Added

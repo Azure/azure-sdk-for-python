@@ -14,7 +14,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 
@@ -36,6 +36,7 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = ConfidentialLedgerCertificateClientConfiguration(endpoint=endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

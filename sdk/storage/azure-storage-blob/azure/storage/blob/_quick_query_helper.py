@@ -5,7 +5,10 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, Union, TYPE_CHECKING
+from typing import (
+    Any, Dict, Generator, IO, Iterable, Optional, Type,
+    TYPE_CHECKING
+)
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
@@ -14,11 +17,11 @@ if TYPE_CHECKING:
     from ._models import BlobQueryError
 
 
-class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
+class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results."""
 
     name: str
-    """The name of the blob being quered."""
+    """The name of the blob being queried."""
     container: str
     """The name of the container where the blob is."""
     response_headers: Dict[str, Any]
@@ -28,8 +31,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     method will return these lines via a generator."""
 
     def __init__(
-        self,
-        name: str = None,  # type: ignore [assignment]
+        self, name: str = None,  # type: ignore [assignment]
         container: str = None,  # type: ignore [assignment]
         errors: Any = None,
         record_delimiter: str = '\n',
@@ -50,7 +52,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self._first_result = self._process_record(next(self._parsed_results))
         self._error_cls = error_cls
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._size
 
     def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
@@ -77,21 +79,19 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             if processed_result is not None:
                 yield processed_result
 
-    def readall(self) -> Union[bytes, str]:
+    def readall(self) -> bytes:
         """Return all query results.
 
         This operation is blocking until all data is downloaded.
-        If encoding has been configured - this will be used to decode individual
-        records are they are received.
 
         :returns: The query results.
-        :rtype: Union[bytes, str]
+        :rtype: bytes
         """
         stream = BytesIO()
         self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
+            return data.decode(self._encoding)  # type: ignore [return-value]
         return data
 
     def readinto(self, stream: IO) -> None:
@@ -105,29 +105,25 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         for record in self._iter_stream():
             stream.write(record)
 
-    def records(self) -> Iterable[Union[bytes, str]]:
+    def records(self) -> Iterable[bytes]:
         """Returns a record generator for the query result.
 
         Records will be returned line by line.
-        If encoding has been configured - this will be used to decode individual
-        records are they are received.
 
         :returns: A record generator for the query result.
-        :rtype: Iterable[Union[bytes, str]]
+        :rtype: Iterable[bytes]
         """
         delimiter = self.record_delimiter.encode('utf-8')
         for record_chunk in self._iter_stream():
             for record in record_chunk.split(delimiter):
                 if self._encoding:
-                    yield record.decode(self._encoding)
+                    yield record.decode(self._encoding)  # type: ignore [misc]
                 else:
                     yield record
 
 
-class QuickQueryStreamer(object):
-    """
-    File-like streaming iterator.
-    """
+class QuickQueryStreamer:
+    """File-like streaming iterator."""
 
     def __init__(self, generator):
         self.generator = generator
@@ -183,7 +179,7 @@ class QuickQueryStreamer(object):
         if relative_start < 0:
             raise ValueError("Buffer has dumped too much data")
         relative_end = relative_start + size
-        data = self._buf[relative_start: relative_end]
+        data = self._buf[relative_start:relative_end]
 
         # dump the extra data in buffer
         # buffer start--------------------16bytes----current read position
