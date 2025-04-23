@@ -605,7 +605,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
-        role_name = 'modify'
+        role_name = "modify"
 
         client.create_user_defined_role([{"role_name": role_name, "role_actions": ["/content/read"]}])
         time.sleep(3)
