@@ -58,14 +58,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         super().__init__(*args, **kwargs)
 
     @overload
-    def create_agent(
-        self,
-        *,
-        model_id: str,
-        display_name: str,
-        instructions: str,
-        **kwargs: Any
-    ) -> "_models.Agent":
+    def create_agent(self, *, model_id: str, display_name: str, instructions: str, **kwargs: Any) -> "_models.Agent":
         """
         Creates a new Agent resource with simplified parameters.
 
@@ -255,14 +248,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         return deserialized  # type: ignore
 
     @overload
-    def run(
-        self,
-        *,
-        model_id: str,
-        instructions: str,
-        message: str,
-        **kwargs: Any
-    ) -> "_models.Run":
+    def run(self, *, model_id: str, instructions: str, message: str, **kwargs: Any) -> "_models.Run":
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
         :keyword model_id: The ID of the model to use for the run. Required.
@@ -278,13 +264,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         ...
 
     @overload
-    def run(
-        self,
-        *,
-        agent_id: str,
-        message: str,
-        **kwargs: Any
-    ) -> "_models.Run":
+    def run(self, *, agent_id: str, message: str, **kwargs: Any) -> "_models.Run":
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
         :keyword agent_id: The ID of the agent to use for the run. Required.
@@ -433,7 +413,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is _Unset:
             if model_id:
                 agent_model = _models.AzureAgentModel(id=model_id)
-                agent_configuration = _models.AgentConfigurationOptions(display_name="", agent_model=agent_model, instructions=instructions)
+                agent_configuration = _models.AgentConfigurationOptions(
+                    display_name="", agent_model=agent_model, instructions=instructions
+                )
 
             if message:
                 chat_content = _models.TextContent(text=message)
@@ -498,6 +480,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
 
 __all__: List[str] = [
     "AgentsOperations",

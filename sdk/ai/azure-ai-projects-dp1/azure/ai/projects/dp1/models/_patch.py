@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 from ._models import Agent as AgentGenerated
 from ._models import Run as RunGenerated
 
+
 class Agent(AgentGenerated):
     @overload
     def __init__(
@@ -54,6 +55,7 @@ class Run(RunGenerated):
     def __iter__(self) -> Iterator["_models.ChatMessage"]:
         """Allows iteration over all messages."""
         return iter(self.run_outputs.messages)
+
 
 __all__: List[str] = [
     "Agent",

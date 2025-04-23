@@ -426,7 +426,7 @@ def build_agents_run_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/runs/run"
+    _url = "/conversations/runs"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -448,7 +448,7 @@ def build_agents_stream_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/runs/stream"
+    _url = "/conversations/runs/stream"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -504,7 +504,7 @@ def build_agents_list_runs_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_runs_list_run_inputs_request(run_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_list_run_inputs_request(run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -512,7 +512,7 @@ def build_runs_list_run_inputs_request(run_id: str, **kwargs: Any) -> HttpReques
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/runs/{runId}/listInputs"
+    _url = "/conversations/runs/{runId}/listInputs"
     path_format_arguments = {
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
@@ -2971,7 +2971,7 @@ class AgentsOperations:
     @distributed_trace
     def get_run(self, run_id: str, **kwargs: Any) -> _models.Run:
         """Retrieves an existing run by its ID.
-        @route("/agents/runs/{run_id}").
+        @route("/conversations/runs/{run_id}").
 
         :param run_id: Unique identifier for this run. Required.
         :type run_id: str
@@ -3117,24 +3117,6 @@ class AgentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-
-class RunsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.dp1.AIProjectClient`'s
-        :attr:`runs` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def list_run_inputs(self, run_id: str, **kwargs: Any) -> _models.RunInputs:
         """Lists the inputs for a specific run by its ID.
@@ -3158,7 +3140,7 @@ class RunsOperations:
 
         cls: ClsType[_models.RunInputs] = kwargs.pop("cls", None)
 
-        _request = build_runs_list_run_inputs_request(
+        _request = build_agents_list_run_inputs_request(
             run_id=run_id,
             api_version=self._config.api_version,
             headers=_headers,

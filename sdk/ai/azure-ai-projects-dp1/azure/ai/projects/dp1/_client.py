@@ -26,7 +26,6 @@ from .operations import (
     EvaluationsOperations,
     IndexesOperations,
     MessagesOperations,
-    RunsOperations,
     ServicePatternsOperations,
 )
 
@@ -45,8 +44,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype conversations: azure.ai.projects.dp1.operations.ConversationsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.dp1.operations.AgentsOperations
-    :ivar runs: RunsOperations operations
-    :vartype runs: azure.ai.projects.dp1.operations.RunsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.dp1.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -102,7 +99,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.conversations = ConversationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)

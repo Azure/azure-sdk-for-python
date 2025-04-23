@@ -40,6 +40,7 @@ from ...operations._operations import (
     build_agents_get_agent_request,
     build_agents_get_run_request,
     build_agents_list_agents_request,
+    build_agents_list_run_inputs_request,
     build_agents_list_runs_request,
     build_agents_run_request,
     build_agents_stream_request,
@@ -75,7 +76,6 @@ from ...operations._operations import (
     build_messages_list_messages_request,
     build_messages_send_message_request,
     build_messages_update_message_request,
-    build_runs_list_run_inputs_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -1900,7 +1900,7 @@ class AgentsOperations:
     @distributed_trace_async
     async def get_run(self, run_id: str, **kwargs: Any) -> _models.Run:
         """Retrieves an existing run by its ID.
-        @route("/agents/runs/{run_id}").
+        @route("/conversations/runs/{run_id}").
 
         :param run_id: Unique identifier for this run. Required.
         :type run_id: str
@@ -2046,24 +2046,6 @@ class AgentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-
-class RunsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
-        :attr:`runs` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
     async def list_run_inputs(self, run_id: str, **kwargs: Any) -> _models.RunInputs:
         """Lists the inputs for a specific run by its ID.
@@ -2087,7 +2069,7 @@ class RunsOperations:
 
         cls: ClsType[_models.RunInputs] = kwargs.pop("cls", None)
 
-        _request = build_runs_list_run_inputs_request(
+        _request = build_agents_list_run_inputs_request(
             run_id=run_id,
             api_version=self._config.api_version,
             headers=_headers,
