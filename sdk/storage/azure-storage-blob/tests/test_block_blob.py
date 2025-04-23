@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import requests
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -29,10 +31,16 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
-from test_helpers import NonSeekableStream, ProgressTracker
+from test_helpers import (
+    NonSeekableStream,
+    ProgressTracker,
+    _build_base_file_share_headers,
+    _create_file_share_oauth
+)
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
+SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 #------------------------------------------------------------------------------
@@ -76,6 +84,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
         return blob_client
 
+    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
@@ -93,7 +104,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(data=source_blob_data)
         destination_blob_client = self._create_blob()
-        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
+        token = self._get_bearer_token_string()
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):
@@ -102,6 +113,108 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         destination_blob_client.upload_blob_from_url(source_blob_client.url, source_authorization=token, overwrite=True)
         destination_blob_data = destination_blob_client.download_blob().readall()
         assert source_blob_data == destination_blob_data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act
+            destination_blob_client.upload_blob_from_url(
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup'
+            )
+            destination_blob_data = destination_blob_client.download_blob().readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=_build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_stage_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act / Assert
+            block_id = '1'
+            destination_blob_client.stage_block_from_url(
+                block_id=block_id,
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup'
+            )
+            block_list = [BlobBlock(block_id=block_id)]
+            resp = destination_blob_client.commit_block_list(block_list)
+            assert resp is not None
+
+            destination_blob_data = destination_blob_client.download_blob().readall()
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=_build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy

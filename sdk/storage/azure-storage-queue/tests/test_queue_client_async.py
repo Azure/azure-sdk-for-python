@@ -562,6 +562,21 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name='queue')
             await service.close()
 
+    @QueuePreparer()
+    @recorded_by_proxy_async
+    async def test_get_and_set_queue_access_policy_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        self.setUp()
+
+        # Arrange
+        service_client = QueueServiceClient(self.account_url(storage_account_name, "queue"), self.token_credential)
+        queue_client = service_client.get_queue_client(self.get_resource_name("pyqueueasync"))
+        await queue_client.create_queue()
+
+        # Act / Assert
+        await queue_client.set_queue_access_policy(signed_identifiers={})
+        acl = await queue_client.get_queue_access_policy()
+        assert acl is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
