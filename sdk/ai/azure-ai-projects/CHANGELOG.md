@@ -14,6 +14,8 @@
 
 ### Bugs Fixed
 
+* Fix for filtering of messages by run ID [see GitHub issue issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513).
+
 ### Breaking Changes
 
 ## 1.0.0b9 (2025-04-16)
