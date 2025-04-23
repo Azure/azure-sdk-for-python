@@ -241,6 +241,8 @@ async def submit_request_onedp(
 ) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
+    :param client: The AI project client.
+    :type client: AIProjectClient
     :param data: The data to evaluate.
     :type data: dict
     :param metric: The evaluation metric to use.
@@ -304,12 +306,10 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
 async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: str) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
+    :param client: The AI project client.
+    :type client: AIProjectClient
     :param operation_id: The operation ID.
     :type operation_id: str
-    :param rai_svc_url: The Responsible AI service URL.
-    :type rai_svc_url: str
-    :param credential: The Azure authentication credential.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param token: The Azure authentication token.
     :type token: str
     :return: The annotation result.
@@ -739,9 +739,7 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     payload = generate_payload_multimodal(content_type, filtered_messages, metric)
     headers = get_common_headers(token)
     
-    params = {}
-    params["api-version"] = "latest"
-    response = client.evaluations.submit_annotation(payload, headers=headers, params=params)
+    response = client.evaluations.submit_annotation(payload, headers=headers)
     
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
