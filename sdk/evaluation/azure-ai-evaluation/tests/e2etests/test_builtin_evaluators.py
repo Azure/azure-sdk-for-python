@@ -218,14 +218,16 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["retrieval"][0] > 0
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+        ("proj_scope", "cred", "conv"),
+        (
+            ("project_scope", "azure_cred", "simple_conversation"),
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
+        )
     )
-    def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
+    def test_content_safety_evaluator_violence(self, request, proj_scope, cred, conv):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        simple_conversation = request.getfixturevalue(conv)
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
@@ -249,14 +251,15 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
+        ("proj_scope", "cred"),
+        (
             ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
     )
-    def test_code_vulnerability_evaluator(self, project_scope, azure_cred):
+    def test_code_vulnerability_evaluator(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
         
         # the code that comes before the completion.
@@ -546,14 +549,16 @@ class TestBuiltInEvaluators:
         assert per_turn["hate_unfairness_reason"][1], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+        ("proj_scope", "cred", "conv"),
+        (
+            ("project_scope", "azure_cred", "simple_conversation"),
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
+        )
     )
-    def test_protected_material_evaluator(self, project_scope, azure_cred, simple_conversation):
+    def test_protected_material_evaluator(self, request, proj_scope, cred, conv):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        simple_conversation = request.getfixturevalue(conv)
         ip_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         good_result = ip_eval(
             query="What shape has 4 equilateral sides?",
