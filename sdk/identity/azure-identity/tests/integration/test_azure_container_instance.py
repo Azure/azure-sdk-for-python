@@ -23,9 +23,9 @@ class TestAzureContainerInstanceIntegration:
 
         # Using "script" as a workaround for "az container exec" requiring a tty.
         # https://github.com/Azure/azure-cli/issues/17530
-        command = (
-            f"{az_path} container exec -g {resource_group} -n {container_instance_name} --exec-command 'python /app.py'"
-        )
+        # Note: Currently only testing user-assigned identity as system-assigned identity doesn't seem to work if both a user-assigned
+        # identity and system-assigned identity are assigned to the container instance.
+        command = f"{az_path} container exec -g {resource_group} -n {container_instance_name} --exec-command 'python /app.py --identity-type user'"
         output = run_command(
             [
                 "script",

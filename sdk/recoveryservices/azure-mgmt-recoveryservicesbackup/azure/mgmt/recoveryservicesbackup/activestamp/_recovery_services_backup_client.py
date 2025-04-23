@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -74,13 +75,12 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
 class RecoveryServicesBackupClient(
     RecoveryServicesBackupClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRROperations
@@ -248,7 +248,7 @@ class RecoveryServicesBackupClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -443,7 +443,7 @@ class RecoveryServicesBackupClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "RecoveryServicesBackupClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

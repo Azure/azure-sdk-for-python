@@ -6,7 +6,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call, STDOUT
+from subprocess import check_output, CalledProcessError, check_call, STDOUT, call
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -379,34 +379,21 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
 
 
 def format_samples_and_tests(sdk_code_path) -> None:
+    try:
+        import black
+    except Exception as e:
+        try:
+            call("pip install black", shell=True)
+        except:
+            pass
     for item in ["generated_samples", "generated_tests"]:
         generate_path = Path(sdk_code_path) / item
-        if not generate_path.exists():
-            _LOGGER.info(f"not find {generate_path}")
-            continue
-
-        try:
-            import black
-        except Exception as e:
-            check_call("pip install black", shell=True)
-            import black
-
-        _BLACK_MODE = black.Mode()
-        _BLACK_MODE.line_length = 120
-        files = generate_path.glob("**/*.py")
-        for path in files:
+        if generate_path.exists():
             try:
-                with open(path, "r") as fr:
-                    file_content = fr.read()
-
-                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
-
-                with open(path, "w") as fw:
-                    fw.write(file_content)
+                call(f"black {generate_path} -l 120", shell=True)
+                _LOGGER.info(f"format {generate_path} successfully")
             except Exception as e:
-                _LOGGER.warning(f"Failed to format {path}: {e}")
-
-        _LOGGER.info(f"format {generate_path} successfully")
+                _LOGGER.info(f"failed to format {generate_path}: {e}")
 
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
@@ -429,13 +416,31 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         file_out.writelines(content)
 
 
-def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+def gen_typespec(
+    typespec_relative_path: str,
+    spec_folder: str,
+    head_sha: str,
+    rest_repo_url: str,
+    run_in_pipeline: bool,
+) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
+        cmd = (
+            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+        )
+        if run_in_pipeline:
+            emitter_name = "@azure-tools/typespec-python"
+            if not os.path.exists(f"node_modules/{emitter_name}"):
+                _LOGGER.info("install dependencies only for the first run")
+                check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+            else:
+                _LOGGER.info(f"skip install since {emitter_name} is already installed")
+            cmd += " --skip-install --debug"
+        else:
+            cmd += " --debug"
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:

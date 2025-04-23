@@ -205,6 +205,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     overwrite = kwargs.pop('overwrite', False)
     content_settings = kwargs.pop('content_settings', None)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     if content_settings:
         kwargs['blob_http_headers'] = BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
@@ -225,6 +226,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
 
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'content_length': 0,
         'copy_source_blob_properties': kwargs.pop('include_source_blob_properties'),
         'source_content_md5': kwargs.pop('source_content_md5', None),
@@ -651,6 +653,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     requires_sync = kwargs.pop('requires_sync', None)
     encryption_scope_str = kwargs.pop('encryption_scope', None)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     # If tags is a str, interpret that as copy_source_tags
     copy_source_tags = isinstance(tags, str)
 
@@ -670,6 +673,8 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
             headers['x-ms-encryption-scope'] = encryption_scope_str
         if source_authorization:
             headers['x-ms-copy-source-authorization'] = source_authorization
+        if source_token_intent:
+            headers['x-ms-file-request-intent'] = source_token_intent
         if copy_source_tags:
             headers['x-ms-copy-source-tag-option'] = tags
     else:
@@ -679,6 +684,9 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         if source_authorization:
             raise ValueError(
                 "Source authorization tokens are only supported for sync copy, please specify requires_sync=True")
+        if source_token_intent:
+            raise ValueError(
+                "Source token intent is only supported for sync copy, please specify requires_sync=True")
         if copy_source_tags:
             raise ValueError(
                 "Copying source tags is only supported for sync copy, please specify requires_sync=True")
@@ -780,6 +788,7 @@ def _stage_block_from_url_options(
 ) -> Dict[str, Any]:
     source_url = _encode_source_url(source_url=source_url)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     if source_length is not None and source_offset is None:
         raise ValueError("Source offset value must not be None if length is set.")
     if source_length is not None and source_offset is not None:
@@ -801,6 +810,7 @@ def _stage_block_from_url_options(
         )
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'block_id': block_id,
         'content_length': 0,
         'source_url': source_url,
@@ -1088,6 +1098,7 @@ def _upload_pages_from_url_options(
         if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
     )
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     source_mod_conditions = get_source_conditions(kwargs)
@@ -1104,6 +1115,7 @@ def _upload_pages_from_url_options(
 
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'source_url': source_url,
         'content_length': 0,
         'source_range': source_range,
@@ -1245,6 +1257,7 @@ def _append_block_from_url_options(
             append_position=appendpos_condition
         )
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     source_mod_conditions = get_source_conditions(kwargs)
@@ -1260,6 +1273,7 @@ def _append_block_from_url_options(
 
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'source_url': copy_source_url,
         'content_length': 0,
         'source_range': source_range,

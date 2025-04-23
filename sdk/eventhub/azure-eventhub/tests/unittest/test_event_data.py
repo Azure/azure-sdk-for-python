@@ -7,6 +7,7 @@
 
 import platform
 import pytest
+import datetime
 from packaging import version
 
 try:
@@ -17,6 +18,8 @@ except (ModuleNotFoundError, ImportError):
     UamqpTransport = None
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
 from azure.eventhub._pyamqp.message import Message, Properties, Header
+from azure.eventhub._utils import CE_ZERO_SECONDS
+from azure.eventhub._constants import PROP_TIMESTAMP
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
 
 from azure.eventhub import _common
@@ -100,7 +103,7 @@ def test_sys_properties(uamqp_transport):
         properties.group_sequence = 1
         properties.reply_to_group_id = "reply_to_group_id"
         message = uamqp.message.Message(properties=properties)
-        message.annotations = {_common.PROP_OFFSET: "@latest"}
+        message.annotations = {_common.PROP_OFFSET: "@latest", PROP_TIMESTAMP: CE_ZERO_SECONDS * 1000}
     else:
         properties = Properties(
             message_id="message_id",
@@ -117,7 +120,7 @@ def test_sys_properties(uamqp_transport):
             group_sequence=1,
             reply_to_group_id="reply_to_group_id",
         )
-        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message_annotations = {_common.PROP_OFFSET: "@latest", PROP_TIMESTAMP: CE_ZERO_SECONDS * 1000}
         message = Message(properties=properties, message_annotations=message_annotations)
     ed = EventData._from_message(message)  # type: EventData
 
@@ -135,6 +138,7 @@ def test_sys_properties(uamqp_transport):
     assert ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
     assert ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
+    assert ed.enqueued_time == datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
 
 
 def test_event_data_batch(uamqp_transport):
@@ -369,3 +373,16 @@ def test_legacy_message(uamqp_transport):
     assert event_data_batch.message.header.priority is None
     assert event_data_batch.message.on_send_complete is None
     assert event_data_batch.message.properties is None
+
+def test_from_bytes(uamqp_transport):
+    if uamqp_transport:
+        pytest.skip("This test is only for pyamqp transport")
+    data = b'\x00Sr\xc1\x87\x08\xa3\x1bx-opt-sequence-number-epochT\xff\xa3\x15x-opt-sequence-numberU\x00\xa3\x0cx-opt-offsetU\x00\xa3\x13x-opt-enqueued-time\x00\xa3\x1dcom.microsoft:datetime-offset\x83\x00\x00\x01\x95\xf3XB\x86\x00St\xc1I\x02\xa1\rDiagnostic-Id\xa1700-1aa201483d464ac3c3d2ab796fbccb36-72e947bb22f404fc-00\x00Su\xa0\x08message1'
+
+    event_data = EventData.from_bytes(data)
+    assert event_data.body_as_str() == 'message1'
+    assert event_data.sequence_number == 0
+    assert event_data.offset is None
+    assert event_data.properties == {b'Diagnostic-Id': b'00-1aa201483d464ac3c3d2ab796fbccb36-72e947bb22f404fc-00'}
+    assert event_data.partition_key is None
+    assert isinstance(event_data.enqueued_time, datetime.datetime)

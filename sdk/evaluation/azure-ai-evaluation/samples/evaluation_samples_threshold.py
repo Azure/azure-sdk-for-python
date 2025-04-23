@@ -247,14 +247,15 @@ class EvaluationThresholdSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        qa_eval = QAEvaluator(model_config=model_config, threshold={
-            "groundedness": 2,
-            "relevance": 2,
-            "coherence": 2,
-            "fluency": 2,
-            "similarity": 2,
-            "f1_score": 0.5,
-        })
+        qa_eval = QAEvaluator(
+            model_config=model_config, 
+            groundedness_threshold=2,
+            relevance_threshold=2,
+            coherence_threshold=2,
+            fluency_threshold=2,
+            similarity_threshold=2,
+            f1_score_threshold=0.5
+        )
         qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
         # [END threshold_qa_evaluator]
 
@@ -311,11 +312,9 @@ class EvaluationThresholdSamples(object):
 
         rouge_evaluator = RougeScoreEvaluator(
             rouge_type=RougeType.ROUGE_4, 
-            threshold={
-                "precision": 0.5,
-                "recall": 0.5,
-                "f1_score": 0.5,
-            }
+            precision_threshold=0.5,
+            recall_threshold=0.5,
+            f1_score_threshold=0.5
         )
         rouge_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
         # [END threshold_rouge_score_evaluator]
@@ -357,6 +356,65 @@ class EvaluationThresholdSamples(object):
             context="Rhombus is a shape with 4 equilateral sides.",
         )
         # [END threshold_groundedness_pro_evaluator]
+
+        # [START document_retrieval_evaluator]
+        from azure.ai.evaluation import DocumentRetrievalEvaluator
+
+        retrieval_ground_truth = [
+            {
+                "document_id": "1",
+                "query_relevance_judgement": 4
+            },
+            {
+                "document_id": "2",
+                "query_relevance_judgement": 2
+            },
+            {
+                "document_id": "3",
+                "query_relevance_judgement": 3
+            },
+            {
+                "document_id": "4",
+                "query_relevance_judgement": 1
+            },
+            {
+                "document_id": "5",
+                "query_relevance_judgement": 0
+            },
+        ]
+
+        retrieved_documents = [
+            {
+                "document_id": "2",
+                "query_relevance_judgement": 45.1
+            },
+            {
+                "document_id": "6",
+                "query_relevance_judgement": 35.8
+            },
+            {
+                "document_id": "3",
+                "query_relevance_judgement": 29.2
+            },
+            {
+                "document_id": "5",
+                "query_relevance_judgement": 25.4
+            },
+            {
+                "document_id": "7",
+                "query_relevance_judgement": 18.8
+            },
+        ]
+
+        threshold = {
+            "ndcg@3": 0.7,
+            "xdcg@3": 70,
+            "fidelity": 0.7
+        }
+
+        document_retrieval_evaluator = DocumentRetrievalEvaluator(threshold=threshold)
+        document_retrieval_evaluator(retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents)        
+        # [END document_retrieval_evaluator]
 
 
 if __name__ == "__main__":
