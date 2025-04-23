@@ -1,0 +1,27 @@
+{
+    "CrossLanguagePackageId": "Azure.Analytics.OnlineExperimentation",
+    "CrossLanguageDefinitionId": {
+        "azure.onlineexperimentation.models.AggregatedValue": "Azure.Analytics.OnlineExperimentation.AggregatedValue",
+        "azure.onlineexperimentation.models.ExperimentMetricDefinition": "Azure.Analytics.OnlineExperimentation.ExperimentMetricDefinition",
+        "azure.onlineexperimentation.models.AverageMetricDefinition": "Azure.Analytics.OnlineExperimentation.AverageMetricDefinition",
+        "azure.onlineexperimentation.models.DiagnosticDetail": "Azure.Analytics.OnlineExperimentation.DiagnosticDetail",
+        "azure.onlineexperimentation.models.EventCountMetricDefinition": "Azure.Analytics.OnlineExperimentation.EventCountMetricDefinition",
+        "azure.onlineexperimentation.models.EventRateMetricDefinition": "Azure.Analytics.OnlineExperimentation.EventRateMetricDefinition",
+        "azure.onlineexperimentation.models.ExperimentMetric": "Azure.Analytics.OnlineExperimentation.ExperimentMetric",
+        "azure.onlineexperimentation.models.ExperimentMetricValidationResult": "Azure.Analytics.OnlineExperimentation.ExperimentMetricValidationResult",
+        "azure.onlineexperimentation.models.ObservedEvent": "Azure.Analytics.OnlineExperimentation.ObservedEvent",
+        "azure.onlineexperimentation.models.PercentileMetricDefinition": "Azure.Analytics.OnlineExperimentation.PercentileMetricDefinition",
+        "azure.onlineexperimentation.models.SumMetricDefinition": "Azure.Analytics.OnlineExperimentation.SumMetricDefinition",
+        "azure.onlineexperimentation.models.UserCountMetricDefinition": "Azure.Analytics.OnlineExperimentation.UserCountMetricDefinition",
+        "azure.onlineexperimentation.models.UserRateMetricDefinition": "Azure.Analytics.OnlineExperimentation.UserRateMetricDefinition",
+        "azure.onlineexperimentation.models.LifecycleStage": "Azure.Analytics.OnlineExperimentation.LifecycleStage",
+        "azure.onlineexperimentation.models.DesiredDirection": "Azure.Analytics.OnlineExperimentation.DesiredDirection",
+        "azure.onlineexperimentation.models.ExperimentMetricType": "Azure.Analytics.OnlineExperimentation.ExperimentMetricType",
+        "azure.onlineexperimentation.models.DiagnosticCode": "Azure.Analytics.OnlineExperimentation.DiagnosticCode",
+        "azure.onlineexperimentation.OnlineExperimentationClient.get_metric": "Azure.Analytics.OnlineExperimentation.getMetric",
+        "azure.onlineexperimentation.OnlineExperimentationClient.create_or_update_metric": "Azure.Analytics.OnlineExperimentation.createOrUpdateMetric",
+        "azure.onlineexperimentation.OnlineExperimentationClient.validate_metric": "Azure.Analytics.OnlineExperimentation.validateMetric",
+        "azure.onlineexperimentation.OnlineExperimentationClient.delete_metric": "Azure.Analytics.OnlineExperimentation.deleteMetric",
+        "azure.onlineexperimentation.OnlineExperimentationClient.list_metrics": "Azure.Analytics.OnlineExperimentation.listMetrics"
+    }
+}
