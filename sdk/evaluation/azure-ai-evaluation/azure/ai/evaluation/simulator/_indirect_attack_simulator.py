@@ -5,7 +5,7 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Callable, cast
+from typing import Callable, cast, Union
 
 from tqdm import tqdm
 
@@ -45,12 +45,24 @@ class IndirectAttackSimulator(AdversarialSimulator):
             :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
 
-        if isinstance(azure_ai_project, dict):
+        if isinstance(azure_ai_project, str):
+            self.azure_ai_project = azure_ai_project
+            self.credential=cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential
+            )
+            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.adversarial_template_handler = AdversarialTemplateHandler(
+                azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
+            )
+        else:
             try:
-                self.azure_ai_project = validate_azure_ai_project(azure_ai_project) if isinstance(azure_ai_project, dict) else azure_ai_project
+                self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
             except EvaluationException as e:
                 raise EvaluationException(
                     message=e.message,
@@ -70,19 +82,6 @@ class IndirectAttackSimulator(AdversarialSimulator):
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )
-        else:
-            self.azure_ai_project = azure_ai_project
-            self.credential=cast(TokenCredential, credential)
-            self.token_manager = ManagedIdentityAPITokenManager(
-                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
-                logger=logging.getLogger("AdversarialSimulator"),
-                credential=self.credential
-            )
-            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
-            self.adversarial_template_handler = AdversarialTemplateHandler(
-                azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
-            )
-            
         super().__init__(azure_ai_project=azure_ai_project, credential=credential)
 
     def _ensure_service_dependencies(self):

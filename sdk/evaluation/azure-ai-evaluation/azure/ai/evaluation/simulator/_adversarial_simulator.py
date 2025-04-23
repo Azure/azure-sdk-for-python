@@ -69,7 +69,16 @@ class AdversarialSimulator:
     def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
 
-        if isinstance(azure_ai_project, dict):
+        if isinstance(azure_ai_project, str):
+            self.azure_ai_project = azure_ai_project
+            self.credential = cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+        else:
             try:
                 self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
             except EvaluationException as e:
@@ -87,15 +96,6 @@ class AdversarialSimulator:
                 credential=self.credential,
             )
             self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        else:
-            self.azure_ai_project = azure_ai_project
-            self.credential = cast(TokenCredential, credential)
-            self.token_manager = ManagedIdentityAPITokenManager(
-                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
-                logger=logging.getLogger("AdversarialSimulator"),
-                credential=self.credential,
-            )
-            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
                             
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client

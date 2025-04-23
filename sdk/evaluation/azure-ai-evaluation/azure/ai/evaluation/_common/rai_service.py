@@ -620,7 +620,14 @@ async def evaluate_with_rai_service(
     :rtype: Dict[str, Union[str, float]]
     """
 
-    if isinstance(project_scope, dict):
+    if isinstance(project_scope, str):
+        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
+        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        result = parse_response(annotation_response, metric_name, metric_display_name)
+        return result
+    else:
         # Get RAI service URL from discovery service and check service availability
         token = await fetch_or_reuse_token(credential)
         rai_svc_url = await get_rai_svc_url(project_scope, token)
@@ -631,14 +638,6 @@ async def evaluate_with_rai_service(
         annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
         result = parse_response(annotation_response, metric_name, metric_display_name)
 
-        return result
-    else:
-        
-        client = AIProjectClient(endpoint=project_scope, credential=credential)
-        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
-        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
-        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
-        result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
 
 def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
@@ -749,7 +748,7 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     return operation_id
 
 async def evaluate_with_rai_service_multimodal(
-    messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
+    messages, metric_name: str, project_scope: Union[str, AzureAIProject], credential: TokenCredential
 ):
     """ "Evaluate the content safety of the response using Responsible AI service
        :param messages: The normalized list of messages.
@@ -765,19 +764,19 @@ async def evaluate_with_rai_service_multimodal(
        :rtype: List[List[Dict]]
     """
 
-    if isinstance(project_scope, dict):
+    if isinstance(project_scope, str):
+        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
+        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        result = parse_response(annotation_response, metric_name)
+        return result
+    else:
         token = await fetch_or_reuse_token(credential)
         rai_svc_url = await get_rai_svc_url(project_scope, token)
         await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
         # Submit annotation request and fetch result
         operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
         annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-        result = parse_response(annotation_response, metric_name)
-        return result
-    else:
-        client = AIProjectClient(endpoint=project_scope, credential=credential)
-        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
-        operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
-        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
         result = parse_response(annotation_response, metric_name)
         return result
