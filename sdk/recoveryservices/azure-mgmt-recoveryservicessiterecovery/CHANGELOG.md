@@ -2,6 +2,8 @@
 
 ## 1.2.1 (2025-04-23)
 
+### Features Added
+
   - Added operation ReplicationProtectionContainersOperations.begin_switch_cluster_protection
   - Added operation group ClusterRecoveryPointOperations
   - Added operation group ClusterRecoveryPointsOperations
