@@ -75,7 +75,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
-@pytest.mark.usefixtures("setup")
+@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
