@@ -12,6 +12,7 @@
 
 - Hub and Project are officially GA'd and no longer experimental.
 - Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
+- PipelineComponentBatchDeployment, ModelBatchDeployment, ModelBatchDeploymentSettings are GA
 
 ## 1.26.3 (2025-04-17)
 
