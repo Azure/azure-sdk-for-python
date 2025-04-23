@@ -33,9 +33,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     async with DefaultAzureCredential() as credential:
-        async with AgentsClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"], credential=credential
-        ) as agents_client:
+        async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=credential) as agents_client:
 
             code_interpreter = CodeInterpreterTool()
 

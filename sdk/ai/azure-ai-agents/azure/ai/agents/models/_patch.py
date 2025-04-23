@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1381,9 +1382,7 @@ class BaseAgentEventHandler(Iterator[T]):
             pass
 
 
-class AsyncAgentEventHandler(
-    BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]
-):
+class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
 
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
@@ -1392,9 +1391,9 @@ class AsyncAgentEventHandler(
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            await cast(
-                Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs
-            )(event_data_obj, self)
+            await cast(Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
+                event_data_obj, self
+            )
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:

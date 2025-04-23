@@ -62,9 +62,7 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await agents_client.create_and_process_run(
-                thread_id=thread.id, agent_id=agent.id, sleep_interval=4
-            )
+            run = await agents_client.create_and_process_run(thread_id=thread.id, agent_id=agent.id, sleep_interval=4)
             print(f"Created run, run ID: {run.id}")
 
             print(f"Run completed with status: {run.status}")

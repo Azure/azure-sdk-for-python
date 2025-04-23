@@ -358,7 +358,7 @@ def build_agents_list_messages_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if run_id is not None:
-        _params["runId"] = _SERIALIZER.query("run_id", run_id, "str")
+        _params["run_id"] = _SERIALIZER.query("run_id", run_id, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:

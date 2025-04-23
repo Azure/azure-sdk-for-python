@@ -109,17 +109,13 @@ with agents_client:
     )
     print(f"Created message, message ID {message.id}")
 
-    with agents_client.create_stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
+    with agents_client.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
         stream.until_done()
 
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    response_message = agents_client.list_messages(thread_id=thread.id).get_last_message_by_role(
-        MessageRole.AGENT
-    )
+    response_message = agents_client.list_messages(thread_id=thread.id).get_last_message_by_role(MessageRole.AGENT)
     if response_message:
         for text_message in response_message.text_messages:
             print(f"Agent response: {text_message.text.value}")

@@ -84,9 +84,7 @@ with agents_client:
     print(f"Created message, message ID {message.id}")
 
     # [START create_stream]
-    with agents_client.create_stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
+    with agents_client.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
         for event_type, event_data, func_return in stream:
             print(f"Received data.")
             print(f"Streaming receive Event Type: {event_type}")

@@ -389,9 +389,7 @@ class TestAgentsMock:
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
 
             # Create run with new tool set, which also can be none.
-            agents_client.create_and_process_run(
-                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2
-            )
+            agents_client.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2)
             if toolset2 is not None:
                 self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset2)
             else:

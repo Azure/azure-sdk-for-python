@@ -22,10 +22,7 @@ import asyncio
 import time
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import (
-    MessageTextContent,
-    ListSortOrder
-)
+from azure.ai.agents.models import MessageTextContent, ListSortOrder
 from azure.identity.aio import DefaultAzureCredential
 
 import os

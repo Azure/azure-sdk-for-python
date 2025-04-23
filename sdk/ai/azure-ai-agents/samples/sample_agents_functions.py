@@ -85,9 +85,7 @@ with agents_client:
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                agents_client.submit_tool_outputs_to_run(
-                    thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                )
+                agents_client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
         print(f"Current run status: {run.status}")
 
