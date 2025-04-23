@@ -9,7 +9,8 @@ import functools
 import warnings
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
+    Any, AnyStr, AsyncIterable, AsyncIterator, Awaitable, Callable,
+    cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote, urlparse
@@ -60,6 +61,8 @@ if TYPE_CHECKING:
     from .._models import (
         AccessPolicy,
         ContainerEncryptionScope,
+        ContentSettings,
+        CustomerProvidedEncryptionKey,
         PremiumPageBlobTier,
         PublicAccess,
         StandardBlobTier,
@@ -803,9 +806,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, _pipeline=_pipeline)
 
-
     @distributed_trace_async
-    async def get_container_access_policy(self, **kwargs: Any) -> Dict[str, Any]:
+    async def get_container_access_policy(
+        self, *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -831,15 +838,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 :dedent: 16
                 :caption: Getting the access policy on the container.
         """
-        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
-        timeout = kwargs.pop('timeout', None)
         try:
             response, identifiers = await self._client.container.get_access_policy(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 cls=return_headers_and_deserialized,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         return {
@@ -851,6 +857,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     async def set_container_access_policy(
         self, signed_identifiers: Dict[str, "AccessPolicy"],
         public_access: Optional[Union[str, "PublicAccess"]] = None,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]:
         """Sets the permissions for the specified container or stored access
@@ -898,8 +909,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 :dedent: 16
                 :caption: Setting access policy on the container.
         """
-        timeout = kwargs.pop('timeout', None)
-        lease = kwargs.pop('lease', None)
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -909,10 +918,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             if value:
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
-
-        mod_conditions = get_modify_conditions(kwargs)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))  # type: ignore
+        signed_identifiers = identifiers  # type: ignore
+        mod_conditions = get_modify_conditions({
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since
+        })
         access_conditions = get_access_conditions(lease)
         try:
             return cast(Dict[str, Union[str, datetime]], await self._client.container.set_access_policy(
@@ -922,7 +933,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs))
+                **kwargs
+            ))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -930,6 +942,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     def list_blobs(
         self, name_starts_with: Optional[str] = None,
         include: Optional[Union[str, List[str]]] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
@@ -943,7 +957,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :type include: list[str] or str
+        :type include: List[str] or str
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -970,12 +984,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
-        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
@@ -985,7 +999,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         )
 
     @distributed_trace
-    def list_blob_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
+    def list_blob_names(
+        self, *,
+        name_starts_with: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[str]:
         """Returns a generator to list the names of blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -1010,9 +1029,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             raise ValueError("Passing 'prefix' has no effect on filtering, " +
                              "please use the 'name_starts_with' parameter instead.")
 
-        name_starts_with = kwargs.pop('name_starts_with', None)
         results_per_page = kwargs.pop('results_per_page', None)
-        timeout = kwargs.pop('timeout', None)
 
         # For listing only names we need to create a one-off generated client and
         # override its deserializer to prevent deserialization of the full response.
@@ -1022,13 +1039,15 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         command = functools.partial(
             client.container.list_blob_flat_segment,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            page_iterator_class=BlobNamesPaged)
+            page_iterator_class=BlobNamesPaged
+        )
 
     @distributed_trace
     def walk_blobs(
@@ -1049,7 +1068,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :type include: list[str] or str
+        :type include: List[str] or str
         :param str delimiter:
             When the request includes this parameter, the operation returns a BlobPrefix
             element in the response body that acts as a placeholder for all blobs whose
@@ -1078,17 +1097,22 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             delimiter=delimiter,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return BlobPrefix(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            delimiter=delimiter)
+            delimiter=delimiter
+        )
 
     @distributed_trace
     def find_blobs_by_tags(
         self, filter_expression: str,
+        *,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[FilteredBlob]:
         """Returns a generator to list the blobs under the specified container whose tags
@@ -1110,17 +1134,18 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :returns: An iterable (auto-paging) response of FilteredBlob.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
-        results_per_page = kwargs.pop('results_per_page', None)
-        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.filter_blobs,
             timeout=timeout,
             where=filter_expression,
-            **kwargs)
+            **kwargs
+        )
         return AsyncItemPaged(
-            command, results_per_page=results_per_page,
+            command,
+            results_per_page=results_per_page,
             container=self.container_name,
-            page_iterator_class=FilteredBlobPaged)
+            page_iterator_class=FilteredBlobPaged
+        )
 
     @distributed_trace_async
     async def upload_blob(
@@ -1129,7 +1154,26 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
         length: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
+        *,
+        overwrite: Optional[bool] = None,
+        content_settings: Optional["ContentSettings"] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
+        premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
+        standard_blob_tier: Optional["StandardBlobTier"] = None,
+        maxsize_condition: Optional[int] = None,
+        max_concurrency: Optional[int] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
+        **kwargs: Any
     ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
@@ -1254,16 +1298,33 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             )
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
+        kwargs.update({
+            'overwrite': overwrite,
+            'content_settings': content_settings,
+            'validate_content': validate_content,
+            'lease': lease,
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since,
+            'etag': etag,
+            'match_condition': match_condition,
+            'if_tags_match_condition': if_tags_match_condition,
+            'premium_page_blob_tier': premium_page_blob_tier,
+            'standard_blob_tier': standard_blob_tier,
+            'maxsize_condition': maxsize_condition,
+            'max_concurrency': max_concurrency,
+            'cpk': cpk,
+            'encryption_scope': encryption_scope,
+            'encoding': encoding or 'UTF-8',
+            'progress_hook': progress_hook
+        })
+        options = {k: v for k, v in kwargs.items() if v is not None}
         await blob.upload_blob(
             data,
             blob_type=blob_type,
             length=length,
             metadata=metadata,
             timeout=timeout,
-            encoding=encoding,
-            **kwargs
+            **options
         )
         return blob
 
@@ -1340,13 +1401,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        blob = self.get_blob_client(blob) # type: ignore
+        blob = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        await blob.delete_blob( # type: ignore
+        await blob.delete_blob(  # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
 
     @overload
     async def download_blob(
