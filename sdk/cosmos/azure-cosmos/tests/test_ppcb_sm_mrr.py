@@ -16,9 +16,9 @@ from azure.cosmos import PartitionKey, _partition_health_tracker
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
-from tests.test_ppcb_mm_async import perform_write_operation, create_doc, PK_VALUE, write_operations_and_errors, \
+from test_ppcb_mm_async import perform_write_operation, create_doc, PK_VALUE, write_operations_and_errors, \
     cleanup_method, read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
-from tests.test_ppcb_sm_mrr_async import validate_unhealthy_partitions
+from test_ppcb_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture()

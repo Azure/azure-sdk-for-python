@@ -2109,7 +2109,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         results, last_response_headers = self._Batch(
             formatted_operations,
             path,
-            collection_link,
             collection_id,
             options,
             **kwargs

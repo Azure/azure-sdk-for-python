@@ -67,9 +67,9 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif request.headers.get(HttpHeaders.PartitionKeyRangeID):
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
-            range = await (self.client._routing_map_provider
+            epk_range = await (self.client._routing_map_provider
                            .get_range_by_partition_key_range_id(container_link, pk_range_id))
-            partition_range = Range.PartitionKeyRangeToRange(range)
+            partition_range = Range.PartitionKeyRangeToRange(epk_range)
         else:
             raise RuntimeError("Illegal state: the request does not contain partition information.")
 

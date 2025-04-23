@@ -54,7 +54,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         print(request.headers)
-        properties = self.Client._container_properties_cache[container_rid]
+        properties = self.Client._container_properties_cache[container_rid] # pylint: disable=protected-access
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
@@ -63,15 +63,15 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         if request.headers.get(HttpHeaders.PartitionKey):
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
-            partition_ranges = (self.Client._routing_map_provider
+            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
+            partition_ranges = (self.Client._routing_map_provider # pylint: disable=protected-access
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif request.headers.get(HttpHeaders.PartitionKeyRangeID):
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
-            range =(self.Client._routing_map_provider
+            epk_range =(self.Client._routing_map_provider # pylint: disable=protected-access
                     .get_range_by_partition_key_range_id(container_link, pk_range_id))
-            partition_range = Range.PartitionKeyRangeToRange(range)
+            partition_range = Range.PartitionKeyRangeToRange(epk_range)
         else:
             raise RuntimeError("Illegal state: the request does not contain partition information.")
 
