@@ -1522,65 +1522,6 @@ class RedTeam():
             except Exception as e:
                 self.logger.error(f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}")
                 return {}
-
-    async def _evaluate_conversation(self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int) -> None:
-        messages = conversation["conversation"]["messages"]
-        
-        # Extract all assistant messages for evaluation
-        assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
-        
-        if assistant_messages:
-            # Create query-response pair with empty query and all assistant messages
-            query_response = {
-                "query": "",  # Empty query as required
-                "response": " ".join(assistant_messages)  # Join all assistant messages
-            }
-            try:
-                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}") # Create retry-enabled wrapper for evaluate_with_rai_service with enhanced retry strategy
-                @retry(**self._create_retry_config()["network_retry"])
-                async def evaluate_with_rai_service_with_retry():
-                    try:
-                        return await evaluate_with_rai_service(
-                            data=query_response,
-                            metric_name=metric_name,
-                            project_scope=self.azure_ai_project,
-                            credential=self.credential
-                        )
-                    except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, 
-                            httpx.HTTPError, httpx.TimeoutException, ConnectionError,
-                            ConnectionRefusedError, ConnectionResetError, TimeoutError, 
-                            OSError, IOError) as e:
-                        self.logger.warning(f"Network error while evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {type(e).__name__}: {str(e)}")
-                        # Add a short delay before retry to increase success probability
-                        await asyncio.sleep(2)
-                        raise
-                
-                # Call the retry-enabled function
-                evaluate_output = await evaluate_with_rai_service_with_retry()
-                
-                # Create a row with the format expected by _to_red_team_result
-                row = {
-                    "inputs.conversation": {"messages": messages}
-                }
-                
-                # Add the evaluation results in the expected format
-                risk_cat_value = risk_category.value
-                if evaluate_output and risk_cat_value in evaluate_output:
-                    row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = evaluate_output.get(risk_cat_value)
-                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(f"{risk_cat_value}_reason", "")
-                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = evaluate_output.get(f"{risk_cat_value}_score", 0)
-                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
-                    
-                    # Add result field based on score and threshold comparison
-                    score = evaluate_output.get(f"{risk_cat_value}_score", 0)
-                    threshold = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
-                    result = int(score) > int(threshold)
-                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = str(result).lower()
-                    self.logger.debug(f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}")
-                    return row
-            except Exception as e:
-                self.logger.error(f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}")
-                return {}
     
     async def _evaluate(
         self,
