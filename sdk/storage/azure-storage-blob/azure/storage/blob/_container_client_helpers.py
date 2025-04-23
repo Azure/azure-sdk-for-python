@@ -127,12 +127,13 @@ def _generate_delete_blobs_options(
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)
     if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
     url_prepend = kwargs.pop('url_prepend', None)
-    kwargs.update({'raise_on_any_failure': raise_on_any_failure,
-                    'sas': query_str.replace('?', '&'),
-                    'timeout': '&timeout=' + str(timeout) if timeout else "",
-                    'path': container_name,
-                    'restype': 'restype=container&'
-                    })
+    kwargs.update({
+        'raise_on_any_failure': raise_on_any_failure,
+        'sas': query_str.replace('?', '&'),
+        'timeout': '&timeout=' + str(timeout) if timeout else "",
+        'path': container_name,
+        'restype': 'restype=container&'
+    })
 
     reqs = []
     for blob in blobs:

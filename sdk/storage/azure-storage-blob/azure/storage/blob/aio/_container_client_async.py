@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
     from ._blob_service_client_async import BlobServiceClient
+    from .._generated.models import RehydratePriority
     from .._models import (
         AccessPolicy,
         ContainerEncryptionScope,
@@ -1148,7 +1149,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         )
 
     @distributed_trace_async
-    async def upload_blob(
+    async def upload_blob(  # pylint: disable=too-many-locals
         self, name: str,
         data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
@@ -1332,6 +1333,15 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     async def delete_blob(
         self, blob: str,
         delete_snapshots: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Marks the specified blob or snapshot for deletion.
@@ -1403,11 +1413,20 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             )
         blob = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault('merge_span', True)
-        timeout = kwargs.pop('timeout', None)
+        kwargs.update({
+            'version_id': version_id,
+            'lease': lease,
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since,
+            'etag': etag,
+            'match_condition': match_condition,
+            'if_tags_match_condition': if_tags_match_condition,
+        })
+        options = {k: v for k, v in kwargs.items() if v is not None}
         await blob.delete_blob(  # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
-            **kwargs
+            **options
         )
 
     @overload
@@ -1416,7 +1435,19 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
         encoding: str,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]:
         ...
@@ -1427,7 +1458,19 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
         encoding: None = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
@@ -1438,7 +1481,19 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Union[str, None] = None,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
@@ -1529,17 +1584,39 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        blob_client = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault('merge_span', True)
+        kwargs.update({
+            'version_id': version_id,
+            'validate_content': validate_content,
+            'lease': lease,
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since,
+            'etag': etag,
+            'match_condition': match_condition,
+            'if_tags_match_condition': if_tags_match_condition,
+            'cpk': cpk,
+            'max_concurrency': max_concurrency,
+            'progress_hook': progress_hook,
+            'timeout': timeout,
+        })
+        options = {k: v for k, v in kwargs.items() if v is not None}
         return await blob_client.download_blob(
             offset=offset,
             length=length,
             encoding=encoding,
-            **kwargs)
+            **options
+        )
 
     @distributed_trace_async
     async def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+        delete_snapshots: Optional[str] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator["AsyncHttpResponse"]:
         """Marks the specified blobs or snapshots for deletion.
@@ -1638,6 +1715,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             self._query_str,
             self.container_name,
             self._client,
+            delete_snapshots=delete_snapshots,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags_match_condition=if_tags_match_condition,
+            raise_on_any_failure=raise_on_any_failure,
+            timeout=timeout,
             *blobs,
             **kwargs
         )
@@ -1648,6 +1731,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     async def set_standard_blob_tier_blobs(
         self, standard_blob_tier: Union[str, 'StandardBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
+        rehydrate_priority: Optional["RehydratePriority"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator["AsyncHttpResponse"]:
         """This operation sets the tier on block blobs.
@@ -1699,16 +1786,16 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
             .. versionadded:: 12.4.0
 
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure. For optimal performance,
-            this should be set to False.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
@@ -1719,8 +1806,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             self.container_name,
             standard_blob_tier,
             self._client,
+            rehydrate_priority=rehydrate_priority,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            raise_on_any_failure=raise_on_any_failure,
             *blobs,
-            **kwargs)
+            **kwargs
+        )
 
         return cast(AsyncIterator["AsyncHttpResponse"], await self._batch_send(*reqs, **options))
 
@@ -1728,6 +1820,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     async def set_premium_page_blob_tier_blobs(
         self, premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator["AsyncHttpResponse"]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
@@ -1760,16 +1854,16 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                     key: 'timeout', value type: int
 
         :type blobs: str or Dict[str, any] or ~azure.storage.blob.BlobProperties
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure. For optimal performance,
-            this should be set to False.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
@@ -1780,6 +1874,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             self.container_name,
             premium_page_blob_tier,
             self._client,
+            raise_on_any_failure=raise_on_any_failure,
+            timeout=timeout,
             *blobs,
             **kwargs)
 

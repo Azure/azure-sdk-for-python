@@ -62,6 +62,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from azure.storage.blob import BlobServiceClient
+    from ._generated.models import RehydratePriority
     from ._models import (
         AccessPolicy,
         ContainerEncryptionScope,
@@ -1167,7 +1168,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         )
 
     @distributed_trace
-    def upload_blob(
+    def upload_blob(  # pylint: disable=too-many-locals
         self, name: str,
         data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
@@ -1349,6 +1350,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def delete_blob(
         self, blob: str,
         delete_snapshots: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Marks the specified blob or snapshot for deletion.
@@ -1420,11 +1430,20 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             )
         blob_client = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault('merge_span', True)
-        timeout = kwargs.pop('timeout', None)
+        kwargs.update({
+            'version_id': version_id,
+            'lease': lease,
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since,
+            'etag': etag,
+            'match_condition': match_condition,
+            'if_tags_match_condition': if_tags_match_condition,
+        })
+        options = {k: v for k, v in kwargs.items() if v is not None}
         blob_client.delete_blob(  # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
-            **kwargs
+            **options
         )
 
     @overload
@@ -1433,8 +1452,19 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
         encoding: str,
-        **kwargs: Any
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
     ) -> StorageStreamDownloader[str]:
         ...
 
@@ -1444,7 +1474,19 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
         encoding: None = None,
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
@@ -1455,7 +1497,19 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Union[str, None] = None,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
@@ -1546,17 +1600,39 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        blob_client = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault('merge_span', True)
+        kwargs.update({
+            'version_id': version_id,
+            'validate_content': validate_content,
+            'lease': lease,
+            'if_modified_since': if_modified_since,
+            'if_unmodified_since': if_unmodified_since,
+            'etag': etag,
+            'match_condition': match_condition,
+            'if_tags_match_condition': if_tags_match_condition,
+            'cpk': cpk,
+            'max_concurrency': max_concurrency,
+            'progress_hook': progress_hook,
+            'timeout': timeout,
+        })
+        options = {k: v for k, v in kwargs.items() if v is not None}
         return blob_client.download_blob(
             offset=offset,
             length=length,
             encoding=encoding,
-            **kwargs)
+            **options
+        )
 
     @distributed_trace
     def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+        delete_snapshots: Optional[str] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:
         """Marks the specified blobs or snapshots for deletion.
@@ -1654,6 +1730,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self._query_str,
             self.container_name,
             self._client,
+            delete_snapshots=delete_snapshots,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags_match_condition=if_tags_match_condition,
+            raise_on_any_failure=raise_on_any_failure,
+            timeout=timeout,
             *blobs,
             **kwargs
         )
@@ -1664,6 +1746,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def set_standard_blob_tier_blobs(
         self, standard_blob_tier: Optional[Union[str, "StandardBlobTier"]],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
+        rehydrate_priority: Optional["RehydratePriority"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:
         """This operation sets the tier on block blobs.
@@ -1719,15 +1805,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
             .. versionadded:: 12.4.0
 
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
@@ -1738,8 +1825,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self.container_name,
             standard_blob_tier,
             self._client,
+            rehydrate_priority=rehydrate_priority,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            raise_on_any_failure=raise_on_any_failure,
             *blobs,
-            **kwargs)
+            **kwargs
+        )
 
         return self._batch_send(*reqs, **options)
 
@@ -1747,6 +1839,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def set_premium_page_blob_tier_blobs(
         self, premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:
         """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
@@ -1780,15 +1874,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                     key: 'timeout', value type: int
 
         :type blobs: str or Dict[str, Any] or ~azure.storage.blob.BlobProperties
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
@@ -1799,8 +1894,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self.container_name,
             premium_page_blob_tier,
             self._client,
+            raise_on_any_failure=raise_on_any_failure,
+            timeout=timeout,
             *blobs,
-            **kwargs)
+            **kwargs
+        )
 
         return self._batch_send(*reqs, **options)
 
