@@ -1487,6 +1487,7 @@ class RedTeam():
         :type idx: int
         :return: None
         """
+
         messages = conversation["conversation"]["messages"]
         
         # Extract all assistant messages for evaluation
