@@ -316,6 +316,13 @@
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
+
+# PRLabel: %Azure Projects
+/sdk/projects/                                                      @annatisch
+
 # ServiceLabel: %Purview
 # PRLabel: %Purview
 /sdk/purview/                                                        @saxenarahulMs @adyabansal-ms

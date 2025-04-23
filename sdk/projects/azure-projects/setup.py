@@ -39,7 +39,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk, azure projects",  # update with search keywords relevant to the azure service / product
     author="Microsoft Corporation",
-    author_email="azuresdkengsysadmins@microsoft.com",
+    author_email="azpysdkhelp@microsoft.com",
     license="MIT License",
     # ensure that the development status reflects the status of your package
     classifiers=[
@@ -48,7 +48,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
