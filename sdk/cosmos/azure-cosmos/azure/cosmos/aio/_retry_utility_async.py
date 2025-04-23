@@ -40,6 +40,7 @@ from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
                               _has_database_account_header)
+from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -305,11 +306,13 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
                 retry_error = err
                 if _has_database_account_header(request.http_request.headers):
                     raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
