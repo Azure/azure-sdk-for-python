@@ -1,5 +1,32 @@
 # Release History
 
+## 2.0.0 (2025-04-21)
+
+### Features Added
+
+  - Model `ContainerGroupInstanceCountSummary` added property `zone`
+  - Model `StandbyContainerGroupPoolResourceProperties` added property `zones`
+  - Model `StandbyContainerGroupPoolResourceUpdateProperties` added property `zones`
+  - Model `StandbyContainerGroupPoolRuntimeViewResourceProperties` added property `status`
+  - Model `StandbyContainerGroupPoolRuntimeViewResourceProperties` added property `prediction`
+  - Model `StandbyVirtualMachinePoolRuntimeViewResourceProperties` added property `status`
+  - Model `StandbyVirtualMachinePoolRuntimeViewResourceProperties` added property `prediction`
+  - Enum `VirtualMachineState` added member `HIBERNATED`
+  - Added enum `HealthStateCode`
+  - Added enum `PoolContainerGroupState`
+  - Added model `PoolContainerGroupStateCount`
+  - Added model `PoolStatus`
+  - Added enum `PoolVirtualMachineState`
+  - Added model `PoolVirtualMachineStateCount`
+  - Added model `StandbyContainerGroupPoolForecastValues`
+  - Added model `StandbyContainerGroupPoolPrediction`
+  - Added model `StandbyVirtualMachinePoolForecastValues`
+  - Added model `StandbyVirtualMachinePoolPrediction`
+
+### Breaking Changes
+
+  - Deleted or renamed model `PoolResourceStateCount`
+
 ## 1.0.0 (2024-09-25)
 
 ### Features Added
