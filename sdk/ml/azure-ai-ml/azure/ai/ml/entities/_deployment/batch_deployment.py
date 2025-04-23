@@ -130,7 +130,10 @@ class BatchDeployment(Deployment):
         **kwargs: Any,
     ) -> None:
         _type = kwargs.pop("_type", None)
-        if _type is None:
+
+        # Suppresses deprecation warning when object is created from REST responses
+        # This is needed to avoid false deprecation warning on model batch deployment
+        if _type is None and not kwargs.pop("_from_rest", False):
             warnings.warn(
                 "This class is intended as a base class and it's direct usage is deprecated. "
                 "Use one of the concrete implementations instead:\n"
@@ -351,6 +354,7 @@ class BatchDeployment(Deployment):
             properties=properties,
             creation_context=SystemData._from_rest_object(deployment.system_data),
             provisioning_state=deployment.properties.provisioning_state,
+            _from_rest=True,
         )
 
         return deployment
