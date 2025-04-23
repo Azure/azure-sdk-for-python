@@ -3,6 +3,13 @@
 ## 12.26.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2025-07-05.
+- Added support for OAuth authentication in `ContainerClient`'s `get_container_access_policy` 
+and `set_container_access_policy` APIs.
+- Added support for the keyword `source_token_intent` when copying from file share to blob and 
+authenticated via `TokenCredential` for the following `BlobClient` APIs: `upload_blob_from_url`,
+`start_copy_from_url`, `stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url`.
+- Added support for `query_blob` in the asynchronous `BlobClient`.
 
 ## 12.25.1 (2025-03-27)
 
