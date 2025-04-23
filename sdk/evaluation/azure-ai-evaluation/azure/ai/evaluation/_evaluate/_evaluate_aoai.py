@@ -384,7 +384,7 @@ def _get_graders_and_column_mappings(
     # At least one grader has a unique column mapping, split graders up
     return [({name:grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
-def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """Produce a data source config that maps all columns from the supplied data source into
     the OAI API. The mapping is naive unless a column mapping is provided, in which case
     the column mapping's values overrule the relevant naive mappings
@@ -398,8 +398,6 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Op
     :rtype: Dict[str, Any]  
     """
 
-    # Start with a naive 1:1 mapping
-    #data_source_config = _generate_default_data_source_config(input_data_df)
     data_source_config = {
         "type": "custom",
         "item_schema": {
@@ -410,16 +408,11 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Op
     }
     properties = data_source_config["item_schema"]["properties"]
     required = data_source_config["item_schema"]["required"]
-    # If a column mapping is provided, use it to override the naive mapping,
-    # but only for the columns it specifies
-    if column_mapping is not None:
-        for key in column_mapping.keys():
-            properties[key] = {
-                "type": "string",
-            }
-            if key not in required:
-                required.append(key)
-    
+    for key in column_mapping.keys():
+        properties[key] = {
+            "type": "string",
+        }
+        required.append(key)
     return data_source_config
 
 def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[str, Any]:
