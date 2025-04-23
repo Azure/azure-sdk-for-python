@@ -5,7 +5,7 @@
 # noqa: E501
 import logging
 from random import randint
-from typing import Callable, Optional, cast
+from typing import Callable, Optional, cast, Union
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
@@ -43,7 +43,7 @@ class DirectAttackSimulator:
             :caption: Run the DirectAttackSimulator to produce 2 results with 3 conversation turns each (6 messages in each result).
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
         
         if isinstance(azure_ai_project, dict):

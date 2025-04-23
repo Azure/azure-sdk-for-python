@@ -91,15 +91,15 @@ class _SafetyEvaluator(Enum):
 class _SafetyEvaluation:
     def __init__(
         self,
-        azure_ai_project: dict,
+        azure_ai_project: Union[str, dict],
         credential: TokenCredential,
         model_config: Optional[Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]] = None,
     ):
         """
         Initializes a SafetyEvaluation object.
 
-        :param azure_ai_project: A dictionary defining the Azure AI project. Required keys are 'subscription_id', 'resource_group_name', and 'project_name'.
-        :type azure_ai_project: Dict[str, str]
+        :param azure_ai_project: A string or dictionary defining the Azure AI project. Required keys are 'subscription_id', 'resource_group_name', and 'project_name'.
+        :type azure_ai_project: Union[str, Dict[str, str]]
         :param credential: The credential for connecting to Azure AI project.
         :type credential: ~azure.core.credentials.TokenCredential
         :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
