@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.aio import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.v2025_04_01.aio import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
         response = self.client.cache_rules.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             registry_name="str",
             cache_rule_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                     "targetRepository": "str",
                     "type": "str",
                 },
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,7 +85,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 registry_name="str",
                 cache_rule_name="str",
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +101,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                 registry_name="str",
                 cache_rule_name="str",
                 cache_rule_update_parameters={"credentialSetResourceId": "str"},
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
