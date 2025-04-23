@@ -1,9 +1,9 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import asyncio
 import os
 import unittest
 import uuid
+from time import sleep
 
 import pytest
 import pytest_asyncio
@@ -12,11 +12,12 @@ from azure.core.exceptions import ServiceResponseError
 
 import test_config
 from azure.cosmos import PartitionKey, _partition_health_tracker
-from azure.cosmos.aio import CosmosClient
+from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from tests._fault_injection_transport import FaultInjectionTransport
-from tests.test_ppcb_mm_async import perform_write_operation, create_doc, PK_VALUE, write_operations_and_errors, \
-    read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
+from tests.test_ppcb_mm import perform_write_operation, perform_read_operation
+from tests.test_ppcb_mm_async import create_doc, PK_VALUE, write_operations_and_errors, \
+    read_operations_and_errors, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
 from tests.test_ppcb_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
@@ -29,7 +30,7 @@ def setup_teardown():
                                             partition_key=PartitionKey("/pk"),
                                             offer_throughput=10000)
     # allow some time for the container to be created as this method is in different event loop
-    asyncio.sleep(3)
+    sleep(3)
     yield
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
