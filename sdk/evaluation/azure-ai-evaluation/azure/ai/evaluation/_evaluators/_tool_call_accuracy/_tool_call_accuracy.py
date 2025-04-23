@@ -158,12 +158,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         tool_calls.extend([content for content in message.get("content")
                                         if content.get("type") == "tool_call"])
             if len(tool_calls) == 0:
-                raise EvaluationException(
-                    message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.MISSING_FIELD,
-                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                )
+                # return empty input when there are no tool calls. From a user perspective this is preferrable to raising an exception 
+                # as the user will see explicitly the evaluator did not run, rather than seeing a null
+                return []
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
@@ -260,11 +257,15 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Go over each turn, and rotate the results into a
         # metric: List[values] format for the evals_per_turn dictionary.
 
-        score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
-        aggregated[self._AGGREGATE_RESULT_KEY] = score
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
+        if len(per_turn_results) == 0:
+            aggregated[self._AGGREGATE_RESULT_KEY] = math.nan
+            aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'N/A. No tool calls present.'
+        else:
+            score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
+            aggregated[self._AGGREGATE_RESULT_KEY] = score
+            aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
 
+        aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
         aggregated["per_tool_call_details"] = per_turn_results
         return aggregated
 
