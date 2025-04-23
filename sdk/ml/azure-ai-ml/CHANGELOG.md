@@ -12,8 +12,7 @@
 
 - Hub and Project are officially GA'd and no longer experimental.
 - Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
-- Added Targe storage connection for capability host.
-
+- Added Target storage connection for capability host.
 ## 1.26.3 (2025-04-17)
 
 ### Bugs Fixed
