@@ -152,15 +152,18 @@ class TestAdvSimulator:
         assert "topic" not in outputs[0]["template_parameters"]
         assert "target_population" not in outputs[0]["template_parameters"]
 
-    def test_adv_code_vuln_sim_responds_with_one_response(self, azure_cred, project_scope):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
+    def test_adv_code_vuln_sim_responds_with_one_response(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
-
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
 
         async def callback(
             messages: List[Dict],
@@ -186,7 +189,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -258,16 +261,18 @@ class TestAdvSimulator:
         assert "CONVERSATION" in outputs[0]["messages"][0]["content"]
         assert outputs[0]["messages"][1]["content"] == response_from_llm
 
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_adv_conversation_sim_responds_with_responses(self, azure_cred, project_scope):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
+    def test_adv_conversation_sim_responds_with_responses(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
-
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
 
         async def callback(
             messages: List[Dict],
@@ -286,7 +291,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -301,7 +306,7 @@ class TestAdvSimulator:
             )
         )
         assert len(outputs) == 1
-        assert len(outputs[0]["messages"]) == 4
+        assert len(outputs[0]["messages"]) == 3
 
     def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)

@@ -296,14 +296,15 @@ class TestBuiltInEvaluators:
         assert "reflected_xss" in details and details["reflected_xss"] is False
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
+        ("proj_scope", "cred"),
+        (
             ("project_scope", "azure_cred"),
             ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+        )
     )
-    def test_ungrounded_attributes_evaluator(self, project_scope, azure_cred):
+    def test_ungrounded_attributes_evaluator(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
         
         query = "How is speaker 2 feeling"
@@ -328,14 +329,16 @@ class TestBuiltInEvaluators:
         assert "groundedness" in details and details["groundedness"] is True
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
+        ("proj_scope", "cred", "conv"),
+        (
+            ("project_scope", "azure_cred", "simple_conversation"),
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
+        )
     )
-    def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
+    def test_content_safety_evaluator_sexual(self, request, proj_scope, cred, conv):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        simple_conversation = request.getfixturevalue(conv)
         eval_fn = SexualEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
@@ -355,33 +358,16 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["sexual_reason"]), "sexual_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        ], 
-        indirect=True
-    )
-    def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
-        eval_fn = SexualEvaluator(azure_cred, project_scope)
-        score = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
+        ("proj_scope", "cred", "conv"),
+        (
+            ("project_scope", "azure_cred", "simple_conversation"),
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
         )
-        assert score is not None
-        assert score["sexual"] == "Very low"
-        assert score["sexual_score"] < 1.0
-        assert score["sexual_reason"], "sexual_reason must not be None or empty."
-
-        # Test conversation input
-        score2 = eval_fn(conversation=simple_conversation)
-        # Using this as the zero test since I don't want to write a positive example for this.
-        assert score2["sexual_score"] == 0
-        assert score2["evaluation_per_turn"]["sexual_score"] == [0, 0]
-        assert score2["evaluation_per_turn"]["sexual"] == ["Very low", "Very low"]
-        assert all(score2["evaluation_per_turn"]["sexual_reason"]), "sexual_reason must not be None or empty."
-
-    def test_content_safety_evaluator_self_harm(self, project_scope, azure_cred, simple_conversation):
+    )
+    def test_content_safety_evaluator_self_harm(self, request, proj_scope, cred, conv):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        simple_conversation = request.getfixturevalue(conv)
         eval_fn = SelfHarmEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
@@ -487,14 +473,15 @@ class TestBuiltInEvaluators:
 
     @pytest.mark.parametrize("parallel", [True, False])
     @pytest.mark.parametrize(
-        "project_scope, azure_cred", 
-        [
+        ("proj_scope", "cred"),
+        (
             ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp"),
-        ], 
-        indirect=True
+            ("project_scope_onedp", "azure_cred_onedp")
+        )
     )
-    def test_composite_evaluator_content_safety(self, project_scope, azure_cred, parallel):
+    def test_composite_evaluator_content_safety(self, proj_scope, cred, parallel):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=parallel)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
