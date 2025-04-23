@@ -1,5 +1,10 @@
 # Release History
 
+## 1.26.4 (2025-04-23)
+
+### Other Changes
+  - Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
+
 ## 1.26.3 (2025-04-17)
 
 ### Bugs Fixed
