@@ -34,9 +34,9 @@ async def process_content(data: Any) -> bytes:
 
     try:
         if hasattr(data.response, "is_stream_consumed") and data.response.is_stream_consumed:
-            content = data.response.content
+            return data.response.content
         else:
-            content = b"".join([d async for d in data])
+            return b"".join([d async for d in data])
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
