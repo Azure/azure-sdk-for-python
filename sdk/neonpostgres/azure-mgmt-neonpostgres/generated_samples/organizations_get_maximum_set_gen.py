@@ -32,11 +32,11 @@ def main():
 
     response = client.organizations.get(
         resource_group_name="rgneon",
-        organization_name="5",
+        organization_name="test-org",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-08-01-preview/Organizations_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01/Organizations_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

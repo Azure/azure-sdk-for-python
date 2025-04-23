@@ -1225,7 +1225,9 @@
         "racwdlmeop",
         "newfs",
         "adlsstorage",
-        "adlskey"
+        "adlskey",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1540,7 +1542,9 @@
         "Fsubdir",
         "Fdir",
         "adal",
-        "mytestshare"
+        "mytestshare",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1884,6 +1888,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

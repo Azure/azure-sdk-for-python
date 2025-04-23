@@ -21,7 +21,8 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
 

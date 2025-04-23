@@ -1738,3 +1738,84 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             ))
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace_async
+    async def create_symlink(
+        self, target: str,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """NFS only. Creates a symbolic link to the specified file.
+
+        :param str target:
+            Specifies the file path the symbolic link will point to. The file path can be either relative or absolute.
+        :keyword dict[str, str] metadata:
+            Name-value pairs associated with the file as metadata.
+        :keyword file_creation_time: Creation time for the file.
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time: Last write time for the file.
+        :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword str owner: The owner of the file.
+        :keyword str group: The owning group of the file.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], await self._client.file.create_symbolic_link(
+                link_text=target,
+                metadata=metadata,
+                file_creation_time=file_creation_time,
+                file_last_write_time=file_last_write_time,
+                owner=owner,
+                group=group,
+                lease_access_conditions=lease,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def get_symlink(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """NFS only. Gets the symbolic link for the file client.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timeouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], await self._client.file.get_symbolic_link(
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)

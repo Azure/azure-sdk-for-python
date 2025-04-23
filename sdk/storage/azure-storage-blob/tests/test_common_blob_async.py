@@ -53,9 +53,15 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream, MockStorageTransport
+from test_helpers_async import (
+    AsyncStream,
+    MockStorageTransport,
+    _build_base_file_share_headers,
+    _create_file_share_oauth
+)
 
 # ------------------------------------------------------------------------------
+SMALL_BLOB_SIZE = 1024
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
@@ -88,6 +94,10 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
+
+    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
+        return "Bearer " + access_token.token
 
     async def _setup_remote(self, storage_account_name, key):
         self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
@@ -157,6 +167,65 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert blob.remaining_retention_days is None
 
     # -- Common test cases for blobs ----------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_copy_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = await self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = await _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act
+            with pytest.raises(ValueError):
+                await destination_blob_client.start_copy_from_url(
+                    source_url=base_url + "/" + file_name,
+                    source_authorization=bearer_token_string,
+                    source_token_intent='backup',
+                    requires_sync=False
+                )
+            await destination_blob_client.start_copy_from_url(
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup',
+                requires_sync=True
+            )
+            destination_blob = await destination_blob_client.download_blob()
+            destination_blob_data = await destination_blob.readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            async with aiohttp.ClientSession() as session:
+                await session.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+            await blob_service_client.delete_container(self.source_container_name)
+
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_start_copy_from_url_with_oauth(self, **kwargs):

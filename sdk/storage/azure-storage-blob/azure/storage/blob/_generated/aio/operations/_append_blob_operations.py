@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +79,6 @@ class AppendBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Create Append Blob operation creates a new append blob.
 
         :param content_length: The length of the request. Required.
@@ -264,7 +264,6 @@ class AppendBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Append Block operation commits a new block of data to the end of an existing append blob.
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
@@ -445,6 +444,7 @@ class AppendBlobOperations:
         transactional_content_md5: Optional[bytes] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -453,7 +453,6 @@ class AppendBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Append Block operation commits a new block of data to the end of an existing append blob
         where the contents are read from a source url. The Append Block operation is permitted only if
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
@@ -486,6 +485,8 @@ class AppendBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -584,6 +585,7 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -642,7 +644,6 @@ class AppendBlobOperations:
         append_position_access_conditions: Optional[_models.AppendPositionAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 

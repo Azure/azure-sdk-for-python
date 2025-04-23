@@ -37,7 +37,7 @@ from azure.storage.filedatalake import (
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
-from test_helpers import MockStorageTransport
+from test_helpers import MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
 
@@ -1691,6 +1691,33 @@ class TestFile(StorageRecordedTestCase):
 
         file_data = file_client.download_file(validate_content=True).read()
         assert file_data == b"Hello World!"  # data is fixed by mock transport
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_progress_hook_upload_data(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client(
+            directory=self._get_directory_reference(),
+            file=self._get_file_reference()
+        )
+        data = self.get_random_bytes(8 * 1024)
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        file_client.upload_data(
+            data,
+            overwrite=True,
+            progress_hook=progress.assert_progress,
+            max_concurrency=1,
+            chunk_size=1024
+        )
+
+        # Assert
+        progress.assert_complete()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

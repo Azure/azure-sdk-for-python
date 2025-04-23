@@ -32,54 +32,123 @@ def main():
 
     response = client.organizations.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="XB-.:",
+        organization_name="test-org",
         resource={
-            "location": "upxxgikyqrbnv",
+            "location": "kcdph",
             "properties": {
                 "companyDetails": {
-                    "businessPhone": "hbeb",
-                    "companyName": "uxn",
-                    "country": "lpajqzptqchuko",
-                    "domain": "krjldeakhwiepvs",
-                    "numberOfEmployees": 23,
-                    "officeAddress": "chpkrlpmfslmawgunjxdllzcrctykq",
+                    "businessPhone": "hucxvzcvpaupqjkgb",
+                    "companyName": "xtul",
+                    "country": "ycmyjdcpyjieemfrthfyxdlvn",
+                    "domain": "snoshqumfsthyofpnrsgyjhszvgtj",
+                    "numberOfEmployees": 12,
+                    "officeAddress": "icirtoqmmozijk",
                 },
                 "marketplaceDetails": {
                     "offerDetails": {
-                        "offerId": "bunyeeupoedueofwrzej",
-                        "planId": "nlbfiwtslenfwek",
-                        "planName": "ljbmgpkfqklaufacbpml",
-                        "publisherId": "hporaxnopmolttlnkbarw",
-                        "termId": "aedlchikwqckuploswthvshe",
-                        "termUnit": "qbcq",
+                        "offerId": "qscggwfdnippiwrrnmuscg",
+                        "planId": "sveqoxtdwxutxmtniuufyrdu",
+                        "planName": "t",
+                        "publisherId": "eibghzuyqsksouwlgqphhmuxeqeigf",
+                        "termId": "uptombvymytfonj",
+                        "termUnit": "jnxhyql",
                     },
-                    "subscriptionId": "yxmkfivp",
+                    "subscriptionId": "xfahbbbzwlcwhhjbxarnwfcy",
                     "subscriptionStatus": "PendingFulfillmentStart",
                 },
                 "partnerOrganizationProperties": {
-                    "organizationId": "nrhvoqzulowcunhmvwfgjcaibvwcl",
-                    "organizationName": "2__.-",
+                    "organizationId": "hzejhmftwsruhwspvtwoy",
+                    "organizationName": "entity-name",
                     "singleSignOnProperties": {
-                        "aadDomains": ["kndszgrwzbvvlssvkej"],
-                        "enterpriseAppId": "fpibacregjfncfdsojs",
+                        "aadDomains": ["mdzbelaiphukhe"],
+                        "enterpriseAppId": "urtjzjfr",
                         "singleSignOnState": "Initial",
-                        "singleSignOnUrl": "tmojh",
+                        "singleSignOnUrl": "gcmlwvtxcsjozitm",
                     },
                 },
+                "projectProperties": {
+                    "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                    "branch": {
+                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                        "databaseName": "duhxebzhd",
+                        "databases": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "orfdwdmzvfvlnrgussvcvoek",
+                                "entityName": "entity-name",
+                                "ownerName": "odmbeg",
+                            }
+                        ],
+                        "endpoints": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "rzsyrhpfbydxtfkpaa",
+                                "endpointType": "read_only",
+                                "entityName": "entity-name",
+                                "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                            }
+                        ],
+                        "entityName": "entity-name",
+                        "parentId": "entity-id",
+                        "projectId": "oik",
+                        "roleName": "qrrairsupyosxnqotdwhbpc",
+                        "roles": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
+                                "entityName": "entity-name",
+                                "isSuperUser": True,
+                                "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                            }
+                        ],
+                    },
+                    "databases": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "orfdwdmzvfvlnrgussvcvoek",
+                            "entityName": "entity-name",
+                            "ownerName": "odmbeg",
+                        }
+                    ],
+                    "defaultEndpointSettings": {"autoscalingLimitMaxCu": 20, "autoscalingLimitMinCu": 26},
+                    "endpoints": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "rzsyrhpfbydxtfkpaa",
+                            "endpointType": "read_only",
+                            "entityName": "entity-name",
+                            "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                        }
+                    ],
+                    "entityName": "entity-name",
+                    "historyRetention": 7,
+                    "pgVersion": 10,
+                    "regionId": "tlcltldfrnxh",
+                    "roles": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
+                            "entityName": "entity-name",
+                            "isSuperUser": True,
+                            "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                        }
+                    ],
+                    "storage": 7,
+                },
                 "userDetails": {
-                    "emailAddress": "3i_%@w8-y.H-p.tvj.dG",
-                    "firstName": "buwwe",
-                    "lastName": "escynjpynkoox",
-                    "phoneNumber": "dlrqoowumy",
-                    "upn": "fwedjamgwwrotcjaucuzdwycfjdqn",
+                    "emailAddress": "test@contoso.com",
+                    "firstName": "zhelh",
+                    "lastName": "zbdhouyeozylnerrc",
+                    "phoneNumber": "zmejenytglrmjnt",
+                    "upn": "mixcikvxlnhkfugetqlngz",
                 },
             },
-            "tags": {"key2099": "omjjymaqtrqzksxszhzgyl"},
+            "tags": {"key8832": "rvukepuxkykdtqjtwk"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-08-01-preview/Organizations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01/Organizations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
