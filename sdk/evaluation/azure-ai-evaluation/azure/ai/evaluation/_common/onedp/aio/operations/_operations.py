@@ -38,7 +38,7 @@ from ...operations._operations import (
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
-    build_datasets_create_version_request,
+    build_datasets_create_or_update_version_request,
     build_datasets_delete_version_request,
     build_datasets_get_credentials_request,
     build_datasets_get_version_request,
@@ -47,7 +47,7 @@ from ...operations._operations import (
     build_datasets_start_pending_upload_version_request,
     build_deployments_get_request,
     build_deployments_list_request,
-    build_evaluation_results_create_version_request,
+    build_evaluation_results_create_or_update_version_request,
     build_evaluation_results_delete_version_request,
     build_evaluation_results_get_credentials_request,
     build_evaluation_results_get_version_request,
@@ -62,7 +62,7 @@ from ...operations._operations import (
     build_evaluations_submit_annotation_request,
     build_evaluations_upload_run_request,
     build_evaluations_upload_update_run_request,
-    build_indexes_create_version_request,
+    build_indexes_create_or_update_version_request,
     build_indexes_delete_version_request,
     build_indexes_get_version_request,
     build_indexes_list_latest_request,
@@ -885,13 +885,13 @@ class EvaluationsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "operation_id", "accept"]},
     )
-    async def operation_results(self, operation_id: str, **kwargs: Any) -> Dict[str, Any]:
+    async def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
 
         :param operation_id: Operation ID for the polling operation. Required.
         :type operation_id: str
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: list of dict mapping str to any
+        :rtype: list[dict[str, any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -905,7 +905,7 @@ class EvaluationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[List[Dict[str, Any]]] = kwargs.pop("cls", None)
 
         _request = build_evaluations_operation_results_request(
             operation_id=operation_id,
@@ -925,7 +925,7 @@ class EvaluationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -937,7 +937,7 @@ class EvaluationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Dict[str, Any], response.json())
+            deserialized = _deserialize(List[Dict[str, Any]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1550,7 +1550,7 @@ class DatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self,
         name: str,
         version: str,
@@ -1559,13 +1559,13 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1576,16 +1576,16 @@ class DatasetsOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1596,16 +1596,16 @@ class DatasetsOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1616,17 +1616,17 @@ class DatasetsOperations:
         """
 
     @distributed_trace_async
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Is one of the following types:
-         DatasetVersion, JSON, IO[bytes] Required.
+        :param body: The definition of the DatasetVersion to create or update. Is one of the following
+         types: DatasetVersion, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.DatasetVersion or JSON or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
@@ -1653,7 +1653,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_create_version_request(
+        _request = build_datasets_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -2258,16 +2258,16 @@ class IndexesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2278,16 +2278,16 @@ class IndexesOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2298,16 +2298,16 @@ class IndexesOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2318,17 +2318,17 @@ class IndexesOperations:
         """
 
     @distributed_trace_async
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Is one of the following types: Index, JSON,
-         IO[bytes] Required.
+        :param body: The definition of the Index to create or update. Is one of the following types:
+         Index, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.Index or JSON or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.Index
@@ -2355,7 +2355,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_create_version_request(
+        _request = build_indexes_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4032,7 +4032,7 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self,
         name: str,
         version: str,
@@ -4041,13 +4041,13 @@ class EvaluationResultsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.EvaluationResult
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4058,16 +4058,16 @@ class EvaluationResultsOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4078,16 +4078,16 @@ class EvaluationResultsOperations:
         """
 
     @overload
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -4102,17 +4102,17 @@ class EvaluationResultsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
     )
-    async def create_version(
+    async def create_or_update_version(
         self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Is one of the following types:
-         EvaluationResult, JSON, IO[bytes] Required.
+        :param body: The definition of the EvaluationResult to create or update. Is one of the
+         following types: EvaluationResult, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.EvaluationResult or JSON or IO[bytes]
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
@@ -4139,7 +4139,7 @@ class EvaluationResultsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluation_results_create_version_request(
+        _request = build_evaluation_results_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
