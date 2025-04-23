@@ -93,6 +93,8 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
     policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
+    policy.ExcludedLocations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
@@ -181,12 +183,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
+        in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+        If all preferred locations were excluded, primary/hub location will be used.
     :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads on rite operations for items.
+    :keyword int throughput_bucket: The desired throughput bucket for the client
 
     .. admonition:: Example:
 
@@ -261,6 +267,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -271,6 +278,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -303,6 +311,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if populate_query_metrics is not None:
             warnings.warn(
                 "The 'populate_query_metrics' flag does not apply to this method"
@@ -327,6 +337,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         *,
         initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -343,6 +354,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -365,7 +377,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         try:
@@ -408,6 +421,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
@@ -416,6 +430,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -430,7 +445,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = build_options(kwargs)
@@ -452,6 +468,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
@@ -465,6 +482,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -482,6 +500,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
@@ -508,6 +528,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -518,6 +539,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -544,7 +566,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)

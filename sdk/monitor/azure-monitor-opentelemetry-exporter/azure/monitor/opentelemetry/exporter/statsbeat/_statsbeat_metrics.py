@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
+    _KUBERNETES_SERVICE_HOST,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -187,7 +188,10 @@ class _StatsbeatMetrics:
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value
-            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
+            if _AKS_ARM_NAMESPACE_ID in os.environ:
+                rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
+            else:
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value

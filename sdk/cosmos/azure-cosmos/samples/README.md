@@ -47,7 +47,7 @@ The following are code samples that show common scenario operations with the Azu
 
 * [tracing-open-telemetry](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py) - Example demonstrating how to use OpenTelemetry tracing with our SDK.
 
-* [diagnostics_handler_sample.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/diagnostics_handler_sample.py) - Example demonstrating how to use diagnostics handler with our SDK.
+* [diagnostics_filter_sample.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py) - Example using logging filters for diagnostics filtering
 
 ## Prerequisites
 * Python 3.8+

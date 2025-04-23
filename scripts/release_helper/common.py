@@ -65,6 +65,7 @@ class IssueProcess:
         self.date_from_target = 0
         self.is_open = True
         self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+        self.full_issue_title = issue_package.issue.title
         self.spec_repo = Path(os.getenv('SPEC_REPO'))
         self.typespec_json = Path(os.getenv('TYPESPEC_JSON'))
         self.language_name = "common"
@@ -207,11 +208,12 @@ class IssueProcess:
         self.target_readme_tag = self.target_readme_tag.replace('tag-', '')
         if self.default_readme_tag != self.target_readme_tag:
             self.add_label(INCONSISTENT_TAG)
-            self.comment(f'Hi, @{self.owner}, according to [rule](https://github.com/Azure/azure-rest-api-specs/blob/'
-                         f'main/documentation/release-request/rules-for-release-request.md#3-readme-tag-to-be-released),'
-                         f' your **Readme Tag** is `{self.target_readme_tag}`, but in [readme.md]({self.readme_link}#basic-information) '
-                         f'it is still `{self.default_readme_tag}`, please modify the readme.md or your '
-                         f'**Readme Tag** above ')
+            if "typespec" not in self.full_issue_title.lower():
+                self.comment(f'Hi, @{self.owner}, according to [rule](https://github.com/Azure/azure-rest-api-specs/blob/'
+                            f'main/documentation/release-request/rules-for-release-request.md#3-readme-tag-to-be-released),'
+                            f' your **Readme Tag** is `{self.target_readme_tag}`, but in [readme.md]({self.readme_link}#basic-information) '
+                            f'it is still `{self.default_readme_tag}`, please modify the readme.md or your '
+                            f'**Readme Tag** above ')
 
     def get_package_name(self) -> None:
         issue_body_list = self.get_issue_body()
@@ -298,9 +300,12 @@ class IssueProcess:
         comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in
                     self.issue_package.issue.get_comments()]
         comments.sort()
-        latest_comments = comments[-1][1]
-        if latest_comments not in self.language_owner:
-            self.bot_advice.append('new comment.')
+        try:
+            latest_comments = comments[-1][1]
+            if latest_comments not in self.language_owner:
+                self.bot_advice.append('new comment.')
+        except Exception:
+            self.log('Error happened when getting latest comment.')
 
     def multi_link_policy(self):
         if self.has_label(MULTI_LINK_LABEL):
