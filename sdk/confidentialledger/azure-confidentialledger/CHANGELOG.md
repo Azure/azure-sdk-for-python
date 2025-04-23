@@ -1,5 +1,10 @@
 # Release History
 
+## 1.2.0b2 (2025-04-23)
+
+### Features Added
+- Added user defined functions suuport for ledger API
+
 ## 1.2.0b1 (Unreleased)
 
 ### Features Added
