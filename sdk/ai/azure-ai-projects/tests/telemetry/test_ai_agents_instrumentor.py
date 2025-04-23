@@ -1057,10 +1057,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             thread_id=thread.id, role="user", content="What is the weather in New York?"
         )
 
-        event_handler=MyEventHandler()
-        with client.agents.create_stream(
-            thread_id=thread.id, agent_id=agent.id, event_handler=event_handler
-        ) as stream:
+        event_handler = MyEventHandler()
+        with client.agents.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=event_handler) as stream:
             stream.until_done()
 
         # delete agent and close client

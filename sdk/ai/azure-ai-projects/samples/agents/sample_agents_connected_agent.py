@@ -35,17 +35,19 @@ project_client = AIProjectClient.from_connection_string(
 
 connected_agent_name = "stock_price_bot"
 
-stock_price_agent = project_client.agents.create_agent( 
+stock_price_agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name=connected_agent_name, 
-    instructions=( 
-        "Your job is to get the stock price of a company. If you don't know the realtime stock price, return the last known stock price." 
-    ), 
-) 
+    name=connected_agent_name,
+    instructions=(
+        "Your job is to get the stock price of a company. If you don't know the realtime stock price, return the last known stock price."
+    ),
+)
 
 # [START create_agent_with_connected_agent_tool]
 # Initialize Connected Agent tool with the agent id, name, and description
-connected_agent = ConnectedAgentTool(id=stock_price_agent.id, name=connected_agent_name, description="Gets the stock price of a company")
+connected_agent = ConnectedAgentTool(
+    id=stock_price_agent.id, name=connected_agent_name, description="Gets the stock price of a company"
+)
 
 # Create agent with the Connected Agent tool and process assistant run
 with project_client:

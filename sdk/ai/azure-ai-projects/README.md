@@ -282,7 +282,7 @@ toolset.add(functions)
 toolset.add(code_interpreter)
 
 # To enable tool calls executed automatically
-project_client.agents.enable_auto_function_calls(toolset=toolset)
+project_client.agents.enable_auto_function_calls(toolset=toolset, max_retry=3)
 
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
