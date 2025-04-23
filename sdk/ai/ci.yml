@@ -54,6 +54,8 @@ extends:
       safeName: azureaiprojects
     - name: azure-ai-inference
       safeName: azureaiinference
+    - name: azure-ai-agents
+      safeName: azureaiagents
     # These packages are deprecated: 
     # - name: azure-ai-generative
     #   safeName: azureaigenerative
