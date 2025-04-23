@@ -44,7 +44,7 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "InjectedPackages": "pyrit==0.8.1",
+          "InjectedPackages": "./azure-ai-evaluation[redteam]",
           "UnsupportedToxEnvironments": "mindependency,sdist"
         }
       }
