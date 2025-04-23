@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -52,7 +53,7 @@ def build_list_file_systems_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,7 +115,6 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable["_models.FileSystem"]:
-        # pylint: disable=line-too-long
         """List FileSystems.
 
         List filesystems and their properties in given account.
@@ -138,7 +138,7 @@ class ServiceOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: An iterator like instance of either FileSystem or the result of cls(response)

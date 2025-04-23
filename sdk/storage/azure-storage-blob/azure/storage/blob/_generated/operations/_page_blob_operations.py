@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -193,7 +193,7 @@ def build_upload_pages_request(
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -299,7 +299,7 @@ def build_clear_pages_request(
 
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -391,6 +391,7 @@ def build_upload_pages_from_url_request(
     source_if_none_match: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -398,7 +399,7 @@ def build_upload_pages_from_url_request(
 
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -479,6 +480,8 @@ def build_upload_pages_from_url_request(
         _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
             "copy_source_authorization", copy_source_authorization, "str"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -505,7 +508,7 @@ def build_get_page_ranges_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -573,7 +576,7 @@ def build_get_page_ranges_diff_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -644,7 +647,7 @@ def build_resize_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -711,7 +714,7 @@ def build_update_sequence_number_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -770,7 +773,7 @@ def build_copy_incremental_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["incrementalcopy"] = kwargs.pop("comp", _params.pop("comp", "incrementalcopy"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -846,7 +849,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request. Required.
@@ -1046,7 +1048,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param content_length: The length of the request. Required.
@@ -1234,7 +1235,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request. Required.
@@ -1385,6 +1385,7 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1393,7 +1394,6 @@ class PageBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
@@ -1425,6 +1425,8 @@ class PageBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -1529,6 +1531,7 @@ class PageBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1588,7 +1591,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        # pylint: disable=line-too-long
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -1728,7 +1730,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        # pylint: disable=line-too-long
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -1879,7 +1880,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
@@ -2006,7 +2006,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Update the sequence number of the blob.
 
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
@@ -2120,7 +2119,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
         blob. The snapshot is copied such that only the differential changes between the previously
         copied snapshot are transferred to the destination. The copied snapshots are complete copies of
