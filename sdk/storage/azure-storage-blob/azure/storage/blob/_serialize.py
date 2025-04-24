@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, cast, Dict, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import quote
@@ -154,12 +154,6 @@ def get_api_version(api_version: Optional[str] = None) -> str:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
-
-
-def get_version_id(self_vid: Optional[str], kwargs: Dict[str, Any]) -> Optional[str]:
-    if 'version_id' in kwargs:
-        return cast(str, kwargs.pop('version_id'))
-    return self_vid
 
 
 def serialize_blob_tags_header(tags: Optional[Dict[str, str]] = None) -> Optional[str]:
