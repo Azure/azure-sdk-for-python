@@ -11,6 +11,7 @@
 #### Bugs Fixed
 * Fixed how the environment variables in the sdk are parsed. See [PR 40303](https://github.com/Azure/azure-sdk-for-python/pull/40303).
 * Fixed health check to check the first write region when it is not specified in the preferred regions. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
+* Fixed `response_hook` not getting called for aggregate queries. See [PR 40696](https://github.com/Azure/azure-sdk-for-python/pull/40696).
 
 #### Other Changes
 * Optimized Diagnostics Logging by reducing time spent on logging. Logged Errors are more readable and formatted. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897)
