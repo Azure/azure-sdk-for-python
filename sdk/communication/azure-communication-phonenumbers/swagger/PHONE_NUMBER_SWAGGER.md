@@ -39,3 +39,9 @@ directive:
   transform: >
     $["format"] = "";
 ```
+
+### Set remove-empty-child-schemas
+```yaml
+modelerfour:
+    remove-empty-child-schemas: true
+```

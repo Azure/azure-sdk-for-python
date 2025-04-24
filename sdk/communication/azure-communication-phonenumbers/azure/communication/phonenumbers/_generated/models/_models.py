@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -39,7 +39,7 @@ class AvailablePhoneNumber(_serialization.Model):
     :vartype assignment_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :ivar cost: The incurred cost for this phone number.
-    :vartype cost: ~azure.communication.phonenumbers.models.AvailablePhoneNumberCost
+    :vartype cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
     :ivar status: Represents the status of the phone number. Possible values include: 'available',
      'reserved', 'expired', 'error', 'purchased'. Known values are: "available", "reserved",
      "expired", "error", and "purchased".
@@ -73,7 +73,7 @@ class AvailablePhoneNumber(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
         "phone_number_type": {"key": "phoneNumberType", "type": "str"},
         "assignment_type": {"key": "assignmentType", "type": "str"},
-        "cost": {"key": "cost", "type": "AvailablePhoneNumberCost"},
+        "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "status": {"key": "status", "type": "str"},
         "is_agreement_to_not_resell_required": {"key": "isAgreementToNotResellRequired", "type": "bool"},
         "error": {"key": "error", "type": "AvailablePhoneNumberError"},
@@ -108,71 +108,10 @@ class AvailablePhoneNumber(_serialization.Model):
         self.capabilities = capabilities
         self.phone_number_type = phone_number_type
         self.assignment_type = assignment_type
-        self.cost: Optional["_models.AvailablePhoneNumberCost"] = None
+        self.cost: Optional["_models.PhoneNumberCost"] = None
         self.status: Optional[Union[str, "_models.AvailablePhoneNumberStatus"]] = None
         self.is_agreement_to_not_resell_required: Optional[bool] = None
         self.error: Optional["_models.AvailablePhoneNumberError"] = None
-
-
-class PhoneNumberCost(_serialization.Model):
-    """The incurred cost for a single phone number.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar amount: The cost amount. Required.
-    :vartype amount: float
-    :ivar currency_code: The ISO 4217 currency code for the cost amount, e.g. USD. Required.
-    :vartype currency_code: str
-    :ivar billing_frequency: The frequency with which the cost gets billed. Required. "monthly"
-    :vartype billing_frequency: str or ~azure.communication.phonenumbers.models.BillingFrequency
-    """
-
-    _validation = {
-        "amount": {"required": True},
-        "currency_code": {"required": True},
-        "billing_frequency": {"required": True},
-    }
-
-    _attribute_map = {
-        "amount": {"key": "amount", "type": "float"},
-        "currency_code": {"key": "currencyCode", "type": "str"},
-        "billing_frequency": {"key": "billingFrequency", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        amount: float,
-        currency_code: str,
-        billing_frequency: Union[str, "_models.BillingFrequency"],
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword amount: The cost amount. Required.
-        :paramtype amount: float
-        :keyword currency_code: The ISO 4217 currency code for the cost amount, e.g. USD. Required.
-        :paramtype currency_code: str
-        :keyword billing_frequency: The frequency with which the cost gets billed. Required. "monthly"
-        :paramtype billing_frequency: str or ~azure.communication.phonenumbers.models.BillingFrequency
-        """
-        super().__init__(**kwargs)
-        self.amount = amount
-        self.currency_code = currency_code
-        self.billing_frequency = billing_frequency
-
-
-class AvailablePhoneNumberCost(PhoneNumberCost):
-    """The incurred cost for this phone number.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar amount: The cost amount. Required.
-    :vartype amount: float
-    :ivar currency_code: The ISO 4217 currency code for the cost amount, e.g. USD. Required.
-    :vartype currency_code: str
-    :ivar billing_frequency: The frequency with which the cost gets billed. Required. "monthly"
-    :vartype billing_frequency: str or ~azure.communication.phonenumbers.models.BillingFrequency
-    """
 
 
 class AvailablePhoneNumberError(_serialization.Model):
@@ -717,6 +656,53 @@ class PhoneNumberCapabilitiesRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.calling = calling
         self.sms = sms
+
+
+class PhoneNumberCost(_serialization.Model):
+    """The incurred cost for a single phone number.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar amount: The cost amount. Required.
+    :vartype amount: float
+    :ivar currency_code: The ISO 4217 currency code for the cost amount, e.g. USD. Required.
+    :vartype currency_code: str
+    :ivar billing_frequency: The frequency with which the cost gets billed. Required. "monthly"
+    :vartype billing_frequency: str or ~azure.communication.phonenumbers.models.BillingFrequency
+    """
+
+    _validation = {
+        "amount": {"required": True},
+        "currency_code": {"required": True},
+        "billing_frequency": {"required": True},
+    }
+
+    _attribute_map = {
+        "amount": {"key": "amount", "type": "float"},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "billing_frequency": {"key": "billingFrequency", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        amount: float,
+        currency_code: str,
+        billing_frequency: Union[str, "_models.BillingFrequency"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword amount: The cost amount. Required.
+        :paramtype amount: float
+        :keyword currency_code: The ISO 4217 currency code for the cost amount, e.g. USD. Required.
+        :paramtype currency_code: str
+        :keyword billing_frequency: The frequency with which the cost gets billed. Required. "monthly"
+        :paramtype billing_frequency: str or ~azure.communication.phonenumbers.models.BillingFrequency
+        """
+        super().__init__(**kwargs)
+        self.amount = amount
+        self.currency_code = currency_code
+        self.billing_frequency = billing_frequency
 
 
 class PhoneNumberCountries(_serialization.Model):

@@ -6,6 +6,7 @@
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 from typing import Iterator, List, Optional, Union, Any
+import uuid
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureKeyCredential
@@ -31,12 +32,13 @@ from .._generated.models import (
     PurchasedPhoneNumber,
     PhoneNumberCapabilityType,
     PhoneNumberAreaCode,
+    PhoneNumberBrowseCapabilitiesRequest,
+    AvailablePhoneNumber,
+    PhoneNumbersReservationPurchaseRequest,
+    PhoneNumbersReservation,
     PhoneNumbersBrowseRequest,
-    PhoneNumbersBrowseResult,
-    PhoneNumbersReservationPurchaseRequest
+    PhoneNumberAssignmentType
 )
-from .._generated.models import PhoneNumbersReservation as InternalPhoneNumbersReservation
-from .._models import PhoneNumbersReservation, PhoneNumbersReservationItem
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
@@ -427,20 +429,14 @@ class PhoneNumbersClient:
         :return: PhoneNumbersReservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        reservation = await self._phone_number_client.phone_numbers.get_reservation(
+        return await self._phone_number_client.phone_numbers.get_reservation(
             reservation_id, **kwargs
         )
-
-        return PhoneNumbersReservation(
-            reservation.id,
-            expires_at=reservation.expires_at,
-            status=reservation.status,
-            phone_numbers=reservation.phone_numbers)
 
     @distributed_trace
     def list_phone_numbers_reservations(
         self, *, max_page_size=100, **kwargs: Any
-    ) -> AsyncItemPaged[PhoneNumbersReservationItem]:
+    ) -> AsyncItemPaged[PhoneNumbersReservation]:
         """Lists all reservations.
 
         Retrieves a paginated list of all phone number reservations. Note that the reservations will
@@ -451,61 +447,56 @@ class PhoneNumbersClient:
         :paramtype max_page_size: int
         :return: An iterator like instance of PhoneNumbersReservationItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservationItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
-
-        # This allows mapping the generated model to the public model.
-        # Internally, the generated client will create an instance of this iterator with each fetched page.
-        class ReservationsIterator(Iterator[PhoneNumbersReservationItem]):  # pylint: disable=too-many-ancestors
-            def __init__(self, inner: List[InternalPhoneNumbersReservation]) -> None:
-                self._inner = iter(inner)
-
-            def __iter__(self):
-                return self
-
-            def __next__(self) -> PhoneNumbersReservation:
-                reservation = next(self._inner)
-                return PhoneNumbersReservationItem(reservation.id, reservation.expires_at, reservation.status)
 
         return self._phone_number_client.phone_numbers.list_reservations(
             max_page_size=max_page_size,
-            cls=ReservationsIterator,
             **kwargs)
 
     @distributed_trace_async
     async def create_or_update_reservation(
-        self, reservation: PhoneNumbersReservation, **kwargs: Any
+        self, *,
+        reservation_id: Optional[str] = None,
+        numbers_to_add: Optional[List[AvailablePhoneNumber]] = None,
+        numbers_to_remove: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> PhoneNumbersReservation:
         """Creates or updates a reservation by its ID.
 
-        Adds and removes phone numbers from the reservation with the given ID. The response will be the
-        updated state of the reservation. Phone numbers can be reserved by including them in the
-        payload. If a number is already in the reservation, it will be ignored. To remove a phone
-        number, set it explicitly to null in the request payload. This operation is idempotent. If a
-        reservation with the same ID already exists, it will be updated, otherwise a new one is
-        created. Only reservations with 'active' status can be updated. Updating a reservation will
-        extend the expiration time of the reservation to 15 minutes after the last change, up to a
-        maximum of 2 hours from creation time. Partial success is possible, in which case the response
-        will have a 207 status code.
+        Updates the reservation with the given ID if it exists; or creates a new one otherwise. 
+        If no ID is provided, a new reservation will be created with a new random ID. 
+        Note that to update an existing reservation, a valid existing ID is required. The response will be the
+        updated state of the reservation. Updating a reservation will extend the expiration time of 
+        the reservation to 15 minutes after the last change, up to a maximum of 2 hours from creation time. 
+        Partial success is possible, in which case the result will contain phone numbers with error status.
 
-        :param reservation: A representation of the desired state of the reservation. Required.
-        :type reservation: ~azure.communication.phonenumbers.PhoneNumbersReservation
-        :return: PhoneNumbersReservation
+        
+        :keyword reservation_id: The ID of the reservation. If not provided, a new GUID will be generated.
+        :paramtype reservation_id: str
+        :keyword numbers_to_add: List of phone numbers to add to the reservation.
+        :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
+        :keyword numbers_to_remove: List of phone number IDs to remove from the reservation.
+        :paramtype numbers_to_remove: list[str]
+        :return: The updated reservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        res_request = InternalPhoneNumbersReservation(
-            phone_numbers=reservation.phone_numbers,
-        )
 
-        result = await self._phone_number_client.phone_numbers.create_or_update_reservation(
-            reservation.id, res_request, **kwargs
-        )
+        _reservation_id = reservation_id or str(uuid.uuid4())
 
-        return PhoneNumbersReservation(
-            result.id,
-            expires_at=result.expires_at,
-            status=result.status,
-            phone_numbers=result.phone_numbers)
+        phone_numbers = {}
+        if numbers_to_add:
+            for number in numbers_to_add:
+                phone_numbers[number.id] = number
+        if numbers_to_remove:
+            for number in numbers_to_remove:
+                phone_numbers[number] = None
+
+        reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
+
+        return await self._phone_number_client.phone_numbers.create_or_update_reservation(
+            _reservation_id, reservation, **kwargs
+        )
 
     @distributed_trace_async
     async def delete_reservation(
@@ -563,9 +554,15 @@ class PhoneNumbersClient:
     async def browse_available_phone_numbers(
             self,
             country_code: str,
-            phone_numbers_browse_request: PhoneNumbersBrowseRequest,
-            **kwargs: Any) -> PhoneNumbersBrowseResult:
-        """
+            phone_number_type: Union[str, PhoneNumberType],
+            *,
+            sms_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+            calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+            assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
+            phone_number_prefixes: Optional[List[str]] = None,
+            **kwargs) -> List[AvailablePhoneNumber]:
+        """Browses for available phone numbers to purchase.
+
         Browses for available phone numbers to purchase. The response will be a randomized list of
         phone numbers available to purchase matching the browsing criteria. This operation is not
         paginated. Since the results are randomized, repeating the same request will not guarantee the
@@ -573,15 +570,40 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :param phone_numbers_browse_request: An object defining the criteria to browse for available
-         phone numbers. Required.
-        :type phone_numbers_browse_request:
-         ~azure.communication.phonenumbers.models.PhoneNumbersBrowseRequest
-        :return: PhoneNumbersBrowseResult
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :param phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
+            or tollFree. Possible values include: "geographic", "tollFree".
+        :type phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
+        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound",
+        "outbound", "inbound_outbound", "none".
+        :paramtype sms_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
+        :keyword calling_capability: The calling capability to search for. Known values are: "inbound",
+        "outbound", "inbound_outbound", "none".
+        :paramtype calling_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
+        :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
+        case. Known values are: "person" and "application".
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :keyword phone_number_prefixes: The phone number prefix to match. If specified, the search will
+        be limited to phone numbers that start with any of the given prefixes.
+        :paramtype phone_number_prefixes: list[str]
+        :return: A list of available phone numbers matching the browsing criteria.
+        :rtype: List[~azure.communication.phonenumbers.models.AvailablePhoneNumber]
         """
-        return await self._phone_number_client.phone_numbers.browse_available_numbers(
+        browse_capabilities = None
+        if sms_capability is not None or calling_capability is not None:
+            browse_capabilities = PhoneNumberBrowseCapabilitiesRequest(
+                calling=calling_capability,
+                sms=sms_capability,
+            )
+        browse_request = PhoneNumbersBrowseRequest(
+            phone_number_type=phone_number_type,
+            capabilities=browse_capabilities,
+            assignment_type=assignment_type,
+            phone_number_prefixes=phone_number_prefixes
+        )
+        result = await self._phone_number_client.phone_numbers.browse_available_numbers(
             country_code,
-            phone_numbers_browse_request,
+            browse_request,
             **kwargs
         )
+
+        return result.phone_numbers

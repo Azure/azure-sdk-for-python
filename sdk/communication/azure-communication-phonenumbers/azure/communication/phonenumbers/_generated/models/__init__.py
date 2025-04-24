@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AvailablePhoneNumber,
-    AvailablePhoneNumberCost,
     AvailablePhoneNumberError,
     CommunicationError,
     CommunicationErrorResponse,
@@ -62,7 +61,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AvailablePhoneNumber",
-    "AvailablePhoneNumberCost",
     "AvailablePhoneNumberError",
     "CommunicationError",
     "CommunicationErrorResponse",
