@@ -8,6 +8,8 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from workload_configs import NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY
 
+_NOISY_ERRORS = set([404, 409, 412])
+_NOISY_SUB_STATUS_CODES = set([0, None])
 
 def get_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
@@ -49,9 +51,33 @@ def create_logger(file_name):
     # Create a rotating file handler
     handler = RotatingFileHandler(
         "log-" + prefix + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
-        maxBytes=1024 * 1024 * 10, # 10 mb
+        maxBytes=1024 * 1024 * 10,  # 10 mb
         backupCount=3
     )
     logger.setLevel(logging.DEBUG)
+    # create filters for the logger handler to reduce the noise
+    workload_logger_filter = WorkloadLoggerFilter()
+    handler.addFilter(workload_logger_filter)
     logger.addHandler(handler)
     return prefix, logger
+
+
+class WorkloadLoggerFilter(logging.Filter):
+    def filter(self, record):
+        # Check if the required attributes exists in the log record
+        required_attributes = ['duration', 'operation_type', 'status_code', 'resource_type', 'verb', 'sub_status_code']
+
+        if all(hasattr(record, attr) for attr in required_attributes):
+            # Check the conditions
+            # Check database account reads
+            if record.resource_type == "databaseaccount" and record.verb == "GET" and record.operation_type == "Read":
+                return True
+            # Check if there is an error and omit noisy errors
+            if record.status_code >= 400 and not (
+                    record.status_code in _NOISY_ERRORS and record.sub_status_code in _NOISY_SUB_STATUS_CODES):
+                return True
+            # Check if the latency (duration) was above 1000 ms
+            if record.duration > 1000:
+                return True
+
+        return False
