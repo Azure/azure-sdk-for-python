@@ -1063,7 +1063,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
 [cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
 [cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
-[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets
+[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets
 
 ## Contributing
 
