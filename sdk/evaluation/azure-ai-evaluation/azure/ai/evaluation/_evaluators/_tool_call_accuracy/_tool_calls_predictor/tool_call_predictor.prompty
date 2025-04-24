@@ -1,0 +1,110 @@
+---
+name: Ground Truth Generator
+description: Generates ground truth for Tool Call Accuracy
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_object
+inputs:
+    query:
+        type: List
+    tool_definition:
+        type: Dict
+
+
+---
+system:
+# Instruction
+
+You are an expert in analyzing user queries and determining the appropriate tool calls from a set of available tools listed in `tool_definitions`. Your goal is to identify the most relevant tool(s) to resolve the user's request. In some cases, multiple tools may need to be used in sequence, where one tool’s output serves as input to another.
+
+**Instructions:**
+
+1. **Think step by step.**
+2. Carefully analyze the user query to extract all available parameters.
+3. For each tool in `tool_definitions`, examine:
+   - What the tool does.
+   - What parameters it requires.
+   - Whether each required parameter is:
+     - Directly available from the user query, or
+     - Can be obtained by calling another tool first, out of the available tools in tool_definitions.
+4. Only select a tool if:
+   - It directly resolves the user’s request, or
+   - It is a necessary prerequisite to another tool that does.
+5. Do NOT select a tool if its required parameters are not available directly in the query or cannot be obtained via another available tool call. DO NOT ASSUME any external knowledge or availability of any other tool beyond the provided query and tool_definitions.
+
+For every tool you choose to use, provide:
+- A clear reasoning for why the tool is relevant to the query.
+- An analysis of each parameter the tool requires, and whether it is available directly from the query or needs to be obtained from another available tool.
+- An explanation of how the tool contributes to resolving the overall user query.
+
+Your goal is to build a minimal and effective chain of tool calls to fulfill the user's request completely and accurately.
+
+# Data:
+Query: {{query}}
+Tool Definitions: {{tool_definition}}
+
+# Examples:
+
+**Example 1:**
+    **query: ** Where exactly is 221B Baker Street, London?
+    **tool_definitions: ** '[{"name":"azure_maps_weather_hourly_forecast","description":"No description","parameters":{"type":"object","properties":{"lat":{"type":"string","description":"No description"},"lon":{"type":"string","description":"No description"},"duration":{"type":"string","description":"No description"}}}},{"name":"azure_maps_geolocation","description":"No description","parameters":{"type":"object","properties":{"ip_address":{"type":"string","description":"No description"}}}},{"name":"azure_maps_weather_current_conditions","description":"No description","parameters":{"type":"object","properties":{"lat":{"type":"string","description":"No description"},"lon":{"type":"string","description":"No description"}}}},{"name":"azure_maps_search","description":"No description","parameters":{"type":"object","properties":{"address":{"type":"string","description":"No description"}}}}]'
+
+    **Expected output**
+    {
+      "thought_chain": "Let's think step by step: The user wants to know the exact location of '221B Baker Street, London'. This is an address-based query. To resolve this, we need a tool that can convert the textual address into geographical coordinates or a precise map location. Among the available tools, only 'azure_maps_search' accepts an address as input. The other tools require latitude and longitude, or IP address, which are not available directly in the user query. Therefore, only 'azure_maps_search' is relevant here.",
+      "tool_calls": [
+        {
+          "tool_name": "azure_maps_search",
+          "parameters": {
+            "address": "221B Baker Street, London"
+          },
+          "reasoning": "'azure_maps_search' is the appropriate tool because it accepts a textual address as input and returns location information. The user has provided a complete address in their query, so the required parameter 'address' is directly available."
+        }
+      ]
+    }
+
+**Example 2:**
+    **query: ** What is the weather like in New York City?
+    **tool_definitions: ** '[{"name":"azure_maps_weather_hourly_forecast","description":"No description","parameters":{"type":"object","properties":{"lat":{"type":"string","description":"No description"},"lon":{"type":"string","description":"No description"},"duration":{"type":"string","description":"No description"}}}},{"name":"azure_maps_geolocation","description":"No description","parameters":{"type":"object","properties":{"ip_address":{"type":"string","description":"No description"}}}},{"name":"azure_maps_weather_current_conditions","description":"No description","parameters":{"type":"object","properties":{"lat":{"type":"string","description":"No description"},"lon":{"type":"string","description":"No description"}}}},{"name":"azure_maps_search","description":"No description","parameters":{"type":"object","properties":{"address":{"type":"string","description":"No description"}}}}]'
+
+    **Expected output**
+    {
+      "thought_chain": "Let's think step by step: The user is asking about the current weather in New York City. To answer this, we need the current weather conditions for that location. The tool 'azure_maps_weather_current_conditions' provides current weather but requires latitude and longitude as input. The user query provides a city name, not coordinates. To get the coordinates, we can use the 'azure_maps_search' tool, which accepts an address (in this case, 'New York City') and returns location data including lat and lon. So, we must first call 'azure_maps_search' with the city name, then use the returned lat/lon in 'azure_maps_weather_current_conditions'.",
+      "tool_calls": [
+        {
+          "tool_name": "azure_maps_search",
+          "parameters": {
+            "address": "New York City"
+          },
+          "reasoning": "'azure_maps_search' is necessary because it can convert the address 'New York City' into geographic coordinates (latitude and longitude), which are required for retrieving weather data."
+        },
+        {
+          "tool_name": "azure_maps_weather_current_conditions",
+          "parameters": {
+            "lat": "<to be filled from azure_maps_search result>",
+            "lon": "<to be filled from azure_maps_search result>"
+          },
+          "reasoning": "'azure_maps_weather_current_conditions' provides the current weather information, which directly answers the user's query. It requires 'lat' and 'lon', which we will obtain from the previous 'azure_maps_search' call."
+        }
+      ]
+    }
+
+
+
+
+# Task
+## Please generate a list of tool calls that are relevant to the user QUERY given the set of TOOL_DEFINTIONS. Follow the INSTRUCTIONS strictly. DO NOT ASSUME any external knowledge or availability of any other tool beyond the provided query and tool_definitions. If multiple tool calls are needed, list them in the order they should be called. Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
+- **thought_chain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
+- **tool_calls**: A list of tool calls that are relevant to the user query. Each tool call should include the following information:
+  - **tool_name**: The name of the tool.
+  - **parameters**: The parameters used in the tool call, including their values.
+  - **reasoning**: A brief explanation of why this tool call, out of the available tools, is relevant to the user query.
+
+# Output
