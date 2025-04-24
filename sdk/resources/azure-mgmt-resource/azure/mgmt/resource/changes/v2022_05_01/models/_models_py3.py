@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -50,11 +51,11 @@ class ChangeAttributes(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.correlation_id = None
-        self.timestamp = None
-        self.changes_count = None
-        self.previous_resource_snapshot_id = None
-        self.new_resource_snapshot_id = None
+        self.correlation_id: Optional[str] = None
+        self.timestamp: Optional[str] = None
+        self.changes_count: Optional[int] = None
+        self.previous_resource_snapshot_id: Optional[str] = None
+        self.new_resource_snapshot_id: Optional[str] = None
 
 
 class ChangeBase(_serialization.Model):
@@ -91,10 +92,10 @@ class ChangeBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.property_change_type = None
-        self.change_category = None
-        self.previous_value = None
-        self.new_value = None
+        self.property_change_type: Optional[Union[str, "_models.PropertyChangeType"]] = None
+        self.change_category: Optional[Union[str, "_models.ChangeCategory"]] = None
+        self.previous_value: Optional[str] = None
+        self.new_value: Optional[str] = None
 
 
 class ChangeProperties(_serialization.Model):
@@ -145,9 +146,9 @@ class ChangeProperties(_serialization.Model):
         :paramtype changes: dict[str, ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeBase]
         """
         super().__init__(**kwargs)
-        self.target_resource_id = None
-        self.target_resource_type = None
-        self.change_type = None
+        self.target_resource_id: Optional[str] = None
+        self.target_resource_type: Optional[str] = None
+        self.change_type: Optional[Union[str, "_models.ChangeType"]] = None
         self.change_attributes = change_attributes
         self.changes = changes
 
@@ -190,7 +191,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -214,9 +215,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class ChangeResourceResult(Resource):
@@ -225,7 +226,7 @@ class ChangeResourceResult(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -282,8 +283,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -323,11 +324,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):

@@ -6,19 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class PolicyAssignment(_serialization.Model):
@@ -173,7 +168,7 @@ class PolicyDefinition(_serialization.Model):
         :paramtype policy_rule: JSON
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.name = name
         self.policy_type = policy_type
         self.display_name = display_name

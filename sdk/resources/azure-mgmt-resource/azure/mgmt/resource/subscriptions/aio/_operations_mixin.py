@@ -8,7 +8,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from .._serialization import Serializer, Deserializer
+from .._utils.serialization import Serializer, Deserializer
 from io import IOBase
 from typing import Any, IO, Optional, Union
 

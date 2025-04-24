@@ -6,20 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AzureResourceBase(_serialization.Model):
@@ -55,10 +50,10 @@ class AzureResourceBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -85,8 +80,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -128,11 +123,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class SystemData(_serialization.Model):
@@ -282,7 +277,7 @@ class TemplateSpec(AzureResourceBase):
         self.tags = tags
         self.description = description
         self.display_name = display_name
-        self.versions = None
+        self.versions: Optional[Dict[str, "_models.TemplateSpecVersionInfo"]] = None
 
 
 class TemplateSpecArtifact(_serialization.Model):
@@ -373,7 +368,7 @@ class TemplateSpecsListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
@@ -567,9 +562,9 @@ class TemplateSpecVersionInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.description = None
-        self.time_created = None
-        self.time_modified = None
+        self.description: Optional[str] = None
+        self.time_created: Optional[datetime.datetime] = None
+        self.time_modified: Optional[datetime.datetime] = None
 
 
 class TemplateSpecVersionsListResult(_serialization.Model):
@@ -601,7 +596,7 @@ class TemplateSpecVersionsListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class TemplateSpecVersionUpdateModel(AzureResourceBase):
