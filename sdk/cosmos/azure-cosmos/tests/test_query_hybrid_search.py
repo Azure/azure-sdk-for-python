@@ -213,11 +213,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True, response_hook=response_hook)
         result_list = list(results)
         assert len(result_list) == 10
-        print(result_list)
         for res in result_list:
             assert res['index'] in [51, 53, 28, 70, 24, 61, 56, 26, 58, 77]
         assert response_hook.count == 2
-        print('done')
 
     def test_hybrid_search_partitioned_query_response_hook(self):
         item_vector = self.test_container.read_item('50', '1')['vector']
