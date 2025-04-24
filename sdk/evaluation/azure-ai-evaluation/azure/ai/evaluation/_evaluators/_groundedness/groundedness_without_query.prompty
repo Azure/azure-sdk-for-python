@@ -82,6 +82,8 @@ user:
   **Context:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.        
   **Response:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.  
 
+Note that the QUERY can either be a string with a user request or an entire conversation history including previous requests and responses from the assistant.
+In this case, the assistant's response should be evaluated in the context of the entire conversation but the focus should be on the last query and response.
 
 # Data
 CONTEXT: {{context}}
