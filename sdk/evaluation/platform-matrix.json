@@ -45,7 +45,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "InjectedPackages": "pyrit==0.8.1",
-          "UnsupportedToxEnvironments": "mindependency,sdist"
+          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
       }
     }
