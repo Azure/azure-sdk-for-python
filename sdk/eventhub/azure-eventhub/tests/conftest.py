@@ -9,7 +9,14 @@ import pytest
 import logging
 import uuid
 import warnings
-import datetime
+import subprocess
+import time
+import signal
+import ssl
+import functools
+
+from typing import Callable
+
 from functools import partial
 from logging.handlers import RotatingFileHandler
 from azure.core.settings import settings
@@ -44,6 +51,26 @@ NAMESPACE_PREFIX = "eh-ns"
 EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
+
+# Set up the amqpproxy environment variables
+RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY", False)
+AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
+if RECORD_AMQP_PROXY:
+    if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
+        os.makedirs(AMQPPROXY_RECORDINGS_DIR)
+
+AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS = "sb://localhost:5671"
+AMQPPROXY_TRANSPORT_TYPE = TransportType.Amqp
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+context.check_hostname = False
+context.verify_mode = ssl.CERT_NONE
+AMQPPROXY_SSL_CONTEXT = context
+AMQPPROXY_CLIENT_ARGS = {
+    "custom_endpoint_address": AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS,
+    "ssl_context": AMQPPROXY_SSL_CONTEXT,
+    "transport_type": AMQPPROXY_TRANSPORT_TYPE,
+}
 
 
 def pytest_addoption(parser):
@@ -246,6 +273,48 @@ def connection_str(live_eventhub):
     )
 
 
+def recorded_by_amqpproxy(test_func: Callable) -> Callable:
+    """Decorator that redirects network requests to target the amqp proxy.
+    Uses the test function name as the logfile name.
+    """
+    @functools.wraps(test_func)
+    def wrapper(*args, **kwargs):
+        # If not recording, just run the test function
+        if not RECORD_AMQP_PROXY:
+            return test_func(*args, **kwargs)
+
+        # Try to get hostname from pytest request
+        live_eventhub = None
+        # Get current pytest request
+        request = kwargs.get('request') or next((arg for arg in args if hasattr(arg, 'getfixturevalue')), None)
+        if request:
+            live_eventhub = request.getfixturevalue('live_eventhub')
+        if not live_eventhub:
+            raise ValueError("live_eventhub fixture not found in pytest context")
+
+        # Use test function name as logfile
+        logfile = test_func.__name__
+
+        # Start amqpproxy process with dynamic hostname
+        proxy_process = subprocess.Popen(
+            ["go", "run", ".", 
+             "--host", live_eventhub["hostname"],
+             "--logs", "amqp_recordings",
+             "--logfile", logfile],
+            preexec_fn=os.setsid
+        )
+
+        try:
+            time.sleep(1)
+            kwargs["client_args"] = AMQPPROXY_CLIENT_ARGS
+            return test_func(*args, **kwargs)
+        finally:
+            os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
+            proxy_process.wait()
+
+    return wrapper
+
+
 @pytest.fixture()
 def invalid_hostname(live_eventhub):
     return CONN_STR.format(
@@ -367,11 +436,13 @@ def auth_credential_receivers_async(live_eventhub, uamqp_transport):
 def auth_credential_senders(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
+    client_args = AMQPPROXY_CLIENT_ARGS if RECORD_AMQP_PROXY else {}
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     partitions = client.get_partition_ids()
 
@@ -389,11 +460,13 @@ def auth_credential_senders(live_eventhub, uamqp_transport):
 def auth_credential_senders_async(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
+    client_args = AMQPPROXY_CLIENT_ARGS if RECORD_AMQP_PROXY else {}
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     partitions = client.get_partition_ids()
 
