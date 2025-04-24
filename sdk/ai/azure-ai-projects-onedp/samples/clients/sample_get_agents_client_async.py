@@ -36,7 +36,7 @@ async def sample_get_agents_client_async():
         credential=DefaultAzureCredential(),
     ) as project_client:
 
-        async with project_client.agents.get_client() as client:
+        async with project_client.clients.get_agents_client() as client:
             # TODO: Do something with the agents client...
             pass
 

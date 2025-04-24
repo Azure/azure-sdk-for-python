@@ -33,7 +33,7 @@ with AIProjectClient(
 ) as project_client:
 
     # [START agents_sample]
-    with project_client.agents.get_client() as client:
+    with project_client.clients.get_agents_client() as client:
         # TODO: Do something with the agents client...
         pass
     # [END sample]

@@ -10,18 +10,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from azure.core.tracing.decorator import distributed_trace
 
 
-class AgentsOperations:
+class ClientsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.AIProjectClient`'s
-        :attr:`agents` attribute.
+        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :attr:`clients` attribute.
     """
 
     # TODO: Merge all code related to handling user-agent, into a single place.
-    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None:  # type: ignore[name-defined]
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.aio.AIProjectClient") -> None:  # type: ignore[name-defined]
 
         # All returned inference clients will have this application id set on their user-agent.
         # For more info on user-agent HTTP header, see:
@@ -38,8 +38,8 @@ class AgentsOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_client(self, **kwargs) -> "AgentsClient":  # type: ignore[name-defined]
-        """Get an authenticated AgentsClient (from the package azure-ai-agents) to use with
+    def get_agents_client(self, **kwargs) -> "AgentsClient":  # type: ignore[name-defined]
+        """Get an authenticated asynchronous AgentsClient (from the package azure-ai-agents) to use with
         your AI Foundry Project. Keyword arguments are passed to the constructor of
         AgentsClient.
 
@@ -53,7 +53,7 @@ class AgentsOperations:
         """
 
         try:
-            from azure.ai.agents import AgentsClient
+            from azure.ai.agents.aio import AgentsClient
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Agents SDK is not installed. Please install it using 'pip install azure-ai-agents'"

@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Any
 from azure.core.credentials_async import AsyncTokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import InferenceOperations, AgentsOperations, TelemetryOperations
+from .operations import InferenceOperations, ClientsOperations, TelemetryOperations
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -17,8 +17,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.aio.operations.ConnectionsOperations
-    :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.onedp.aio.operations.AgentsOperations
+    :ivar clients: ClientsOperations operations
+    :vartype clients: azure.ai.projects.onedp.aio.operations.ClientsOperations
     :ivar inference: InferenceOperations operations
     :vartype inference: azure.ai.projects.onedp.aio.operations.InferenceOperations
     :ivar telemetry: TelemetryOperations operations
@@ -53,7 +53,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
-        self.agents = AgentsOperations(self)
+        self.clients = ClientsOperations(self)
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

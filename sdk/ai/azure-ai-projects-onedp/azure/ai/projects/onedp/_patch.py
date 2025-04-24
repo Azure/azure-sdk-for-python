@@ -6,10 +6,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Self
 from azure.core.credentials import TokenCredential
+from azure.ai.agents import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import TelemetryOperations, InferenceOperations, AgentsOperations
+from .operations import TelemetryOperations, InferenceOperations, ClientsOperations
 from ._patch_prompts import PromptTemplate
 from ._patch_telemetry import enable_telemetry
 
@@ -17,10 +18,12 @@ from ._patch_telemetry import enable_telemetry
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar agents: The AgentsClient associated with this AIProjectClient.
+    :vartype agents: azure.ai.agents.AgentsClient
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.operations.ConnectionsOperations
-    :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.onedp.operations.AgentsOperations
+    :ivar clients: ClientsOperations operations
+    :vartype clients: azure.ai.projects.onedp.operations.ClientsOperations
     :ivar inference: InferenceOperations operations
     :vartype inference: azure.ai.projects.onedp.operations.InferenceOperations
     :ivar telemetry: TelemetryOperations operations
@@ -49,12 +52,27 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
+        agents_kwargs = kwargs.copy()
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
-        self.agents = AgentsOperations(self)
+        self.clients = ClientsOperations(self)
+        # TODO: set user_agent here:
+        self.agents = AgentsClient(endpoint=endpoint, credential=credential, **agents_kwargs)
 
+    def close(self) -> None:
+        self.agents.close()
+        super().close()
+
+    def __enter__(self) -> Self:
+        super().__enter__()
+        self.agents.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self.agents.__exit__(*exc_details)
+        super().__exit__(*exc_details)
 
 __all__: List[str] = [
     "AIProjectClient",
