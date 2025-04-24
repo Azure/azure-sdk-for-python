@@ -43,6 +43,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param threshold: The threshold for the IndirectAttack evaluator. Default is 0.
+    :type threshold: int
 
     .. admonition:: Example:
 

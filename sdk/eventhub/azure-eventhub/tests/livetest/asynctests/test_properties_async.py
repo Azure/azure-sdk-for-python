@@ -100,10 +100,6 @@ async def test_get_partition_ids(auth_credentials_async, uamqp_transport):
         assert partition_ids == ["0", "1"]
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("win"),
-    reason="Large negative timestamp to datetime conversion fails on Windows with: https://bugs.python.org/issue36439",
-)
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_get_partition_properties(auth_credentials_async, uamqp_transport):

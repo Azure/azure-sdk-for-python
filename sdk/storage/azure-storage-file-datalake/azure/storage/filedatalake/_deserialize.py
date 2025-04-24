@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import NoReturn, TYPE_CHECKING
+from typing import (
+    Any, cast, Collection, Dict, List, NoReturn, Tuple,
+    TYPE_CHECKING
+)
 from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -17,26 +20,37 @@ from azure.core.exceptions import (
     ResourceExistsError
 )
 from ._models import (
-    FileProperties,
-    DirectoryProperties,
-    LeaseProperties,
-    DeletedPathProperties,
-    StaticWebsite,
-    RetentionPolicy,
-    Metrics,
     AnalyticsLogging,
-    PathProperties
+    DeletedPathProperties,
+    DirectoryProperties,
+    FileProperties,
+    LeaseProperties,
+    Metrics,
+    PathProperties,
+    RetentionPolicy,
+    StaticWebsite
 )
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    pass
+    from azure.core.rest import HttpResponse
+    from azure.storage.blob import BlobProperties
+    from ._generated.models import (
+        BlobItemInternal,
+        Path,
+        PathList
+    )
+    from ._models import ContentSettings
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def deserialize_dir_properties(response, obj, headers):
+def deserialize_dir_properties(
+    response: "HttpResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> DirectoryProperties:
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
@@ -49,7 +63,11 @@ def deserialize_dir_properties(response, obj, headers):
     return dir_properties
 
 
-def deserialize_file_properties(response, obj, headers):
+def deserialize_file_properties(
+    response: "HttpResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> FileProperties:
     metadata = deserialize_metadata(response, obj, headers)
     # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
@@ -69,15 +87,19 @@ def deserialize_file_properties(response, obj, headers):
     return file_properties
 
 
-def deserialize_path_properties(path_list):
-    return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
+def deserialize_path_properties(path_list: List["Path"]) -> List[PathProperties]:
+    return [PathProperties._from_generated(path) for path in path_list]  # pylint: disable=protected-access
 
 
-def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=name-too-long, unused-argument
+def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long, unused-argument
+    _,
+    deserialized: "PathList",
+    response_headers: Dict[str, Any]
+) -> Tuple[Collection["Path"], Dict[str, Any]]:
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(generated):  # pylint: disable=name-too-long
+def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal") -> DeletedPathProperties:  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -86,39 +108,37 @@ def get_deleted_path_properties_from_generated_code(generated):  # pylint: disab
     return deleted_path
 
 
-def is_file_path(_, __, headers):
-    if headers['x-ms-resource-type'] == "file":
-        return True
-    return False
+def is_file_path(_, __, headers: Dict[str, Any]) -> bool:
+    return headers['x-ms-resource-type'] == "file"
 
 
-def get_datalake_service_properties(datalake_properties):
-    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(    # pylint: disable=protected-access
+def get_datalake_service_properties(datalake_properties: Dict[str, Any]) -> Dict[str, Any]:
+    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(  # pylint: disable=protected-access
         datalake_properties["analytics_logging"])
     datalake_properties["hour_metrics"] = Metrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
-    datalake_properties["minute_metrics"] = Metrics._from_generated(    # pylint: disable=protected-access
+    datalake_properties["minute_metrics"] = Metrics._from_generated(  # pylint: disable=protected-access
         datalake_properties["minute_metrics"])
-    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(   # pylint: disable=protected-access
+    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(  # pylint: disable=protected-access
         datalake_properties["delete_retention_policy"])
     datalake_properties["static_website"] = StaticWebsite._from_generated(  # pylint: disable=protected-access
         datalake_properties["static_website"])
     return datalake_properties
 
 
-def from_blob_properties(blob_properties, **additional_args):
+def from_blob_properties(blob_properties: "BlobProperties", **additional_args: Any) -> FileProperties:
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
     file_props.deleted = blob_properties.deleted
     file_props.metadata = blob_properties.metadata
-    file_props.lease = blob_properties.lease
+    file_props.lease = cast(LeaseProperties, blob_properties.lease)
     file_props.lease.__class__ = LeaseProperties
     file_props.last_modified = blob_properties.last_modified
     file_props.creation_time = blob_properties.creation_time
     file_props.size = blob_properties.size
     file_props.deleted_time = blob_properties.deleted_time
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
-    file_props.content_settings = blob_properties.content_settings
+    file_props.content_settings = cast("ContentSettings", blob_properties.content_settings)
 
     # Parse additional Datalake-only properties
     file_props.encryption_context = additional_args.pop('encryption_context', None)
@@ -130,7 +150,7 @@ def from_blob_properties(blob_properties, **additional_args):
     return file_props
 
 
-def normalize_headers(headers):
+def normalize_headers(headers: Dict[str, Any]) -> Dict[str, Any]:
     normalized = {}
     for key, value in headers.items():
         if key.startswith('x-ms-'):
@@ -139,7 +159,7 @@ def normalize_headers(headers):
     return normalized
 
 
-def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:

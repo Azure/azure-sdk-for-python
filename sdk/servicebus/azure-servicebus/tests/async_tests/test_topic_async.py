@@ -17,7 +17,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage
-from tests.servicebus_preparer import (
+from servicebus_preparer import (
     ServiceBusNamespacePreparer,
     ServiceBusTopicPreparer,
     CachedServiceBusNamespacePreparer,
@@ -25,7 +25,7 @@ from tests.servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from tests.utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

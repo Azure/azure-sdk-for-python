@@ -1002,6 +1002,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
 
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+            "server.address": "Test_name",
+            "messaging.destination.name": "/testdest",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
+
     def test_span_envelope_server_http(self):
         exporter = self._exporter
         start_time = 1575494316027613500

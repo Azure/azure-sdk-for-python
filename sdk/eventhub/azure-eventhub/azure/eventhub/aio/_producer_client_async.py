@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import logging
 import time
+import warnings
 
 from typing import Any, Union, List, Optional, Dict, Callable, cast
 from typing_extensions import TYPE_CHECKING, Literal, Awaitable, overload
@@ -185,6 +186,17 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs,
         )
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn(
+                "uAMQP legacy support will be removed in the 5.16.0 minor release. "
+                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
+                "to use the pure Python AMQP transport. "
+                "If you rely on this, please comment on [this issue]"
+                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
+                DeprecationWarning, stacklevel=2
+            )
+
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
         self._producers: Dict[str, Optional[EventHubProducer]] = {ALL_PARTITIONS: self._create_producer()}

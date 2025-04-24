@@ -6,7 +6,7 @@ import asyncio
 from dotenv import load_dotenv
 import os
 
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import AzurePowerShellCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.secrets.aio import SecretClient
@@ -15,20 +15,10 @@ load_dotenv()
 
 if "AZURE_KEYVAULT_URL" not in os.environ:
     raise EnvironmentError("Missing a Key Vault URL")
-if "KEYVAULT_TENANT_ID" not in os.environ:
-    raise EnvironmentError("Missing a tenant ID for Key Vault")
-if "KEYVAULT_CLIENT_ID" not in os.environ:
-    raise EnvironmentError("Missing a client ID for Key Vault")
-if "KEYVAULT_CLIENT_SECRET" not in os.environ:
-    raise EnvironmentError("Missing a client secret for Key Vault")
 
 hsm_present = bool(os.environ.get("AZURE_MANAGEDHSM_URL"))
 
-credential = ClientSecretCredential(
-    tenant_id=os.environ["KEYVAULT_TENANT_ID"],
-    client_id=os.environ["KEYVAULT_CLIENT_ID"],
-    client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
-)
+credential = AzurePowerShellCredential()
 
 cert_client = CertificateClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 key_client = KeyClient(os.environ["AZURE_KEYVAULT_URL"], credential)

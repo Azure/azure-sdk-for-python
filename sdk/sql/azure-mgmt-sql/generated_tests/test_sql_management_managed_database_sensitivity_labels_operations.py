@@ -20,112 +20,12 @@ class TestSqlManagementManagedDatabaseSensitivityLabelsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
-        response = self.client.managed_database_sensitivity_labels.get(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="str",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
-        response = self.client.managed_database_sensitivity_labels.create_or_update(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            parameters={
-                "columnName": "str",
-                "id": "str",
-                "informationType": "str",
-                "informationTypeId": "str",
-                "isDisabled": bool,
-                "labelId": "str",
-                "labelName": "str",
-                "managedBy": "str",
-                "name": "str",
-                "rank": "str",
-                "schemaName": "str",
-                "tableName": "str",
-                "type": "str",
-            },
-            sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_delete(self, resource_group):
-        response = self.client.managed_database_sensitivity_labels.delete(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disable_recommendation(self, resource_group):
-        response = self.client.managed_database_sensitivity_labels.disable_recommendation(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_enable_recommendation(self, resource_group):
-        response = self.client.managed_database_sensitivity_labels.enable_recommendation(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_current_by_database(self, resource_group):
+    def test_managed_database_sensitivity_labels_list_current_by_database(self, resource_group):
         response = self.client.managed_database_sensitivity_labels.list_current_by_database(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -133,7 +33,7 @@ class TestSqlManagementManagedDatabaseSensitivityLabelsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_managed_database_sensitivity_labels_update(self, resource_group):
         response = self.client.managed_database_sensitivity_labels.update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -147,6 +47,7 @@ class TestSqlManagementManagedDatabaseSensitivityLabelsOperations(AzureMgmtRecor
                         "op": "str",
                         "schema": "str",
                         "sensitivityLabel": {
+                            "clientClassificationSource": "str",
                             "columnName": "str",
                             "id": "str",
                             "informationType": "str",
@@ -166,7 +67,7 @@ class TestSqlManagementManagedDatabaseSensitivityLabelsOperations(AzureMgmtRecor
                     }
                 ]
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -174,12 +75,126 @@ class TestSqlManagementManagedDatabaseSensitivityLabelsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_recommended_by_database(self, resource_group):
+    def test_managed_database_sensitivity_labels_list_recommended_by_database(self, resource_group):
         response = self.client.managed_database_sensitivity_labels.list_recommended_by_database(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_get(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.get(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="str",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_create_or_update(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.create_or_update(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            parameters={
+                "clientClassificationSource": "str",
+                "columnName": "str",
+                "id": "str",
+                "informationType": "str",
+                "informationTypeId": "str",
+                "isDisabled": bool,
+                "labelId": "str",
+                "labelName": "str",
+                "managedBy": "str",
+                "name": "str",
+                "rank": "str",
+                "schemaName": "str",
+                "tableName": "str",
+                "type": "str",
+            },
+            sensitivity_label_source="current",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_delete(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.delete(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="current",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_disable_recommendation(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.disable_recommendation(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_enable_recommendation(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.enable_recommendation(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_database_sensitivity_labels_list_by_database(self, resource_group):
+        response = self.client.managed_database_sensitivity_labels.list_by_database(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

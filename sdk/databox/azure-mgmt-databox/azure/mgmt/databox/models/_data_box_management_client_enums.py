@@ -190,6 +190,24 @@ class DataCenterCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BN7 = "BN7"
     SN6 = "SN6"
     BJS20 = "BJS20"
+    BL24 = "BL24"
+    IDC5 = "IDC5"
+    TYO23 = "TYO23"
+    CPQ21 = "CPQ21"
+    NTG20 = "NTG20"
+    DXB23 = "DXB23"
+    DSM11 = "DSM11"
+    OSA23 = "OSA23"
+    AMS25 = "AMS25"
+
+
+class DelayNotificationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of notification."""
+
+    ACTIVE = "Active"
+    """Delay is still active"""
+    RESOLVED = "Resolved"
+    """Delay has been resolved"""
 
 
 class DoubleEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -211,12 +229,12 @@ class FilterFileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class HardwareEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines Hardware level encryption (Only for disk)."""
+    """Hardware encryption support for a given sku for a given region."""
 
     ENABLED = "Enabled"
     """Hardware-based encryption is enabled."""
     DISABLED = "Disabled"
-    """Hardware-based encryption is enabled."""
+    """Hardware-based encryption is disabled."""
 
 
 class JobDeliveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -244,6 +262,26 @@ class LogCollectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Only Errors will be collected in the logs."""
     VERBOSE = "Verbose"
     """Verbose logging (includes Errors, CRC, size information and others)."""
+
+
+class ModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The customer friendly name of the combination of version and capacity of the device. This field
+    is necessary only at the time of ordering the newer generation device i.e. AzureDataBox120 and
+    AzureDataBox525 as of Feb/2025.
+    """
+
+    DATA_BOX = "DataBox"
+    """Data Box."""
+    DATA_BOX_DISK = "DataBoxDisk"
+    """Data Box Disk."""
+    DATA_BOX_HEAVY = "DataBoxHeavy"
+    """Data Box Heavy."""
+    DATA_BOX_CUSTOMER_DISK = "DataBoxCustomerDisk"
+    """Data Box Customer Disk"""
+    AZURE_DATA_BOX120 = "AzureDataBox120"
+    """Data Box V2 with 125TB usable capacity."""
+    AZURE_DATA_BOX525 = "AzureDataBox525"
+    """Data Box V2 with 500TB usable capacity."""
 
 
 class NotificationStageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -276,6 +314,19 @@ class OverallValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Some input requests are not valid."""
     CERTAIN_INPUT_VALIDATIONS_SKIPPED = "CertainInputValidationsSkipped"
     """Certain input validations skipped."""
+
+
+class PortalDelayErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delay Error code."""
+
+    INTERNAL_ISSUE_DELAY = "InternalIssueDelay"
+    """Delay due to any internal reasons"""
+    ACTIVE_ORDER_LIMIT_BREACHED_DELAY = "ActiveOrderLimitBreachedDelay"
+    """Active Order limit breached."""
+    HIGH_DEMAND_DELAY = "HighDemandDelay"
+    """High demand"""
+    LARGE_NUMBER_OF_FILES_DELAY = "LargeNumberOfFilesDelay"
+    """Slow copy due to large number of files"""
 
 
 class ReverseShippingDetailsEditStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

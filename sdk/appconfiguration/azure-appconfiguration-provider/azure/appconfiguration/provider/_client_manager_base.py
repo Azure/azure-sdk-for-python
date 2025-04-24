@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import random
-import hashlib
-import base64
 from dataclasses import dataclass
 from typing import Dict, Mapping, Any, Optional
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -23,7 +21,6 @@ from ._constants import (
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
-    FEATURE_FLAG_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
@@ -35,15 +32,6 @@ JSON = Mapping[str, Any]
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str
-
-    @staticmethod
-    def _calculate_feature_id(key, label):
-        basic_value = f"{key}\n"
-        if label and not label.isspace():
-            basic_value += f"{label}"
-        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
-        encoded_flag = base64.urlsafe_b64encode(feature_flag_id_hash_bytes)
-        return encoded_flag[: encoded_flag.find(b"=")]
 
     def _feature_flag_telemetry(
         self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
@@ -60,9 +48,6 @@ class _ConfigurationClientWrapperBase:
                 feature_flag_reference += f"?label={feature_flag.label}"
             if feature_flag_value[TELEMETRY_KEY].get("enabled"):
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
-                    feature_flag.key, feature_flag.label
-                )
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]

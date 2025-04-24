@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2025-03-24)
+
+### Features Added
+
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED`
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Model `UserAssignedIdentity` added property `principal_id`
+
 ## 1.1.0b2 (2024-12-16)
 
 ### Features Added

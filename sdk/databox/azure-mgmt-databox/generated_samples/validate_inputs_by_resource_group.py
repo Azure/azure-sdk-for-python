@@ -45,11 +45,13 @@ def main():
                         }
                     ],
                     "deviceType": "DataBox",
+                    "model": "DataBox",
                     "transferType": "ImportToAzure",
                     "validationType": "ValidateDataTransferDetails",
                 },
                 {
                     "deviceType": "DataBox",
+                    "model": "DataBox",
                     "shippingAddress": {
                         "addressType": "Commercial",
                         "city": "XXXX XXXX",
@@ -68,12 +70,14 @@ def main():
                     "country": "XX",
                     "deviceType": "DataBox",
                     "location": "westus",
+                    "model": "DataBox",
                     "transferType": "ImportToAzure",
                     "validationType": "ValidateSkuAvailability",
                 },
-                {"deviceType": "DataBox", "validationType": "ValidateCreateOrderLimit"},
+                {"deviceType": "DataBox", "model": "DataBox", "validationType": "ValidateCreateOrderLimit"},
                 {
                     "deviceType": "DataBox",
+                    "model": "DataBox",
                     "preference": {"transportPreferences": {"preferredShipmentType": "MicrosoftManaged"}},
                     "validationType": "ValidatePreferences",
                 },
@@ -84,6 +88,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/databox/resource-manager/Microsoft.DataBox/stable/2022-12-01/examples/ValidateInputsByResourceGroup.json
+# x-ms-original-file: specification/databox/resource-manager/Microsoft.DataBox/stable/2025-02-01/examples/ValidateInputsByResourceGroup.json
 if __name__ == "__main__":
     main()

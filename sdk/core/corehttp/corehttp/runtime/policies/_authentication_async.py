@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from __future__ import annotations
 import time
-from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
+from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar, Union
 
 from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
@@ -29,16 +29,24 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :param credential: The credential.
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
     """
 
+    # pylint: disable=unused-argument
     def __init__(
-        self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any  # pylint: disable=unused-argument
+        self,
+        credential: "AsyncTokenCredential",
+        *scopes: str,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__()
         self._credential = credential
         self._lock_instance = None
         self._scopes = scopes
         self._token: Optional[AccessTokenInfo] = None
+        self._auth_flows = auth_flows
 
     @property
     def _lock(self):
@@ -46,11 +54,18 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             self._lock_instance = get_running_async_lock()
         return self._lock_instance
 
-    async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+    async def on_request(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        *,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
+    ) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
+        :keyword auth_flows: A list of authentication flows to use for the credential.
+        :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         :raises: :class:`~corehttp.exceptions.ServiceRequestError`
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
@@ -59,7 +74,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token:
-                    self._token = await await_result(self._credential.get_token_info, *self._scopes)
+                    options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}  # type: ignore
+                    self._token = await await_result(self._credential.get_token_info, *self._scopes, options=options)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessTokenInfo, self._token).token
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
@@ -91,7 +107,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :return: The pipeline response object
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        await await_result(self.on_request, request)
+        await await_result(self.on_request, request, auth_flows=self._auth_flows)
         try:
             response = await self.next.send(request)
         except Exception:

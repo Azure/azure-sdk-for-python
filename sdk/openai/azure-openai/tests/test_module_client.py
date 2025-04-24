@@ -200,6 +200,7 @@ class TestModuleClient(AzureRecordedTestCase):
             assert embedding.data[0].index is not None
             assert len(embedding.data[0].embedding) > 0
 
+    @pytest.mark.skip("InternalServerError, opened issue")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
     def test_module_client_models(self, client, api_type, api_version, **kwargs):

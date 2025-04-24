@@ -1,6 +1,16 @@
 # Release History
 
-## 1.33.0 (Unreleased)
+## 1.33.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.33.0 (2025-04-03)
 
 ### Features Added
 
@@ -28,6 +38,8 @@
     - "x-ms-request-id" is now "az.service_request_id"
 
 ### Bugs Fixed
+
+- Fixed an issue where the `traceparent` header was not being set correctly in the `DistributedTracingPolicy`. The `traceparent` header will now set based on the context of the HTTP client span. #40074
 
 ### Other Changes
 

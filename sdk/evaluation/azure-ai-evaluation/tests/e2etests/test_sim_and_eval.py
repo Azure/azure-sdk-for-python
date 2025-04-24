@@ -16,7 +16,7 @@ from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     ProtectedMaterialEvaluator,
     CodeVulnerabilityEvaluator,
-    ISAEvaluator,
+    UngroundedAttributesEvaluator,
     evaluate,
 )
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -488,6 +488,132 @@ class TestSimAndEval:
         assert "code_vulnerability.code_vulnerability_defect_rate" in metrics.keys()
         assert metrics["code_vulnerability.code_vulnerability_defect_rate"] is not None
         assert metrics.get("code_vulnerability.code_vulnerability_defect_rate") >= 0.0
+        
+        # Cleanup file
+        os.remove(file_name)
+    
+    @pytest.mark.azuretest
+    def test_ungrounded_attributes_sim_and_eval(self, project_scope, azure_cred):
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+        
+        response_from_llm = '''
+            Person 1 might experience emotions such as:
+                Curiosity – They may wonder what the experience of meditation feels like.
+                Admiration – They might appreciate Person 2’s ability to find peace and focus.
+                Inspiration – They could feel motivated to try meditation themselves.
+                Serenity – Simply observing a calm moment might bring them a sense of peace.
+                Happiness – Seeing someone enjoy a tranquil experience could make them feel happy.
+                Their emotions would likely depend on their own mindset and past experiences with meditation or peaceful settings.
+            ''' 
+
+        # Simple First message-only echo callback
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Dict[str, Any] = None,
+        ) -> dict:
+            import re
+            generated_text = messages["messages"][0]["content"]
+            
+            conversation_match = re.search(r"<START CONVERSATION>(.*?)<END CONVERSATION>", generated_text, re.DOTALL)
+            conversation = conversation_match.group(1).strip() if conversation_match else ""
+
+            query_match = re.search(r"<END CONVERSATION>\s*(.*)", generated_text, re.DOTALL)
+            query = query_match.group(1).strip() if query_match else ""
+
+            messages = {"messages": []}
+            user_message = {
+                "content": query,
+                "role": "user",
+                "context": conversation,
+            }
+            
+            temperature = 0.0
+            formatted_response = {
+                "content": response_from_llm,
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(user_message)
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": conversation,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        
+        simulator_output = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+            )
+        )
+        assert len(simulator_output) == 1
+        assert len(simulator_output[0]["messages"]) == 2
+        assert simulator_output[0]["messages"][0]["content"] is not None
+        assert simulator_output[0]["messages"][1]["content"] is not None
+        assert simulator_output[0]["messages"][1]["context"] is not None
+        
+        # Write simulator output to file
+        file_name = "eval_ungrounded_attributes_test.jsonl"
+        
+        # Write the output to the file
+        with open(file_name, "w") as file:
+            file.write(JsonLineChatProtocol(simulator_output[0]).to_eval_qr_json_lines()) 
+
+        # Evaluator simulator output
+        ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
+        # run the evaluation
+        eval_output = evaluate(
+            data=file_name,
+            evaluators={"ungrounded_attributes": ua_eval},
+        )
+
+        # validate the results
+        assert eval_output is not None
+        assert eval_output["rows"] is not None
+        assert len(eval_output["rows"]) == 1
+        
+        # verifying rows
+        row_result_df = pd.DataFrame(eval_output["rows"])
+        
+        assert "inputs.query" in row_result_df.columns.to_list()
+        assert "inputs.response" in row_result_df.columns.to_list()
+        assert "inputs.context" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_label" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_reason" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_details" in row_result_df.columns.to_list()
+
+        assert eval_output["rows"][0]["inputs.query"] == simulator_output[0]["messages"][0]["content"]
+        assert eval_output["rows"][0]["inputs.context"] == simulator_output[0]["messages"][1]["context"]
+        assert eval_output["rows"][0]["inputs.response"] == simulator_output[0]["messages"][1]["content"]
+        
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_label"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["groundedness"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["emotional_state"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["protected_class"] in [True, False]
+        
+        # verifying metrics
+        metrics = eval_output["metrics"]
+        assert metrics is not None
+        assert "ungrounded_attributes.ungrounded_attributes_defect_rate" in metrics.keys()
+        assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] is not None
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate") >= 0.0
         
         # Cleanup file
         os.remove(file_name)

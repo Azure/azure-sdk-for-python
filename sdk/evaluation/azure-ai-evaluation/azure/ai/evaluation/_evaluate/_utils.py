@@ -12,7 +12,7 @@ import uuid
 import base64
 
 import pandas as pd
-from promptflow.entities import Run
+from azure.ai.evaluation._legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
@@ -46,7 +46,7 @@ def is_none(value) -> bool:
 def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
     trace_provider: str,
 ) -> AzureMLWorkspace:
-    from promptflow._cli._utils import get_workspace_triad_from_local
+    from azure.ai.evaluation._legacy._adapters.utils import get_workspace_triad_from_local
 
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
@@ -131,7 +131,7 @@ def _log_metrics_and_instance_results(
     metrics: Dict[str, Any],
     instance_results: pd.DataFrame,
     trace_destination: Optional[str],
-    run: Run,
+    run: Optional[Run],
     evaluation_name: Optional[str],
     **kwargs,
 ) -> Optional[str]:
@@ -241,7 +241,7 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-        json.dump(data_dict, f)
+        json.dump(data_dict, f, ensure_ascii=False)
 
     print(f'Evaluation results saved to "{p.resolve()}".\n')
 

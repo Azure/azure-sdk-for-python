@@ -1,9 +1,8 @@
 name: my-production-model
 type: mlflow_model
 path: ./lightgbm_mlflow_model
-version: 3
-description: "this is my test model with stage"
-stage: "Production"
+version: 1
+description: "this is my test model with system metadata"
 tags:
   foo: bar
   abc: 123

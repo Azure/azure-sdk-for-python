@@ -27,7 +27,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
 def main():
     client = ContainerServiceFleetMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     client.fleet_update_strategies.begin_delete(
@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2024-04-01/examples/UpdateStrategies_Delete.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2025-03-01/examples/UpdateStrategies_Delete.json
 if __name__ == "__main__":
     main()

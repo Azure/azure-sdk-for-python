@@ -33,6 +33,7 @@ from azure.cosmos._execution_context.base_execution_context import _DefaultQuery
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
@@ -56,8 +57,9 @@ def _verify_valid_hybrid_search_query(hybrid_search_query_info):
         raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
                          " RUs very fast and have long runtimes. Please ensure you are using one" +
                          " of the two filters with your hybrid search query.")
-    if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS', 1000):
-        raise ValueError("Executing a hybrid search query with more items than the max is not allowed." +
+    if hybrid_search_query_info['take'] > int(os.environ.get(Constants.HS_MAX_ITEMS_CONFIG,
+                                                             Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)):
+        raise ValueError("Executing a hybrid search query with more items than the max is not allowed. " +
                          "Please ensure you are using a limit smaller than the max, or change the max.")
 
 
@@ -149,8 +151,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")
-            if total_item_buffer > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
-                raise ValueError("Executing a vector search query with more items than the max is not allowed." +
+            if total_item_buffer > int(os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG,
+                                                      Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)):
+                raise ValueError("Executing a vector search query with more items than the max is not allowed. " +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator = \
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,

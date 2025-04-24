@@ -6,18 +6,20 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Callable, Optional, Union,
+    Any, Callable, cast, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import parse_qs
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
-from azure.storage.blob import generate_container_sas, generate_blob_sas
+from azure.storage.blob import generate_blob_sas, generate_container_sas
 from ._shared.models import Services
 from ._shared.shared_access_signature import QueryStringConstants
 
 
 if TYPE_CHECKING:
+    from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions
+    from azure.storage.blob._shared.models import Services as BlobServices
     from datetime import datetime
     from ._models import (
         AccountSasPermissions,
@@ -75,6 +77,7 @@ def generate_account_sas(
     :keyword Union[Services, str] services:
         Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
         Will default to only this package (i.e. blobs) if not provided.
+    :paramtype services: Services or str
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str encryption_scope:
@@ -82,7 +85,7 @@ def generate_account_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], None]]
+    :paramtype sts_hook: Callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -92,23 +95,22 @@ def generate_account_sas(
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,
-        services=services,
+        services=cast(Union["BlobServices", str], services),
         sts_hook=sts_hook,
         **kwargs
     )
 
 
 def generate_file_system_sas(
-    account_name,  # type: str
-    file_system_name,  # type: str
-    credential,  # type: Union[str, UserDelegationKey]
-    permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
-    expiry=None,  # type: Optional[Union[datetime, str]]
+    account_name: str,
+    file_system_name: str,
+    credential: Union[str, "UserDelegationKey"],
+    permission: Optional[Union["FileSystemSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], None]]
-    **kwargs  # type: Any
-):
-    # type: (...) -> str
+    sts_hook: Optional[Callable[[str], None]] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for a file system.
 
     Use the returned signature with the credential parameter of any DataLakeServiceClient,
@@ -118,7 +120,7 @@ def generate_file_system_sas(
         The storage account name used to generate the shared access signature.
     :param str file_system_name:
         The name of the file system.
-    :param str credential:
+    :param credential:
         Credential could be either account key or user delegation key.
         If use account key is used as credential, then the credential type should be a str.
         Instead of an account key, the user could also pass in a user delegation key.
@@ -134,7 +136,7 @@ def generate_file_system_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.FileSystemSasPermissions
+    :type permission: str or ~azure.storage.filedatalake.FileSystemSasPermissions or None
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -142,7 +144,7 @@ def generate_file_system_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: datetime or str or None
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
@@ -194,7 +196,7 @@ def generate_file_system_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], None]]
+    :paramtype sts_hook: Callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -203,7 +205,7 @@ def generate_file_system_sas(
         container_name=file_system_name,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,
+        permission=cast(Optional[Union["ContainerSasPermissions", str]], permission),
         expiry=expiry,
         sts_hook=sts_hook,
         **kwargs
@@ -211,17 +213,16 @@ def generate_file_system_sas(
 
 
 def generate_directory_sas(
-    account_name,  # type: str
-    file_system_name,  # type: str
-    directory_name,  # type: str
-    credential,  # type: Union[str, UserDelegationKey]
-    permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
-    expiry=None,  # type: Optional[Union[datetime, str]]
+    account_name: str,
+    file_system_name: str,
+    directory_name: str,
+    credential: Union[str, "UserDelegationKey"],
+    permission: Optional[Union["DirectorySasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], None]]
-    **kwargs  # type: Any
-):
-    # type: (...) -> str
+    sts_hook: Optional[Callable[[str], None]] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for a directory.
 
     Use the returned signature with the credential parameter of any DataLakeServiceClient,
@@ -249,7 +250,7 @@ def generate_directory_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.DirectorySasPermissions
+    :type permission: str or ~azure.storage.filedatalake.DirectorySasPermissions or None
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -257,7 +258,7 @@ def generate_directory_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: ~datetime.datetime or str or None
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
@@ -309,7 +310,7 @@ def generate_directory_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], None]]
+    :paramtype sts_hook: Callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -320,7 +321,7 @@ def generate_directory_sas(
         blob_name=directory_name,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,
+        permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
         sdd=depth,
         is_directory=True,
@@ -330,18 +331,17 @@ def generate_directory_sas(
 
 
 def generate_file_sas(
-    account_name,  # type: str
-    file_system_name,  # type: str
-    directory_name,  # type: str
-    file_name,  # type: str
-    credential,  # type: Union[str, UserDelegationKey]
-    permission=None,  # type: Optional[Union[FileSasPermissions, str]]
-    expiry=None,  # type: Optional[Union[datetime, str]]
+    account_name: str,
+    file_system_name: str,
+    directory_name: str,
+    file_name: str,
+    credential: Union[str, "UserDelegationKey"],
+    permission: Optional[Union["FileSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], None]]
-    **kwargs  # type: Any
-):
-    # type: (...) -> str
+    sts_hook: Optional[Callable[[str], None]] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for a file.
 
     Use the returned signature with the credential parameter of any BDataLakeServiceClient,
@@ -371,7 +371,7 @@ def generate_file_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.FileSasPermissions
+    :type permission: str or ~azure.storage.filedatalake.FileSasPermissions or None
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -379,7 +379,7 @@ def generate_file_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: ~datetime.datetime or str or None
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
@@ -431,7 +431,7 @@ def generate_file_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], None]]
+    :paramtype sts_hook: Callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -445,7 +445,7 @@ def generate_file_sas(
         blob_name=path,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,
+        permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
         sts_hook=sts_hook,
         **kwargs

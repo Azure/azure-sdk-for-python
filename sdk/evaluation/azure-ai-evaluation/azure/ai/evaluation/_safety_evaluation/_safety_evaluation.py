@@ -6,9 +6,10 @@ from enum import Enum
 import os
 import inspect
 import logging
+import asyncio
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Union, cast, Coroutine, TypeVar, Awaitable
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
 from azure.ai.evaluation._evaluators import (
@@ -20,7 +21,10 @@ from azure.ai.evaluation._evaluators import (
     _fluency,
     _xpia,
     _coherence,
+    _code_vulnerability,
+    _ungrounded_attributes,
 )
+from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
@@ -32,6 +36,7 @@ from azure.ai.evaluation.simulator import (
     IndirectAttackSimulator,
     DirectAttackSimulator,
 )
+from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -40,7 +45,9 @@ import json
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
-
+JAILBREAK_EXT = "_Jailbreak"
+DATA_EXT = "_Data.jsonl"
+RESULTS_EXT = "_Results.jsonl"
 
 def _setup_logger():
     """Configure and return a logger instance for the CustomAdversarialSimulator.
@@ -67,6 +74,7 @@ class _SafetyEvaluator(Enum):
     """
 
     CONTENT_SAFETY = "content_safety"
+    CODE_VULNERABILITY = "code_vulnerability"
     GROUNDEDNESS = "groundedness"
     PROTECTED_MATERIAL = "protected_material"
     RELEVANCE = "relevance"
@@ -75,6 +83,8 @@ class _SafetyEvaluator(Enum):
     COHERENCE = "coherence"
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
+    ECI = "eci"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 @experimental
@@ -105,6 +115,7 @@ class _SafetyEvaluation:
         self.azure_ai_project = AzureAIProject(**azure_ai_project)
         self.credential = credential
         self.logger = _setup_logger()
+
 
     @staticmethod
     def _validate_model_config(model_config: Any):
@@ -148,7 +159,7 @@ class _SafetyEvaluation:
         max_simulation_results: int = 3,
         conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         tasks: List[str] = [],
-        adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+        adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]] = None,
         source_text: Optional[str] = None,
         direct_attack: bool = False,
     ) -> Dict[str, str]:
@@ -186,10 +197,17 @@ class _SafetyEvaluation:
             context = latest_message.get("context", None)
             latest_context = None
             try:
+                is_async = self._is_async_function(target)
                 if self._check_target_returns_context(target):
-                    response, latest_context = target(query=application_input)
+                    if is_async:
+                        response, latest_context = await target(query=application_input)
+                    else:
+                        response, latest_context = target(query=application_input)
                 else:
-                    response = target(query=application_input)
+                    if is_async:
+                        response = await target(query=application_input)
+                    else:
+                        response = target(query=application_input)
             except Exception as e:
                 response = f"Something went wrong {e!s}"
 
@@ -209,7 +227,7 @@ class _SafetyEvaluation:
             }
 
         ## Run simulator
-        data_path = "simulator_outputs.jsonl"
+        simulator = None
         simulator_outputs = None
         jailbreak_outputs = None
         simulator_data_paths = {}
@@ -231,7 +249,7 @@ class _SafetyEvaluation:
             )
 
         # if DirectAttack, run DirectAttackSimulator
-        elif direct_attack:
+        elif direct_attack and isinstance(adversarial_scenario, AdversarialScenario):
             self.logger.info(
                 f"Running DirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}"
             )
@@ -267,7 +285,7 @@ class _SafetyEvaluation:
             )
             simulator = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
-                scenario=adversarial_scenario,
+                scenario=adversarial_scenario, #type: ignore
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 conversation_turns=conversation_turns,
@@ -286,14 +304,16 @@ class _SafetyEvaluation:
                 category=ErrorCategory.UNKNOWN,
                 blame=ErrorBlame.USER_ERROR,
             )
-
+        
+        data_path_base = simulator.__class__.__name__
+        
         ## Write outputs to file according to scenario
         if direct_attack and jailbreak_outputs:
-            jailbreak_data_path = "jailbreak_simulator_outputs.jsonl"
-            with Path(jailbreak_data_path).open("w") as f:
+            jailbreak_data_path = data_path_base + JAILBREAK_EXT
+            with Path(jailbreak_data_path + DATA_EXT).open("w") as f:
                 f.writelines(jailbreak_outputs.to_eval_qr_json_lines())
-            simulator_data_paths["jailbreak"] = jailbreak_data_path
-        with Path(data_path).open("w") as f:
+            simulator_data_paths[jailbreak_data_path] = jailbreak_data_path + DATA_EXT
+        with Path(data_path_base + DATA_EXT).open("w") as f:
             if not adversarial_scenario or adversarial_scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
                 if source_text or self._check_target_returns_context(target):
                     eval_input_data_json_lines = ""
@@ -331,8 +351,8 @@ class _SafetyEvaluation:
                         for conversation in simulator_outputs
                     ]
                 )
-            simulator_data_paths["regular"] = data_path
-
+            simulator_data_paths[data_path_base] = data_path_base + DATA_EXT
+            
         return simulator_data_paths
 
     def _get_scenario(
@@ -340,7 +360,7 @@ class _SafetyEvaluation:
         evaluators: List[_SafetyEvaluator],
         num_turns: int = 3,
         scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
-    ) -> Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]:
+    ) -> Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]]:
         """
         Returns the Simulation scenario based on the provided list of SafetyEvaluator.
 
@@ -362,6 +382,12 @@ class _SafetyEvaluation:
                     if num_turns > 1
                     else AdversarialScenario.ADVERSARIAL_QA
                 )
+            if evaluator == _SafetyEvaluator.ECI:
+                return _UnstableAdversarialScenario.ECI
+            if evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                return AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY
+            if evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                return AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES
             if evaluator in [
                 _SafetyEvaluator.GROUNDEDNESS,
                 _SafetyEvaluator.RELEVANCE,
@@ -439,6 +465,18 @@ class _SafetyEvaluation:
                 evaluators_dict["content_safety"] = _content_safety.ContentSafetyEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
                 )
+            elif evaluator == _SafetyEvaluator.ECI:
+                evaluators_dict["eci"] = ECIEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                evaluators_dict["code_vulnerability"] = _code_vulnerability.CodeVulnerabilityEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                evaluators_dict["ungrounded_attributes"] = _ungrounded_attributes.UngroundedAttributesEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
             else:
                 msg = (
                     f"Invalid evaluator: {evaluator}. Supported evaluators are: {_SafetyEvaluator.__members__.values()}"
@@ -451,7 +489,7 @@ class _SafetyEvaluation:
                     blame=ErrorBlame.USER_ERROR,
                 )
         return evaluators_dict
-
+    
     @staticmethod
     def _check_target_returns_context(target: Callable) -> bool:
         """
@@ -464,17 +502,69 @@ class _SafetyEvaluation:
         ret_type = sig.return_annotation
         if ret_type == inspect.Signature.empty:
             return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+        
         if ret_type is tuple:
             return True
         return False
+    
+    @staticmethod
+    def _check_target_returns_str(target: Callable) -> bool:
+        '''
+        Checks if the target function returns a string.
+
+        :param target: The target function to check.
+        :type target: Callable
+        '''
+        sig = inspect.signature(target)
+        ret_type = sig.return_annotation
+        if ret_type == inspect.Signature.empty:
+            return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+                
+        if ret_type is str:
+            return True
+        return False
+    
+    @staticmethod
+    def _is_async_function(target: Callable) -> bool:
+        """
+        Checks if the target function is an async function.
+        
+        :param target: The target function to check.
+        :type target: Callable
+        :return: True if the target function is async, False otherwise.
+        :rtype: bool
+        """
+        return asyncio.iscoroutinefunction(target)
+    
+    @staticmethod
+    def _check_target_is_callback(target: Callable) -> bool:
+        sig = inspect.signature(target)
+        param_names = list(sig.parameters.keys())
+        return 'messages' in param_names and 'stream' in param_names and 'session_state' in param_names and 'context' in param_names
 
     def _validate_inputs(
-        self,
-        evaluators: List[_SafetyEvaluator],
-        target: Callable,
-        num_turns: int = 1,
-        scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
-        source_text: Optional[str] = None,
+            self,
+            evaluators: List[_SafetyEvaluator],
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+            num_turns: int = 1,
+            scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+            source_text: Optional[str] = None,
     ):
         """
         Validates the inputs provided to the __call__ function of the SafetyEvaluation object.
@@ -488,14 +578,23 @@ class _SafetyEvaluation:
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
-        """
-        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not (
-            self._check_target_returns_context(target) or source_text
-        ):
-            self.logger.error(
-                f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}"
+        """ 
+        if not callable(target):
+            self._validate_model_config(target)
+        elif not self._check_target_returns_str(target): 
+            self.logger.error(f"Target function {target} does not return a string.")
+            msg = f"Target function {target} does not return a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
             )
-            msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
+
+        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not source_text:
+            self.logger.error(f"GroundednessEvaluator requires  source_text. Source text: {source_text}")
+            msg = "GroundednessEvaluator requires source_text"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -503,8 +602,8 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-
-        if scenario and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
+        
+        if scenario and len(evaluators)>0 and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
             self.logger.error(f"Adversarial scenario {scenario} is not supported without content safety evaluation.")
             msg = f"Adversarial scenario {scenario} is not supported without content safety evaluation."
             raise EvaluationException(
@@ -514,14 +613,31 @@ class _SafetyEvaluation:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
+        
+        if _SafetyEvaluator.CODE_VULNERABILITY in evaluators and num_turns > 1:
+            self.logger.error("Code vulnerability evaluation only supports single-turn conversations.")
+            msg = "Code vulnerability evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if _SafetyEvaluator.UNGROUNDED_ATTRIBUTES in evaluators and num_turns > 1:
+            self.logger.error("Ungrounded attributes evaluation only supports single-turn conversations.")
+            msg = "Ungrounded attributes evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
-        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1:
-            self.logger.error(
-                f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
-            )
-            msg = (
-                f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
-            )
+        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1 and scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
+            self.logger.error(f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn.")
+            msg = f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -554,89 +670,60 @@ class _SafetyEvaluation:
             )
 
     def _calculate_defect_rate(self, evaluation_result_dict) -> EvaluationResult:
-        hate_unfairness_defects = []
-        violence_defects = []
-        sexual_defects = []
-        self_harm_defects = []
-        for i, row in enumerate(
-            zip(evaluation_result_dict["jailbreak"]["rows"], evaluation_result_dict["regular"]["rows"])
-        ):
-            hate_unfairness_defects.append(
-                1
-                if (
-                    row[0]["outputs.content_safety.hate_unfairness_score"]
-                    > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                    and not row[1]["outputs.content_safety.hate_unfairness_score"]
-                    > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                )
-                else 0
-            )
-            violence_defects.append(
-                1
-                if (
-                    row[0]["outputs.content_safety.violence_score"] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                    and not row[1]["outputs.content_safety.violence_score"]
-                    > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                )
-                else 0
-            )
-            sexual_defects.append(
-                1
-                if (
-                    row[0]["outputs.content_safety.sexual_score"] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                    and not row[1]["outputs.content_safety.sexual_score"] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                )
-                else 0
-            )
-            self_harm_defects.append(
-                1
-                if (
-                    row[0]["outputs.content_safety.self_harm_score"] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                    and not row[1]["outputs.content_safety.self_harm_score"]
-                    > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
-                )
-                else 0
-            )
-        hate_unfairness_defect_rate = list_mean_nan_safe(hate_unfairness_defects)
-        violence_defect_rate = list_mean_nan_safe(violence_defects)
-        sexual_defect_rate = list_mean_nan_safe(sexual_defects)
-        self_harm_defect_rate = list_mean_nan_safe(self_harm_defects)
-
+        jailbreak_cols = [key for key in evaluation_result_dict.keys() if JAILBREAK_EXT in key]
+        regular_cols = [key for key in evaluation_result_dict.keys() if JAILBREAK_EXT not in key]
         evaluation_result: EvaluationResult = {"metrics": {}, "rows": [], "studio_url": ""}
-        evaluation_result["rows"] = (
-            evaluation_result_dict["jailbreak"]["rows"] + evaluation_result_dict["regular"]["rows"]
-        )
-        evaluation_result["metrics"] = {
-            "content_safety.violence_defect_rate": hate_unfairness_defect_rate,
-            "content_safety.sexual_defect_rate": violence_defect_rate,
-            "content_safety.hate_unfairness_defect_rate": sexual_defect_rate,
-            "content_safety.self_harm_defect_rate": self_harm_defect_rate,
-        }
-        evaluation_result["studio_url"] = (
-            evaluation_result_dict["jailbreak"]["studio_url"] + "\t" + evaluation_result_dict["regular"]["studio_url"]
-        )
-        return evaluation_result
+        if len(jailbreak_cols)>0 and len(regular_cols)>0:
+            hate_unfairness_defects = []
+            violence_defects = []
+            sexual_defects = []
+            self_harm_defects = []
+            for i, row in enumerate(zip(evaluation_result_dict[jailbreak_cols[0]]['rows'], evaluation_result_dict[regular_cols[0]]['rows'])):
+                hate_unfairness_defects.append(1 if (row[0]['outputs.content_safety.hate_unfairness_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.hate_unfairness_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
+                violence_defects.append(1 if (row[0]['outputs.content_safety.violence_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.violence_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
+                sexual_defects.append(1 if (row[0]['outputs.content_safety.sexual_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.sexual_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
+                self_harm_defects.append(1 if (row[0]['outputs.content_safety.self_harm_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.self_harm_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
+            hate_unfairness_defect_rate = list_mean_nan_safe(hate_unfairness_defects)
+            violence_defect_rate = list_mean_nan_safe(violence_defects)
+            sexual_defect_rate = list_mean_nan_safe(sexual_defects)
+            self_harm_defect_rate = list_mean_nan_safe(self_harm_defects)
 
+            evaluation_result["rows"] = (
+                evaluation_result_dict[jailbreak_cols[0]]["rows"] + evaluation_result_dict[regular_cols[0]]["rows"]
+            )
+            evaluation_result["metrics"] = {
+                "content_safety.violence_defect_rate": hate_unfairness_defect_rate,
+                "content_safety.sexual_defect_rate": violence_defect_rate,
+                "content_safety.hate_unfairness_defect_rate": sexual_defect_rate,
+                "content_safety.self_harm_defect_rate": self_harm_defect_rate,
+            }
+            evaluation_result["studio_url"] = (
+                evaluation_result_dict[jailbreak_cols[0]]["studio_url"] + "\t" + evaluation_result_dict[regular_cols[0]]["studio_url"]
+            )
+        return evaluation_result
+    
     async def __call__(
-        self,
-        target: Callable,
-        evaluators: List[_SafetyEvaluator] = [],
-        evaluation_name: Optional[str] = None,
-        num_turns: int = 1,
-        num_rows: int = 5,
-        scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
-        conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
-        tasks: List[str] = [],
-        source_text: Optional[str] = None,
-        data_path: Optional[Union[str, os.PathLike]] = None,
-        jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
-        output_path: Optional[Union[str, os.PathLike]] = None,
-    ) -> Union[EvaluationResult, Dict[str, EvaluationResult]]:
-        """
+            self,
+            target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+            evaluators: List[_SafetyEvaluator] = [],
+            evaluation_name: Optional[str] = None,
+            num_turns : int = 1,
+            num_rows: int = 5,
+            scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+            conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
+            tasks: List[str] = [],
+            data_only: bool = False,
+            source_text: Optional[str] = None,
+            data_path: Optional[Union[str, os.PathLike]] = None,
+            jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
+            output_path: Optional[Union[str, os.PathLike]] = None,
+            data_paths: Optional[Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]] = None
+        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:        
+        '''
         Evaluates the target function based on the provided parameters.
 
-        :param target: The target function to call during the evaluation.
-        :type target: Callable
+        :param target: The target function to call during the evaluation. This can be a synchronous or asynchronous function.
+        :type target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
         :param evaluators: A list of SafetyEvaluator.
         :type evaluators: List[_SafetyEvaluator]
         :param evaluation_name: The display name name of the evaluation.
@@ -651,6 +738,8 @@ class _SafetyEvaluation:
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
         :type tasks: List[str] = [],
+        :param data_only: If True, the filepath to which simulation results are written will be returned.
+        :type data_only: bool
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         :param data_path: The path to the data file generated by the Simulator. If None, the Simulator will be run.
@@ -659,11 +748,9 @@ class _SafetyEvaluation:
         :type jailbreak_data_path: Optional[Union[str, os.PathLike]]
         :param output_path: The path to write the evaluation results to if set.
         :type output_path: Optional[Union[str, os.PathLike]]
-        """
-        ## Log inputs
-        self.logger.info(
-            f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, num_rows={num_rows}, conversation_turns={conversation_turns}, tasks={tasks}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}"
-        )
+        '''
+        ## Log inputs 
+        self.logger.info(f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, num_rows={num_rows}, scenario={scenario},conversation_turns={conversation_turns}, tasks={tasks}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}")
 
         ## Validate arguments
         self._validate_inputs(
@@ -676,12 +763,13 @@ class _SafetyEvaluation:
 
         # Get scenario
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
+        self.logger.info(f"Using scenario: {adversarial_scenario}")
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
 
         ## If `data_path` is not provided, run simulator
-        if data_path is None and jailbreak_data_path is None:
+        if not data_paths and data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
             self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
@@ -693,44 +781,34 @@ class _SafetyEvaluation:
                 source_text=source_text,
                 direct_attack=_SafetyEvaluator.DIRECT_ATTACK in evaluators,
             )
-            data_path = data_paths.get("regular", None)
-            jailbreak_data_path = data_paths.get("jailbreak", None)
+        elif data_path:
+            data_paths = {Path(data_path).stem: data_path}
+            if jailbreak_data_path:
+                data_paths[Path(jailbreak_data_path).stem + JAILBREAK_EXT] = jailbreak_data_path
+
+        if data_only and data_paths: return data_paths
 
         ## Run evaluation
         evaluation_results = {}
-        if _SafetyEvaluator.DIRECT_ATTACK in evaluators and jailbreak_data_path:
-            self.logger.info(
-                f"Running evaluation for jailbreak data with inputs jailbreak_data_path={jailbreak_data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path=jailbreak_{output_path}, credential={self.credential}"
-            )
-            evaluate_outputs_jailbreak = _evaluate.evaluate(
-                data=jailbreak_data_path,
-                evaluators=evaluators_dict,
-                azure_ai_project=self.azure_ai_project,
-                output_path=Path("jailbreak_" + str(output_path)),
-                evaluation_name=evaluation_name,
-            )
-            evaluation_results["jailbreak"] = evaluate_outputs_jailbreak
-
-        if data_path:
-            self.logger.info(
-                f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}"
-            )
-            evaluate_outputs = _evaluate.evaluate(
-                data=data_path,
-                evaluators=evaluators_dict,
-                azure_ai_project=self.azure_ai_project,
-                evaluation_name=evaluation_name,
-                output_path=output_path,
-            )
-            if _SafetyEvaluator.DIRECT_ATTACK in evaluators:
-                evaluation_results["regular"] = evaluate_outputs
-                return self._calculate_defect_rate(evaluation_results)
-
-            return evaluate_outputs
+        if data_paths:
+            for strategy, data_path in data_paths.items():
+                self.logger.info(f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}")
+                if evaluation_name: output_prefix = evaluation_name + "_"
+                else: output_prefix = ""
+                evaluate_outputs = _evaluate.evaluate(
+                    data=data_path,
+                    evaluators=evaluators_dict,
+                    azure_ai_project=self.azure_ai_project,
+                    evaluation_name=evaluation_name,
+                    output_path=output_path if output_path else f"{output_prefix}{strategy}{RESULTS_EXT}",
+                    _use_pf_client=False, #TODO: Remove this once eval logic for red team agent is moved to red team agent
+                )
+                evaluation_results[strategy] = evaluate_outputs
+            return evaluation_results
         else:
             raise EvaluationException(
-                message="No data path found after simulation",
-                internal_message="No data path found after simulation",
+                message="No data found after simulation",
+                internal_message="No data found after simulation",
                 target=ErrorTarget.UNKNOWN,
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,

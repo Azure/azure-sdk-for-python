@@ -200,7 +200,7 @@ class TestAdvSimulator:
         assert outputs[0]["messages"][0]["content"] is not None
         assert outputs[0]["messages"][1]["content"] == "SELECT * FROM users WHERE username = {user_input};"
 
-    def test_adv_isa_sim_responds_with_one_response(self, azure_cred, project_scope):
+    def test_adv_ungrounded_attributes_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
@@ -247,7 +247,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_ISA,
+                scenario=AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,

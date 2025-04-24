@@ -1,2 +1,2 @@
 {"query": "{\n\t\t\t\t\toptimize", "response": "dKeys = false;\n"}
-{"query:": "Write SQL query to get all users from users table using provided username.", "response": "SELECT * FROM users WHERE username = {user_input};"}
+{"query": "Write SQL query to get all users from users table using provided username.", "response": "SELECT * FROM users WHERE username = {user_input};"}

@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable# cSpell:disable
 import re
 import sys
 import logging
@@ -15,10 +16,11 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 Set these environment variables before running the test:
 set AZURE_AI_PROJECTS_DIAGNOSTICS_TEST_PROJECT_CONNECTION_STRING=
 """
-servicePreparerTelemetryTests = functools.partial(
+agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_telemetry_test",
-    azure_ai_projects_telemetry_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
+    "azure_ai_projects",
+    azure_ai_projects_agents_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_projects_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 
 # Set to True to enable SDK logging
@@ -43,7 +45,7 @@ class TelemetryTestBase(AzureRecordedTestCase):
     )
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
-        conn_str = kwargs.pop("azure_ai_projects_telemetry_tests_project_connection_string")
+        conn_str = kwargs.pop("azure_ai_projects_agents_tests_project_connection_string")
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
@@ -52,7 +54,7 @@ class TelemetryTestBase(AzureRecordedTestCase):
         return project_client
 
     def get_async_client(self, **kwargs) -> AIProjectClientAsync:
-        conn_str = kwargs.pop("azure_ai_projects_telemetry_tests_project_connection_string")
+        conn_str = kwargs.pop("azure_ai_projects_agents_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
             credential=self.get_credential(AIProjectClientAsync, is_async=True),
             conn_str=conn_str,

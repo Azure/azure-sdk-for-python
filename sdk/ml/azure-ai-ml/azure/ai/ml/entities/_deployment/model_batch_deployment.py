@@ -4,54 +4,60 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Literal, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBatchDeploymentSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
-from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 
+type: Literal["model"] = "model"
 
-@experimental
-class ModelBatchDeployment(Deployment):
-    """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
-    :type type: str
-    :param name: Job name
+class ModelBatchDeployment(BatchDeployment):
+    """Model Batch Deployment entity.
+
+    :param name: Name of the deployment resource.
     :type name: str
-    :param job: Job definition
-    :type job: Union[Job, str]
-    :param component: Component definition
-    :type component: Union[Component, str]
-    :param settings: Job settings
-    :type settings: Dict[str, Any]
-    :param description: Job description.
-    :type description: str
-    :param tags: Job tags
-    :type tags: Dict[str, Any]
+    :param endpoint_name: Name of the endpoint.
+    :type endpoint_name: Optional[str]
+    :param environment: Environment to use for deployment.
+    :type environment: Optional[Union[str, Environment]]
     :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :type properties: Optional[Dict[str, str]]
+    :param model: Model to deploy.
+    :type model: Optional[Union[str, Model]]
+    :param description: Deployment description.
+    :type description: Optional[str]
+    :param tags: Deployment tags.
+    :type tags: Optional[Dict[str, Any]]
+    :param settings: Deployment settings.
+    :type settings: Optional[ModelBatchDeploymentSettings]
+    :param resources: Resource configuration.
+    :type resources: Optional[ResourceConfiguration]
+    :param compute: Compute target to use.
+    :type compute: Optional[str]
+    :param code_configuration: Code configuration for deployment.
+    :type code_configuration: Optional[CodeConfiguration]
+    :param code_path: Path to the code directory.
+    :type code_path: Optional[Union[str, PathLike]]
+    :param scoring_script: Path to the scoring script.
+    :type scoring_script: Optional[Union[str, PathLike]]
     """
 
     def __init__(
         self,
         *,
-        name: Optional[str],
+        name: str,
         endpoint_name: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -68,9 +74,12 @@ class ModelBatchDeployment(Deployment):
         ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs: Any,
     ):
-        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
+        # If type not removed from kwargs, it can lead to dual type params passed to Deployment class
+        # Get type from kwargs if present, otherwise use the default type defined above
+        _type = kwargs.pop("type", type)
         super().__init__(
             name=name,
+            _type=_type,
             endpoint_name=endpoint_name,
             properties=properties,
             code_path=code_path,
@@ -80,30 +89,22 @@ class ModelBatchDeployment(Deployment):
             description=description,
             tags=tags,
             code_configuration=code_configuration,
+            compute=compute,
+            resources=resources,
+            settings=settings,
             **kwargs,
         )
-        self.compute = compute
-        self.resources = resources
-        if settings is not None:
-            self.settings = ModelBatchDeploymentSettings(
-                mini_batch_size=settings.mini_batch_size,
-                instance_count=settings.instance_count,
-                max_concurrency_per_instance=settings.max_concurrency_per_instance,
-                output_action=settings.output_action,
-                output_file_name=settings.output_file_name,
-                retry_settings=settings.retry_settings,
-                environment_variables=settings.environment_variables,
-                error_threshold=settings.error_threshold,
-                logging_level=settings.logging_level,
-            )
-            if self.resources is not None:
-                if self.resources.instance_count is None and settings.instance_count is not None:
-                    self.resources.instance_count = settings.instance_count
-            if self.resources is None and settings.instance_count is not None:
-                self.resources = ResourceConfiguration(instance_count=settings.instance_count)
+
+    @property
+    def settings(self) -> ModelBatchDeploymentSettings:
+        return self._settings
+
+    @settings.setter
+    def settings(self, value: ModelBatchDeploymentSettings) -> None:
+        self._settings = value
 
     # pylint: disable=arguments-differ
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore[override]
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -158,49 +159,6 @@ class ModelBatchDeployment(Deployment):
         }
         res: ModelBatchDeployment = load_from_dict(ModelBatchDeploymentSchema, data, context, **kwargs)
         return res
-
-    @classmethod
-    def _update_params(cls, params_override: Any) -> None:
-        for param in params_override:
-            endpoint_name = param.get("endpoint_name")
-            if isinstance(endpoint_name, str):
-                param["endpoint_name"] = endpoint_name.lower()
-
-    @classmethod
-    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
-        output_switcher = {
-            BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
-            BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
-        }
-        return output_switcher.get(yaml_output_action, yaml_output_action)
-
-    @property
-    def provisioning_state(self) -> Optional[str]:
-        """Batch deployment provisioning state, readonly.
-
-        :return: Batch deployment provisioning state.
-        :rtype: Optional[str]
-        """
-        return self._provisioning_state
-
-    def _validate(self) -> None:
-        self._validate_output_action()
-
-    def _validate_output_action(self) -> None:
-        if (
-            self.settings.output_action
-            and self.settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
-            and self.settings.output_file_name
-        ):
-            msg = "When output_action is set to {}, the output_file_name need not to be specified."
-            msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.BATCH_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
 
     def _to_dict(self) -> Dict:
         res: dict = ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

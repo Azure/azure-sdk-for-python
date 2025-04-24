@@ -36,6 +36,7 @@
     "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3",
     "sdk/ai/azure-ai-inference/tests/hello_how_are_you.mp3",
     "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
+    "sdk/ai/azure-ai-projects/samples/agents/tripadvisor_openapi.json",
     "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
     "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
@@ -68,6 +69,7 @@
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_vendor/**",
     "sdk/evaluation/azure-ai-evaluation/tests/**",
+    "sdk/evaluation/azure-ai-evaluation/samples/agent_evaluators/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -375,6 +377,7 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prompty",
     "pschema",
     "PSECRET",
     "pydantic",
@@ -403,6 +406,7 @@
     "rtsp",
     "rtype",
     "rwdlacu",
+    "sansiohttppolicy",
     "scbedd",
     "sdist",
     "sdpath",
@@ -1178,7 +1182,9 @@
         "racwdlmeop",
         "newfs",
         "adlsstorage",
-        "adlskey"
+        "adlskey",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1342,6 +1348,10 @@
     {
       "filename": "sdk/ai/azure-ai-projects/**",
       "words": [
+        "coso",
+        "longtitude",
+        "abbrev",
+        "accommodations",
         "ENTRAID",
         "entraid",
         "aiservices",
@@ -1400,6 +1410,12 @@
         "upia",
         "xpia",
         "expirable",
+        "ralphe",
+        "Inadherent",
+        "nbformat",
+        "nbconvert",
+        "onedp",
+        "azureai",
       ]
     },
     {
@@ -1483,7 +1499,9 @@
         "Fsubdir",
         "Fdir",
         "adal",
-        "mytestshare"
+        "mytestshare",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1827,6 +1845,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

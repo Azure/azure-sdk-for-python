@@ -1,5 +1,28 @@
 # Release History
 
+## 7.14.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.14.2 (2025-04-09)
+
+### Bugs Fixed
+
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
+- 
+### Other Changes
+
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Fixed aiohttp websocket library showing a deprecation warning due to an incorrect timeout type ([#40429](https://github.com/Azure/azure-sdk-for-python/issues/40429))
+- Dropped support for Python 3.8
+
 ## 7.14.1 (2025-03-12)
 
 ### Bugs Fixed

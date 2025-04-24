@@ -1,6 +1,22 @@
 # Release History
 
-## 1.0.1 (2025-03-11)
+## 1.0.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.2 (2025-03-26)
+
+### Bugs Fixed
+
+- Fix polling for `begin_copy_classifier_to()` to stop on success response from the "Operation-Location" endpoint and correctly parse the result.
+
+## 1.0.1 (2025-03-13)
 
 ### Bugs Fixed
 
