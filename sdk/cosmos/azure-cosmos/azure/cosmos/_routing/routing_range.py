@@ -44,14 +44,14 @@ class Range(object):
     IsMinInclusivePath = "isMinInclusive"
     IsMaxInclusivePath = "isMaxInclusive"
 
-    def __init__(self, range_min, range_max, isMinInclusive, isMaxInclusive):
+    def __init__(self, range_min: str, range_max: str, isMinInclusive: bool, isMaxInclusive: bool):
         if range_min is None:
             raise ValueError("min is missing")
         if range_max is None:
             raise ValueError("max is missing")
 
-        self.min = range_min
-        self.max = range_max
+        self.min = range_min.upper()
+        self.max = range_max.upper()
         self.isMinInclusive = isMinInclusive
         self.isMaxInclusive = isMaxInclusive
 
@@ -77,8 +77,8 @@ class Range(object):
     @classmethod
     def ParseFromDict(cls, range_as_dict):
         self = cls(
-            range_as_dict[Range.MinPath],
-            range_as_dict[Range.MaxPath],
+            range_as_dict[Range.MinPath].upper(),
+            range_as_dict[Range.MaxPath].upper(),
             range_as_dict[Range.IsMinInclusivePath],
             range_as_dict[Range.IsMaxInclusivePath],
         )
