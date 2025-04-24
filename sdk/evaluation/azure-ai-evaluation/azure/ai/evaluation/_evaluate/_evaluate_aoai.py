@@ -85,11 +85,11 @@ def _begin_aoai_evaluation(
     """
 
 
-    print("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...")
+    LOGGER.info("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...")
     all_eval_run_info: List[OAIEvalRunCreationInfo] = []
 
     if len(all_eval_run_info) > 1:
-        print("AOAI: Grader-specific column mappings detected. Splitting up evaluation runs to avoid conflicts...")
+        LOGGER.info("AOAI: Grader-specific column mappings detected. Splitting up evaluation runs to avoid conflicts...")
     for selected_graders, selected_column_mapping in _get_graders_and_column_mappings(graders, column_mappings):
         all_eval_run_info.append(_begin_single_aoai_evaluation(
             client,
@@ -143,7 +143,7 @@ def _begin_single_aoai_evaluation(
         metadata={"is_foundry_eval": "true"}
     )
     
-    print(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
+    LOGGER.info(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
     # Use eval group info to map grader IDs back to user-assigned names.
     grader_name_map = {}
     num_criteria = len(eval_group_info.testing_criteria)
@@ -160,7 +160,7 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run 
     eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, column_mapping)
-    print(f"AOAI: Eval run created with id {eval_run_id}." +
+    LOGGER.info(f"AOAI: Eval run created with id {eval_run_id}." +
           " Results will be retrieved after normal evaluation is complete...")
 
     return OAIEvalRunCreationInfo(eval_group_id=eval_group_info.id, eval_run_id=eval_run_id, grader_name_map=grader_name_map)
@@ -219,12 +219,14 @@ def _get_single_run_results(
     run_results = _wait_for_run_conclusion(client, run_info["eval_group_id"], run_info["eval_run_id"])
     if run_results.status != "completed":
         raise EvaluationException(
-            message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']} failed with status {run_results.status}.",
+            message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
+             + " failed with status {run_results.status}.",
             blame=ErrorBlame.UNKNOWN,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
-    print(f"AOAI: Evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']} completed successfully. Gathering results...")
+    LOGGER.info(f"AOAI: Evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
+                + " completed successfully. Gathering results...")
     # Convert run results into a dictionary of metrics
     run_metrics = {}
     for criteria_result in run_results.per_testing_criteria_results:
@@ -246,7 +248,10 @@ def _get_single_run_results(
     # The passed and score values are then added to the results dictionary, prepended with the grader's name
     # as entered by the user in the inputted dictionary.
     # Other values, if they exist, are also added to the results dictionary.
-    raw_list_results = client.evals.runs.output_items.list(eval_id=run_info["eval_group_id"], run_id=run_info["eval_run_id"])
+    raw_list_results = client.evals.runs.output_items.list(
+        eval_id=run_info["eval_group_id"],
+        run_id=run_info["eval_run_id"]
+    )
     listed_results = {}
     for row_result in raw_list_results.data:
         for single_grader_row_result in row_result.results:
@@ -531,7 +536,12 @@ def _begin_eval_run(
     return eval_run.id
 
 # Post built TODO: replace with _red_team.py's retry logic?
-def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str, max_wait_seconds = 21600) -> Any:
+def _wait_for_run_conclusion(
+        client: Union[OpenAI, AzureOpenAI],
+        eval_group_id: str,
+        eval_run_id: str,
+        max_wait_seconds = 21600
+    ) -> Any:
     """
     Perform exponential backoff polling to get the results of an AOAI evaluation run.
     Raises an EvaluationException if max attempts are reached without receiving a concluding status.
@@ -548,7 +558,7 @@ def _wait_for_run_conclusion(client: Union[OpenAI, AzureOpenAI], eval_group_id: 
     :rtype: Any
     """
 
-    print(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...\n")
+    LOGGER.info(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...")
     total_wait = 0
     iters = 0
     # start with ~51 minutes of exponential backoff
