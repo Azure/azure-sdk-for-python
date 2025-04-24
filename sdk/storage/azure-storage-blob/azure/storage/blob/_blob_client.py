@@ -482,6 +482,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional["StandardBlobTier"] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """
@@ -616,6 +617,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             encryption_scope=encryption_scope,
             standard_blob_tier=standard_blob_tier,
             source_authorization=source_authorization,
+            source_token_intent=source_token_intent,
             **kwargs
         )
         try:
@@ -2092,6 +2094,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         seal_destination_blob: Optional[bool] = None,
         requires_sync: Optional[bool] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         encryption_scope: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -2312,6 +2315,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             seal_destination_blob=seal_destination_blob,
             requires_sync=requires_sync,
             source_authorization=source_authorization,
+            source_token_intent=source_token_intent,
             encryption_scope=encryption_scope,
             timeout=timeout,
             **kwargs
@@ -2594,6 +2598,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2664,6 +2669,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             cpk=cpk,
             encryption_scope=encryption_scope,
             source_authorization=source_authorization,
+            source_token_intent=source_token_intent,
             timeout=timeout,
             **kwargs
         )
@@ -3637,6 +3643,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -3778,6 +3785,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             cpk=cpk,
             encryption_scope=encryption_scope,
             source_authorization=source_authorization,
+            source_token_intent=source_token_intent,
             timeout=timeout,
             **kwargs
         )
@@ -4037,6 +4045,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]:
@@ -4170,6 +4179,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             cpk=cpk,
             encryption_scope=encryption_scope,
             source_authorization=source_authorization,
+            source_token_intent=source_token_intent,
             timeout=timeout,
             **kwargs
         )
