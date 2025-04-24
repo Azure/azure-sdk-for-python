@@ -616,9 +616,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "requires_action",
-                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
-                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 },
             },
@@ -764,9 +766,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "requires_action",
-                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
-                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "Sofia"}}}]}',
                 },
             },
@@ -947,9 +951,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "requires_action",
-                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
-                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 },
             },
@@ -1010,6 +1016,107 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
+    # Need a recording for this test
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_agent_streaming_run_steps_with_toolset_with_tracing_content_recording_enabled(self, **kwargs):
+        def fetch_weather(location: str) -> str:
+            """
+            Fetches the weather information for the specified location.
+
+            :param location (str): The location to fetch weather for.
+            :return: Weather information as a JSON string.
+            :rtype: str
+            """
+            # In a real-world scenario, you'd integrate with a weather API.
+            # Here, we'll mock the response.
+            mock_weather_data = {"New York": "Sunny", "London": "Cloudy", "Tokyo": "Rainy"}
+            weather = mock_weather_data.get(location, "Weather data not available for this location.")
+            weather_json = json.dumps({"weather": weather})
+            return weather_json
+
+        user_functions: Set[Callable[..., Any]] = {
+            fetch_weather,
+        }
+
+        functions = FunctionTool(user_functions)
+        toolset = ToolSet()
+        toolset.add(functions)
+
+        client = self.create_client(**kwargs)
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+        )
+
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+        client.agents.enable_auto_function_calls(toolset=toolset)
+
+        thread = client.agents.create_thread()
+        message = client.agents.create_message(
+            thread_id=thread.id, role="user", content="What is the weather in New York?"
+        )
+
+        event_handler = MyEventHandler()
+        with client.agents.create_stream(thread_id=thread.id, agent_id=agent.id, event_handler=event_handler) as stream:
+            stream.until_done()
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        messages = client.agents.list_messages(thread_id=thread.id)
+        client.agents.list_run_steps(thread_id=thread.id, run_id=event_handler.run_id)
+        client.close()
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("list_run_steps")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.operation.name", "list_run_steps"),
+            ("server.address", ""),
+            ("gen_ai.thread.id", ""),
+            ("gen_ai.thread.run.id", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        expected_events = [
+            {
+                "name": "gen_ai.run_step.message_creation",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.agent.id": "*",
+                    "gen_ai.thread.run.id": "*",
+                    "gen_ai.message.id": "*",
+                    "gen_ai.run_step.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
+                },
+            },
+            {
+                "name": "gen_ai.run_step.tool_calls",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.agent.id": "*",
+                    "gen_ai.thread.run.id": "*",
+                    "gen_ai.run_step.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
 
 class MyEventHandler(AgentEventHandler):
 
@@ -1024,7 +1131,7 @@ class MyEventHandler(AgentEventHandler):
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
-
+        self.run_id = run.id
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 

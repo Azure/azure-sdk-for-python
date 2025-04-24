@@ -1,6 +1,16 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.2.0b1 (2025-04-23)
 
 ### Features Added
 
@@ -8,6 +18,7 @@
 - Add and manage ledger users with the `create_or_update_ledger_user`, `delete_ledger_user`, `get_ledger_user` and `list_ledger_users` methods
 - Add and manage programmable endpoints with the `create_user_defined_endpoint` and `get_user_defined_endpoint` methods
 - A user can now be associated with more than one role
+- Added user defined functions support for ledger API
 
 ### Other Changes
 
