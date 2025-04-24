@@ -15,7 +15,8 @@ from ._batch_run import CodeClient, ProxyClient
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
-from .._model_configurations import EvaluatorConfig
+from azure.ai.evaluation._common._experimental import experimental
+
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
@@ -52,7 +53,7 @@ def _split_evaluators_and_grader_configs(
             true_evaluators[key] = value
     return true_evaluators, aoai_graders
 
-
+@experimental
 def _begin_aoai_evaluation(
         client: Union[OpenAI, AzureOpenAI],
         graders: Dict[str, AoaiGrader],

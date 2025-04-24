@@ -106,3 +106,4 @@ BINARY_AGGREGATE_SUFFIX = "binary_aggregate"
 
 AOAI_COLUMN_NAME = "aoai"
 DEFAULT_OAI_EVAL_RUN_NAME = "AI_SDK_EVAL_RUN"
+DEFAULT_OAI_API_VERSION = "2025-04-01-preview" # Unfortunately relying on preview version for now.

@@ -4,9 +4,13 @@
 # TODO import acceptable configs from AOAI SDK?
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
+from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from typing import Any, Dict, Union
+from azure.ai.evaluation._common._experimental import experimental
 
+
+@experimental
 class AoaiGrader():
     """
     Base class for azure open ai grader warppers, recommended only for use by experience OpenAI API users.
@@ -91,7 +95,7 @@ class AoaiGrader():
            return AzureOpenAI(
                 azure_endpoint=self._model_config["azure_endpoint"],
                 api_key=self._model_config.get("api_key", None), # Default-style access to appease linters.
-                api_version=self._model_config.get("api_version", ""),
+                api_version=self._model_config.get("api_version", DEFAULT_AOAI_API_VERSION),
                 azure_deployment=self._model_config.get("azure_deployment", ""),
             )
         from openai import OpenAI

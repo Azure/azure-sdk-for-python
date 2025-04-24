@@ -5,8 +5,11 @@ from typing import Any, Dict, Union, List
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.eval_create_params import TestingCriterionLabelModel
+from azure.ai.evaluation._common._experimental import experimental
+
 from .aoai_grader import AoaiGrader
 
+@experimental
 class LabelGrader(AoaiGrader):
     """
     Wrapper class for OpenAI's label model graders.
