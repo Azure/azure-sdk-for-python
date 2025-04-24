@@ -1,6 +1,13 @@
 from mcp.server.fastmcp import FastMCP
 import subprocess
 from typing import Dict, Optional, Any
+import logging
+import sys
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+hander = logging.StreamHandler(sys.stderr)
+logger.addHandler(hander)
 
 # Initialize FastMCP server
 mcp = FastMCP("typespec-story")
@@ -23,6 +30,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any]) -> Dict[str, An
         elif value is not False and value is not None:
             cli_args.append(f"--{key}")
             cli_args.append(str(value))
+
+    logger.info(f"Running command: {' '.join(cli_args)}")
     
     try:
         # Run the command and capture the output
@@ -50,25 +59,21 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any]) -> Dict[str, An
 
 # Register tools for each TypeSpec client generator CLI command
 @mcp.tool("init")
-def init_tool(project_directory: Optional[str] = None, output_dir: Optional[str] = None) -> Dict[str, Any]:
+def init_tool(tspconfig_url: Optional[str] = None, root_dir: Optional[str] = None) -> Dict[str, Any]:
     """Initialize a client library directory using a tspconfig.yaml file.
     
     Args:
-        project_directory: The directory containing the TypeSpec project.
-        output_dir: The directory where the client library will be generated.
+        tspconfig_url: The URL of the tspconfig.yaml file.
+        root_dir: The root directory where the client library will be generated. # TODO: Unsure if this is needed
     
     Returns:
         A dictionary containing the result of the command.
     """
-
-    ## TODO: here we could grab commit from link????
-
-
     args = {}
-    if project_directory:
-        args["_"] = [project_directory]
-    if output_dir:
-        args["output-dir"] = output_dir
+    if tspconfig_url:
+        args["tsp-config"] = tspconfig_url
+    # if output_dir:
+    #     args["output-dir"] = output_dir
     
     return run_typespec_cli_command("init", args)
 
