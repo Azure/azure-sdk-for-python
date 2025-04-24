@@ -33,10 +33,6 @@ async def send_message(live_eventhub):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    not pytest.importorskip("aiohttp", reason="aiohttp is required for this test"),
-    reason="aiohttp is not installed"
-)
 async def test_event_hubs_client_web_socket_async(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub["hostname"], live_eventhub["event_hub"])
     sas_auth = _authentication_async.SASTokenAuthAsync(

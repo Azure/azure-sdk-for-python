@@ -31,6 +31,8 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
+
+
 @pytest.mark.cosmosEmulator
 class TestCosmosHttpLogger(unittest.TestCase):
     mock_handler_diagnostic = None
@@ -54,10 +56,10 @@ class TestCosmosHttpLogger(unittest.TestCase):
         cls.mock_handler_diagnostic = MockHandler()
         cls.logger_default = logging.getLogger("testloggerdefault")
         cls.logger_default.addHandler(cls.mock_handler_default)
-        cls.logger_default.setLevel(logging.DEBUG)
+        cls.logger_default.setLevel(logging.INFO)
         cls.logger_diagnostic = logging.getLogger("testloggerdiagnostic")
         cls.logger_diagnostic.addHandler(cls.mock_handler_diagnostic)
-        cls.logger_diagnostic.setLevel(logging.DEBUG)
+        cls.logger_diagnostic.setLevel(logging.INFO)
         cls.client_default = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                         consistency_level="Session",
                                                         connection_policy=cls.connectionPolicy,
@@ -73,8 +75,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_default.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
-        messages_request = self.mock_handler_default.messages[3].message.split("\n")
-        messages_response = self.mock_handler_default.messages[4].message.split("\n")
+        messages_request = self.mock_handler_default.messages[0].message.split("\n")
+        messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[14] == 'No body was attached to the request'
@@ -87,20 +89,29 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.client_default.delete_database(database_id)
 
     def test_cosmos_http_logging_policy(self):
-        # Test if we can log into from creating a database
+        # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[13].message.split("\n")
-        messages_response = self.mock_handler_diagnostic.messages[14].message.split("\n")
-        elapsed_time = self.mock_handler_diagnostic.messages[5].message.split("\n")
-        assert "/dbs" in messages_request[0]
-        assert messages_request[1] == "Request method: 'POST'"
-        assert 'Request headers:' in messages_request[2]
-        assert messages_request[15] == 'A body is sent with the request'
-        assert messages_response[0] == 'Response status: 201'
-        assert "Elapsed time in seconds:" in elapsed_time[0]
-        assert "Response headers" in messages_response[1]
+        messages_request = self.mock_handler_diagnostic.messages[1]
+        messages_response = self.mock_handler_diagnostic.messages[2]
+        elapsed_time = messages_request.duration
+        assert "databaseaccount" == messages_request.resource_type
+        assert messages_request.verb == "GET"
+        assert 200 == messages_request.status_code
+        assert "Read" == messages_request.operation_type
+        assert elapsed_time is not None
+        assert "Response headers" in messages_response.message
+        # Test if we can log into from creating a database
+        messages_request = self.mock_handler_diagnostic.messages[4]
+        messages_response = self.mock_handler_diagnostic.messages[5]
+        elapsed_time = messages_request.duration
+        assert "dbs" == messages_request.resource_type
+        assert messages_request.verb == "POST"
+        assert 201 == messages_request.status_code
+        assert messages_request.operation_type == "Create"
+        assert elapsed_time is not None
+        assert "Response headers" in messages_response.message
 
         self.mock_handler_diagnostic.reset()
         # now test in case of an error
@@ -109,16 +120,16 @@ class TestCosmosHttpLogger(unittest.TestCase):
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[7].message.split("\n")
-        messages_response = self.mock_handler_diagnostic.messages[8].message.split("\n")
-        elapsed_time = self.mock_handler_diagnostic.messages[9].message.split("\n")
-        assert "/dbs" in messages_request[0]
-        assert messages_request[1] == "Request method: 'POST'"
-        assert 'Request headers:' in messages_request[2]
-        assert messages_request[15] == 'A body is sent with the request'
-        assert messages_response[0] == 'Response status: 409'
-        assert "Elapsed time in seconds:" in elapsed_time[0]
-        assert "Response headers" in messages_response[1]
+        messages_request = self.mock_handler_diagnostic.messages[1]
+        messages_response = self.mock_handler_diagnostic.messages[2]
+        elapsed_time = messages_request.duration
+        assert "dbs" == messages_request.resource_type
+        assert messages_request.operation_type == "Create"
+        assert 'Request headers:' in messages_request.msg
+        assert 'A body is sent with the request' in messages_request.msg
+        assert messages_request.status_code == 409
+        assert elapsed_time is not None
+        assert "Response headers" in messages_response.msg
 
         # delete database
         self.client_diagnostic.delete_database(database_id)

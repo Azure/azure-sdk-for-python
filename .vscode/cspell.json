@@ -378,6 +378,7 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prompty",
     "pschema",
     "PSECRET",
     "pydantic",
@@ -1182,7 +1183,9 @@
         "racwdlmeop",
         "newfs",
         "adlsstorage",
-        "adlskey"
+        "adlskey",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1422,6 +1425,8 @@
         "Inadherent",
         "nbformat",
         "nbconvert",
+        "onedp",
+        "azureai",
       ]
     },
     {
@@ -1505,7 +1510,9 @@
         "Fsubdir",
         "Fdir",
         "adal",
-        "mytestshare"
+        "mytestshare",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1849,6 +1856,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

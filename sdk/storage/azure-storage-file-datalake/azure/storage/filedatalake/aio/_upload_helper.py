@@ -53,6 +53,7 @@ async def upload_datalake_file(
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
         chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
         encryption_context = kwargs.pop('encryption_context', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
@@ -95,6 +96,7 @@ async def upload_datalake_file(
                 stream=stream,
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
+                progress_hook=progress_hook,
                 **kwargs
             )
         else:
@@ -106,6 +108,7 @@ async def upload_datalake_file(
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
+                progress_hook=progress_hook,
                 **kwargs
             )
 

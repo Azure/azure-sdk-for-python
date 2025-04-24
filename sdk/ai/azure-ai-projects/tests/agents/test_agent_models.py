@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 from typing import Iterator, List
 from unittest.mock import Mock, patch
 import pytest
@@ -174,8 +175,17 @@ class TestAgentEventHandler:
     class MyAgentEventHandler(AgentEventHandler[None]):
         pass
 
+    @pytest.mark.parametrize(
+        "has_errors_in_toolcalls_output,expected_current_retry",
+        [
+            (True, 1),
+            (False, 0),
+        ],
+    )
     @patch("azure.ai.projects.models._patch._parse_event")
-    def test_tool_calls(self, mock_parse_event: Mock):
+    def test_tool_calls(
+        self, mock_parse_event: Mock, has_errors_in_toolcalls_output: bool, expected_current_retry: int
+    ):
         # Test if the event type and status are met, submit function calls.
         submit_tool_outputs = Mock()
         handler = self.MyAgentEventHandler()
@@ -187,13 +197,18 @@ class TestAgentEventHandler:
         event_obj.required_action = SubmitToolOutputsAction({})
         mock_parse_event.return_value = ("", event_obj)
 
-        for _ in handler:
-            handler.until_done()
+        with patch(
+            "azure.ai.projects.models._patch._has_errors_in_toolcalls_output",
+            return_value=has_errors_in_toolcalls_output,
+        ):
+            for _ in handler:
+                handler.until_done()
 
         assert mock_parse_event.call_count == 1
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
-        assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+        assert submit_tool_outputs.call_args[0] == (event_obj, handler, True)
+        assert handler.current_retry == expected_current_retry
 
     @patch("azure.ai.projects.models._patch.AgentEventHandler.on_unhandled_event")
     @pytest.mark.parametrize("event_type", [e.value for e in AgentStreamEvent])
