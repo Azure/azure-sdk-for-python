@@ -47,7 +47,7 @@ class TimeoutTransport(RequestsTransport):
         response = RequestsTransportResponse(None, output)
         return response
 
-
+@pytest.mark.cosmosPPCB
 @pytest.mark.cosmosLong
 class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
