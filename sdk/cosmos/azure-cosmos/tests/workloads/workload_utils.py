@@ -10,6 +10,7 @@ from workload_configs import NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY
 
 _NOISY_ERRORS = set([404, 409, 412])
 _NOISY_SUB_STATUS_CODES = set([0, None])
+_REQUIRED_ATTRIBUTES = ["resource_type", "verb", "operation_type", "status_code", "sub_status_code", "duration"]
 
 def get_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
@@ -64,10 +65,8 @@ def create_logger(file_name):
 
 class WorkloadLoggerFilter(logging.Filter):
     def filter(self, record):
-        # Check if the required attributes exists in the log record
-        required_attributes = ['duration', 'operation_type', 'status_code', 'resource_type', 'verb', 'sub_status_code']
-
-        if all(hasattr(record, attr) for attr in required_attributes):
+        # Check if the required attributes exist in the log record
+        if all(hasattr(record, attr) for attr in _REQUIRED_ATTRIBUTES):
             # Check the conditions
             # Check database account reads
             if record.resource_type == "databaseaccount" and record.verb == "GET" and record.operation_type == "Read":
@@ -79,5 +78,4 @@ class WorkloadLoggerFilter(logging.Filter):
             # Check if the latency (duration) was above 1000 ms
             if record.duration > 1000:
                 return True
-
         return False
