@@ -59,7 +59,7 @@ class PartitionKeyRangeCache(object):
     ):
         client = self._documentClient
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
-        if collection_routing_map is None:
+        if not collection_routing_map:
             collection_pk_ranges = list(client._ReadPartitionKeyRanges(collection_link, **kwargs))
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need

@@ -19,7 +19,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 REGION_1 = "West US 3"
-REGION_2 = "Mexico Central" # "West US"
+REGION_2 = "West US"
 CHANGE_FEED = "changefeed"
 CHANGE_FEED_PK = "changefeed_pk"
 CHANGE_FEED_EPK = "changefeed_epk"
