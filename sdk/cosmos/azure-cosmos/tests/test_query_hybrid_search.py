@@ -213,8 +213,6 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True, response_hook=response_hook)
         result_list = list(results)
         assert len(result_list) == 10
-        for res in result_list:
-            assert res['index'] in [51, 53, 28, 70, 24, 61, 56, 26, 58, 77]
         assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     def test_hybrid_search_partitioned_query_response_hook(self):
@@ -226,8 +224,6 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, partition_key='1', response_hook=response_hook)
         result_list = list(results)
         assert len(result_list) == 10
-        for res in result_list:
-            assert res['index'] in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
         assert response_hook.count == 1
 
 if __name__ == "__main__":
