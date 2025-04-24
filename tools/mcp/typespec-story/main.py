@@ -13,7 +13,7 @@ logger.addHandler(hander)
 mcp = FastMCP("typespec-story")
 
 # Helper function to run CLI commands
-def run_typespec_cli_command(command: str, args: Dict[str, Any]) -> Dict[str, Any]:
+def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optional[str] = None) -> Dict[str, Any]:
     """Run a TypeSpec client generator CLI command and return the result."""
     cli_args = ["npx", "@azure-tools/typespec-client-generator-cli", command]
     
@@ -39,7 +39,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any]) -> Dict[str, An
             cli_args,
             check=True,
             capture_output=True,
-            text=True
+            text=True,
+            cwd=root_dir,
         )
         
         return {
@@ -72,10 +73,8 @@ def init_tool(tspconfig_url: Optional[str] = None, root_dir: Optional[str] = Non
     args = {}
     if tspconfig_url:
         args["tsp-config"] = tspconfig_url
-    # if output_dir:
-    #     args["output-dir"] = output_dir
     
-    return run_typespec_cli_command("init", args)
+    return run_typespec_cli_command("init", args, root_dir=root_dir)
 
 @mcp.tool("update")
 def update_tool(path: Optional[str] = None) -> Dict[str, Any]:
