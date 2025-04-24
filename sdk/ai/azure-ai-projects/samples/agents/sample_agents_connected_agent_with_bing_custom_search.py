@@ -77,7 +77,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role=MessageRole.USER,
-        content="Ask the wikipedia search assistant: how many medals did the USA win in the 2024 summer olympics? DO NOT TRY TO ANSWER THIS QUESTION YOURSELF.",
+        content="Ask the wikipedia search assistant: how many medals did the USA win in the 2024 summer olympics?",
     )
     print(f"Created message, ID: {message.id}")
 
