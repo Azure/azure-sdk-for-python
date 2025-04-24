@@ -76,6 +76,6 @@ class WorkloadLoggerFilter(logging.Filter):
                     record.status_code in _NOISY_ERRORS and record.sub_status_code in _NOISY_SUB_STATUS_CODES):
                 return True
             # Check if the latency (duration) was above 1000 ms
-            if record.duration > 1000:
+            if record.duration >= 1000:
                 return True
         return False
