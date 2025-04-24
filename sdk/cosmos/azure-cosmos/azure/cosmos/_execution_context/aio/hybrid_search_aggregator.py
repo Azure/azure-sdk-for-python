@@ -76,6 +76,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
+                        None
                     )
                 )
 
@@ -224,6 +225,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     query,
                     self._document_producer_comparator,
                     self._options,
+                    self._response_hook
                 )
             )
 

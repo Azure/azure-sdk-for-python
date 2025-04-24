@@ -39,7 +39,8 @@ class _DocumentProducer(object):
     result of each.
     """
 
-    def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp, options, response_hook):
+    def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp, options,
+                 response_hook):
         """
         Constructor
         """
@@ -53,7 +54,6 @@ class _DocumentProducer(object):
         self._has_started = False
         self._cur_item = None
         self._query = query
-        self._response_hook = response_hook
         # initiate execution context
 
         path = _base.GetPathFromLink(collection_link, "docs")
@@ -61,7 +61,7 @@ class _DocumentProducer(object):
 
         def fetch_fn(options):
             return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"],
-                                          response_hook=self._response_hook)
+                                          response_hook=response_hook)
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 

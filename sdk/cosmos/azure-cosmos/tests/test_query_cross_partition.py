@@ -478,6 +478,30 @@ class TestCrossPartitionQuery(unittest.TestCase):
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
+    def test_cross_partition_query_response_hook(self):
+        created_collection = self.created_db.create_container_if_not_exists(
+            id="query_response_hook_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=12000
+        )
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10}
+        ]
+
+        for item in items:
+            created_collection.create_item(body=item)
+
+        response_hook = test_config.ResponseHookCaller()
+        item_list = [item for item in created_collection.query_items("select * from c", enable_cross_partition_query=True, response_hook=response_hook)]
+        assert len(item_list) == 6
+        assert response_hook.count == 2
+        self.created_db.delete_container(created_collection.id)
+
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
             item, result = self.get_mock_result(self.payloads, self.count)
