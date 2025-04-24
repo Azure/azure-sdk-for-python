@@ -1,0 +1,15 @@
+[project]
+name = "typespec-story-mcp"
+version = "0.1.0"
+description = "MCP server for TypeSpec client generator CLI"
+requires-python = ">=3.12"
+license = "MIT"
+readme = "README.md"
+authors = [
+    {name = "Azure SDK Team", email = "azpysdk@microsoft.com"},
+]
+dependencies = [
+    "mcp[cli]>=1.6.0",
+]
+
+
