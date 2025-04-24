@@ -158,7 +158,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         tool_calls.extend([content for content in message.get("content")
                                         if content.get("type") == "tool_call"])
             if len(tool_calls) == 0:
-                # return empty input when there are no tool calls. From a user perspective this is preferrable to raising an exception 
+                # return empty input when there are no tool calls. From a user perspective this is preferable to raising an exception 
                 # as the user will see explicitly the evaluator did not run, rather than seeing a null
                 return []
 
@@ -259,7 +259,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if len(per_turn_results) == 0:
             aggregated[self._AGGREGATE_RESULT_KEY] = math.nan
-            aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'N/A. No tool calls present.'
+            # when there are no tool calls, we assume the evaluator 'passed' as there is nothing to evaluate
+            # assuming a failure could mislead the user into thinking there was a problem with the agent
+            # however, ideally we would like to have a third value like 'N/A' but only 'pass' or 'fail' are allowed for now
+            aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass'
         else:
             score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
             aggregated[self._AGGREGATE_RESULT_KEY] = score
