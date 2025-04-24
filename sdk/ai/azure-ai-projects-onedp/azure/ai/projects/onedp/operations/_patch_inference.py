@@ -247,7 +247,7 @@ class InferenceOperations:
         # TODO: Confirm that it's okay to do two REST API calls here.
         # If the connection uses API key authentication, we need to make another service call to get
         # the connection with API key populated.
-        if connection.credentials.auth_type == CredentialType.API_KEY:
+        if connection.credentials.type == CredentialType.API_KEY:
             connection = self._outer_instance.connections.get_with_credentials(name=connection_name, **kwargs)
 
         logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
@@ -286,6 +286,6 @@ class InferenceOperations:
             )
 
         else:
-            raise ValueError("Unsupported authentication type {connection.auth_type}")
+            raise ValueError("Unsupported authentication type {connection.type}")
 
         return client

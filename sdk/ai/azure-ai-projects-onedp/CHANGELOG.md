@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b10 (Unreleased)
+## 1.0.0b11 (Unreleased)
 
 Major changes happened in this version as the client library switched to using the new AI Foundry data-plane REST APIs.
 (TODO: Add link). Please see updated samples.
@@ -26,6 +26,23 @@ of your selected LLM (RAG pattern).
 ### Sample updates
 
 ### Bugs Fixed
+
+## 1.0.0b10 (2025-04-23)
+
+### Features added
+
+* Added `ConnectedAgentTool` class for better connected Agent support.
+* Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
+* Added tracing for listing Agent run steps.
+* Add a `max_retry` argument to the Agent's `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
+
+### Sample updates
+
+* Added connected Agent tool sample.
+
+### Bugs Fixed
+
+* Fix for filtering of Agent messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
 
 ## 1.0.0b9 (2025-04-16)
 

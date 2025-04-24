@@ -23,7 +23,6 @@ USAGE:
 """
 
 import os
-from typing import List
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
@@ -82,9 +81,7 @@ with AIProjectClient(
     print(get_evaluation_response)
 
     print("List evaluations")
-    evaluations_list_response: List[Evaluation] = project_client.evaluations.list()
-
-    for evaluation in evaluations_list_response:
+    for evaluation in project_client.evaluations.list():
         print(evaluation)
 
     # [END evaluations_sample]

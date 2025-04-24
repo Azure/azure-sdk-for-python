@@ -23,7 +23,6 @@ USAGE:
 """
 import asyncio
 import os
-from typing import List
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
