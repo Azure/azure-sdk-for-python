@@ -67,8 +67,8 @@ class Range(object):
     @classmethod
     def PartitionKeyRangeToRange(cls, partition_key_range):
         self = cls(
-            partition_key_range[PartitionKeyRange.MinInclusive],
-            partition_key_range[PartitionKeyRange.MaxExclusive],
+            partition_key_range[PartitionKeyRange.MinInclusive].upper(),
+            partition_key_range[PartitionKeyRange.MaxExclusive].upper(),
             True,
             False,
         )
