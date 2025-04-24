@@ -77,9 +77,6 @@ test_overlaps_ranges = [(Range("", "FF", True, False),
                        True),
                       (Range("AA", "BB", True, False),
                        Range("CC", "FF", True, False),
-                       False),
-                      (Range("1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "FF", True, False),
-                       Range("1EC0C2CBE45DBC919CF2B65D399C2673", "1ec0c2cbe45dbc919cf2b65d399c2674", True, False),
                        False)]
 
 @pytest.mark.cosmosEmulator

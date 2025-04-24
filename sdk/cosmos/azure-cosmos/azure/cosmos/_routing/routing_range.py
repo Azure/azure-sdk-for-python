@@ -125,7 +125,7 @@ class Range(object):
                     break
                 byte_array[i] = 255
 
-        return binascii.hexlify(byte_array).decode()
+        return binascii.hexlify(byte_array).decode().upper()
 
     def hex_binary_to_byte_array(self, hex_binary_string: str):
         if hex_binary_string is None:
@@ -181,10 +181,8 @@ class Range(object):
 
     @staticmethod
     def _compare_helper(a: str, b: str):
-        normalized_a = a.upper()
-        normalized_b = b.upper()
         # python 3 compatible
-        return (normalized_a > normalized_b) - (normalized_a < normalized_b)
+        return (a > b) - (a < b)
 
     @staticmethod
     def overlaps(range1, range2):
