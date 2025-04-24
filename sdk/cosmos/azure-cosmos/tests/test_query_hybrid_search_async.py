@@ -219,7 +219,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(result_list) == 10
         for res in result_list:
             assert res['index'] in [51, 53, 28, 70, 24, 61, 56, 26, 58, 77]
-        assert response_hook.count == 2
+        assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     async def test_hybrid_search_partitioned_query_response_hook_async(self):
         item_vector = await self.test_container.read_item('50', '1')['vector']
