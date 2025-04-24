@@ -154,7 +154,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         *,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -170,7 +169,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -186,8 +184,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
