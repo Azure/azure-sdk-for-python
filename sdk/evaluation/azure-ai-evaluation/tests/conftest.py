@@ -114,7 +114,7 @@ def add_sanitizers(
             regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
         )
         add_general_regex_sanitizer(
-            regex=r"/projects/([-\w\._\(\)/]+)", value=mock_onedp_project_scope["project_name"], group_for_replace="1"
+            regex=r"/projects/([-\w\._\(\)/]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -344,14 +344,12 @@ def mock_project_scope() -> Dict[str, str]:
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
+        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
 @pytest.fixture(scope="session")
 def mock_onedp_project_scope() -> Dict[str, str]:
-    return {
-        "azure_ai_one_dp_project_scope": "https://Sanitized.cognitiveservices.azure.com",
-        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
-    }
+    return "https://Sanitized.cognitiveservices.azure.com"
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
