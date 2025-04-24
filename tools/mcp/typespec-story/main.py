@@ -1,10 +1,6 @@
 from mcp.server.fastmcp import FastMCP
 import subprocess
-import json
-import os
-import tempfile
-import shutil
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 
 # Initialize FastMCP server
 mcp = FastMCP("typespec-story")
@@ -64,6 +60,10 @@ def init_tool(project_directory: Optional[str] = None, output_dir: Optional[str]
     Returns:
         A dictionary containing the result of the command.
     """
+
+    ## TODO: here we could grab commit from link????
+
+
     args = {}
     if project_directory:
         args["_"] = [project_directory]
