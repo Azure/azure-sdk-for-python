@@ -1,17 +1,14 @@
+import os
+from datetime import datetime
+
 import pytest
 
 from azure.ai.ml import load_capability_host
-from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
-    CapabilityHost,
-)
-from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import (
-    CapabilityHost as RestCapabilityHost,
-)
-from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import (
     CapabilityHostProperties as RestCapabilityHostProperties,
 )
-from datetime import datetime
-import os
+from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
 
 
 @pytest.mark.unittest
@@ -53,6 +50,11 @@ class TestCapabilityHostEntity:
             capability_host.vector_store_connections is not None
             and len(capability_host.vector_store_connections) == 1
             and capability_host.vector_store_connections[0] == "vector_store_connection_1"
+        )
+        assert (
+            capability_host.thread_storage_connections is not None
+            and len(capability_host.thread_storage_connections) == 1
+            and capability_host.thread_storage_connections[0] == "thread_storage_connection_1"
         )
 
     def test_capability_host_constructor(self) -> None:
