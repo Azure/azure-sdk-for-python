@@ -276,7 +276,7 @@ folder in the [package samples][samples].
 
 ```python
 print(f"Create an Index named `{index_name}` referencing an existing AI Search resource:")
-index = project_client.indexes.create_version(
+index = project_client.indexes.create_or_update_version(
     name=index_name,
     version=index_version,
     body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),

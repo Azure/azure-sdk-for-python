@@ -14,9 +14,15 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AgentEvaluation,
+    AgentEvaluationRedactionConfiguration,
+    AgentEvaluationRequest,
+    AgentEvaluationResult,
+    AgentEvaluationSamplingConfiguration,
     ApiKeyCredentials,
     AssetCredentialResponse,
     AzureAISearchIndex,
+    AzureOpenAIModelConfiguration,
     BaseCredentials,
     BlobReferenceForConsumption,
     Connection,
@@ -42,6 +48,7 @@ from ._models import (  # type: ignore
     SASCredentials,
     SasCredential,
     Sku,
+    TargetConfig,
 )
 
 from ._enums import (  # type: ignore
@@ -60,9 +67,15 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AgentEvaluation",
+    "AgentEvaluationRedactionConfiguration",
+    "AgentEvaluationRequest",
+    "AgentEvaluationResult",
+    "AgentEvaluationSamplingConfiguration",
     "ApiKeyCredentials",
     "AssetCredentialResponse",
     "AzureAISearchIndex",
+    "AzureOpenAIModelConfiguration",
     "BaseCredentials",
     "BlobReferenceForConsumption",
     "Connection",
@@ -88,6 +101,7 @@ __all__ = [
     "SASCredentials",
     "SasCredential",
     "Sku",
+    "TargetConfig",
     "AttackStrategy",
     "ConnectionType",
     "CredentialType",

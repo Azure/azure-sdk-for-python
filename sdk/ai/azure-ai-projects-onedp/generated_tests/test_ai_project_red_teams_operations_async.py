@@ -39,14 +39,15 @@ class TestAIProjectRedTeamsOperationsAsync(AIProjectClientTestBaseAsync):
         client = self.create_async_client(endpoint=aiproject_endpoint)
         response = await client.red_teams.create_run(
             red_team={
-                "attackStrategy": ["str"],
+                "attackStrategies": ["str"],
                 "id": "str",
                 "numTurns": 0,
                 "riskCategories": ["str"],
-                "scanName": "str",
                 "simulationOnly": bool,
+                "targetConfig": "target_config",
                 "applicationScenario": "str",
                 "properties": {"str": "str"},
+                "scanName": "str",
                 "status": "str",
                 "tags": {"str": "str"},
             },

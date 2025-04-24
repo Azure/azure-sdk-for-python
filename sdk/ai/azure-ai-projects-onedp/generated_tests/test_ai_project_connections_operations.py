@@ -42,12 +42,3 @@ class TestAIProjectConnectionsOperations(AIProjectClientTestBase):
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy
-    def test_connections_list_with_credentials(self, aiproject_endpoint):
-        client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.connections.list_with_credentials()
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
