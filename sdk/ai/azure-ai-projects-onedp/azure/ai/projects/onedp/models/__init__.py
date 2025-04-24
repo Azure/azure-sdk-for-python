@@ -22,6 +22,7 @@ from ._models import (  # type: ignore
     ApiKeyCredentials,
     AssetCredentialResponse,
     AzureAISearchIndex,
+    AzureOpenAIModelConfiguration,
     BaseCredentials,
     BlobReferenceForConsumption,
     Connection,
@@ -47,6 +48,7 @@ from ._models import (  # type: ignore
     SASCredentials,
     SasCredential,
     Sku,
+    TargetConfig,
 )
 
 from ._enums import (  # type: ignore
@@ -73,6 +75,7 @@ __all__ = [
     "ApiKeyCredentials",
     "AssetCredentialResponse",
     "AzureAISearchIndex",
+    "AzureOpenAIModelConfiguration",
     "BaseCredentials",
     "BlobReferenceForConsumption",
     "Connection",
@@ -98,6 +101,7 @@ __all__ = [
     "SASCredentials",
     "SasCredential",
     "Sku",
+    "TargetConfig",
     "AttackStrategy",
     "ConnectionType",
     "CredentialType",

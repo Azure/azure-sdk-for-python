@@ -44,6 +44,7 @@ class TestAIProjectRedTeamsOperationsAsync(AIProjectClientTestBaseAsync):
                 "numTurns": 0,
                 "riskCategories": ["str"],
                 "simulationOnly": bool,
+                "targetConfig": "target_config",
                 "applicationScenario": "str",
                 "properties": {"str": "str"},
                 "scanName": "str",

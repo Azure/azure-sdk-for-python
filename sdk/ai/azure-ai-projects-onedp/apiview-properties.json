@@ -11,6 +11,8 @@
         "azure.ai.projects.onedp.models.AssetCredentialResponse": "Azure.AI.Projects.AssetCredentialResponse",
         "azure.ai.projects.onedp.models.Index": "Azure.AI.Projects.Index",
         "azure.ai.projects.onedp.models.AzureAISearchIndex": "Azure.AI.Projects.AzureAISearchIndex",
+        "azure.ai.projects.onedp.models.TargetConfig": "Azure.AI.Projects.TargetConfig",
+        "azure.ai.projects.onedp.models.AzureOpenAIModelConfiguration": "Azure.AI.Projects.AzureOpenAIModelConfiguration",
         "azure.ai.projects.onedp.models.BlobReferenceForConsumption": "Azure.AI.Projects.BlobReferenceForConsumption",
         "azure.ai.projects.onedp.models.Connection": "Azure.AI.Projects.Connection",
         "azure.ai.projects.onedp.models.CosmosDBIndex": "Azure.AI.Projects.CosmosDBIndex",

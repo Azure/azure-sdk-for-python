@@ -280,13 +280,13 @@ class BaseCredentials(_model_base.Model):
     EntraIDCredentials, ApiKeyCredentials, CustomCredential, NoAuthenticationCredentials,
     SASCredentials
 
-    :ivar auth_type: The type of credential used by the connection. Required. Known values are:
+    :ivar type: The type of credential used by the connection. Required. Known values are:
      "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.CredentialType
+    :vartype type: str or ~azure.ai.projects.onedp.models.CredentialType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    auth_type: str = rest_discriminator(name="authType", visibility=["read"])
+    type: str = rest_discriminator(name="type", visibility=["read"])
     """The type of credential used by the connection. Required. Known values are: \"ApiKey\", \"AAD\",
      \"SAS\", \"CustomKeys\", and \"None\"."""
 
@@ -294,7 +294,7 @@ class BaseCredentials(_model_base.Model):
     def __init__(
         self,
         *,
-        auth_type: str,
+        type: str,
     ) -> None: ...
 
     @overload
@@ -311,13 +311,13 @@ class BaseCredentials(_model_base.Model):
 class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
     """API Key Credential definition.
 
-    :ivar auth_type: The credentail type. Required. API Key credential
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.API_KEY
+    :ivar type: The credentail type. Required. API Key credential
+    :vartype type: str or ~azure.ai.projects.onedp.models.API_KEY
     :ivar api_key: API Key.
     :vartype api_key: str
     """
 
-    auth_type: Literal[CredentialType.API_KEY] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    type: Literal[CredentialType.API_KEY] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credentail type. Required. API Key credential"""
     api_key: Optional[str] = rest_field(name="key", visibility=["read"])
     """API Key."""
@@ -335,7 +335,7 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, auth_type=CredentialType.API_KEY, **kwargs)
+        super().__init__(*args, type=CredentialType.API_KEY, **kwargs)
 
 
 class AssetCredentialResponse(_model_base.Model):
@@ -482,6 +482,76 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         super().__init__(*args, type=IndexType.AZURE_SEARCH, **kwargs)
 
 
+class TargetConfig(_model_base.Model):
+    """Abstract class for target configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIModelConfiguration
+
+    :ivar type: Type of the model configuration. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the model configuration. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIModel"):
+    """Azure OpenAI model configuration. The API version would be selected by the service for querying
+    the model.
+
+    :ivar type: Required. Default value is "AzureOpenAIModel".
+    :vartype type: str
+    :ivar model_deployment_name: Deployment name for AOAI model. Example: gpt-4o if in AIServices
+     or connection based ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``.
+     Required.
+    :vartype model_deployment_name: str
+    """
+
+    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"AzureOpenAIModel\"."""
+    model_deployment_name: str = rest_field(
+        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment name for AOAI model. Example: gpt-4o if in AIServices or connection based
+     ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_deployment_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="AzureOpenAIModel", **kwargs)
+
+
 class BlobReferenceForConsumption(_model_base.Model):
     """Represents a reference to a blob for consumption.
 
@@ -526,8 +596,6 @@ class BlobReferenceForConsumption(_model_base.Model):
 class Connection(_model_base.Model):
     """Response from the list and get connections operations.
 
-    :ivar auth_type: Discriminator property for Connection. Required.
-    :vartype auth_type: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
@@ -545,8 +613,6 @@ class Connection(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    auth_type: str = rest_discriminator(name="authType")
-    """Discriminator property for Connection. Required."""
     name: str = rest_field(visibility=["read"])
     """The name of the resource. Required."""
     type: Union[str, "_models.ConnectionType"] = rest_field(visibility=["read"])
@@ -561,21 +627,6 @@ class Connection(_model_base.Model):
     """The credentials used by the connection. Required."""
     metadata: Dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
@@ -645,12 +696,16 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
     """Custom credential defintion.
 
-    :ivar auth_type: The credential type. Required. Custom credential
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.CUSTOM
+    :ivar type: The credential type. Required. Custom credential
+    :vartype type: str or ~azure.ai.projects.onedp.models.CUSTOM
+    :ivar keys_property: The credential type. Required.
+    :vartype keys_property: dict[str, str]
     """
 
-    auth_type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Custom credential"""
+    keys_property: Dict[str, str] = rest_field(name="keys", visibility=["read"])
+    """The credential type. Required."""
 
     @overload
     def __init__(
@@ -665,7 +720,7 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, auth_type=CredentialType.CUSTOM, **kwargs)
+        super().__init__(*args, type=CredentialType.CUSTOM, **kwargs)
 
 
 class DatasetVersion(_model_base.Model):
@@ -813,11 +868,11 @@ class EmbeddingConfiguration(_model_base.Model):
 class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
     """Entra ID credential definition.
 
-    :ivar auth_type: The credential type. Required. Entra ID credential (formerly known as AAD)
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.ENTRA_ID
+    :ivar type: The credential type. Required. Entra ID credential (formerly known as AAD)
+    :vartype type: str or ~azure.ai.projects.onedp.models.ENTRA_ID
     """
 
-    auth_type: Literal[CredentialType.ENTRA_ID] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    type: Literal[CredentialType.ENTRA_ID] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Entra ID credential (formerly known as AAD)"""
 
     @overload
@@ -833,7 +888,7 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, auth_type=CredentialType.ENTRA_ID, **kwargs)
+        super().__init__(*args, type=CredentialType.ENTRA_ID, **kwargs)
 
 
 class Evaluation(_model_base.Model):
@@ -1220,11 +1275,11 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
 class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
     """Credentials that do not require authentication.
 
-    :ivar auth_type: The credential type. Required. No credential
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.NONE
+    :ivar type: The credential type. Required. No credential
+    :vartype type: str or ~azure.ai.projects.onedp.models.NONE
     """
 
-    auth_type: Literal[CredentialType.NONE] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    type: Literal[CredentialType.NONE] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. No credential"""
 
     @overload
@@ -1240,7 +1295,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, auth_type=CredentialType.NONE, **kwargs)
+        super().__init__(*args, type=CredentialType.NONE, **kwargs)
 
 
 class PendingUploadRequest(_model_base.Model):
@@ -1373,6 +1428,8 @@ class RedTeam(_model_base.Model):
     :vartype properties: dict[str, str]
     :ivar status: Status of the red-team. It is set by service and is read-only.
     :vartype status: str
+    :ivar target_config: Target configuration for the red-team run. Required.
+    :vartype target_config: ~azure.ai.projects.onedp.models.TargetConfig
     """
 
     id: str = rest_field(visibility=["read"])
@@ -1405,6 +1462,10 @@ class RedTeam(_model_base.Model):
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the red-team. It is set by service and is read-only."""
+    target_config: "_models.TargetConfig" = rest_field(
+        name="targetConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target configuration for the red-team run. Required."""
 
     @overload
     def __init__(
@@ -1414,6 +1475,7 @@ class RedTeam(_model_base.Model):
         attack_strategies: List[Union[str, "_models.AttackStrategy"]],
         simulation_only: bool,
         risk_categories: List[Union[str, "_models.RiskCategory"]],
+        target_config: "_models.TargetConfig",
         scan_name: Optional[str] = None,
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1453,15 +1515,15 @@ class SasCredential(_model_base.Model):
 class SASCredentials(BaseCredentials, discriminator="SAS"):
     """Shared Access Signature (SAS) credential definition.
 
-    :ivar auth_type: The credential type. Required. Shared Access Signature (SAS) credential
-    :vartype auth_type: str or ~azure.ai.projects.onedp.models.SAS
+    :ivar type: The credential type. Required. Shared Access Signature (SAS) credential
+    :vartype type: str or ~azure.ai.projects.onedp.models.SAS
     :ivar sas_token: SAS token.
     :vartype sas_token: str
     """
 
-    auth_type: Literal[CredentialType.SAS] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    type: Literal[CredentialType.SAS] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Shared Access Signature (SAS) credential"""
-    sas_token: Optional[str] = rest_field(name="sasToken", visibility=["read"])
+    sas_token: Optional[str] = rest_field(name="SAS", visibility=["read"])
     """SAS token."""
 
     @overload
@@ -1477,7 +1539,7 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, auth_type=CredentialType.SAS, **kwargs)
+        super().__init__(*args, type=CredentialType.SAS, **kwargs)
 
 
 class Sku(_model_base.Model):
