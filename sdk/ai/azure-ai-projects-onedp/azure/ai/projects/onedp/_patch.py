@@ -6,8 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any, Union, Optional
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from typing import List, Any, Optional
+from azure.core.credentials import TokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations, InferenceOperations, AgentsOperations
 from ._patch_prompts import PromptTemplate
@@ -48,7 +48,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
         self.telemetry = TelemetryOperations(self)
