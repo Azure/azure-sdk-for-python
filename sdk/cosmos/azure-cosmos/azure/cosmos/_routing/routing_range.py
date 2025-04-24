@@ -25,6 +25,7 @@ database service.
 import base64
 import binascii
 import json
+from typing import Union
 
 
 class PartitionKeyRange(object):
@@ -44,7 +45,7 @@ class Range(object):
     IsMinInclusivePath = "isMinInclusive"
     IsMaxInclusivePath = "isMaxInclusive"
 
-    def __init__(self, range_min: str, range_max: str, isMinInclusive: bool, isMaxInclusive: bool):
+    def __init__(self, range_min, range_max, isMinInclusive, isMaxInclusive):
         if range_min is None:
             raise ValueError("min is missing")
         if range_max is None:
