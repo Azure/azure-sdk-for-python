@@ -12,38 +12,94 @@ _NOISY_ERRORS = set([404, 409, 412])
 _NOISY_SUB_STATUS_CODES = set([0, None])
 _REQUIRED_ATTRIBUTES = ["resource_type", "verb", "operation_type", "status_code", "sub_status_code", "duration"]
 
+def get_user_agent(client_id):
+    return str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
 def get_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
     return {"id": "test-" + str(random_int), "pk": "pk-" + str(random_int)}
 
-async def upsert_item_concurrently(container, num_upserts):
+def upsert_item(container, excluded_locations, num_upserts):
+    for _ in range(num_upserts):
+        if excluded_locations:
+            container.upsert_item(get_random_item(), etag=None, match_condition=None,
+                                  excluded_locations=excluded_locations)
+        else:
+            container.upsert_item(get_random_item(), etag=None, match_condition=None)
+
+
+def read_item(container, excluded_locations, num_reads):
+    for _ in range(num_reads):
+        item = get_random_item()
+        if excluded_locations:
+            container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None,
+                                excluded_locations=excluded_locations)
+        else:
+            container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None)
+
+def query_items(container, excluded_locations, num_queries):
+    for _ in range(num_queries):
+        perform_query(container, excluded_locations)
+
+
+def perform_query(container, excluded_locations):
+    random_item = get_random_item()
+    if excluded_locations:
+        results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
+                                        parameters=[{"name": "@id", "value": random_item["id"]},
+                                                    {"name": "@pk", "value": random_item["pk"]}],
+                                        partition_key=random_item[PARTITION_KEY],
+                                        excluded_locations=excluded_locations)
+    else:
+        results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
+                                        parameters=[{"name": "@id", "value": random_item["id"]},
+                                                    {"name": "@pk", "value": random_item["pk"]}],
+                                        partition_key=random_item[PARTITION_KEY])
+    items = [item for item in results]
+
+async def upsert_item_concurrently(container, excluded_locations, num_upserts):
     tasks = []
     for _ in range(num_upserts):
-        tasks.append(container.upsert_item(get_random_item(), etag=None, match_condition=None))
+        if excluded_locations:
+            tasks.append(container.upsert_item(get_random_item(), etag=None, match_condition=None,
+                                               excluded_locations=excluded_locations))
+        else:
+            tasks.append(container.upsert_item(get_random_item(), etag=None, match_condition=None))
     await asyncio.gather(*tasks)
 
 
-async def read_item_concurrently(container, num_reads):
+async def read_item_concurrently(container, excluded_locations, num_reads):
     tasks = []
     for _ in range(num_reads):
         item = get_random_item()
-        tasks.append(container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None))
+        if excluded_locations:
+            tasks.append(container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None,
+                                             excluded_locations=excluded_locations))
+        else:
+            tasks.append(container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None))
     await asyncio.gather(*tasks)
 
 
-async def query_items_concurrently(container, num_queries):
+async def query_items_concurrently(container, excluded_locations, num_queries):
     tasks = []
     for _ in range(num_queries):
-        tasks.append(perform_query(container))
+        tasks.append(perform_query_concurrently(container, excluded_locations))
     await asyncio.gather(*tasks)
 
 
-async def perform_query(container):
+async def perform_query_concurrently(container, excluded_locations):
     random_item = get_random_item()
-    results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
-                                    parameters=[{"name": "@id", "value": random_item["id"]},
-                                                {"name": "@pk", "value": random_item["pk"]}],
-                                    partition_key=random_item[PARTITION_KEY])
+    if excluded_locations:
+        results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
+                                        parameters=[{"name": "@id", "value": random_item["id"]},
+                                                    {"name": "@pk", "value": random_item["pk"]}],
+                                        partition_key=random_item[PARTITION_KEY],
+                                        excluded_locations=excluded_locations)
+    else:
+        results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
+                                        parameters=[{"name": "@id", "value": random_item["id"]},
+                                                    {"name": "@pk", "value": random_item["pk"]}],
+                                        partition_key=random_item[PARTITION_KEY])
     items = [item async for item in results]
 
 def create_logger(file_name):
