@@ -111,10 +111,10 @@ def add_sanitizers(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
         add_general_regex_sanitizer(
-            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
+            regex=r"/projects/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
         add_general_regex_sanitizer(
-            regex=r"/projects/([-\w\._\(\)/]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
