@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.aio import ServiceBusManagementClient
+from azure.mgmt.servicebus.v2021_11_01.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_migration_configs_list(self, resource_group):
         response = self.client.migration_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -33,7 +33,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_and_start_migration(self, resource_group):
+    async def test_migration_configs_begin_create_and_start_migration(self, resource_group):
         response = await (
             await self.client.migration_configs.begin_create_and_start_migration(
                 resource_group_name=resource_group.name,
@@ -67,7 +67,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_migration_configs_delete(self, resource_group):
         response = await self.client.migration_configs.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -80,7 +80,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_migration_configs_get(self, resource_group):
         response = await self.client.migration_configs.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -93,7 +93,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_complete_migration(self, resource_group):
+    async def test_migration_configs_complete_migration(self, resource_group):
         response = await self.client.migration_configs.complete_migration(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -106,7 +106,7 @@ class TestServiceBusManagementMigrationConfigsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_revert(self, resource_group):
+    async def test_migration_configs_revert(self, resource_group):
         response = await self.client.migration_configs.revert(
             resource_group_name=resource_group.name,
             namespace_name="str",

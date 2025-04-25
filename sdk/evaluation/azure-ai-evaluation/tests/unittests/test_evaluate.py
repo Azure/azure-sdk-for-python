@@ -70,6 +70,9 @@ def evaluate_test_data_jsonl_file():
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_alphanumeric():
+    return _get_file("evaluate_test_data_alphanumeric.jsonl")
 
 @pytest.fixture
 def questions_file():
@@ -89,6 +92,19 @@ def questions_answers_file():
 @pytest.fixture
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
+
+@pytest.fixture
+def questions_answers_korean_file():
+    return _get_file("questions_answers_korean.jsonl")
+
+
+@pytest.fixture
+def restore_env_vars():
+    """Fixture to restore environment variables after the test."""
+    original_vars = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(original_vars)
 
 
 def _target_fn(query):
@@ -401,10 +417,42 @@ class TestEvaluate:
                 },
             )
 
-        assert (
-            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-            in exc_info.value.args[0]
+            assert (
+                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+                in exc_info.value.args[0]
+            )
+
+    def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
+        # Valid column mappings that include numeric characters
+        # This test validates the fix for the regex pattern that now accepts numeric characters
+        # Previous regex was `re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")`
+        # New regex is `re.compile(r"^\$\{(target|data)\.[a-zA-Z0-9_]+\}$")`
+
+        column_mappings_with_numbers = {
+            "response": "${data.response123}",
+            "query": "${data.query456}",
+            "context": "${data.context789}"
+        } # This should not raise an exception with the updated regex for column mapping format validation
+        # The test passes if no exception about "Unexpected references" is raised
+        result = evaluate(
+            data=evaluate_test_data_alphanumeric,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            evaluator_config={
+                "g": {
+                    "column_mapping": column_mappings_with_numbers,
+                }
+            },
+            fail_on_evaluator_errors=False
         )
+        
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response123" in row_result_df.columns
+        assert "inputs.query456" in row_result_df.columns
+        assert "inputs.context789" in row_result_df.columns
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
@@ -786,6 +834,7 @@ class TestEvaluate:
         assert eval1._get_conversation_aggregator_type() == _AggregationType.CUSTOM
 
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
+    @pytest.mark.usefixtures("restore_env_vars")
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
         # This test exists to ensure that PF doesn't crash when trying to serialize a
         # complex aggregation function.
@@ -851,3 +900,22 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
+    
+    def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
+        output_path = "eval_test_results_korean.jsonl"
+
+        result = evaluate(
+            data=questions_answers_korean_file,
+            evaluators={"g": F1ScoreEvaluator()},
+            output_path=output_path,
+        )
+
+        assert result is not None
+
+        with open(questions_answers_korean_file, "r", encoding="utf-8") as f:
+            first_line = f.readline()
+            data_from_file = json.loads(first_line)
+
+        assert result["rows"][0]["inputs.query"] == data_from_file["query"]
+
+        os.remove(output_path)

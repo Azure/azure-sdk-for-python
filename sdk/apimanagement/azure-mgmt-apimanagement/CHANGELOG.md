@@ -1,5 +1,247 @@
 # Release History
 
+## 5.0.0 (2025-04-21)
+
+### Features Added
+
+  - Client `ApiManagementClient` added operation group `api_gateway`
+  - Client `ApiManagementClient` added operation group `api_management_gateway_skus`
+  - Client `ApiManagementClient` added operation group `all_policies`
+  - Client `ApiManagementClient` added operation group `api_gateway_config_connection`
+  - Client `ApiManagementClient` added operation group `policy_restriction`
+  - Client `ApiManagementClient` added operation group `policy_restriction_validations`
+  - Client `ApiManagementClient` added operation group `product_api_link`
+  - Client `ApiManagementClient` added operation group `product_group_link`
+  - Client `ApiManagementClient` added operation group `tag_api_link`
+  - Client `ApiManagementClient` added operation group `tag_operation_link`
+  - Client `ApiManagementClient` added operation group `tag_product_link`
+  - Client `ApiManagementClient` added operation group `workspace_backend`
+  - Client `ApiManagementClient` added operation group `workspace_certificate`
+  - Client `ApiManagementClient` added operation group `workspace_diagnostic`
+  - Client `ApiManagementClient` added operation group `workspace_api_diagnostic`
+  - Client `ApiManagementClient` added operation group `api_management_workspace_links`
+  - Client `ApiManagementClient` added operation group `api_management_workspace_link`
+  - Client `ApiManagementClient` added operation group `workspace_logger`
+  - Client `ApiManagementClient` added operation group `workspace`
+  - Client `ApiManagementClient` added operation group `workspace_policy`
+  - Client `ApiManagementClient` added operation group `workspace_named_value`
+  - Client `ApiManagementClient` added operation group `workspace_global_schema`
+  - Client `ApiManagementClient` added operation group `workspace_notification`
+  - Client `ApiManagementClient` added operation group `workspace_notification_recipient_user`
+  - Client `ApiManagementClient` added operation group `workspace_notification_recipient_email`
+  - Client `ApiManagementClient` added operation group `workspace_policy_fragment`
+  - Client `ApiManagementClient` added operation group `workspace_group`
+  - Client `ApiManagementClient` added operation group `workspace_group_user`
+  - Client `ApiManagementClient` added operation group `workspace_subscription`
+  - Client `ApiManagementClient` added operation group `workspace_api_version_set`
+  - Client `ApiManagementClient` added operation group `workspace_api`
+  - Client `ApiManagementClient` added operation group `workspace_api_revision`
+  - Client `ApiManagementClient` added operation group `workspace_api_release`
+  - Client `ApiManagementClient` added operation group `workspace_api_operation`
+  - Client `ApiManagementClient` added operation group `workspace_api_operation_policy`
+  - Client `ApiManagementClient` added operation group `workspace_api_policy`
+  - Client `ApiManagementClient` added operation group `workspace_api_schema`
+  - Client `ApiManagementClient` added operation group `workspace_product`
+  - Client `ApiManagementClient` added operation group `workspace_product_api_link`
+  - Client `ApiManagementClient` added operation group `workspace_product_group_link`
+  - Client `ApiManagementClient` added operation group `workspace_product_policy`
+  - Client `ApiManagementClient` added operation group `workspace_tag`
+  - Client `ApiManagementClient` added operation group `workspace_tag_api_link`
+  - Client `ApiManagementClient` added operation group `workspace_tag_operation_link`
+  - Client `ApiManagementClient` added operation group `workspace_tag_product_link`
+  - Client `ApiManagementClient` added operation group `workspace_api_export`
+  - Client `ApiManagementClient` added operation group `operation_status`
+  - Client `ApiManagementClient` added operation group `operations_results`
+  - Model `ApiContract` added property `provisioning_state`
+  - Model `ApiContractProperties` added property `provisioning_state`
+  - Model `ApiCreateOrUpdateParameter` added property `provisioning_state`
+  - Model `ApiCreateOrUpdateProperties` added property `provisioning_state`
+  - Model `ApiManagementServiceBaseProperties` added property `configuration_api`
+  - Model `ApiManagementServiceBaseProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceBaseProperties` added property `developer_portal_status`
+  - Model `ApiManagementServiceProperties` added property `configuration_api`
+  - Model `ApiManagementServiceProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceProperties` added property `developer_portal_status`
+  - Model `ApiManagementServiceResource` added property `configuration_api`
+  - Model `ApiManagementServiceResource` added property `legacy_portal_status`
+  - Model `ApiManagementServiceResource` added property `developer_portal_status`
+  - Model `ApiManagementServiceUpdateParameters` added property `configuration_api`
+  - Model `ApiManagementServiceUpdateParameters` added property `legacy_portal_status`
+  - Model `ApiManagementServiceUpdateParameters` added property `developer_portal_status`
+  - Model `ApiManagementServiceUpdateProperties` added property `configuration_api`
+  - Model `ApiManagementServiceUpdateProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceUpdateProperties` added property `developer_portal_status`
+  - Enum `ApiType` added member `GRPC`
+  - Enum `ApiType` added member `ODATA`
+  - Model `AuthorizationAccessPolicyContract` added property `app_ids`
+  - Model `BackendBaseParameters` added property `circuit_breaker`
+  - Model `BackendBaseParameters` added property `pool`
+  - Model `BackendBaseParameters` added property `type`
+  - Model `BackendContract` added property `circuit_breaker`
+  - Model `BackendContract` added property `pool`
+  - Model `BackendContract` added property `type_properties_type`
+  - Model `BackendContractProperties` added property `circuit_breaker`
+  - Model `BackendContractProperties` added property `pool`
+  - Model `BackendContractProperties` added property `type`
+  - Model `BackendUpdateParameterProperties` added property `circuit_breaker`
+  - Model `BackendUpdateParameterProperties` added property `pool`
+  - Model `BackendUpdateParameterProperties` added property `type`
+  - Model `BackendUpdateParameters` added property `circuit_breaker`
+  - Model `BackendUpdateParameters` added property `pool`
+  - Model `BackendUpdateParameters` added property `type`
+  - Enum `ContentFormat` added member `GRPC`
+  - Enum `ContentFormat` added member `GRPC_LINK`
+  - Enum `ContentFormat` added member `ODATA`
+  - Enum `ContentFormat` added member `ODATA_LINK`
+  - Model `ErrorResponse` added property `error`
+  - Model `GlobalSchemaContract` added property `provisioning_state`
+  - Enum `HostnameType` added member `CONFIGURATION_API`
+  - Model `NamedValueContract` added property `provisioning_state`
+  - Model `NamedValueContractProperties` added property `provisioning_state`
+  - Enum `PlatformVersion` added member `STV2_1`
+  - Model `PolicyFragmentContract` added property `provisioning_state`
+  - Model `PortalRevisionContract` added property `provisioning_state`
+  - Model `SchemaContract` added property `provisioning_state`
+  - Enum `SkuType` added member `BASIC_V2`
+  - Enum `SkuType` added member `STANDARD_V2`
+  - Enum `SoapApiType` added member `G_RPC`
+  - Enum `SoapApiType` added member `O_DATA`
+  - Added model `AllPoliciesCollection`
+  - Added model `AllPoliciesContract`
+  - Added enum `ApiGatewaySkuType`
+  - Added model `ApiManagementGatewayBaseProperties`
+  - Added model `ApiManagementGatewayConfigConnectionListResult`
+  - Added model `ApiManagementGatewayConfigConnectionResource`
+  - Added model `ApiManagementGatewayListResult`
+  - Added model `ApiManagementGatewayProperties`
+  - Added model `ApiManagementGatewayResource`
+  - Added model `ApiManagementGatewaySkuProperties`
+  - Added model `ApiManagementGatewaySkuPropertiesForPatch`
+  - Added model `ApiManagementGatewayUpdateParameters`
+  - Added model `ApiManagementGatewayUpdateProperties`
+  - Added model `ApiManagementWorkspaceLinksListResult`
+  - Added model `ApiManagementWorkspaceLinksProperties`
+  - Added model `ApiManagementWorkspaceLinksResource`
+  - Added model `BackendBaseParametersPool`
+  - Added model `BackendCircuitBreaker`
+  - Added model `BackendConfiguration`
+  - Added model `BackendPool`
+  - Added model `BackendPoolItem`
+  - Added model `BackendSubnetConfiguration`
+  - Added enum `BackendType`
+  - Added model `CircuitBreakerFailureCondition`
+  - Added model `CircuitBreakerRule`
+  - Added model `ConfigurationApi`
+  - Added enum `DeveloperPortalStatus`
+  - Added model `DiagnosticUpdateContract`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `FailureStatusCodeRange`
+  - Added model `FrontendConfiguration`
+  - Added model `GatewayConfigurationApi`
+  - Added model `GatewayDebugCredentialsContract`
+  - Added model `GatewayListDebugCredentialsContract`
+  - Added enum `GatewayListDebugCredentialsContractPurpose`
+  - Added model `GatewayListTraceContract`
+  - Added model `GatewayResourceSkuResult`
+  - Added model `GatewayResourceSkuResults`
+  - Added model `GatewaySku`
+  - Added model `GatewaySkuCapacity`
+  - Added enum `GatewaySkuCapacityScaleType`
+  - Added enum `KeyVaultRefreshState`
+  - Added enum `LegacyApiState`
+  - Added enum `LegacyPortalStatus`
+  - Added model `MigrateToStv2Contract`
+  - Added enum `MigrateToStv2Mode`
+  - Added model `OperationStatusResult`
+  - Added enum `PolicyComplianceState`
+  - Added model `PolicyRestrictionCollection`
+  - Added model `PolicyRestrictionContract`
+  - Added enum `PolicyRestrictionRequireBase`
+  - Added model `PolicyRestrictionUpdateContract`
+  - Added model `PolicyWithComplianceCollection`
+  - Added model `PolicyWithComplianceContract`
+  - Added model `ProductApiLinkCollection`
+  - Added model `ProductApiLinkContract`
+  - Added model `ProductGroupLinkCollection`
+  - Added model `ProductGroupLinkContract`
+  - Added model `TagApiLinkCollection`
+  - Added model `TagApiLinkContract`
+  - Added model `TagOperationLinkCollection`
+  - Added model `TagOperationLinkContract`
+  - Added model `TagProductLinkCollection`
+  - Added model `TagProductLinkContract`
+  - Added model `WorkspaceCollection`
+  - Added model `WorkspaceContract`
+  - Added model `WorkspaceLinksBaseProperties`
+  - Added model `WorkspaceLinksGateway`
+  - Model `ApiOperations` added method `begin_delete`
+  - Model `GatewayOperations` added method `invalidate_debug_credentials`
+  - Model `GatewayOperations` added method `list_debug_credentials`
+  - Model `GatewayOperations` added method `list_trace`
+  - Model `UserOperations` added method `begin_delete`
+  - Added model `AllPoliciesOperations`
+  - Added model `ApiGatewayConfigConnectionOperations`
+  - Added model `ApiGatewayOperations`
+  - Added model `ApiManagementGatewaySkusOperations`
+  - Added model `ApiManagementWorkspaceLinkOperations`
+  - Added model `ApiManagementWorkspaceLinksOperations`
+  - Added model `OperationStatusOperations`
+  - Added model `OperationsResultsOperations`
+  - Added model `PolicyRestrictionOperations`
+  - Added model `PolicyRestrictionValidationsOperations`
+  - Added model `ProductApiLinkOperations`
+  - Added model `ProductGroupLinkOperations`
+  - Added model `TagApiLinkOperations`
+  - Added model `TagOperationLinkOperations`
+  - Added model `TagProductLinkOperations`
+  - Added model `WorkspaceApiDiagnosticOperations`
+  - Added model `WorkspaceApiExportOperations`
+  - Added model `WorkspaceApiOperationOperations`
+  - Added model `WorkspaceApiOperationPolicyOperations`
+  - Added model `WorkspaceApiOperations`
+  - Added model `WorkspaceApiPolicyOperations`
+  - Added model `WorkspaceApiReleaseOperations`
+  - Added model `WorkspaceApiRevisionOperations`
+  - Added model `WorkspaceApiSchemaOperations`
+  - Added model `WorkspaceApiVersionSetOperations`
+  - Added model `WorkspaceBackendOperations`
+  - Added model `WorkspaceCertificateOperations`
+  - Added model `WorkspaceDiagnosticOperations`
+  - Added model `WorkspaceGlobalSchemaOperations`
+  - Added model `WorkspaceGroupOperations`
+  - Added model `WorkspaceGroupUserOperations`
+  - Added model `WorkspaceLoggerOperations`
+  - Added model `WorkspaceNamedValueOperations`
+  - Added model `WorkspaceNotificationOperations`
+  - Added model `WorkspaceNotificationRecipientEmailOperations`
+  - Added model `WorkspaceNotificationRecipientUserOperations`
+  - Added model `WorkspaceOperations`
+  - Added model `WorkspacePolicyFragmentOperations`
+  - Added model `WorkspacePolicyOperations`
+  - Added model `WorkspaceProductApiLinkOperations`
+  - Added model `WorkspaceProductGroupLinkOperations`
+  - Added model `WorkspaceProductOperations`
+  - Added model `WorkspaceProductPolicyOperations`
+  - Added model `WorkspaceSubscriptionOperations`
+  - Added model `WorkspaceTagApiLinkOperations`
+  - Added model `WorkspaceTagOperationLinkOperations`
+  - Added model `WorkspaceTagOperations`
+  - Added model `WorkspaceTagProductLinkOperations`
+
+### Breaking Changes
+
+  - Parameter `virtual_network_type` of model `ApiManagementServiceBaseProperties` is now optional
+  - Parameter `virtual_network_type` of model `ApiManagementServiceProperties` is now optional
+  - Parameter `virtual_network_type` of model `ApiManagementServiceResource` is now optional
+  - Parameter `virtual_network_type` of model `ApiManagementServiceUpdateParameters` is now optional
+  - Parameter `virtual_network_type` of model `ApiManagementServiceUpdateProperties` is now optional
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Model `ErrorResponse` deleted or renamed its instance variable `details`
+  - Deleted or renamed method `ApiOperations.delete`
+  - Deleted or renamed method `UserOperations.delete`
+
 ## 4.0.1 (2024-03-19)
 
 ### Other Changes

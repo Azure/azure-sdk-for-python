@@ -22,8 +22,7 @@ class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
     </ns0:content>
     """
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Mutate serialized (QueueDescription, TopicDescription, SubscriptionDescription, RuleDescription)
         XML to use default namespace.
 

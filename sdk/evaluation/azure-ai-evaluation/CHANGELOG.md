@@ -3,10 +3,18 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
+- New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
+    ```
+    "query1": "some query", "response: "some response"
+    ```
+    throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
+    Now, users may import data containing fields with numeric characters. 
+
 
 ### Other Changes
 

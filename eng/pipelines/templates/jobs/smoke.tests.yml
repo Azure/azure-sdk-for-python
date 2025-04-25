@@ -13,8 +13,8 @@ jobs:
     - job: smoke_test_eligibility
       displayName: Check Smoke Test Eligibility
       pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: $(LINUXPOOL)
+        image: $(LINUXVMIMAGE)
         os: linux
       steps:
         - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(parameters.Artifact.skipPublishPackage, 'true')) }}:
@@ -41,23 +41,20 @@ jobs:
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
       matrix:
-        Python_38_Linux (AzureCloud):
-          PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-2004-general"
-          OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+        Python_310_Linux (AzureCloud):
+          PythonVersion: '3.10'
         ${{ if eq(parameters.Daily, true) }}:
-          Python_37_Linux (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+          Python_39_Linux (AzureCloud):
+            PythonVersion: '3.9'
 
     pool:
-      name: $(Pool)
-      image: $(OSVmImage)
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
       os: linux
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
+      - template: /eng/pipelines/templates/variables/image.yml
       - name: requirements
         ${{ if eq(parameters.Daily, true) }}:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -79,21 +76,18 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_37_Windows (AzureCloud):
-              PythonVersion: '3.7'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
-            Python_38_Windows (AzureCloud):
-              PythonVersion: '3.8'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
+            Python_310_Windows (AzureCloud):
+              PythonVersion: '3.10'
+            Python_39_Windows (AzureCloud):
+              PythonVersion: '3.9'
 
       pool:
-        name: $(Pool)
-        image: $(OSVmImage)
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
+        - template: /eng/pipelines/templates/variables/image.yml
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -113,22 +107,19 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_37_Mac (AzureCloud):
-              PythonVersion: '3.7'
-              Pool: Azure Pipelines
-              OSVmImage: macos-latest
-            Python_38_Mac (AzureCloud):
-              PythonVersion: '3.8'
-              Pool: Azure Pipelines
-              OSVmImage: macos-latest
+            Python_310_Mac (AzureCloud):
+              PythonVersion: '3.10'
+            Python_39_Mac (AzureCloud):
+              PythonVersion: '3.9'
 
       pool:
-        name: $(Pool)
-        vmImage: $(OSVmImage)
+        name: $(MACPOOL)
+        vmImage: $(MACVMIMAGE)
         os: macOS
 
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
+        - template: /eng/pipelines/templates/variables/image.yml
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt

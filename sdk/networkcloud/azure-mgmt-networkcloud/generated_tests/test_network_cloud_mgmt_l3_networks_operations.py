@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_l3_networks_list_by_subscription(self, resource_group):
         response = self.client.l3_networks.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
     def test_l3_networks_list_by_resource_group(self, resource_group):
         response = self.client.l3_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.l3_networks.get(
             resource_group_name=resource_group.name,
             l3_network_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualMachinesAssociatedIds": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.l3_networks.begin_delete(
             resource_group_name=resource_group.name,
             l3_network_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.l3_networks.update(
             resource_group_name=resource_group.name,
             l3_network_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
