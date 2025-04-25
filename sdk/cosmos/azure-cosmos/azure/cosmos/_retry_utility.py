@@ -39,6 +39,7 @@ from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
 from .documents import _OperationType
+from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 
 
@@ -337,11 +338,13 @@ class ConnectionRetryPolicy(RetryPolicy):
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
                 retry_error = err
                 if _has_database_account_header(request.http_request.headers):
                     raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

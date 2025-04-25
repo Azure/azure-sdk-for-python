@@ -457,6 +457,11 @@ class DataLakeFileClient(PathClient):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
+        :keyword progress_hook:
+            A callback to track the progress of a long-running upload. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], None]
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """
@@ -683,6 +688,11 @@ class DataLakeFileClient(PathClient):
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
+        :keyword progress_hook:
+            A callback to track the progress of a long-running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

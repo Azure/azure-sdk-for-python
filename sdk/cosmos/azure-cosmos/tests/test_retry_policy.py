@@ -10,8 +10,20 @@ import azure.cosmos._retry_options as retry_options
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import _retry_utility, PartitionKey
+from azure.cosmos import _retry_utility, PartitionKey, documents
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from _fault_injection_transport import FaultInjectionTransport
+
+
+def setup_method_with_custom_transport(
+        custom_transport,
+        **kwargs):
+    connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs")
+    client = cosmos_client.CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey,
+                                        transport=custom_transport, connection_retry_policy=connection_retry_policy, **kwargs)
+    db = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+    container = db.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+    return {"client": client, "db": db, "col": container, "retry_policy": connection_retry_policy}
 
 
 @pytest.mark.cosmosEmulator
@@ -441,6 +453,35 @@ class TestRetryPolicy(unittest.TestCase):
                     max_total_retries)
             finally:
                 _retry_utility.ExecuteFunction = self.original_execute_function
+
+    def test_patch_replace_no_retry(self):
+        doc = {'id': str(uuid.uuid4()),
+               'pk': str(uuid.uuid4()),
+               'name': 'sample document',
+               'key': 'value'}
+        custom_transport =  FaultInjectionTransport()
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_operation_type(r, documents._OperationType.Patch)
+                               or FaultInjectionTransport.predicate_is_operation_type(r, documents._OperationType.Replace))
+        custom_transport.add_fault(predicate, lambda r: FaultInjectionTransport.error_after_delay(
+            0,
+            exceptions.CosmosHttpResponseError(
+                status_code=502,
+                message="Some random reverse proxy error.")))
+
+        initialized_objects = setup_method_with_custom_transport(
+            custom_transport,
+        )
+        container = initialized_objects["col"]
+        connection_retry_policy = initialized_objects["retry_policy"]
+        container.create_item(body=doc)
+        operations = [{"op": "incr", "path": "/company", "value": 3}]
+        with self.assertRaises(exceptions.CosmosHttpResponseError):
+            container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
+        assert connection_retry_policy.counter == 0
+        with self.assertRaises(exceptions.CosmosHttpResponseError):
+            doc['name'] = "something else"
+            container.replace_item(item=doc['id'], body=doc)
+        assert connection_retry_policy.counter == 0
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
