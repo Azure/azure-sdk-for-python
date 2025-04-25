@@ -405,7 +405,7 @@ class QueueServiceClient(  # type: ignore [misc]
 
         Note that deleting a queue is likely to take at least 40 seconds to complete.
         If an operation is attempted against the queue while it was being deleted,
-        an :class:`HttpResponseError` will be thrown.
+        an ~azure.core.exceptions.HttpResponseError will be thrown.
 
         :param queue:
             The queue to delete. This can either be the name of the queue,
@@ -437,7 +437,7 @@ class QueueServiceClient(  # type: ignore [misc]
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
-        :returns: A :class:`~azure.storage.queue.aio.QueueClient` object.
+        :returns: A ~azure.storage.queue.aio.QueueClient object.
         :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:
