@@ -85,7 +85,7 @@ class _ConfigurationClientWrapperBase:
                 for pa in percentile_allocations
             )
 
-        if not allocated_variants and (not allocation or not allocation.get("seed")):
+        if not allocated_variants and not allocation.get("seed"):
             return None
 
         # Variants
