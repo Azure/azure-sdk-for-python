@@ -118,8 +118,7 @@ class _ConfigurationClientWrapperBase:
         hash_digest = hash_object.digest()
 
         # Encode the first 15 bytes in base64 url
-        allocation_id_hash = base64.urlsafe_b64encode(hash_digest[:15]).decode()
-        return allocation_id_hash
+        return base64.urlsafe_b64encode(hash_digest[:15]).decode()
 
     def _feature_flag_telemetry(
         self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict

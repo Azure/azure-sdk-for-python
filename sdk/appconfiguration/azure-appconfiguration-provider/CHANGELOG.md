@@ -1,14 +1,10 @@
 # Release History
 
-## 2.0.3 (Unreleased)
+## 2.1.0 (2025-04-28)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
 
 ## 2.1.0b1 (2025-04-10)
 
