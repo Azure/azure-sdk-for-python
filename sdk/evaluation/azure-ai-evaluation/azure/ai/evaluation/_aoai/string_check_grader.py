@@ -12,7 +12,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from .aoai_grader import AoaiGrader
 
 @experimental
-class StringCheckGrader(AoaiGrader):
+class AoaiStringCheckGrader(AoaiGrader):
     """
     Wrapper class for OpenAI's string check graders.
 

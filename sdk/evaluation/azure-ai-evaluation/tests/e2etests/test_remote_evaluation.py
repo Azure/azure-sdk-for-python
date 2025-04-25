@@ -5,10 +5,16 @@
 
 import pytest
 
-from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import EvaluatorConfiguration
+from azure.ai.evaluation import (
+    AoaiLabelGrader,
+    AoaiStringCheckGrader,
+    AoaiTextSimilarityGrader,
+    AoaiGrader,
+)
 from azure.ai.projects import AIProjectClient
-from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
-
+from azure.ai.projects.models import Evaluation, Dataset
+from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
 
 
@@ -20,62 +26,76 @@ class TestRemoteEvaluation():
     
     @pytest.mark.skipif(True, reason="WIP")
     def test_remote_aoai_evaluation(self, model_config, project_scope):
-
-        placeholder_grader_config = {
-            "type": "stringCheck",
-            "model": "gpt-35-turbo",
-        }
-        grader = AoaiGrader(model_config, placeholder_grader_config)
-        eval_config_init_params = {
-            "model_config": model_config,
-            "grader_config": placeholder_grader_config,
-        }
-
-        grader_eval_config = EvaluatorConfiguration(
-            id=grader.id,
-            init_params=eval_config_init_params,
+        sim_grader_config = EvaluatorConfiguration(
+            id=AoaiTextSimilarityGrader.id,
+            init_params={
+                "model_config": model_config,
+                "evaluation_metric": "fuzzy_match",
+                "input": "{{item.query}}",
+                "name": "similarity",
+                "pass_threshold": 1,
+                "reference": "{{item.query}}",
+            },
         )
 
-        f1_eval_config = EvaluatorConfiguration(
-            id="azureml://registries/azureml/models/F1Score-Evaluator/versions/4",
-            init_params={},
+        string_grader_config = EvaluatorConfiguration(
+            id=AoaiStringCheckGrader.id,
+            init_params={
+                "model_config": model_config,
+                "input": "{{item.query}}",
+                "name": "contains hello",
+                "operation": "like",
+                "reference": "hello",
+            },
         )
 
-        evalutors = {
-            "aoai_grader": grader_eval_config,
-            "f1_score": f1_eval_config,
-        }
+        label_grader_config = EvaluatorConfiguration(
+            id=AoaiLabelGrader.id,
+            init_params={
+                "model_config": model_config,
+                "input": [{"content": "{{item.query}}", "role": "user"}],
+                "labels": ["too short", "just right", "too long"],
+                "passing_labels": ["just right"],
+                "model": "gpt-4o",
+                "name": "label",
+            },
+        )
 
+        general_grader_config = EvaluatorConfiguration(
+            id=AoaiGrader.id,
+            init_params={
+                "model_config": model_config,
+                "grader_config": {
+                    "input": "{{item.query}}",
+                    "name": "contains hello",
+                    "operation": "like",
+                    "reference": "hello",
+                    "type": "string_check",
+                },
+            },
+        )
+
+        from azure.ai.projects import AIProjectClient
+        from azure.ai.projects.models import Evaluation, Dataset
+        from azure.identity import DefaultAzureCredential
+        # Note you might want to change the run name to avoid confusion with others
+        run_name = "Test Remote AOAI Evaluation"
         evaluation = Evaluation(
-            display_name="Test Remote AOAI Evaluation",
+            display_name=run_name,
             description="Evaluation started by test_remote_aoai_evaluation e2e test.",
-            evaluators=evalutors,
-            data=Dataset(id="..."),
-            properties={ "Environment":"..."}
+            evaluators = {
+                "label": label_grader_config,
+                "general": general_grader_config,
+                "string": string_grader_config,
+                "similarity": sim_grader_config,
+            },
+            data=Dataset(id=dataset_id),
         )
-
-        project_connection_string = "..."
         project_client = AIProjectClient.from_connection_string(
             credential=DefaultAzureCredential(),
             conn_str=project_connection_string,
         )
-        breakpoint()
         created_evaluation = project_client.evaluations.create(evaluation)
-        breakpoint()
         retrieved_evaluation = project_client.evaluations.get(created_evaluation.id)
-        breakpoint()
-        pass
 
 
-        set_bodiless_matcher()
-        default_aoai_connection_name = kwargs.pop("azure_ai_projects_evaluations_tests_default_aoai_connection_name")
-        project_client = self.get_sync_client(**kwargs)
-        default_aoai_connection = project_client.connections.get(
-            connection_name=default_aoai_connection_name, include_credentials=True
-        )
-        deployment_name = kwargs.get("azure_ai_projects_evaluations_tests_deployment_name")
-        api_version = kwargs.get("azure_ai_projects_evaluations_tests_api_version")
-        model_config = default_aoai_connection.to_evaluator_model_config(
-            deployment_name=deployment_name, api_version=api_version, include_credentials=True
-        )
-        assert model_config["api_key"] == default_aoai_connection.key

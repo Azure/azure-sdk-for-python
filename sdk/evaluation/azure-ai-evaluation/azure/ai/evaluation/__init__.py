@@ -41,9 +41,9 @@ from ._model_configurations import (
     OpenAIModelConfiguration,
 )
 from ._aoai.aoai_grader import AoaiGrader
-from ._aoai.label_grader import LabelGrader
-from ._aoai.string_check_grader import StringCheckGrader
-from ._aoai.text_similarity_grader import TextSimilarityGrader
+from ._aoai.label_grader import AoaiLabelGrader
+from ._aoai.string_check_grader import AoaiStringCheckGrader
+from ._aoai.text_similarity_grader import AoaiTextSimilarityGrader
 
 
 _patch_all = []
@@ -95,9 +95,9 @@ __all__ = [
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
     "AoaiGrader",
-    "LabelGrader",
-    "StringCheckGrader",
-    "TextSimilarityGrader",
+    "AoaiLabelGrader",
+    "AoaiStringCheckGrader",
+    "AoaiTextSimilarityGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

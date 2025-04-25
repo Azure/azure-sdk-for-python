@@ -12,7 +12,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from .aoai_grader import AoaiGrader
 
 @experimental
-class TextSimilarityGrader(AoaiGrader):
+class AoaiTextSimilarityGrader(AoaiGrader):
     """
     Wrapper class for OpenAI's string check graders.
 

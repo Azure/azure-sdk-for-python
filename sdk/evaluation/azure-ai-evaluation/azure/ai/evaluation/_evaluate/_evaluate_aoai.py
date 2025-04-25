@@ -341,15 +341,15 @@ def _get_grader_class(model_id: str) -> Type[AoaiGrader]:
 
     from azure.ai.evaluation import (
         AoaiGrader,
-        LabelGrader,
-        StringCheckGrader,
-        TextSimilarityGrader,
+        AoaiLabelGrader,
+        AoaiStringCheckGrader,
+        AoaiTextSimilarityGrader,
     )
     id_map = {
         AoaiGrader.id: AoaiGrader,
-        LabelGrader.id: LabelGrader,
-        StringCheckGrader.id: StringCheckGrader,
-        TextSimilarityGrader.id: TextSimilarityGrader,
+        AoaiLabelGrader.id: AoaiLabelGrader,
+        AoaiStringCheckGrader.id: AoaiStringCheckGrader,
+        AoaiTextSimilarityGrader.id: AoaiTextSimilarityGrader,
     }
 
     for key in id_map.keys():

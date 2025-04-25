@@ -13,9 +13,9 @@ from azure.ai.evaluation._evaluate._evaluate_aoai import (
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation import (
     AoaiGrader,
-    TextSimilarityGrader,
-    LabelGrader,
-    StringCheckGrader,
+    AoaiTextSimilarityGrader,
+    AoaiLabelGrader,
+    AoaiStringCheckGrader,
 )
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
@@ -49,29 +49,6 @@ def simple_eval_function():
 
 @pytest.mark.unittest
 class TestAoaiIntegrationFeatures:
-    @pytest.mark.skipif(True, reason="WIP. Needs to be an e2e since I've removed the mock OAI eval code.")
-    def test_aoai_and_normal_evaluation(self, mock_aoai_model_config, mock_grader_config, questions_file):
-        """
-        Test that runs a full evaluation using both a 'normal' evaluator and an AOAI grader.
-        """
-        grader = AoaiGrader(
-            model_config=mock_aoai_model_config,
-            grader_config=mock_grader_config
-        )
-        from azure.ai.evaluation import evaluate, F1ScoreEvaluator
-        local_eval = simple_eval_function
-
-        evaluators = {
-            "local": local_eval,
-            "aoai_grader": grader
-        }
-        results = evaluate(
-            data=questions_file,
-            evaluators=evaluators,
-        )
-        # TODO analyze results
-
-
     def test_remote_eval_grader_generation(self, mock_aoai_model_config, mock_grader_config):
         """
         Test to ensure that the AoaiGrader class and its children validate their inputs
@@ -106,8 +83,8 @@ class TestAoaiIntegrationFeatures:
             "reference": "...",
             "name": "test",
         }
-        grader = _convert_remote_eval_params_to_grader(TextSimilarityGrader.id, init_params=init_params)
-        assert isinstance(grader, TextSimilarityGrader)
+        grader = _convert_remote_eval_params_to_grader(AoaiTextSimilarityGrader.id, init_params=init_params)
+        assert isinstance(grader, AoaiTextSimilarityGrader)
         assert grader.get_model_config() == mock_aoai_model_config
 
         # Test string check creation
@@ -118,8 +95,8 @@ class TestAoaiIntegrationFeatures:
             "operation": "eq",
             "reference": "...",
         }
-        grader = _convert_remote_eval_params_to_grader(StringCheckGrader.id, init_params=init_params)
-        assert isinstance(grader, StringCheckGrader)
+        grader = _convert_remote_eval_params_to_grader(AoaiStringCheckGrader.id, init_params=init_params)
+        assert isinstance(grader, AoaiStringCheckGrader)
         assert grader.get_model_config() == mock_aoai_model_config
 
         # Test label creation
@@ -131,11 +108,9 @@ class TestAoaiIntegrationFeatures:
             "model": "gpt-35-turbo",
             "passing_labels": ["label1"],
         }
-        grader = _convert_remote_eval_params_to_grader(LabelGrader.id, init_params=init_params)
-        assert isinstance(grader, LabelGrader)
+        grader = _convert_remote_eval_params_to_grader(AoaiLabelGrader.id, init_params=init_params)
+        assert isinstance(grader, AoaiLabelGrader)
         assert grader.get_model_config() == mock_aoai_model_config
-
-
 
     def test_grader_initialization(self, mock_aoai_model_config, mock_grader_config):
         bad_model_config = AzureOpenAIModelConfiguration(
@@ -167,7 +142,6 @@ class TestAoaiIntegrationFeatures:
 
         # TODO add checks for bad grader config... maybe.
         # Need to decide if we really want grader validation at base grader level.
-
 
     def test_evaluate_grader_recognition(self, mock_aoai_model_config, mock_grader_config):
         """
