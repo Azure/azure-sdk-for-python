@@ -35,21 +35,6 @@ class InferenceOperations:
     """
 
     def __init__(self, outer_instance: "azure.ai.projects.onedp.aio.AIProjectClient") -> None:  # type: ignore[name-defined]
-
-        # TODO: Put the user agent initialization code below in a common place used by both sync and async operations.
-
-        # All returned inference clients will have this application id set on their user-agent.
-        # For more info on user-agent HTTP header, see:
-        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-        USER_AGENT_APP_ID = "AIProjectClient"
-
-        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
-            # If the calling application has set "user_agent" when constructing the AIProjectClient,
-            # take that value and prepend it to USER_AGENT_APP_ID.
-            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
-        else:
-            self._user_agent = USER_AGENT_APP_ID
-
         self._outer_instance = outer_instance
 
     # TODO: Use a common method for both the sync and async operations
@@ -100,14 +85,14 @@ class InferenceOperations:
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevent of course if EntraID auth is used.
+        # is only relevant of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
-            user_agent=kwargs.pop("user_agent", self._user_agent),
+            user_agent=kwargs.pop("user_agent", self._outer_instance._patched_user_agent),  # pylint: disable=protected-access
             **kwargs,
         )
 
@@ -140,14 +125,14 @@ class InferenceOperations:
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevent of course if EntraID auth is used.
+        # is only relevant of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = EmbeddingsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
-            user_agent=kwargs.pop("user_agent", self._user_agent),
+            user_agent=kwargs.pop("user_agent", self._outer_instance._patched_user_agent),  # pylint: disable=protected-access
             **kwargs,
         )
 
@@ -180,14 +165,14 @@ class InferenceOperations:
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevent of course if EntraID auth is used.
+        # is only relevant of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
-            user_agent=kwargs.pop("user_agent", self._user_agent),
+            user_agent=kwargs.pop("user_agent", self._outer_instance._patched_user_agent),  # pylint: disable=protected-access
             **kwargs,
         )
 
@@ -198,7 +183,7 @@ class InferenceOperations:
         self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
     ) -> "AsyncAzureOpenAI":  # type: ignore[name-defined]
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
-        Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
+        Azure OpenAI connection (if `connection_name` is not specified), or from the Azure OpenAI
         resource given by its connection name.
 
         .. note:: The package `openai` must be installed prior to calling this method.
