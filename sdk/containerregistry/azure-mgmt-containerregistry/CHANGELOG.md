@@ -16,22 +16,6 @@
   - Removed operation RegistriesOperations.get_build_source_upload_url
   - Removed operation RegistriesOperations.schedule_run
 
-## 14.0.0 (2025-04-27)
-
-### Breaking Changes
-
-  - Model Policies no longer has parameter soft_delete_policy
-  - Model Registry no longer has parameter auto_generated_domain_name_label_scope
-  - Model Registry no longer has parameter metadata_search
-  - Model Registry no longer has parameter role_assignment_mode
-  - Model RegistryNameCheckRequest no longer has parameter auto_generated_domain_name_label_scope
-  - Model RegistryNameCheckRequest no longer has parameter resource_group_name
-  - Model RegistryNameStatus no longer has parameter available_login_server_name
-  - Model RegistryUpdateParameters no longer has parameter metadata_search
-  - Model RegistryUpdateParameters no longer has parameter role_assignment_mode
-  - Removed operation RegistriesOperations.get_build_source_upload_url
-  - Removed operation RegistriesOperations.schedule_run
-
 ## 13.0.0 (2025-04-21)
 
 ### Features Added
