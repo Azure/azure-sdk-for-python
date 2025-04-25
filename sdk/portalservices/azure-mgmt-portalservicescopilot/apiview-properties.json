@@ -1,0 +1,26 @@
+{
+    "CrossLanguagePackageId": "Microsoft.PortalServices",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.portalservicescopilot.models.CopilotSettingsProperties": "Microsoft.PortalServices.CopilotSettingsProperties",
+        "azure.mgmt.portalservicescopilot.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.portalservicescopilot.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.portalservicescopilot.models.CopilotSettingsResource": "Microsoft.PortalServices.CopilotSettingsResource",
+        "azure.mgmt.portalservicescopilot.models.CopilotSettingsResourceUpdate": "Azure.ResourceManager.Foundations.ResourceUpdateModel",
+        "azure.mgmt.portalservicescopilot.models.CopilotSettingsResourceUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
+        "azure.mgmt.portalservicescopilot.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.portalservicescopilot.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.portalservicescopilot.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.portalservicescopilot.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.portalservicescopilot.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.portalservicescopilot.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.portalservicescopilot.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.portalservicescopilot.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.portalservicescopilot.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.portalservicescopilot.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.mgmt.portalservicescopilot.PortalServicesCopilotMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.portalservicescopilot.PortalServicesCopilotMgmtClient.copilot_settings.get": "Microsoft.PortalServices.CopilotSettings.get",
+        "azure.mgmt.portalservicescopilot.PortalServicesCopilotMgmtClient.copilot_settings.create_or_update": "Microsoft.PortalServices.CopilotSettings.createOrUpdate",
+        "azure.mgmt.portalservicescopilot.PortalServicesCopilotMgmtClient.copilot_settings.update": "Microsoft.PortalServices.CopilotSettings.update",
+        "azure.mgmt.portalservicescopilot.PortalServicesCopilotMgmtClient.copilot_settings.delete": "Microsoft.PortalServices.CopilotSettings.delete"
+    }
+}

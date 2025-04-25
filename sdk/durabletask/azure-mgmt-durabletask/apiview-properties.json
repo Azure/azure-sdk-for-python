@@ -8,6 +8,9 @@
         "azure.mgmt.durabletask.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
         "azure.mgmt.durabletask.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.durabletask.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.durabletask.models.RetentionPolicy": "Microsoft.DurableTask.RetentionPolicy",
+        "azure.mgmt.durabletask.models.RetentionPolicyDetails": "Microsoft.DurableTask.RetentionPolicyDetails",
+        "azure.mgmt.durabletask.models.RetentionPolicyProperties": "Microsoft.DurableTask.RetentionPolicyProperties",
         "azure.mgmt.durabletask.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.durabletask.models.Scheduler": "Microsoft.DurableTask.Scheduler",
         "azure.mgmt.durabletask.models.SchedulerProperties": "Microsoft.DurableTask.SchedulerProperties",
@@ -23,6 +26,7 @@
         "azure.mgmt.durabletask.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.durabletask.models.ProvisioningState": "Microsoft.DurableTask.ProvisioningState",
         "azure.mgmt.durabletask.models.RedundancyState": "Microsoft.DurableTask.RedundancyState",
+        "azure.mgmt.durabletask.models.PurgeableOrchestrationState": "Microsoft.DurableTask.PurgeableOrchestrationState",
         "azure.mgmt.durabletask.DurableTaskMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.durabletask.DurableTaskMgmtClient.schedulers.get": "Microsoft.DurableTask.Schedulers.get",
         "azure.mgmt.durabletask.DurableTaskMgmtClient.schedulers.begin_create_or_update": "Microsoft.DurableTask.Schedulers.createOrUpdate",
@@ -33,6 +37,11 @@
         "azure.mgmt.durabletask.DurableTaskMgmtClient.task_hubs.get": "Microsoft.DurableTask.TaskHubs.get",
         "azure.mgmt.durabletask.DurableTaskMgmtClient.task_hubs.begin_create_or_update": "Microsoft.DurableTask.TaskHubs.createOrUpdate",
         "azure.mgmt.durabletask.DurableTaskMgmtClient.task_hubs.begin_delete": "Microsoft.DurableTask.TaskHubs.delete",
-        "azure.mgmt.durabletask.DurableTaskMgmtClient.task_hubs.list_by_scheduler": "Microsoft.DurableTask.TaskHubs.listByScheduler"
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.task_hubs.list_by_scheduler": "Microsoft.DurableTask.TaskHubs.listByScheduler",
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.retention_policies.get": "Microsoft.DurableTask.RetentionPolicies.get",
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.retention_policies.begin_create_or_replace": "Microsoft.DurableTask.RetentionPolicies.createOrReplace",
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.retention_policies.begin_update": "Microsoft.DurableTask.RetentionPolicies.update",
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.retention_policies.begin_delete": "Microsoft.DurableTask.RetentionPolicies.delete",
+        "azure.mgmt.durabletask.DurableTaskMgmtClient.retention_policies.list_by_scheduler": "Microsoft.DurableTask.RetentionPolicies.listByScheduler"
     }
 }

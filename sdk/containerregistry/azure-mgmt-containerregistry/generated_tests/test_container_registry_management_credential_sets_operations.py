@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.v2025_04_01 import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedT
         response = self.client.credential_sets.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             registry_name="str",
             credential_set_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedT
                 },
                 "type": "str",
             },
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             registry_name="str",
             credential_set_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedT
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
             },
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

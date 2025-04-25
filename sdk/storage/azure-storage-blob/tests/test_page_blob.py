@@ -22,7 +22,8 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy

@@ -19,21 +19,21 @@ class ConfidentialLedgerClientConfiguration:  # pylint: disable=too-many-instanc
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The Confidential Ledger URL, for example
+    :param ledger_endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
-    :type endpoint: str
+    :type ledger_endpoint: str
     :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, ledger_endpoint: str, **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
 
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
+        if ledger_endpoint is None:
+            raise ValueError("Parameter 'ledger_endpoint' must not be None.")
 
-        self.endpoint = endpoint
+        self.ledger_endpoint = ledger_endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

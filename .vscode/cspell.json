@@ -388,6 +388,7 @@
     "pyright",
     "pyrightconfig",
     "parameterizing",
+    "pyrit",
     "pytyped",
     "pytz",
     "pywin",
@@ -1182,7 +1183,9 @@
         "racwdlmeop",
         "newfs",
         "adlsstorage",
-        "adlskey"
+        "adlskey",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1497,7 +1500,9 @@
         "Fsubdir",
         "Fdir",
         "adal",
-        "mytestshare"
+        "mytestshare",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
