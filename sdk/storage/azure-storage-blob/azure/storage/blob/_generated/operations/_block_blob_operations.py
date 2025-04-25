@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -79,7 +79,7 @@ def build_upload_request(
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -213,13 +213,14 @@ def build_put_blob_from_url_request(
     copy_source_blob_properties: Optional[bool] = None,
     copy_source_authorization: Optional[str] = None,
     copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+    file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -317,6 +318,8 @@ def build_put_blob_from_url_request(
         )
     if copy_source_tags is not None:
         _headers["x-ms-copy-source-tag-option"] = _SERIALIZER.header("copy_source_tags", copy_source_tags, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -346,7 +349,7 @@ def build_stage_block_request(
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -422,13 +425,14 @@ def build_stage_block_from_url_request(
     source_if_none_match: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -487,6 +491,8 @@ def build_stage_block_from_url_request(
         _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
             "copy_source_authorization", copy_source_authorization, "str"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -529,7 +535,7 @@ def build_commit_block_list_request(
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -635,7 +641,7 @@ def build_get_block_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -710,7 +716,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
         supported with Put Blob; the content of the existing blob is overwritten with the content of
@@ -928,6 +933,7 @@ class BlockBlobOperations:
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -936,7 +942,6 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
         updates are not supported with Put Blob from URL; the content of an existing blob is
@@ -990,6 +995,8 @@ class BlockBlobOperations:
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1105,6 +1112,7 @@ class BlockBlobOperations:
             copy_source_blob_properties=copy_source_blob_properties,
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
+            file_request_intent=file_request_intent,
             blob_type=blob_type,
             version=self._config.version,
             headers=_headers,
@@ -1165,7 +1173,6 @@ class BlockBlobOperations:
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
@@ -1313,13 +1320,13 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
@@ -1351,6 +1358,8 @@ class BlockBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -1421,6 +1430,7 @@ class BlockBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -1485,7 +1495,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
         to the server in a prior Put Block operation. You can call Put Block List to update a blob by
@@ -1689,7 +1698,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlockList:
-        # pylint: disable=line-too-long
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 

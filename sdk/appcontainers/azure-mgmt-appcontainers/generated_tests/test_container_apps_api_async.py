@@ -26,7 +26,7 @@ class TestContainerAppsAPIAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             job_execution_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestContainerAppsAPIAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_custom_domain_verification_id(self, resource_group):
         response = await self.client.get_custom_domain_verification_id(
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

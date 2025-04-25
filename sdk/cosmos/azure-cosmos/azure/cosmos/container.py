@@ -215,6 +215,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -235,6 +236,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -259,6 +261,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -288,6 +292,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -304,6 +309,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -317,6 +323,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         feed_options = build_options(kwargs)
@@ -591,6 +599,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         continuation_token_limit: Optional[int] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -631,6 +640,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this options will incur
             overhead, so it should be enabled only when debugging slow queries.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -660,6 +670,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughputBucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
@@ -724,6 +736,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -750,6 +763,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -777,6 +791,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -811,6 +827,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -836,6 +853,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -860,6 +878,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -895,6 +915,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -921,6 +942,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -954,6 +976,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -987,6 +1011,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -1016,6 +1041,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1040,6 +1066,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1067,6 +1095,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], List[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> CosmosList:
@@ -1082,6 +1111,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1114,6 +1144,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['session_token'] = session_token
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1139,6 +1171,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -1160,6 +1193,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1180,6 +1214,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1425,6 +1461,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -1439,6 +1476,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1466,6 +1504,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)

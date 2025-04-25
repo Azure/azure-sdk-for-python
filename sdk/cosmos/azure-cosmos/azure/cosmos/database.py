@@ -276,7 +276,6 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
