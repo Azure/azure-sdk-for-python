@@ -18,6 +18,7 @@
 ### Other Changes
 
 * Updates telemetry for JSON usage.
+
 ## 2.0.1 (2025-03-07)
 
 ### Bugs Fixed
