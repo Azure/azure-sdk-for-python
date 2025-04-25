@@ -104,6 +104,6 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
-output PPCB_ENABLED bool = ppcbEnabled
+output AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER bool = ppcbEnabled
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
 output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey

@@ -71,7 +71,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Circuit Breaker enabled: " + os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "True"))
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -80,7 +79,11 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        print("Circuit Breaker enabled: " + os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "True"))
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+            use_multiple_write_locations = True
+        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
