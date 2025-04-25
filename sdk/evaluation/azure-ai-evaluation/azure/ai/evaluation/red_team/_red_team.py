@@ -336,7 +336,7 @@ class RedTeam():
         :rtype: Optional[str]
         """
         self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
-        artifact_name = "instance_results.json" if not _skip_evals else "instance_data.json"
+        artifact_name = "instance_results.json"
 
         # If we have a scan output directory, save the results there first
         if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
