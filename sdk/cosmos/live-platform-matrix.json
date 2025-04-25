@@ -43,6 +43,11 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosPPCB"
         }
+      },
+      "ArmConfig": {
+        "MultiMaster_MultiRegion": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; ppcbEnabled = $true }"
+        }
       }
     },
     {

@@ -4,6 +4,7 @@
 
 """End-to-end test.
 """
+import os
 import time
 import unittest
 import urllib.parse as urllib
@@ -42,7 +43,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         response = AsyncioRequestsTransportResponse(None, output)
         return response
 
-
+@pytest.mark.cosmosPPCB
 @pytest.mark.cosmosLong
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
@@ -70,6 +71,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
+        print("Circuit Breaker enabled: " + os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "True"))
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(

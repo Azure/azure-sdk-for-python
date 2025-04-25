@@ -199,7 +199,7 @@ async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
         method_client: CosmosClient = obj["client"]
         await method_client.close()
 
-@pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosPPCB
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerMMAsync:

@@ -353,7 +353,8 @@ class ConnectionRetryPolicy(RetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if _has_database_account_header(request.http_request.headers):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     global_endpoint_manager.record_failure(request_params)

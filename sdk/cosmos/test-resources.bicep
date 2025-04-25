@@ -12,6 +12,9 @@ param enableMultipleRegions bool = false
 @description('Location for the Cosmos DB account.')
 param location string = resourceGroup().location
 
+@description('Whether Per Partition Circuit Breaker should be enabled.')
+param ppcbEnabled bool = false 
+
 @description('The api version to be used by Bicep to create resources')
 param apiVersion string = '2023-04-15'
 
@@ -101,6 +104,6 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
-
+output PPCB_ENABLED bool = ppcbEnabled
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
 output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey
