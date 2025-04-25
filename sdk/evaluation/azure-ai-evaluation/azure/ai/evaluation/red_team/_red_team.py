@@ -1815,6 +1815,7 @@ class RedTeam():
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
             timeout: int = 120,
+            skip_evals: bool = False,
             **kwargs: Any
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
@@ -1839,6 +1840,8 @@ class RedTeam():
         :type max_parallel_tasks: int
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
+        :param skip_evals: Whether to skip the evaluation process
+        :type skip_evals: bool
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
@@ -2081,7 +2084,6 @@ class RedTeam():
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
                 
-        _skip_evals = kwargs.get("_skip_evals", False)
         self.logger.info("Completed fetching all attack objectives")
         
         log_section_header(self.logger, "Starting orchestrator processing")
@@ -2117,7 +2119,7 @@ class RedTeam():
                     output_path=output_path,
                     risk_category=risk_category,
                     timeout=timeout,
-                    _skip_evals=_skip_evals,
+                    _skip_evals=skip_evals,
                 )
             )
             
@@ -2206,7 +2208,7 @@ class RedTeam():
             await self._log_redteam_results_to_mlflow(
                 redteam_result=output,
                 eval_run=eval_run,
-                _skip_evals=_skip_evals
+                _skip_evals=skip_evals
             )
         
         

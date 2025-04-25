@@ -6,7 +6,7 @@
 - New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
 
 ### Breaking Changes
-- In the experimental RedTeam's scan method, the `data_only` param has been replaced with `_skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
+- In the experimental RedTeam's scan method, the `data_only` param has been replaced with `skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
 
 ### Bugs Fixed
 - Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
