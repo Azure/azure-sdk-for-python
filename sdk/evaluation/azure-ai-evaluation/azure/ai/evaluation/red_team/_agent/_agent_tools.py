@@ -17,7 +17,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
-from .agent_utils import AgentUtils
+from ._agent_utils import AgentUtils
 
 # Setup logging
 logger = logging.getLogger(__name__)

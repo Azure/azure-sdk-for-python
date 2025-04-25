@@ -1,7 +1,8 @@
 # ------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ------------------------------------
-from azure.ai.evaluation.red_team.agent.agent_functions import initialize_tool_provider
+# apistub: exclude
+from azure.ai.evaluation.red_team._agent._agent_functions import initialize_tool_provider
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential

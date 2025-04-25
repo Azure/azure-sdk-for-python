@@ -1,6 +1,7 @@
 # ------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ------------------------------------
+# apistub: exclude
 
 import asyncio
 import json
@@ -19,7 +20,7 @@ converting prompts using various strategies, and sending prompts to target model
 """
 
 # Import the RedTeamPlugin from the SDK
-from azure.ai.evaluation.red_team.agent.semantic_kernel_plugin import RedTeamPlugin
+from azure.ai.evaluation.red_team._agent._semantic_kernel_plugin import RedTeamPlugin
 
 def call_ollama(query: str) -> str:
     """
