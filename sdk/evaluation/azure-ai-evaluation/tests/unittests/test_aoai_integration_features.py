@@ -12,10 +12,10 @@ from azure.ai.evaluation._evaluate._evaluate_aoai import (
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation import (
-    AoaiGrader,
-    AoaiTextSimilarityGrader,
-    AoaiLabelGrader,
-    AoaiStringCheckGrader,
+    AzureOpenAIGrader,
+    AzureOpenAITextSimilarityGrader,
+    AzureOpenAILabelGrader,
+    AzureOpenAIStringCheckGrader,
 )
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
@@ -69,8 +69,8 @@ class TestAoaiIntegrationFeatures:
         assert "not recognized as an AOAI grader ID" in str(excinfo.value)
 
         # test general creation creation
-        grader = _convert_remote_eval_params_to_grader(AoaiGrader.id, init_params=init_params)
-        assert isinstance(grader, AoaiGrader)
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAIGrader.id, init_params=init_params)
+        assert isinstance(grader, AzureOpenAIGrader)
         assert grader.get_model_config() == mock_aoai_model_config
         assert grader.get_grader_config() == mock_grader_config
 
@@ -83,8 +83,8 @@ class TestAoaiIntegrationFeatures:
             "reference": "...",
             "name": "test",
         }
-        grader = _convert_remote_eval_params_to_grader(AoaiTextSimilarityGrader.id, init_params=init_params)
-        assert isinstance(grader, AoaiTextSimilarityGrader)
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAITextSimilarityGrader.id, init_params=init_params)
+        assert isinstance(grader, AzureOpenAITextSimilarityGrader)
         assert grader.get_model_config() == mock_aoai_model_config
 
         # Test string check creation
@@ -95,8 +95,8 @@ class TestAoaiIntegrationFeatures:
             "operation": "eq",
             "reference": "...",
         }
-        grader = _convert_remote_eval_params_to_grader(AoaiStringCheckGrader.id, init_params=init_params)
-        assert isinstance(grader, AoaiStringCheckGrader)
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAIStringCheckGrader.id, init_params=init_params)
+        assert isinstance(grader, AzureOpenAIStringCheckGrader)
         assert grader.get_model_config() == mock_aoai_model_config
 
         # Test label creation
@@ -108,8 +108,8 @@ class TestAoaiIntegrationFeatures:
             "model": "gpt-35-turbo",
             "passing_labels": ["label1"],
         }
-        grader = _convert_remote_eval_params_to_grader(AoaiLabelGrader.id, init_params=init_params)
-        assert isinstance(grader, AoaiLabelGrader)
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAILabelGrader.id, init_params=init_params)
+        assert isinstance(grader, AzureOpenAILabelGrader)
         assert grader.get_model_config() == mock_aoai_model_config
 
     def test_grader_initialization(self, mock_aoai_model_config, mock_grader_config):
@@ -120,21 +120,21 @@ class TestAoaiIntegrationFeatures:
         bad_grader_config = {}
 
         # Test with fully valid inputs
-        AoaiGrader(
+        AzureOpenAIGrader(
             model_config=mock_aoai_model_config,
             grader_config=mock_grader_config
         )
 
         # missing api_key in model config should throw an error 
         with pytest.raises(Exception) as excinfo:
-            AoaiGrader(
+            AzureOpenAIGrader(
                 model_config=bad_model_config,
                 grader_config=mock_grader_config
             )
         assert "Requires an api_key in the supplied model_config." in str(excinfo.value)
 
         # Test that validation bypass works to simplify other tests
-        AoaiGrader(
+        AzureOpenAIGrader(
             model_config=bad_model_config,
             grader_config=bad_grader_config,
             validate=False
@@ -151,7 +151,7 @@ class TestAoaiIntegrationFeatures:
         """
         built_in_eval = F1ScoreEvaluator()
         custom_eval = lambda x: x
-        aoai_grader = AoaiGrader(mock_aoai_model_config, mock_grader_config)
+        aoai_grader = AzureOpenAIGrader(mock_aoai_model_config, mock_grader_config)
         evaluators = {
             "f1_score": built_in_eval,
             "custom_eval": custom_eval,

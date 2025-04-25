@@ -7,10 +7,10 @@ import pytest
 
 from azure.ai.projects.models import EvaluatorConfiguration
 from azure.ai.evaluation import (
-    AoaiLabelGrader,
-    AoaiStringCheckGrader,
-    AoaiTextSimilarityGrader,
-    AoaiGrader,
+    AzureOpenAILabelGrader,
+    AzureOpenAIStringCheckGrader,
+    AzureOpenAITextSimilarityGrader,
+    AzureOpenAIGrader,
 )
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import Evaluation, Dataset
@@ -27,7 +27,7 @@ class TestRemoteEvaluation():
     @pytest.mark.skipif(True, reason="WIP")
     def test_remote_aoai_evaluation(self, model_config, project_scope):
         sim_grader_config = EvaluatorConfiguration(
-            id=AoaiTextSimilarityGrader.id,
+            id=AzureOpenAITextSimilarityGrader.id,
             init_params={
                 "model_config": model_config,
                 "evaluation_metric": "fuzzy_match",
@@ -39,7 +39,7 @@ class TestRemoteEvaluation():
         )
 
         string_grader_config = EvaluatorConfiguration(
-            id=AoaiStringCheckGrader.id,
+            id=AzureOpenAIStringCheckGrader.id,
             init_params={
                 "model_config": model_config,
                 "input": "{{item.query}}",
@@ -50,7 +50,7 @@ class TestRemoteEvaluation():
         )
 
         label_grader_config = EvaluatorConfiguration(
-            id=AoaiLabelGrader.id,
+            id=AzureOpenAILabelGrader.id,
             init_params={
                 "model_config": model_config,
                 "input": [{"content": "{{item.query}}", "role": "user"}],
@@ -62,7 +62,7 @@ class TestRemoteEvaluation():
         )
 
         general_grader_config = EvaluatorConfiguration(
-            id=AoaiGrader.id,
+            id=AzureOpenAIGrader.id,
             init_params={
                 "model_config": model_config,
                 "grader_config": {

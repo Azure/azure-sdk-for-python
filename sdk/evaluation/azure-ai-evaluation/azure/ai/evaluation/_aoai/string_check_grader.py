@@ -9,10 +9,10 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 from openai.types.eval_string_check_grader import EvalStringCheckGrader
 from azure.ai.evaluation._common._experimental import experimental
 
-from .aoai_grader import AoaiGrader
+from .aoai_grader import AzureOpenAIGrader
 
 @experimental
-class AoaiStringCheckGrader(AoaiGrader):
+class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     """
     Wrapper class for OpenAI's string check graders.
 

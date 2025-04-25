@@ -17,7 +17,7 @@ from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
+from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -75,7 +75,7 @@ class __ValidatedData(TypedDict):
     the resultant objects that are needed for downstream evaluation.
     '''
     evaluators: Dict[str, Callable]
-    graders: Dict[str, AoaiGrader]
+    graders: Dict[str, AzureOpenAIGrader]
     input_data_df: pd.DataFrame
     column_mapping: Dict[str, Dict[str, str]]
     target_run: Optional[BatchClientRun]
@@ -691,7 +691,7 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 def evaluate(
     *,
     data: Union[str, os.PathLike],
-    evaluators: Dict[str, Union[Callable, AoaiGrader]],
+    evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
@@ -811,7 +811,7 @@ def _print_fail_flag_warning() -> None:
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     *,
-    evaluators_and_graders: Dict[str, Union[Callable, AoaiGrader]],
+    evaluators_and_graders: Dict[str, Union[Callable, AzureOpenAIGrader]],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     data: Union[str, os.PathLike],
@@ -854,7 +854,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     got_local_results = False
     if need_oai_run:
         for grader in graders.values():
-            if isinstance(grader, AoaiGrader):
+            if isinstance(grader, AzureOpenAIGrader):
                 oai_client = grader.get_client()
                 break
         try:
@@ -941,7 +941,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
 def _preprocess_data(
     data: Union[str, os.PathLike],
-    evaluators_and_graders: Dict[str, Union[Callable, AoaiGrader]],
+    evaluators_and_graders: Dict[str, Union[Callable, AzureOpenAIGrader]],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     target: Optional[Callable] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
@@ -1123,7 +1123,7 @@ def _run_callable_evaluators(
 
 def _map_names_to_builtins(
         evaluators: Dict[str, Callable],
-        graders: Dict[str, AoaiGrader],
+        graders: Dict[str, AzureOpenAIGrader],
     ) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in

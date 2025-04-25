@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 
 
-from .aoai_grader import AoaiGrader
+from .aoai_grader import AzureOpenAIGrader
 
 __all__ = [
-    "AoaiGrader",
+    "AzureOpenAIGrader",
 ]

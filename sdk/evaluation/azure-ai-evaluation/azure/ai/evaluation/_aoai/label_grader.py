@@ -7,10 +7,10 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 from openai.types.eval_create_params import TestingCriterionLabelModel
 from azure.ai.evaluation._common._experimental import experimental
 
-from .aoai_grader import AoaiGrader
+from .aoai_grader import AzureOpenAIGrader
 
 @experimental
-class AoaiLabelGrader(AoaiGrader):
+class AzureOpenAILabelGrader(AzureOpenAIGrader):
     """
     Wrapper class for OpenAI's label model graders.
 

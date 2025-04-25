@@ -5,19 +5,16 @@ import os
 import pathlib
 import pandas as pd
 import pytest
-from regex import F
-from devtools_testutils import is_live
 
 from openai.types.eval_string_check_grader import EvalStringCheckGrader
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
     evaluate,
-    AoaiGrader,
-    AoaiLabelGrader,
-    AoaiStringCheckGrader,
-    AoaiTextSimilarityGrader,
+    AzureOpenAIGrader,
+    AzureOpenAILabelGrader,
+    AzureOpenAIStringCheckGrader,
+    AzureOpenAITextSimilarityGrader,
 )
-from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
 
 @pytest.fixture
@@ -36,7 +33,7 @@ class TestAoaiEvaluation:
         ## ---- Initialize specific graders ----
 
         # Corresponds to https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_text_similarity_grader.py#L11
-        sim_grader = AoaiTextSimilarityGrader(
+        sim_grader = AzureOpenAITextSimilarityGrader(
             model_config=model_config,
             evaluation_metric="fuzzy_match",
             input="{{item.query}}",
@@ -46,7 +43,7 @@ class TestAoaiEvaluation:
         )
 
         # Corresponds to https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_string_check_grader_param.py#L10
-        string_grader = AoaiStringCheckGrader(
+        string_grader = AzureOpenAIStringCheckGrader(
             model_config=model_config,
             input="{{item.query}}",
             name="starts with what is",
@@ -55,7 +52,7 @@ class TestAoaiEvaluation:
         )
 
         # Corresponds to https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L132
-        label_grader = AoaiLabelGrader(
+        label_grader = AzureOpenAILabelGrader(
             model_config=model_config,
             input=[{"content": "{{item.query}}", "role": "user"}],
             labels=["too short", "just right", "too long"],
@@ -75,7 +72,7 @@ class TestAoaiEvaluation:
             type="string_check"
         )
         # Plug that into the general grader
-        general_grader = AoaiGrader(
+        general_grader = AzureOpenAIGrader(
             model_config,
             oai_string_check_grader
         )
@@ -133,7 +130,7 @@ class TestAoaiEvaluation:
    
    
     def test_evaluate_with_column_mapping_and_target(self, model_config, data_file):
-        sim_grader = AoaiTextSimilarityGrader(
+        sim_grader = AzureOpenAITextSimilarityGrader(
             model_config=model_config,
             evaluation_metric="fuzzy_match",
             input="{{item.target_output}}",
@@ -142,7 +139,7 @@ class TestAoaiEvaluation:
             reference="{{item.query}}",
         )
 
-        string_grader = AoaiStringCheckGrader(
+        string_grader = AzureOpenAIStringCheckGrader(
             model_config=model_config,
             input="{{item.query}}",
             name="starts with what is",

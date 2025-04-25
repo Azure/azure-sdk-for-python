@@ -11,7 +11,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 
 @experimental
-class AoaiGrader():
+class AzureOpenAIGrader():
     """
     Base class for Azure OpenAI grader wrappers, recommended only for use by experienced OpenAI API users.
     Combines a model configuration and any grader configuration

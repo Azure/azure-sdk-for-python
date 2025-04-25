@@ -9,10 +9,10 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 from openai.types.eval_text_similarity_grader import EvalTextSimilarityGrader
 from azure.ai.evaluation._common._experimental import experimental
 
-from .aoai_grader import AoaiGrader
+from .aoai_grader import AzureOpenAIGrader
 
 @experimental
-class AoaiTextSimilarityGrader(AoaiGrader):
+class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     """
     Wrapper class for OpenAI's string check graders.
 

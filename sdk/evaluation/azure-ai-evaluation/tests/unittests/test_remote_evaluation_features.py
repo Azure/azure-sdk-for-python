@@ -7,7 +7,7 @@ import pytest
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation import (
-    AoaiGrader,
+    AzureOpenAIGrader,
 )
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
@@ -50,7 +50,7 @@ class TestRemoteEvaluationFeatures:
         # create f1 score eval
         f1_score_eval = F1ScoreEvaluator()
         # create aoai grader
-        aoai_grader = AoaiGrader(mock_aoai_model_config, mock_grader_config)
+        aoai_grader = AzureOpenAIGrader(mock_aoai_model_config, mock_grader_config)
         from azure.ai.evaluation._evaluate._evaluate import _map_names_to_builtins
         from azure.ai.evaluation._eval_mapping import EVAL_CLASS_MAP
 
@@ -63,4 +63,4 @@ class TestRemoteEvaluationFeatures:
         result = _map_names_to_builtins(evaluators, graders)
         assert result is not None
         assert result["my_f1"] == EVAL_CLASS_MAP[F1ScoreEvaluator]
-        assert result["my_aoai"] == AoaiGrader.id
+        assert result["my_aoai"] == AzureOpenAIGrader.id

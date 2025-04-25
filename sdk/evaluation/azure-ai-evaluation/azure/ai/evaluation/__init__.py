@@ -40,10 +40,10 @@ from ._model_configurations import (
     Message,
     OpenAIModelConfiguration,
 )
-from ._aoai.aoai_grader import AoaiGrader
-from ._aoai.label_grader import AoaiLabelGrader
-from ._aoai.string_check_grader import AoaiStringCheckGrader
-from ._aoai.text_similarity_grader import AoaiTextSimilarityGrader
+from ._aoai.aoai_grader import AzureOpenAIGrader
+from ._aoai.label_grader import AzureOpenAILabelGrader
+from ._aoai.string_check_grader import AzureOpenAIStringCheckGrader
+from ._aoai.text_similarity_grader import AzureOpenAITextSimilarityGrader
 
 
 _patch_all = []
@@ -94,10 +94,10 @@ __all__ = [
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
-    "AoaiGrader",
-    "AoaiLabelGrader",
-    "AoaiStringCheckGrader",
-    "AoaiTextSimilarityGrader",
+    "AzureOpenAIGrader",
+    "AzureOpenAILabelGrader",
+    "AzureOpenAIStringCheckGrader",
+    "AzureOpenAITextSimilarityGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

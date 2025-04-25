@@ -14,7 +14,7 @@ from ._batch_run import CodeClient, ProxyClient
 #import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._aoai.aoai_grader import AoaiGrader
+from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 
@@ -30,8 +30,8 @@ class OAIEvalRunCreationInfo(TypedDict, total=True):
     grader_name_map: Dict[str, str]
 
 def _split_evaluators_and_grader_configs(
-        evaluators: Dict[str, Union[Callable, AoaiGrader]]
-    ) -> Tuple[Dict[str, Callable], Dict[str, AoaiGrader]]:
+        evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]]
+    ) -> Tuple[Dict[str, Callable], Dict[str, AzureOpenAIGrader]]:
     """
     Given a dictionary of strings to Evaluators and AOAI graders. Identity which is which, and return two
     dictionaries that each contain one subset, the first containing the evaluators and the second containing
@@ -47,7 +47,7 @@ def _split_evaluators_and_grader_configs(
     true_evaluators = {}
     aoai_graders = {}
     for key, value in evaluators.items():
-        if isinstance(value, AoaiGrader):
+        if isinstance(value, AzureOpenAIGrader):
             aoai_graders[key] = value
         else:
             true_evaluators[key] = value
@@ -56,7 +56,7 @@ def _split_evaluators_and_grader_configs(
 @experimental
 def _begin_aoai_evaluation(
         client: Union[OpenAI, AzureOpenAI],
-        graders: Dict[str, AoaiGrader],
+        graders: Dict[str, AzureOpenAIGrader],
         column_mappings: Optional[Dict[str, Dict[str, str]]],
         data: pd.DataFrame,
         run_name: str
@@ -103,7 +103,7 @@ def _begin_aoai_evaluation(
 
 def _begin_single_aoai_evaluation(
         client: Union[OpenAI, AzureOpenAI],
-        graders: Dict[str, AoaiGrader],
+        graders: Dict[str, AzureOpenAIGrader],
         data: pd.DataFrame,
         column_mapping: Dict[str, str],
         run_name: str
@@ -274,7 +274,7 @@ def _get_single_run_results(
     return output_df, run_metrics
 
 def _are_individual_runs_needed(
-        graders: Dict[str, AoaiGrader],
+        graders: Dict[str, AzureOpenAIGrader],
         column_mapping: Optional[Dict[str, str]] = None
     ) -> bool:
     """
@@ -309,7 +309,7 @@ def _are_individual_runs_needed(
     return False
 
 
-def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AoaiGrader:
+def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AzureOpenAIGrader:
     """
     Helper function for the remote evaluation service.
     Given a model ID that refers to a specific AOAI grader wrapper class, return an instance of that class
@@ -334,22 +334,22 @@ def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str,
     grader_class =  _get_grader_class(grader_id)
     return grader_class(**init_params)
 
-def _get_grader_class(model_id: str) -> Type[AoaiGrader]:
+def _get_grader_class(model_id: str) -> Type[AzureOpenAIGrader]:
     """
     Given a model ID, return the class of the corresponding grader wrapper.
     """
 
     from azure.ai.evaluation import (
-        AoaiGrader,
-        AoaiLabelGrader,
-        AoaiStringCheckGrader,
-        AoaiTextSimilarityGrader,
+        AzureOpenAIGrader,
+        AzureOpenAILabelGrader,
+        AzureOpenAIStringCheckGrader,
+        AzureOpenAITextSimilarityGrader,
     )
     id_map = {
-        AoaiGrader.id: AoaiGrader,
-        AoaiLabelGrader.id: AoaiLabelGrader,
-        AoaiStringCheckGrader.id: AoaiStringCheckGrader,
-        AoaiTextSimilarityGrader.id: AoaiTextSimilarityGrader,
+        AzureOpenAIGrader.id: AzureOpenAIGrader,
+        AzureOpenAILabelGrader.id: AzureOpenAILabelGrader,
+        AzureOpenAIStringCheckGrader.id: AzureOpenAIStringCheckGrader,
+        AzureOpenAITextSimilarityGrader.id: AzureOpenAITextSimilarityGrader,
     }
 
     for key in id_map.keys():
@@ -364,9 +364,9 @@ def _get_grader_class(model_id: str) -> Type[AoaiGrader]:
 
 
 def _get_graders_and_column_mappings(
-        graders: Dict[str, AoaiGrader],
+        graders: Dict[str, AzureOpenAIGrader],
         column_mappings: Optional[Dict[str, Dict[str, str]]],
-    ) -> List[Tuple[Dict[str, AoaiGrader], Optional[Dict[str, str]]]]:
+    ) -> List[Tuple[Dict[str, AzureOpenAIGrader], Optional[Dict[str, str]]]]:
     """
     Given a dictionary of column mappings and a dictionary of AOAI graders,
     Split them into sub-lists and sub-dictionaries that each correspond to a single evaluation run
