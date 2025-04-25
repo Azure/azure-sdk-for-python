@@ -36,12 +36,12 @@ def main():
         resource={
             "location": "northcentralus",
             "properties": {"ipAllowlist": ["10.0.0.0/8"], "sku": {"name": "Dedicated"}},
-            "tags": {"key2138": "fjaeecgnvqd", "key7131": "ryohwcoiccwsnewjigfmijz"},
+            "tags": {"department": "research", "development": "true"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-10-01-preview/Schedulers_CreateOrUpdate.json
+# x-ms-original-file: 2025-04-01-preview/Schedulers_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
