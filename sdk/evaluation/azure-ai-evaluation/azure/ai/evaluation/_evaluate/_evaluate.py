@@ -43,7 +43,7 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
-    DataLoaderFactory,
+    DataLoaderFactory, _log_metrics_and_instance_results_onedp,
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
