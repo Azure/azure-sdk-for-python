@@ -15,7 +15,7 @@ class AzureOpenAIGrader():
     """
     Base class for Azure OpenAI grader wrappers, recommended only for use by experienced OpenAI API users.
     Combines a model configuration and any grader configuration
-    into a singlular object that can be used in evaluations.
+    into a singular object that can be used in evaluations.
 
     Supplying an AoaiGrader to the `evaluate` method will cause an asynchronous request to evaluate
     the grader via the OpenAI API. The results of the evaluation will then be merged into the standard

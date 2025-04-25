@@ -17,7 +17,8 @@
         "vuln",
         "pyrit",
         "Pyrit",
-        "submitaoaievaluation"
+        "submitaoaievaluation",
+        "ilike"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
