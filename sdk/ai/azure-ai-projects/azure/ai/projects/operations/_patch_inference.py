@@ -87,8 +87,8 @@ class InferenceOperations:
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent
-            ),  # pylint: disable=protected-access
+                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
+            ),
             **kwargs,
         )
 
@@ -129,8 +129,8 @@ class InferenceOperations:
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent
-            ),  # pylint: disable=protected-access
+                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
+            ),
             **kwargs,
         )
 
@@ -171,8 +171,8 @@ class InferenceOperations:
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent
-            ),  # pylint: disable=protected-access
+                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
+            ),
             **kwargs,
         )
 
