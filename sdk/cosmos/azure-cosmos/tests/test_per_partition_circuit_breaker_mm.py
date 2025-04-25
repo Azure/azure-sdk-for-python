@@ -13,7 +13,7 @@ from azure.cosmos import PartitionKey, _location_cache, _partition_health_tracke
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
-from test_ppcb_mm_async import DELETE, CREATE, UPSERT, REPLACE, PATCH, BATCH, validate_response_uri, READ, \
+from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, REPLACE, PATCH, BATCH, validate_response_uri, READ, \
     QUERY_PK, QUERY, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS, REGION_1, REGION_2, \
     write_operations_and_errors, validate_unhealthy_partitions, read_operations_and_errors, PK_VALUE, operations, \
     create_doc
