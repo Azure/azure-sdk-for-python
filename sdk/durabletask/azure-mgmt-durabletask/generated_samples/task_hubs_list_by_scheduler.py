@@ -32,12 +32,12 @@ def main():
 
     response = client.task_hubs.list_by_scheduler(
         resource_group_name="rgopenapi",
-        scheduler_name="testtaskhub",
+        scheduler_name="testscheduler",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-10-01-preview/TaskHubs_ListByScheduler.json
+# x-ms-original-file: 2025-04-01-preview/TaskHubs_ListByScheduler.json
 if __name__ == "__main__":
     main()

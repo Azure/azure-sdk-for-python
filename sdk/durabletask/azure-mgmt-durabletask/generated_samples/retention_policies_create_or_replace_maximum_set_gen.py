@@ -15,7 +15,7 @@ from azure.mgmt.durabletask import DurableTaskMgmtClient
     pip install azure-identity
     pip install azure-mgmt-durabletask
 # USAGE
-    python schedulers_get.py
+    python retention_policies_create_or_replace_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedulers.get(
-        resource_group_name="rgopenapi",
+    response = client.retention_policies.begin_create_or_replace(
+        resource_group_name="rgdurabletask",
         scheduler_name="testscheduler",
-    )
+        resource={
+            "properties": {
+                "retentionPolicies": [
+                    {"retentionPeriodInDays": 30},
+                    {"orchestrationState": "Failed", "retentionPeriodInDays": 10},
+                ]
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Schedulers_Get.json
+# x-ms-original-file: 2025-04-01-preview/RetentionPolicies_CreateOrReplace_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
