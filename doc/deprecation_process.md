@@ -29,37 +29,37 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 A disclaimer should be added indicating end-of-life date (EOLDate) of the package and directing to a replacement package and migration guide as necessary.
   - The EOLDate should be in the format `MM-DD-YYYY`.
-    - If there is no replacement package, the package EOLDate should be the service retirement date. This does not necessarily need to be the same as the release date in the CHANGELOG.md, since the package may be deprecated before/after the service is retired.
+    - If there is no replacement package, the package EOLDate should be the service retirement date.
     - If there is a replacement package (or repo), the EOLDate should be the same as the deprecation release date of the old package in the CHANGELOG.md.
     - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
   - The link to the migration guide should be a link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this aka.ms link, follow the "How to create aka.ms links" section [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/233/Azure-SDK-AKA.ms-Links?anchor=how-to-create-aka.ms-links).
     - **NOTE**: You may decide to postpone or skip writing a migration guide based on downloads numbers (found on [pypistats](https://pypistats.org/), [pepy.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 
-The disclaimer should be added at the very top of the README.md before any other text in the following format.
+Replace ALL existing text with a disclaimer in the following format.
 
   - If a replacement package and migration guide exist:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
     ```
 
   - If a migration guide is not provided:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
     ```
 
   - If a replacement package does not exist:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
     ```
 
   - If a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
 
     ```md
-    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+     This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
     
     For additional support, open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
     ```
@@ -104,7 +104,6 @@ The disclaimer should be added at the very top of the README.md before any other
       - name: azure-mypackage
         safeName: azuremypackage
   ```
-
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -167,11 +166,28 @@ You may see tests/mypy/pylint or other checks failing on other packages in the C
 
 ## Post-Release
 
-Check to make sure that the new version of the package has been released on PyPI.
+Check to make sure that the new version of the package has been released on PyPI and that the release has been tagged in the `azure-sdk-for-python` repo with `azure-mypackage_<version>`.
 
-# Step 5: Create a new PR to remove the package from CI
+**NOTE: If your package has been released, there should be a corresponding [GitHub release tag](https://github.com/Azure/azure-sdk-for-python/tags). If there is not, create a post in the [Engineering System channel](https://teams.microsoft.com/l/channel/19%3A59dbfadafb5e41c4890e2cd3d74cc7ba%40thread.skype/Engineering%20System%20%F0%9F%9B%A0%EF%B8%8F?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) that the release tag cannot be found and add a link to the release build.**
 
-- You will see an `Artifacts` parameter in the `mypackage/ci.yml`.
+Example release tag: [azure-cognitiveservices-language-spellcheck_2.0.1](https://github.com/Azure/azure-sdk-for-python/releases/tag/azure-cognitiveservices-language-spellcheck_2.0.1)
+
+# Step 5: Create a new PR to remove the package from the main branch
+
+Append a note to the README.md deprecation message stating the package has been removed from the main branch, a link to the latest GitHub release tag and package on PyPI, and contact info for questions. The full README text should now look like the following:
+
+  ```md
+  # Microsoft Azure SDK for Python
+
+  This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
+
+  Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mypackage_<version>](https://github.com/Azure/azure-sdk-for-python/tree/azure-mypackage_<version>/sdk/mypackage/azure-mypackage). The latest release can be found on [PyPI](https://pypi.org/project/azure-mypackage/).
+
+  If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.
+  ```
+
+- Delete all files in the package directory `sdk/mypackage/azure-mypackage` EXCEPT for the README.md at the package directory root.
+- You will see an `Artifacts` parameter in `mypackage/ci.yml`.
   ```yml
   extends:
     parameters:
@@ -180,13 +196,7 @@ Check to make sure that the new version of the package has been released on PyPI
       - name: azure-mypackage
         safeName: azuremypackage
   ```
- - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
-    ```yml
-    extends:
-      parameters:
-        ...
-    ```
- - If there are multiple packages listed, remove the `name` and corresponding `safeName` lines for only `azure-mypackage`.
+  - If there are multiple packages listed, remove the `name` and corresponding `safeName` lines for only `azure-mypackage`.
     ```yml
     extends:
       parameters:
@@ -194,14 +204,12 @@ Check to make sure that the new version of the package has been released on PyPI
         Artifacts:
           ...
     ```
+  - If the only package listed is `azure-mypackage`, delete `ci.yml` and all other files -- _not package subdirectories_-- in the `mypackage` service directory (i.e. `tests.yml`, `test-resources.bicep`, etc.).
 
-- Add the line `ci_enabled = false` to `azure-mypackage/pyproject.toml`.
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 - Once the PR has been approved by codeowner, merge.
 - You're responsible for fixing any CI issues related to this PR.
-
-Example post-deprecation PR for azure-cognitiveservices-language-spellcheck [here](https://github.com/Azure/azure-sdk-for-python/pull/37459/files).
 
 # Step 6: Update API Documentation
 
