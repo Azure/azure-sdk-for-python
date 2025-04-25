@@ -340,10 +340,10 @@ class TestRedTeamMlflowIntegration:
              patch.object(red_team, "scan_output_dir", None):
              
             # Mock the implementation to avoid tempfile dependency but still log metrics
-            async def mock_impl(redteam_output, eval_run, data_only=False):
+            async def mock_impl(redteam_result, eval_run, data_only=False, _skip_evals=False):
                 # Call log_metric with the expected values
-                if redteam_output.scan_result:
-                    scorecard = redteam_output.scan_result["scorecard"]
+                if redteam_result.scan_result:
+                    scorecard = redteam_result.scan_result["scorecard"]
                     joint_attack_summary = scorecard["joint_risk_attack_summary"]
                     
                     if joint_attack_summary:
