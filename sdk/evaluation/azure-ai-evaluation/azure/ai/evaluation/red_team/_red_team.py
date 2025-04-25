@@ -991,7 +991,7 @@ class RedTeam():
                         conversation_messages = []
                         for msg in messages:
                             # Get the basic chat message using the existing utility
-                            chat_msg = self._message_to_dict(item.to_chat_message())
+                            chat_msg = self._message_to_dict(msg.to_chat_message())
                             
                             # Add prompt_group_id if it exists in prompt_metadata
                             prompt_metadata = msg.get("prompt_metadata", {})
