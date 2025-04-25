@@ -195,7 +195,7 @@ class SecurityDomainClient(KeyVaultClient):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainOperationStatus]: ...
+    ) -> LROPoller[None]: ...
 
     @overload
     @distributed_trace
@@ -205,7 +205,7 @@ class SecurityDomainClient(KeyVaultClient):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainOperationStatus]: ...
+    ) -> LROPoller[None]: ...
 
     @overload
     @distributed_trace
@@ -215,7 +215,7 @@ class SecurityDomainClient(KeyVaultClient):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainOperationStatus]: ...
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
     def begin_upload(
@@ -224,7 +224,7 @@ class SecurityDomainClient(KeyVaultClient):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainOperationStatus]:
+    ) -> LROPoller[None]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required in one of the following types:
@@ -244,7 +244,7 @@ class SecurityDomainClient(KeyVaultClient):
         polling_method = SecurityDomainUploadPollingMethod(
             lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay
         )
-        return super()._begin_upload(
+        return super()._begin_upload(  # type: ignore[return-value]
             security_domain,
             content_type=content_type,
             polling=polling_method,

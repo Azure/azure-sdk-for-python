@@ -146,16 +146,15 @@ class AsyncSecurityDomainUploadPollingMethod(AsyncPollingTerminationMixin, Async
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
 
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            return _deserialize(SecurityDomainOperationStatus, response.json())
+        def get_long_running_output(_):
+            return None
 
         super().initialize(client, initial_response, get_long_running_output)
 
-    def resource(self) -> SecurityDomainOperationStatus:
+    def resource(self) -> None:
         """Return the built resource.
 
         :rtype: any
         :return: The built resource.
         """
-        return cast(SecurityDomainOperationStatus, self.parse_resource(self._pipeline_response))
+        return None
