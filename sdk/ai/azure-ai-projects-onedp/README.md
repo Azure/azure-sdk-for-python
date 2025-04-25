@@ -87,12 +87,21 @@ project_client = AIProjectClient.from_connection_string(
 Below is a code example of how to get an authenticated `AgentsClient` from the `azure-ai-agents` package.
 Full samples can be found under the `agents` folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_get_agents_client.agents_sample -->
+<!-- SNIPPET:sample_agents.agents_sample -->
 
 ```python
-with project_client.agents.get_client() as client:
-    # TODO: Do something with the agents client...
-    pass
+agent = project_client.agents.create_agent(
+    model=model_deployment_name,
+    name="my-agent",
+    instructions="You are helpful agent",
+)
+print(f"Created agent, agent ID: {agent.id}")
+
+# Do something with your Agent!
+# See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
+
+project_client.agents.delete_agent(agent.id)
+print("Deleted agent")
 ```
 
 <!-- END SNIPPET -->

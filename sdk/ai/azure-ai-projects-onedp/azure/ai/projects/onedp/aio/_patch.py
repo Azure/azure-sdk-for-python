@@ -6,19 +6,21 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Any
+from typing import List, Any
+from typing_extensions import Self
 from azure.core.credentials_async import AsyncTokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import InferenceOperations, ClientsOperations, TelemetryOperations
+from .._patch import _patch_user_agent
+from .operations import InferenceOperations, TelemetryOperations
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar agents: The asynchronous AgentsClient associated with this AIProjectClient.
+    :vartype agents: azure.ai.agents.aio.AgentsClient
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.aio.operations.ConnectionsOperations
-    :ivar clients: ClientsOperations operations
-    :vartype clients: azure.ai.projects.onedp.aio.operations.ClientsOperations
     :ivar inference: InferenceOperations operations
     :vartype inference: azure.ai.projects.onedp.aio.operations.InferenceOperations
     :ivar telemetry: TelemetryOperations operations
@@ -33,27 +35,71 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype deployments: azure.ai.projects.onedp.aio.operations.DeploymentsOperations
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.onedp.aio.operations.RedTeamsOperations
-    :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :param endpoint: Project endpoint. In the form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
+     form "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     if you want to explicitly specify the Foundry Project name. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any
-    ) -> None:
-        self._user_agent: Optional[str] = kwargs.get("user_agent", None)
+    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+
+        self._kwargs = kwargs.copy()
+        self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
+
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
-        self.clients = ClientsOperations(self)
+        self._agents = None
+
+    @property
+    def agents(self) -> "AgentsClient":  # type: ignore[name-defined]
+        """Get the asynchronous AgentsClient associated with this AIProjectClient.
+        The package azure.ai.agents must be installed to use this property.
+
+        :return: The asynchronous AgentsClient associated with this AIProjectClient.
+        :rtype: azure.ai.agents.aio.AgentsClient
+        """
+        if self._agents is None:
+            # TODO: set user_agent
+            # Lazy import of AgentsClient only when this property is accessed
+            try:
+                from azure.ai.agents.aio import AgentsClient
+            except ModuleNotFoundError as e:
+                raise ModuleNotFoundError(
+                    "Failed to import AgentsClient. Please run 'pip install azure.ai.agents'"
+                ) from e
+            self._agents = AgentsClient(
+                endpoint=self._config.endpoint,
+                credential=self._config.credential,
+                user_agent=self._patched_user_agent,
+                **self._kwargs,
+            )
+        return self._agents
+
+    async def close(self) -> None:
+        if self._agents:
+            await self.agents.close()
+        await super().close()
+
+    async def __aenter__(self) -> Self:
+        await super().__aenter__()
+        if self._agents:
+            await self.agents.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        if self._agents:
+            await self.agents.__aexit__(*exc_details)
+        await super().__aexit__(*exc_details)
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
