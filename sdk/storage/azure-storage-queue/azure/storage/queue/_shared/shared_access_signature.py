@@ -40,6 +40,8 @@ class QueryStringConstants(object):
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
     SIGNED_ENCRYPTION_SCOPE = 'ses'
+    SIGNED_KEY_DELEGATED_USER_TID = 'skdutid'
+    SIGNED_DELEGATED_USER_OID = 'sduoid'
 
     # for ADLS
     SIGNED_AUTHORIZED_OID = 'saoid'
@@ -77,6 +79,8 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
+            QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+            QueryStringConstants.SIGNED_DELEGATED_USER_OID,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
             QueryStringConstants.SIGNED_UNAUTHORIZED_OID,

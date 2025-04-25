@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.aio import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.v2025_04_01.aio import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,12 +21,24 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_webhooks_list(self, resource_group):
+        response = self.client.webhooks.list(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_webhooks_get(self, resource_group):
         response = await self.client.webhooks.get(
             resource_group_name=resource_group.name,
             registry_name="str",
             webhook_name="str",
-            api_version="2019-05-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +61,7 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
                     "status": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2019-05-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -64,7 +76,7 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 registry_name="str",
                 webhook_name="str",
-                api_version="2019-05-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,22 +99,10 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
                     "status": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2019-05-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_webhooks_list(self, resource_group):
-        response = self.client.webhooks.list(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            api_version="2019-05-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -113,20 +113,7 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             registry_name="str",
             webhook_name="str",
-            api_version="2019-05-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_webhooks_get_callback_config(self, resource_group):
-        response = await self.client.webhooks.get_callback_config(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            webhook_name="str",
-            api_version="2019-05-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -139,8 +126,21 @@ class TestContainerRegistryManagementWebhooksOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             registry_name="str",
             webhook_name="str",
-            api_version="2019-05-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_webhooks_get_callback_config(self, resource_group):
+        response = await self.client.webhooks.get_callback_config(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            webhook_name="str",
+            api_version="2025-04-01",
+        )
+
         # please add some check logic here by yourself
         # ...

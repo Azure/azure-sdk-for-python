@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 import pytest
+
+from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import ModelBatchDeployment
 from azure.ai.ml.entities._load_functions import load_model_batch_deployment
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml.exceptions import ValidationException
 
 
@@ -18,6 +19,7 @@ class TestModelBatchDeployment:
         deployment = load_model_batch_deployment(
             TestModelBatchDeployment.MODEL_BATCH_DEPLOYMNET, params_override=[{"endpoint_name": "some-en-name"}]
         )
+        assert deployment.type == "model"
         rest_deployment = deployment._to_rest_object(location="eastus")
         assert rest_deployment.location == "eastus"
         assert rest_deployment.properties.description == deployment.description
@@ -69,3 +71,32 @@ class TestModelBatchDeployment:
         assert deployment_dict["resources"]["instance_count"] == deployment.resources.instance_count
         assert deployment_dict["settings"]["error_threshold"] == deployment.settings.error_threshold
         assert deployment_dict["settings"]["output_action"] == "append_row"
+
+    def test_settings_getter_setter(self) -> None:
+        """Test getter and setter for settings in ModelBatchDeployment."""
+        # Create a minimal batch deployment
+        deployment = ModelBatchDeployment(
+            name="test-deployment",
+            endpoint_name="test-endpoint",
+            model="azureml:model:1",
+            compute="azureml:cpu-cluster",
+            resources={"instance_count": 2},
+        )
+        assert deployment.compute == "azureml:cpu-cluster"
+        assert deployment.resources["instance_count"] == 2
+
+        # Test setting individual settings properties
+        deployment.settings.output_file_name = "results.csv"
+        deployment.settings.output_action = BatchDeploymentOutputAction.APPEND_ROW
+        deployment.settings.error_threshold = 10
+        deployment.settings.max_concurrency_per_instance = 4
+        deployment.settings.mini_batch_size = 5
+        deployment.settings.environment_variables = {"ENV_VAR1": "value1", "ENV_VAR2": "value2"}
+
+        # Verify individual settings can be retrieved correctly
+        assert deployment.settings.output_file_name == "results.csv"
+        assert deployment.settings.output_action == BatchDeploymentOutputAction.APPEND_ROW
+        assert deployment.settings.error_threshold == 10
+        assert deployment.settings.max_concurrency_per_instance == 4
+        assert deployment.settings.mini_batch_size == 5
+        assert deployment.settings.environment_variables == {"ENV_VAR1": "value1", "ENV_VAR2": "value2"}

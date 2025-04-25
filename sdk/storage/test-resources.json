@@ -128,11 +128,11 @@
             "apiVersion": "[variables('storageApiVersion')]",
             "name": "[concat(variables('primaryAccountName'), '/default')]",
             "properties": {
-            "containerDeleteRetentionPolicy": {
+              "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
               }
-        },
+            },
         "dependsOn": [
           "[variables('primaryAccountName')]"
         ]
@@ -438,6 +438,7 @@
           "name": "[concat(variables('dataLakeSoftDeleteAccountName'), '/default')]",
           "properties": {
             "deleteRetentionPolicy": {
+              "allowPermanentDelete": false,
               "enabled": true,
               "days": 1
             },

@@ -77,3 +77,4 @@ nltk
 azure-monitor-opentelemetry
 pyrit
 prompty
+jinja2
