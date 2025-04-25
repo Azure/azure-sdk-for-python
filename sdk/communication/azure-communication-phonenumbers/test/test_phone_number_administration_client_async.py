@@ -12,7 +12,6 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilities,
     PhoneNumberCapabilityType,
     PhoneNumberType,
-    PhoneNumbersBrowseRequest,
     PhoneNumbersReservation,
     ReservationStatus,
     AvailablePhoneNumberStatus
@@ -27,12 +26,14 @@ STATIC_RESERVATION_ID = "6227aeb8-8086-4824-9586-05cafe96f37b"
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+SKIP_INT_PHONE_NUMBER_TESTS = os.getenv(
+    "COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
 INT_PHONE_NUMBER_TEST_SKIP_REASON = (
     "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 )
 
-SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
+    "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
 
@@ -53,7 +54,8 @@ def is_client_error_status_code(
 @pytest.mark.asyncio
 class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     def setup_method(self):
-        super(TestPhoneNumbersClientAsync, self).setUp(use_dynamic_resource=False)
+        super(TestPhoneNumbersClientAsync, self).setUp(
+            use_dynamic_resource=False)
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
@@ -63,14 +65,15 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             self.purchased_reservation_id = STATIC_RESERVATION_ID
         else:
             self.phone_number = _get_test_phone_number()
-            self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
-            
+            self.country_code = os.getenv(
+                "AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
+
             # In live mode, generate unique reservation IDs for each test run
             # Tests that create and delete reservations will use the same ID
-            self.reservation_id = str(uuid.uuid4()) 
-            # The purchase reservation test will use a different ID, 
+            self.reservation_id = str(uuid.uuid4())
+            # The purchase reservation test will use a different ID,
             # since purchased reservations are immutable and cannot be modified after purchase
-            self.purchased_reservation_id = str(uuid.uuid4()) 
+            self.purchased_reservation_id = str(uuid.uuid4())
 
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
@@ -253,11 +256,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.OUTBOUND, sms=PhoneNumberCapabilityType.NONE
         )
-        
+
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(
-                "FR", 
+                "FR",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
@@ -368,7 +371,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async for item in area_codes:
                 items.append(item.area_code)
 
-        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
+        expected_area_codes = {"888", "877", "866",
+                               "855", "844", "800", "833", "88"}
         for area_code in items:
             assert area_code in expected_area_codes
 
@@ -384,7 +388,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async for item in area_codes:
                 items.append(item.area_code)
 
-        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
+        expected_area_codes = {"888", "877", "866",
+                               "855", "844", "800", "833", "88"}
         for area_code in items:
             assert area_code in expected_area_codes
 
@@ -412,7 +417,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
                     "US",
@@ -459,7 +465,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_localities(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             items = []
             async for item in localities:
                 items.append(item)
@@ -483,7 +490,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_localities_with_ad(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             async for first_locality in localities:
                 localities = self.phone_number_client.list_available_localities(
                     "US", administrative_division=first_locality.administrative_division.abbreviated_name
@@ -564,13 +572,12 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
     @recorded_by_proxy_async
     async def test_browse_available_numbers(self):
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         result = await self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
         assert result
-        assert len(result.phone_numbers) > 0
+        assert len(result) > 0
 
     # This test does a lot of stuff because pytest doesn't have an easy built-in way to execute tests in a specific order.
     @recorded_by_proxy_async
@@ -578,28 +585,28 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.reservation_id
 
         # Test that a reservation can be created without any phone numbers
-        reservation = PhoneNumbersReservation(reservation_id)
-        created_reservation = await self.phone_number_client.create_or_update_reservation(reservation)
+        created_reservation = await self.phone_number_client.create_or_update_reservation(reservation_id=reservation_id)
 
         assert created_reservation.id == reservation_id
         assert created_reservation.status == ReservationStatus.ACTIVE
         assert len(created_reservation.phone_numbers) == 0
 
         # Test that we can add phone numbers to the reservation
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
-        phone_number_to_reserve = browse_result.phone_numbers[0]
-        created_reservation.add_phone_number(phone_number_to_reserve)
-        updated_reservation = await self.phone_number_client.create_or_update_reservation(created_reservation)
-        
+        phone_number_to_reserve = browse_result[0]
+        updated_reservation = await self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[
+                phone_number_to_reserve]
+        )
+
         assert updated_reservation.id == reservation_id
         assert updated_reservation.status == ReservationStatus.ACTIVE
         assert updated_reservation.expires_at > created_reservation.expires_at
@@ -615,8 +622,9 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert len(retrieved_reservation.phone_numbers) == len(updated_reservation.phone_numbers)
 
         # Test that we can remove numbers from the reservation
-        updated_reservation.remove_phone_number(phone_number_to_reserve.id)
-        reservation_after_remove = await self.phone_number_client.create_or_update_reservation(updated_reservation)
+        reservation_after_remove = await self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id,
+            numbers_to_remove=[phone_number_to_reserve.id])
 
         assert reservation_after_remove.id == updated_reservation.id
         assert reservation_after_remove.status == updated_reservation.status
@@ -634,21 +642,20 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.reservation_id
 
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            "FR", browse_request
+            "FR", PhoneNumberType.TOLL_FREE
         )
 
         # The phone number can be reserved, but not purchased without agreement to not resell
-        phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id)
-        reservation.add_phone_number(phone_number)
-        created_reservation = await self.phone_number_client.create_or_update_reservation(reservation)
+        phone_number = browse_result[0]
+        created_reservation = await self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[phone_number])
+        
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 
@@ -669,20 +676,19 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.purchased_reservation_id
 
         # Test that we can purchase a reservation
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
-        phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id)
-        reservation.add_phone_number(phone_number)
-        created_reservation = await self.phone_number_client.create_or_update_reservation(reservation)
+        phone_number = browse_result[0]
+        created_reservation = await self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[phone_number])
+        
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 

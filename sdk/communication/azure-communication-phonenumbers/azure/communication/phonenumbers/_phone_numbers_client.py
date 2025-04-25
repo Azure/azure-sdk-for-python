@@ -441,7 +441,6 @@ class PhoneNumbersClient:
 
         # This allows mapping the generated model to the public model.
         # Internally, the generated client will create an instance of this iterator with each fetched page.
-        
 
         return self._phone_number_client.phone_numbers.list_reservations(
             max_page_size=max_page_size,
@@ -486,7 +485,7 @@ class PhoneNumbersClient:
                 phone_numbers[number] = None
 
         reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
-        
+
         return self._phone_number_client.phone_numbers.create_or_update_reservation(
             _reservation_id, reservation, **kwargs)
 
@@ -552,7 +551,8 @@ class PhoneNumbersClient:
             calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
             assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
             phone_number_prefixes: Optional[List[str]] = None,
-            **kwargs) -> List[AvailablePhoneNumber]:
+            **kwargs: Any,
+    ) -> List[AvailablePhoneNumber]:
         """Browses for available phone numbers to purchase.
 
         Browses for available phone numbers to purchase. The response will be a randomized list of
@@ -565,17 +565,17 @@ class PhoneNumbersClient:
         :param phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
             or tollFree. Possible values include: "geographic", "tollFree".
         :type phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
-        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound",
-        "outbound", "inbound_outbound", "none".
+        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound", 
+            "outbound", "inbound_outbound", "none".
         :paramtype sms_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
         :keyword calling_capability: The calling capability to search for. Known values are: "inbound",
-        "outbound", "inbound_outbound", "none".
+            "outbound", "inbound_outbound", "none".
         :paramtype calling_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
         :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
-        case. Known values are: "person" and "application".
+            case. Known values are: "person" and "application".
         :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword phone_number_prefixes: The phone number prefix to match. If specified, the search will
-        be limited to phone numbers that start with the any of the given prefixes.
+            be limited to phone numbers that start with the any of the given prefixes.
         :paramtype phone_number_prefixes: list[str]
         :return: A list of available phone numbers matching the browsing criteria.
         :rtype: List[~azure.communication.phonenumbers.models.AvailablePhoneNumber]

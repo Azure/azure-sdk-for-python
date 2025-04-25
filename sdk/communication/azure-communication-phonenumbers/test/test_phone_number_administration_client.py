@@ -9,7 +9,6 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilities,
     PhoneNumberCapabilityType,
     PhoneNumberType,
-    PhoneNumbersBrowseRequest,
     PhoneNumbersReservation,
     ReservationStatus,
     AvailablePhoneNumberStatus
@@ -467,13 +466,12 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
     @recorded_by_proxy
     def test_browse_available_numbers(self):
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         result = self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
         assert result
-        assert len(result.phone_numbers) > 0
+        assert len(result) > 0
 
     # This test does a lot of stuff because pytest doesn't have an easy built-in way to execute tests in a specific order.
     @recorded_by_proxy
@@ -486,22 +484,21 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         reservation_id = self.reservation_id
 
         # Test that a reservation can be created without any phone numbers
-        reservation = PhoneNumbersReservation(reservation_id)
-        created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
+        created_reservation = self.phone_number_client.create_or_update_reservation(reservation_id=reservation_id)
 
         assert created_reservation.id == reservation_id
         assert created_reservation.status == ReservationStatus.ACTIVE
         assert len(created_reservation.phone_numbers) == 0
 
         # Test that we can add phone numbers to the reservation
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
-        phone_number_to_reserve = browse_result.phone_numbers[0]
-        created_reservation.add_phone_number(phone_number_to_reserve)
-        updated_reservation = self.phone_number_client.create_or_update_reservation(created_reservation)
+        phone_number_to_reserve = browse_result[0]
+        updated_reservation = self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[phone_number_to_reserve]
+        )
         
         assert updated_reservation.id == reservation_id
         assert updated_reservation.status == ReservationStatus.ACTIVE
@@ -518,8 +515,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert len(retrieved_reservation.phone_numbers) == len(updated_reservation.phone_numbers)
 
         # Test that we can remove numbers from the reservation
-        updated_reservation.remove_phone_number(phone_number_to_reserve.id)
-        reservation_after_remove = self.phone_number_client.create_or_update_reservation(updated_reservation)
+        reservation_after_remove = self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_remove=[phone_number_to_reserve.id])
 
         assert reservation_after_remove.id == updated_reservation.id
         assert reservation_after_remove.status == updated_reservation.status
@@ -542,16 +539,14 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         reservation_id = self.reservation_id
 
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            "FR", browse_request
+            "FR", PhoneNumberType.TOLL_FREE
         )
 
         # The phone number can be reserved, but not purchased without agreement to not resell
-        phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id)
-        reservation.add_phone_number(phone_number)
-        created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
+        phone_number = browse_result[0]
+        created_reservation = self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[phone_number])
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 
@@ -577,15 +572,14 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         reservation_id = self.purchased_reservation_id
 
         # Test that we can purchase a reservation
-        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            self.country_code, browse_request
+            self.country_code, PhoneNumberType.TOLL_FREE
         )
 
-        phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id)
-        reservation.add_phone_number(phone_number)
-        created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
+        phone_number = browse_result[0]
+        created_reservation = self.phone_number_client.create_or_update_reservation(
+            reservation_id=reservation_id, numbers_to_add=[phone_number])
+        
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 
