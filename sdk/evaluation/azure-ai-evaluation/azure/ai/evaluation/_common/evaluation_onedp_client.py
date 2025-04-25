@@ -10,10 +10,12 @@ from azure.ai.evaluation._common.onedp.models import (PendingUploadRequest, Pend
                                                       ResultType, AssetCredentialRequest, EvaluationUpload, InputDataset)
 from azure.storage.blob import ContainerClient
 from .utils import upload
+from .evaluation_service_interface import EvaluationServiceClientInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 LOGGER = logging.getLogger(__name__)
 
-class EvaluationServiceOneDPClient:
+class EvaluationServiceOneDPClient(EvaluationServiceClientInterface):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self.rest_client = RestEvaluationServiceClient(
@@ -113,3 +115,19 @@ class EvaluationServiceOneDPClient:
         )
 
         return update_run_response
+
+    def check_annotation(self, *, annotation: str, **kwargs) -> None:
+        check_annotation_response = self.rest_client.evaluations.check_annotation(**kwargs)
+
+        if annotation and annotation not in check_annotation_response:
+            msg = f"The needed capability '{annotation}' is not supported by the RAI service in this region."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
+
+
