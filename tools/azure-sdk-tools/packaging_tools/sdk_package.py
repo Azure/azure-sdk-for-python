@@ -54,6 +54,13 @@ def main(generate_input, generate_output):
             md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
+        finally:
+            for file in ["stable.json", "current.json"]:
+                file_path = Path(sdk_folder, prefolder, package_name, file)
+                if file_path.exists():
+                    os.remove(file_path)
+                    _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
+
         _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
         package["changelog"] = {
             "content": md_output,

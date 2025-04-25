@@ -311,7 +311,9 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
                  self.get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION) +
                  self.get_value_to_append(QueryStringConstants.SIGNED_AUTHORIZED_OID) +
                  self.get_value_to_append(QueryStringConstants.SIGNED_UNAUTHORIZED_OID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_CORRELATION_ID))
+                 self.get_value_to_append(QueryStringConstants.SIGNED_CORRELATION_ID) +
+                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID) +
+                 self.get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID))
         else:
             string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 

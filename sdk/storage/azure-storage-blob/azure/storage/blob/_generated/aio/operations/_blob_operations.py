@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,7 +99,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        # pylint: disable=line-too-long
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
@@ -415,7 +414,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -619,7 +617,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
         permanently removed from the storage account. If the storage account's soft delete feature is
         enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
@@ -744,7 +741,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def undelete(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Undelete a blob that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -817,7 +813,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         expires_on: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time. Known values are:
@@ -900,7 +895,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set HTTP Headers operation sets system properties on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1027,7 +1021,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1133,7 +1126,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1219,7 +1211,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         :param legal_hold: Specified if a legal hold should be set on the blob. Required.
@@ -1311,7 +1302,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
@@ -1450,7 +1440,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1558,7 +1547,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1658,7 +1646,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1760,7 +1747,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1866,7 +1852,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1976,7 +1961,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2118,7 +2102,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
@@ -2287,13 +2270,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
 
@@ -2344,6 +2327,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -2425,6 +2410,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
             copy_source_tags=copy_source_tags,
+            file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
             version=self._config.version,
             headers=_headers,
@@ -2476,7 +2462,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
 
@@ -2569,7 +2554,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
         premium storage account and on a block blob in a blob storage account (locally redundant
         storage only). A premium page blob's tier determines the allowed size, IOPS, and bandwidth of
@@ -2674,7 +2658,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def get_account_info(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Returns the sku name and account kind.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2755,7 +2738,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         query_request: Optional[_models.QueryRequest] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        # pylint: disable=line-too-long
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
@@ -3005,7 +2987,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlobTags:
-        # pylint: disable=line-too-long
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -3111,7 +3092,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         tags: Optional[_models.BlobTags] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see

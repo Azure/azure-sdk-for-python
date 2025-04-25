@@ -283,14 +283,14 @@ class RedTeam():
 
     async def _log_redteam_results_to_mlflow(
         self,
-        redteam_output: RedTeamResult,
+        redteam_result: RedTeamResult,
         eval_run: EvalRun,
         data_only: bool = False,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
-        :param redteam_output: The output from the red team agent evaluation
-        :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
+        :param redteam_result: The output from the red team agent evaluation
+        :type redteam_result: ~azure.ai.evaluation.RedTeamResult
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
         :param data_only: Whether to log only data without evaluation results
@@ -308,21 +308,21 @@ class RedTeam():
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if data_only:
                     # In data_only mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                elif redteam_output.scan_result:
+                    f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                elif redteam_result.scan_result:
                     # Create a copy to avoid modifying the original scan result
-                    result_with_conversations = redteam_output.scan_result.copy() if isinstance(redteam_output.scan_result, dict) else {}
+                    result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
                     
                     # Preserve all original fields needed for scorecard generation
                     result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
                     result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
                     
                     # Add conversations field with all conversation data including user messages
-                    result_with_conversations["conversations"] = redteam_output.attack_details or []
+                    result_with_conversations["conversations"] = redteam_result.attack_details or []
                     
                     # Keep original attack_details field to preserve compatibility with existing code
-                    if "attack_details" not in result_with_conversations and redteam_output.attack_details is not None:
-                        result_with_conversations["attack_details"] = redteam_output.attack_details
+                    if "attack_details" not in result_with_conversations and redteam_result.attack_details is not None:
+                        result_with_conversations["attack_details"] = redteam_result.attack_details
                     
                     json.dump(result_with_conversations, f)
 
@@ -340,10 +340,10 @@ class RedTeam():
                 f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not data_only and redteam_output.scan_result:
+            if not data_only and redteam_result.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    f.write(self._to_scorecard(redteam_output.scan_result))
+                    f.write(self._to_scorecard(redteam_result.scan_result))
                 self.logger.debug(f"Saved scorecard to: {scorecard_path}")
                 
             # Create a dedicated artifacts directory with proper structure for MLFlow
@@ -354,13 +354,13 @@ class RedTeam():
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
-                        redteam_output.scan_result["redteaming_parameters"] = redteam_output.scan_result.get("parameters", None)
-                        redteam_output.scan_result["redteaming_data"] = redteam_output.scan_result.get("attack_details", None)
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get("scorecard", None)
+                        redteam_result.scan_result["redteaming_parameters"] = redteam_result.scan_result.get("parameters", None)
+                        redteam_result.scan_result["redteaming_data"] = redteam_result.scan_result.get("attack_details", None)
 
-                        json.dump(redteam_output.scan_result, f)
+                        json.dump(redteam_result.scan_result, f)
                 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -401,9 +401,9 @@ class RedTeam():
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        json.dump(redteam_output.scan_result, f)
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        json.dump(redteam_result.scan_result, f)
                 eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
@@ -414,8 +414,8 @@ class RedTeam():
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
         })
 
-        if redteam_output.scan_result:
-            scorecard = redteam_output.scan_result["scorecard"]
+        if redteam_result.scan_result:
+            scorecard = redteam_result.scan_result["scorecard"]
             joint_attack_summary = scorecard["joint_risk_attack_summary"]
             
             if joint_attack_summary:
@@ -1770,7 +1770,7 @@ class RedTeam():
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
         :return: The output from the red team scan
-        :rtype: RedTeamOutput
+        :rtype: RedTeamResult
         """
         # Start timing for performance tracking
         self.start_time = time.time()
@@ -1802,7 +1802,7 @@ class RedTeam():
                     return False
                 if 'The path to the artifact is either not a directory or does not exist' in record.getMessage():
                     return False
-                if 'RedTeamOutput object at' in record.getMessage():
+                if 'RedTeamResult object at' in record.getMessage():
                     return False
                 if 'timeout won\'t take effect' in record.getMessage():
                     return False
@@ -2135,7 +2135,7 @@ class RedTeam():
             # Log results to MLFlow
             self.logger.info("Logging results to MLFlow")
             await self._log_redteam_results_to_mlflow(
-                redteam_output=output,
+                redteam_result=output,
                 eval_run=eval_run,
                 data_only=data_only
             )
