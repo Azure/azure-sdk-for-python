@@ -9,7 +9,7 @@ from typing import Any
 import multiprocessing
 from functools import partial
 
-from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -59,13 +59,8 @@ def main(generate_input, generate_output):
         package["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-        # Built package
-        create_package(prefolder, package_name)
-        folder_name = package["path"][0]
-        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-        package["result"] = "succeeded"
         # Generate api stub File
+        folder_name = package["path"][0]
         try:
             package_path = Path(sdk_folder, folder_name, package_name)
             check_call(
@@ -87,15 +82,28 @@ def main(generate_input, generate_output):
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
             _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
+
+        # check generated files and update package["version"]
+        if package_name.startswith("azure-mgmt-"):
+            try:
+                check_file(package)
+            except Exception as e:
+                _LOGGER.error(f"Fail to check generated files for {package_name}: {e}")
+
+        # Built package
+        create_package(prefolder, package_name)
+        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
+        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["language"] = "Python"
+                break
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        for artifact in package["artifacts"]:
-            if ".whl" in artifact:
-                package["language"] = "Python"
-                break
+        package["result"] = "succeeded"
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 

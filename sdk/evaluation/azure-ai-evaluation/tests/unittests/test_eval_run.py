@@ -265,6 +265,7 @@ class TestEvalRun:
                     kwargs = {"key": "f1", "value": 0.5}
                 with patch("azure.ai.evaluation._evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
                     fn(**kwargs)
+
         assert len(caplog.records) == 1
         assert mock_response.text() in caplog.records[0].message
         assert "404" in caplog.records[0].message

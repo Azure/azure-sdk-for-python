@@ -87,7 +87,7 @@ async def main():
             print(f"Created message, message ID: {message.id}")
 
             # [START create_run]
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 
             if run.status != RunStatus.COMPLETED:
                 print(f"The run did not succeed: {run.status=}.")

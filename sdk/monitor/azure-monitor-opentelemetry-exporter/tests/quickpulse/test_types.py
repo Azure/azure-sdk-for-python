@@ -20,7 +20,65 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _DependencyData,
     _ExceptionData,
     _RequestData,
+    _TelemetryData,
 )
+
+
+
+class TestTelemetryData(unittest.TestCase):
+
+    @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._RequestData")
+    def test_from_span_server_kind_server(self, fn_mock):
+        span = Mock()
+        span.kind = SpanKind.SERVER
+        data_mock = Mock()
+        fn_mock._from_span.return_value = data_mock
+        result = _TelemetryData._from_span(span)
+        self.assertEqual(result, data_mock)
+        fn_mock._from_span.assert_called_once_with(span)
+
+    @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._RequestData")
+    def test_from_span_consumer_kind_(self, fn_mock):
+        span = Mock()
+        span.kind = SpanKind.CONSUMER
+        data_mock = Mock()
+        fn_mock._from_span.return_value = data_mock
+        result = _TelemetryData._from_span(span)
+        self.assertEqual(result, data_mock)
+        fn_mock._from_span.assert_called_once_with(span)
+
+    @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._DependencyData")
+    def test_from_span_dependency_kind(self, fn_mock):
+        span = Mock()
+        span.kind = SpanKind.CLIENT
+        data_mock = Mock()
+        fn_mock._from_span.return_value = data_mock
+        result = _TelemetryData._from_span(span)
+        self.assertEqual(result, data_mock)
+        fn_mock._from_span.assert_called_once_with(span)
+
+    @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._ExceptionData")
+    def test_from_log_record_with_exception(self, fn_mock):
+        log_record = Mock()
+        log_record.attributes = {
+            SpanAttributes.EXCEPTION_TYPE: "SomeException",
+            SpanAttributes.EXCEPTION_MESSAGE: "An error occurred"
+        }
+        data_mock = Mock()
+        fn_mock._from_log_record.return_value = data_mock
+        result = _TelemetryData._from_log_record(log_record)
+        self.assertEqual(result, data_mock)
+        fn_mock._from_log_record.assert_called_once_with(log_record)
+
+    @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._TraceData")
+    def test_from_log_record_without_exception(self, fn_mock):
+        log_record = Mock()
+        log_record.attributes = {}
+        data_mock = Mock()
+        fn_mock._from_log_record.return_value = data_mock
+        result = _TelemetryData._from_log_record(log_record)
+        self.assertEqual(result, data_mock)
+        fn_mock._from_log_record.assert_called_once_with(log_record)
 
 
 class TestRequestData(unittest.TestCase):

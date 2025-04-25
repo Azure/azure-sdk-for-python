@@ -1,16 +1,48 @@
 # Release History
 
-## 5.14.1 (Unreleased)
+## 5.15.0 (2025-04-09)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+- Added a class method `from bytes` to `EventData` to create from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
+
+### Other Changes
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Dropped support for Python 3.8
 
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
 
+### Other Changes
+
+- The following change has been temporarily pulled out and will be added to a future release:
+  - Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b2 (2025-03-14)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b1 (2025-02-13)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation.
+- Fixed a bug where the lowest possible timestamp returned by the service to represent an unset time was not being parsed correctly.
+
 ## 5.14.0 (2025-02-13)
 
 ### Features Added
 
-- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
+- Add support for Decimal128 in pyAMQP ([#39511](https://github.com/Azure/azure-sdk-for-python/pull/39511))
 
 ### Bugs Fixed
 

@@ -44,7 +44,7 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):  # pylint: disabl
     :vartype aliases: azure.search.documents.indexes.aio.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-11-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2025-03-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """

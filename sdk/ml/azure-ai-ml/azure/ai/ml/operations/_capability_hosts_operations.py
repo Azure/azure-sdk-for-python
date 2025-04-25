@@ -247,16 +247,16 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type capability_host: CapabilityHost
         :param workspace_kind: The kind of the workspace, Project only.
         :type workspace_kind: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or
-            vector store (AISearch) connection is empty for a Project workspace kind.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the
+            OpenAI service connection is empty for a Project workspace kind.
             Details will be provided in the error message.
         :return: None, or the result of cls(response)
         :rtype: None
         """
 
         if workspace_kind == WorkspaceKind.PROJECT:
-            if capability_host.ai_services_connections is None or capability_host.vector_store_connections is None:
-                msg = "For Project workspace kind, OpenAI service connections and vector store (AISearch) connections are required."  # pylint: disable=line-too-long
+            if capability_host.ai_services_connections is None:
+                msg = "For Project workspace kind, OpenAI service connections are required."
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.CAPABILITY_HOST,

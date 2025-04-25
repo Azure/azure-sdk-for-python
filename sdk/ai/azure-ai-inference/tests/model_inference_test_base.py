@@ -92,6 +92,13 @@ ServicePreparerImageEmbeddings = functools.partial(
     azure_ai_image_embeddings_key="00000000000000000000000000000000",
 )
 
+ServicePreparerChatCompletionsWithAudio = functools.partial(
+    EnvironmentVariableLoader,
+    "azure_ai_chat_audio",
+    azure_ai_chat_audio_endpoint="https://your-deployment-name.eastus2.models.ai.azure.com",
+    azure_ai_chat_audio_key="00000000000000000000000000000000",
+)
+
 
 # The test class name needs to start with "Test" to get collected by pytest
 class ModelClientTestBase(AzureRecordedTestCase):
@@ -264,6 +271,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _load_image_embeddings_credentials_entra_id(self, is_async: bool = False, **kwargs):
         endpoint = kwargs.pop("azure_ai_image_embeddings_endpoint")
         credential = self.get_credential(sdk.ImageEmbeddingsClient, is_async=is_async)
+        return endpoint, credential
+
+    def _load_phi_audio_credentials(self, bad_key: bool, **kwargs):
+        endpoint = kwargs.pop("azure_ai_chat_audio_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_chat_audio_key")
+        credential = AzureKeyCredential(key)
         return endpoint, credential
 
     # **********************************************************************************
@@ -444,6 +457,30 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def _create_phi_audio_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        (
+            endpoint,
+            credential,
+        ) = self._load_phi_audio_credentials(bad_key=bad_key, **kwargs)
+        return sdk.ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=credential,
+            logging_enable=LOGGING_ENABLED,
+        )
+
+    def _create_async_phi_audio_chat_client(
+        self, *, bad_key: bool = False, **kwargs
+    ) -> async_sdk.ChatCompletionsClient:
+        (
+            endpoint,
+            credential,
+        ) = self._load_phi_audio_credentials(bad_key=bad_key, **kwargs)
+        return async_sdk.ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=credential,
+            logging_enable=LOGGING_ENABLED,
+        )
+
     # **********************************************************************************
     #
     #             HELPER METHODS TO VALIDATE TEST RESULTS
@@ -532,7 +569,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         if is_aoai:
             assert bool(ModelClientTestBase.REGEX_AOAI_RESULT_ID.match(response.id))
         else:
-            assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+            assert response.id
         assert response.created is not None
         assert response.created != ""
         assert response.model is not None

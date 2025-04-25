@@ -6,6 +6,8 @@ pylint = true
 mindependency = false
 latestdependency = false
 black = true
+absolute_cov = true
+absolute_cov_percent = 65
 
 [tool.isort]
 profile = "black"

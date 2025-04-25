@@ -178,4 +178,4 @@ class SearchPageIterator(PageIterator):
     def get_debug_info(self) -> DebugInfo:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
-        return cast(DebugInfo, response.debug)
+        return cast(DebugInfo, response.debug_info)

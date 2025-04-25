@@ -23,7 +23,7 @@ class ContentItem(_model_base.Model):
     """An abstract representation of a structured content item within a chat message.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, AudioContentItem, TextContentItem
+    AudioUrlContentItem, ImageContentItem, AudioDataContentItem, TextContentItem
 
     :ivar type: The discriminated object type. Required. Default value is None.
     :vartype type: str
@@ -51,13 +51,13 @@ class ContentItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AudioContentItem(ContentItem, discriminator="input_audio"):
-    """A structured chat content item containing an audio content.
+class AudioDataContentItem(ContentItem, discriminator="input_audio"):
+    """A structured chat content item for audio content passed as base64 encoded data.
 
     :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
      Default value is "input_audio".
     :vartype type: str
-    :ivar input_audio: The details of the input audio. Required.
+    :ivar input_audio: The details of the input audio data. Required.
     :vartype input_audio: ~azure.ai.inference.models.InputAudio
     """
 
@@ -65,7 +65,7 @@ class AudioContentItem(ContentItem, discriminator="input_audio"):
     """The discriminated object type: always 'input_audio' for this type. Required. Default value is
      \"input_audio\"."""
     input_audio: "_models.InputAudio" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The details of the input audio. Required."""
+    """The details of the input audio data. Required."""
 
     @overload
     def __init__(
@@ -83,6 +83,40 @@ class AudioContentItem(ContentItem, discriminator="input_audio"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="input_audio", **kwargs)
+
+
+class AudioUrlContentItem(ContentItem, discriminator="audio_url"):
+    """A structured chat content item for audio content passed as a url.
+
+    :ivar type: The discriminated object type: always 'audio_url' for this type. Required. Default
+     value is "audio_url".
+    :vartype type: str
+    :ivar audio_url: The details of the audio url. Required.
+    :vartype audio_url: ~azure.ai.inference.models.InputAudioUrl
+    """
+
+    type: Literal["audio_url"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminated object type: always 'audio_url' for this type. Required. Default value is
+     \"audio_url\"."""
+    audio_url: "_models.InputAudioUrl" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The details of the audio url. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio_url: "_models.InputAudioUrl",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="audio_url", **kwargs)
 
 
 class ChatChoice(_model_base.Model):
@@ -1230,7 +1264,7 @@ class FunctionDefinition(_model_base.Model):
      interpreting its parameters.
     :vartype description: str
     :ivar parameters: The parameters the function accepts, described as a JSON Schema object.
-    :vartype parameters: any
+    :vartype parameters: dict[str, any]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1239,7 +1273,7 @@ class FunctionDefinition(_model_base.Model):
     """A description of what the function does. The model will use this description when selecting the
      function and
      interpreting its parameters."""
-    parameters: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters the function accepts, described as a JSON Schema object."""
 
     @overload
@@ -1248,7 +1282,7 @@ class FunctionDefinition(_model_base.Model):
         *,
         name: str,
         description: Optional[str] = None,
-        parameters: Optional[Any] = None,
+        parameters: Optional[Dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -1446,7 +1480,7 @@ class ImageUrl(_model_base.Model):
 
 
 class InputAudio(_model_base.Model):
-    """The details of an audio chat message content part.
+    """The details of the input audio data.
 
     :ivar data: Base64 encoded audio data. Required.
     :vartype data: str
@@ -1468,6 +1502,34 @@ class InputAudio(_model_base.Model):
         *,
         data: str,
         format: Union[str, "_models.AudioContentFormat"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InputAudioUrl(_model_base.Model):
+    """The details of the audio url.
+
+    :ivar url: The URL of the audio content. Required.
+    :vartype url: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of the audio content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
     ) -> None: ...
 
     @overload

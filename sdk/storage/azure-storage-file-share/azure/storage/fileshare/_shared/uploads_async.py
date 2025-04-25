@@ -4,10 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 import threading
-from asyncio import Lock
 from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
@@ -165,7 +164,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
         # Progress feedback
         self.progress_total = 0
-        self.progress_lock = Lock() if parallel else None
+        self.progress_lock = asyncio.Lock() if parallel else None
         self.progress_hook = progress_hook
 
         # Encryption

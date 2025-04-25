@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING

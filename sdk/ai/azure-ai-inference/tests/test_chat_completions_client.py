@@ -11,6 +11,7 @@ from model_inference_test_base import (
     ModelClientTestBase,
     ServicePreparerChatCompletions,
     ServicePreparerAOAIChatCompletions,
+    ServicePreparerChatCompletionsWithAudio,
 )
 
 from devtools_testutils import recorded_by_proxy
@@ -559,11 +560,9 @@ class TestChatCompletionsClient(ModelClientTestBase):
         )
         client.close()
 
-    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input audio.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_with_audio_input(self, **kwargs):
+    def test_chat_completions_with_audio_data_input(self, **kwargs):
         client = self._create_aoai_audio_chat_client(**kwargs)
 
         # Construct the full path to the image file
@@ -578,7 +577,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
                 sdk.models.UserMessage(
                     content=[
                         sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
-                        sdk.models.AudioContentItem(
+                        sdk.models.AudioDataContentItem(
                             input_audio=sdk.models.InputAudio.load(
                                 audio_file=audio_file_path, audio_format=sdk.models.AudioContentFormat.MP3
                             )
@@ -589,6 +588,32 @@ class TestChatCompletionsClient(ModelClientTestBase):
         )
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=True)
+        client.close()
+
+    @ServicePreparerChatCompletionsWithAudio()
+    @recorded_by_proxy
+    def test_chat_completions_with_audio_url_input(self, **kwargs):
+        client = self._create_phi_audio_chat_client(**kwargs)
+
+        # Construct the full path to the image file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        audio_url = "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
+
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(
+                    content="You are an AI assistant for translating and transcribing audio clips."
+                ),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
+                        sdk.models.AudioUrlContentItem(audio_url=sdk.models.InputAudioUrl(url=audio_url)),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=False)
         client.close()
 
     # **********************************************************************************

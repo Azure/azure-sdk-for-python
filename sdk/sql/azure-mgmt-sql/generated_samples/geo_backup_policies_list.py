@@ -30,7 +30,7 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.geo_backup_policies.list_by_database(
+    response = client.geo_backup_policies.list(
         resource_group_name="sqlcrudtest-4799",
         server_name="sqlcrudtest-5961",
         database_name="testdw",
@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/GeoBackupPoliciesList.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/GeoBackupPoliciesList.json
 if __name__ == "__main__":
     main()

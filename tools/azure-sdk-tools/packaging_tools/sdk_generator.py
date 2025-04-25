@@ -278,6 +278,8 @@ def main(generate_input, generate_output):
                     package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
                     readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
+                    package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
+                    package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)

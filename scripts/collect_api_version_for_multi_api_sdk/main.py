@@ -149,7 +149,7 @@ class CollectApiVersion:
         else:
             api_version = api_version_info.default_api_version + str(api_version_info.profile)
 
-        return set(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", api_version))
+        return set(re.findall(r"\d{4}-\d{2}-\d{2}[-a-z]*", api_version))
 
     @staticmethod
     def write_file(file_name, content):

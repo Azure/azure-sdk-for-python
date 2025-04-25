@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -62,7 +63,7 @@ class AIProjectClient:
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"  # pylint: disable=line-too-long
+        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"
         self._config = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

@@ -63,7 +63,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
         # Poll the run as long as run status is queued or in progress
         while run.status in ["queued", "in_progress", "requires_action"]:

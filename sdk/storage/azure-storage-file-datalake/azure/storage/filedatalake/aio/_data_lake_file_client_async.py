@@ -3,23 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
-    TYPE_CHECKING)
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Optional, Union,
+    TYPE_CHECKING
+)
 from urllib.parse import quote, unquote
+
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._data_lake_file_client_helpers import (
+    _append_data_options,
+    _flush_data_options,
+    _upload_options,
+)
+from .._deserialize import deserialize_file_properties, process_storage_error
+from .._models import FileProperties
+from .._path_client_helpers import _parse_rename_path
+from .._serialize import convert_datetime_to_rfc1123
+from .._shared.base_client_async import parse_connection_str
+from ..aio._upload_helper import upload_datalake_file
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
-from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._serialize import convert_datetime_to_rfc1123
-from .._deserialize import process_storage_error, deserialize_file_properties
-from .._models import FileProperties
-from ..aio._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -27,15 +36,9 @@ if TYPE_CHECKING:
     from .._models import ContentSettings
 
 
-class DataLakeFileClient(PathClient, DataLakeFileClientBase):
+class DataLakeFileClient(PathClient):
     """A client to interact with the DataLake file, even if the file may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the file system, including SAS token if used.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URI to the storage account.
     :param file_system_name:
@@ -58,12 +61,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
@@ -76,6 +79,13 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             :caption: Creating the DataLakeServiceClient from connection string.
     """
 
+    url: str
+    """The full endpoint URL to the file system, including SAS token if used."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
+
     def __init__(
         self, account_url: str,
         file_system_name: str,
@@ -86,11 +96,55 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         super(DataLakeFileClient, self).__init__(account_url, file_system_name, path_name=file_path,
                                                  credential=credential, **kwargs)
 
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        file_system_name: str,
+        file_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """
+        Create DataLakeFileClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param file_system_name: The name of file system to interact with.
+        :type file_system_name: str
+        :param str file_path:
+            The whole file path, so that to interact with a specific file.
+            eg. "{directory}/{subdirectory}/{file}"
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or Dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A DataLakeFileClient.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
+        """
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        return cls(
+            account_url, file_system_name=file_system_name, file_path=file_path,
+            credential=credential, **kwargs)
+
     @distributed_trace_async
-    async def create_file(self, content_settings=None,  # type: Optional[ContentSettings]
-                          metadata=None,  # type: Optional[Dict[str, str]]
-                          **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def create_file(
+        self, content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """
         Create a new file.
 
@@ -98,7 +152,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: Optional[dict[str, str]]
+        :type metadata: Optional[Dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -171,8 +225,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             #other-client--per-operation-configuration>`_.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :returns: response dict (Etag and last modified).
-        :rtype: dict[str, str] or dict[~datetime.datetime]
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -186,8 +240,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a file exists and returns False otherwise.
 
@@ -203,8 +256,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         return await self._exists(**kwargs)
 
     @distributed_trace_async
-    async def delete_file(self, **kwargs):
-        # type: (...) -> None
+    async def delete_file(self, **kwargs: Any) -> None:
         """
         Marks the specified file for deletion.
 
@@ -235,8 +287,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: None.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -247,11 +299,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Delete file.
         """
-        return await self._delete(**kwargs)
+        return await self._delete(**kwargs)  # type: ignore [return-value]
 
     @distributed_trace_async
-    async def get_file_properties(self, **kwargs):
-        # type: (**Any) -> FileProperties
+    async def get_file_properties(self, **kwargs: Any) -> FileProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file. It does not return the content of the file.
 
@@ -305,13 +356,20 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
+        props = await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
+        return cast(FileProperties, props)
 
     @distributed_trace_async
-    async def set_file_expiry(self, expiry_options,  # type: str
-                              expires_on=None,  # type: Optional[Union[datetime, int]]
-                              **kwargs):
-        # type: (...) -> None
+    async def set_file_expiry(
+        self, expiry_options: str,
+        expires_on: Optional[Union[datetime, int]] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets the time a file will expire and be deleted.
 
         :param str expiry_options:
@@ -328,32 +386,32 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        expiry_time = None
         if isinstance(expires_on, datetime):
-            expires_on = convert_datetime_to_rfc1123(expires_on)
+            expiry_time = convert_datetime_to_rfc1123(expires_on)
         elif expires_on is not None:
-            expires_on = str(expires_on)
-        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
-                                                                       **kwargs)
+            expiry_time = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiry_time, **kwargs)
 
     @distributed_trace_async
     async def upload_data(
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            overwrite: Optional[bool] = False,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        overwrite: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :paramtype metadata: dict[str, str] or None
+        :paramtype metadata: Dict[str, str] or None
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -415,26 +473,31 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :return: response dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Any]
         """
-        options = self._upload_options(
+        options = _upload_options(
             data,
+            self.scheme,
+            self._config,
+            self._client.path,
             length=length,
             overwrite=overwrite,
-            **kwargs)
+            **kwargs
+        )
         return await upload_datalake_file(**options)
 
     @distributed_trace_async
-    async def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                          offset,  # type: int
-                          length=None,  # type: Optional[int]
-                          **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def append_data(
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        offset: int,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int offset: start position of the data to be appended to.
         :param length: Size of the data in bytes.
         :type length: int or None
@@ -471,8 +534,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: dict of the response header.
-        :rtype: dict[str, str], dict[str, ~datetime.datetime], or dict[str, int]
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -483,7 +546,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Append data to the file.
         """
-        options = self._append_data_options(
+        options = _append_data_options(
             data=data,
             offset=offset,
             scheme=self.scheme,
@@ -495,10 +558,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def flush_data(self, offset,  # type: int
-                         retain_uncommitted_data=False,  # type: Optional[bool]
-                         **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def flush_data(
+        self, offset: int,
+        retain_uncommitted_data: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """ Commit the previous appended data.
 
         :param int offset: offset is equal to the length of the file after commit the
@@ -567,8 +631,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response header in dict.
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -579,18 +643,23 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 12
                 :caption: Commit the previous appended data.
         """
-        options = self._flush_data_options(
+        options = _flush_data_options(
             offset,
             self.scheme,
-            retain_uncommitted_data=retain_uncommitted_data, **kwargs)
+            retain_uncommitted_data=retain_uncommitted_data,
+            **kwargs
+        )
         try:
             return await self._client.path.flush_data(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def download_file(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_file(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -637,7 +706,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
-        :returns: A streaming object (StorageStreamDownloader)
+        :returns: A streaming object (StorageStreamDownloader).
         :rtype: ~azure.storage.filedatalake.aio.StorageStreamDownloader
 
         .. admonition:: Example:
@@ -653,8 +722,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         return StorageStreamDownloader(downloader)
 
     @distributed_trace_async
-    async def rename_file(self, new_name, **kwargs):
-        # type: (str, **Any) -> DataLakeFileClient
+    async def rename_file(self, new_name: str, **kwargs: Any) -> "DataLakeFileClient":
         """
         Rename the source file.
 
@@ -663,14 +731,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword source_lease: A lease ID for the source path. If specified,
-            the source path must have an active lease and the lease ID must
-            match.
+            the source path must have an active lease and the lease ID must match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -711,7 +777,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: the renamed file client
+        :return: The renamed file client.
         :rtype: DataLakeFileClient
 
         .. admonition:: Example:
@@ -723,7 +789,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Rename the source file.
         """
-        new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
+        new_file_system, new_path, new_file_sas = _parse_rename_path(
+            new_name, self.file_system_name, self._query_str, self._raw_credential)
 
         new_file_client = DataLakeFileClient(
             f"{self.scheme}://{self.primary_hostname}", new_file_system, file_path=new_path,

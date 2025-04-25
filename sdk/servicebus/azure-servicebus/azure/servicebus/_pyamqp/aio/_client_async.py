@@ -147,7 +147,7 @@ class AMQPClientAsync(AMQPClientSync):
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     await asyncio.shield(
-                        self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+                        self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
                     )
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -733,7 +733,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            if self._link.current_link_credit<= 0:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

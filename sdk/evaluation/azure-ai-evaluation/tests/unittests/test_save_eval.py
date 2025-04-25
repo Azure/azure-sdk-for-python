@@ -29,7 +29,7 @@ def get_evaluators_from_module(namespace: Any, exceptions: Optional[List[str]] =
 class TestSaveEval:
     """Test saving evaluators."""
 
-    EVALUATORS = get_evaluators_from_module(evaluators)
+    EVALUATORS = get_evaluators_from_module(evaluators, exceptions=["AIAgentConverter", "RedTeam", "RedTeamOutput"])
 
     @pytest.mark.parametrize("evaluator", EVALUATORS)
     def test_save_evaluators(self, tmpdir, pf_client, evaluator) -> None:

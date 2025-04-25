@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for SqlManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,9 +27,14 @@ class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-att
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2024-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+        api_version: str = kwargs.pop("api_version", "2024-05-01-preview")
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -38,6 +42,7 @@ class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-att
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-sql/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

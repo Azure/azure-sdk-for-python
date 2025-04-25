@@ -181,7 +181,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         )
         copy = new_client_source_copy.start_copy_from_url(
             file_client.url,
-            mode_copy_mode='source',
+            file_mode_copy_mode='source',
             owner_copy_mode='source'
         )
         self._assert_copy(copy)
@@ -212,7 +212,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
             owner=override_owner,
             group=override_group,
             file_mode=override_file_mode,
-            mode_copy_mode='override',
+            file_mode_copy_mode='override',
             owner_copy_mode='override'
         )
         self._assert_copy(copy)
@@ -221,7 +221,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_hard_link(self, **kwargs: Any):
+    def test_create_hardlink(self, **kwargs: Any):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -235,7 +235,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         hard_link_file_name = self._get_file_name('file2')
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
-        resp = hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
+        resp = hard_link_file_client.create_hardlink(target=f"{directory_name}/{source_file_name}")
 
         assert resp is not None
         assert resp['file_file_type'] == 'Regular'
@@ -255,7 +255,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_hard_link_error(self, **kwargs: Any):
+    def test_create_hardlink_error(self, **kwargs: Any):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -269,6 +269,6 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
         with pytest.raises(ResourceNotFoundError) as e:
-            hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
+            hard_link_file_client.create_hardlink(target=f"{directory_name}/{source_file_name}")
 
         assert 'ParentNotFound' in e.value.args[0]

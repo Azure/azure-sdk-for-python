@@ -29,22 +29,23 @@ class EvaluationEvaluateSamples(object):
     def evaluation_evaluate_classes_methods(self):
         # [START evaluate_method]
         import os
-        from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
+        from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator, IntentResolutionEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
-
+        
         print(os.getcwd())
         path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
 
         evaluate(
             data=path,
             evaluators={
-                "coherence": CoherenceEvaluator(model_config=model_config),
-                "relevance": RelevanceEvaluator(model_config=model_config),
+                "coherence"          : CoherenceEvaluator(model_config=model_config),
+                "relevance"          : RelevanceEvaluator(model_config=model_config),
+                "intent_resolution"  : IntentResolutionEvaluator(model_config=model_config),
             },
             evaluator_config={
                 "coherence": {
@@ -84,6 +85,19 @@ class EvaluationEvaluateSamples(object):
         coherence_evaluator = CoherenceEvaluator(model_config=model_config)
         coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
         # [END coherence_evaluator]
+
+        # [START intent_resolution_evaluator]
+        import os
+        from azure.ai.evaluation import CoherenceEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+        intent_resolution_evaluator = IntentResolutionEvaluator(model_config=model_config)
+        intent_resolution_evaluator(query="What is the opening hours of the Eiffel Tower?", response="Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM.")
+        # [END intent_resolution_evaluator]
 
         # [START content_safety_evaluator]
         import os
@@ -346,6 +360,51 @@ class EvaluationEvaluateSamples(object):
         )
         # [END similarity_evaluator]
 
+        # [START completeness_evaluator]
+        import os
+        from azure.ai.evaluation import CompletenessEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        completeness_eval = CompletenessEvaluator(model_config=model_config)
+        completeness_eval(
+            response="The capital of Japan is Tokyo.",
+            ground_truth="Tokyo is Japan's capital.",
+        )
+        # [END completeness_evaluator]
+
+        # [START task_adherence_evaluator]
+        import os
+        from azure.ai.evaluation import TaskAdherenceEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        task_adherence_evaluator = TaskAdherenceEvaluator(model_config=model_config)
+
+        query = [{'role': 'system', 'content': 'You are a helpful customer service agent.'}, 
+         {'role': 'user', 'content': [{'type': 'text', 'text': 'What is the status of my order #123?'}]}]
+
+        response = [{'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_001', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '123'}}}}]}, 
+            {'role': 'tool', 'tool_call_id': 'tool_001', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "123", "status": "shipped" } }'}]}, 
+            {'role': 'assistant', 'content': [{'type': 'text', 'text': 'Your order #123 has been shipped.'}]}]
+
+        tool_definitions = [{'name': 'get_order', 'description': 'Get order details.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string'}}}}]
+
+        task_adherence_evaluator(
+            query=query,
+            response=response,
+            tool_definitions=tool_definitions
+        )
+        # [END task_adherence_evaluator]
+
         # [START indirect_attack_evaluator]
         import os
         from azure.identity import DefaultAzureCredential
@@ -385,8 +444,55 @@ class EvaluationEvaluateSamples(object):
         )
         # [END groundedness_pro_evaluator]
 
+        # [START tool_call_accuracy_evaluator]
+        import os
+        from azure.ai.evaluation import ToolCallAccuracyEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        tool_call_accuracy_evaluator = ToolCallAccuracyEvaluator(model_config=model_config)
+        tool_call_accuracy_evaluator(
+            query="How is the weather in New York?",
+            response="The weather in New York is sunny.",
+            tool_calls={
+                "type": "tool_call",
+                "tool_call": {
+                    "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
+                    "type": "function",
+                    "function": {
+                        "name": "fetch_weather",
+                        "arguments": {
+                            "location": "New York"
+                        }
+                    }
+                }
+            },
+            tool_definitions={
+                "id": "fetch_weather",
+                "name": "fetch_weather",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for."
+                        }
+                    }
+                }
+            }
+        )
+        # [END tool_call_accuracy_evaluator]
+
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
+
     print("Loading samples in evaluation_samples_evaluate.py")
     sample = EvaluationEvaluateSamples()
     print("Samples loaded successfully!")

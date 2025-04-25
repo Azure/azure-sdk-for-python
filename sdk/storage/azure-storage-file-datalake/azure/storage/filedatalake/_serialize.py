@@ -4,13 +4,29 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional, Union
+from typing import (
+    Any, cast, Dict, Literal, Optional, Union,
+    TYPE_CHECKING
+)
 
 from azure.storage.blob._serialize import _get_match_headers
+from ._generated.models import (
+    CpkInfo,
+    LeaseAccessConditions,
+    ModifiedAccessConditions,
+    PathHTTPHeaders,
+    SourceModifiedAccessConditions,
+)
 from ._shared import encode_base64
-from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
-    SourceModifiedAccessConditions, LeaseAccessConditions, CpkInfo
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.blob import BlobLeaseClient
+    from azure.storage.blob.aio import BlobLeaseClient as BlobLeaseClientAsync
+    from azure.storage.filedatalake import CustomerProvidedEncryptionKey
+    from ._models import ContentSettings
+
+EncryptionAlgorithmType = Literal["AES256"]
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
@@ -41,8 +57,7 @@ _SUPPORTED_API_VERSIONS = [
 ]  # This list must be in chronological order!
 
 
-def get_api_version(kwargs):
-    # type: (Dict[str, Any]) -> str
+def get_api_version(kwargs: Dict[str, Any]) -> str:
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
@@ -60,19 +75,18 @@ def compare_api_versions(version1: str, version2: str) -> int:
     return 1
 
 
-def convert_dfs_url_to_blob_url(dfs_account_url):
+def convert_dfs_url_to_blob_url(dfs_account_url: str) -> str:
     return dfs_account_url.replace('.dfs.', '.blob.', 1)
 
 
-def convert_datetime_to_rfc1123(date):
+def convert_datetime_to_rfc1123(date: "datetime") -> str:
     weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][date.weekday()]
     month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
              "Oct", "Nov", "Dec"][date.month - 1]
     return f"{weekday}, {date.day:02} {month} {date.year:04} {date.hour:02}:{date.minute:02}:{date.second:02} GMT"
 
 
-def add_metadata_headers(metadata=None):
-    # type: (Optional[Dict[str, str]]) -> str
+def add_metadata_headers(metadata: Optional[Dict[str, str]] = None) -> Optional[str]:
     if not metadata:
         return None
     headers = []
@@ -88,8 +102,7 @@ def add_metadata_headers(metadata=None):
     return ''.join(headers)
 
 
-def get_mod_conditions(kwargs):
-    # type: (Dict[str, Any]) -> ModifiedAccessConditions
+def get_mod_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
     return ModifiedAccessConditions(
         if_modified_since=kwargs.pop('if_modified_since', None),
@@ -99,8 +112,7 @@ def get_mod_conditions(kwargs):
     )
 
 
-def get_source_mod_conditions(kwargs):
-    # type: (Dict[str, Any]) -> SourceModifiedAccessConditions
+def get_source_mod_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
     if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
     return SourceModifiedAccessConditions(
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
@@ -110,7 +122,7 @@ def get_source_mod_conditions(kwargs):
     )
 
 
-def get_path_http_headers(content_settings):
+def get_path_http_headers(content_settings: "ContentSettings") -> PathHTTPHeaders:
     path_headers = PathHTTPHeaders(
         cache_control=content_settings.cache_control,
         content_type=content_settings.content_type,
@@ -122,21 +134,24 @@ def get_path_http_headers(content_settings):
     return path_headers
 
 
-def get_access_conditions(lease):
-    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease  # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+def get_access_conditions(
+    lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]
+) -> Optional[LeaseAccessConditions]:
+    if not lease:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id
+    else:
+        lease_id = lease
+    return LeaseAccessConditions(lease_id=lease_id)
 
 
-def get_lease_id(lease):
+def get_lease_id(lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]) -> str:
     if not lease:
         return ""
-    try:
+    if hasattr(lease, "id"):
         lease_id = lease.id
-    except AttributeError:
+    else:
         lease_id = lease
     return lease_id
 
@@ -145,9 +160,9 @@ def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     lease_action = kwargs.pop('lease_action', None)
     lease_duration = kwargs.pop('lease_duration', None)
     lease = kwargs.pop('lease', None)
-    try:
+    if hasattr(lease, "id"):
         lease_id = lease.id
-    except AttributeError:
+    else:
         lease_id = lease
 
     proposed_lease_id = None
@@ -171,15 +186,15 @@ def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def get_cpk_info(scheme, kwargs):
-    # type: (str, Dict[str, Any]) -> CpkInfo
-    cpk = kwargs.pop('cpk', None)
+def get_cpk_info(scheme: str, kwargs: Dict[str, Any]) -> Optional[CpkInfo]:
+    cpk: Optional[CustomerProvidedEncryptionKey] = kwargs.pop('cpk', None)
     if cpk:
         if scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         return CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cpk.algorithm)
+            encryption_algorithm=cast(EncryptionAlgorithmType, cpk.algorithm)
+        )
 
     return None

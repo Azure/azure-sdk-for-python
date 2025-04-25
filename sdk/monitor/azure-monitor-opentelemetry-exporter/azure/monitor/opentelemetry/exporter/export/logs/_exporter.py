@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _MICROSOFT_CUSTOM_EVENT_NAME,
@@ -125,6 +126,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
+    # Special use case: Customers want to be able to set location ip on log records
+    location_ip = trace_utils._get_location_ip(log_record.attributes)
+    if location_ip:
+        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
     )

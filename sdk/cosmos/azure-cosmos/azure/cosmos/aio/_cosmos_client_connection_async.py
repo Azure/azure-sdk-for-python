@@ -296,11 +296,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     async def _setup(self) -> None:
         if 'database_account' not in self._setup_kwargs:
-            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
+            database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
             )
             self._setup_kwargs['database_account'] = database_account
-            await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+            await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
         else:
             database_account = self._setup_kwargs['database_account']
 
@@ -3195,7 +3195,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf)
-        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
+                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                         documents._QueryFeature.CompositeAggregate + "," +
                                         documents._QueryFeature.Distinct + "," +

@@ -251,12 +251,14 @@ class MLClient:
                 self._service_client_10_2021_dataplanepreview,
                 resource_group_name,
                 subscription_id,
+                self._service_client_model_dataplane,
             ) = get_registry_client(
                 self._credential,
                 registry_name if registry_name else registry_reference,
                 workspace_location,
                 **kwargs,
             )
+
             if not workspace_name:
                 workspace_name = workspace_reference
 
@@ -577,6 +579,7 @@ class MLClient:
                 else self._service_client_08_2023_preview
             ),
             self._datastores,
+            (self._service_client_model_dataplane if registry_name or registry_reference else None),
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_08_2023_preview,

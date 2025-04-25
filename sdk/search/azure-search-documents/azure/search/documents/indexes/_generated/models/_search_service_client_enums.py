@@ -9,7 +9,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AIStudioModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the embedding model from the Azure AI Foundry Catalog that will be called."""
 
     OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"

@@ -26,7 +26,9 @@ class AadClientCertificate:
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+        sha256_fingerprint = cert.fingerprint(hashes.SHA256())
         self._thumbprint = base64.urlsafe_b64encode(fingerprint).decode("utf-8")
+        self._sha256_thumbprint = base64.urlsafe_b64encode(sha256_fingerprint).decode("utf-8")
 
     @property
     def thumbprint(self) -> str:
@@ -36,7 +38,15 @@ class AadClientCertificate:
         """
         return self._thumbprint
 
-    def sign(self, plaintext: bytes) -> bytes:
+    @property
+    def sha256_thumbprint(self) -> str:
+        """The certificate's SHA256 thumbprint as a base64url-encoded string.
+
+        :rtype: str
+        """
+        return self._sha256_thumbprint
+
+    def sign_rs256(self, plaintext: bytes) -> bytes:
         """Sign bytes using RS256.
 
         :param bytes plaintext: Bytes to sign.
@@ -44,3 +54,20 @@ class AadClientCertificate:
         :rtype: bytes
         """
         return self._private_key.sign(plaintext, padding.PKCS1v15(), hashes.SHA256())
+
+    def sign_ps256(self, plaintext: bytes) -> bytes:
+        """Sign bytes using PS256.
+
+        :param bytes plaintext: Bytes to sign.
+        :return: The signature.
+        :rtype: bytes
+        """
+        hash_alg = hashes.SHA256()
+
+        # Note: For PS265, the salt length should match the hash output size, so we use the hash algorithm's
+        # digest_size property to get the correct value.
+        return self._private_key.sign(
+            plaintext,
+            padding.PSS(mgf=padding.MGF1(hash_alg), salt_length=hash_alg.digest_size),
+            hash_alg,
+        )

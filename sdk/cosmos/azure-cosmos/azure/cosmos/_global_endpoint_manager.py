@@ -24,18 +24,20 @@ database service.
 """
 
 import threading
+from typing import Tuple
 
 from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
+from .documents import DatabaseAccount
 from ._location_cache import LocationCache
 
 
 # pylint: disable=protected-access
 
 
-class _GlobalEndpointManager(object):
+class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
     This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
@@ -51,25 +53,24 @@ class _GlobalEndpointManager(object):
             self.PreferredLocations,
             self.DefaultEndpoint,
             self.EnableEndpointDiscovery,
-            client.connection_policy.UseMultipleWriteLocations,
-            self.refresh_time_interval_in_ms,
+            client.connection_policy.UseMultipleWriteLocations
         )
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
         self._database_account_cache = None
 
+    def get_use_multiple_write_locations(self):
+        return self.location_cache.can_use_multiple_write_locations()
+
     def get_refresh_time_interval_in_ms_stub(self):
-        return constants._Constants.DefaultUnavailableLocationExpirationTime
+        return constants._Constants.DefaultEndpointsRefreshTime
 
     def get_write_endpoint(self):
-        return self.location_cache.get_write_regional_endpoint()
+        return self.location_cache.get_write_regional_routing_context()
 
     def get_read_endpoint(self):
-        return self.location_cache.get_read_regional_endpoint()
-
-    def swap_regional_endpoint_values(self, request):
-        return self.location_cache.swap_regional_endpoint_values(request)
+        return self.location_cache.get_read_regional_routing_context()
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
@@ -89,7 +90,7 @@ class _GlobalEndpointManager(object):
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
-    def force_refresh(self, database_account):
+    def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
         self.refresh_endpoint_list(database_account)
 
@@ -118,24 +119,24 @@ class _GlobalEndpointManager(object):
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                database_account = self._GetDatabaseAccount(**kwargs)
-                self.location_cache.perform_on_database_account_read(database_account)
                 # this will perform getDatabaseAccount calls to check endpoint health
                 self._endpoints_health_check(**kwargs)
 
-    def _GetDatabaseAccount(self, **kwargs):
+    def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
         use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
-        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account
+        and the endpoint that was used for the request.
+        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
         """
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            return database_account
+            self.location_cache.mark_endpoint_available(self.DefaultEndpoint)
+            return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
         # information from any of the preferred locations that the user might have
@@ -143,14 +144,20 @@ class _GlobalEndpointManager(object):
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
+            # when atm is available, L: 145, 146 should be removed as the global endpoint shouldn't be used
+            # for dataplane operations anymore
+            self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
+            self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    return database_account
+                    self.location_cache.mark_endpoint_available(locational_endpoint)
+                    return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    pass
+                    self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise
 
     def _endpoints_health_check(self, **kwargs):
@@ -158,21 +165,42 @@ class _GlobalEndpointManager(object):
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        all_endpoints = [self.location_cache.read_regional_endpoints[0]]
-        all_endpoints.extend(self.location_cache.write_regional_endpoints)
-        count = 0
-        for endpoint in all_endpoints:
-            count += 1
-            if count > 3:
-                break
-            try:
-                self.Client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
-            except (exceptions.CosmosHttpResponseError, AzureError):
-                if endpoint in self.location_cache.read_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
-                if endpoint in self.location_cache.write_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
-                    endpoint.swap()
+        endpoints_attempted = set()
+        database_account, attempted_endpoint = self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted.add(attempted_endpoint)
+        self.location_cache.perform_on_database_account_read(database_account)
+        # get all the regional routing contexts to check
+        endpoints = self.location_cache.endpoints_to_health_check()
+        success_count = 0
+        for endpoint in endpoints:
+            if endpoint not in endpoints_attempted:
+                if success_count >= 4:
+                    break
+                endpoints_attempted.add(endpoint)
+                # save current dba timeouts
+                previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
+                previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+                try:
+                    if (endpoint in
+                            self.location_cache.location_unavailability_info_by_endpoint):
+                        # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
+                        # health check. This helps reduce the time the health check is blocking all requests.
+                        self.Client.connection_policy.override_dba_timeouts(constants._Constants
+                                                                            .UnavailableEndpointDBATimeouts,
+                                                                            constants._Constants
+                                                                            .UnavailableEndpointDBATimeouts)
+                        self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                    else:
+                        self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                    success_count += 1
+                    self.location_cache.mark_endpoint_available(endpoint)
+                except (exceptions.CosmosHttpResponseError, AzureError):
+                    self.mark_endpoint_unavailable_for_read(endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(endpoint, False)
+                finally:
+                    # after the health check for that endpoint setting the timeouts back to their original values
+                    self.Client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
+                                                                        previous_dba_connection_timeout)
         self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
@@ -183,4 +211,21 @@ class _GlobalEndpointManager(object):
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        return self.Client.GetDatabaseAccount(endpoint, **kwargs)
+        if endpoint in self.location_cache.location_unavailability_info_by_endpoint:
+            previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
+            previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+            try:
+                # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
+                # health check. This helps reduce the time the health check is blocking all requests.
+                self.Client.connection_policy.override_dba_timeouts(constants._Constants
+                                                                    .UnavailableEndpointDBATimeouts,
+                                                                    constants._Constants
+                                                                    .UnavailableEndpointDBATimeouts)
+                database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+            finally:
+                # after the health check for that endpoint setting the timeouts back to their original values
+                self.Client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
+                                                                    previous_dba_connection_timeout)
+        else:
+            database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+        return database_account

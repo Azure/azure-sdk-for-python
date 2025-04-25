@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,10 +31,13 @@ from ..._operations._operations import (
     build_confidential_ledger_create_or_update_ledger_user_request,
     build_confidential_ledger_create_or_update_user_request,
     build_confidential_ledger_create_user_defined_endpoint_request,
+    build_confidential_ledger_create_user_defined_function_request,
     build_confidential_ledger_create_user_defined_role_request,
     build_confidential_ledger_delete_ledger_user_request,
+    build_confidential_ledger_delete_user_defined_function_request,
     build_confidential_ledger_delete_user_defined_role_request,
     build_confidential_ledger_delete_user_request,
+    build_confidential_ledger_execute_user_defined_function_request,
     build_confidential_ledger_get_constitution_request,
     build_confidential_ledger_get_current_ledger_entry_request,
     build_confidential_ledger_get_enclave_quotes_request,
@@ -45,12 +48,14 @@ from ..._operations._operations import (
     build_confidential_ledger_get_transaction_status_request,
     build_confidential_ledger_get_user_defined_endpoint_request,
     build_confidential_ledger_get_user_defined_endpoints_module_request,
+    build_confidential_ledger_get_user_defined_function_request,
     build_confidential_ledger_get_user_defined_role_request,
     build_confidential_ledger_get_user_request,
     build_confidential_ledger_list_collections_request,
     build_confidential_ledger_list_consortium_members_request,
     build_confidential_ledger_list_ledger_entries_request,
     build_confidential_ledger_list_ledger_users_request,
+    build_confidential_ledger_list_user_defined_functions_request,
     build_confidential_ledger_list_users_request,
     build_confidential_ledger_update_runtime_options_request,
     build_confidential_ledger_update_user_defined_role_request,
@@ -204,7 +209,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["members"]
+            list_of_elem = deserialized.get("members", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -367,7 +372,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["collections"]
+            list_of_elem = deserialized.get("collections", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -396,6 +401,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         collection_id: Optional[str] = None,
         from_transaction_id: Optional[str] = None,
         to_transaction_id: Optional[str] = None,
+        tag: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets ledger entries from a collection corresponding to a range.
@@ -410,6 +416,8 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         :paramtype from_transaction_id: str
         :keyword to_transaction_id: Specify the last transaction ID in a range. Default value is None.
         :paramtype to_transaction_id: str
+        :keyword tag: Single tag. Default value is None.
+        :paramtype tag: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -421,6 +429,44 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 response == {
                     "contents": "str",
                     "collectionId": "str",
+                    "postHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
+                    "preHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
                     "transactionId": "str"
                 }
         """
@@ -444,6 +490,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                     collection_id=collection_id,
                     from_transaction_id=from_transaction_id,
                     to_transaction_id=to_transaction_id,
+                    tag=tag,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -479,7 +526,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["entries"]
+            list_of_elem = deserialized.get("entries", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -503,7 +550,13 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
     @overload
     async def create_ledger_entry(
-        self, entry: JSON, *, collection_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        entry: JSON,
+        *,
+        collection_id: Optional[str] = None,
+        tags: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -513,6 +566,8 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         :type entry: JSON
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -527,6 +582,44 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 entry = {
                     "contents": "str",
                     "collectionId": "str",
+                    "postHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
+                    "preHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
                     "transactionId": "str"
                 }
 
@@ -542,6 +635,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         entry: IO[bytes],
         *,
         collection_id: Optional[str] = None,
+        tags: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
@@ -553,6 +647,8 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         :type entry: IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -571,7 +667,12 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def create_ledger_entry(
-        self, entry: Union[JSON, IO[bytes]], *, collection_id: Optional[str] = None, **kwargs: Any
+        self,
+        entry: Union[JSON, IO[bytes]],
+        *,
+        collection_id: Optional[str] = None,
+        tags: Optional[str] = None,
+        **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -581,6 +682,8 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         :type entry: JSON or IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -592,6 +695,44 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 entry = {
                     "contents": "str",
                     "collectionId": "str",
+                    "postHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
+                    "preHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
                     "transactionId": "str"
                 }
 
@@ -624,6 +765,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         _request = build_confidential_ledger_create_ledger_entry_request(
             collection_id=collection_id,
+            tags=tags,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -690,6 +832,44 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                     "entry": {
                         "contents": "str",
                         "collectionId": "str",
+                        "postHooks": [
+                            {
+                                "functionId": "str",
+                                "properties": {
+                                    "arguments": [
+                                        "str"
+                                    ],
+                                    "exportedFunctionName": "str",
+                                    "runtimeOptions": {
+                                        "log_exception_details": bool,
+                                        "max_cached_interpreters": 0,
+                                        "max_execution_time_ms": 0,
+                                        "max_heap_bytes": 0,
+                                        "max_stack_bytes": 0,
+                                        "return_exception_details": bool
+                                    }
+                                }
+                            }
+                        ],
+                        "preHooks": [
+                            {
+                                "functionId": "str",
+                                "properties": {
+                                    "arguments": [
+                                        "str"
+                                    ],
+                                    "exportedFunctionName": "str",
+                                    "runtimeOptions": {
+                                        "log_exception_details": bool,
+                                        "max_cached_interpreters": 0,
+                                        "max_execution_time_ms": 0,
+                                        "max_heap_bytes": 0,
+                                        "max_stack_bytes": 0,
+                                        "return_exception_details": bool
+                                    }
+                                }
+                            }
+                        ],
                         "transactionId": "str"
                     }
                 }
@@ -927,6 +1107,44 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 response == {
                     "contents": "str",
                     "collectionId": "str",
+                    "postHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
+                    "preHooks": [
+                        {
+                            "functionId": "str",
+                            "properties": {
+                                "arguments": [
+                                    "str"
+                                ],
+                                "exportedFunctionName": "str",
+                                "runtimeOptions": {
+                                    "log_exception_details": bool,
+                                    "max_cached_interpreters": 0,
+                                    "max_execution_time_ms": 0,
+                                    "max_heap_bytes": 0,
+                                    "max_stack_bytes": 0,
+                                    "return_exception_details": bool
+                                }
+                            }
+                        }
+                    ],
                     "transactionId": "str"
                 }
         """
@@ -1046,7 +1264,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["ledgerUsers"]
+            list_of_elem = deserialized.get("ledgerUsers", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1141,7 +1359,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["ledgerUsers"]
+            list_of_elem = deserialized.get("ledgerUsers", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2334,13 +2552,13 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_endpoints_module(self, *, module: str, **kwargs: Any) -> JSON:
+    async def get_user_defined_endpoints_module(self, *, module_name: str, **kwargs: Any) -> JSON:
         """Module for user defined endpoints.
 
         It gets the module for the user defined endpoint.
 
-        :keyword module: module name of the user defined endpoint. Required.
-        :paramtype module: str
+        :keyword module_name: module name of the user defined endpoint. Required.
+        :paramtype module_name: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2368,8 +2586,588 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_endpoints_module_request(
-            module=module,
+            module_name=module_name,
             api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+
+        return cast(JSON, deserialized)  # type: ignore
+
+    @distributed_trace
+    def list_user_defined_functions(self, **kwargs: Any) -> AsyncIterable[JSON]:
+        """Retrieves a list of user defined functions present in the Confidential Ledger.
+
+        User defined functions stored in the Confidential Ledger.
+
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "code": "str",
+                    "id": "str"
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_confidential_ledger_list_user_defined_functions_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized.get("functions", [])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def delete_user_defined_function(self, function_id: str, **kwargs: Any) -> None:
+        """Deletes a user defined function from the Confidential Ledger.
+
+        Deletes a user defined function from the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_confidential_ledger_delete_user_defined_function_request(
+            function_id=function_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_user_defined_function(self, function_id: str, **kwargs: Any) -> JSON:
+        """Gets a user defined function.
+
+        Returns the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "code": "str",
+                    "id": "str"
+                }
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        _request = build_confidential_ledger_get_user_defined_function_request(
+            function_id=function_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+
+        return cast(JSON, deserialized)  # type: ignore
+
+    @overload
+    async def create_user_defined_function(
+        self, function_id: str, user_defined_function: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
+        """Creates a user defined function.
+
+        Creates the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function: Specify a user defined function of a Confidential Ledger.
+         Required.
+        :type user_defined_function: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                user_defined_function = {
+                    "code": "str",
+                    "id": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "code": "str",
+                    "id": "str"
+                }
+        """
+
+    @overload
+    async def create_user_defined_function(
+        self,
+        function_id: str,
+        user_defined_function: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Creates a user defined function.
+
+        Creates the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function: Specify a user defined function of a Confidential Ledger.
+         Required.
+        :type user_defined_function: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "code": "str",
+                    "id": "str"
+                }
+        """
+
+    @distributed_trace_async
+    async def create_user_defined_function(
+        self, function_id: str, user_defined_function: Union[JSON, IO[bytes]], **kwargs: Any
+    ) -> JSON:
+        """Creates a user defined function.
+
+        Creates the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function: Specify a user defined function of a Confidential Ledger. Is
+         either a JSON type or a IO[bytes] type. Required.
+        :type user_defined_function: JSON or IO[bytes]
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                user_defined_function = {
+                    "code": "str",
+                    "id": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "code": "str",
+                    "id": "str"
+                }
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(user_defined_function, (IOBase, bytes)):
+            _content = user_defined_function
+        else:
+            _json = user_defined_function
+
+        _request = build_confidential_ledger_create_user_defined_function_request(
+            function_id=function_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-ccf-transaction-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-ccf-transaction-id")
+        )
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+
+        return cast(JSON, deserialized)  # type: ignore
+
+    @overload
+    async def execute_user_defined_function(
+        self,
+        function_id: str,
+        user_defined_function_execution_properties: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Executes a user defined function.
+
+        Executes the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function_execution_properties: Specify user defined function execution
+         properties. Default value is None.
+        :type user_defined_function_execution_properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                user_defined_function_execution_properties = {
+                    "arguments": [
+                        "str"
+                    ],
+                    "exportedFunctionName": "str",
+                    "runtimeOptions": {
+                        "log_exception_details": bool,
+                        "max_cached_interpreters": 0,
+                        "max_execution_time_ms": 0,
+                        "max_heap_bytes": 0,
+                        "max_stack_bytes": 0,
+                        "return_exception_details": bool
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "status": "str",
+                    "error": {
+                        "message": "str"
+                    },
+                    "result": {
+                        "returnValue": "str"
+                    }
+                }
+        """
+
+    @overload
+    async def execute_user_defined_function(
+        self,
+        function_id: str,
+        user_defined_function_execution_properties: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Executes a user defined function.
+
+        Executes the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function_execution_properties: Specify user defined function execution
+         properties. Default value is None.
+        :type user_defined_function_execution_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "status": "str",
+                    "error": {
+                        "message": "str"
+                    },
+                    "result": {
+                        "returnValue": "str"
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    async def execute_user_defined_function(
+        self,
+        function_id: str,
+        user_defined_function_execution_properties: Optional[Union[JSON, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> JSON:
+        """Executes a user defined function.
+
+        Executes the user defined function in the Confidential Ledger.
+
+        :param function_id: Identifies a user defined function. Required.
+        :type function_id: str
+        :param user_defined_function_execution_properties: Specify user defined function execution
+         properties. Is either a JSON type or a IO[bytes] type. Default value is None.
+        :type user_defined_function_execution_properties: JSON or IO[bytes]
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                user_defined_function_execution_properties = {
+                    "arguments": [
+                        "str"
+                    ],
+                    "exportedFunctionName": "str",
+                    "runtimeOptions": {
+                        "log_exception_details": bool,
+                        "max_cached_interpreters": 0,
+                        "max_execution_time_ms": 0,
+                        "max_heap_bytes": 0,
+                        "max_stack_bytes": 0,
+                        "return_exception_details": bool
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "status": "str",
+                    "error": {
+                        "message": "str"
+                    },
+                    "result": {
+                        "returnValue": "str"
+                    }
+                }
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(user_defined_function_execution_properties, (IOBase, bytes)):
+            _content = user_defined_function_execution_properties
+        else:
+            if user_defined_function_execution_properties is not None:
+                _json = user_defined_function_execution_properties
+            else:
+                _json = None
+
+        _request = build_confidential_ledger_execute_user_defined_function_request(
+            function_id=function_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )

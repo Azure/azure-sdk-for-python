@@ -14,6 +14,7 @@ from conftest import configure, ASST_AZURE, OPENAI, AZURE, PREVIEW, GA
 @pytest.mark.live_test_only
 class TestModels(AzureRecordedTestCase):
 
+    @pytest.mark.skip("InternalServerError, opened issue")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",

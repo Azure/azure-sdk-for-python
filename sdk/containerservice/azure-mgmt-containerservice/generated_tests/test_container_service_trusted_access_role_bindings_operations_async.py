@@ -25,7 +25,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
         response = self.client.trusted_access_role_bindings.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
                     },
                     "type": "str",
                 },
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,7 +83,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 trusted_access_role_binding_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

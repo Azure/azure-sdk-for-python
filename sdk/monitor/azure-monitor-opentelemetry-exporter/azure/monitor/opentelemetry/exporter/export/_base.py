@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     RequestIdPolicy,
 )
+from azure.identity import ManagedIdentityCredential
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -29,6 +30,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
+    _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -85,7 +87,10 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
-        self._credential = kwargs.get("credential")
+        if self._is_stats_exporter():
+            self._credential = None
+        else:
+            self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._endpoint = parsed_connection_string.endpoint
@@ -433,3 +438,25 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                     item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)  # type: ignore
                     item.data.base_data.additional_properties = None  # type: ignore
     return item
+
+# mypy: disable-error-code="union-attr"
+def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
+    if "credential" in kwargs:
+        return kwargs.get("credential")
+    try:
+        if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
+            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
+            kv_pairs = auth_string.split(";")
+            auth_string_d = dict(s.split("=") for s in kv_pairs)
+            auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}
+            if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
+                if "clientid" in auth_string_d:
+                    credential = ManagedIdentityCredential(client_id=auth_string_d["clientid"])
+                    return credential
+                credential = ManagedIdentityCredential()
+                return credential
+    except ValueError as exc:
+        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)
+    except Exception as e:
+        logger.error("Failed to get authentication credential and enable AAD: %s", e)
+    return None

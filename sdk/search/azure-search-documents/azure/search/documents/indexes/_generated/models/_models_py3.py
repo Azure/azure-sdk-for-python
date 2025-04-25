@@ -73,7 +73,7 @@ class AIServicesAccountIdentity(CognitiveServicesAccount):
     :ivar identity: The user-assigned managed identity used for connections to AI Service. If not
      specified, the system-assigned managed identity is used. On updates to the skillset, if the
      identity is unspecified, the value remains unchanged. If set to "none", the value of this
-     property is cleared. Required.
+     property is cleared.
     :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar subdomain_url: The subdomain url for the corresponding AI Service. Required.
     :vartype subdomain_url: str
@@ -81,7 +81,6 @@ class AIServicesAccountIdentity(CognitiveServicesAccount):
 
     _validation = {
         "odata_type": {"required": True},
-        "identity": {"required": True},
         "subdomain_url": {"required": True},
     }
 
@@ -95,9 +94,9 @@ class AIServicesAccountIdentity(CognitiveServicesAccount):
     def __init__(
         self,
         *,
-        identity: "_models.SearchIndexerDataIdentity",
         subdomain_url: str,
         description: Optional[str] = None,
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -106,7 +105,7 @@ class AIServicesAccountIdentity(CognitiveServicesAccount):
         :keyword identity: The user-assigned managed identity used for connections to AI Service. If
          not specified, the system-assigned managed identity is used. On updates to the skillset, if the
          identity is unspecified, the value remains unchanged. If set to "none", the value of this
-         property is cleared. Required.
+         property is cleared.
         :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         :keyword subdomain_url: The subdomain url for the corresponding AI Service. Required.
         :paramtype subdomain_url: str
@@ -690,7 +689,7 @@ class AzureMachineLearningParameters(_serialization.Model):
      "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
      "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
      "Cohere-embed-v3-english", and "Cohere-embed-v3-multilingual".
-    :vartype model_name: str or ~azure.search.documents.indexes.models.AIStudioModelCatalogName
+    :vartype model_name: str or ~azure.search.documents.indexes.models.AIFoundryModelCatalogName
     """
 
     _validation = {
@@ -714,7 +713,7 @@ class AzureMachineLearningParameters(_serialization.Model):
         resource_id: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = None,
         region: Optional[str] = None,
-        model_name: Optional[Union[str, "_models.AIStudioModelCatalogName"]] = None,
+        model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -740,7 +739,7 @@ class AzureMachineLearningParameters(_serialization.Model):
          "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
          "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
          "Cohere-embed-v3-english", and "Cohere-embed-v3-multilingual".
-        :paramtype model_name: str or ~azure.search.documents.indexes.models.AIStudioModelCatalogName
+        :paramtype model_name: str or ~azure.search.documents.indexes.models.AIFoundryModelCatalogName
         """
         super().__init__(**kwargs)
         self.scoring_uri = scoring_uri
@@ -1392,7 +1391,7 @@ class VectorSearchCompression(_serialization.Model):
         self,
         *,
         compression_name: str,
-        rerank_with_original_vectors: bool = True,
+        rerank_with_original_vectors: Optional[bool] = None,
         default_oversampling: Optional[float] = None,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
         truncation_dimension: Optional[int] = None,
@@ -1480,7 +1479,7 @@ class BinaryQuantizationCompression(VectorSearchCompression):
         self,
         *,
         compression_name: str,
-        rerank_with_original_vectors: bool = True,
+        rerank_with_original_vectors: Optional[bool] = None,
         default_oversampling: Optional[float] = None,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
         truncation_dimension: Optional[int] = None,
@@ -4919,6 +4918,51 @@ class IndexingSchedule(_serialization.Model):
         self.start_time = start_time
 
 
+class IndexStatisticsSummary(_serialization.Model):
+    """Statistics for a given index. Statistics are collected periodically and are not guaranteed to
+    always be up-to-date.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the index. Required.
+    :vartype name: str
+    :ivar document_count: The number of documents in the index. Required.
+    :vartype document_count: int
+    :ivar storage_size: The amount of storage in bytes consumed by the index. Required.
+    :vartype storage_size: int
+    :ivar vector_index_size: The amount of memory in bytes consumed by vectors in the index.
+     Required.
+    :vartype vector_index_size: int
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "document_count": {"required": True, "readonly": True},
+        "storage_size": {"required": True, "readonly": True},
+        "vector_index_size": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "document_count": {"key": "documentCount", "type": "int"},
+        "storage_size": {"key": "storageSize", "type": "int"},
+        "vector_index_size": {"key": "vectorIndexSize", "type": "int"},
+    }
+
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the index. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.document_count: Optional[int] = None
+        self.storage_size: Optional[int] = None
+        self.vector_index_size: Optional[int] = None
+
+
 class InputFieldMappingEntry(_serialization.Model):
     """Input field mapping for a skill.
 
@@ -5556,6 +5600,34 @@ class ListIndexesResult(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.indexes: Optional[List["_models.SearchIndex"]] = None
+
+
+class ListIndexStatsSummary(_serialization.Model):
+    """Response from a request to retrieve stats summary of all indexes. If successful, it includes
+    the stats of each index in the service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar indexes_statistics: The Statistics summary of all indexes in the Search service.
+     Required.
+    :vartype indexes_statistics:
+     list[~azure.search.documents.indexes.models.IndexStatisticsSummary]
+    """
+
+    _validation = {
+        "indexes_statistics": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "indexes_statistics": {"key": "value", "type": "[IndexStatisticsSummary]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.indexes_statistics: Optional[List["_models.IndexStatisticsSummary"]] = None
 
 
 class ListSkillsetsResult(_serialization.Model):
@@ -7245,7 +7317,7 @@ class ScalarQuantizationCompression(VectorSearchCompression):
         self,
         *,
         compression_name: str,
-        rerank_with_original_vectors: bool = True,
+        rerank_with_original_vectors: Optional[bool] = None,
         default_oversampling: Optional[float] = None,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
         truncation_dimension: Optional[int] = None,
@@ -8115,6 +8187,8 @@ class SearchIndexer(_serialization.Model):
 class SearchIndexerCache(_serialization.Model):
     """SearchIndexerCache.
 
+    :ivar id: A guid for the SearchIndexerCache.
+    :vartype id: str
     :ivar storage_connection_string: The connection string to the storage account where the cache
      data will be persisted.
     :vartype storage_connection_string: str
@@ -8129,6 +8203,7 @@ class SearchIndexerCache(_serialization.Model):
     """
 
     _attribute_map = {
+        "id": {"key": "id", "type": "str"},
         "storage_connection_string": {"key": "storageConnectionString", "type": "str"},
         "enable_reprocessing": {"key": "enableReprocessing", "type": "bool"},
         "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
@@ -8137,12 +8212,15 @@ class SearchIndexerCache(_serialization.Model):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         storage_connection_string: Optional[str] = None,
         enable_reprocessing: Optional[bool] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword id: A guid for the SearchIndexerCache.
+        :paramtype id: str
         :keyword storage_connection_string: The connection string to the storage account where the
          cache data will be persisted.
         :paramtype storage_connection_string: str
@@ -8156,6 +8234,7 @@ class SearchIndexerCache(_serialization.Model):
         :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         """
         super().__init__(**kwargs)
+        self.id = id
         self.storage_connection_string = storage_connection_string
         self.enable_reprocessing = enable_reprocessing
         self.identity = identity
@@ -9245,7 +9324,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
      Required.
     :vartype key_name: str
     :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
-     rest. Required.
+     rest.
     :vartype key_version: str
     :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
@@ -9264,7 +9343,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
 
     _validation = {
         "key_name": {"required": True},
-        "key_version": {"required": True},
         "vault_uri": {"required": True},
     }
 
@@ -9280,8 +9358,8 @@ class SearchResourceEncryptionKey(_serialization.Model):
         self,
         *,
         key_name: str,
-        key_version: str,
         vault_uri: str,
+        key_version: Optional[str] = None,
         access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
@@ -9291,7 +9369,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
          rest. Required.
         :paramtype key_name: str
         :keyword key_version: The version of your Azure Key Vault key to be used to encrypt your data
-         at rest. Required.
+         at rest.
         :paramtype key_version: str
         :keyword vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that
          contains the key to be used to encrypt your data at rest. An example URI might be
@@ -9567,6 +9645,9 @@ class SemanticConfiguration(_serialization.Model):
      semantic ranking, captions, highlights, and answers. At least one of the three sub properties
      (titleField, prioritizedKeywordsFields and prioritizedContentFields) need to be set. Required.
     :vartype prioritized_fields: ~azure.search.documents.indexes.models.SemanticPrioritizedFields
+    :ivar flighting_opt_in: Determines how which semantic or query rewrite models to use during
+     model flighting/upgrades.
+    :vartype flighting_opt_in: bool
     """
 
     _validation = {
@@ -9577,9 +9658,17 @@ class SemanticConfiguration(_serialization.Model):
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "prioritized_fields": {"key": "prioritizedFields", "type": "SemanticPrioritizedFields"},
+        "flighting_opt_in": {"key": "flightingOptIn", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, prioritized_fields: "_models.SemanticPrioritizedFields", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        prioritized_fields: "_models.SemanticPrioritizedFields",
+        flighting_opt_in: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the semantic configuration. Required.
         :paramtype name: str
@@ -9587,10 +9676,14 @@ class SemanticConfiguration(_serialization.Model):
          semantic ranking, captions, highlights, and answers. At least one of the three sub properties
          (titleField, prioritizedKeywordsFields and prioritizedContentFields) need to be set. Required.
         :paramtype prioritized_fields: ~azure.search.documents.indexes.models.SemanticPrioritizedFields
+        :keyword flighting_opt_in: Determines how which semantic or query rewrite models to use during
+         model flighting/upgrades.
+        :paramtype flighting_opt_in: bool
         """
         super().__init__(**kwargs)
         self.name = name
         self.prioritized_fields = prioritized_fields
+        self.flighting_opt_in = flighting_opt_in
 
 
 class SemanticField(_serialization.Model):

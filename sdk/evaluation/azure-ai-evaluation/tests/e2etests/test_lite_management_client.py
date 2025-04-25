@@ -1,3 +1,4 @@
+from typing import Any, Mapping
 import pytest
 import logging
 from azure.core.credentials import AzureSasCredential, TokenCredential
@@ -66,7 +67,12 @@ class TestLiteAzureManagementClient(object):
             assert store.credential == None
 
     @pytest.mark.azuretest
-    def test_workspace_get_info(self, project_scope, azure_cred):
+    @pytest.mark.parametrize("config_name", ["sas", "none", "private"])
+    def test_workspace_get_info(
+        self, datastore_project_scopes: Mapping[str, Any], azure_cred: TokenCredential, config_name: str
+    ):
+        project_scope = datastore_project_scopes[config_name]
+
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],

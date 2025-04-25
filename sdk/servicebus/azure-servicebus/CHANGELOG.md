@@ -1,10 +1,18 @@
 # Release History
 
-## 7.14.1 (Unreleased)
+## 7.14.2 (2025-04-09)
+
+### Other Changes
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Dropped support for Python 3.8
+
+## 7.14.1 (2025-03-12)
 
 ### Bugs Fixed
 
-- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug where service errors were incorrectly expected to have info/description fields set in all cases.
+- Fixed a bug where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
 
 ## 7.14.0 (2025-02-13)
 

@@ -10,7 +10,6 @@ from ci_tools.variables import in_ci
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
     FluencyEvaluator,
-    GroundednessEvaluator,
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
@@ -33,6 +32,7 @@ def data_file():
 def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
+
 
 def answer_evaluator(response):
     return {"length": len(response)}

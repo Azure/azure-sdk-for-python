@@ -70,5 +70,9 @@ openai
 dnspython
 promptflow-core
 promptflow-devkit
+ruamel.yaml
+httpx
+pandas
 nltk
 azure-monitor-opentelemetry
+pyrit

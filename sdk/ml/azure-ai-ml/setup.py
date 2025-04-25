@@ -88,6 +88,8 @@ setup(
         "azure-common>=1.1",
         "typing-extensions",
         "azure-monitor-opentelemetry",
+        # TODO: remove six after using new autorest
+        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package

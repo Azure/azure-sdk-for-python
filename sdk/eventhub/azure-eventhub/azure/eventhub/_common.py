@@ -55,6 +55,7 @@ from .amqp import (
 )
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from ._pyamqp.message import Message as pyamqp_Message
+from ._pyamqp._decode import decode_payload
 from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
@@ -221,6 +222,15 @@ class EventData:
         """
         event_data = cls(content)
         event_data.content_type = content_type
+        return event_data
+
+    @classmethod
+    def from_bytes(cls, message: bytes) -> "EventData":
+
+        amqp_message = decode_payload(memoryview(message))
+        event_data = cls(body="")
+        event_data._message = amqp_message
+        event_data._raw_amqp_message = AmqpAnnotatedMessage(message=amqp_message)
         return event_data
 
     @classmethod
