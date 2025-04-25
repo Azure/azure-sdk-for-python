@@ -8,7 +8,7 @@ from unittest import mock
 
 import pytest
 
-from corehttp.settings import Settings, settings, convert_bool
+from corehttp.settings import Settings, settings, _convert_bool
 
 
 def test_global_settings_default():
@@ -35,9 +35,9 @@ def test_environment_settings():
 
 @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on", "true", "True", True])
 def test_convert_bool(value):
-    assert convert_bool(value)
+    assert _convert_bool(value)
 
 
 @pytest.mark.parametrize("value", ["No", "NO", "no", "0", "OFF", "off", "false", "False", False])
 def test_convert_bool_false(value):
-    assert not convert_bool(value)
+    assert not _convert_bool(value)
