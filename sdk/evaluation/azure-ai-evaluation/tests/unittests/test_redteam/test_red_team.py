@@ -367,7 +367,7 @@ class TestRedTeamMlflowIntegration:
             result = await red_team._log_redteam_results_to_mlflow(
                 redteam_output=mock_redteam_result,
                 eval_run=mock_eval_run,
-                data_only=False
+                _skip_evals=False
             )
         
         mock_eval_run.log_artifact.assert_called_once()
@@ -896,7 +896,7 @@ class TestRedTeamProcessing:
                     risk_category=RiskCategory.Violence,
                     strategy=AttackStrategy.Base64,
                     scan_name="test_eval",
-                    data_only=False,
+                    _skip_evals=False,
                     output_path="/path/to/output.json"
                 )
         
