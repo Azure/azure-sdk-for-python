@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Replace with your Cosmos DB details
 PREFERRED_LOCATIONS = []
+CLIENT_EXCLUDED_LOCATIONS = []
+REQUEST_EXCLUDED_LOCATIONS = []
 COSMOS_PROXY_URI = "http://0.0.0.0:5100"
 COSMOS_URI = ""
 COSMOS_KEY = ""
