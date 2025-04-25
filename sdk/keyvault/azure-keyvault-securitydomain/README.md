@@ -138,13 +138,12 @@ assert transfer_key.transfer_key_jwk
 
 `begin_upload` can be used by a `SecurityDomainClient` to restore a different managed HSM with a security domain, for
 example for disaster recovery. Like the download operation this will activate a provisioned managed HSM, but the poller
-will return the activation status instead of the security domain object.
+will return None if successful (and an error if unsuccessful) instead of the security domain object.
 
 ```python
 from azure.keyvault.securitydomain.models import SecurityDomainOperationStatus
 
 result: SecurityDomainOperationStatus = upload_client.begin_upload(security_domain=result).result()
-assert result.status.lower() == "success"
 print("The managed HSM has been successfully restored with the security domain.")
 ```
 
