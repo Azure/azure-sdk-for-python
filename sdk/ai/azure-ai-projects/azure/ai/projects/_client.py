@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
@@ -66,6 +66,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

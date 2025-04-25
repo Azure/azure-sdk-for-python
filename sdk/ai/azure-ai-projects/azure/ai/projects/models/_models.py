@@ -10,21 +10,22 @@
 
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import CredentialType, DatasetType, DeploymentType, IndexType, PendingUploadType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AgentEvaluation(_model_base.Model):
+class AgentEvaluation(_Model):
     """Evaluation response for agent evaluation run.
 
     :ivar id: Identifier of the agent evaluation run. Required.
     :vartype id: str
     :ivar status: Status of the agent evaluation. Options: Running, Completed, Failed. Required.
     :vartype status: str
+    :ivar error: The reason of the request failure for the long running process, if applicable.
+    :vartype error: str
     :ivar result: The agent evaluation result.
     :vartype result: list[~azure.ai.projects.models.AgentEvaluationResult]
     """
@@ -33,6 +34,8 @@ class AgentEvaluation(_model_base.Model):
     """Identifier of the agent evaluation run. Required."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Status of the agent evaluation. Options: Running, Completed, Failed. Required."""
+    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason of the request failure for the long running process, if applicable."""
     result: Optional[List["_models.AgentEvaluationResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -44,6 +47,7 @@ class AgentEvaluation(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         status: str,
+        error: Optional[str] = None,
         result: Optional[List["_models.AgentEvaluationResult"]] = None,
     ) -> None: ...
 
@@ -58,7 +62,7 @@ class AgentEvaluation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEvaluationRedactionConfiguration(_model_base.Model):
+class AgentEvaluationRedactionConfiguration(_Model):
     """The redaction configuration will allow the user to control what is redacted.
 
     :ivar redact_score_properties: Redact score properties. If not specified, the default is to
@@ -89,7 +93,7 @@ class AgentEvaluationRedactionConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEvaluationRequest(_model_base.Model):
+class AgentEvaluationRequest(_Model):
     """Evaluation request for agent run.
 
     :ivar run_id: Identifier of the agent run. Required.
@@ -100,14 +104,12 @@ class AgentEvaluationRequest(_model_base.Model):
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar sampling_configuration: Sampling configuration for the evaluation.
-    :vartype sampling_configuration:
-     ~azure.ai.projects.models.AgentEvaluationSamplingConfiguration
+    :vartype sampling_configuration: ~azure.ai.projects.models.AgentEvaluationSamplingConfiguration
     :ivar redaction_configuration: Redaction configuration for the evaluation.
     :vartype redaction_configuration:
      ~azure.ai.projects.models.AgentEvaluationRedactionConfiguration
-    :ivar app_insights_connection_string: Optional and temporary way to pass the AppInsights
-     connection string to the evaluator. When this string is not null, the evaluation results will
-     be logged to Azure AppInsights.
+    :ivar app_insights_connection_string: Pass the AppInsights connection string to the agent
+     evaluation for the evaluation results and the errors logs. Required.
     :vartype app_insights_connection_string: str
     """
 
@@ -128,11 +130,11 @@ class AgentEvaluationRequest(_model_base.Model):
         name="redactionConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Redaction configuration for the evaluation."""
-    app_insights_connection_string: Optional[str] = rest_field(
+    app_insights_connection_string: str = rest_field(
         name="appInsightsConnectionString", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional and temporary way to pass the AppInsights connection string to the evaluator. When
-     this string is not null, the evaluation results will be logged to Azure AppInsights."""
+    """Pass the AppInsights connection string to the agent evaluation for the evaluation results and
+     the errors logs. Required."""
 
     @overload
     def __init__(
@@ -140,10 +142,10 @@ class AgentEvaluationRequest(_model_base.Model):
         *,
         run_id: str,
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        app_insights_connection_string: str,
         thread_id: Optional[str] = None,
         sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = None,
         redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = None,
-        app_insights_connection_string: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -157,7 +159,7 @@ class AgentEvaluationRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEvaluationResult(_model_base.Model):
+class AgentEvaluationResult(_Model):
     """Result for the agent evaluation evaluator run.
 
     :ivar evaluator: Evaluator's name. This is the name of the evaluator that was used to evaluate
@@ -231,7 +233,7 @@ class AgentEvaluationResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEvaluationSamplingConfiguration(_model_base.Model):
+class AgentEvaluationSamplingConfiguration(_Model):
     """Definition for sampling strategy.
 
     :ivar name: Name of the sampling strategy. Required.
@@ -273,7 +275,7 @@ class AgentEvaluationSamplingConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseCredentials(_model_base.Model):
+class BaseCredentials(_Model):
     """A base class for connection credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -285,7 +287,7 @@ class BaseCredentials(_model_base.Model):
     :vartype type: str or ~azure.ai.projects.models.CredentialType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read"])
     """The type of credential used by the connection. Required. Known values are: \"ApiKey\", \"AAD\",
      \"SAS\", \"CustomKeys\", and \"None\"."""
@@ -338,12 +340,11 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         super().__init__(*args, type=CredentialType.API_KEY, **kwargs)
 
 
-class AssetCredentialResponse(_model_base.Model):
+class AssetCredentialResponse(_Model):
     """Represents a reference to a blob for consumption.
 
     :ivar blob_reference_for_consumption: Credential info to access the storage account. Required.
-    :vartype blob_reference_for_consumption:
-     ~azure.ai.projects.models.BlobReferenceForConsumption
+    :vartype blob_reference_for_consumption: ~azure.ai.projects.models.BlobReferenceForConsumption
     """
 
     blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
@@ -369,7 +370,7 @@ class AssetCredentialResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Index(_model_base.Model):
+class Index(_Model):
     """Index resource Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -392,7 +393,7 @@ class Index(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
@@ -482,7 +483,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         super().__init__(*args, type=IndexType.AZURE_SEARCH, **kwargs)
 
 
-class TargetConfig(_model_base.Model):
+class TargetConfig(_Model):
     """Abstract class for target configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -492,7 +493,7 @@ class TargetConfig(_model_base.Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the model configuration. Required. Default value is None."""
 
@@ -552,7 +553,7 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
         super().__init__(*args, type="AzureOpenAIModel", **kwargs)
 
 
-class BlobReferenceForConsumption(_model_base.Model):
+class BlobReferenceForConsumption(_Model):
     """Represents a reference to a blob for consumption.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
@@ -593,7 +594,7 @@ class BlobReferenceForConsumption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Connection(_model_base.Model):
+class Connection(_Model):
     """Response from the list and get connections operations.
 
     :ivar name: The name of the resource. Required.
@@ -723,7 +724,7 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
         super().__init__(*args, type=CredentialType.CUSTOM, **kwargs)
 
 
-class DatasetVersion(_model_base.Model):
+class DatasetVersion(_Model):
     """DatasetVersion Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -751,7 +752,7 @@ class DatasetVersion(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
     """[Required] Uri of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
@@ -794,7 +795,7 @@ class DatasetVersion(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_model_base.Model):
+class Deployment(_Model):
     """Model Deployment Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -806,7 +807,7 @@ class Deployment(_model_base.Model):
     :vartype name: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the deployment. Required. \"ModelDeployment\""""
     name: str = rest_field(visibility=["read"])
@@ -830,7 +831,7 @@ class Deployment(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EmbeddingConfiguration(_model_base.Model):
+class EmbeddingConfiguration(_Model):
     """Embedding configuration class.
 
     :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
@@ -891,7 +892,7 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         super().__init__(*args, type=CredentialType.ENTRA_ID, **kwargs)
 
 
-class Evaluation(_model_base.Model):
+class Evaluation(_Model):
     """Evaluation Definition.
 
     :ivar id: Identifier of the evaluation. Required.
@@ -962,7 +963,7 @@ class Evaluation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorConfiguration(_model_base.Model):
+class EvaluatorConfiguration(_Model):
     """Evaluator Configuration.
 
     :ivar id: Identifier of the evaluator. Required.
@@ -1109,7 +1110,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         super().__init__(*args, type=DatasetType.URI_FOLDER, **kwargs)
 
 
-class InputData(_model_base.Model):
+class InputData(_Model):
     """Abstract data class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1119,7 +1120,7 @@ class InputData(_model_base.Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the data. Required. Default value is None."""
 
@@ -1298,7 +1299,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         super().__init__(*args, type=CredentialType.NONE, **kwargs)
 
 
-class PendingUploadRequest(_model_base.Model):
+class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -1345,12 +1346,11 @@ class PendingUploadRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResponse(_model_base.Model):
+class PendingUploadResponse(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
-    :vartype blob_reference_for_consumption:
-     ~azure.ai.projects.models.BlobReferenceForConsumption
+    :vartype blob_reference_for_consumption: ~azure.ai.projects.models.BlobReferenceForConsumption
     :ivar pending_upload_id: ID for this upload request. Required.
     :vartype pending_upload_id: str
     :ivar dataset_version: Version of dataset to be created if user did not specify version when
@@ -1401,7 +1401,7 @@ class PendingUploadResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RedTeam(_model_base.Model):
+class RedTeam(_Model):
     """Red team details.
 
     :ivar id: Identifier of the red team. Required.
@@ -1493,7 +1493,7 @@ class RedTeam(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SasCredential(_model_base.Model):
+class SasCredential(_Model):
     """SAS Credential definition.
 
     :ivar sas_uri: SAS uri. Required.
@@ -1542,7 +1542,7 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         super().__init__(*args, type=CredentialType.SAS, **kwargs)
 
 
-class Sku(_model_base.Model):
+class Sku(_Model):
     """Sku information.
 
     :ivar capacity: Sku capacity. Required.

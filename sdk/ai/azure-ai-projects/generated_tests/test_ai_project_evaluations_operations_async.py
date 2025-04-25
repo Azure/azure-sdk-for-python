@@ -59,9 +59,9 @@ class TestAIProjectEvaluationsOperationsAsync(AIProjectClientTestBaseAsync):
         client = self.create_async_client(endpoint=aiproject_endpoint)
         response = await client.evaluations.create_agent_evaluation(
             evaluation={
+                "appInsightsConnectionString": "str",
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
                 "runId": "str",
-                "appInsightsConnectionString": "str",
                 "redactionConfiguration": {"redactScoreProperties": bool},
                 "samplingConfiguration": {"maxRequestRate": 0.0, "name": "str", "samplingPercent": 0.0},
                 "threadId": "str",

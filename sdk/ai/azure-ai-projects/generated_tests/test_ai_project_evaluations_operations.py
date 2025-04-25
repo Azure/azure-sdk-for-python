@@ -58,9 +58,9 @@ class TestAIProjectEvaluationsOperations(AIProjectClientTestBase):
         client = self.create_client(endpoint=aiproject_endpoint)
         response = client.evaluations.create_agent_evaluation(
             evaluation={
+                "appInsightsConnectionString": "str",
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
                 "runId": "str",
-                "appInsightsConnectionString": "str",
                 "redactionConfiguration": {"redactScoreProperties": bool},
                 "samplingConfiguration": {"maxRequestRate": 0.0, "name": "str", "samplingPercent": 0.0},
                 "threadId": "str",

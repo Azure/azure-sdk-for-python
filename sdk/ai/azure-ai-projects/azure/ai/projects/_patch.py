@@ -15,10 +15,15 @@ from .operations import TelemetryOperations, InferenceOperations
 from ._patch_prompts import PromptTemplate
 from ._patch_telemetry import enable_telemetry
 
-_console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in ("true", "1", "yes")
+_console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 if _console_logging_enabled:
     import sys
     import logging
+
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(logging.DEBUG)
     azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -40,6 +45,7 @@ def _patch_user_agent(user_agent: Optional[str]) -> str:
         patched_user_agent = USER_AGENT_APP_ID
 
     return patched_user_agent
+
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
