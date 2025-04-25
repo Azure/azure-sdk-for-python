@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-cognitiveservices-formrecognizer"
-package_nspkg = "azure-cognitiveservices-nspkg"
-package_pprint_name = "Cognitive Services Form Recognizer"
-package_doc_id = ""
-is_stable = false
-is_arm = false
-need_msrestazure = false
