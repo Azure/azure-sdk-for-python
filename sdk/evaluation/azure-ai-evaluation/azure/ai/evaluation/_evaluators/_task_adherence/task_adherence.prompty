@@ -1,6 +1,6 @@
 ---
 name: TaskAdherence
-description: Evaluates Task Adherence score for QA scenario
+description: Evaluates Task Adherence score
 model:
   api: chat
   parameters:
@@ -10,7 +10,7 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
@@ -54,7 +54,18 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
     **Response:** Books are fun!
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
-**Explanation:** The response is entirely off-topic. It doesn't attempt to answer the user's question or use the available tool.
+    **Output JSON:**
+    {
+        "thought_chain": "Let's think step by step: The assistant response is entirely irrelevant to the query and ignores the provided tool completely.",
+        "explanation": "The response is completely irrelevant and doesn't use the provided tool.",
+        "score": "1",
+        "agent_perceived_task": "unclear or misunderstood",
+        "actual_user_task": "Recommend a historical fiction book",
+        "correct_task_detected": false,
+        "tools_used": [],
+        "expected_tool_calls": ["get_book"],
+        "task_resolved": false
+    }
 
 [TaskAdherence: 2] (Barely Adherent)
 **Definition:** Response minimally aligns with the task, showing surface-level relevance but ignoring most instructions. It lacks necessary detail and structure to be helpful.
@@ -63,9 +74,18 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
     **Query:** Recommend a historical fiction book.
     **Response:** There are many good books in historical fiction.
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
-
-    **Explanation:** The response references the genre but gives no specific recommendation and ignores the tool, leaving major task gaps.
-
+    **Output JSON:**
+    {
+        "thought_chain": "Let's think step by step: The assistant acknowledged the genre but did not recommend an actual book nor used the provided tool.",
+        "explanation": "The response mentions the genre but provides no actual recommendation or use of the tool.",
+        "score": "2",
+        "agent_perceived_task": "mention historical fiction genre",
+        "actual_user_task": "Recommend a historical fiction book",
+        "correct_task_detected": false,
+        "tools_used": [],
+        "expected_tool_calls": ["get_book"],
+        "task_resolved": false
+    }
 [TaskAdherence: 3] (Moderately Adherent)
 **Definition:** Response addresses the main task and includes some relevant content, but key elements are missing or underdeveloped. It may lack completeness, structure, or sufficient clarity to fully satisfy the task.
 
@@ -74,7 +94,18 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
     **Response:** You might like **The Book Thief** by Markus Zusak.
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
-    **Explanation:** The assistant gives a relevant book, showing moderate task adherence. However, it does not use the tool or give supporting information.
+    **Output JSON:**
+    {
+        "thought_chain": "Let's think step by step: The assistant provided a relevant book recommendation but did not invoke the provided tool.",
+        "explanation": "Relevant recommendation provided, but did not use the available tool.",
+        "score": "3",
+        "agent_perceived_task": "suggest historical fiction book",
+        "actual_user_task": "Recommend a historical fiction book",
+        "correct_task_detected": true,
+        "tools_used": [],
+        "expected_tool_calls": ["get_book"],
+        "task_resolved": true
+    }
 
 ## [TaskAdherence: 4] (Mostly Adherent)
 
@@ -82,15 +113,26 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
 
     **Example:**
     **Query:** Recommend a historical fiction book.
-    **Response:** [  
-      { "role": "assistant", "content": [{ "type": "text", "text": "Let me check..." }] },  
-      { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },  
-      { "role": "tool", "tool_call_id": "tool_call_001", "content": [{ "type": "tool_result", "tool_result": "{ \"title\": \"Wolf Hall\", \"author\": \"Hilary Mantel\" }" }] },  
-      { "role": "assistant", "content": [{ "type": "text", "text": "You might enjoy *Wolf Hall* by Hilary Mantel." }] }  
-    ]  
+    **Response:** [
+      { "role": "assistant", "content": [{ "type": "text", "text": "Let me check..." }] },
+      { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },
+      { "role": "tool", "tool_call_id": "tool_call_001", "content": [{ "type": "tool_result", "tool_result": "{ \"title\": \"Wolf Hall\", \"author\": \"Hilary Mantel\" }" }] },
+      { "role": "assistant", "content": [{ "type": "text", "text": "You might enjoy *Wolf Hall* by Hilary Mantel." }] }
+    ]
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
-**Explanation:** The tool is correctly used and the result is relevant. The response is solid but could be improved with more context.
+    **Output JSON:**
+    {
+        "thought_chain": "Let's think step by step: The assistant correctly invoked the provided tool and returned a relevant recommendation. The response is solid, with minor contextual details possibly missing.",
+        "explanation": "Correctly used the tool and recommended an appropriate book, minor context improvements possible.",
+        "score": "4",
+        "agent_perceived_task": "recommend historical fiction book with tool",
+        "actual_user_task": "Recommend a historical fiction book",
+        "correct_task_detected": true,
+        "tools_used": ["get_book"],
+        "expected_tool_calls": ["get_book"],
+        "task_resolved": true
+    }
 
 ## [TaskAdherence: 5] (Fully Adherent)
 
@@ -98,15 +140,26 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
 
 **Example:**
     **Query:** Recommend a historical fiction book.
-    **Response:** [  
-        { "role": "assistant", "content": [{ "type": "text", "text": "Sure! Fetching a recommendation..." }] },  
-        { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_20250314_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },  
-        { "role": "tool", "tool_call_id": "tool_call_20250314_001", "content": [{ "type": "tool_result", "tool_result": "{ \"book\": { \"title\": \"The Nightingale\", \"author\": \"Kristin Hannah\", \"summary\": \"A WWII-era story of two sisters resisting the German occupation in France.\" } }" }] },  
-        { "role": "assistant", "content": [{ "type": "text", "text": "I recommend *The Nightingale* by Kristin Hannah — a moving WWII-era novel about two sisters' survival and resistance in occupied France." }] }  
-    ]  
+    **Response:** [
+        { "role": "assistant", "content": [{ "type": "text", "text": "Sure! Fetching a recommendation..." }] },
+        { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_20250314_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },
+        { "role": "tool", "tool_call_id": "tool_call_20250314_001", "content": [{ "type": "tool_result", "tool_result": "{ \"book\": { \"title\": \"The Nightingale\", \"author\": \"Kristin Hannah\", \"summary\": \"A WWII-era story of two sisters resisting the German occupation in France.\" } }" }] },
+        { "role": "assistant", "content": [{ "type": "text", "text": "I recommend *The Nightingale* by Kristin Hannah — a moving WWII-era novel about two sisters' survival and resistance in occupied France." }] }
+    ]
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
-    **Explanation:** The assistant uses the tool, presents accurate content, and offers helpful detail. This fully meets the task's requirements.
+    **Output JSON:**
+    {
+        "thought_chain": "Let's think step by step: The assistant clearly understood the user's request, accurately used the provided tool, provided detailed and relevant information, and gave a well-contextualized recommendation.",
+        "explanation": "The response fully meets the user's request with flawless tool usage and appropriate detail.",
+        "score": "5",
+        "agent_perceived_task": "recommend historical fiction book using provided tool",
+        "actual_user_task": "Recommend a historical fiction book",
+        "correct_task_detected": true,
+        "tools_used": ["get_book"],
+        "expected_tool_calls": ["get_book"],
+        "task_resolved": true
+    }
 
 # Data
 Query: {{query}}
@@ -115,12 +168,16 @@ Tool Definitions: {{tool_definitions}}
 
 # Tasks
 ## Please provide your assessment Score for the assistant RESPONSE in relation to the user QUERY and TOOL_DEFINITIONS based on the Instructions and examples above.
-Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the
+Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
+    - thought_chain: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the
 definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The answer you give MUST be an integer score ("1", "2", ...) based on the categories of the definitions.
-
-## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your score</S2>.
+    - explanation: a very short explanation of why you think the input data should get that Score.
+    - score: based on your previous analysis, provide your Score. The answer you give MUST be an integer score ("1", "2", ...) based on the categories of the definitions.
+    - agent_perceived_task: a string that describes the task the agent perceived from the user query
+    - actual_user_task: a string that describes the actual user task
+    - correct_task_detected: true or false
+    - tools_used: a list of tools that were used in the response
+    - expected_tool_calls: a list of expected tool calls that should have been made in the response
+    - task_resolved: true or false
 
 # Output

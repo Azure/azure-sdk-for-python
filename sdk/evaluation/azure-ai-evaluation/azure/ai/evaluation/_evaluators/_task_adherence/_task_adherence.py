@@ -130,19 +130,16 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-
-        score = math.nan
-        if llm_output:
-            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
-
-            score_result = 'pass' if score >= self.threshold else 'fail'
-
+        if isinstance(llm_output, dict):
+            score = float(llm_output.get("score", math.nan))
+            score_result = "pass" if score >= self.threshold else "fail"
+            reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
+                f"{self._result_key}_additional_details": llm_output
             }
-
         return {self._result_key: math.nan}
 
