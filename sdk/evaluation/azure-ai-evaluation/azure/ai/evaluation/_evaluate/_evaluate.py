@@ -41,7 +41,7 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
-    DataLoaderFactory,
+    DataLoaderFactory, _log_metrics_and_instance_results_onedp,
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -938,7 +938,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     metrics.update(evaluators_metric)
 
     if isinstance(azure_ai_project, str):
-        studio_url = _log_metrics_and_instance_results(
+        studio_url = _log_metrics_and_instance_results_onedp(
             metrics, result_df, azure_ai_project, evaluation_name, **kwargs
         )
     else:
