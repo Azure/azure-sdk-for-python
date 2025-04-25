@@ -53,7 +53,7 @@ EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
 # Set up the amqpproxy environment variables
-RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY", False)
+RECORD_AMQP_PROXY = True #os.environ.get("RECORD_AMQP_PROXY", False)
 AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
 if RECORD_AMQP_PROXY:
     if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
@@ -277,18 +277,13 @@ def recorded_by_amqpproxy(test_func: Callable) -> Callable:
     """Decorator that redirects network requests to target the amqp proxy.
     Uses the test function name as the logfile name.
     """
-    @functools.wraps(test_func)
     def wrapper(*args, **kwargs):
         # If not recording, just run the test function
         if not RECORD_AMQP_PROXY:
             return test_func(*args, **kwargs)
 
         # Try to get hostname from pytest request
-        live_eventhub = None
-        # Get current pytest request
-        request = kwargs.get('request') or next((arg for arg in args if hasattr(arg, 'getfixturevalue')), None)
-        if request:
-            live_eventhub = request.getfixturevalue('live_eventhub')
+        live_eventhub = kwargs.get('live_eventhub')
         if not live_eventhub:
             raise ValueError("live_eventhub fixture not found in pytest context")
 
