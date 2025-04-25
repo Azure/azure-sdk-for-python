@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-cognitiveservices-search-entitysearch"
-package_nspkg = "azure-cognitiveservices-search-nspkg"
-package_pprint_name = "Cognitive Services Entity Search"
-package_doc_id = "cognitive-services"
-is_stable = true
-is_arm = false
-auto_update = false

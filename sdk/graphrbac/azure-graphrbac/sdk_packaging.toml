@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-graphrbac"
-package_nspkg = "azure-nspkg"
-package_pprint_name = "Graph RBAC"
-package_doc_id = "activedirectory"
-is_stable = false
-is_arm = false
-auto_update = false
