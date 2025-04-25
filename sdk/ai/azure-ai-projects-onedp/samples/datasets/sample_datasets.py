@@ -23,16 +23,6 @@ USAGE:
     2) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     3) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
 """
-# TODO: Remove console logging
-import sys
-import logging
-
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-identity_logger = logging.getLogger("azure.identity")
-identity_logger.setLevel(logging.ERROR)
-# End logging
 
 import os
 from azure.identity import DefaultAzureCredential
@@ -46,7 +36,6 @@ dataset_version = os.environ.get("DATASET_VERSION", "1.0")
 with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    logging_enable=True,
 ) as project_client:
 
     # [START datasets_sample]

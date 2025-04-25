@@ -25,17 +25,6 @@ USAGE:
     5) AI_SEARCH_INDEX_NAME - Optional. The name of the AI Search index to use in this sample.
 """
 
-# TODO: Remove console logging
-import sys
-import logging
-
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-identity_logger = logging.getLogger("azure.identity")
-identity_logger.setLevel(logging.ERROR)
-# End logging
-
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
@@ -50,7 +39,6 @@ ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-inde
 with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    logging_enable=True,
 ) as project_client:
 
     # [START indexes_sample]

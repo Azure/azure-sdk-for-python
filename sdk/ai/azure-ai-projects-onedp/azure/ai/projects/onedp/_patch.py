@@ -98,7 +98,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :rtype: azure.ai.agents.AgentsClient
         """
         if self._agents is None:
-            # TODO: set user_agent
             # Lazy import of AgentsClient only when this property is accessed
             try:
                 from azure.ai.agents import AgentsClient
