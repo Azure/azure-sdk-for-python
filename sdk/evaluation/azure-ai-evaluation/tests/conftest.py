@@ -349,7 +349,7 @@ def mock_project_scope() -> Dict[str, str]:
 
 @pytest.fixture(scope="session")
 def mock_onedp_project_scope() -> Dict[str, str]:
-    return "https://Sanitized.cognitiveservices.azure.com"
+    return "https://Sanitized.cognitiveservices.azure.com/api/projects/00000"
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
