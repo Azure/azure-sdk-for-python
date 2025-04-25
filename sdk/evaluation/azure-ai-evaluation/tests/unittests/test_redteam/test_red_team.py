@@ -276,7 +276,7 @@ class TestRedTeamMlflowIntegration:
             result = await red_team._log_redteam_results_to_mlflow(
                 redteam_result=mock_redteam_result,
                 eval_run=mock_eval_run,
-                data_only=True
+                _skip_evals=True
             )
         
         mock_eval_run.log_artifact.assert_called_once()
