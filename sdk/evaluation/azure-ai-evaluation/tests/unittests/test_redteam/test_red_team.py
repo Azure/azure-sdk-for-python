@@ -751,9 +751,9 @@ class TestRedTeamOrchestrator:
                 prompt_converters=[mock_converter]
             )
             
-            # Check that send_prompts_async was called with the expected parameters 
+            # Check that send_normalizer_requests_async was called with the expected parameters 
             # instead of asserting it was called exactly once
-            mock_orchestrator.send_prompts_async.assert_called_with(
+            mock_orchestrator.send_normalizer_requests_async.assert_called_with(
                 prompt_list=mock_prompts, 
                 memory_labels={'risk_strategy_path': 'test-uuid.jsonl', 'batch': 1}
             )
