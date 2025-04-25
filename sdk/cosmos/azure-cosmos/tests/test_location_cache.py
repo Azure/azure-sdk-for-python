@@ -126,8 +126,8 @@ class TestLocationCache:
         lc = refresh_location_cache([location1_name, location3_name, location4_name], True)
         db_acc = create_database_account(True)
         lc.perform_on_database_account_read(db_acc)
-        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
 
         # resolve both document requests with all regions available
         write_doc_resolved = lc.resolve_service_endpoint(write_doc_request)
