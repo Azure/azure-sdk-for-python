@@ -1,0 +1,10 @@
+{
+    "ignoreWords": [
+        "aiproject",
+        "Prompty",
+        "azureopenai",
+        "GLEU",
+    ],
+    "ignorePaths": [
+    ]
+}

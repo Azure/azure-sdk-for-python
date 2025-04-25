@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    AsyncAzureOpenAI client from the azure.ai.inference package.
+    AzureOpenAI client from the openai package, and perform one chat completion operation.
 
 USAGE:
     python sample_chat_completions_with_azure_openai_client.py
@@ -16,24 +16,27 @@ USAGE:
     pip install azure-ai-projects openai
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+       Azure AI Foundry project.
+    2) DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
 """
+
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=project_connection_string,
+with AIProjectClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START aoai_sample]
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
@@ -47,3 +50,4 @@ with AIProjectClient.from_connection_string(
         )
 
         print(response.choices[0].message.content)
+    # [END aoai_sample]

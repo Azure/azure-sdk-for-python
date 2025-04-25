@@ -6,34 +6,36 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    async ChatCompletionsClient from the azure.ai.inference package, and then work with a prompt string.
-    For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
+    Given an AIProjectClient, this sample demonstrates how to
+    * Get an authenticated ChatCompletionsClient from the azure.ai.inference package
+    * Define a Mustache template, and render the template with provided parameters to create a list of chat messages.
+    * Perform one chat completion operation.
+    Package azure.ai.inference required. For more information see https://pypi.org/project/azure-ai-inference/.
+    Package prompty required. For more information see https://pypi.org/project/prompty/.
 
 USAGE:
-    python sample_chat_completions_with_azure_ai_inference_client_and_prompt_string.py
+    sample_chat_completions_with_azure_ai_inference_client_and_prompt_string.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-ai-inference azure-identity prompty
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+       Azure AI Foundry project.
+    2) DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
 """
 
 import os
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.prompts import PromptTemplate
-from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient, PromptTemplate
 
-project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=project_connection_string,
+with AIProjectClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
     with project_client.inference.get_chat_completions_client() as client:
@@ -68,6 +70,7 @@ with AIProjectClient.from_connection_string(
             {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
         ]
         messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
+        print(messages)
 
         response = client.complete(model=model_deployment_name, messages=messages)
 
