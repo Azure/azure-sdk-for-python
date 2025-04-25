@@ -48,8 +48,6 @@ class TokenRequestOptions(TypedDict, total=False):
     claims: str
     """Additional claims required in the token, such as those returned in a resource provider's claims
     challenge following an authorization failure."""
-    tenant_id: str
-    """The tenant ID to include in the token request."""
 
 
 class TokenCredential(Protocol, ContextManager["TokenCredential"]):
