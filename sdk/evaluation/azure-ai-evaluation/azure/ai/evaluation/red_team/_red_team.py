@@ -208,7 +208,7 @@ class RedTeam():
         :type application_scenario: Optional[str]
         :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
         :type custom_attack_seed_prompts: Optional[str]
-        :param output_dir: Directory to save evaluation outputs and logs
+        :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
         """
 
