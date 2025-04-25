@@ -188,8 +188,29 @@ class RedTeam():
             num_objectives: int = 10,
             application_scenario: Optional[str] = None,
             custom_attack_seed_prompts: Optional[str] = None,
-            output_dir=None
+            output_dir="."
         ):
+        """Initialize a new Red Team agent for AI model evaluation.
+        
+        Creates a Red Team agent instance configured with the specified parameters.
+        This initializes the token management, attack objective generation, and logging
+        needed for running red team evaluations against AI models.
+        
+        :param azure_ai_project: Azure AI project details for connecting to services
+        :type azure_ai_project: dict
+        :param credential: Authentication credential for Azure services
+        :type credential: TokenCredential
+        :param risk_categories: List of risk categories to test (required unless custom prompts provided)
+        :type risk_categories: Optional[List[RiskCategory]]
+        :param num_objectives: Number of attack objectives to generate per risk category
+        :type num_objectives: int
+        :param application_scenario: Description of the application scenario for contextualizing attacks
+        :type application_scenario: Optional[str]
+        :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
+        :type custom_attack_seed_prompts: Optional[str]
+        :param output_dir: Directory to save evaluation outputs and logs
+        :type output_dir: str
+        """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
@@ -280,7 +301,6 @@ class RedTeam():
         
         run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
         self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
-        
         eval_run = EvalRun(
             run_name=run_display_name,
             tracking_uri=cast(str, tracking_uri),
@@ -289,10 +309,12 @@ class RedTeam():
             workspace_name=ws_triad.workspace_name,
             management_client=management_client, # type: ignore
         )
+        eval_run._start_run()
+        self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
 
         self.trace_destination = trace_destination
         self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
-
+    
         return eval_run
 
 
@@ -1578,7 +1600,7 @@ class RedTeam():
         :return: None
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={_skip_evals}, scan_name={scan_name}")
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_upload={_skip_evals}, scan_name={scan_name}")
         if _skip_evals:
             return None
         
@@ -1665,7 +1687,7 @@ class RedTeam():
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
             scan_name: Optional[str] = None,
-            data_only: bool = False,
+            skip_upload: bool = False,
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
             _skip_evals: bool = False,
@@ -1693,8 +1715,8 @@ class RedTeam():
         :type progress_bar_lock: asyncio.Lock
         :param scan_name: Optional name for the evaluation
         :type scan_name: Optional[str]
-        :param data_only: Whether to return only data without evaluation
-        :type data_only: bool
+        :param skip_upload: Whether to return only data without evaluation
+        :type skip_upload: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
         :param timeout: The timeout in seconds for API calls
@@ -1792,7 +1814,7 @@ class RedTeam():
             scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
-            data_only: bool = False, 
+            skip_upload: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
@@ -1810,8 +1832,8 @@ class RedTeam():
         :type num_turns: int
         :param attack_strategies: List of attack strategies to use
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-        :param data_only: Whether to return only data without evaluation
-        :type data_only: bool
+        :param skip_upload: Whether to return only data without evaluation
+        :type skip_upload: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
         :param application_scenario: Optional description of the application scenario
@@ -1883,7 +1905,7 @@ class RedTeam():
         self.logger.info(f"Scan ID: {self.scan_id}")
         self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
-        self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
+        self.logger.debug(f"skip_upload: {skip_upload}, output_path: {output_path}")
         self.logger.debug(f"Timeout: {timeout} seconds")
         
         # Clear, minimal output for start of scan
@@ -1961,11 +1983,12 @@ class RedTeam():
                 attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
                 self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
             
-        if data_only:
+        if skip_upload:
             self.ai_studio_url = None
             eval_run = {}
         else:
             eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
+
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
@@ -2095,7 +2118,7 @@ class RedTeam():
                     progress_bar=progress_bar,
                     progress_bar_lock=progress_bar_lock,
                     scan_name=scan_name,
-                    data_only=data_only,
+                    skip_upload=skip_upload,
                     output_path=output_path,
                     risk_category=risk_category,
                     timeout=timeout,
@@ -2183,7 +2206,7 @@ class RedTeam():
             attack_details=red_team_result["attack_details"]
         )
         
-        if not data_only:
+        if not skip_upload:
             self.logger.info("Logging results to MLFlow")
             await self._log_redteam_results_to_mlflow(
                 redteam_output=output,
