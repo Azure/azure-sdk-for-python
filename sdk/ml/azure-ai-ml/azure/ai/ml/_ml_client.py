@@ -543,7 +543,7 @@ class MLClient:
         self._capability_hosts = CapabilityHostsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2024_preview,
+            self._service_client_01_2025_preview,
             self._operation_container,
             self._credential,
             **kwargs,

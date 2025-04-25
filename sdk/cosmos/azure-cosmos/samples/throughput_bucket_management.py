@@ -23,16 +23,14 @@ import config
 #
 # 1. Setting throughput buckets at the Client Level
 #
-# 2. Setting Throughput Buckets at the Database Level
-#    2.1 - Create and Delete Database
+# 2. Setting Throughput Buckets at the Item Level
+#    2.1 - Read Item
+#    2.2 - Create Item
 #
-# 3. Setting Throughput Buckets at the Container Level
-#    3.1 - Create container
-#    3.2 - Query Container
-#
-# 4. Setting Throughput Buckets at the Item Level
-#    4.1 - Read Item
-#    4.2 - Create Item
+# 3. Multi-Bucket Usage
+#    3.1 - Create and Delete Item with Separate Buckets
+#    3.2 - Create Client and Create Item with Separate Buckets
+#    3.3 - Create, Upsert, and Delete Item with Separate Buckets
 # ----------------------------------------------------------------------------------------------------------
 # Note -
 #
@@ -51,37 +49,7 @@ def create_client_with_throughput_bucket(host=HOST, master_key=MASTER_KEY):
     cosmos_client.CosmosClient(host, master_key,
         throughput_bucket=1)
 
-# Applies throughput bucket 2 to create and delete a database
-def create_and_delete_database_with_throughput_bucket(client):
-    created_db = client.create_database_if_not_exists(
-        "test_db" + str(uuid.uuid4()),
-        throughput_bucket=2)
-
-    client.delete_database(
-        created_db.id,
-        throughput_bucket=2)
-
-# Applies throughput bucket 3 to create a container
-def create_container_with_throughput_bucket(client):
-    database = client.get_database_client(DATABASE_ID)
-
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"),
-        throughput_bucket=3)
-
-    database.delete_container(created_container.id)
-
-# Applies throughput bucket 3 for requests to query containers
-def query_containers_with_throughput_bucket(client):
-    database = client.get_database_client(DATABASE_ID)
-
-    query = 'SELECT * from c'
-    database.query_containers(
-        query=query,
-        throughput_bucket=3)
-
-# Applies throughput bucket 4 for read item requests
+# Applies throughput bucket 2 for read item requests
 def container_read_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
     created_container = database.create_container(
@@ -92,11 +60,11 @@ def container_read_item_throughput_bucket(client):
     created_container.read_item(
          item=created_document['id'],
          partition_key="mypk",
-         throughput_bucket=4)
+         throughput_bucket=2)
 
     database.delete_container(created_container.id)
 
-# Applies throughput bucket 5 for create item requests
+# Applies throughput bucket 3 for create item requests
 def container_create_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
 
@@ -106,8 +74,66 @@ def container_create_item_throughput_bucket(client):
 
     created_container.create_item(
         body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-        throughput_bucket=5)
+        throughput_bucket=3)
 
+    database.delete_container(created_container.id)
+
+# Applies throughput bucket 3 for create item requests and bucket 4 for delete item requests
+def container_create_and_delete_item_throughput_bucket(client):
+    database = client.get_database_client(DATABASE_ID)
+
+    created_container = database.create_container(
+        str(uuid.uuid4()),
+        PartitionKey(path="/pk"))
+
+    created_item = created_container.create_item(
+        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+        throughput_bucket=3)
+
+    created_container.delete_item(
+        created_item['id'],
+        partition_key='mypk',
+        throughput_bucket=4)
+
+    database.delete_container(created_container.id)
+
+# Applies throughput bucket 1 to all requests from a client application, and bucket 2 to create item requests
+def create_client_and_item_with_throughput_bucket(host=HOST, master_key=MASTER_KEY):
+    client = cosmos_client.CosmosClient(host, master_key,
+        throughput_bucket=1)
+    database = client.get_database_client(DATABASE_ID)
+
+    created_container = database.create_container(
+        str(uuid.uuid4()),
+        PartitionKey(path="/pk"))
+
+    created_container.create_item(
+        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+        throughput_bucket=2)
+
+    database.delete_container(created_container.id)
+
+# Applies throughput bucket 3 for create item requests, bucket 4 for upsert item requests, and bucket 5 for delete item
+def container_create_upsert_and_delete_item_throughput_bucket(client):
+    database = client.get_database_client(DATABASE_ID)
+
+    created_container = database.create_container(
+        str(uuid.uuid4()),
+        PartitionKey(path="/pk"))
+
+    created_item = created_container.create_item(
+        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+        throughput_bucket=3)
+
+    # add items for partition key 1
+    for i in range(1, 3):
+        created_container.upsert_item(
+            dict(id="item{}".format(i), pk='mypk', throughput_bucket=4))
+
+    created_container.delete_item(
+        created_item['id'],
+        partition_key='mypk',
+        throughput_bucket=5)
     database.delete_container(created_container.id)
 
 def run_sample():
@@ -117,20 +143,20 @@ def run_sample():
         # creates client
         create_client_with_throughput_bucket()
 
-        # creates and deletes a database
-        create_and_delete_database_with_throughput_bucket(client)
-
-        # create a container
-        create_container_with_throughput_bucket(client)
-
-        # queries containers in a database
-        query_containers_with_throughput_bucket(client)
-
         # reads an item from a container
         container_read_item_throughput_bucket(client)
 
         # writes an item to a container
         container_create_item_throughput_bucket(client)
+
+        # creates and deletes an item to a container
+        container_create_and_delete_item_throughput_bucket(client)
+
+        # creates a client and item with separate throughput buckets
+        create_client_and_item_with_throughput_bucket()
+
+        # creates an item, upserts multiple items, and deletes an item all on separate throughput buckets
+        container_create_upsert_and_delete_item_throughput_bucket(client)
 
     except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
