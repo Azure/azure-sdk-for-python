@@ -4,6 +4,11 @@
         "Prompty",
         "azureopenai",
         "GLEU",
+        "aiservices",
+        "azureai",
+        "GENAI",
+        "UPIA",
+        "ansii",
     ],
     "ignorePaths": [
     ]

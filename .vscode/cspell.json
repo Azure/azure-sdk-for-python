@@ -1345,16 +1345,6 @@
       ]
     },
     {
-      "filename": "sdk/ai/azure-ai-projects/**",
-      "words": [
-       "aiservices",
-        "azureai",
-        "GENAI",
-        "UPIA",
-        "ansii",
-      ]
-    },
-    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
         "ctxt",
