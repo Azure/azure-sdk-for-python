@@ -28,7 +28,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the similarity evaluator. Default is 5.
+    :param threshold: The threshold for the similarity evaluator. 3.
     :type threshold: int
 
     .. admonition:: Example:
