@@ -11,21 +11,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActiveRevisionsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ActiveRevisionsMode controls how active revisions are handled for the Container app:
-
-
-    .. raw:: html
-
-       <list><item>Multiple: multiple revisions can be active. If no value if provided, this is the
-    default</item><item>Single: Only one revision can be active at a time. Revision weights can not
-    be used in this mode</item></list>.
-    """
-
-    MULTIPLE = "multiple"
-    SINGLE = "single"
-
-
 class AppServicePlanRestrictions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """App Service plans this offer is restricted to."""
 
@@ -270,15 +255,6 @@ class ConnectionStringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DOC_DB = "DocDb"
     REDIS_CACHE = "RedisCache"
     POSTGRE_SQL = "PostgreSQL"
-
-
-class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the Container App."""
-
-    IN_PROGRESS = "InProgress"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
 
 
 class ContinuousWebJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -532,14 +508,6 @@ class InAvailabilityReasonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
-
-
-class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Ingress transport protocol."""
-
-    AUTO = "auto"
-    HTTP = "http"
-    HTTP2 = "http2"
 
 
 class InsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -860,24 +828,6 @@ class ResourceScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVER_FARM = "ServerFarm"
     SUBSCRIPTION = "Subscription"
     WEB_SITE = "WebSite"
-
-
-class RevisionHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current health State of the revision."""
-
-    HEALTHY = "Healthy"
-    UNHEALTHY = "Unhealthy"
-    NONE = "None"
-
-
-class RevisionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current provisioning State of the revision."""
-
-    PROVISIONING = "Provisioning"
-    PROVISIONED = "Provisioned"
-    FAILED = "Failed"
-    DEPROVISIONING = "Deprovisioning"
-    DEPROVISIONED = "Deprovisioned"
 
 
 class RouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,5 +1,43 @@
 # Release History
 
+## 1.0.0b10 (2025-04-23)
+
+### Features added
+
+* Added `ConnectedAgentTool` class for better connected Agent support.
+* Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
+* Added tracing for listing Agent run steps.
+* Add a `max_retry` argument to the `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
+
+### Sample updates
+
+* Added connected Agent tool sample.
+
+### Bugs Fixed
+
+* Fix for filtering of messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
+
+## 1.0.0b9 (2025-04-16)
+
+### Features added
+
+* Utilities to load prompt template strings and Prompty file content
+* Added BingCustomSearchTool class with sample
+* Added list_threads API to agents namespace
+* Added image input support for agents create_message
+
+### Sample updates
+
+* Added `project_client.agents.enable_auto_function_calls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
+* New BingCustomSearchTool sample
+* New samples added for image input from url, file and base64
+
+### Breaking Changes
+
+* Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+* Because of the function calls redesign, when errors occur in `FunctionTool.execute` and `AsyncFunctionTool.execute`, they return a JSON string in the format of `{error: [message]}` instead of throwing errors.
+* Because of the function calls redesign, when errors occur in `ToolSet.execute_tool_calls` and `AsyncToolSet.execute_tool_calls`, the returned array now includes an entry with output: {error: [message]} instead of not inserting the entry into the array.
+
 ## 1.0.0b8 (2025-03-28)
 
 ### Features added
@@ -18,8 +56,7 @@
 * Fix for a bug in Agent tracing causing tool calls not to be recorded in traces.
 * Fix for a bug in Agent tracing causing function tool calls to not work properly when tracing is enabled.
 * Fix for a bug in Agent streaming, where `agent_id` was not included in the response. This caused the SDK not to make function calls when the thread run status is `requires_action`.
-
-## 1.0.0b7 (2025-03-06)
+* Fix for a bug in Agent `create_and_process_run` addresses an issue where it would get into an infinite loop when automatic function calls fail.
 
 ### Features added
 

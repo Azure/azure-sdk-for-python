@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Optional
-from asyncio import Lock
+from asyncio import Lock  # pylint: disable=do-not-import-asyncio
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 

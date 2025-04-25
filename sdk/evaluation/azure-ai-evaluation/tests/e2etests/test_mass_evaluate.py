@@ -46,15 +46,18 @@ def data_convo_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_conversation.jsonl")
 
+
 @pytest.fixture
 def code_based_data_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_with_code.jsonl")
 
+
 @pytest.fixture
 def chat_based_data_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_with_chat.jsonl")
+
 
 # I didn't feel like using gross-looking package manipulation commands,
 # or importing the lazy_fixture 3p decorator. So we have this monster instead,
@@ -355,37 +358,37 @@ class TestMassEvaluate:
         else:
             assert len(row_result_df.keys()) == 32
         known_keys = [
-            'outputs.content_safety.hate_unfairness',
-            'outputs.content_safety.hate_unfairness_score',
-            'outputs.content_safety.hate_unfairness_reason',
-            'outputs.content_safety.hate_unfairness_result',
-            'outputs.content_safety.self_harm',
-            'outputs.content_safety.self_harm_score',
-            'outputs.content_safety.self_harm_reason',
-            'outputs.content_safety.self_harm_result',
-            'outputs.content_safety.sexual',
-            'outputs.content_safety.sexual_score',
-            'outputs.content_safety.sexual_reason',
-            'outputs.content_safety.sexual_result',
-            'outputs.content_safety.violence',
-            'outputs.content_safety.violence_score',
-            'outputs.content_safety.violence_reason',
-            'outputs.content_safety.violence_result',
-            'outputs.protected_material.fictional_characters_label',
-            'outputs.protected_material.fictional_characters_reason',
-            'outputs.protected_material.logos_and_brands_label',
-            'outputs.protected_material.logos_and_brands_reason',
-            'outputs.protected_material.artwork_label',
-            'outputs.protected_material.artwork_reason',
-            'outputs.sexual.sexual',
-            'outputs.sexual.sexual_score',
-            'outputs.sexual.sexual_reason',
-            'outputs.sexual.sexual_result'
+            "outputs.content_safety.hate_unfairness",
+            "outputs.content_safety.hate_unfairness_score",
+            "outputs.content_safety.hate_unfairness_reason",
+            "outputs.content_safety.hate_unfairness_result",
+            "outputs.content_safety.self_harm",
+            "outputs.content_safety.self_harm_score",
+            "outputs.content_safety.self_harm_reason",
+            "outputs.content_safety.self_harm_result",
+            "outputs.content_safety.sexual",
+            "outputs.content_safety.sexual_score",
+            "outputs.content_safety.sexual_reason",
+            "outputs.content_safety.sexual_result",
+            "outputs.content_safety.violence",
+            "outputs.content_safety.violence_score",
+            "outputs.content_safety.violence_reason",
+            "outputs.content_safety.violence_result",
+            "outputs.protected_material.fictional_characters_label",
+            "outputs.protected_material.fictional_characters_reason",
+            "outputs.protected_material.logos_and_brands_label",
+            "outputs.protected_material.logos_and_brands_reason",
+            "outputs.protected_material.artwork_label",
+            "outputs.protected_material.artwork_reason",
+            "outputs.sexual.sexual",
+            "outputs.sexual.sexual_score",
+            "outputs.sexual.sexual_reason",
+            "outputs.sexual.sexual_result",
         ]
         for key in known_keys:
             assert key in row_result_df.keys()
 
-        assert len(metrics) == 13
+        assert len(metrics) == 15
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
@@ -414,46 +417,120 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_reason"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_details"]) == 2
-        
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["code_injection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["code_injection"] in [True, False]
+
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["code_injection"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["code_injection"] in [
+            True,
+            False,
+        ]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["full_ssrf"] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["full_ssrf"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["path_injection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["path_injection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["hardcoded_credentials"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["hardcoded_credentials"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["stack_trace_exposure"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["stack_trace_exposure"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["incomplete_url_substring_sanitization"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["incomplete_url_substring_sanitization"] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["path_injection"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["path_injection"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["hardcoded_credentials"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["hardcoded_credentials"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["stack_trace_exposure"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["stack_trace_exposure"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "incomplete_url_substring_sanitization"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "incomplete_url_substring_sanitization"
+        ] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["flask_debug"] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["flask_debug"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["potentially_weak_cryptographic_algorithm"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["potentially_weak_cryptographic_algorithm"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["clear_text_logging_sensitive_data"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["clear_text_logging_sensitive_data"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["incomplete_hostname_regexp"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["incomplete_hostname_regexp"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["sql_injection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["sql_injection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["insecure_randomness"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["insecure_randomness"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["bind_socket_all_network_interfaces"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["bind_socket_all_network_interfaces"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["client_side_unvalidated_url_redirection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["client_side_unvalidated_url_redirection"] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "potentially_weak_cryptographic_algorithm"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "potentially_weak_cryptographic_algorithm"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "clear_text_logging_sensitive_data"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "clear_text_logging_sensitive_data"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "incomplete_hostname_regexp"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "incomplete_hostname_regexp"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["sql_injection"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["sql_injection"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["insecure_randomness"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["insecure_randomness"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "bind_socket_all_network_interfaces"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "bind_socket_all_network_interfaces"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "client_side_unvalidated_url_redirection"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "client_side_unvalidated_url_redirection"
+        ] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["likely_bugs"] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["likely_bugs"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["server_side_unvalidated_url_redirection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["server_side_unvalidated_url_redirection"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["clear_text_storage_sensitive_data"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["clear_text_storage_sensitive_data"] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "server_side_unvalidated_url_redirection"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "server_side_unvalidated_url_redirection"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0][
+            "clear_text_storage_sensitive_data"
+        ] in [True, False]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1][
+            "clear_text_storage_sensitive_data"
+        ] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["tarslip"] in [True, False]
         assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["tarslip"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["reflected_xss"] in [True, False]
-        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["reflected_xss"] in [True, False]
-        
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][0]["reflected_xss"] in [
+            True,
+            False,
+        ]
+        assert row_result_df["outputs.code_vulnerability.code_vulnerability_details"][1]["reflected_xss"] in [
+            True,
+            False,
+        ]
+
         assert len(metrics.keys()) == 20
         assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.code_injection_defect_rate"] >= 0
@@ -461,21 +538,41 @@ class TestMassEvaluate:
         assert metrics["code_vulnerability.code_vulnerability_details.path_injection_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.hardcoded_credentials_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.stack_trace_exposure_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.incomplete_url_substring_sanitization_defect_rate"] >= 0
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.incomplete_url_substring_sanitization_defect_rate"]
+            >= 0
+        )
         assert metrics["code_vulnerability.code_vulnerability_details.flask_debug_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.potentially_weak_cryptographic_algorithm_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_logging_sensitive_data_defect_rate"] >= 0
+        assert (
+            metrics[
+                "code_vulnerability.code_vulnerability_details.potentially_weak_cryptographic_algorithm_defect_rate"
+            ]
+            >= 0
+        )
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.clear_text_logging_sensitive_data_defect_rate"] >= 0
+        )
         assert metrics["code_vulnerability.code_vulnerability_details.incomplete_hostname_regexp_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.sql_injection_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.insecure_randomness_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.bind_socket_all_network_interfaces_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.client_side_unvalidated_url_redirection_defect_rate"] >= 0
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.bind_socket_all_network_interfaces_defect_rate"] >= 0
+        )
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.client_side_unvalidated_url_redirection_defect_rate"]
+            >= 0
+        )
         assert metrics["code_vulnerability.code_vulnerability_details.likely_bugs_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.server_side_unvalidated_url_redirection_defect_rate"] >= 0
-        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_storage_sensitive_data_defect_rate"] >= 0
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.server_side_unvalidated_url_redirection_defect_rate"]
+            >= 0
+        )
+        assert (
+            metrics["code_vulnerability.code_vulnerability_details.clear_text_storage_sensitive_data_defect_rate"] >= 0
+        )
         assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
-        
+
     def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
         evaluators = {
             "ungrounded_attributes": UngroundedAttributesEvaluator(azure_cred, project_scope),

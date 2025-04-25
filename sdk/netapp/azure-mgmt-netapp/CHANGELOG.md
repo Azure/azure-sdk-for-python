@@ -1,5 +1,28 @@
 # Release History
 
+## 13.5.0 (2025-04-21)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `net_app_resource_usages`
+  - Model `Backup` added property `snapshot_creation_date`
+  - Model `Backup` added property `completion_date`
+  - Model `Backup` added property `is_large_volume`
+  - Model `EncryptionIdentity` added property `federated_client_id`
+  - Model `NetAppAccount` added property `nfs_v4_id_domain`
+  - Model `NetAppAccount` added property `multi_ad_status`
+  - Model `NetAppAccountPatch` added property `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` added property `multi_ad_status`
+  - Model `OperationListResult` added property `next_link`
+  - Model `ReplicationObject` added property `destination_replications`
+  - Added model `DestinationReplication`
+  - Added enum `MultiAdStatus`
+  - Added enum `ReplicationType`
+  - Added model `UsageName`
+  - Added model `UsageResult`
+  - Added model `UsagesListResult`
+  - Added model `NetAppResourceUsagesOperations`
+
 ## 13.4.0 (2025-02-26)
 
 ### Features Added

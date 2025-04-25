@@ -20,8 +20,8 @@ extends:
       Packages: ${{ parameters.Services }}
       MatrixReplace:
         # Use dedicated storage pool in canadacentral with higher memory capacity
-        - Pool=.*LINUXPOOL.*/azsdk-pool-mms-ubuntu-2004-storage
-        - Pool=.*WINDOWSPOOL.*/azsdk-pool-mms-win-2022-general
+        - Pool=.*LINUXPOOL.*/azsdk-pool-storage
+        - Pool=.*WINDOWSPOOL.*/azsdk-pool-storage
       ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
         MatrixConfigs:
           - Name: Storage_all_versions_live_test

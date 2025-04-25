@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import datetime
 from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
