@@ -66,6 +66,12 @@ class RunsOperations(RunsOperationsGenerated):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        # if the client didn't inject these for some reason, give safe defaults:
+        if not hasattr(self, "_function_tool"):
+            self._function_tool = _models.FunctionTool(set())
+        if not hasattr(self, "_function_tool_max_retry"):
+            self._function_tool_max_retry = 0
+
     # pylint: disable=arguments-differ
     @overload
     def create(  # pylint: disable=arguments-differ

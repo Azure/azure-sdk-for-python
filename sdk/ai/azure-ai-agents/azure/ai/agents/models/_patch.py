@@ -49,6 +49,8 @@ from ._models import (
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
+    ConnectedAgentToolDefinition,
+    ConnectedAgentDetails,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
@@ -89,6 +91,26 @@ from .. import _types
 logger = logging.getLogger(__name__)
 
 StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+
+
+def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
+    """
+    Check if any tool output contains an error.
+
+    :param List[Dict] tool_outputs: A list of tool outputs to check.
+    :return: True if any output contains an error, False otherwise.
+    :rtype: bool
+    """
+    for tool_output in tool_outputs:
+        output = tool_output.get("output")
+        if isinstance(output, str):
+            try:
+                output_json = json.loads(output)
+                if "error" in output_json:
+                    return True
+            except json.JSONDecodeError:
+                continue
+    return False
 
 
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -900,6 +922,51 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         pass
 
 
+class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
+    """
+    A tool that connects to a sub-agent, with a description describing the conditions
+    or domain where the sub-agent would be called.
+    """
+
+    def __init__(self, id: str, name: str, description: str):
+        """
+        Initialize ConnectedAgentTool with an id, name, and description.
+
+        :param id: The ID of the connected agent.
+        :param name: The name of the connected agent.
+        :param description: The description of the connected agent, used by the calling agent
+           to determine when to call the connected agent.
+        """
+        self.connected_agent = ConnectedAgentDetails(id=id, name=name, description=description)
+
+    @property
+    def definitions(self) -> List[ConnectedAgentToolDefinition]:
+        """
+        Get the connected agent tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ConnectedAgentToolDefinition(connected_agent=self.connected_agent)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: An empty ToolResources as ConnectedAgentTool doesn't have specific resources.
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> None:
+        """
+        ConnectedAgentTool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
+
+
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
     A tool that searches for information using Microsoft Fabric.
@@ -1258,15 +1325,15 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
-            None
-        )
+        self.submit_tool_outputs: Optional[
+            Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]", bool], Awaitable[Any]]
+        ] = None
         self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]", bool], Awaitable[Any]],
     ):
         self.response_iterator = (
             async_chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
@@ -1324,13 +1391,13 @@ class BaseAgentEventHandler(Iterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]", bool], Any]]
         self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None],
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]", bool], Any],
     ) -> None:
         self.response_iterator = (
             itertools.chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
@@ -1382,17 +1449,33 @@ class BaseAgentEventHandler(Iterator[T]):
 
 
 class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
+    def __init__(self) -> None:
+        super().__init__()
+        self._max_retry = 10
+        self.current_retry = 0
+
+    def set_max_retry(self, max_retry: int) -> None:
+        """
+        Set the maximum number of retries for tool output submission.
+
+        :param int max_retry: The maximum number of retries.
+        """
+        self._max_retry = max_retry
 
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
+
         event_type, event_data_obj = _parse_event(event_data_str)
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            await cast(Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
-                event_data_obj, self
-            )
+            tool_output = await cast(
+                Callable[[ThreadRun, "BaseAsyncAgentEventHandler", bool], Awaitable[Any]], self.submit_tool_outputs
+            )(event_data_obj, self, self.current_retry < self._max_retry)
+
+            if _has_errors_in_toolcalls_output(tool_output):
+                self.current_retry += 1
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:
@@ -1495,6 +1578,18 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
 
 
 class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
+    def __init__(self) -> None:
+        super().__init__()
+        self._max_retry = 10
+        self.current_retry = 0
+
+    def set_max_retry(self, max_retry: int) -> None:
+        """
+        Set the maximum number of retries for tool output submission.
+
+        :param int max_retry: The maximum number of retries.
+        """
+        self._max_retry = max_retry
 
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
 
@@ -1504,9 +1599,12 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            cast(Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
-                event_data_obj, self
+            tool_output = cast(Callable[[ThreadRun, "BaseAgentEventHandler", bool], Any], self.submit_tool_outputs)(
+                event_data_obj, self, self.current_retry < self._max_retry
             )
+
+            if _has_errors_in_toolcalls_output(tool_output):
+                self.current_retry += 1
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:
@@ -1605,7 +1703,7 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT], Awaitable[None]],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT, bool], Awaitable[Any]],
         event_handler: BaseAsyncAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
@@ -1613,7 +1711,7 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler, bool], Awaitable[Any]], submit_tool_outputs),
         )
 
     async def __aenter__(self):
@@ -1631,7 +1729,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, BaseAgentEventHandlerT], None],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAgentEventHandlerT, bool], Any],
         event_handler: BaseAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
@@ -1639,7 +1737,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAgentEventHandler], None], submit_tool_outputs),
+            cast(Callable[[ThreadRun, BaseAgentEventHandler, bool], Any], submit_tool_outputs),
         )
 
     def __enter__(self):
@@ -1730,6 +1828,7 @@ __all__: List[str] = [
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
     "CodeInterpreterTool",
+    "ConnectedAgentTool",
     "AsyncAgentEventHandler",
     "OpenAIPageableListOfThreadMessage",
     "FileSearchTool",

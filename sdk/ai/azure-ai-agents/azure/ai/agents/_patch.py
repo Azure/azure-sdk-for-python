@@ -76,7 +76,14 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
+
+        # Create and store your function tool + retry limit on the client instance.
         self._function_tool = _models.FunctionTool(set())
+        self._function_tool_max_retry = 10
+
+        # Inject them into the RunsOperations instance so that run operations can use them.
+        self.runs._function_tool = self._function_tool
+        self.runs._function_tool_max_retry = self._function_tool_max_retry
 
     # pylint: disable=arguments-differ
     @overload
