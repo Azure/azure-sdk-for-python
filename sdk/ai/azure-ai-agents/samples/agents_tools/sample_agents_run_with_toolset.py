@@ -21,10 +21,15 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
-import os
+import os, sys
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FunctionTool, ToolSet, CodeInterpreterTool
+
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
 agents_client = AgentsClient(
@@ -43,6 +48,9 @@ with agents_client:
     toolset.add(functions)
     toolset.add(code_interpreter)
 
+    # To enable tool calls executed automatically
+    agents_client.enable_auto_function_calls(toolset=toolset)
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -53,11 +61,11 @@ with agents_client:
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
-    thread = agents_client.create_thread()
+    thread = agents_client.threads.create()
     print(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
-    message = agents_client.create_message(
+    message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
         content="Hello, send an email with the datetime and weather information in New York?",
@@ -66,7 +74,7 @@ with agents_client:
 
     # Create and process agent run in thread with tools
     # [START create_and_process_run]
-    run = agents_client.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     # [END create_and_process_run]
     print(f"Run finished with status: {run.status}")
 
@@ -78,5 +86,5 @@ with agents_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.list_messages(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id)
     print(f"Messages: {messages}")

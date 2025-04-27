@@ -51,6 +51,9 @@ setup(
     zip_safe=False,
     packages=find_packages(
         exclude=[
+            "samples",
+            "samples.utils",
+            "samples.agents_tools",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",

@@ -685,6 +685,11 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         self._function_tool_max_retry = max_retry
 
+        # Propagate into the RunsOperations instance
+        self.runs._function_tool = self._function_tool
+        self.runs._function_tool_max_retry = self._function_tool_max_retry
+
+
 __all__: List[str] = ["AgentsClient"]  # Add all objects you want publicly available to users at this package level
 
 
