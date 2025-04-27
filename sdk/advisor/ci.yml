@@ -22,7 +22,7 @@ pr:
   paths:
     include:
     - sdk/advisor/
-
+ 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
