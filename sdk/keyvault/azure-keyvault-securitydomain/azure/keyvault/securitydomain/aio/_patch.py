@@ -23,7 +23,7 @@ from .._internal import (
     SecurityDomainDownloadPolling,
     SecurityDomainUploadPolling,
 )
-from ..models import CertificateInfo, SecurityDomain, SecurityDomainOperationStatus
+from ..models import CertificateInfo, SecurityDomain
 from .._patch import DEFAULT_VERSION, _format_api_version, _SERIALIZER
 
 

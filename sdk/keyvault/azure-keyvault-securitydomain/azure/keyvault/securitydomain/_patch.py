@@ -27,7 +27,7 @@ from ._internal import (
     SecurityDomainUploadPolling,
     SecurityDomainUploadPollingMethod,
 )
-from .models import CertificateInfo, SecurityDomain, SecurityDomainOperationStatus
+from .models import CertificateInfo, SecurityDomain
 from ._serialization import Serializer
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object

@@ -13,26 +13,14 @@ class BaseClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
         hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
         secondary_hsm_playback_url = "https://managedhsmvaultname2.managedhsm.azure.net"
-        vault_playback_url = "https://keyvaultname.vault.azure.net"
-        container_playback_uri = "https://storagename.blob.core.windows.net/container"
-        playback_sas_token = "fake-sas"
 
         if self.is_live:
             self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
             self.secondary_hsm_url = os.environ.get("SECONDARY_MANAGEDHSM_URL")
-            self.vault_url = os.environ.get("AZURE_KEYVAULT_URL")
-            storage_url = os.environ.get("BLOB_STORAGE_URL")
-            container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = f"{storage_url}/{container_name}"
-
-            self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
 
         else:
             self.managed_hsm_url = hsm_playback_url
             self.secondary_hsm_url = secondary_hsm_playback_url
-            self.vault_url = vault_playback_url
-            self.container_uri = container_playback_uri
-            self.sas_token = playback_sas_token
 
         self.managed_identity_client_id = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
@@ -61,7 +49,6 @@ class ClientPreparer(BaseClientPreparer):
     def __call__(self, fn):
         async def _preparer(test_class, **kwargs):
             self._skip_if_not_configured()
-            kwargs["container_uri"] = self.container_uri
             kwargs["managed_hsm_url"] = self.managed_hsm_url
             client = self.create_client(self.managed_hsm_url, **kwargs)
             upload_client = self.create_client(self.secondary_hsm_url, **kwargs)
