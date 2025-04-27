@@ -47,7 +47,11 @@ with AIProjectClient(
     ):
         print(connection)
 
-    print(f"Get the properties of a connection named `{connection_name}`:")
+    print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
     connection = project_client.connections.get(connection_name)
+    print(connection)
+
+    print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+    connection = project_client.connections.get(connection_name, include_credentials=True)
     print(connection)
     # [END connection_sample]

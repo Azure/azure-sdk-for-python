@@ -43,7 +43,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         input_version: str,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_response: PendingUploadResponse = await self.start_pending_upload_version(
+        pending_upload_response: PendingUploadResponse = await self.pending_upload(
             name=name,
             version=input_version,
             body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
@@ -98,7 +98,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def upload_file_and_create(self, *, name: str, version: str, file: str, **kwargs: Any) -> DatasetVersion:
+    async def upload_file(self, *, name: str, version: str, file: str, **kwargs: Any) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -130,7 +130,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                 blob_name = path_file.name  # Extract the file name from the path.
                 logger.debug(
-                    "[upload_file_and_create] Start uploading file `%s` as blob `%s`.",
+                    "[upload_file] Start uploading file `%s` as blob `%s`.",
                     file,
                     blob_name,
                 )
@@ -138,9 +138,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                 with await container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
 
-                    logger.debug("[upload_file_and_create] Done uploading")
+                    logger.debug("[upload_file] Done uploading")
 
-                    dataset_version = await self.create_or_update_version(
+                    dataset_version = await self.create_or_update(
                         name=name,
                         version=output_version,
                         body=DatasetVersion(
@@ -154,7 +154,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         return dataset_version
 
     @distributed_trace_async
-    async def upload_folder_and_create(self, *, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+    async def upload_folder(self, *, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -188,7 +188,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 if file_path.is_file():  # Check if the path is a file. Skip folders.
                     blob_name = file_path.relative_to(path_folder)  # Blob name relative to the folder
                     logger.debug(
-                        "[upload_folder_and_create] Start uploading file `%s` as blob `%s`.",
+                        "[upload_folder] Start uploading file `%s` as blob `%s`.",
                         file_path,
                         blob_name,
                     )
@@ -197,13 +197,13 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                     ) as data:  # Open the file for reading in binary mode # TODO: async version?
                         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
-                    logger.debug("[upload_folder_and_create] Done uploaded.")
+                    logger.debug("[upload_folder] Done uploaded.")
                     files_uploaded = True
 
             if not files_uploaded:
                 raise ValueError("The provided folder is empty.")
 
-            dataset_version = await self.create_or_update_version(
+            dataset_version = await self.create_or_update(
                 name=name,
                 version=output_version,
                 body=DatasetVersion(

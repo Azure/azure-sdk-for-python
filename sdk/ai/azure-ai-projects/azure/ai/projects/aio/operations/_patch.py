@@ -11,11 +11,13 @@ from typing import List
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_inference_async import InferenceOperations
 from ._patch_telemetry_async import TelemetryOperations
+from ._patch_connections_async import ConnectionsOperations
 
 __all__: List[str] = [
     "InferenceOperations",
     "TelemetryOperations",
     "DatasetsOperations",
+    "ConnectionsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

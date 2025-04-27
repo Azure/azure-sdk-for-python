@@ -52,7 +52,7 @@ async def sample_evaluations_async() -> None:
         # print(
         #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
         # )
-        # dataset: DatasetVersion = await project_client.datasets.upload_file_and_create(
+        # dataset: DatasetVersion = await project_client.datasets.upload_file(
         #     name=dataset_name,
         #     version="1",
         #     file="./samples_folder/sample_data_evaluation.jsonl",

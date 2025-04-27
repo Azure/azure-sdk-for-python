@@ -265,7 +265,7 @@ def build_datasets_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_latest_request(
+def build_datasets_list_request(
     *,
     top: Optional[int] = None,
     skip: Optional[str] = None,
@@ -299,7 +299,7 @@ def build_datasets_list_latest_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -324,7 +324,7 @@ def build_datasets_get_version_request(name: str, version: str, **kwargs: Any) -
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -349,9 +349,7 @@ def build_datasets_delete_version_request(name: str, version: str, **kwargs: Any
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_create_or_update_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -379,9 +377,7 @@ def build_datasets_create_or_update_version_request(  # pylint: disable=name-too
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_start_pending_upload_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -476,7 +472,7 @@ def build_indexes_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_latest_request(
+def build_indexes_list_request(
     *,
     top: Optional[int] = None,
     skip: Optional[str] = None,
@@ -510,7 +506,7 @@ def build_indexes_list_latest_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -535,7 +531,7 @@ def build_indexes_get_version_request(name: str, version: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -560,9 +556,7 @@ def build_indexes_delete_version_request(name: str, version: str, **kwargs: Any)
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_create_or_update_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -618,6 +612,7 @@ def build_deployments_list_request(
     *,
     model_publisher: Optional[str] = None,
     model_name: Optional[str] = None,
+    deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
     maxpagesize: Optional[int] = None,
@@ -638,6 +633,8 @@ def build_deployments_list_request(
         _params["modelPublisher"] = _SERIALIZER.query("model_publisher", model_publisher, "str")
     if model_name is not None:
         _params["modelName"] = _SERIALIZER.query("model_name", model_name, "str")
+    if deployment_type is not None:
+        _params["deploymentType"] = _SERIALIZER.query("deployment_type", deployment_type, "str")
     if top is not None:
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
@@ -760,7 +757,7 @@ class ConnectionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.Connection:
+    def _get(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, without populating connection credentials.
 
         :param name: The name of the resource. Required.
@@ -825,7 +822,7 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
+    def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, with its connection credentials.
 
         :param name: The name of the resource. Required.
@@ -1556,7 +1553,7 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest(
+    def list(
         self,
         *,
         top: Optional[int] = None,
@@ -1599,7 +1596,7 @@ class DatasetsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_datasets_list_latest_request(
+                _request = build_datasets_list_request(
                     top=top,
                     skip=skip,
                     tags=tags,
@@ -1662,7 +1659,7 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
+    def get(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
         """Get the specific version of the DatasetVersion.
 
         :param name: The name of the resource. Required.
@@ -1686,7 +1683,7 @@ class DatasetsOperations:
 
         cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
 
-        _request = build_datasets_get_version_request(
+        _request = build_datasets_get_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -1725,9 +1722,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_version(  # pylint: disable=inconsistent-return-statements
-        self, name: str, version: str, **kwargs: Any
-    ) -> None:
+    def delete(self, name: str, version: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete the specific version of the DatasetVersion.
 
         :param name: The name of the resource. Required.
@@ -1751,7 +1746,7 @@ class DatasetsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_datasets_delete_version_request(
+        _request = build_datasets_delete_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -1778,7 +1773,7 @@ class DatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self,
         name: str,
         version: str,
@@ -1804,7 +1799,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
@@ -1824,7 +1819,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
@@ -1844,7 +1839,7 @@ class DatasetsOperations:
         """
 
     @distributed_trace
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
@@ -1881,7 +1876,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_create_or_update_version_request(
+        _request = build_datasets_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -1922,7 +1917,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def start_pending_upload_version(
+    def pending_upload(
         self,
         name: str,
         version: str,
@@ -1948,7 +1943,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def start_pending_upload_version(
+    def pending_upload(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
@@ -1968,7 +1963,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def start_pending_upload_version(
+    def pending_upload(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
@@ -1988,7 +1983,7 @@ class DatasetsOperations:
         """
 
     @distributed_trace
-    def start_pending_upload_version(
+    def pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
@@ -2025,7 +2020,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_start_pending_upload_version_request(
+        _request = build_datasets_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -2264,7 +2259,7 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest(
+    def list(
         self,
         *,
         top: Optional[int] = None,
@@ -2307,7 +2302,7 @@ class IndexesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_indexes_list_latest_request(
+                _request = build_indexes_list_request(
                     top=top,
                     skip=skip,
                     tags=tags,
@@ -2370,7 +2365,7 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.Index:
+    def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
         """Get the specific version of the Index.
 
         :param name: The name of the resource. Required.
@@ -2394,7 +2389,7 @@ class IndexesOperations:
 
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
-        _request = build_indexes_get_version_request(
+        _request = build_indexes_get_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -2433,9 +2428,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_version(  # pylint: disable=inconsistent-return-statements
-        self, name: str, version: str, **kwargs: Any
-    ) -> None:
+    def delete(self, name: str, version: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete the specific version of the Index.
 
         :param name: The name of the resource. Required.
@@ -2459,7 +2452,7 @@ class IndexesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexes_delete_version_request(
+        _request = build_indexes_delete_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -2486,7 +2479,7 @@ class IndexesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
@@ -2506,7 +2499,7 @@ class IndexesOperations:
         """
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
@@ -2526,7 +2519,7 @@ class IndexesOperations:
         """
 
     @overload
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
@@ -2546,7 +2539,7 @@ class IndexesOperations:
         """
 
     @distributed_trace
-    def create_or_update_version(
+    def create_or_update(
         self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
@@ -2583,7 +2576,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_create_or_update_version_request(
+        _request = build_indexes_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -2712,6 +2705,7 @@ class DeploymentsOperations:
         *,
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
+        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
@@ -2723,6 +2717,9 @@ class DeploymentsOperations:
         :keyword model_name: Model name (the publisher specific name) to filter models by. Default
          value is None.
         :paramtype model_name: str
+        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
+         is None.
+        :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -2751,6 +2748,7 @@ class DeploymentsOperations:
                 _request = build_deployments_list_request(
                     model_publisher=model_publisher,
                     model_name=model_name,
+                    deployment_type=deployment_type,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,

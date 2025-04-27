@@ -695,17 +695,17 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 
 
 class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
-    """Custom credential defintion.
+    """Custom credential definition.
 
     :ivar type: The credential type. Required. Custom credential
     :vartype type: str or ~azure.ai.projects.models.CUSTOM
-    :ivar keys_property: The credential type. Required.
-    :vartype keys_property: dict[str, str]
+    :ivar credential_keys: The credential type. Required.
+    :vartype credential_keys: dict[str, str]
     """
 
     type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Custom credential"""
-    keys_property: Dict[str, str] = rest_field(name="keys", visibility=["read"])
+    credential_keys: Dict[str, str] = rest_field(name="keys", visibility=["read"])
     """The credential type. Required."""
 
     @overload

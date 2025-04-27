@@ -42,7 +42,7 @@ with AIProjectClient(
     print(
         "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
     )
-    dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+    dataset: DatasetVersion = project_client.datasets.upload_file(
         name=dataset_name,
         version=dataset_version,
         file="sample_folder/sample_file1.txt",
@@ -51,7 +51,7 @@ with AIProjectClient(
 
     """
     print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
-    dataset = project_client.datasets.upload_folder_and_create(
+    dataset = project_client.datasets.upload_folder(
         name=dataset_name,
         version="2",
         folder="sample_folder",
@@ -59,7 +59,7 @@ with AIProjectClient(
     print(dataset)
 
     print("Upload a single file to the existing dataset, while letting the service increment the version")
-    dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+    dataset: DatasetVersion = project_client.datasets.upload_file(
         name=dataset_name,
         file="sample_folder/file2.txt",
     )

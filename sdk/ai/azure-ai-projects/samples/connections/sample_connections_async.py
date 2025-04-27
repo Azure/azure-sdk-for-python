@@ -50,10 +50,13 @@ async def sample_connections_async() -> None:
         ):
             print(connection)
 
-        print(f"Get the properties of a connection named `{connection_name}`:")
+        print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
         connection = await project_client.connections.get(connection_name)
         print(connection)
 
+        print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+        connection = await project_client.connections.get(connection_name, include_credentials=True)
+        print(connection)
 
 async def main():
     await sample_connections_async()

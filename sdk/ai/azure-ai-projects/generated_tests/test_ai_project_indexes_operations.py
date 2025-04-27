@@ -25,18 +25,18 @@ class TestAIProjectIndexesOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_indexes_list_latest(self, aiproject_endpoint):
+    def test_indexes_list(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.indexes.list_latest()
+        response = client.indexes.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_indexes_get_version(self, aiproject_endpoint):
+    def test_indexes_get(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.indexes.get_version(
+        response = client.indexes.get(
             name="str",
             version="str",
         )
@@ -46,9 +46,9 @@ class TestAIProjectIndexesOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_indexes_delete_version(self, aiproject_endpoint):
+    def test_indexes_delete(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.indexes.delete_version(
+        response = client.indexes.delete(
             name="str",
             version="str",
         )
@@ -58,9 +58,9 @@ class TestAIProjectIndexesOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_indexes_create_or_update_version(self, aiproject_endpoint):
+    def test_indexes_create_or_update(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.indexes.create_or_update_version(
+        response = client.indexes.create_or_update(
             name="str",
             version="str",
             body={
