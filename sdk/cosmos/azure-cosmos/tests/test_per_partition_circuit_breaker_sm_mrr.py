@@ -7,17 +7,16 @@ from time import sleep
 
 import pytest
 import pytest_asyncio
-from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker
+from azure.cosmos import PartitionKey, _partition_health_tracker, _location_cache
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import perform_write_operation, perform_read_operation
 from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, write_operations_and_errors, \
-    read_operations_and_errors, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
+    read_operations_and_errors, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations, REGION_2, REGION_1
 from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
@@ -35,7 +34,7 @@ def setup_teardown():
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosPPCMMultiRegion
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
@@ -44,7 +43,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
 
-    def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
                               preferred_locations=["Write Region", "Read Region"],
                               transport=custom_transport, **kwargs)
@@ -52,33 +51,10 @@ class TestPerPartitionCircuitBreakerSmMrr:
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
 
-    def create_custom_transport_sm_mrr(self):
-        custom_transport =  FaultInjectionTransport()
-        # Inject rule to disallow writes in the read-only region
-        is_write_operation_in_read_region_predicate = lambda \
-                r: FaultInjectionTransport.predicate_is_write_operation(r, self.host)
-
-        custom_transport.add_fault(
-            is_write_operation_in_read_region_predicate,
-            lambda r: FaultInjectionTransport.error_write_forbidden())
-
-        # Inject topology transformation that would make Emulator look like a single write region
-        # account with two read regions
-        is_get_account_predicate = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        emulator_as_multi_region_sm_account_transformation = \
-            lambda r, inner: FaultInjectionTransport.transform_topology_swr_mrr(
-                write_region_name="Write Region",
-                read_region_name="Read Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_region_sm_account_transformation)
-        return custom_transport
-
     def setup_info(self, error):
-        expected_uri = self.host
-        uri_down = expected_uri.replace("localhost", "127.0.0.1")
-        custom_transport = self.create_custom_transport_sm_mrr()
+        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransport()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and

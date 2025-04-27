@@ -12,13 +12,15 @@ from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker
+from azure.cosmos import PartitionKey, _partition_health_tracker, _location_cache
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
-from test_per_partition_circuit_breaker_mm_async import perform_write_operation, create_doc, PK_VALUE, write_operations_and_errors, \
-    cleanup_method, read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations
+from test_per_partition_circuit_breaker_mm_async import perform_write_operation, create_doc, PK_VALUE, \
+    write_operations_and_errors, \
+    cleanup_method, read_operations_and_errors, perform_read_operation, CHANGE_FEED, QUERY, READ_ALL_ITEMS, operations, \
+    REGION_2, REGION_1
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture()
@@ -102,9 +104,9 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         return custom_transport
 
     async def setup_info(self, error):
-        expected_uri = self.host
-        uri_down = expected_uri.replace("localhost", "127.0.0.1")
-        custom_transport = await self.create_custom_transport_sm_mrr()
+        expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        custom_transport = FaultInjectionTransportAsync()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and

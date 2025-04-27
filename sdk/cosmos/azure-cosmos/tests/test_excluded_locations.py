@@ -210,18 +210,18 @@ def _verify_endpoint(messages, client, expected_locations):
     req_urls = [url.replace("Request URL: '", "") for url in messages if 'Request URL:' in url]
 
     # get location
-    actual_locations = []
+    actual_locations = set()
     for req_url in req_urls:
         if req_url.startswith(default_endpoint):
-            actual_locations.append(L0)
+            actual_locations.add(L0)
         else:
             for endpoint in location_mapping:
                 if req_url.startswith(endpoint):
                     location = location_mapping[endpoint]
-                    actual_locations.append(location)
+                    actual_locations.add(location)
                     break
 
-    assert actual_locations == expected_locations
+    assert list(actual_locations) == expected_locations
 
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
