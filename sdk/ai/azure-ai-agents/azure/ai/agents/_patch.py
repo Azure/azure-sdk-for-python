@@ -621,27 +621,39 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         return super().delete_agent(agent_id, **kwargs)
 
     @overload
-    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]]) -> None:
+    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]], max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
         :keyword functions: A set of callable functions to be used as tools.
         :type functions: Set[Callable[..., Any]]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
         """
 
     @overload
-    def enable_auto_function_calls(self, *, function_tool: _models.FunctionTool) -> None:
+    def enable_auto_function_calls(self, *, function_tool: _models.FunctionTool, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
         :keyword function_tool: A FunctionTool object representing the tool to be used.
         :type function_tool: Optional[_models.FunctionTool]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
         """
 
     @overload
-    def enable_auto_function_calls(self, *, toolset: _models.ToolSet) -> None:
+    def enable_auto_function_calls(self, *, toolset: _models.ToolSet, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
         :keyword toolset: A ToolSet object representing the set of tools to be used.
         :type toolset: Optional[_models.ToolSet]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
         """
 
     @distributed_trace
@@ -651,15 +663,20 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         functions: Optional[Set[Callable[..., Any]]] = None,
         function_tool: Optional[_models.FunctionTool] = None,
         toolset: Optional[_models.ToolSet] = None,
+        max_retry: int = 10,
     ) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
         :keyword functions: A set of callable functions to be used as tools.
         :type functions: Set[Callable[..., Any]]
         :keyword function_tool: A FunctionTool object representing the tool to be used.
         :type function_tool: Optional[_models.FunctionTool]
         :keyword toolset: A ToolSet object representing the set of tools to be used.
         :type toolset: Optional[_models.ToolSet]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
         """
         if functions:
             self._function_tool = _models.FunctionTool(functions)
@@ -669,6 +686,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             tool = toolset.get_tool(_models.FunctionTool)
             self._function_tool = tool
 
+        self._function_tool_max_retry = max_retry
 
 __all__: List[str] = ["AgentsClient"]  # Add all objects you want publicly available to users at this package level
 
