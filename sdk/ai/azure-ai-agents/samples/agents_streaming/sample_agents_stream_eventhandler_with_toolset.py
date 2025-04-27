@@ -33,8 +33,12 @@ from azure.ai.agents.models import AgentEventHandler
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FunctionTool, ToolSet
 
-import os
+import os, sys
 from typing import Any
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
 agents_client = AgentsClient(
@@ -77,6 +81,7 @@ with agents_client:
     functions = FunctionTool(user_functions)
     toolset = ToolSet()
     toolset.add(functions)
+    agents_client.enable_auto_function_calls(toolset=toolset)
 
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],

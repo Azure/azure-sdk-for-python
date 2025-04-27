@@ -19,7 +19,7 @@ USAGE:
     PROJECT_ENDPOINT - the Azure AI Agents endpoint.
 """
 
-import os, asyncio
+import os, asyncio, sys
 from azure.ai.agents.aio import AgentsClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import AsyncFunctionTool, AsyncToolSet
@@ -40,6 +40,7 @@ async def main() -> None:
 
             toolset = AsyncToolSet()
             toolset.add(functions)
+            agents_client.enable_auto_function_calls(toolset=toolset)
 
             agent = await agents_client.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],

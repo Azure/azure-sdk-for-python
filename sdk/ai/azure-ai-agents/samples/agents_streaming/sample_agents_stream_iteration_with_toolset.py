@@ -21,7 +21,7 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
-import os
+import os, sys
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.agents.models import (
@@ -32,6 +32,10 @@ from azure.ai.agents.models import (
 )
 from azure.ai.agents.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
 agents_client = AgentsClient(
@@ -44,6 +48,7 @@ toolset = ToolSet()
 toolset.add(functions)
 
 with agents_client:
+    agents_client.enable_auto_function_calls(toolset=toolset)
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
