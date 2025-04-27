@@ -55,12 +55,9 @@ async def main():
 
             # [START create_agent]
             agent = await agents_client.create_agent(
-                # Note only gpt-4o-mini-2024-07-18 and
-                # gpt-4o-2024-08-06 and later support structured output.
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-agent",
                 instructions="Extract the information about planets.",
-                headers={"x-ms-enable-preview": "true"},
                 response_format=ResponseFormatJsonSchemaType(
                     json_schema=ResponseFormatJsonSchema(
                         name="planet_mass",

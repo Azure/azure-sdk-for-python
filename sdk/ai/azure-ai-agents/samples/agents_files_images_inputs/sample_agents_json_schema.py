@@ -58,8 +58,6 @@ with agents_client:
 
     # [START create_agent]
     agent = agents_client.create_agent(
-        # Note only gpt-4o-mini-2024-07-18 and
-        # gpt-4o-2024-08-06 and later support structured output.
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="Extract the information about planets.",
