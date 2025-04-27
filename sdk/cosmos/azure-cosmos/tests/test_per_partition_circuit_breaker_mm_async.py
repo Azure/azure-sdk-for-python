@@ -77,7 +77,7 @@ def create_doc():
      'key': 'value'}
 
 def read_operations_and_errors():
-    read_operations = [READ, QUERY, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS]
+    read_operations = [READ, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK]
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -199,7 +199,7 @@ async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
         method_client: CosmosClient = obj["client"]
         await method_client.close()
 
-@pytest.mark.cosmosPPCB
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerMMAsync:

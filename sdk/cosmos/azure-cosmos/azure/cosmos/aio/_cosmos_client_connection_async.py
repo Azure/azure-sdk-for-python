@@ -2878,6 +2878,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return []
 
         initial_headers = self.default_headers.copy()
+        cont_prop = kwargs.pop("containerProperties", None)
+        if cont_prop:
+            cont_prop = await cont_prop()
+            options["containerRID"] = cont_prop["_rid"]
 
 
 
@@ -2922,10 +2926,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key = options.get("partitionKey", None)
         isPrefixPartitionQuery = False
         partition_key_definition = None
-        cont_prop = kwargs.pop("containerProperties", None)
         if cont_prop and partition_key:
-            cont_prop = await cont_prop()
-            options["containerRID"] = cont_prop["_rid"]
             pk_properties = cont_prop["partitionKey"]
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             if partition_key_definition.kind == "MultiHash" and \

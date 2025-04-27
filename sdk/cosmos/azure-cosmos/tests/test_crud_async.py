@@ -43,7 +43,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         response = AsyncioRequestsTransportResponse(None, output)
         return response
 
-@pytest.mark.cosmosPPCB
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.cosmosLong
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.

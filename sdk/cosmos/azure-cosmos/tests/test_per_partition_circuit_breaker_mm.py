@@ -109,7 +109,7 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
         for _ in container.read_all_items():
             pass
 
-@pytest.mark.cosmosPPCB
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host

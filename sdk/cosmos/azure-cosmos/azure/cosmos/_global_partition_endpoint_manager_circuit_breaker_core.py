@@ -30,7 +30,7 @@ from azure.cosmos._partition_health_tracker import _PartitionHealthTracker
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import EndpointOperationType, LocationCache
 from azure.cosmos._request_object import RequestObject
-from azure.cosmos.http_constants import ResourceType
+from azure.cosmos.http_constants import ResourceType, HttpMethods, HttpHeaders
 from azure.cosmos._constants import _Constants as Constants
 
 
@@ -65,6 +65,10 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             return False
 
         if request.operation_type == documents._OperationType.QueryPlan: # pylint: disable=protected-access
+            return False
+
+        # this is for certain cross partition queries and read all items where we cannot discern partition information
+        if not request.headers.get(HttpHeaders.PartitionKeyRangeID) and not request.headers.get(HttpHeaders.PartitionKey):
             return False
 
         return True
