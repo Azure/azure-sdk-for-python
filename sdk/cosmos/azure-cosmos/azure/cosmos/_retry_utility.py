@@ -64,7 +64,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
+        client.connection_policy, global_endpoint_manager, *args
     )
     database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
         client.connection_policy
