@@ -544,7 +544,7 @@ class RunsOperations(RunsOperationsGenerated):
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        await self.submit_tool_outputs_to_run(
+                        await self.submit_tool_outputs(
                             thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
 

@@ -35,28 +35,28 @@ from azure.ai.agents.models import (
 )
 from azure.ai.agents.models._patch import AgentEventHandler, AsyncAgentEventHandler, ToolSet
 from azure.ai.agents.telemetry._utils import (
-    AZ_AI_AGENT_SYSTEM,
-    ERROR_TYPE,
-    GEN_AI_AGENT_DESCRIPTION,
-    GEN_AI_AGENT_ID,
-    GEN_AI_AGENT_NAME,
-    GEN_AI_EVENT_CONTENT,
-    GEN_AI_MESSAGE_ID,
-    GEN_AI_MESSAGE_STATUS,
-    GEN_AI_RESPONSE_MODEL,
-    GEN_AI_SYSTEM,
-    GEN_AI_SYSTEM_MESSAGE,
-    GEN_AI_THREAD_ID,
-    GEN_AI_THREAD_RUN_ID,
-    GEN_AI_THREAD_RUN_STATUS,
-    GEN_AI_USAGE_INPUT_TOKENS,
-    GEN_AI_USAGE_OUTPUT_TOKENS,
-    GEN_AI_RUN_STEP_START_TIMESTAMP,
-    GEN_AI_RUN_STEP_END_TIMESTAMP,
-    GEN_AI_RUN_STEP_STATUS,
-    ERROR_MESSAGE,
-    OperationName,
-    start_span,
+    AZ_AI_AGENT_SYSTEM, # type: ignore[reportPrivateImportUsage]
+    ERROR_TYPE, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_AGENT_DESCRIPTION, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_AGENT_ID, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_AGENT_NAME, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_EVENT_CONTENT, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_MESSAGE_ID, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_MESSAGE_STATUS, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_RESPONSE_MODEL, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_SYSTEM, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_SYSTEM_MESSAGE, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_THREAD_ID, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_THREAD_RUN_ID, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_THREAD_RUN_STATUS, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_USAGE_INPUT_TOKENS, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_USAGE_OUTPUT_TOKENS, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_RUN_STEP_START_TIMESTAMP, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_RUN_STEP_END_TIMESTAMP, # type: ignore[reportPrivateImportUsage]
+    GEN_AI_RUN_STEP_STATUS, # type: ignore[reportPrivateImportUsage]
+    ERROR_MESSAGE, # type: ignore[reportPrivateImportUsage]
+    OperationName, # type: ignore[reportPrivateImportUsage]
+    start_span, # type: ignore[reportPrivateImportUsage]
 )
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings

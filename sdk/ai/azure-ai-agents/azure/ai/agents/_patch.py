@@ -34,8 +34,6 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from . import models as _models
-from ._vendor import FileType
-from .models._enums import FilePurpose, RunStatus
 from ._client import AgentsClient as AgentsClientGenerated
 
 if sys.version_info >= (3, 9):
