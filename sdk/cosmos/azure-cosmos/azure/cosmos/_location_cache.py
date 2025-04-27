@@ -205,11 +205,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         excluded_locations = request.excluded_locations
         if excluded_locations is None:
             if self.connection_policy.ExcludedLocations:
-                excluded_locations = []
-            # If excluded locations were only configured on client(connection_policy), use client level
-            # make copy of excluded locations to avoid modifying the original list
-            else:
+                # If excluded locations were only configured on client(connection_policy), use client level
+                # make copy of excluded locations to avoid modifying the original list
                 excluded_locations = list(self.connection_policy.ExcludedLocations)
+            else:
+                excluded_locations = []
         for excluded_location in request.excluded_locations_circuit_breaker:
             if excluded_location not in excluded_locations:
                 excluded_locations.append(excluded_location)

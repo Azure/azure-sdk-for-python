@@ -47,7 +47,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def __init__(self, client):
         self.Client = client
-        self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()

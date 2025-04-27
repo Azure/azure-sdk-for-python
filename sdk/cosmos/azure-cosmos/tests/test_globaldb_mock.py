@@ -1,7 +1,6 @@
 ﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import json
 import unittest
 
 import pytest
@@ -13,13 +12,16 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility
+from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
+    _GlobalPartitionEndpointManagerForCircuitBreaker
 from azure.cosmos.http_constants import StatusCodes
 
 location_changed = False
 
 
-class MockGlobalEndpointManager:
+class MockGlobalEndpointManager(_GlobalPartitionEndpointManagerForCircuitBreaker):
     def __init__(self, client):
+        super(MockGlobalEndpointManager, self).__init__(client)
         self.Client = client
         self.DefaultEndpoint = client.url_connection
         self._ReadEndpoint = client.url_connection
@@ -73,10 +75,10 @@ class MockGlobalEndpointManager:
     def get_read_endpoint(self):
         return self._ReadEndpoint
 
-    def resolve_service_endpoint(self, request):
+    def resolve_service_endpoint(self, request, pk_range_wrapper):
         return
 
-    def refresh_endpoint_list(self):
+    def refresh_endpoint_list(self, database_account, **kwargs):
         return
 
     def can_use_multiple_write_locations(self, request):
@@ -150,20 +152,6 @@ class TestGlobalDBMock(unittest.TestCase):
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.OriginalGetDatabaseAccountStub
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
-    def MockExecuteFunction(self, function, *args, **kwargs):
-        global location_changed
-
-        if self.endpoint_discovery_retry_count == 2:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-            return json.dumps([{'id': 'mock database'}]), None
-        else:
-            self.endpoint_discovery_retry_count += 1
-            location_changed = True
-            raise exceptions.CosmosHttpResponseError(
-                status_code=StatusCodes.FORBIDDEN,
-                message="Forbidden",
-                response=test_config.FakeResponse({'x-ms-substatus': 3}))
-
     def MockGetDatabaseAccountStub(self, endpoint):
         raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Internal Server Error")
@@ -176,6 +164,8 @@ class TestGlobalDBMock(unittest.TestCase):
                                                            TestGlobalDBMock.masterKey,
                                                            consistency_level="Session",
                                                            connection_policy=connection_policy)
+        write_location_client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(write_location_client.client_connection)
+        write_location_client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         self.assertEqual(write_location_client.client_connection.WriteEndpoint,
                          TestGlobalDBMock.write_location_host)
 
@@ -188,6 +178,8 @@ class TestGlobalDBMock(unittest.TestCase):
 
         client = cosmos_client.CosmosClient(TestGlobalDBMock.host, TestGlobalDBMock.masterKey,
                                             consistency_level="Session", connection_policy=connection_policy)
+        client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(client.client_connection)
+        client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
 
         self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDBMock.write_location_host)
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDBMock.write_location_host)
@@ -195,7 +187,7 @@ class TestGlobalDBMock(unittest.TestCase):
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         client.client_connection.DatabaseAccountAvailable = False
 
-        client.client_connection._global_endpoint_manager.refresh_endpoint_list()
+        client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
 
         self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDBMock.host)
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDBMock.host)
