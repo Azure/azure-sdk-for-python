@@ -63,7 +63,6 @@ with agents_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="Extract the information about planets.",
-        headers={"x-ms-enable-preview": "true"},
         response_format=ResponseFormatJsonSchemaType(
             json_schema=ResponseFormatJsonSchema(
                 name="planet_mass",

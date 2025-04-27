@@ -65,6 +65,9 @@ with agents_client:
         # [END create_run]
         print(f"Run status: {run.status}")
 
+    if run.status == "failed":
+        print(f"Run error: {run.last_error}")
+
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 

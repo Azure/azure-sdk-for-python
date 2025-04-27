@@ -57,10 +57,10 @@ async def main() -> None:
                 # Wait for a second
                 time.sleep(1)
                 run = await agent_client.runs.get(thread_id=thread.id, run_id=run.id)
-
                 print(f"Run status: {run.status}")
 
-            print(f"Run completed with status: {run.status}")
+            if run.status == "failed":
+                print(f"Run error: {run.last_error}")                
 
             await agent_client.delete_agent(agent.id)
             print("Deleted agent")
