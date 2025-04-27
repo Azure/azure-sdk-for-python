@@ -54,6 +54,8 @@ setup(
             "samples",
             "samples.utils",
             "samples.agents_tools",
+            "samples.agents_async",
+            "samples.agents_async.utils",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
