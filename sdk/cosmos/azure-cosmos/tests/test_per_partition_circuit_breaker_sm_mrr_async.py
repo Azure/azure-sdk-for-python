@@ -57,7 +57,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 
-@pytest.mark.cosmosPPCBMultiRegion
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrrAsync:

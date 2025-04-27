@@ -80,8 +80,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        logger = logging.getLogger("TestCRUDOperationsAsync")
-        logger.info("Circuit Breaker enabled: " + os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "True"))
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
             use_multiple_write_locations = True

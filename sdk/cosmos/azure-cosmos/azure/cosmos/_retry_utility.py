@@ -178,8 +178,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
-                # record the failure for circuit breaker tracking
-                global_endpoint_manager.record_failure(args[0])
+                if args:
+                    # record the failure for circuit breaker tracking
+                    global_endpoint_manager.record_failure(args[0])
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -205,7 +206,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    global_endpoint_manager.record_failure(args[0])
+                    if args:
+                        global_endpoint_manager.record_failure(args[0])
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
@@ -213,7 +215,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
-                global_endpoint_manager.record_failure(args[0])
+                if args:
+                    global_endpoint_manager.record_failure(args[0])
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -221,7 +224,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
-                global_endpoint_manager.record_failure(args[0])
+                if args:
+                    global_endpoint_manager.record_failure(args[0])
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):

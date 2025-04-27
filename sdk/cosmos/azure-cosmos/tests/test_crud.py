@@ -75,13 +75,16 @@ class TestCRUDOperations(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+            use_multiple_write_locations = True
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, multiple_write_locations=use_multiple_write_locations)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_partitioned_collection_document_crud_and_query(self):

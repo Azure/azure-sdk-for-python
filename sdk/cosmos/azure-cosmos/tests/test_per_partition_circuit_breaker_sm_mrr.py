@@ -34,7 +34,7 @@ def setup_teardown():
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
-@pytest.mark.cosmosPPCMMultiRegion
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host

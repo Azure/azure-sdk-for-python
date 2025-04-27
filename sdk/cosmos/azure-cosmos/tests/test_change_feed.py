@@ -17,6 +17,9 @@ from azure.cosmos.partition_key import PartitionKey
 @pytest.fixture(scope="class")
 def setup():
     config = test_config.TestConfig()
+    use_multiple_write_locations = False
+    if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+        use_multiple_write_locations = True
     if (config.masterKey == '[YOUR_KEY_HERE]' or
             config.host == '[YOUR_ENDPOINT_HERE]'):
         raise Exception(
@@ -33,6 +36,7 @@ def round_time():
     utc_now = datetime.now(timezone.utc)
     return utc_now - timedelta(microseconds=utc_now.microsecond)
 
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.cosmosQuery
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")

@@ -18,6 +18,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
+@pytest.mark.cosmosPPCBMultiWrite
 @pytest.mark.cosmosQuery
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -34,6 +35,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+            cls.use_multiple_write_locations = True
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -42,7 +46,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=self.use_multiple_write_locations)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         if self.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"

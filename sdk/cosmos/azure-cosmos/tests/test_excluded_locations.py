@@ -221,7 +221,7 @@ def _verify_endpoint(messages, client, expected_locations):
                     actual_locations.add(location)
                     break
 
-    assert list(actual_locations) == expected_locations
+    assert list(actual_locations) == list(set(expected_locations))
 
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
