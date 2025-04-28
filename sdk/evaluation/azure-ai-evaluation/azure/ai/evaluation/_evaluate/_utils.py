@@ -133,6 +133,7 @@ def _log_metrics_and_instance_results(
     trace_destination: Optional[str],
     run: Optional[Run],
     evaluation_name: Optional[str],
+    name_map: Dict[str, str],
     **kwargs,
 ) -> Optional[str]:
     from azure.ai.evaluation._evaluate._eval_run import EvalRun
@@ -192,6 +193,7 @@ def _log_metrics_and_instance_results(
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
                         EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
                         EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+                        EvaluationRunProperties.NAME_MAP: json.dumps(name_map),
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
                     }
                 )
