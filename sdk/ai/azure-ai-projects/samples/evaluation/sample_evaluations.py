@@ -61,13 +61,17 @@ with AIProjectClient(
     evaluation: Evaluation = Evaluation(
         display_name="Sample Evaluation",
         description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-        data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
+        data=InputDataset(id="<>"),  # TODO: update this to use the correct id
         evaluators={
             "relevance": EvaluatorConfiguration(
-                id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
+                id=EvaluatorIds.RELEVANCE.value,
                 init_params={
-                    "deployment_name": "gpt-4o",
+                    "deployment_name": "gpt-4o-mini",
                 },
+                data_mapping={
+                    "query": "${data.query}",
+                    "response": "${data.response}",
+                }
             ),
         },
     )
@@ -76,7 +80,7 @@ with AIProjectClient(
     print(evaluation_response)
 
     print("Get evaluation")
-    get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.id)
+    get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
 
     print(get_evaluation_response)
 
