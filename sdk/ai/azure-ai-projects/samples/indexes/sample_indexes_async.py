@@ -34,7 +34,7 @@ from azure.ai.projects.models import AzureAISearchIndex
 async def sample_indexes_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    index_name = os.environ.get("INDEX_NAME", "my-index-name")
+    index_name = os.environ.get("INDEX_NAME", "index-test")
     index_version = os.environ.get("INDEX_VERSION", "1.0")
     ai_search_connection_name = os.environ.get("AI_SEARCH_CONNECTION_NAME", "my-ai-search-connection-name")
     ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-index-name")
