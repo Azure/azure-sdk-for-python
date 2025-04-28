@@ -12,9 +12,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import traceback
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
+if TYPE_CHECKING:
+    from prompty import Prompty  # type: ignore[import]
 
 class PromptTemplate:
     """A helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
@@ -155,7 +157,7 @@ class PromptTemplate:
         else:
             raise ValueError("Please pass valid arguments for PromptTemplate")
 
-    def create_messages(self, data: Optional[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
+    def create_messages(self, data: Optional[Dict[str, Any]] = None, **kwargs: Any) -> List[Dict[str, Any]]:
         """Render the prompt template with the given data.
 
         :param data: The data to render the prompt template with.

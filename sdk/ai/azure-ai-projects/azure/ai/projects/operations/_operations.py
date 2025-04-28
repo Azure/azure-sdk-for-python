@@ -2062,7 +2062,7 @@ class DatasetsOperations:
 
     @distributed_trace
     def get_credentials(self, name: str, version: str, body: Any, **kwargs: Any) -> _models.AssetCredentialResponse:
-        """Get download sas for dataset version.
+        """Get the SAS credential to access the storage account associated with a Dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str

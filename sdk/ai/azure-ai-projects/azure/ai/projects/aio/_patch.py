@@ -6,13 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any, Optional
+from typing import List, Any, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core.credentials_async import AsyncTokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .._patch import _patch_user_agent
 from .operations import InferenceOperations, TelemetryOperations
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.ai.agents.aio import AgentsClient
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
@@ -56,12 +59,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-        self.telemetry = TelemetryOperations(self)
-        self.inference = InferenceOperations(self)
+        self.telemetry = TelemetryOperations(self)  # type: ignore
+        self.inference = InferenceOperations(self)  # type: ignore
         self._agents = None
 
     @property
-    def agents(self) -> "AgentsClient":
+    def agents(self) -> "AgentsClient":  # type: ignore[name-defined]
         """Get the asynchronous AgentsClient associated with this AIProjectClient.
         The package azure.ai.agents must be installed to use this property.
 

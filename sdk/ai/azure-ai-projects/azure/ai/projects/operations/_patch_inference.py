@@ -8,12 +8,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, Iterable
+from typing import Optional, Iterable, TYPE_CHECKING
 from urllib.parse import urlparse
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from ..models._models import Connection, ApiKeyCredentials, EntraIDCredentials
 from ..models._enums import CredentialType, ConnectionType
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from openai import AzureOpenAI
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +29,8 @@ class InferenceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`inference` attribute.
+    def __init__(self, outer_instance: "AIProjectClient") -> None:
+        self._outer_instance = outer_instance
     """
 
     def __init__(self, outer_instance: "azure.ai.projects.AIProjectClient") -> None:  # type: ignore[name-defined]
@@ -52,7 +57,7 @@ class InferenceOperations:
         return new_url
 
     @distributed_trace
-    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":  # type: ignore[name-defined]
+    def get_chat_completions_client(self, **kwargs: Any) -> "ChatCompletionsClient":  # type: ignore[name-defined]
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -95,7 +100,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":  # type: ignore[name-defined]
+    def get_embeddings_client(self, **kwargs: Any) -> "EmbeddingsClient":  # type: ignore[name-defined]
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -137,7 +142,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":  # type: ignore[name-defined]
+    def get_image_embeddings_client(self, **kwargs: Any) -> "ImageEmbeddingsClient":  # type: ignore[name-defined]
         """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
