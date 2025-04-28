@@ -61,6 +61,26 @@ _Unset: Any = object()
 logger = logging.getLogger(__name__)
 
 
+def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
+    """
+    Check if any tool output contains an error.
+
+    :param List[Dict] tool_outputs: A list of tool outputs to check.
+    :return: True if any output contains an error, False otherwise.
+    :rtype: bool
+    """
+    for tool_output in tool_outputs:
+        output = tool_output.get("output")
+        if isinstance(output, str):
+            try:
+                output_json = json.loads(output)
+                if "error" in output_json:
+                    return True
+            except json.JSONDecodeError:
+                continue
+    return False
+
+
 class RunsOperations(RunsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
@@ -533,7 +553,7 @@ class RunsOperations(RunsOperationsGenerated):
                     toolset.add(self._function_tool)
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
 
-                    if self._has_errors_in_toolcalls_output(tool_outputs):
+                    if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
                             logging.warning(
                                 "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
@@ -551,25 +571,6 @@ class RunsOperations(RunsOperationsGenerated):
             logging.info("Current run status: %s", run.status)
 
         return run
-
-    def _has_errors_in_toolcalls_output(self, tool_outputs: List[Dict]) -> bool:
-        """
-        Check if any tool output contains an error.
-
-        :param List[Dict] tool_outputs: A list of tool outputs to check.
-        :return: True if any output contains an error, False otherwise.
-        :rtype: bool
-        """
-        for tool_output in tool_outputs:
-            output = tool_output.get("output")
-            if isinstance(output, str):
-                try:
-                    output_json = json.loads(output)
-                    if "error" in output_json:
-                        return True
-                except json.JSONDecodeError:
-                    continue
-        return False
 
     @overload
     def stream(
@@ -1268,7 +1269,7 @@ class RunsOperations(RunsOperationsGenerated):
                 toolset.add(self._function_tool)
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
 
-                if self._has_errors_in_toolcalls_output(tool_outputs):
+                if _has_errors_in_toolcalls_output(tool_outputs):
                     if submit_with_error:
                         logging.warning("Tool outputs contain errors - retrying")
                     else:

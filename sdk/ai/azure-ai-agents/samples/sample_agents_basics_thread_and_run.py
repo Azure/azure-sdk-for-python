@@ -34,12 +34,10 @@ from azure.ai.agents.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-# [START create_project_client]
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
-# [END create_project_client]
 
 with agents_client:
     agent = agents_client.create_agent(
