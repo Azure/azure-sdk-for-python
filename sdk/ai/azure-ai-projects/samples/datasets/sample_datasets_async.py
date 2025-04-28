@@ -39,46 +39,45 @@ async def sample_datasets_async() -> None:
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
     dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        print(
-            f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
-        )
-        dataset: DatasetVersion = await project_client.datasets.upload_file(
-            name=dataset_name,
-            version=dataset_version_1,
-            file="sample_folder/sample_file1.txt",
-        )
-        print(dataset)
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        print(
-            f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
-        )
-        dataset = await project_client.datasets.upload_folder(
-            name=dataset_name,
-            version=dataset_version_2,
-            folder="sample_folder",
-        )
-        print(dataset)
-
-        print(f"Get an existing Dataset version `{dataset_version_1}`:")
-        dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
-        print(dataset)
-
-        print("List latest versions of all Datasets:")
-        async for dataset in project_client.datasets.list():
+            print(
+                f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
+            )
+            dataset: DatasetVersion = await project_client.datasets.upload_file(
+                name=dataset_name,
+                version=dataset_version_1,
+                file="sample_folder/sample_file1.txt",
+            )
             print(dataset)
 
-        print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-        async for dataset in project_client.datasets.list_versions(name=dataset_name):
+            print(
+                f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+            )
+            dataset = await project_client.datasets.upload_folder(
+                name=dataset_name,
+                version=dataset_version_2,
+                folder="sample_folder",
+            )
             print(dataset)
 
-        print("Delete all Dataset versions created above:")
-        await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
-        await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
+            print(f"Get an existing Dataset version `{dataset_version_1}`:")
+            dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
+            print(dataset)
+
+            print("List latest versions of all Datasets:")
+            async for dataset in project_client.datasets.list():
+                print(dataset)
+
+            print(f"Listing all versions of the Dataset named `{dataset_name}`:")
+            async for dataset in project_client.datasets.list_versions(name=dataset_name):
+                print(dataset)
+
+            print("Delete all Dataset versions created above:")
+            await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+            await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 
 async def main():

@@ -31,17 +31,16 @@ from azure.ai.inference.models import UserMessage
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    # [START inference_sample]
-    with project_client.inference.get_chat_completions_client() as client:
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        response = client.complete(
-            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-        )
+        # [START inference_sample]
+        with project_client.inference.get_chat_completions_client() as client:
 
-        print(response.choices[0].message.content)
-    # [END inference_sample]
+            response = client.complete(
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            )
+
+            print(response.choices[0].message.content)
+        # [END inference_sample]

@@ -39,24 +39,23 @@ enable_telemetry()
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    # Enable Azure Monitor tracing
-    application_insights_connection_string = project_client.telemetry.get_connection_string()
-    if not application_insights_connection_string:
-        print("Application Insights was not enabled for this project.")
-        print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
-        exit()
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-    configure_azure_monitor(connection_string=application_insights_connection_string)
+        # Enable Azure Monitor tracing
+        application_insights_connection_string = project_client.telemetry.get_connection_string()
+        if not application_insights_connection_string:
+            print("Application Insights was not enabled for this project.")
+            print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
+            exit()
 
-    with project_client.inference.get_chat_completions_client() as client:
+        configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        response = client.complete(
-            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-        )
+        with project_client.inference.get_chat_completions_client() as client:
 
-        print(response.choices[0].message.content)
+            response = client.complete(
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            )
+
+            print(response.choices[0].message.content)

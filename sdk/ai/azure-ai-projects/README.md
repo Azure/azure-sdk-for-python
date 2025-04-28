@@ -214,8 +214,12 @@ for connection in project_client.connections.list(
 ):
     print(connection)
 
-print(f"Get the properties of a connection named `{connection_name}`:")
+print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
 connection = project_client.connections.get(connection_name)
+print(connection)
+
+print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+connection = project_client.connections.get(connection_name, include_credentials=True)
 print(connection)
 ```
 
@@ -230,48 +234,40 @@ folder in the [package samples][samples].
 
 ```python
 print(
-    "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+    f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
 )
-dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
-    version=dataset_version,
+    version=dataset_version_1,
     file="sample_folder/sample_file1.txt",
 )
 print(dataset)
 
-"""
-print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
-dataset = project_client.datasets.upload_folder_and_create(
+print(
+    f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+)
+dataset = project_client.datasets.upload_folder(
     name=dataset_name,
-    version="2",
+    version=dataset_version_2,
     folder="sample_folder",
 )
 print(dataset)
 
-print("Upload a single file to the existing dataset, while letting the service increment the version")
-dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
-    name=dataset_name,
-    file="sample_folder/file2.txt",
-)
+print(f"Get an existing Dataset version `{dataset_version_1}`:")
+dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
 print(dataset)
 
-print("Get an existing Dataset version `1`:")
-dataset = project_client.datasets.get_version(name=dataset_name, version="1")
-print(dataset)
+print("List latest versions of all Datasets:")
+for dataset in project_client.datasets.list():
+    print(dataset)
 
 print(f"Listing all versions of the Dataset named `{dataset_name}`:")
 for dataset in project_client.datasets.list_versions(name=dataset_name):
     print(dataset)
 
-print("List latest versions of all Datasets:")
-for dataset in project_client.datasets.list_latest():
-    print(dataset)
-
 print("Delete all Dataset versions created above:")
-project_client.datasets.delete_version(name=dataset_name, version="1")
-project_client.datasets.delete_version(name=dataset_name, version="2")
-project_client.datasets.delete_version(name=dataset_name, version="3")
-"""
+project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 ```
 
 <!-- END SNIPPET -->
@@ -284,30 +280,28 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(f"Create an Index named `{index_name}` referencing an existing AI Search resource:")
-index = project_client.indexes.create_or_update_version(
+print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
+index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
     body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
 )
 print(index)
-exit()
 
-print(f"Get an existing Index named `{index_name}`, version `{index_version}`:")
-index = project_client.indexes.get_version(name=index_name, version=index_version)
+print(f"Get Index `{index_name}` version `{index_version}`:")
+index = project_client.indexes.get(name=index_name, version=index_version)
 print(index)
+
+print("List latest versions of all Indexes:")
+for index in project_client.indexes.list():
+    print(index)
 
 print(f"Listing all versions of the Index named `{index_name}`:")
 for index in project_client.indexes.list_versions(name=index_name):
     print(index)
 
-print("List latest versions of all Indexes:")
-for index in project_client.indexes.list_latest():
-    print(index)
-
-print("Delete the Index versions created above:")
-project_client.indexes.delete_version(name=index_name, version="1")
-project_client.indexes.delete_version(name=index_name, version="2")
+print(f"Delete Index`{index_name}` version `{index_version}`:")
+project_client.indexes.delete(name=index_name, version=index_version)
 ```
 
 <!-- END SNIPPET -->

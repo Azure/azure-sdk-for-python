@@ -31,27 +31,26 @@ from azure.ai.projects.models import ConnectionType
 endpoint = os.environ["PROJECT_ENDPOINT"]
 connection_name = os.environ["CONNECTION_NAME"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    # [START connections_sample]
-    print("List the properties of all connections:")
-    for connection in project_client.connections.list():
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+        # [START connections_sample]
+        print("List the properties of all connections:")
+        for connection in project_client.connections.list():
+            print(connection)
+
+        print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
+        for connection in project_client.connections.list(
+            connection_type=ConnectionType.AZURE_OPEN_AI,
+        ):
+            print(connection)
+
+        print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
+        connection = project_client.connections.get(connection_name)
         print(connection)
 
-    print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
-    for connection in project_client.connections.list(
-        connection_type=ConnectionType.AZURE_OPEN_AI,
-    ):
+        print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+        connection = project_client.connections.get(connection_name, include_credentials=True)
         print(connection)
-
-    print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
-    connection = project_client.connections.get(connection_name)
-    print(connection)
-
-    print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
-    connection = project_client.connections.get(connection_name, include_credentials=True)
-    print(connection)
-    # [END connection_sample]
+        # [END connection_sample]

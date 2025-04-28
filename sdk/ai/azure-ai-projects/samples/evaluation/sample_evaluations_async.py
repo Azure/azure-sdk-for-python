@@ -42,51 +42,50 @@ async def sample_evaluations_async() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
     dataset_name = os.environ["DATASET_NAME"]
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        # [START evaluations_sample]
-        # TODO : Uncomment the following lines once dataset creation works
-        # print(
-        #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
-        # )
-        # dataset: DatasetVersion = await project_client.datasets.upload_file(
-        #     name=dataset_name,
-        #     version="1",
-        #     file="./samples_folder/sample_data_evaluation.jsonl",
-        # )
-        # print(dataset)
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        print("Create an evaluation")
-        evaluation: Evaluation = Evaluation(
-            display_name="Sample Evaluation",
-            description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-            data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
-            evaluators={
-                "relevance": EvaluatorConfiguration(
-                    id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
-                    init_params={
-                        "deployment_name": "gpt-4o",
-                    },
-                ),
-            },
-        )
+            # [START evaluations_sample]
+            # TODO : Uncomment the following lines once dataset creation works
+            # print(
+            #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+            # )
+            # dataset: DatasetVersion = await project_client.datasets.upload_file(
+            #     name=dataset_name,
+            #     version="1",
+            #     file="./samples_folder/sample_data_evaluation.jsonl",
+            # )
+            # print(dataset)
 
-        evaluation_response: Evaluation = await project_client.evaluations.create_run(evaluation)
-        print(evaluation_response)
+            print("Create an evaluation")
+            evaluation: Evaluation = Evaluation(
+                display_name="Sample Evaluation",
+                description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
+                data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
+                evaluators={
+                    "relevance": EvaluatorConfiguration(
+                        id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
+                        init_params={
+                            "deployment_name": "gpt-4o",
+                        },
+                    ),
+                },
+            )
 
-        print("Get evaluation")
-        get_evaluation_response: Evaluation = await project_client.evaluations.get(evaluation_response.id)
+            evaluation_response: Evaluation = await project_client.evaluations.create_run(evaluation)
+            print(evaluation_response)
 
-        print(get_evaluation_response)
+            print("Get evaluation")
+            get_evaluation_response: Evaluation = await project_client.evaluations.get(evaluation_response.id)
 
-        print("List evaluations")
-        async for evaluation in project_client.evaluations.list():
-            print(evaluation)
+            print(get_evaluation_response)
 
-        # [END evaluations_sample]
+            print("List evaluations")
+            async for evaluation in project_client.evaluations.list():
+                print(evaluation)
+
+            # [END evaluations_sample]
 
 
 async def main():
