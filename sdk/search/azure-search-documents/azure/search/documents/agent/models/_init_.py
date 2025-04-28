@@ -44,7 +44,7 @@ from .._generated.models import (
 )
 
 
-__all__ = [
+__all__ = (
     "KnowledgeAgentActivityRecord",
     "KnowledgeAgentAzureSearchDocReference",
     "KnowledgeAgentIndexParams",
@@ -62,4 +62,4 @@ __all__ = [
     "KnowledgeAgentSemanticRankerActivityRecord",
     "RequestOptions",
     "KnowledgeAgentMessageContentType",
-]
+)
