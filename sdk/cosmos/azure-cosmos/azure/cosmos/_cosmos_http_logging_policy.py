@@ -98,6 +98,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def on_request(
             # pylint: disable=too-many-return-statements, too-many-statements, too-many-nested-blocks, too-many-branches
+            # pylint: disable=too-many-locals
             self, request: PipelineRequest[HTTPRequestType]
     ) -> None:
         """Logs HTTP method, url and headers.
@@ -113,7 +114,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             # then read from kwargs (pop if that's the case)
             # then use my instance logger
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
-            filter_applied = bool(logger.filters) or any(bool(h.filters) for h in logger.handlers)
+            # If filtered is applied, and we are not calling on request from on response, just return to avoid logging
+            # the request again
+            filter_applied = (logger.filters) or any(bool(h.filters) for h in logger.handlers)
             if filter_applied and 'logger_attributes' not in request.context:
                 return
             operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
@@ -221,7 +224,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             return
         super().on_request(request)
 
-    def on_response(  # pylint: disable=too-many-statements, too-many-branches
+    def on_response(  # pylint: disable=too-many-statements, too-many-branches, too-many-locals
             self,
             request: PipelineRequest[HTTPRequestType],
             response: PipelineResponse[HTTPRequestType, HTTPResponseType],
