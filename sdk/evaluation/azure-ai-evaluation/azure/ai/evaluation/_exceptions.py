@@ -86,6 +86,7 @@ class ErrorTarget(Enum):
     CONVERSATION = "Conversation"
     TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
     RED_TEAM = "RedTeam"
+    AOAI_GRADER = "AoaiGrader"
 
 
 class EvaluationException(AzureError):
