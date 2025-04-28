@@ -62,6 +62,7 @@ class EvaluationRunProperties:
     RUN_TYPE = "runType"
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
+    NAME_MAP = "_azureml.evaluation_name_map"
 
 
 @experimental
@@ -102,3 +103,7 @@ EVALUATION_PASS_FAIL_MAPPING = {
 
 DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS = 60000
 BINARY_AGGREGATE_SUFFIX = "binary_aggregate"
+
+AOAI_COLUMN_NAME = "aoai"
+DEFAULT_OAI_EVAL_RUN_NAME = "AI_SDK_EVAL_RUN"
+DEFAULT_AOAI_API_VERSION = "2025-04-01-preview" # Unfortunately relying on preview version for now.
