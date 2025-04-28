@@ -5,7 +5,7 @@ import os
 import logging
 import time
 import inspect
-from typing import cast, Optional, Union
+from typing import cast, Optional, Union, Any
 
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedIdentityCredential
@@ -71,7 +71,7 @@ class AzureMLTokenManager(APITokenManager):
             # Fall back to using the parent implementation
             return super().get_aad_credential()
 
-    def get_token(self) -> str:
+    def get_token(self, *scopes: str, claims: str | None = None, tenant_id: str | None = None, enable_cae: bool = False, **kwargs: Any) -> AccessToken:
         """Get the API token. If the token is not available or has expired, refresh the token.
 
         :return: API token
@@ -82,7 +82,7 @@ class AzureMLTokenManager(APITokenManager):
             access_token = credential.get_token(self.token_scope)
             self._update_token(access_token)
 
-        return cast(str, self.token)  # check for none is hidden in the _token_needs_update method
+        return self.token  # check for none is hidden in the _token_needs_update method
 
     async def get_token_async(self) -> str:
         """Get the API token asynchronously. If the token is not available or has expired, refresh it.
@@ -112,7 +112,7 @@ class AzureMLTokenManager(APITokenManager):
         )
 
     def _update_token(self, access_token: AccessToken) -> None:
-        self.token = cast(str, access_token.token)
+        self.token = access_token
         self.token_expiry_time = access_token.expires_on
         self.last_refresh_time = time.time()
         self.logger.info("Refreshed Azure management token.")
