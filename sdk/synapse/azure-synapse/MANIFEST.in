@@ -1,6 +1,0 @@
-recursive-include tests *.py *.yaml
-include *.md
-include azure/__init__.py
-include LICENSE.txt
-recursive-include samples *.py *.md
-include azure/synapse/py.typed

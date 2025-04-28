@@ -886,8 +886,8 @@ This ensures that no single workload consumes excessive throughput and impacts o
 Throughput bucket configurations can be changed once every 10 minutes, otherwise the request is throttled with an HTTP 429 status code and substatus code 3213.
 Also, requests with an invalid bucket ID (less than 1 or greater than 5) results in an error, as only bucket IDs 1 to 5 are valid.
 
-You can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
-
+See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
+After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
 ## Troubleshooting
 
 ### General
@@ -1063,6 +1063,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
 [cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
 [cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
+[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets
 
 ## Contributing
 

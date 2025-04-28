@@ -2,6 +2,9 @@
 
 ## 1.27.0 (unreleased)
 
+### Features Added
+- Added Target storage connection for capability host.
+
 ### Bugs Fixed
 - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
 - Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
@@ -9,6 +12,7 @@
 
 ### Other Changes
 - Hub and Project are officially GA'd and no longer experimental.
+- PipelineComponentBatchDeployment, ModelBatchDeployment, ModelBatchDeploymentSettings are GA
 
 ## 1.26.4 (2025-04-23)
 
