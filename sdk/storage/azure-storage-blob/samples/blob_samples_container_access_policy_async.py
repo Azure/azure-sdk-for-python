@@ -16,7 +16,7 @@ DESCRIPTION:
 
 USAGE: python blob_samples_container_access_policy_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 
@@ -37,14 +37,14 @@ from azure.storage.blob import AccessPolicy, ContainerSasPermissions, PublicAcce
 from azure.storage.blob.aio import BlobServiceClient
 
 try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
 async def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    container_client = service_client.get_container_client("mynewcontainer")
+    container_client = service_client.get_container_client("mynewcontaineraccessasync")
 
     async with service_client:
         print("\n..Creating container")
@@ -52,7 +52,6 @@ async def get_and_set_container_access_policy():
             await container_client.create_container()
         except ResourceExistsError:
             pass
-
         # Create access policy
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
                                         expiry=datetime.utcnow() + timedelta(hours=1),
