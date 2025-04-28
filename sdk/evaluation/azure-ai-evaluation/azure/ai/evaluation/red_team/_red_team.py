@@ -345,7 +345,7 @@ class RedTeam():
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if _skip_evals:
                     # In _skip_evals mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                    f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                 elif redteam_result.scan_result:
                     # Create a copy to avoid modifying the original scan result
                     result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
@@ -366,7 +366,7 @@ class RedTeam():
             eval_info_name = "redteam_info.json"
             eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
             self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
-            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+            with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 # Remove evaluation_result from red_team_info before logging
                 red_team_info_logged = {}
                 for strategy, harms_dict in self.red_team_info.items():
@@ -377,7 +377,7 @@ class RedTeam():
                 f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not _skip_evals and redteam_output.scan_result:
+            if not _skip_evals and redteam_result.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     f.write(self._to_scorecard(redteam_result.scan_result))
@@ -391,11 +391,11 @@ class RedTeam():
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
-                        redteam_output.scan_result["redteaming_parameters"] = redteam_output.scan_result.get("parameters", None)
-                        redteam_output.scan_result["redteaming_data"] = redteam_output.scan_result.get("attack_details", None)
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get("scorecard", None)
+                        redteam_result.scan_result["redteaming_parameters"] = redteam_result.scan_result.get("parameters", None)
+                        redteam_result.scan_result["redteaming_data"] = redteam_result.scan_result.get("attack_details", None)
 
                         json.dump(redteam_result.scan_result, f)
                 
@@ -438,9 +438,9 @@ class RedTeam():
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        json.dump(redteam_output.scan_result, f)
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        json.dump(redteam_result.scan_result, f)
                 eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
@@ -1595,7 +1595,7 @@ class RedTeam():
         :return: None
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_upload={_skip_evals}, scan_name={scan_name}")
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_evals={_skip_evals}, scan_name={scan_name}")
         if _skip_evals:
             return None
         
@@ -1828,7 +1828,7 @@ class RedTeam():
         :type num_turns: int
         :param attack_strategies: List of attack strategies to use
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-        :param skip_upload: Whether to return only data without evaluation
+        :param skip_upload: Flag to determine if the scan results should be uploaded
         :type skip_upload: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
