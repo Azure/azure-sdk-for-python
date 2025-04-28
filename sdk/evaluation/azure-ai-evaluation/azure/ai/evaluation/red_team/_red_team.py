@@ -37,7 +37,7 @@ from azure.ai.evaluation.simulator._model_tools._generated_rai_client import Gen
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation import evaluate
 
 # Azure Core imports
@@ -171,7 +171,7 @@ class RedTeam():
 
     def __init__(
             self,
-            azure_ai_project,
+            azure_ai_project: Union[dict, str],
             credential,
             *,
             risk_categories: Optional[List[RiskCategory]] = None,
@@ -181,18 +181,25 @@ class RedTeam():
             output_dir=None
         ):
 
-        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
+        self.azure_ai_project = azure_ai_project if is_onedp_project(azure_ai_project) else validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
         
         # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
         
-        self.token_manager = ManagedIdentityAPITokenManager(
-            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("RedTeamLogger"),
-            credential=cast(TokenCredential, credential),
-        )
+        if not is_onedp_project(azure_ai_project):
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+                logger=logging.getLogger("RedTeamLogger"),
+                credential=cast(TokenCredential, credential),
+            )
+        else:
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("RedTeamLogger"),
+                credential=cast(TokenCredential, credential),
+            )
         
         # Initialize task tracking
         self.task_statuses = {}
