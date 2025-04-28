@@ -10,7 +10,12 @@ import uuid
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos.container import ContainerProxy
 import test_config
+from _fault_injection_transport import FaultInjectionTransport
+from test_fault_injection_transport import TestFaultInjectionTransport
+from typing import List, Callable
+from azure.core.rest import HttpRequest
 
 try:
     from unittest.mock import Mock
@@ -30,8 +35,32 @@ class MockHandler(logging.Handler):
     def emit(self, record):
         self.messages.append(record)
 
+CONFIG = test_config.TestConfig
+L1 = "Location1"
+L2 = "Location2"
+L1_URL = test_config.TestConfig.local_host
+L2_URL = L1_URL.replace("localhost", "127.0.0.1")
+URL_TO_LOCATIONS = {
+    L1_URL: L1,
+    L2_URL: L2}
 
 
+def create_logger(name: str, mock_handler: MockHandler, level: int = logging.INFO) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.addHandler(mock_handler)
+    logger.setLevel(level)
+
+    return logger
+
+def get_locations_list(msg: str) -> List[str]:
+    msg = msg.replace(' ', '')
+    msg = msg.replace('\'', '')
+    # Find the substring between the first '[' and the last ']'
+    start = msg.find('[') + 1
+    end = msg.rfind(']')
+    # Extract the substring and convert it to a list using ast.literal_eval
+    msg = msg[start:end]
+    return msg.split(',')
 
 @pytest.mark.cosmosEmulator
 class TestCosmosHttpLogger(unittest.TestCase):
@@ -54,12 +83,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
                 "tests.")
         cls.mock_handler_default = MockHandler()
         cls.mock_handler_diagnostic = MockHandler()
-        cls.logger_default = logging.getLogger("testloggerdefault")
-        cls.logger_default.addHandler(cls.mock_handler_default)
-        cls.logger_default.setLevel(logging.INFO)
-        cls.logger_diagnostic = logging.getLogger("testloggerdiagnostic")
-        cls.logger_diagnostic.addHandler(cls.mock_handler_diagnostic)
-        cls.logger_diagnostic.setLevel(logging.INFO)
+        cls.logger_default = create_logger("testloggerdefault", cls.mock_handler_default)
+        cls.logger_diagnostic = create_logger("testloggerdiagnostic", cls.mock_handler_diagnostic)
         cls.client_default = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                         consistency_level="Session",
                                                         connection_policy=cls.connectionPolicy,
@@ -136,6 +161,65 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         self.mock_handler_diagnostic.reset()
 
+    def test_client_settings(self):
+        # Test data
+        all_locations = [L1, L2]
+        client_excluded_locations = [L1]
+        multiple_write_locations = True
+
+        # Client setup
+        mock_handler = MockHandler()
+        logger = create_logger("test_logger_client_settings", mock_handler)
+
+        custom_transport = FaultInjectionTransport()
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        emulator_as_multi_write_region_account_transformation = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
+                first_region_name=L1,
+                second_region_name=L2,
+                inner=inner,
+                first_region_url=L1_URL,
+                second_region_url=L2_URL,
+            )
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_write_region_account_transformation)
+
+        initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint=CONFIG.host,
+            key=CONFIG.masterKey,
+            database_id=CONFIG.TEST_DATABASE_ID,
+            container_id=CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID,
+            preferred_locations=all_locations,
+            excluded_locations=client_excluded_locations,
+            multiple_write_locations=multiple_write_locations,
+            custom_logger=logger
+        )
+        mock_handler.reset()
+
+        # create an item
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value, 'pk': id_value}
+        container: ContainerProxy = initialized_objects["col"]
+        container.create_item(body=document_definition)
+
+        # Verify endpoint locations
+        messages_split = mock_handler.messages[1].message.split("\n")
+        for message in messages_split:
+            if "Client Preferred Regions:" in message:
+                locations = get_locations_list(message)
+                assert all_locations == locations
+            elif "Client Excluded Regions:" in message:
+                locations = get_locations_list(message)
+                assert client_excluded_locations == locations
+            elif "Client Account Read Regions:" in message:
+                locations = get_locations_list(message)
+                assert all_locations == locations
+            elif "Client Account Write Regions:" in message:
+                locations = get_locations_list(message)
+                assert all_locations == locations
 
 if __name__ == "__main__":
     unittest.main()
