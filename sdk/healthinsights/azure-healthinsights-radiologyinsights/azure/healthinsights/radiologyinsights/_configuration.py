@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for RadiologyInsightsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,17 +26,17 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2024-10-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-04-01")
+        api_version: str = kwargs.pop("api_version", "2024-10-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
