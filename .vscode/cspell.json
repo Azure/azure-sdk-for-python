@@ -105,6 +105,9 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/projects/azure-projects/tests/test_infra/**",
+    "sdk/projects/azure-projects/samples/**/*.html",
+    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -388,6 +391,7 @@
     "pyright",
     "pyrightconfig",
     "parameterizing",
+    "pyrit",
     "pytyped",
     "pytz",
     "pywin",
@@ -637,6 +641,46 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/tests/**/*.py",
+      "words": [
+        "tofile",
+        "rgtest",
+        "rgexists",
+        "rgtag",
+        "kvtest",
+        "testb",
+        "sclient",
+        "aclient"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/**",
+      "words": [
+        "azproj",
+        "azproject",
+        "azprojects",
+        "aiservices",
+        "aifoundry",
+        "mcpcommand",
+        "fastmcp",
+        "GUNICORN",
+        "GZRS",
+        "RAGZRS",
+        "nfsv",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "Netezza",
+        "Odbc",
+        "Serp",
+        "Sybase",
+        "Vertica",
+        "Xero",
+        "redef"
       ]
     },
     {
@@ -1384,7 +1428,7 @@
         "cómo",
         "estás",
         "logprobs",
-        "conver",
+        "conver"
       ]
     },
     {
@@ -1415,7 +1459,7 @@
         "nbformat",
         "nbconvert",
         "onedp",
-        "azureai",
+        "azureai"
       ]
     },
     {

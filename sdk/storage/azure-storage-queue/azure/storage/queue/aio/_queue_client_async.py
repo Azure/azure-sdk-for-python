@@ -79,12 +79,12 @@ class QueueClient(  # type: ignore [misc]
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword message_encode_policy: The encoding policy to use on outgoing messages.
-        Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
-        :class:`BinaryBase64EncodePolicy` or `None`.
+        Default is not to encode messages. Other options include ~azure.storage.queue.TextBase64EncodePolicy,
+        ~azure.storage.queue.BinaryBase64EncodePolicy or `None`.
     :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
-        Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
-        :class:`BinaryBase64DecodePolicy` or `None`.
+        Default value is not to decode messages. Other options include ~azure.storage.queue.TextBase64DecodePolicy,
+        ~azure.storage.queue.BinaryBase64DecodePolicy or `None`.
     :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
@@ -190,12 +190,12 @@ class QueueClient(  # type: ignore [misc]
         :keyword str secondary_hostname:
             The hostname of the secondary endpoint.
         :keyword message_encode_policy: The encoding policy to use on outgoing messages.
-            Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
-            :class:`BinaryBase64EncodePolicy` or `None`.
+            Default is not to encode messages. Other options include ~azure.storage.queue.TextBase64EncodePolicy,
+            ~azure.storage.queue.BinaryBase64EncodePolicy or `None`.
         :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
         :keyword message_decode_policy: The decoding policy to use on incoming messages.
-            Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
-            :class:`BinaryBase64DecodePolicy` or `None`.
+            Default value is not to decode messages. Other options include ~azure.storage.queue.TextBase64DecodePolicy,
+            ~azure.storage.queue.BinaryBase64DecodePolicy or `None`.
         :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
@@ -255,12 +255,12 @@ class QueueClient(  # type: ignore [misc]
         :keyword str secondary_hostname:
             The hostname of the secondary endpoint.
         :keyword message_encode_policy: The encoding policy to use on outgoing messages.
-            Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
-            :class:`BinaryBase64EncodePolicy` or `None`.
+            Default is not to encode messages. Other options include ~azure.storage.queue.TextBase64EncodePolicy,
+            ~azure.storage.queue.BinaryBase64EncodePolicy or `None`.
         :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
         :keyword message_decode_policy: The decoding policy to use on incoming messages.
-            Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
-            :class:`BinaryBase64DecodePolicy` or `None`.
+            Default value is not to decode messages. Other options include ~azure.storage.queue.TextBase64DecodePolicy,
+            ~azure.storage.queue.BinaryBase64DecodePolicy or `None`.
         :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
@@ -348,7 +348,7 @@ class QueueClient(  # type: ignore [misc]
 
         Note that deleting a queue is likely to take at least 40 seconds to complete.
         If an operation is attempted against the queue while it was being deleted,
-        an :class:`HttpResponseError` will be thrown.
+        an ~azure.core.exceptions.HttpResponseError will be thrown.
 
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
@@ -490,7 +490,7 @@ class QueueClient(  # type: ignore [misc]
         When you establish a stored access policy on a queue, it may take up to
         30 seconds to take effect. During this interval, a shared access signature
         that is associated with the stored access policy will throw an
-        :class:`HttpResponseError` until the access policy becomes active.
+        ~azure.core.exceptions.HttpResponseError until the access policy becomes active.
 
         :param signed_identifiers:
             SignedIdentifier access policies to associate with the queue.
@@ -573,7 +573,7 @@ class QueueClient(  # type: ignore [misc]
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`__.
         :return:
-            A :class:`~azure.storage.queue.QueueMessage` object.
+            A ~azure.storage.queue.QueueMessage object.
             This object is also populated with the content, although it is not
             returned from the service.
         :rtype: ~azure.storage.queue.QueueMessage
@@ -844,7 +844,7 @@ class QueueClient(  # type: ignore [misc]
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`__.
         :return:
-            A :class:`~azure.storage.queue.QueueMessage` object. For convenience,
+            A ~azure.storage.queue.QueueMessage object. For convenience,
             this object is also populated with the content, although it is not returned by the service.
         :rtype: ~azure.storage.queue.QueueMessage
 
@@ -961,7 +961,7 @@ class QueueClient(  # type: ignore [misc]
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`__.
         :return:
-            A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
+            A list of ~azure.storage.queue.QueueMessage objects. Note that
             next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
         :rtype: list[~azure.storage.queue.QueueMessage]

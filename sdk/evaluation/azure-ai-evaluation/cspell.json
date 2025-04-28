@@ -11,7 +11,8 @@
         "vuln",
         "pyrit",
         "Pyrit",
-        "submitaoaievaluation"
+        "submitaoaievaluation",
+        "ollama"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",

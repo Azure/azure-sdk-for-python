@@ -156,7 +156,6 @@ class ContainerProxy:
         populate_quota_info: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
@@ -170,7 +169,6 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -187,8 +185,6 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics

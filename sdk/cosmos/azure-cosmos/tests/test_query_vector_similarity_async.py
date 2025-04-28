@@ -50,7 +50,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.created_quantized_cosine_container = cls.test_db.create_container(
             id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="cosine",
@@ -58,7 +58,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.created_flat_euclidean_container = cls.test_db.create_container(
             id="flat" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="flat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="euclidean",
@@ -66,7 +66,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.created_diskANN_dotproduct_container = cls.test_db.create_container(
             id="diskANN" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="diskANN"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="dotproduct",
@@ -74,7 +74,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.created_large_container = cls.test_db.create_container(
             id="large_container" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="cosine",
@@ -283,6 +283,37 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 500
+
+    async def test_vector_query_cross_partition_response_hook_async(self):
+        # load up previously calculated embedding for the given string
+        vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
+
+        query = "SELECT TOP 5 c.text, VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'cosine'}}) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': " \
+                "'cosine'}})".format(vector_string, vector_string)
+
+        response_hook = test_config.ResponseHookCaller()
+        query_iterable = self.created_quantized_cosine_container.query_items(query=query,
+                                                                             response_hook=response_hook)
+        result_list = [item async for item in query_iterable]
+        assert len(result_list) == 5
+        assert response_hook.count == 2
+
+    async def test_vector_query_partitioned_response_hook_async(self):
+        # load up previously calculated embedding for the given string
+        vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
+
+        query = "SELECT TOP 4 c.text, VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'cosine'}}) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': " \
+                "'cosine'}})".format(vector_string, vector_string)
+
+        response_hook = test_config.ResponseHookCaller()
+        query_iterable = self.created_quantized_cosine_container.query_items(query=query,
+                                                                             partition_key='1',
+                                                                             response_hook=response_hook)
+        result_list = [item async for item in query_iterable]
+        assert len(result_list) == 4
+        assert response_hook.count == 1
 
 
 if __name__ == "__main__":

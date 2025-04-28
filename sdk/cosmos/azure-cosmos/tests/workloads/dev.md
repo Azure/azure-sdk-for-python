@@ -9,31 +9,32 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
    - 32 GB RAM
    - Ubuntu
    - Accelerated networking
-2. Fork and clone this repository
-3. Go to azure cosmos folder
+1. Fork and clone this repository
+1. Go to azure cosmos folder
    - `cd azure-sdk-for-python/sdk/cosmos/azure-cosmos`
-4. Install the required packages and create virtual environment
+1. Install the required packages and create virtual environment
    - `sudo apt-get update`
    - `sudo apt-get install python3-pip`
    - `sudo apt-get install python3.12-venv`
    - `python3 -m venv azure-cosmosdb-sdk-environment`
    - `source azure-cosmosdb-sdk-environment/bin/activate`
    - `pip install -r dev_requirements.txt`
-5. Checkout the branch with the changes to test. 
-6. Install azure-cosmos
+1. Checkout the branch with the changes to test. 
+1. Install azure-cosmos
    - `pip install .`
-7. Go to workloads folder
+1. Go to workloads folder
     - `cd tests/workloads`
-8. Fill out relevant configs in `workload_configs.py`: key, host, etc
-9. Install envoy proxy https://www.envoyproxy.io/docs/envoy/latest/start/install
-10. Update envoy_simple_config.yaml to have the correct account info. Replace <> with account name.
-11. Go to envoy folder and start envoy
+1. Fill out relevant configs in `workload_configs.py`: key, host, etc
+1. Install envoy proxy https://www.envoyproxy.io/docs/envoy/latest/start/install
+1. Go to envoy folder and generate envoy configuration file using template. Template files are in `envoy/templates` directory. `<account_name>` is your Cosmos DB account name.
     - `cd envoy`
+    - `./generate_envoy_config.sh <template_file_path> <output_envoy_config_file> <account_name>`
+1. Start envoy using the generated configuration file
     - `mkdir logs`
-    - `envoy -c <envoy_file>.yaml --log-level debug --log-path logs/debug.txt`
-12. Run the setup workload to create the database and containers and insert data
+    - `envoy -c <envoy_config_file>.yaml --log-level debug --log-path logs/debug.txt`
+1. Run the setup workload to create the database and containers and insert data
     - `python3 initial-setup.py`
-13. Run the scale workloads
+1. Run the scale workloads
     - `./run_workloads.sh <number of clients per workload>`
 
 ### Monitor Run
