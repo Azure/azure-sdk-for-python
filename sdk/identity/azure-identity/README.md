@@ -41,7 +41,7 @@ To authenticate with the [Azure Developer CLI][azure_developer_cli], run the com
 
 For systems without a default web browser, the `azd auth login --use-device-code` command uses the device code authentication flow.
 
-#### Authenticate via the Azure PowerShell
+#### Authenticate via Azure PowerShell
 
 Developers coding outside of an IDE can also use [Azure PowerShell][azure_powershell] to authenticate. Applications using `DefaultAzureCredential` or `AzurePowerShellCredential` can then use this account to authenticate calls in their application when running locally.
 
