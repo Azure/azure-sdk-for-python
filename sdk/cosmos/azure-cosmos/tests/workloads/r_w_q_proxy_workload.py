@@ -6,9 +6,8 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from workload_utils import create_logger, upsert_item_concurrently, read_item_concurrently, query_items_concurrently
-from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, \
-    CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER, COSMOS_DATABASE, CONCURRENT_QUERIES
+from workload_utils import *
+from workload_configs import *
 
 sys.path.append(r"/")
 
@@ -17,27 +16,25 @@ from azure.core.pipeline.transport import AioHttpTransport
 import asyncio
 
 import time
-from datetime import datetime
 
 async def run_workload(client_id, client_logger):
-    connectionPolicy = documents.ConnectionPolicy()
-    connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
-
+        connectionPolicy = documents.ConnectionPolicy()
+        connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
-        async with AsyncClient(COSMOS_PROXY_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
+        async with AsyncClient(COSMOS_PROXY_URI, COSMOS_KEY, connection_policy=connectionPolicy,
+                               preferred_locations=PREFERRED_LOCATIONS, excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=client_logger, transport=transport,
-                               user_agent=str(client_id) + "-" + datetime.now().strftime(
-                                   "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
+                               user_agent=get_user_agent(client_id)) as client:
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
-            time.sleep(1)
+            await asyncio.sleep(1)
 
             while True:
                 try:
-                    await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
-                    await read_item_concurrently(cont, CONCURRENT_REQUESTS)
-                    await query_items_concurrently(cont, CONCURRENT_QUERIES)
+                    await upsert_item_concurrently(cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS)
+                    await read_item_concurrently(cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS)
+                    await query_items_concurrently(cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES)
                 except Exception as e:
                     client_logger.info("Exception in application layer")
                     client_logger.error(e)

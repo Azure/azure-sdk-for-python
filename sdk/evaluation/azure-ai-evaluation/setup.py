@@ -80,6 +80,7 @@ setup(
         "openai>=1.40.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
+        "Jinja2>=3.1.6",
     ],
     extras_require={
         "redteam": [

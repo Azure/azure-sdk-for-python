@@ -12,6 +12,7 @@
 
 ### Other Changes
 - Hub and Project are officially GA'd and no longer experimental.
+- PipelineComponentBatchDeployment, ModelBatchDeployment, ModelBatchDeploymentSettings are GA
 
 ## 1.26.4 (2025-04-23)
 

@@ -920,11 +920,10 @@ class Evaluation(_model_base.Model):
     :vartype properties: dict[str, str]
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.onedp.models.EvaluatorConfiguration]
-    :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
+    :ivar outputs: Read-only result outputs. Evaluation Results will have logs and results under
+     the eval_results folder. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
-     }. Required.
+     'evaluationMetrics': '{serialized-json-metrics}' }. Required.
     :vartype outputs: dict[str, str]
     """
 
@@ -956,11 +955,10 @@ class Evaluation(_model_base.Model):
     )
     """Evaluators to be used for the evaluation. Required."""
     outputs: Dict[str, str] = rest_field(visibility=["read"])
-    """Read-only result outputs. Example: { 'evaluationResultId':
+    """Read-only result outputs. Evaluation Results will have logs and results under the eval_results
+     folder. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
-     }. Required."""
+     'evaluationMetrics': '{serialized-json-metrics}' }. Required."""
 
     @overload
     def __init__(
@@ -992,6 +990,8 @@ class EvaluationResult(_model_base.Model):
     :ivar result_type: Type of Evaluation result. Known values are: "Benchmark", "Evaluation",
      "Redteam", and "Simulation".
     :vartype result_type: str or ~azure.ai.projects.onedp.models.ResultType
+    :ivar metrics: Aggregated metrics.
+    :vartype metrics: dict[str, float]
     :ivar blob_uri: Blob URI.
     :vartype blob_uri: str
     :ivar stage: Asset stage.
@@ -1013,6 +1013,10 @@ class EvaluationResult(_model_base.Model):
     )
     """Type of Evaluation result. Known values are: \"Benchmark\", \"Evaluation\", \"Redteam\", and
      \"Simulation\"."""
+    metrics: Optional[Dict[str, float]] = rest_field(
+        name="Metrics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Aggregated metrics."""
     blob_uri: Optional[str] = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
     """Blob URI."""
     stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
@@ -1033,6 +1037,7 @@ class EvaluationResult(_model_base.Model):
         self,
         *,
         result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        metrics: Optional[Dict[str, float]] = None,
         blob_uri: Optional[str] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
