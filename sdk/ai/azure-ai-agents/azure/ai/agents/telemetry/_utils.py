@@ -49,7 +49,11 @@ GEN_AI_USAGE_INPUT_TOKENS = "gen_ai.usage.input_tokens"
 GEN_AI_USAGE_OUTPUT_TOKENS = "gen_ai.usage.output_tokens"
 GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.message"
 GEN_AI_EVENT_CONTENT = "gen_ai.event.content"
+GEN_AI_RUN_STEP_START_TIMESTAMP = "gen_ai.run_step.start.timestamp"
+GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
+GEN_AI_RUN_STEP_STATUS = "gen_ai.run_step.status"
 ERROR_TYPE = "error.type"
+ERROR_MESSAGE = "error.message"
 
 
 class OperationName(Enum):
@@ -59,6 +63,7 @@ class OperationName(Enum):
     START_THREAD_RUN = "start_thread_run"
     EXECUTE_TOOL = "execute_tool"
     LIST_MESSAGES = "list_messages"
+    LIST_RUN_STEPS = "list_run_steps"
     SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs"
     PROCESS_THREAD_RUN = "process_thread_run"
 

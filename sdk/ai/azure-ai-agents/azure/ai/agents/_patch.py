@@ -22,8 +22,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
-    TextIO,
     Union,
     Callable,
     Set,
@@ -2574,7 +2572,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
 
     @distributed_trace
-    def enable_auto_function_calls(
+    def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
         self,
         *,
         functions: Optional[Set[Callable[..., Any]]] = None,

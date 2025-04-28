@@ -29,14 +29,31 @@ USAGE:
 import asyncio
 import time
 import sys
+from azure.core.settings import settings
+
+settings.tracing_implementation = "opentelemetry"
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import ListSortOrder
 from azure.ai.agents.telemetry import enable_telemetry
 from azure.identity.aio import DefaultAzureCredential
 from opentelemetry import trace
 import os
+from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
+# Setup tracing to console
+# Requires opentelemetry-sdk
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
 
+AIAgentsInstrumentor().instrument()
+
+scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 

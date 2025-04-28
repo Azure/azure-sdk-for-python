@@ -26,8 +26,6 @@ from typing import (
     List,
     MutableMapping,
     Optional,
-    Sequence,
-    TextIO,
     Union,
     cast,
     Callable,
