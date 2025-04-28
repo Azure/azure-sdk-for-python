@@ -225,7 +225,18 @@ class TestMassEvaluate:
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
 
-    def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
+    @pytest.mark.parametrize(
+        ("config", "proj_scope", "cred", "conv"),
+        (
+            ("model_config", "project_scope", "azure_cred", "data_convo_file"),
+            ("model_config", "project_scope_onedp", "azure_cred_onedp", "data_convo_file"),
+        )
+    )
+    def test_evaluate_conversation(self, request, config, proj_scope, cred, conv):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        data_convo_file = request.getfixturevalue(conv)
+        model_config = request.getfixturevalue(config)
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
             "coherence": CoherenceEvaluator(model_config),
