@@ -533,9 +533,9 @@ async def run_samples():
     
     # Uncomment the samples you want to run
     sample_runners = [
-        # samples.basic_callback_example(),
+        samples.basic_callback_example(),
         # samples.advanced_callback_example(),
-        samples.direct_model_testing_example(),
+        # samples.direct_model_testing_example(),
         # samples.strategy_complexity_levels_example(),
         # samples.specific_attack_strategies_example(),
         # samples.data_only_mode_example(),

@@ -241,7 +241,6 @@ class RedTeam():
         self.scan_id = None
         self.scan_output_dir = None
         
-        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
         self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential()) #type: ignore
 
         # Initialize a cache for attack objectives by risk category and strategy
