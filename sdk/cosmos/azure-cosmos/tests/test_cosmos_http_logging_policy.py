@@ -125,6 +125,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Read" == messages_request.operation_type
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
+        # Verify we only have a total of 4 logged messages: 2 from databaseaccount read and 2 from create database
+        assert len(self.mock_handler_diagnostic.messages) == 4
         # Test if we can log into from creating a database
         # The request to create database should follow the databaseaccount read request immediately
         messages_request = self.mock_handler_diagnostic.messages[2]
@@ -181,6 +183,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert response_log.status_code == 404
         assert request_log.resource_type == "docs"
         assert request_log.operation_type == "Read"
+        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
 
         self.mock_handler_filtered_diagnostic.reset()
 
@@ -196,6 +199,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert response_log.status_code == 400
         assert request_log.resource_type == "docs"
         assert request_log.operation_type == "Create"
+        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
 
         # Clean up
         self.client_filtered_diagnostic.delete_database(database_id)
