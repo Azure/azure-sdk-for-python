@@ -1,20 +1,24 @@
 # Release History
 
-## 2.0.3 (Unreleased)
+## 2.1.0 (2025-04-28)
 
 ### Features Added
 
-### Breaking Changes
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
+
+## 2.1.0b1 (2025-04-10)
 
 ### Bugs Fixed
 
-### Other Changes
+* Updates the feature flag telemetry to use the provided endpoint instead of the endpoint of the store the feature flag was loaded from.
+* Removes FeatureFlagId from feature flag telemetry.
 
 ## 2.0.2 (2025-04-17)
 
 ### Other Changes
 
 * Updates telemetry for JSON usage.
+
 ## 2.0.1 (2025-03-07)
 
 ### Bugs Fixed
