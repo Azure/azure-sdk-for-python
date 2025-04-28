@@ -35,7 +35,7 @@ from azure.ai.projects.models import DatasetVersion
 async def sample_datasets_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    dataset_name = os.environ.get("DATASET_NAME", "my-dataset-name")
+    dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
     dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
 
