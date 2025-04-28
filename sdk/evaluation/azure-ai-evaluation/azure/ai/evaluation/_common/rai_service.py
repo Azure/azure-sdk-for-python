@@ -21,6 +21,7 @@ from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -112,7 +113,31 @@ def get_async_http_client_with_timeout() -> AsyncHttpPipeline:
         retry_policy=AsyncRetryPolicy(timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT)
     )
 
+async def ensure_service_availability_onedp(client: AIProjectClient, token: str, capability: Optional[str] = None) -> None:
+    """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
+    :param client: The AI project client.
+    :type client: AIProjectClient
+    :param token: The Azure authentication token.
+    :type token: str
+    :param capability: The capability to check. Default is None.
+    :type capability: str
+    :raises Exception: If the service is not available in the region or the capability is not available.
+    """
+    headers = get_common_headers(token)
+    capabilities = client.evaluations.check_annotation(headers=headers)
+    
+    if capability and capability not in capabilities:
+        msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.USER_ERROR,
+            tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+        )
+    
 async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
@@ -618,7 +643,7 @@ async def evaluate_with_rai_service(
     :rtype: Dict[str, Union[str, float]]
     """
 
-    if isinstance(project_scope, str):
+    if is_onedp_project(project_scope):
         client = AIProjectClient(endpoint=project_scope, credential=credential)
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
@@ -760,9 +785,10 @@ async def evaluate_with_rai_service_multimodal(
        :rtype: List[List[Dict]]
     """
 
-    if isinstance(project_scope, str):
+    if is_onedp_project(project_scope):
         client = AIProjectClient(endpoint=project_scope, credential=credential)
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
         operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
         result = parse_response(annotation_response, metric_name)

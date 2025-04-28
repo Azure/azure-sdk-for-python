@@ -9,7 +9,7 @@ from typing import Callable, cast, Union
 
 from tqdm import tqdm
 
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
@@ -48,7 +48,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
     def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
 
-        if isinstance(azure_ai_project, str):
+        if is_onedp_project(azure_ai_project):
             self.azure_ai_project = azure_ai_project
             self.credential=cast(TokenCredential, credential)
             self.token_manager = ManagedIdentityAPITokenManager(
