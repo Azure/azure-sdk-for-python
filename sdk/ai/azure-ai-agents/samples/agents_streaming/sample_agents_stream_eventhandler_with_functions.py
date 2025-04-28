@@ -23,7 +23,7 @@ USAGE:
 """
 from typing import Any
 
-import os
+import os, sys
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import (
     AgentEventHandler,
@@ -37,6 +37,10 @@ from azure.ai.agents.models import (
     ToolOutput,
 )
 from azure.identity import DefaultAzureCredential
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
 agents_client = AgentsClient(
