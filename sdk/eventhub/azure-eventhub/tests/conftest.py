@@ -305,16 +305,20 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
     Tests can opt out using @pytest.mark.no_amqpproxy or set the environment variable
     RECORD_AMQP_PROXY=False.
     """
-    test_name = request.node.name
-
     # Skip if not recording or test opted out
     if skip_amqp_proxy:
         yield
         return
 
     # Use test name as logfile
-    test_file_path = os.path.relpath(request.node.fspath, start=os.path.dirname(__file__))
-    recording_file_path = f"{test_file_path}/{test_name}".replace("/", ".")
+    test_name = request.node.name
+    # Mirror relative path in AMQPPROXY_RECORDINGS_PATH for recording files
+    relative_path = os.path.relpath(request.node.fspath, start=os.path.dirname(__file__))
+    recording_dir_path = os.path.join(AMQPPROXY_RECORDINGS_DIR, os.path.dirname(relative_path))
+    if not os.path.exists(recording_dir_path):
+        os.makedirs(recording_dir_path)
+    file_name = os.path.splitext(os.path.basename(request.node.fspath))[0]
+    recording_file = f"{file_name}.{test_name}"
 
     # Start amqpproxy process 
     log_file = open(AMQPPROXY_STARTUP_LOG, "a")
@@ -339,8 +343,8 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
         proxy_process = subprocess.Popen(
             ["go", "run", ".", 
             "--host", live_eventhub["hostname"],
-            "--logs", AMQPPROXY_RECORDINGS_DIR,
-            "--logfile", recording_file_path],
+            "--logs", recording_dir_path,
+            "--logfile", recording_file],
             stdout=log_file,
             stderr=log_file,
             preexec_fn=os.setsid
@@ -362,43 +366,6 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
         log_file.write(f"####### Stopping amqpproxy for test: {test_name}\n")
         log_file.flush()
         log_file.close()
-
-
-#def recorded_by_amqpproxy(test_func: Callable) -> Callable:
-#    """Decorator that redirects network requests to target the amqp proxy.
-#    Uses the test function name as the logfile name.
-#    """
-#    def wrapper(*args, **kwargs):
-#        # If not recording, just run the test function
-#        if not RECORD_AMQP_PROXY:
-#            return test_func(*args, **kwargs)
-#
-#        # Try to get hostname from pytest request
-#        live_eventhub = kwargs.get('live_eventhub')
-#        if not live_eventhub:
-#            raise ValueError("live_eventhub fixture not found in pytest context")
-#
-#        # Use test function name as logfile
-#        logfile = test_func.__name__
-#
-#        # Start amqpproxy process with dynamic hostname
-#        proxy_process = subprocess.Popen(
-#            ["go", "run", ".", 
-#             "--host", live_eventhub["hostname"],
-#             "--logs", "amqp_recordings",
-#             "--logfile", logfile],
-#            preexec_fn=os.setsid
-#        )
-#
-#        try:
-#            time.sleep(1)
-#            kwargs["client_args"] = AMQPPROXY_CLIENT_ARGS
-#            return test_func(*args, **kwargs)
-#        finally:
-#            os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
-#            proxy_process.wait()
-#
-#    return wrapper
 
 
 @pytest.fixture()

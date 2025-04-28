@@ -1,0 +1,6 @@
+# amqpproxy
+*.bin
+
+# ignoring the key files so they don't get checked in.
+*-bin-*.txt
+*-tlskeys.txt
