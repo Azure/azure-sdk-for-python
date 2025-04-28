@@ -31,7 +31,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AzureAISearchIndex
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-index_name = os.environ.get("INDEX_NAME", "my-index")
+index_name = os.environ.get("INDEX_NAME", "my-index-name")
 index_version = os.environ.get("INDEX_VERSION", "1.0")
 ai_search_connection_name = os.environ.get("AI_SEARCH_CONNECTION_NAME", "my-ai-search-connection-name")
 ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-index-name")
@@ -42,28 +42,26 @@ with AIProjectClient(
 ) as project_client:
 
     # [START indexes_sample]
-    print(f"Create an Index named `{index_name}` referencing an existing AI Search resource:")
-    index = project_client.indexes.create_or_update_version(
+    print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
+    index = project_client.indexes.create_or_update(
         name=index_name,
         version=index_version,
         body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
     )
     print(index)
-    exit()
 
-    print(f"Get an existing Index named `{index_name}`, version `{index_version}`:")
-    index = project_client.indexes.get_version(name=index_name, version=index_version)
+    print("Get Index `{index_name}` version `{index_version}`:")
+    index = project_client.indexes.get(name=index_name, version=index_version)
     print(index)
+
+    print("List latest versions of all Indexes:")
+    for index in project_client.indexes.list():
+        print(index)
 
     print(f"Listing all versions of the Index named `{index_name}`:")
     for index in project_client.indexes.list_versions(name=index_name):
         print(index)
 
-    print("List latest versions of all Indexes:")
-    for index in project_client.indexes.list_latest():
-        print(index)
-
-    print("Delete the Index versions created above:")
-    project_client.indexes.delete_version(name=index_name, version="1")
-    project_client.indexes.delete_version(name=index_name, version="2")
+    print("Delete Index`{index_name}` version `{index_version}`:")
+    project_client.indexes.delete(name=index_name, version=index_version)
     # [END indexes_sample]
