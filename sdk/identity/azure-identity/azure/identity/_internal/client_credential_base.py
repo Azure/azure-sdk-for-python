@@ -20,7 +20,7 @@ def _get_known_kwargs(kwargs: Dict[str, Any]):
 
 
 class ClientCredentialBase(MsalCredential, GetTokenMixin):
-    """Base class for credentials authenticating a service principal with a certificate or secret"""
+    """Base class for credentials authenticating a service principal with a certificate, secret, or JWT assertion."""
 
     @wrap_exceptions
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
