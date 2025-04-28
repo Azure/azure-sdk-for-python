@@ -9,9 +9,8 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -21,7 +20,7 @@ from typing import (
     cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -38,28 +37,15 @@ if TYPE_CHECKING:
     from azure.search.documents import SearchClient
     from azure.search.documents.aio import SearchClient as AsyncSearchClient
 
-    from .types import SearchServiceResource, SearchNetworkRuleSet
+    from ._types import SearchServiceResource, SearchServiceNetworkRuleSet
 
 
 class SearchServiceKwargs(TypedDict, total=False):
-    auth_options: "AuthOption"  # type: ignore[name-defined]  # TODO
-    """Defines the options for how the data plane API of a Search service authenticates requests. Must remain an
-    empty object {} if 'disableLocalAuth' is set to true.
-    """
-    cmk_enforcement: Union[Literal["Disabled", "Enabled", "Unspecified"], Parameter]
-    """Describes a policy that determines how resources within the search service are to be encrypted with Customer
-    Managed Keys.
-    """
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
     disable_local_auth: Union[bool, Parameter]
     """When set to true, calls to the search service will not be permitted to utilize API keys for authentication.
     This cannot be set to true if 'authOptions' are defined.
-    """
-    hosting_mode: Union[Literal["default", "highDensity"], Parameter]
-    """Applicable only for the standard3 SKU. You can set this property to enable up to 3 high density partitions that
-    allow up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU. For the
-    standard3 SKU, the value is either 'default' or 'highDensity'. For all other SKUs, this value must be 'default'.
     """
     location: Union[str, Parameter]
     """Location for all Resources."""
@@ -67,7 +53,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     # """The lock settings for all Resources in the solution."""
     managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource."""
-    network_acls: Union["SearchNetworkRuleSet", Parameter]
+    network_acls: Union["SearchServiceNetworkRuleSet", Parameter]
     """Network specific rules that determine how the Azure Cognitive Search service may be reached."""
     partition_count: Union[int, Parameter]
     """The number of partitions in the search service; if specified, it can be 1, 2, 3, 4, 6, or 12. Values greater
@@ -89,7 +75,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     """
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -109,7 +95,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     """Array of role assignments to create."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -138,7 +124,7 @@ class SearchServiceKwargs(TypedDict, total=False):
         Parameter,
     ]
     """Defines the SKU of an Azure Cognitive Search Service, which determines price tier and capacity limits."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags to help categorize the resource in the Azure portal."""
 
 
@@ -192,7 +178,6 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
-            # TODO: Finish full typing
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
             if "managed_identities" in kwargs:
@@ -201,6 +186,14 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
                 properties["properties"]["networkRuleSet"] = kwargs.pop("network_acls")
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
+            if "semantic_search" in kwargs:
+                properties["properties"]["semanticSearch"] = kwargs.pop("semantic_search")
+            if "partition_count" in kwargs:
+                properties["properties"]["partitionCount"] = kwargs.pop("partition_count")
+            if "disable_local_auth" in kwargs:
+                properties["properties"]["disableLocalAuth"] = kwargs.pop("disable_local_auth")
+            if "replica_count" in kwargs:
+                properties["properties"]["replicaCount"] = kwargs.pop("replica_count")
             if "sku" in kwargs:
                 properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
@@ -220,7 +213,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -242,7 +235,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
 
     def _outputs(  # type: ignore[override]
         self, *, symbol: ResourceSymbol, suffix: str, **kwargs
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"].append(
             Output(
@@ -257,6 +250,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         self,
         /,
         *,
+        index_name: None = None,
         transport: Any = None,
         credential: Any = None,
         api_version: Optional[str] = None,
@@ -270,6 +264,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         self,
         /,
         *,
+        index_name: None = None,
         transport: Any = None,
         credential: Any = None,
         api_version: Optional[str] = None,
@@ -279,37 +274,36 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         **client_options,
     ) -> "AsyncSearchIndexClient": ...
 
-    # TODO: I don't know why these don't work with either mypy or pyright.
-    # @overload
-    # def get_client(
-    #     self,
-    #     /,
-    #     *,
-    #     index_name: str,
-    #     transport: Any = None,
-    #     credential: Any = None,
-    #     api_version: Optional[str] = None,
-    #     audience: Optional[str] = None,
-    #     config_store: Optional[Mapping[str, Any]] = None,
-    #     use_async: Optional[Literal[False]] = None,
-    #     **client_options,
-    # ) -> "SearchClient":
-    #     ...
-    # @overload
-    # def get_client(
-    #     self,
-    #     /,
-    #     *,
-    #     index_name: str,
-    #     transport: Any = None,
-    #     credential: Any = None,
-    #     api_version: Optional[str] = None,
-    #     audience: Optional[str] = None,
-    #     config_store: Optional[Mapping[str, Any]] = None,
-    #     use_async: Literal[True],
-    #     **client_options,
-    # ) -> "AsyncSearchClient":
-    #     ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        index_name: str,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "SearchClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        index_name: str,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncSearchClient":
+        ...
     @overload
     def get_client(
         self,

@@ -6,8 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Generic, List, Literal, Mapping, Union, Optional, Dict, cast
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing import TYPE_CHECKING, Any, Generic, TypedDict, Literal, Mapping, Union, Optional, cast
+from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ...resources.resourcegroup import ResourceGroup
@@ -16,16 +16,16 @@ from ..._parameters import GLOBAL_PARAMS
 from ..._resource import Resource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import UserAssignedIdentityResource
+    from ._types import UserAssignedIdentityResource
 
 
 class UserAssignedIdentityKwargs(TypedDict, total=False):
     # lock: 'Lock'
     # """The lock settings of the service."""
     location: Union[str, Parameter]
-    """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
-    """Tags of the Resource Group."""
+    """Location of the User Assigned Identity. It uses the deployment's location when not provided."""
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    """Tags of the User Assigned Identity."""
 
 
 UserAssignedIdentityResourceType = TypeVar(
@@ -39,6 +39,35 @@ _DEFAULT_USER_ASSIGNED_IDENTITY: "UserAssignedIdentityResource" = {
 
 
 class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
+    """A user-assigned managed identity in Azure.
+
+    User-assigned managed identities are Azure resources that can be used to authenticate to services 
+    that support Azure AD authentication.
+
+    :ivar DEFAULTS: Default values for the resource properties
+    :vartype DEFAULTS: UserAssignedIdentityResource
+    :ivar properties: Properties of the user-assigned identity resource
+    :vartype properties: UserAssignedIdentityResourceType
+    :ivar extensions: Extension resources associated with this identity (roles, etc.)
+    :vartype extensions: ExtensionResources
+    :ivar parent: Parent resource, None for user-assigned identities
+    :vartype parent: None
+    :ivar identifier: Resource identifier for the user-assigned identity
+    :vartype identifier: ResourceIdentifiers
+    :ivar resource: The Azure resource type string
+    :vartype resource: str
+    :ivar version: The API version of the resource
+    :vartype version: str
+
+    :param properties: Properties for the user-assigned identity
+    :type properties: Optional[UserAssignedIdentityResource]
+    :param name: Name of the user-assigned identity
+    :type name: Optional[Union[str, Parameter]]
+    :keyword str location: Location of the User Assigned Identity. It uses the deployment's location when not provided.
+    :paramtype location: Union[str, Parameter]
+    :keyword dict tags: Tags of the User Assigned Identity.
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    """
     DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY  # type: ignore[assignment]
     properties: UserAssignedIdentityResourceType
     parent: None
@@ -76,7 +105,7 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -94,10 +123,7 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
         symbol = super()._build_symbol(suffix)
         return ResourceSymbol(cast(str, symbol._value), principal_id=True)  # pylint: disable=protected-access
 
-    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
-        # TODO: This results in duplicate outputs if there's multiple identities.
-        # Not sure if it's really needed as most people wont be using managedidentitycredential locally.
-        # return {'client_id': Output("AZURE_CLIENT_ID", "properties.clientId", symbol)}
+    def _outputs(self, **kwargs) -> dict[str, list[Output]]:
         return {}
 
     def __bicep__(self, fields, *, parameters, infra_component=None, **kwargs):

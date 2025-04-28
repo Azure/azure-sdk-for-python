@@ -240,6 +240,10 @@ def test_search_export_with_properties(export_dir):
                 public_network_access="Disabled",
                 managed_identities={"systemAssigned": True, "userAssignedResourceIds": ["identity"]},
                 network_acls={"bypass": "AzureServices", "ipRules": [{"value": "rule"}]},
+                semantic_search="free",
+                partition_count=3,
+                replica_count=2,
+                disable_local_auth=False,
                 tags={"foo": "bar"},
             )
         )

@@ -9,9 +9,8 @@ from collections import defaultdict
 import inspect
 from typing import (
     TYPE_CHECKING,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -22,7 +21,7 @@ from typing import (
     cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ....._parameters import GLOBAL_PARAMS
 from ...._identifiers import ResourceIdentifiers
@@ -35,7 +34,7 @@ from .. import TableStorage
 if TYPE_CHECKING:
     from ...._extension import RoleAssignment
     from ....resourcegroup import ResourceGroup
-    from .types import TableResource
+    from ._types import TableResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -46,7 +45,7 @@ if TYPE_CHECKING:
 class TableKwargs(TypedDict, total=False):
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -69,7 +68,7 @@ class TableKwargs(TypedDict, total=False):
     """Array of role assignments to create for user-assigned identity."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -102,6 +101,31 @@ ClientType = TypeVar("ClientType", default="TableClient")
 
 
 class Table(_ClientResource, Generic[TableResourceType]):
+    """Azure Storage Table resource.
+
+    A Table resource represents an Azure Storage Table within a storage account.
+
+    :param properties: Table resource properties
+    :type properties: TableResource | None
+    :param name: The name of the table
+    :type name: str | None
+    :param account: The storage account name or reference
+    :type account: str | Parameter | TableStorage | None
+    :keyword roles: Array of role assignments to create for user-assigned identity
+    :paramtype roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :keyword user_roles: Array of role assignments to create for user principal ID
+    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+
+    :ivar DEFAULTS: Default values for table resource properties
+    :vartype DEFAULTS: TableResource
+    :ivar DEFAULT_EXTENSIONS: Default extension resources for the table
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Table resource properties
+    :vartype properties: TableResourceType
+    :ivar parent: Parent TableStorage resource
+    :vartype parent: TableStorage
+    """
+
     DEFAULTS: "TableResource" = _DEFAULT_TABLE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_TABLE_EXTENSIONS
     properties: TableResourceType
@@ -151,7 +175,7 @@ class Table(_ClientResource, Generic[TableResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -197,7 +221,7 @@ class Table(_ClientResource, Generic[TableResourceType]):
         suffix: str,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"].append(
             Output(

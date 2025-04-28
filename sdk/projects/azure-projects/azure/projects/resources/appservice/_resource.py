@@ -9,16 +9,15 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Union,
     Optional,
     cast,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -32,7 +31,7 @@ from ..._resource import (
 )
 
 if TYPE_CHECKING:
-    from .types import AppServicePlanResource
+    from ._types import AppServicePlanResource
 
 
 class AppServicePlanKwargs(TypedDict, total=False):
@@ -40,15 +39,13 @@ class AppServicePlanKwargs(TypedDict, total=False):
     """Defaults to false when creating Windows/app App Service Plan. Required if creating a Linux App Service Plan
     and must be set to true.
     """
-    app_service_environment: str
-    """The Resource ID of the App Service Environment to use for the App Service Plan."""
     # diagnosticSettings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    elastic_scale_enabled: bool
+    elastic_scale_enabled: Union[bool, Parameter]
     """Enable/Disable ElasticScaleEnabled App Service Plan."""
-    kind: Literal["App", "Elastic", "FunctionApp", "Linux", "Windows"]
+    kind: Union[Literal["App", "Elastic", "FunctionApp", "Linux", "Windows"], Parameter]
     """Kind of server OS."""
-    location: str
+    location: Union[str, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
@@ -60,7 +57,7 @@ class AppServicePlanKwargs(TypedDict, total=False):
     """
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -79,7 +76,7 @@ class AppServicePlanKwargs(TypedDict, total=False):
     """Array of role assignments to create."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -96,21 +93,21 @@ class AppServicePlanKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    capacity: int
+    capacity: Union[int, Parameter]
     """Number of workers associated with the App Service Plan. This defaults to 3, to leverage availability zones."""
-    sku: str
+    sku: Union[str, Parameter]
     """The name of the SKU will Determine the tier, size, family of the App Service Plan. This defaults to P1v3 to
     leverage availability zones.
     """
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
-    target_worker_count: int
+    target_worker_count: Union[int, Parameter]
     """Scaling worker count."""
-    target_worker_size: Literal[0, 1, 2]
+    target_worker_size: Union[Literal[0, 1, 2], Parameter]
     """The instance size of the hosting plan (small, medium, or large)."""
-    worker_tier_name: str
+    worker_tier_name: Union[str, Parameter]
     """Target worker tier assigned to the App Service plan."""
-    zone_redundant: bool
+    zone_redundant: Union[bool, Parameter]
     """Zone Redundant server farms can only be used on Premium or ElasticPremium SKU tiers within ZRS Supported
     regions (https://learn.microsoft.com/azure/storage/common/redundancy-regions-zrs).
     """
@@ -136,6 +133,54 @@ _DEFAULT_APP_SERVICE_PLAN_EXTENSIONS: ExtensionResources = {"managed_identity_ro
 
 
 class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
+    """Azure App Service Plan resource.
+
+    :param properties: The properties of the App Service Plan resource
+    :type properties: Optional[AppServicePlanResource]
+    :param name: The name of the App Service Plan
+    :type name: Optional[Union[str, Parameter]]
+
+    :keyword reserved: Defaults to false for Windows App Service Plan. Must be true for Linux App Service Plan
+    :paramtype reserved: bool
+    :keyword elastic_scale_enabled: Enable/Disable ElasticScaleEnabled App Service Plan
+    :paramtype elastic_scale_enabled: Union[bool, Parameter]
+    :keyword kind: Kind of server OS
+    :paramtype kind: Union[Literal["App", "Elastic", "FunctionApp", "Linux", "Windows"], Parameter]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword maximum_elastic_worker_count: Maximum number of total workers allowed for ElasticScaleEnabled plan
+    :paramtype maximum_elastic_worker_count: int
+    :keyword per_site_scaling: If true, apps can be scaled independently
+    :paramtype per_site_scaling: bool
+    :keyword roles: Array of role assignments to create
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", "Website Contributor", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword user_roles: Array of Role assignments to create for user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", "Website Contributor", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword capacity: Number of workers associated with the App Service Plan (defaults to 3)
+    :paramtype capacity: Union[int, Parameter]
+    :keyword sku: Name of the SKU determining tier, size, family of App Service Plan (defaults to P1v3)
+    :paramtype sku: Union[str, Parameter]
+    :keyword tags: Tags of the resource
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :keyword target_worker_count: Scaling worker count
+    :paramtype target_worker_count: Union[int, Parameter]
+    :keyword target_worker_size: Instance size of hosting plan (0=small, 1=medium, 2=large)
+    :paramtype target_worker_size: Union[Literal[0, 1, 2], Parameter]
+    :keyword worker_tier_name: Target worker tier assigned to the App Service plan
+    :paramtype worker_tier_name: Union[str, Parameter]
+    :keyword zone_redundant: Enable zone redundancy (Premium/ElasticPremium SKU only, ZRS supported regions)
+    :paramtype zone_redundant: Union[bool, Parameter]
+
+    :ivar DEFAULTS: Default configuration for App Service Plan
+    :vartype DEFAULTS: AppServicePlanResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: The properties of the App Service Plan
+    :vartype properties: AppServicePlanResourceType
+    :ivar parent: Parent resource (None for App Service Plan)
+    :vartype parent: None
+    """
+    
     DEFAULTS: "AppServicePlanResource" = _DEFAULT_APP_SERVICE_PLAN  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_APP_SERVICE_PLAN_EXTENSIONS
     properties: AppServicePlanResourceType
@@ -154,7 +199,6 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
             extensions["user_roles"] = kwargs.pop("user_roles")
-        # TODO: Finish populating kwarg properties
         if not existing:
             properties = properties or {}
             if "properties" not in properties:
@@ -163,6 +207,22 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
                 properties["name"] = name
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
+            if "reserved" in kwargs:
+                properties["properties"]["reserved"] = kwargs.pop("reserved")
+            if "elastic_scale_enabled" in kwargs:
+                properties["properties"]["elasticScaleEnabled"] = kwargs.pop("elastic_scale_enabled")
+            if "maximum_elastic_worker_count" in kwargs:
+                properties["properties"]["maximumElasticWorkerCount"] = kwargs.pop("maximum_elastic_worker_count")
+            if "per_site_scaling" in kwargs:
+                properties["properties"]["perSiteScaling"] = kwargs.pop("per_site_scaling")
+            if "target_worker_count" in kwargs:
+                properties["properties"]["targetWorkerCount"] = kwargs.pop("target_worker_count")
+            if "target_worker_size" in kwargs:
+                properties["properties"]["targetWorkerSizeId"] = kwargs.pop("target_worker_size")
+            if "worker_tier_name" in kwargs:
+                properties["properties"]["workerTierName"] = kwargs.pop("worker_tier_name")
+            if "zone_redundant" in kwargs:
+                properties["properties"]["zoneRedundant"] = kwargs.pop("zone_redundant")
             if "sku" in kwargs:
                 sku = kwargs.pop("sku")
                 properties["sku"] = {"name": sku}
@@ -205,9 +265,9 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
-    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, **kwargs) -> dict[str, list[Output]]:
         return {}

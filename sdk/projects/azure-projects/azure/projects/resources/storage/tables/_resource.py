@@ -30,7 +30,7 @@ from ...._resource import _ClientResource, ExtensionResources, ResourceReference
 from .._resource import StorageAccount, StorageAccountKwargs
 
 if TYPE_CHECKING:
-    from .types import TableServiceResource, TablesCorsRule
+    from ._types import TableServiceResource, TableServiceCorsRule
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 
 
 class TableStorageKwargs(StorageAccountKwargs, total=False):
-    cors_rules: Union[List[Union["TablesCorsRule", Parameter]], Parameter]
+    cors_rules: Union[List[Union["TableServiceCorsRule", Parameter]], Parameter]
     """Specifies CORS rules for the Table service. You can include up to five CorsRule elements in the request.
     If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be
     disabled for the Table service.
@@ -56,6 +56,75 @@ ClientType = TypeVar("ClientType", default="TableServiceClient")
 
 
 class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
+    """Azure Storage Table Service resource.
+
+    A TableStorage resource represents the Table service within an Azure Storage Account.
+
+    :param properties: Table service resource properties
+    :type properties: TableServiceResource | None
+    :param account: The storage account name or reference
+    :type account: str | StorageAccount | Parameter | None
+    :keyword cors_rules: Specifies CORS rules for the Table service. Up to five CorsRule elements allowed.
+    :paramtype cors_rules: List[TableServiceCorsRule | Parameter] | Parameter
+    :keyword access_tier: Required if the Storage Account kind is set to BlobStorage. The access tier is used for billing.
+    :paramtype access_tier: Literal["Cool", "Hot", "Premium"] | Parameter
+    :keyword enable_hierarchical_namespace: If true, enables Hierarchical Namespace for the storage account.
+    :paramtype enable_hierarchical_namespace: bool | Parameter
+    :keyword allow_blob_public_access: Indicates whether public access is enabled for blobs/containers.
+    :paramtype allow_blob_public_access: bool | Parameter
+    :keyword allow_cross_tenant_replication: Allow or disallow cross AAD tenant object replication.
+    :paramtype allow_cross_tenant_replication: bool | Parameter
+    :keyword allowed_copy_scope: Allowed scope for copy operations.
+    :paramtype allowed_copy_scope: Literal["AAD", "PrivateLink"] | Parameter
+    :keyword allow_shared_key_access: Indicates whether shared key access is allowed.
+    :paramtype allow_shared_key_access: bool | Parameter
+    :keyword default_to_oauth_authentication: Indicates whether the default authentication is OAuth.
+    :paramtype default_to_oauth_authentication: bool | Parameter
+    :keyword dns_endpoint_type: Type of DNS endpoint.
+    :paramtype dns_endpoint_type: Literal["AzureDnsZone", "Standard"] | Parameter
+    :keyword enable_nfs_v3: Enables NFS 3.0 support if true.
+    :paramtype enable_nfs_v3: bool | Parameter
+    :keyword enable_sftp: Enables Secure File Transfer Protocol if true.
+    :paramtype enable_sftp: bool | Parameter
+    :keyword encryption: Encryption settings for server-side encryption.
+    :paramtype encryption: StorageEncryption | Parameter
+    :keyword is_local_user_enabled: Enables local users feature if true.
+    :paramtype is_local_user_enabled: bool | Parameter
+    :keyword kind: Type of Storage Account to create.
+    :paramtype kind: Literal["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"] | Parameter
+    :keyword large_file_shares_state: Allows large file shares if set to 'Enabled'.
+    :paramtype large_file_shares_state: Literal["Disabled", "Enabled"] | Parameter
+    :keyword location: Location for all resources.
+    :paramtype location: str | Parameter
+    :keyword minimum_tls_version: Sets the minimum TLS version.
+    :paramtype minimum_tls_version: Literal["TLS1_0", "TLS1_1", "TLS1_2", "TLS1_3"] | Parameter
+    :keyword network_acls: Network rules governing the storage account access.
+    :paramtype network_acls: StorageNetworkRuleSet | Parameter
+    :keyword public_network_access: Controls whether public network access is allowed.
+    :paramtype public_network_access: Literal["Enabled", "Disabled"] | Parameter
+    :keyword sas_expiration_period: The SAS expiration period in DD.HH:MM:SS format.
+    :paramtype sas_expiration_period: str | Parameter
+    :keyword sku: Storage Account Sku Name.
+    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :keyword supports_https_traffic_only: Allows HTTPS traffic only if true.
+    :paramtype supports_https_traffic_only: bool | Parameter
+    :keyword tags: Resource tags.
+    :paramtype tags: Dict[str, Union[str, Parameter]] | Parameter
+    :keyword roles: Array of role assignments to create for user-assigned identity
+    :paramtype roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :keyword user_roles: Array of role assignments to create for user principal ID
+    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+
+    :ivar DEFAULTS: Default values for table service resource properties
+    :vartype DEFAULTS: TableServiceResource
+    :ivar DEFAULT_EXTENSIONS: Default extension resources for the table service
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Table service resource properties
+    :vartype properties: TableServiceResourceType
+    :ivar parent: Parent StorageAccount resource
+    :vartype parent: StorageAccount
+    """
+
     DEFAULTS: "TableServiceResource" = _DEFAULT_TABLE_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_TABLE_SERVICE_EXTENSIONS
     properties: TableServiceResourceType  # type: ignore[reportIncompatibleVariableOverride]
@@ -112,7 +181,7 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 

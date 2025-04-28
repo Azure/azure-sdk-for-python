@@ -10,9 +10,8 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -22,7 +21,7 @@ from typing import (
     cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -42,7 +41,7 @@ from ..._resource import (
 from ._connection import AIConnection
 
 if TYPE_CHECKING:
-    from .types import MachineLearningWorkspaceResource
+    from ._types import MachineLearningWorkspaceResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -55,40 +54,36 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """Friendly name of the workspace."""
     sku: Union[Literal["Basic", "Free", "Premium", "Standard"], Parameter]
     """Specifies the SKU, also referred as 'edition' of the Azure Machine Learning workspace."""
-    application_insights: Union[str, Parameter]
-    """The resource ID of the associated Application Insights. Required if 'kind' is 'Default' or 'FeatureStore'."""
-    keyvault: Union[str, Parameter]
-    """The resource ID of the associated Key Vault. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
-    storage: Union[str, Parameter]
-    """The resource ID of the associated Storage Account. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
-    feature_store_settings: Union["FeatureStoreSetting", Parameter]  # type: ignore[name-defined]  # TODO
-    """Settings for feature store type workspaces. Required if 'kind' is set to 'FeatureStore'."""
-    hub: Union[str, Parameter]
-    """The resource ID of the hub to associate with the workspace. Required if 'kind' is set to 'Project'."""
-    primary_user_assigned_identity: Union[str, Parameter]
-    """The user assigned identity resource ID that represents the workspace identity. Required if
-    'userAssignedIdentities' is not empty and may not be used if 'systemAssignedIdentity' is enabled.
-    """
-    container_registry: Union[str, Parameter]
-    """The resource ID of the associated Container Registry."""
+    # application_insights: Union[str, Parameter]
+    # """The resource ID of the associated Application Insights. Required if 'kind' is 'Default' or 'FeatureStore'."""
+    # keyvault: Union[str, Parameter]
+    # """The resource ID of the associated Key Vault. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
+    # storage: Union[str, Parameter]
+    # """The resource ID of the associated Storage Account. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
+    # feature_store_settings: Union["FeatureStoreSetting", Parameter]
+    # """Settings for feature store type workspaces. Required if 'kind' is set to 'FeatureStore'."""
+    # hub: Union[str, Parameter]
+    # """The resource ID of the hub to associate with the workspace. Required if 'kind' is set to 'Project'."""
+    # primary_user_assigned_identity: Union[str, Parameter]
+    # """The user assigned identity resource ID that represents the workspace identity. Required if
+    # 'userAssignedIdentities' is not empty and may not be used if 'systemAssignedIdentity' is enabled.
+    # """
+    # container_registry: Union[str, Parameter]
+    # """The resource ID of the associated Container Registry."""
     description: Union[str, Parameter]
     """The description of this workspace."""
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
     discovery_url: Union[str, Parameter]
     """URL for the discovery service to identify regional endpoints for machine learning experimentation services."""
-    hbi_workspace: Union[bool, Parameter]
-    """The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service."""
-    image_build_compute: Union[str, Parameter]
-    """The compute name for image build."""
     location: Union[str, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
     managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource. At least one identity type is required."""
-    managed_network: Union["ManagedNetworkSetting", Parameter]  # type: ignore[name-defined]  # TODO
-    """Managed Network settings for a machine learning workspace."""
+    # managed_network: Union["ManagedNetworkSetting", Parameter]
+    # """Managed Network settings for a machine learning workspace."""
     # private_endpoints: List['PrivateEndpoint']
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
     # whenever possible.
@@ -99,7 +94,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -120,7 +115,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """Array of role assignments to create."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -139,18 +134,8 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    serverless_compute_settings: Union["ServerlessComputeSetting", Parameter]  # type: ignore[name-defined]  # TODO
-    """Settings for serverless compute created in the workspace."""
-    service_managed_resources_settings: Union[Dict[str, Any], Parameter]  # TODO: Proper typed dict
-    """The service managed resource settings."""
-    shared_private_link_resources: Union[List[Any], Parameter]  # TODO: Proper typed dict
-    """The list of shared private link resources in this workspace. Note: This property is not idempotent."""
-    system_datastores_auth_mode: Union[Literal["accessKey", "identity"], Parameter]
-    """The authentication mode used by the workspace when connecting to the default storage account."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
-    workspacehub_config: Union["WorkspaceHubConfig", Parameter]  # type: ignore[name-defined]  # TODO
-    """Configuration for workspace hub settings."""
 
 
 MachineLearningWorkspaceResourceType = TypeVar(
@@ -204,6 +189,8 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 properties["properties"]["friendlyName"] = kwargs.pop("friendly_name")
             if "description" in kwargs:
                 properties["properties"]["description"] = kwargs.pop("description")
+            if "discovery_url" in kwargs:
+                properties["properties"]["discoveryUrl"] = kwargs.pop("discovery_url")
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
             if "managed_identities" in kwargs:
@@ -245,7 +232,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -256,14 +243,14 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: Dict[str, Any],
-        new_properties: Dict[str, Any],
+        current_properties: dict[str, Any],
+        new_properties: dict[str, Any],
         *,
-        parameters: Dict[str, Parameter],
+        parameters: dict[str, Parameter],
         symbol: ResourceSymbol,
         fields: FieldsType,
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         merged_properties = super()._merge_properties(
             current_properties,
             new_properties,
@@ -348,6 +335,44 @@ _DEFAULT_AI_HUB_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], 
 
 
 class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
+    """Azure AI Hub resource, extending MLWorkspace for AI specific functionality.
+
+    :param properties: The properties of the AI Hub workspace
+    :type properties: Optional[MachineLearningWorkspaceResource]
+    :param name: The name of the AI Hub workspace
+    :type name: Optional[str]
+
+    :keyword friendly_name: Friendly name of the workspace
+    :paramtype friendly_name: Union[str, Parameter]
+    :keyword sku: Specifies the SKU/edition of the Azure Machine Learning workspace
+    :paramtype sku: Union[Literal["Basic", "Free", "Premium", "Standard"], Parameter]
+    :keyword description: The description of this workspace
+    :paramtype description: Union[str, Parameter]
+    :keyword discovery_url: URL for the discovery service to identify regional endpoints
+    :paramtype discovery_url: Union[str, Parameter]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword managed_identities: The managed identity definition. At least one identity type is required
+    :paramtype managed_identities: Optional[ManagedIdentity]
+    :keyword public_network_access: Whether public network access is allowed
+    :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    :keyword roles: Array of role assignments to create
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword user_roles: Array of Role assignments to create for user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword tags: Tags of the resource
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+
+    :ivar DEFAULTS: Default configuration for AI Hub workspace
+    :vartype DEFAULTS: MachineLearningWorkspaceResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: The properties of the AI Hub workspace
+    :vartype properties: MachineLearningWorkspaceResourceType
+    :ivar parent: Parent resource (None for AI Hub)
+    :vartype parent: None
+    """
+    
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_AI_HUB
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_HUB_EXTENSIONS
     properties: MachineLearningWorkspaceResourceType
@@ -383,12 +408,12 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: Dict[str, Any],
-        new_properties: Dict[str, Any],
+        current_properties: dict[str, Any],
+        new_properties: dict[str, Any],
         *,
         fields: FieldsType,
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         merged_properties = super()._merge_properties(
             current_properties,
             new_properties,
@@ -439,6 +464,46 @@ ClientType = TypeVar("ClientType", default="AIProjectClient")
 
 
 class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
+    """Azure AI Project resource, extending MLWorkspace for project-specific functionality.
+
+    :param properties: The properties of the AI Project workspace
+    :type properties: Optional[MachineLearningWorkspaceResource]
+    :param name: The name of the AI Project workspace
+    :type name: Optional[str]
+
+    :keyword friendly_name: Friendly name of the workspace
+    :paramtype friendly_name: Union[str, Parameter]
+    :keyword sku: Specifies the SKU/edition of the Azure Machine Learning workspace
+    :paramtype sku: Union[Literal["Basic", "Free", "Premium", "Standard"], Parameter]
+    :keyword description: The description of this workspace
+    :paramtype description: Union[str, Parameter]
+    :keyword discovery_url: URL for the discovery service to identify regional endpoints
+    :paramtype discovery_url: Union[str, Parameter]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword managed_identities: The managed identity definition. At least one identity type is required
+    :paramtype managed_identities: Optional[ManagedIdentity]
+    :keyword public_network_access: Whether public network access is allowed
+    :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    :keyword roles: Array of role assignments to create
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword user_roles: Array of Role assignments to create for user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword tags: Tags of the resource
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+
+    :ivar DEFAULTS: Default configuration for AI Project workspace
+    :vartype DEFAULTS: MachineLearningWorkspaceResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: The properties of the AI Project workspace
+    :vartype properties: MachineLearningWorkspaceResourceType
+    :ivar parent: Parent resource (None for AI Project)
+    :vartype parent: None
+    :ivar _settings: Dictionary containing configuration settings including endpoint
+    :vartype _settings: dict[str, StoredPrioritizedSetting]
+    """
+
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_AI_PROJECT
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_PROJECT_EXTENSIONS
     properties: MachineLearningWorkspaceResourceType
@@ -475,7 +540,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         )
         return cast(AIProject[ResourceReference], existing)
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
 
         outputs["endpoint"].append(
@@ -485,12 +550,12 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: Dict[str, Any],
-        new_properties: Dict[str, Any],
+        current_properties: dict[str, Any],
+        new_properties: dict[str, Any],
         *,
         fields: FieldsType,
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         merged_properties = super()._merge_properties(
             current_properties,
             new_properties,

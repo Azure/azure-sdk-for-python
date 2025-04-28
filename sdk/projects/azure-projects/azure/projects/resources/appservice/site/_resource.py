@@ -9,20 +9,19 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Union,
     Optional,
     cast,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ...resourcegroup import ResourceGroup
 from ..._identifiers import ResourceIdentifiers
-from ..._extension import ManagedIdentity, RoleAssignment
+from ..._extension import ManagedIdentity, RoleAssignment, convert_managed_identities
 from ...._parameters import GLOBAL_PARAMS
 from ...._bicep.expressions import ResourceSymbol, Parameter, Output
 from ...._resource import (
@@ -36,11 +35,11 @@ from .._resource import AppServicePlan
 from ._config import SiteConfig
 
 if TYPE_CHECKING:
-    from .types import AppSiteResource
+    from ._types import AppSiteResource
 
 
 class AppSiteKwargs(TypedDict, total=False):
-    kind: Literal[
+    kind: Union[Literal[
         "api",
         "app",
         "app,container,windows",
@@ -53,17 +52,17 @@ class AppSiteKwargs(TypedDict, total=False):
         "functionapp,workflowapp",
         "functionapp,workflowapp,linux",
         "linux,api",
-    ]
+    ], Parameter]
     """Type of site to deploy."""
-    app_service_plan: Union[str, Parameter]
-    """The resource ID of the app service plan to use for the site."""
-    api_management_config: Dict[str, object]
-    """The web settings api management configuration."""
+    # app_service_plan: Union[str, Parameter]
+    # """The resource ID of the app service plan to use for the site."""
+    # api_management_config: Union[dict[str, Any], Parameter]
+    # """The web settings api management configuration."""
     # app_insights: str
     # """Resource ID of the app insight to leverage for this resource."""
     # app_service_environment: str
     # """The resource ID of the app service environment to use for this resource."""
-    app_settings: Dict[str, str]
+    app_settings: dict[str, str]
     """The app settings-value pairs except for AzureWebJobsStorage, AzureWebJobsDashboard,
     APPINSIGHTS_INSTRUMENTATIONKEY and APPLICATIONINSIGHTS_CONNECTION_STRING.
     """
@@ -79,8 +78,8 @@ class AppSiteKwargs(TypedDict, total=False):
     """Client certificate authentication comma-separated exclusion paths."""
     client_cert_mode: Literal["Optional", "OptionalInteractiveUser", "Required"]
     """This composes with ClientCertEnabled setting."""
-    cloning_info: Dict[str, object]
-    """If specified during app creation, the app is cloned from a source app."""
+    # cloning_info: dict[str, Any]
+    # """If specified during app creation, the app is cloned from a source app."""
     container_size: int
     """Size of the function container."""
     daily_memory_time_quota: int
@@ -91,16 +90,16 @@ class AppSiteKwargs(TypedDict, total=False):
     """Setting this value to false disables the app (takes the app offline)."""
     # function_app_config: Dict[str, object]
     # """The Function App configuration object."""
-    hostname_ssl_states: List[object]
-    """Hostname SSL states are used to manage the SSL bindings for app's hostnames."""
+    # hostname_ssl_states: List[object]
+    # """Hostname SSL states are used to manage the SSL bindings for app's hostnames."""
     https_only: bool
     """Configures a site to accept only HTTPS requests. Issues redirect for HTTP requests."""
     # hybrid_connection_relays: List[object]
     # """Names of hybrid connection relays to connect app with."""
-    hyper_v: bool
-    """Hyper-V sandbox."""
-    keyvault_access_identity: Union[str, Parameter]
-    """The resource ID of the assigned identity to be used to access a key vault with."""
+    # hyper_v: bool
+    # """Hyper-V sandbox."""
+    # keyvault_access_identity: Union[str, Parameter]
+    # """The resource ID of the assigned identity to be used to access a key vault with."""
     location: str
     """Location for all Resources."""
     # lock: 'Lock'
@@ -125,7 +124,7 @@ class AppSiteKwargs(TypedDict, total=False):
     """Site redundancy mode."""
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -145,7 +144,7 @@ class AppSiteKwargs(TypedDict, total=False):
     """Array of role assignments to create."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -163,26 +162,26 @@ class AppSiteKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    scm_site_also_stopped: bool
-    """Stop SCM (KUDU) site when the app is stopped."""
-    site_config: Dict[str, object]
-    """The site config object. The defaults are set to the following values: alwaysOn: true,
-    minTlsVersion: '1.2', ftpsState: 'FtpsOnly'.
-    """
+    # scm_site_also_stopped: bool
+    # """Stop SCM (KUDU) site when the app is stopped."""
+    # site_config: Dict[str, object]
+    # """The site config object. The defaults are set to the following values: alwaysOn: true,
+    # minTlsVersion: '1.2', ftpsState: 'FtpsOnly'.
+    # """
     # slots: List['Slot']
     # """Configuration for deployment slots for an app."""
-    storage_account_required: bool
-    """Checks if Customer provided storage account is required."""
-    storage_account: Union[str, Parameter]
-    """Required if app of kind functionapp. Resource ID of the storage account to manage triggers and logging
-    function executions.
-    """
-    storage_account_use_identity_authentication: bool
-    """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false).
-    When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account
-    is 'Storage Blob Data Owner'.
-    """
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    # storage_account_required: bool
+    # """Checks if Customer provided storage account is required."""
+    # storage_account: Union[str, Parameter]
+    # """Required if app of kind functionapp. Resource ID of the storage account to manage triggers and logging
+    # function executions.
+    # """
+    # storage_account_use_identity_authentication: bool
+    # """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false).
+    # When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account
+    # is 'Storage Blob Data Owner'.
+    # """
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     # virtualNetworkSubnetId: str
     # """Azure Resource Manager ID of the Virtual network and subnet to be joined by Regional VNET Integration."""
@@ -220,6 +219,68 @@ _DEFAULT_APP_SITE_EXTENSIONS: ExtensionResources = {"managed_identity_roles": []
 
 
 class AppSite(Resource, Generic[AppSiteResourceType]):
+    """Azure App Service site resource.
+
+    :param properties: Raw properties object for the app site resource
+    :type properties: Optional[AppSiteResource]
+    :param name: The name of the app service site
+    :type name: Optional[Union[str, Parameter]]
+    :param plan: The app service plan to use for this site
+    :type plan: Optional[Union[str, Parameter, AppServicePlan]]
+
+    :keyword kind: Type of site to deploy
+    :paramtype kind: Union[Literal["api", "app", "app,container,windows", "app,linux", "app,linux,container", 
+                    "functionapp", "functionapp,linux", "functionapp,linux,container", 
+                    "functionapp,linux,container,azurecontainerapps", "functionapp,workflowapp", 
+                    "functionapp,workflowapp,linux", "linux,api"], Parameter]
+    :keyword app_settings: App settings key-value pairs
+    :paramtype app_settings: dict[str, str]
+    :keyword client_affinity_enabled: If client affinity is enabled
+    :paramtype client_affinity_enabled: bool
+    :keyword client_cert_enabled: To enable client certificate authentication
+    :paramtype client_cert_enabled: bool
+    :keyword client_cert_exclusion_paths: Client certificate authentication comma-separated exclusion paths
+    :paramtype client_cert_exclusion_paths: str
+    :keyword client_cert_mode: This composes with ClientCertEnabled setting
+    :paramtype client_cert_mode: Literal["Optional", "OptionalInteractiveUser", "Required"]
+    :keyword container_size: Size of the function container
+    :paramtype container_size: int
+    :keyword daily_memory_time_quota: Maximum allowed daily memory-time quota (dynamic apps only)
+    :paramtype daily_memory_time_quota: int
+    :keyword enabled: Setting this value to false disables the app (takes the app offline)
+    :paramtype enabled: bool
+    :keyword https_only: Configures a site to accept only HTTPS requests
+    :paramtype https_only: bool
+    :keyword location: Location for all Resources
+    :paramtype location: str
+    :keyword managed_identities: The managed identity definition for this resource
+    :paramtype managed_identities: ManagedIdentity
+    :keyword public_network_access: Whether public network access is allowed
+    :paramtype public_network_access: Literal["Disabled", "Enabled"]
+    :keyword redundancy_mode: Site redundancy mode
+    :paramtype redundancy_mode: Literal["ActiveActive", "Failover", "GeoRedundant", "Manual", "None"]
+    :keyword roles: Array of role assignments to create
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", 
+                    "Website Contributor", "App Compliance Automation Administrator", "Contributor", 
+                    "Owner", "Reader", "Role Based Access Control Administrator", 
+                    "User Access Administrator"]]]]
+    :keyword user_roles: Array of Role assignments to create for user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", 
+                         "Website Contributor", "App Compliance Automation Administrator", "Contributor", 
+                         "Owner", "Reader", "Role Based Access Control Administrator", 
+                         "User Access Administrator"]]]]
+    :keyword tags: Tags of the resource
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+
+    :ivar DEFAULTS: Default configuration for app site resources
+    :vartype DEFAULTS: AppSiteResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: The properties of this app site resource
+    :vartype properties: AppSiteResourceType
+    :ivar parent: The parent resource (None for App Sites)
+    :vartype parent: None
+    """
     DEFAULTS: "AppSiteResource" = _DEFAULT_APP_SITE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_APP_SITE_EXTENSIONS
     properties: AppSiteResourceType
@@ -255,6 +316,30 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["location"] = kwargs.pop("location")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            if "enabled" in kwargs:
+                properties["properties"]["enabled"] = kwargs.pop("enabled")
+            if "kind" in kwargs:
+                properties["kind"] = kwargs.pop("kind")
+            if "managed_identities" in kwargs:
+                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
+            if "https_only" in kwargs:
+                properties["properties"]["httpsOnly"] = kwargs.pop("https_only")
+            if "public_network_access" in kwargs:
+                properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
+            if "redundancy_mode" in kwargs:
+                properties["properties"]["redundancyMode"] = kwargs.pop("redundancy_mode")
+            if "client_affinity_enabled" in kwargs:
+                properties["properties"]["clientAffinityEnabled"] = kwargs.pop("client_affinity_enabled")
+            if "client_cert_enabled" in kwargs:
+                properties["properties"]["clientCertEnabled"] = kwargs.pop("client_cert_enabled")
+            if "client_cert_exclusion_paths" in kwargs:
+                properties["properties"]["clientCertExclusionPaths"] = kwargs.pop("client_cert_exclusion_paths")
+            if "client_cert_mode" in kwargs:
+                properties["properties"]["clientCertMode"] = kwargs.pop("client_cert_mode")
+            if "container_size" in kwargs:
+                properties["properties"]["containerSize"] = kwargs.pop("container_size")
+            if "daily_memory_time_quota" in kwargs:
+                properties["properties"]["dailyMemoryTimeQuota"] = kwargs.pop("daily_memory_time_quota")
         self._app_settings = kwargs.pop("app_settings", {})
         super().__init__(
             properties,
@@ -289,20 +374,20 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: Dict[str, Any],
-        new_properties: Dict[str, Any],
+        current_properties: dict[str, Any],
+        new_properties: dict[str, Any],
         *,
-        parameters: Dict[str, Parameter],
+        parameters: dict[str, Parameter],
         symbol: ResourceSymbol,
         fields: FieldsType,
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         merged_properties = super()._merge_properties(
             current_properties,
             new_properties,
@@ -341,5 +426,5 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
         app_logs.__bicep__(fields, parameters=parameters)
         return merged_properties
 
-    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, **kwargs) -> dict[str, list[Output]]:
         return {}

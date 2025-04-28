@@ -11,9 +11,8 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -24,7 +23,7 @@ from typing import (
     overload,
     get_origin,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -34,7 +33,7 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import ConfigStoreResource
+    from ._types import ConfigStoreResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -75,7 +74,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     # """All Replicas to create."""
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -98,7 +97,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Array of role assignments to create for the managed identity."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -123,7 +122,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Pricing tier of App Configuration."""
     soft_delete_retention: int
     """The amount of time in days that the configuration store will be retained when it is soft deleted."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Resource tags."""
 
 
@@ -151,6 +150,47 @@ _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
 
 
 class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
+    """Azure App Configuration Store resource representation.
+
+    A class representing an Azure App Configuration Store that provides centralized storage and management
+    of application settings and feature flags.
+
+    :ivar DEFAULTS: Default configuration settings for the Config Store resource
+    :vartype DEFAULTS: ConfigStoreResource
+    :ivar DEFAULT_EXTENSIONS: Default role assignments and extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Properties of the Config Store resource
+    :vartype properties: ConfigStoreResourceType
+    :ivar parent: Parent resource (None for ConfigStore as it's a top-level resource)
+    :vartype parent: None
+
+    :param properties: Optional dictionary containing the Config Store resource properties
+    :type properties: Optional[ConfigStoreResource]
+    :param name: Optional name for the Config Store
+    :type name: Optional[Union[str, Parameter]]
+    :keyword create_mode: Indicates whether the configuration store needs to be recovered
+    :paramtype create_mode: Union[Literal["Default", "Recover"], Parameter]
+    :keyword disable_local_auth: Disables all authentication methods other than AAD authentication
+    :paramtype disable_local_auth: Union[bool, Parameter]
+    :keyword enable_purge_protection: Property specifying whether protection against purge is enabled
+    :paramtype enable_purge_protection: Union[bool, Parameter]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword managed_identities: The managed identity definition for this resource
+    :paramtype managed_identities: Optional[ManagedIdentity]
+    :keyword public_network_access: Whether or not public network access is allowed for this resource
+    :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    :keyword roles: Array of role assignments to create for the managed identity
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["App Compliance Automation Administrator", "App Compliance Automation Reader", "App Configuration Contributor", "App Configuration Data Owner", "App Configuration Data Reader", "App Configuration Reader", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword user_roles: Array of role assignments to create for the user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["App Compliance Automation Administrator", "App Compliance Automation Reader", "App Configuration Contributor", "App Configuration Data Owner", "App Configuration Data Reader", "App Configuration Reader", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword sku: Pricing tier of App Configuration
+    :paramtype sku: Literal["Free", "Standard"]
+    :keyword soft_delete_retention: The amount of time in days that the configuration store will be retained when soft deleted
+    :paramtype soft_delete_retention: int
+    :keyword tags: Resource tags
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    """
     DEFAULTS: "ConfigStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_STORE_EXTENSIONS
     properties: ConfigStoreResourceType
@@ -209,7 +249,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -229,7 +269,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.azconfig.io"
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> dict[str, list[Output]]:
         if suffix == "_CONFIG_STORE":
             # This is the default config store attrname - let's just ignore it.
             suffix = ""

@@ -28,7 +28,7 @@ from .. import ConfigStore
 
 if TYPE_CHECKING:
     from ...resourcegroup import ResourceGroup
-    from .types import ConfigSettingResource
+    from ._types import ConfigSettingResource
 
 
 class ConfigSettingKwargs(TypedDict, total=False):
@@ -48,6 +48,34 @@ ConfigSettingResourceType = TypeVar(
 
 
 class ConfigSetting(Resource, Generic[ConfigSettingResourceType]):
+    """A class representing an Azure App Configuration setting resource.
+
+    This class manages key-value settings within an Azure App Configuration store, allowing
+    you to create, reference, and manage configuration settings.
+
+    :param properties: Optional dictionary containing the setting's resource properties
+    :type properties: Optional[ConfigSettingResource]
+    :param name: The name of the configuration setting
+    :type name: Optional[Union[str, Parameter]]
+    :param value: The value of the configuration setting
+    :type value: Optional[Union[str, Parameter]]
+    :param store: The configuration store that contains this setting
+    :type store: Optional[Union[str, Parameter, ConfigStore]]
+    :keyword content_type: The content type of the setting's value
+    :paramtype content_type: Union[str, Parameter]
+    :keyword tags: Dictionary of tags for the setting
+    :paramtype tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+
+    :ivar DEFAULTS: Default configuration setting properties
+    :vartype DEFAULTS: ConfigSettingResource
+    :ivar DEFAULT_EXTENSIONS: Default extension resources
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: The configuration setting's properties
+    :vartype properties: ConfigSettingResourceType
+    :ivar parent: The parent ConfigStore resource
+    :vartype parent: ConfigStore
+    """
+    
     DEFAULTS: "ConfigSettingResource" = _DEFAULT_CONFIG_SETTING  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_SETTING_EXTENSIONS
     properties: ConfigSettingResourceType
@@ -102,7 +130,7 @@ class ConfigSetting(Resource, Generic[ConfigSettingResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 

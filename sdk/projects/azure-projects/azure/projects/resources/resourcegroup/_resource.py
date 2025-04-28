@@ -6,8 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, Generic, Literal, Mapping, Tuple, Union, Optional, Any, cast
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing import TYPE_CHECKING, TypedDict, Generic, Literal, Mapping, Tuple, Union, Optional, Any, cast
+from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ..._parameters import GLOBAL_PARAMS
@@ -16,7 +16,7 @@ from ..._bicep.expressions import Parameter, ResourceSymbol, Subscription
 from ..._resource import Resource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import ResourceGroupResource
+    from ._types import ResourceGroupResource
     from ..._component import AzureInfrastructure
 
 
@@ -32,7 +32,7 @@ class ResourceGroupKwargs(TypedDict, total=False):
     # """The lock settings of the service."""
     location: Union[str, Parameter]
     """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the Resource Group."""
 
 
@@ -42,6 +42,35 @@ ResourceGroupResourceType = TypeVar(
 
 
 class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
+    """A class representing an Azure Resource Group.
+
+    This class allows you to define and manage Azure Resource Groups, which serve as containers
+    for organizing and managing Azure resources.
+
+    :ivar DEFAULTS: Default values for the resource group properties
+    :vartype DEFAULTS: ResourceGroupResource
+    :ivar properties: Properties of the resource group
+    :vartype properties: ResourceGroupResourceType
+    :ivar extensions: Extension resources associated with this resource group (roles, etc.)
+    :vartype extensions: ExtensionResources
+    :ivar parent: Parent resource, None for resource groups as they are top-level resources
+    :vartype parent: None
+    :ivar identifier: Resource identifier for the resource group
+    :vartype identifier: ResourceIdentifiers
+    :ivar resource: The Azure resource type string "Microsoft.Resources/resourceGroups"
+    :vartype resource: str
+    :ivar version: The API version of the resource
+    :vartype version: str
+
+    :param properties: Optional dictionary containing resource group properties
+    :type properties: ResourceGroupResource | None
+    :param name: Name of the resource group
+    :type name: str | Parameter | None
+    :keyword location: Location of the Resource Group. Uses the deployment's location when not provided
+    :paramtype location: str | Parameter
+    :keyword tags: Tags to be applied to the Resource Group
+    :paramtype tags: dict[str, str | Parameter] | Parameter
+    """
     DEFAULTS: "ResourceGroupResource" = _DEFAULT_RESOURCE_GROUP  # type: ignore[assignment]
     properties: ResourceGroupResourceType
     parent: None
@@ -89,7 +118,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -101,7 +130,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
         self,
         fields: FieldsType,
         *,
-        parameters: Dict[str, Parameter],
+        parameters: dict[str, Parameter],
         infra_component: Optional["AzureInfrastructure"] = None,
         **kwargs,
     ) -> Tuple[ResourceSymbol, ...]:

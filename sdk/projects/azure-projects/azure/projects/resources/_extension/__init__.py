@@ -15,7 +15,7 @@ from ..._parameters import GLOBAL_PARAMS
 
 if TYPE_CHECKING:
     from ..._resource import FieldsType
-    from .roles.types import RoleAssignmentProperties
+    from .roles._types import RoleAssignmentProperties
 
 
 class RoleAssignment(TypedDict, total=False):

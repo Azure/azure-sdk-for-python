@@ -8,9 +8,7 @@
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -31,7 +29,7 @@ from ...._resource import _ClientResource, ExtensionResources, ResourceReference
 from .._resource import StorageAccount, StorageAccountKwargs
 
 if TYPE_CHECKING:
-    from .types import BlobServiceResource, BlobsCorsRule
+    from ._types import BlobServiceResource, BlobServiceCorsRule
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -42,24 +40,7 @@ if TYPE_CHECKING:
 class BlobStorageKwargs(StorageAccountKwargs, total=False):
     automatic_snapshot_policy_enabled: Union[bool, Parameter]
     """Automatic Snapshot is enabled if set to true."""
-    change_feed_enabled: bool
-    """The blob service properties for change feed events. Indicates whether change feed event logging is
-    enabled for the Blob service.
-    """
-    change_feed_retention_in_days: int
-    """Indicates whether change feed event logging is enabled for the Blob service. Indicates the duration of
-    changeFeed retention in days. If left blank, it indicates an infinite retention of the change feed.
-    """
-    container_delete_retention_policy_allow_permanent_delete: bool
-    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property
-    cannot be used with blob restore policy. This property only applies to blob service and does not apply to
-    containers or file share.
-    """
-    container_delete_retention_policy_days: int
-    """Indicates the number of days that the deleted item should be retained."""
-    container_delete_retention_policy_enabled: bool
-    """The blob service properties for container soft delete. Indicates whether DeleteRetentionPolicy is enabled."""
-    cors_rules: Union[List[Union["BlobsCorsRule", Parameter]], Parameter]
+    cors_rules: Union[list[Union["BlobServiceCorsRule", Parameter]], Parameter]
     """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no
     CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled
     for the Blob service.
@@ -68,27 +49,8 @@ class BlobStorageKwargs(StorageAccountKwargs, total=False):
     """Indicates the default version to use for requests to the Blob service if an incoming request's version is not
     specified. Possible values include version 2008-10-27 and all more recent versions.
     """
-    delete_retention_policy_allow_permanent_delete: bool
-    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property
-    cannot be used with blob restore policy. This property only applies to blob service and does not apply to
-    containers or file share.
-    """
-    delete_retention_policy_days: int
-    """Indicates the number of days that the deleted blob should be retained."""
-    delete_retention_policy_enabled: bool
-    """The blob service properties for blob soft delete."""
     is_versioning_enabled: Union[bool, Parameter]
     """Use versioning to automatically maintain previous versions of your blobs."""
-    last_access_time_tracking_policy_enabled: bool
-    """The blob service property to configure last access time based tracking policy. When set to true last access
-    time based tracking is enabled.
-    """
-    restore_policy_days: int
-    """How long this blob can be restored. It should be less than DeleteRetentionPolicy days."""
-    restore_policy_enabled: bool
-    """The blob service properties for blob restore policy. If point-in-time restore is enabled, then versioning,
-    change feed, and blob soft delete must also be enabled.
-    """
 
 
 _DEFAULT_BLOB_SERVICE: "BlobServiceResource" = {"name": "default"}
@@ -101,6 +63,85 @@ ClientType = TypeVar("ClientType", default="BlobServiceClient")
 
 
 class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
+    """Azure Storage Blob Service resource that manages blob storage configuration and access.
+
+    :param properties: Optional properties for configuring the blob service.
+    :type properties: BlobServiceResource | None
+    :param account: The storage account name, parameter, field reference or StorageAccount instance.
+    :type account: str | Parameter | ComponentField | StorageAccount | None
+
+    :keyword automatic_snapshot_policy_enabled: Enables automatic snapshot creation for the blob service
+    :paramtype automatic_snapshot_policy_enabled: bool | Parameter
+    :keyword cors_rules: CORS rules for the Blob service (up to 5 rules)
+    :paramtype cors_rules: List[BlobServiceCorsRule | Parameter] | Parameter
+    :keyword default_service_version: Default API version for Blob service requests
+    :paramtype default_service_version: str
+    :keyword is_versioning_enabled: Enable blob versioning
+    :paramtype is_versioning_enabled: bool | Parameter
+    :keyword access_tier: Storage tier for billing. Required for BlobStorage accounts
+    :paramtype access_tier: Literal["Cool", "Hot", "Premium"] | Parameter
+    :keyword enable_hierarchical_namespace: Enable hierarchical namespace. Required for SFTP or NFS v3
+    :paramtype enable_hierarchical_namespace: bool | Parameter
+    :keyword allow_blob_public_access: Enable/disable public access for blobs/containers
+    :paramtype allow_blob_public_access: bool | Parameter
+    :keyword allow_cross_tenant_replication: Allow/disallow cross AAD tenant object replication
+    :paramtype allow_cross_tenant_replication: bool | Parameter
+    :keyword allowed_copy_scope: Restrict copy scope to AAD tenant or Private Links
+    :paramtype allowed_copy_scope: Literal["AAD", "PrivateLink"] | Parameter
+    :keyword allow_shared_key_access: Allow requests to be authorized with account access key
+    :paramtype allow_shared_key_access: bool | Parameter
+    :keyword azure_files_identity_auth: Identity based authentication settings for Azure Files
+    :paramtype azure_files_identity_auth: AzureFilesIdentityBasedAuthentication | Parameter
+    :keyword default_to_oauth_authentication: Set OAuth as default authentication
+    :paramtype default_to_oauth_authentication: bool | Parameter
+    :keyword dns_endpoint_type: Type of DNS endpoint
+    :paramtype dns_endpoint_type: Literal["AzureDnsZone", "Standard"] | Parameter
+    :keyword enable_nfs_v3: Enable NFS 3.0 support
+    :paramtype enable_nfs_v3: bool | Parameter
+    :keyword enable_sftp: Enable SFTP support
+    :paramtype enable_sftp: bool | Parameter
+    :keyword encryption: Server-side encryption settings
+    :paramtype encryption: StorageEncryption | Parameter
+    :keyword is_local_user_enabled: Enable local users feature
+    :paramtype is_local_user_enabled: bool | Parameter
+    :keyword kind: Type of Storage Account
+    :paramtype kind: Literal["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"] | Parameter
+    :keyword large_file_shares_state: Enable/disable large file shares
+    :paramtype large_file_shares_state: Literal["Disabled", "Enabled"] | Parameter
+    :keyword location: Azure region location
+    :paramtype location: str | Parameter
+    :keyword managed_identities: Managed identity configuration
+    :paramtype managed_identities: ManagedIdentity | None
+    :keyword minimum_tls_version: Minimum TLS version
+    :paramtype minimum_tls_version: Literal["TLS1_2", "TLS1_3"] | Parameter
+    :keyword network_acls: Network access rules configuration
+    :paramtype network_acls: StorageNetworkRuleSet | Parameter
+    :keyword public_network_access: Public network access configuration
+    :paramtype public_network_access: Literal["Disabled", "Enabled", "SecuredByPerimeter"] | Parameter
+    :keyword sas_expiration_period: SAS token expiration period (DD.HH:MM:SS)
+    :paramtype sas_expiration_period: str | Parameter
+    :keyword sku: Storage Account SKU
+    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :keyword supports_https_traffic_only: Allow only HTTPS traffic
+    :paramtype supports_https_traffic_only: bool | Parameter
+    :keyword tags: Resource tags
+    :paramtype tags: Dict[str, str | Parameter] | Parameter
+
+    :ivar DEFAULTS: Default configuration for blob service.
+    :vartype DEFAULTS: BlobServiceResource
+    :ivar DEFAULT_EXTENSIONS: Default role assignments for managed identities and users.
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Properties specific to this blob service instance.
+    :vartype properties: BlobServiceResourceType
+    :ivar parent: The parent storage account for this blob service.
+    :vartype parent: StorageAccount
+    :ivar endpoints: The service endpoints from the parent resource.
+    :vartype endpoints: Dict[str, str]
+    :ivar extensions: Extension resources like role assignments.
+    :vartype extensions: ExtensionResources
+    :ivar settings: Configuration settings for the resource.
+    :vartype settings: Dict[str, Setting]
+    """
     DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_BLOB_SERVICE_EXTENSIONS
     properties: BlobServiceResourceType
@@ -124,49 +165,16 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
             properties = properties or {}
             if "properties" not in properties:
                 properties["properties"] = {}
-            # TODO: Finish full typing
             if "automatic_snapshot_policy_enabled" in kwargs:
                 properties["properties"]["automaticSnapshotPolicyEnabled"] = kwargs.pop(
                     "automatic_snapshot_policy_enabled"
                 )
-            # if 'change_feed_enabled' in kwargs:
-            #     properties['changeFeedEnabled'] = kwargs.pop('change_feed_enabled')
-            # if 'change_feed_retention_in_days' in kwargs:
-            #     properties['changeFeedRetentionInDays'] = kwargs.pop('change_feed_retention_in_days')
-            # if 'container_delete_retention_policy_allow_permanent_delete' in kwargs:
-            # properties['containerDeleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop(
-            #     'container_delete_retention_policy_allow_permanent_delete'
-            # )
-            # if 'container_delete_retention_policy_days' in kwargs:
-            #     properties['containerDeleteRetentionPolicyDays']=kwargs.pop('container_delete_retention_policy_days')
-            # if 'container_delete_retention_policy_enabled' in kwargs:
-            # properties['containerDeleteRetentionPolicyEnabled'] = kwargs.pop(
-            #     'container_delete_retention_policy_enabled'
-            # )
             if "cors_rules" in kwargs:
                 properties["properties"]["cors"] = {"corsRules": kwargs.pop("cors_rules")}
-            # if 'default_service_version' in kwargs:
-            #     properties['defaultServiceVersion'] = kwargs.pop('default_service_version')
-            # if 'delete_retention_policy_allow_permanent_delete' in kwargs:
-            # properties['deleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop(
-            #     'delete_retention_policy_allow_permanent_delete'
-            # )
-            # if 'delete_retention_policy_days' in kwargs:
-            #     blob_service_params['deleteRetentionPolicyDays'] = kwargs.pop('delete_retention_policy_days')
-            # if 'delete_retention_policy_enabled' in kwargs:
-            #     blob_service_params['deleteRetentionPolicyEnabled'] = kwargs.pop('delete_retention_policy_enabled')
-            # if 'diagnostic_settings' in kwargs:
-            #     blob_service_params['diagnosticSettings'] = kwargs.pop('diagnostic_settings')
+            if "default_service_version" in kwargs:
+                properties["properties"]["defaultServiceVersion"] = kwargs.pop("default_service_version")
             if "is_versioning_enabled" in kwargs:
                 properties["properties"]["isVersioningEnabled"] = kwargs.pop("is_versioning_enabled")
-            # if 'last_access_time_tracking_policy_enabled' in kwargs:
-            # properties['lastAccessTimeTrackingPolicyEnabled'] = kwargs.pop(
-            #     'last_access_time_tracking_policy_enabled'
-            # )
-            # if 'restore_policy_days' in kwargs:
-            #     blob_service_params['restorePolicyDays'] = kwargs.pop('restore_policy_days')
-            # if 'restore_policy_enabled' in kwargs:
-            #     blob_service_params['restorePolicyEnabled'] = kwargs.pop('restore_policy_enabled')
 
         if account and "parent" in kwargs:
             raise ValueError("Cannot specify both 'account' and 'parent'.")
@@ -196,7 +204,7 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -236,7 +244,7 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
 
     def _outputs(  # type: ignore[override]  # Parameter subset
         self, *, parents: Tuple[ResourceSymbol, ...], suffix: str, **kwargs
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         return {
             "endpoint": [
                 Output(

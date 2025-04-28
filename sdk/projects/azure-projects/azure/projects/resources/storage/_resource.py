@@ -74,8 +74,6 @@ class StorageAccountKwargs(TypedDict, total=False):
     """If true, enables Secure File Transfer Protocol for the storage account. Requires enableHierarchicalNamespace
     to be true.
     """
-    # enable_telemetry: Union[bool, Parameter]
-    # """Enable/Disable usage telemetry for module."""
     encryption: Union["StorageEncryption", Parameter]
     """Encryption settings to be used for server-side encryption for the storage account."""
     is_local_user_enabled: Union[bool, Parameter]
@@ -230,6 +228,84 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
 
 
 class StorageAccount(Resource, Generic[StorageAccountResourceType]):
+    """Azure Storage Account resource class.
+
+    :param properties: Storage account properties dictionary
+    :type properties: StorageAccountResource | None
+    :param name: Name of the storage account
+    :type name: str | Parameter | None
+
+    :keyword access_tier: Storage tier for billing. Required for BlobStorage accounts. Premium is default for premium block blobs
+    :paramtype access_tier: Literal["Cool", "Hot", "Premium"] | Parameter
+    :keyword enable_hierarchical_namespace: Enable hierarchical namespace. Required for SFTP or NFS v3
+    :paramtype enable_hierarchical_namespace: bool | Parameter
+    :keyword allow_blob_public_access: Enable/disable public access for blobs/containers
+    :paramtype allow_blob_public_access: bool | Parameter
+    :keyword allow_cross_tenant_replication: Allow/disallow cross AAD tenant object replication
+    :paramtype allow_cross_tenant_replication: bool | Parameter
+    :keyword allowed_copy_scope: Restrict copy scope to AAD tenant or Private Links
+    :paramtype allowed_copy_scope: Literal["AAD", "PrivateLink"] | Parameter
+    :keyword allow_shared_key_access: Allow requests to be authorized with account access key
+    :paramtype allow_shared_key_access: bool | Parameter
+    :keyword azure_files_identity_auth: Identity based authentication settings for Azure Files
+    :paramtype azure_files_identity_auth: AzureFilesIdentityBasedAuthentication | Parameter
+    :keyword custom_domain_name: Custom domain name for storage account
+    :paramtype custom_domain_name: str | Parameter
+    :keyword custom_domain_use_subdomain_name: Enable/disable indirect CName validation
+    :paramtype custom_domain_use_subdomain_name: bool | Parameter
+    :keyword default_to_oauth_authentication: Set OAuth as default authentication
+    :paramtype default_to_oauth_authentication: bool | Parameter
+    :keyword dns_endpoint_type: Type of DNS endpoint
+    :paramtype dns_endpoint_type: Literal["AzureDnsZone", "Standard"] | Parameter
+    :keyword enable_nfs_v3: Enable NFS 3.0 support
+    :paramtype enable_nfs_v3: bool | Parameter
+    :keyword enable_sftp: Enable SFTP support
+    :paramtype enable_sftp: bool | Parameter
+    :keyword encryption: Server-side encryption settings
+    :paramtype encryption: StorageEncryption | Parameter
+    :keyword is_local_user_enabled: Enable local users feature
+    :paramtype is_local_user_enabled: bool | Parameter
+    :keyword kind: Type of Storage Account
+    :paramtype kind: Literal["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"] | Parameter
+    :keyword large_file_shares_state: Enable/disable large file shares
+    :paramtype large_file_shares_state: Literal["Disabled", "Enabled"] | Parameter
+    :keyword location: Azure region location
+    :paramtype location: str | Parameter
+    :keyword managed_identities: Managed identity configuration
+    :paramtype managed_identities: ManagedIdentity | None
+    :keyword minimum_tls_version: Minimum TLS version
+    :paramtype minimum_tls_version: Literal["TLS1_2", "TLS1_3"] | Parameter
+    :keyword network_acls: Network access rules configuration
+    :paramtype network_acls: StorageNetworkRuleSet | Parameter
+    :keyword public_network_access: Public network access configuration
+    :paramtype public_network_access: Literal["Disabled", "Enabled", "SecuredByPerimeter"] | Parameter
+    :keyword require_infrastructure_encryption: Enable infrastructure encryption
+    :paramtype require_infrastructure_encryption: bool | Parameter
+    :keyword roles: Role assignments for managed identity
+    :paramtype roles: List[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
+    :keyword user_roles: Role assignments for user principal
+    :paramtype user_roles: List[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
+    :keyword sas_expiration_period: SAS token expiration period (DD.HH:MM:SS)
+    :paramtype sas_expiration_period: str | Parameter
+    :keyword sku: Storage Account SKU
+    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :keyword supports_https_traffic_only: Allow only HTTPS traffic
+    :paramtype supports_https_traffic_only: bool | Parameter
+    :keyword tags: Resource tags
+    :paramtype tags: Dict[str, str | Parameter] | Parameter
+
+    :ivar DEFAULTS: Default storage account configuration
+    :vartype DEFAULTS: StorageAccountResource
+    :ivar properties: Storage account resource properties
+    :vartype properties: StorageAccountResourceType
+    :ivar parent: Parent resource reference (None for storage accounts)
+    :vartype parent: None
+    :ivar resource: Azure resource type string
+    :vartype resource: Literal["Microsoft.Storage/storageAccounts"]
+    :ivar version: API version string
+    :vartype version: str
+    """
+
     DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT  # type: ignore[assignment]
     properties: StorageAccountResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]

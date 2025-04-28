@@ -9,16 +9,15 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
     Generic,
-    List,
+    TypedDict,
     Literal,
     Mapping,
     Union,
     Optional,
     cast,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -28,32 +27,10 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import KeyVaultResource, KeyVaultNetworkRuleSet
+    from ._types import KeyVaultResource, KeyVaultNetworkRuleSet
 
 
 class KeyVaultKwargs(TypedDict, total=False):
-    access_policies: Union[List[Union["AccessPolicy", Parameter]], Parameter]  # type: ignore[name-defined]  # TODO
-    """All access policies to create."""
-    create_mode: Union[Literal["default", "recover"], Parameter]
-    """The vault's create mode to indicate whether the vault need to be recovered or not. - recover or default."""
-    # diagnostic_settings: List['DiagnosticSetting']
-    # """The diagnostic settings of the service."""
-    enable_purge_protection: Union[bool, Parameter]
-    """Provide 'true' to enable Key Vault's purge protection feature."""
-    enable_rbac_authorization: Union[bool, Parameter]
-    """Property that controls how data actions are authorized. When true, the key vault will use Role Based Access
-    Control (RBAC) for authorization of data actions, and the access policies specified in vault properties will be
-    ignored. When false, the key vault will use the access policies specified in vault properties, and any policy
-    stored on Azure Resource Manager will be ignored. Note that management actions are always authorized with RBAC.
-    """
-    enable_soft_delete: Union[bool, Parameter]
-    """Switch to enable/disable Key Vault's soft delete feature."""
-    enable_vault_for_deployment: Union[bool, Parameter]
-    """Specifies if the vault is enabled for deployment by script or compute."""
-    enable_vault_for_disk_encryption: Union[bool, Parameter]
-    """Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."""
-    enable_vault_for_template_deployment: Union[bool, Parameter]
-    """Specifies if the vault is enabled for a template deployment."""
     location: Union[str, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
@@ -70,7 +47,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -92,7 +69,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Array of role assignments to create."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -114,9 +91,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Array of Role assignments to create for user principal ID"""
     sku: Union[Literal["premium", "standard"], Parameter]
     """Specifies the SKU for the vault."""
-    soft_delete_retention: Union[bool, Parameter]
-    """softDelete data retention days. It accepts >=7 and <=90."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Resource tags."""
 
 
@@ -141,6 +116,39 @@ _DEFAULT_KEY_VAULT_EXTENSIONS: ExtensionResources = {
 
 
 class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
+    """Azure Key Vault resource representation.
+
+    A class representing an Azure Key Vault instance that provides secure storage of secrets, keys, and certificates.
+
+    :ivar DEFAULTS: Default configuration settings for the Key Vault resource
+    :vartype DEFAULTS: KeyVaultResource
+    :ivar DEFAULT_EXTENSIONS: Default role assignments and extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Properties of the Key Vault resource
+    :vartype properties: KeyVaultResourceType
+    :ivar parent: Parent resource (None for KeyVault as it's a top-level resource)
+    :vartype parent: None
+
+    :param properties: Optional dictionary containing the KeyVault resource properties
+    :type properties: Optional[KeyVaultResource]
+    :param name: Optional name for the KeyVault resource
+    :type name: Optional[str]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword network_acls: A collection of rules governing the accessibility from specific network locations
+    :paramtype network_acls: Union[KeyVaultNetworkRuleSet, Parameter]
+    :keyword public_network_access: Whether or not public network access is allowed for this resource
+    :paramtype public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter]
+    :keyword roles: Array of role assignments to create
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Contributor", "Key Vault Administrator", "Key Vault Contributor", "Key Vault Reader", "Key Vault Secrets Officer", "Key Vault Secrets User", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword user_roles: Array of Role assignments to create for user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Contributor", "Key Vault Administrator", "Key Vault Contributor", "Key Vault Reader", "Key Vault Secrets Officer", "Key Vault Secrets User", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :keyword sku: Specifies the SKU for the vault
+    :paramtype sku: Union[Literal["premium", "standard"], Parameter]
+    :keyword tags: Resource tags
+    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    """
+
     DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_KEY_VAULT_EXTENSIONS
     properties: KeyVaultResourceType
@@ -166,7 +174,6 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
-            # TODO: Finish full typing
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
             if "network_acls" in kwargs:
@@ -192,7 +199,7 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -212,7 +219,7 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"].append(Output(f"AZURE_KEYVAULT_ENDPOINT{suffix}", "properties.vaultUri", symbol))
         return outputs
