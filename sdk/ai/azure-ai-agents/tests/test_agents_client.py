@@ -2149,7 +2149,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # Adjust the file path to be relative to the test file location
         file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "product_info_1.md")
-        openai_file = client.upload_file_and_poll(file_path=file_path, purpose="assistants")
+        openai_file = client.files.upload_and_poll(file_path=file_path, purpose="assistants")
         print(f"Uploaded file, file ID: {openai_file.id}")
 
         openai_vectorstore = client.vector_stores.create_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
@@ -2573,7 +2573,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2633,7 +2633,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2988,7 +2988,7 @@ class TestAgentClient(AzureRecordedTestCase):
     def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
-            file = ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             return file.id
         return None
@@ -3015,7 +3015,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
 
-                file: OpenAIFile = client.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
+                file: OpenAIFile = client.files.upload_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
 
                 # create agent
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])

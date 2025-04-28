@@ -2474,7 +2474,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = await ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2537,7 +2537,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = await ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
@@ -2962,7 +2962,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     async def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
-            file = await ai_client.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = await ai_client.files.upload_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
             assert file.id, "The file was not uploaded."
             return file.id
         return None
