@@ -18,24 +18,25 @@ USAGE:
     python file_samples_service_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import asyncio
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class FileShareServiceSamplesAsync(object):
 
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     async def file_service_properties_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: file_service_properties_async")
             sys.exit(1)
 
@@ -79,7 +80,7 @@ class FileShareServiceSamplesAsync(object):
 
     async def list_shares_in_service_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: list_shares_in_service_async")
             sys.exit(1)
 
@@ -89,7 +90,7 @@ class FileShareServiceSamplesAsync(object):
 
         async with file_service:
             # [START fsc_create_shares]
-            await file_service.create_share(share_name="fileshare1")
+            await file_service.create_share(share_name="fileshare1async")
             # [END fsc_create_shares]
             try:
                 # [START fsc_list_shares]
@@ -105,12 +106,12 @@ class FileShareServiceSamplesAsync(object):
 
             finally:
                 # [START fsc_delete_shares]
-                await file_service.delete_share(share_name="fileshare1")
+                await file_service.delete_share(share_name="fileshare1async")
                 # [END fsc_delete_shares]
 
     async def get_share_client_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_share_client_async")
             sys.exit(1)
 
