@@ -201,4 +201,4 @@ class LiteMLClient:
         return url
 
     def _get_headers(self) -> Dict[str, str]:
-        return {"Authorization": f"Bearer {self.get_token()}", "Content-Type": "application/json"}
+        return {"Authorization": f"Bearer {self.get_token().token}", "Content-Type": "application/json"}

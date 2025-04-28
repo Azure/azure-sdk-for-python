@@ -141,17 +141,11 @@ def _log_metrics_and_instance_results_onedp(
     from azure.ai.evaluation._common import EvaluationServiceOneDPClient, EvaluationUpload
 
     credentials = AzureMLTokenManager(
-        TokenScope.CONGNITIVE_SERVICES.value, LOGGER, credential=kwargs.get("credential")
+        TokenScope.COGNITIVE_SERVICES.value, LOGGER, credential=kwargs.get("credential")
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
-        credentials=credentials
-    )
-
-    upload_run_response = client.start_evaluation_run(
-        evaluation=EvaluationUpload(
-            display_name=evaluation_name,
-        )
+        credential=credentials
     )
 
     # Massaging before artifacts are put on disk
@@ -187,6 +181,12 @@ def _log_metrics_and_instance_results_onedp(
             name=uuid.uuid4(),
             path=tmp_path,
             metrics=metrics
+        )
+
+        upload_run_response = client.start_evaluation_run(
+            evaluation=EvaluationUpload(
+                display_name=evaluation_name,
+            )
         )
 
         update_run_response = client.update_evaluation_run(
