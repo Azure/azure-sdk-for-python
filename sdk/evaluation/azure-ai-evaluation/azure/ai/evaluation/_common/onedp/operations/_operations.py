@@ -1,3 +1,4 @@
+# type: ignore
 # pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------

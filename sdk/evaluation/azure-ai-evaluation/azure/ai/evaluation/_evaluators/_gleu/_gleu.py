@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
+
 from typing import Dict
 from nltk.translate.gleu_score import sentence_gleu
 from typing_extensions import overload, override

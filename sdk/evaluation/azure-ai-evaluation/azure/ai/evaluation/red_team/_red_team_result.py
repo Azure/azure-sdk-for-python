@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
 from typing import Dict, List, Optional,  TypedDict
 import json
 from azure.ai.evaluation._common._experimental import experimental

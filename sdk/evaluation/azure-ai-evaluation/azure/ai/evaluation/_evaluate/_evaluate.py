@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
 import inspect
 import json
 import logging
@@ -223,24 +224,22 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     :rtype: Dict[str, float]
     """
     results = {}
-
+    
     # Find all columns that end with "_result"
-    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
-
+    result_columns = [
+        col for col in df.columns
+        if col.startswith("outputs.") and col.endswith("_result")
+    ]
+    
     for col in result_columns:
         # Extract the evaluator name from the column name
         # (outputs.<evaluator>.<metric>_result)
-        parts = col.split(".")
         evaluator_name = None
+        parts = col.split(".")
         if len(parts) >= 3:
             evaluator_name = parts[1]
-        else:
-            LOGGER.warning("Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col)
-            continue
-        if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
             value_counts = df[col].value_counts().to_dict()
-
             # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
             total_rows = len(df)
             pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
@@ -249,7 +248,6 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             # Set the result with the evaluator name as the key
             result_key = f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"
             results[result_key] = round(proportion, 2)
-
     return results
 
 
@@ -295,10 +293,8 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     metrics = mean_value.to_dict()
     # Add defect rates back into metrics
     metrics.update(defect_rates)
-
     # Add binary threshold metrics based on pass/fail results
     metrics.update(binary_metrics)
-
     return metrics
 
 

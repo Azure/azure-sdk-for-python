@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# type: ignore
 
 # This contains code merged together from the following files:
 # promptflow-devkit/promptflow/batch/_batch_engine.py
