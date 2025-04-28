@@ -5,6 +5,7 @@ import os
 import pathlib
 import pandas as pd
 import pytest
+from devtools_testutils import is_live
 
 from openai.types.eval_string_check_grader import EvalStringCheckGrader
 from azure.ai.evaluation import (
@@ -26,6 +27,7 @@ def data_file():
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestAoaiEvaluation:
+    @pytest.mark.skipif(is_live(), reason="AOAI recordings have bad recording scrubbing")
     def test_evaluate_all_aoai_graders(self, model_config, data_file):
         # create a normal evaluator for comparison
         f1_eval = F1ScoreEvaluator()
@@ -129,6 +131,7 @@ class TestAoaiEvaluation:
         assert metrics['general_grader.pass_rate'] == 0.0
    
    
+    @pytest.mark.skipif(is_live(), reason="AOAI recordings have bad recording scrubbing")
     def test_evaluate_with_column_mapping_and_target(self, model_config, data_file):
         sim_grader = AzureOpenAITextSimilarityGrader(
             model_config=model_config,

@@ -953,6 +953,17 @@ def _preprocess_data(
     if evaluator_config is None:
         evaluator_config = {}
 
+    input_data_df = _validate_and_load_data(
+        target,
+        data,
+        evaluators_and_graders,
+        output_path,
+        azure_ai_project,
+        evaluation_name
+    )
+    if target is not None:
+        _validate_columns_for_target(input_data_df, target)
+        
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
     column_mapping = _process_column_mappings(
         {
