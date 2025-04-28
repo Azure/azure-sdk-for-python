@@ -844,7 +844,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     input_data_df = validated_data["input_data_df"]
     results_df = pd.DataFrame()
     metrics: Dict[str, float] = {}
-    oai_client: Optional[Union[OpenAI, AzureOpenAI]] = None
     eval_run_info_list: List[OAIEvalRunCreationInfo] = []
 
     # Start OAI eval runs if any graders are present.
@@ -853,14 +852,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     need_get_oai_results = False
     got_local_results = False
     if need_oai_run:
-        for grader in graders.values():
-            if isinstance(grader, AzureOpenAIGrader):
-                oai_client = grader.get_client()
-                break
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
             eval_run_info_list = _begin_aoai_evaluation(
-                oai_client, # type: ignore
                 graders,
                 column_mapping,
                 input_data_df,
@@ -900,7 +894,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Retrieve OAI eval run results if needed.
     if need_get_oai_results:
         try:
-            aoai_results, aoai_metrics = _get_evaluation_run_results(oai_client, eval_run_info_list) # type: ignore
+            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list) # type: ignore
             # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
 
             # Combine results if both evaluators and graders are present
