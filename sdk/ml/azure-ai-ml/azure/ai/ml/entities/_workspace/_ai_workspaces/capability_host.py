@@ -38,6 +38,8 @@ class CapabilityHost(Resource):
     :type storage_connections: Optional[List[str]]
     :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
+    :param thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
+    :type thread_storage_connections: Optional[List[str]]
     :type capability_host_kind: Union[str, CapabilityHostKind]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any

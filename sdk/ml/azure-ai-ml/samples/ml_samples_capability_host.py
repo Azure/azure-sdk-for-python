@@ -94,6 +94,7 @@ class CapabilityHostConfigurationOptions(object):
             ai_services_connections=["connection1"],
             storage_connections=["projectname/workspaceblobstore"],
             vector_store_connections=["connection1"],
+            thread_storage_connections=["connection1"],
         )
         result = ml_client.capability_hosts.begin_create_or_update(capability_host).result()
         # [END capability_host_begin_create_or_update_operation]
