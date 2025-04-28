@@ -32,12 +32,17 @@ USAGE:
 
 import os, sys, time
 from typing import cast
+from azure.core.settings import settings
+
+settings.tracing_implementation = "opentelemetry"
+# Install opentelemetry with command "pip install opentelemetry-sdk".
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider, SpanProcessor, ReadableSpan, Span
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ListSortOrder
-from azure.ai.agents.telemetry import enable_telemetry
 from azure.identity import DefaultAzureCredential
-from opentelemetry import trace
-from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan, Span, TracerProvider
+from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
 
 # Define the custom span processor that is used for adding the custom
@@ -59,15 +64,20 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 
 
+# Setup tracing to console
+# Requires opentelemetry-sdk
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+
+AIAgentsInstrumentor().instrument()
+
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
-
-# Enable console tracing
-# or, if you have local OTLP endpoint running, change it to
-# enable_telemetry(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
 
 # Add the custom span processor to the global tracer provider
 provider = cast(TracerProvider, trace.get_tracer_provider())

@@ -35,28 +35,28 @@ from azure.ai.agents.models import (
 )
 from azure.ai.agents.models._patch import AgentEventHandler, AsyncAgentEventHandler, ToolSet
 from azure.ai.agents.telemetry._utils import (
-    AZ_AI_AGENT_SYSTEM, # type: ignore[reportPrivateImportUsage]
-    ERROR_TYPE, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_AGENT_DESCRIPTION, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_AGENT_ID, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_AGENT_NAME, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_EVENT_CONTENT, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_MESSAGE_ID, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_MESSAGE_STATUS, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_RESPONSE_MODEL, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_SYSTEM, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_SYSTEM_MESSAGE, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_THREAD_ID, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_THREAD_RUN_ID, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_THREAD_RUN_STATUS, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_USAGE_INPUT_TOKENS, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_USAGE_OUTPUT_TOKENS, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_RUN_STEP_START_TIMESTAMP, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_RUN_STEP_END_TIMESTAMP, # type: ignore[reportPrivateImportUsage]
-    GEN_AI_RUN_STEP_STATUS, # type: ignore[reportPrivateImportUsage]
-    ERROR_MESSAGE, # type: ignore[reportPrivateImportUsage]
-    OperationName, # type: ignore[reportPrivateImportUsage]
-    start_span, # type: ignore[reportPrivateImportUsage]
+    AZ_AI_AGENT_SYSTEM,
+    ERROR_TYPE,
+    GEN_AI_AGENT_DESCRIPTION,
+    GEN_AI_AGENT_ID,
+    GEN_AI_AGENT_NAME,
+    GEN_AI_EVENT_CONTENT,
+    GEN_AI_MESSAGE_ID,
+    GEN_AI_MESSAGE_STATUS,
+    GEN_AI_RESPONSE_MODEL,
+    GEN_AI_SYSTEM,
+    GEN_AI_SYSTEM_MESSAGE,
+    GEN_AI_THREAD_ID,
+    GEN_AI_THREAD_RUN_ID,
+    GEN_AI_THREAD_RUN_STATUS,
+    GEN_AI_USAGE_INPUT_TOKENS,
+    GEN_AI_USAGE_OUTPUT_TOKENS,
+    GEN_AI_RUN_STEP_START_TIMESTAMP,
+    GEN_AI_RUN_STEP_END_TIMESTAMP,
+    GEN_AI_RUN_STEP_STATUS,
+    ERROR_MESSAGE,
+    OperationName,
+    start_span,
 )
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
@@ -614,7 +614,7 @@ class _AIAgentsInstrumentorPreview:
     def start_thread_run_span(
         self,
         operation_name: OperationName,
-        project_name: str,
+        server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
         agent_id: Optional[str] = None,
         model: Optional[str] = None,
@@ -630,7 +630,7 @@ class _AIAgentsInstrumentorPreview:
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             operation_name,
-            project_name,
+            server_address,
             thread_id=thread_id,
             agent_id=agent_id,
             model=model,
@@ -652,7 +652,7 @@ class _AIAgentsInstrumentorPreview:
 
     def start_submit_tool_outputs_span(
         self,
-        project_name: str,
+        server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
         run_id: Optional[str] = None,
         tool_outputs: Optional[List[ToolOutput]] = None,
@@ -667,7 +667,7 @@ class _AIAgentsInstrumentorPreview:
         else:
             recorded = False
 
-        span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, project_name, thread_id=thread_id, run_id=run_id)
+        span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, server_address, thread_id=thread_id, run_id=run_id)
         if not recorded:
             self._add_tool_message_events(span, tool_outputs)
         return span
@@ -690,7 +690,7 @@ class _AIAgentsInstrumentorPreview:
 
     def start_create_agent_span(
         self,
-        project_name: str,
+        server_address: Optional[str] = None,
         model: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -704,7 +704,7 @@ class _AIAgentsInstrumentorPreview:
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
-            project_name,
+            server_address=server_address,
             span_name=f"{OperationName.CREATE_AGENT.value} {name}",
             model=model,
             temperature=temperature,
@@ -722,29 +722,50 @@ class _AIAgentsInstrumentorPreview:
 
     def start_create_thread_span(
         self,
-        project_name: str,
+        server_address: Optional[str] = None,
         messages: Optional[List[ThreadMessage]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
-        span = start_span(OperationName.CREATE_THREAD, project_name)
+        span = start_span(OperationName.CREATE_THREAD, server_address=server_address)
         if span and span.span_instance.is_recording:
             for message in messages or []:
                 self.add_thread_message_event(span, message)
 
         return span
 
-    def start_list_messages_span(self, project_name: str, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
-        return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
+    def start_list_messages_span(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None
+    ) -> "Optional[AbstractSpan]":
+        return start_span(OperationName.LIST_MESSAGES, server_address=server_address, thread_id=thread_id)
 
     def start_list_run_steps_span(
-        self, project_name: str, run_id: Optional[str] = None, thread_id: Optional[str] = None
+        self, server_address: Optional[str] = None, run_id: Optional[str] = None, thread_id: Optional[str] = None
     ) -> "Optional[AbstractSpan]":
-        return start_span(OperationName.LIST_RUN_STEPS, project_name, run_id=run_id, thread_id=thread_id)
+        return start_span(
+            OperationName.LIST_RUN_STEPS, server_address=server_address, run_id=run_id, thread_id=thread_id
+        )
+
+    def get_server_address_from_arg(self, arg: Any) -> Optional[str]:
+        """
+        Extracts the base endpoint from the provided arguments _config.endpoint attribute, if that exists.
+
+        :param arg: The argument from which the server address is to be extracted.
+        :type arg: Any
+        :return: The base endpoint. None if endpoint is not found.
+        :rtype: str
+        """
+        if hasattr(arg, "_config") and hasattr(
+            arg._config, "endpoint"  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+        ):
+            endpoint = (
+                arg._config.endpoint  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            )
+            parsed_url = urlparse(endpoint)
+            return f"{parsed_url.scheme}://{parsed_url.netloc}"
+        return None
 
     def trace_create_agent(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         name = kwargs.get("name")
         model = kwargs.get("model")
         description = kwargs.get("description")
@@ -757,7 +778,7 @@ class _AIAgentsInstrumentorPreview:
         response_format = kwargs.get("response_format")
 
         span = self.start_create_agent_span(
-            project_name=project_name,
+            server_address=server_address,
             name=name,
             model=model,
             description=description,
@@ -793,9 +814,7 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_agent_async(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         name = kwargs.get("name")
         model = kwargs.get("model")
         description = kwargs.get("description")
@@ -808,7 +827,7 @@ class _AIAgentsInstrumentorPreview:
         response_format = kwargs.get("response_format")
 
         span = self.start_create_agent_span(
-            project_name=project_name,
+            server_address=server_address,
             name=name,
             model=model,
             description=description,
@@ -844,12 +863,10 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_thread(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         messages = kwargs.get("messages")
 
-        span = self.start_create_thread_span(project_name=project_name, messages=messages)
+        span = self.start_create_thread_span(server_address=server_address, messages=messages)
 
         if span is None:
             return function(*args, **kwargs)
@@ -874,12 +891,10 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_thread_async(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         messages = kwargs.get("messages")
 
-        span = self.start_create_thread_span(project_name=project_name, messages=messages)
+        span = self.start_create_thread_span(server_address=server_address, messages=messages)
 
         if span is None:
             return await function(*args, **kwargs)
@@ -904,16 +919,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_message(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
         attachments = kwargs.get("attachments")
 
         span = self.start_create_message_span(
-            project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
+            server_address=server_address, thread_id=thread_id, content=content, role=role, attachments=attachments
         )
 
         if span is None:
@@ -939,16 +952,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_message_async(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
         attachments = kwargs.get("attachments")
 
         span = self.start_create_message_span(
-            project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
+            server_address=server_address, thread_id=thread_id, content=content, role=role, attachments=attachments
         )
 
         if span is None:
@@ -974,9 +985,7 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_run(self, operation_name, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
@@ -992,7 +1001,7 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_thread_run_span(
             operation_name,
-            project_name,
+            server_address,
             thread_id,
             agent_id,
             model=model,
@@ -1030,9 +1039,7 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_run_async(self, operation_name, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
@@ -1048,7 +1055,7 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_thread_run_span(
             operation_name,
-            project_name,
+            server_address,
             thread_id,
             agent_id,
             model=model,
@@ -1092,16 +1099,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_submit_tool_outputs(self, stream, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
         tool_outputs = kwargs.get("tool_outputs")
         event_handler = kwargs.get("event_handler")
 
         span = self.start_submit_tool_outputs_span(
-            project_name=project_name,
+            server_address=server_address,
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,
@@ -1135,16 +1140,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_submit_tool_outputs_async(self, stream, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
         tool_outputs = kwargs.get("tool_outputs")
         event_handler = kwargs.get("event_handler")
 
         span = self.start_submit_tool_outputs_span(
-            project_name=project_name,
+            server_address=server_address,
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,
@@ -1233,9 +1236,7 @@ class _AIAgentsInstrumentorPreview:
 
     def trace_create_stream(self, function, *args, **kwargs):
         operation_name = OperationName.PROCESS_THREAD_RUN
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
@@ -1252,9 +1253,9 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_thread_run_span(
             operation_name,
-            project_name,
-            thread_id,
-            agent_id,
+            server_address=server_address,
+            thread_id=thread_id,
+            agent_id=agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1291,9 +1292,7 @@ class _AIAgentsInstrumentorPreview:
 
     async def trace_create_stream_async(self, function, *args, **kwargs):
         operation_name = OperationName.PROCESS_THREAD_RUN
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
         agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
@@ -1310,9 +1309,9 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_thread_run_span(
             operation_name,
-            project_name,
-            thread_id,
-            agent_id,
+            server_address=server_address,
+            thread_id=thread_id,
+            agent_id=agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1350,12 +1349,10 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_list_messages(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
+        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
         if span is None:
             return function(*args, **kwargs)
@@ -1381,14 +1378,42 @@ class _AIAgentsInstrumentorPreview:
 
         return result
 
+    async def trace_list_messages_async(self, function, *args, **kwargs):
+        server_address = self.get_server_address_from_arg(args[0])
+        thread_id = kwargs.get("thread_id")
+
+        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+
+        if span is None:
+            return await function(*args, **kwargs)
+
+        with span:
+            try:
+                result = await function(*args, **kwargs)
+                for message in result.data:
+                    self.add_thread_message_event(span, message)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
     def trace_list_run_steps(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
 
         if span is None:
             return function(*args, **kwargs)
@@ -1416,13 +1441,11 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_list_run_steps_async(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
+        server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
 
         if span is None:
             return function(*args, **kwargs)
@@ -1433,38 +1456,6 @@ class _AIAgentsInstrumentorPreview:
                 if hasattr(result, "data") and result.data is not None:
                     for step in result.data:
                         self.add_run_step_event(span, step)
-
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
-
-    async def trace_list_messages_async(self, function, *args, **kwargs):
-        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-            0
-        ]._config.project_name
-        thread_id = kwargs.get("thread_id")
-
-        span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
-
-        if span is None:
-            return await function(*args, **kwargs)
-
-        with span:
-            try:
-                result = await function(*args, **kwargs)
-                for message in result.data:
-                    self.add_thread_message_event(span, message)
 
             except Exception as exc:
                 # Set the span status to error
@@ -1531,14 +1522,14 @@ class _AIAgentsInstrumentorPreview:
 
     def start_create_message_span(
         self,
-        project_name: str,
+        server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
         content: Optional[str] = None,
         role: Optional[Union[str, MessageRole]] = None,
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
         role_str = self._get_role(role)
-        span = start_span(OperationName.CREATE_MESSAGE, project_name, thread_id=thread_id)
+        span = start_span(OperationName.CREATE_MESSAGE, server_address, thread_id=thread_id)
         if span and span.span_instance.is_recording:
             self._add_message_event(span, role_str, content, attachments=attachments, thread_id=thread_id)
         return span
@@ -1578,33 +1569,33 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsClient.create_agent"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_agent(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_thread"):
+            if class_function_name.startswith("ThreadsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_thread(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_message"):
+            if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_run"):
+            if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_and_process_run"):
+            if class_function_name.startswith("RunsOperations.create_and_process"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+            if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+            if class_function_name.startswith("RunsOperations.submit_tool_outputs_stream"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(True, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
+            if class_function_name.startswith("RunsOperations._handle_submit_tool_outputs"):
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_stream"):
+            if class_function_name.startswith("RunsOperations.stream"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_stream(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.list_messages"):
+            if class_function_name.startswith("MessagesOperations.list"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_list_messages(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+            if class_function_name.startswith("RunStepsOperations.list"):
                 return self.trace_list_run_steps(function, *args, **kwargs)
             if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
@@ -1648,33 +1639,33 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsClient.create_agent"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_agent_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_thread"):
+            if class_function_name.startswith("ThreadsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_thread_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_message"):
+            if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_message_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_run"):
+            if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_and_process_run"):
+            if class_function_name.startswith("RunsOperations.create_and_process"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+            if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_submit_tool_outputs_async(False, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+            if class_function_name.startswith("RunsOperations.submit_tool_outputs_stream"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_submit_tool_outputs_async(True, function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
+            if class_function_name.startswith("RunsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.create_stream"):
+            if class_function_name.startswith("RunsOperations.stream"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_stream_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.list_messages"):
+            if class_function_name.startswith("MessagesOperations.list"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_messages_async(function, *args, **kwargs)
-            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+            if class_function_name.startswith("RunStepsOperations.list"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_run_steps_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
@@ -1697,39 +1688,40 @@ class _AIAgentsInstrumentorPreview:
     def _agents_apis(self):
         sync_apis = (
             ("azure.ai.agents", "AgentsClient", "create_agent", TraceType.AGENTS, "agent_create"),
-            ("azure.ai.agents", "AgentsOperations", "create_thread", TraceType.AGENTS, "thread_create"),
-            ("azure.ai.agents", "AgentsOperations", "create_message", TraceType.AGENTS, "message_create"),
-            ("azure.ai.agents", "AgentsOperations", "create_run", TraceType.AGENTS, "create_run"),
+            ("azure.ai.agents.operations", "ThreadsOperations", "create", TraceType.AGENTS, "thread_create"),
+            ("azure.ai.agents.operations", "MessagesOperations", "create", TraceType.AGENTS, "message_create"),
+            ("azure.ai.agents.operations", "RunsOperations", "create", TraceType.AGENTS, "create_run"),
             (
-                "azure.ai.agents",
-                "AgentsOperations",
-                "create_and_process_run",
+                "azure.ai.agents.operations",
+                "RunsOperations",
+                "create_and_process",
                 TraceType.AGENTS,
-                "create_and_process_run",
+                "create_and_process",
             ),
             (
-                "azure.ai.agents",
-                "AgentsOperations",
-                "submit_tool_outputs_to_run",
+                "azure.ai.agents.operations",
+                "RunsOperations",
+                "submit_tool_outputs",
                 TraceType.AGENTS,
-                "submit_tool_outputs_to_run",
+                "submit_tool_outputs",
             ),
             (
-                "azure.ai.agents",
-                "AgentsOperations",
-                "submit_tool_outputs_to_stream",
+                "azure.ai.agents.operations",
+                "RunsOperations",
+                "submit_tool_outputs_stream",
                 TraceType.AGENTS,
-                "submit_tool_outputs_to_stream",
+                "submit_tool_outputs_stream",
             ),
             (
-                "azure.ai.agents",
-                "AgentsOperations",
+                "azure.ai.agents.operations",
+                "RunsOperations",
                 "_handle_submit_tool_outputs",
                 TraceType.AGENTS,
                 "_handle_submit_tool_outputs",
             ),
-            ("azure.ai.agents", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
-            ("azure.ai.agents", "AgentsOperations", "list_messages", TraceType.AGENTS, "list_messages"),
+            ("azure.ai.agents.operations", "RunsOperations", "stream", TraceType.AGENTS, "stream"),
+            ("azure.ai.agents.operations", "MessagesOperations", "list", TraceType.AGENTS, "list_messages"),
+            ("azure.ai.agents.operations", "RunStepsOperations", "list", TraceType.AGENTS, "list_run_steps"),
             ("azure.ai.agents.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
         async_apis = (
@@ -1741,66 +1733,66 @@ class _AIAgentsInstrumentorPreview:
                 "agent_create",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "create_thread",
+                "azure.ai.agents.aio.operations",
+                "ThreadsOperations",
+                "create",
                 TraceType.AGENTS,
                 "agents_thread_create",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "create_message",
+                "azure.ai.agents.aio.operations",
+                "MessagesOperations",
+                "create",
                 TraceType.AGENTS,
-                "agents_thread_message",
+                "agents_thread_message_create",
             ),
-            ("azure.ai.agents.aio", "AgentsClient", "create_run", TraceType.AGENTS, "create_run"),
+            ("azure.ai.agents.aio.operations", "RunsOperations", "create", TraceType.AGENTS, "create_run"),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
+                "create_and_process",
+                TraceType.AGENTS,
                 "create_and_process_run",
-                TraceType.AGENTS,
-                "create_and_process_run",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "submit_tool_outputs_to_run",
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
+                "submit_tool_outputs",
                 TraceType.AGENTS,
-                "submit_tool_outputs_to_run",
+                "submit_tool_outputs",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "submit_tool_outputs_to_stream",
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
+                "submit_tool_outputs_stream",
                 TraceType.AGENTS,
-                "submit_tool_outputs_to_stream",
+                "submit_tool_outputs_stream",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
                 "_handle_submit_tool_outputs",
                 TraceType.AGENTS,
                 "_handle_submit_tool_outputs",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "create_stream",
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
+                "stream",
                 TraceType.AGENTS,
-                "create_stream",
+                "stream",
             ),
             (
-                "azure.ai.agents.aio",
-                "AgentsOperations",
-                "list_messages",
+                "azure.ai.agents.aio.operations",
+                "MessagesOperations",
+                "list",
                 TraceType.AGENTS,
                 "list_messages",
             ),
             (
                 "azure.ai.agents.aio.operations",
-                "AgentsOperations",
-                "list_run_steps",
+                "RunStepsOperations",
+                "list",
                 TraceType.AGENTS,
                 "list_run_steps",
             ),
