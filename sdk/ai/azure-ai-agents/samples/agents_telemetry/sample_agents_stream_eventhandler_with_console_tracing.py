@@ -30,6 +30,12 @@ USAGE:
 """
 
 import os, sys
+from azure.core.settings import settings
+
+settings.tracing_implementation = "opentelemetry"
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
@@ -41,7 +47,20 @@ from azure.ai.agents.models import (
 )
 from azure.ai.agents.telemetry import enable_telemetry
 from typing import Any
-from opentelemetry import trace
+from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
+# Setup tracing to console
+# Requires opentelemetry-sdk
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+
+AIAgentsInstrumentor().instrument()
+
+scenario = os.path.basename(__file__)
+tracer = trace.get_tracer(__name__)
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -77,11 +96,6 @@ class MyEventHandler(AgentEventHandler):
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
-
-# Enable console tracing
-# or, if you have local OTLP endpoint running, change it to
-# enable_telemetry(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

@@ -29,25 +29,34 @@ USAGE:
        messages, which may contain personal data. False by default.
 """
 
-import os, sys, time
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.telemetry import enable_telemetry
-from azure.identity import DefaultAzureCredential
+import os, time
+from azure.core.settings import settings
+
+settings.tracing_implementation = "opentelemetry"
+# Install opentelemetry with command "pip install opentelemetry-sdk".
 from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from azure.ai.agents import AgentsClient
+from azure.identity import DefaultAzureCredential
+from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
+# Setup tracing to console
+# Requires opentelemetry-sdk
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+
+AIAgentsInstrumentor().instrument()
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-# Enable console tracing
-# or, if you have local OTLP endpoint running, change it to
-# agents_client.telemetry.enable(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
-
 scenario = os.path.basename(__file__)
-tracer = trace.get_tracer(__name__)
-
 with tracer.start_as_current_span(scenario):
     with agents_client:
         agent = agents_client.create_agent(
