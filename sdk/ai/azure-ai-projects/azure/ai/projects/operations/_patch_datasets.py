@@ -15,6 +15,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
     DatasetVersion,
+    FileDatasetVersion,
+    FolderDatasetVersion,
     PendingUploadRequest,
     PendingUploadType,
     PendingUploadResponse,
@@ -142,11 +144,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                     dataset_version = self.create_or_update(
                         name=name,
                         version=output_version,
-                        body=DatasetVersion(
+                        body=FileDatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
                             dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
-                            type=DatasetType.URI_FILE,
+                            open_ai_purpose="what-should-this-be", # TODO: What should this be?
                         ),
                     )
 
@@ -204,11 +206,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             dataset_version = self.create_or_update(
                 name=name,
                 version=output_version,
-                body=DatasetVersion(
+                body=FolderDatasetVersion(
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                     # Per above doc the ".url" contains SAS token... should this be stripped away?
                     dataset_uri=container_client.url,  # "<account>.blob.windows.core.net/<container> ?"
-                    type=DatasetType.URI_FOLDER,
                 ),
             )
 

@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, AsyncIterable, TYPE_CHECKING
+from typing import Optional, AsyncIterable, TYPE_CHECKING, Any
 from urllib.parse import urlparse
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async

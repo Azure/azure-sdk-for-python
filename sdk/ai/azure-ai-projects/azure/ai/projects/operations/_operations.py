@@ -77,7 +77,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/connections/{name}/withCredentials"
+    _url = "/connections/{name}/getconnectionwithcredentials"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }

@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, Iterable, TYPE_CHECKING
+from typing import Optional, Iterable, TYPE_CHECKING, Any
 from urllib.parse import urlparse
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -29,8 +29,8 @@ class InferenceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-    def __init__(self, outer_instance: "AIProjectClient") -> None:
-        self._outer_instance = outer_instance
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`inference` attribute.
     """
 
     def __init__(self, outer_instance: "azure.ai.projects.AIProjectClient") -> None:  # type: ignore[name-defined]

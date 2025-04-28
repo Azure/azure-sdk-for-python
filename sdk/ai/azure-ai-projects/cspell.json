@@ -9,6 +9,7 @@
         "GENAI",
         "UPIA",
         "ansii",
+        "getconnectionwithcredentials",
     ],
     "ignorePaths": [
     ]
