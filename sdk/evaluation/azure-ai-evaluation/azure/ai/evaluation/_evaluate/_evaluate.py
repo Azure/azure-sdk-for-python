@@ -43,7 +43,7 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
-    DataLoaderFactory,
+    DataLoaderFactory, _log_metrics_and_instance_results_onedp,
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -920,15 +920,19 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 raise e
 
     # Done with all evaluations, message outputs into final forms, and log results if needed.
-
-    # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-    studio_url = None
-    if trace_destination:
-        name_map = _map_names_to_builtins(evaluators, graders)
-        studio_url = _log_metrics_and_instance_results(
-            metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
+    name_map = _map_names_to_builtins(evaluators, graders)
+    if isinstance(azure_ai_project, str):
+        studio_url = _log_metrics_and_instance_results_onedp(
+            metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
         )
+    else:
+        # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
+        trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
+        studio_url = None
+        if trace_destination:
+            studio_url = _log_metrics_and_instance_results(
+                metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
+            )
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
@@ -1125,7 +1129,6 @@ def _run_callable_evaluators(
     # will be marked as outputs already so we do not need to rename them.
 
     input_data_df = _rename_columns_conditionally(validated_data["input_data_df"])
-
     eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     eval_metrics.update(evaluators_metric)

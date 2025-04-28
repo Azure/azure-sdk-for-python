@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Union, Any
+from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import AIProjectClient as RestEvaluationServiceClient
 from azure.ai.evaluation._common.onedp.models import (PendingUploadRequest, PendingUploadType, EvaluationResult,
@@ -22,7 +22,7 @@ class EvaluationServiceOneDPClient:
             **kwargs,
         )
 
-    def create_evaluation_result(self, *, name: str, path: str, version=1, **kwargs) -> None:
+    def create_evaluation_result(self, *, name: str, path: str, version=1, metrics: Dict[str, int]=None, **kwargs) -> EvaluationResult:
         """Create and upload evaluation results to Azure evaluation service.
 
         This method uploads evaluation results from a local path to Azure Blob Storage
@@ -38,6 +38,8 @@ class EvaluationServiceOneDPClient:
         :type path: str
         :param version: The version number for the evaluation results, defaults to 1
         :type version: int, optional
+        :param metrics: Metrics to be added to evaluation result
+        :type version: Dict[str, int], optional
         :param kwargs: Additional keyword arguments to pass to the underlying API calls
         :return: The response from creating the evaluation result version
         :rtype: EvaluationResult
@@ -58,12 +60,13 @@ class EvaluationServiceOneDPClient:
             upload(path=path, container_client=container_client, logger=LOGGER)
 
         LOGGER.debug(f"Creating evaluation result version for {name} with version {version}")
-        create_version_response = self.rest_client.evaluation_results.create_version(
+        create_version_response = self.rest_client.evaluation_results.create_or_update_version(
             body=EvaluationResult(
                 blob_uri=start_pending_upload_response.blob_reference_for_consumption.blob_uri,
                 result_type=ResultType.EVALUATION,
                 name=name,
-                version=version
+                version=version,
+                metrics=metrics,
             ),
             name=name,
             version=version,
