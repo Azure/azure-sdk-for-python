@@ -4,11 +4,11 @@
 
 ### Features Added
 - New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
-- Added support for AOAI evaluation via 4 new 'grader' classes, which serve as wrappers around AOAI grader configurations. These new grader objects can be supplied to the main `evaluate` method as if they were normal callable evaluators. The new classes are:
-    - AoaiGrader (general class for experienced users)
-    - AoaiLabelGrader
-    - AoaiStringCheckGrader
-    - AoaiTextSimilarityGrader
+- Added support for Azure Open AI evaluation via 4 new 'grader' classes, which serve as wrappers around Azure Open AI grader configurations. These new grader objects can be supplied to the main `evaluate` method as if they were normal callable evaluators. The new classes are:
+    - AzureOpenAIGrader (general class for experienced users)
+    - AzureOpenAILabelGrader
+    - AzureOpenAIStringCheckGrader
+    - AzureOpenAITextSimilarityGrader
 
 ### Breaking Changes
 

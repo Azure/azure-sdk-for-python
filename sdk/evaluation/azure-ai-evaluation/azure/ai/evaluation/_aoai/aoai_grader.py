@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# TODO import acceptable configs from AOAI SDK?
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION
@@ -17,7 +16,7 @@ class AzureOpenAIGrader():
     Combines a model configuration and any grader configuration
     into a singular object that can be used in evaluations.
 
-    Supplying an AoaiGrader to the `evaluate` method will cause an asynchronous request to evaluate
+    Supplying an AzureOpenAIGrader to the `evaluate` method will cause an asynchronous request to evaluate
     the grader via the OpenAI API. The results of the evaluation will then be merged into the standard
     evaluation results.
 

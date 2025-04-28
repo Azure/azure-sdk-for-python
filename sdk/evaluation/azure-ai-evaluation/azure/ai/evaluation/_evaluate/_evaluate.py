@@ -707,9 +707,9 @@ def evaluate(
         JSONL and CSV files are supported.  `target` and `data` both cannot be None. Required.
     :paramtype data: str
     :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
-        and value as the evaluator function. Also accepts AoaiGrader instances as values, which are processed separately.
+        and value as the evaluator function. Also accepts AzureOpenAIGrader instances as values, which are processed separately.
         Required.
-    :paramtype evaluators: Dict[str, Union[Callable, ~azure.ai.evaluation.AoaiGrader]]
+    :paramtype evaluators: Dict[str, Union[Callable, ~azure.ai.evaluation.AzureOpenAIGrader]]
     :keyword evaluation_name: Display name of the evaluation.
     :paramtype evaluation_name: Optional[str]
     :keyword target: Target to be evaluated. `target` and `data` both cannot be None
@@ -868,10 +868,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             )
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
-            if need_local_run and not fail_on_oai_errors:
+            if need_local_run:
                 # If there are normal evaluators, don't stop execution and try to run
                 # those.
-                LOGGER.warning("Remote AOAI grader evaluations failed during run creation." +
+                LOGGER.warning("Remote Azure Open AI grader evaluations failed during run creation." +
                                " Continuing with local evaluators.")
                 LOGGER.warning(e)
             else:
@@ -914,7 +914,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         except EvaluationException as e:
             if got_local_results:
                 # If there are local eval results, we only print a warning on OAI failure.
-                LOGGER.warning("Remote AOAI grader evaluations failed. Still returning local results.")
+                LOGGER.warning("Remote Azure Open AI grader evaluations failed. Still returning local results.")
                 LOGGER.warning(e)
             else:
                 raise e
@@ -1144,7 +1144,7 @@ def _map_names_to_builtins(
     :param evaluators: The dictionary of evaluators.
     :type evaluators: Dict[str, Callable]
     :param graders: The dictionary of graders.
-    :type graders: Dict[str, AoaiGrader]
+    :type graders: Dict[str, AzureOpenAIGrader]
     :param evaluator_config: The configuration for evaluators.
     :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
     

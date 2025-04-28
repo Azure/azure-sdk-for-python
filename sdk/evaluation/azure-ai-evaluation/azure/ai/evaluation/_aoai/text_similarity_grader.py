@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# TODO import acceptable configs from AOAI SDK?
 from typing import Any, Dict, Union
 from typing_extensions import Literal
 
