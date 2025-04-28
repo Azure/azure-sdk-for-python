@@ -50,7 +50,7 @@ with AIProjectClient(
     )
     print(index)
 
-    print("Get Index `{index_name}` version `{index_version}`:")
+    print(f"Get Index `{index_name}` version `{index_version}`:")
     index = project_client.indexes.get(name=index_name, version=index_version)
     print(index)
 
@@ -62,6 +62,6 @@ with AIProjectClient(
     for index in project_client.indexes.list_versions(name=index_name):
         print(index)
 
-    print("Delete Index`{index_name}` version `{index_version}`:")
+    print(f"Delete Index`{index_name}` version `{index_version}`:")
     project_client.indexes.delete(name=index_name, version=index_version)
     # [END indexes_sample]

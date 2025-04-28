@@ -20,7 +20,9 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) DATASET_NAME - Required. The name of the Dataset to create and use in this sample.
+    2) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
+    3) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.
+    4) DATASET_VERSION_2 - Optional. The second version of the Dataset to create and use in this sample.
 """
 
 import asyncio
@@ -33,7 +35,9 @@ from azure.ai.projects.models import DatasetVersion
 async def sample_datasets_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    dataset_name = os.environ["DATASET_NAME"]
+    dataset_name = os.environ.get("DATASET_NAME", "my-dataset-name")
+    dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
+    dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
 
     async with AIProjectClient(
         endpoint=endpoint,
@@ -41,49 +45,40 @@ async def sample_datasets_async() -> None:
     ) as project_client:
 
         print(
-            """Upload a single file and create a new Dataset to reference the file.
-        Here we explicitly specify the dataset version."""
+            f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
         )
         dataset: DatasetVersion = await project_client.datasets.upload_file(
             name=dataset_name,
-            version="1",
+            version=dataset_version_1,
             file="sample_folder/sample_file1.txt",
         )
         print(dataset)
 
-        """
-        print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
+        print(
+            f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+        )
         dataset = await project_client.datasets.upload_folder(
             name=dataset_name,
-            version="2",
+            version=dataset_version_2,
             folder="sample_folder",
         )
         print(dataset)
 
-        print("Upload a single file to the existing dataset, while letting the service increment the version")
-        dataset: DatasetVersion = await project_client.datasets.upload_file(
-            name=dataset_name,
-            file="sample_folder/file2.txt",
-        )
+        print(f"Get an existing Dataset version `{dataset_version_1}`:")
+        dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
         print(dataset)
 
-        print("Get an existing Dataset version `1`:")
-        dataset = await project_client.datasets.get_version(name=dataset_name, version="1")
-        print(dataset)
+        print("List latest versions of all Datasets:")
+        async for dataset in project_client.datasets.list():
+            print(dataset)
 
         print(f"Listing all versions of the Dataset named `{dataset_name}`:")
         async for dataset in project_client.datasets.list_versions(name=dataset_name):
             print(dataset)
 
-        print("List latest versions of all Datasets:")
-        async for dataset in project_client.datasets.list_latest():
-            print(dataset)
-
         print("Delete all Dataset versions created above:")
-        await project_client.datasets.delete_version(name=dataset_name, version="1")
-        await project_client.datasets.delete_version(name=dataset_name, version="2")
-        await project_client.datasets.delete_version(name=dataset_name, version="3")
-        """
+        await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+        await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 
 async def main():
