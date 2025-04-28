@@ -5,12 +5,11 @@
 """End-to-end test.
 """
 
-import json
-import os.path
 import time
 import unittest
 import urllib.parse as urllib
 import uuid
+import os
 
 import pytest
 import requests
@@ -19,7 +18,6 @@ from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from urllib3.util.retry import Retry
 
-import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -1146,7 +1144,7 @@ class TestCRUDOperations(unittest.TestCase):
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
-    async def test_read_timeout_async(self):
+    def test_read_timeout_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001

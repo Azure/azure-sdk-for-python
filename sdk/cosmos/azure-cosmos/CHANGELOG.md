@@ -10,6 +10,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed how resource tokens are parsed for metadata calls in the lifecycle of a document operation. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 * Fixed bug where change feed requests would not respect the partition key filter. See [PR 40677](https://github.com/Azure/azure-sdk-for-python/pull/40677).
 * Fixed how the environment variables in the sdk are parsed. See [PR 40303](https://github.com/Azure/azure-sdk-for-python/pull/40303).
 * Fixed health check to check the first write region when it is not specified in the preferred regions. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
