@@ -6,9 +6,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+from typing import List, Any, Optional
 from typing_extensions import Self
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.ai.agents.aio import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .._patch import _patch_user_agent
 from .operations import InferenceOperations, TelemetryOperations
@@ -58,10 +59,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
-        self._agents = None
+        self._agents: Optional[AgentsClient]  = None
 
     @property
-    def agents(self) -> "AgentsClient":  # type: ignore[name-defined]
+    def agents(self) -> AgentsClient:
         """Get the asynchronous AgentsClient associated with this AIProjectClient.
         The package azure.ai.agents must be installed to use this property.
 
@@ -69,14 +70,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :rtype: azure.ai.agents.aio.AgentsClient
         """
         if self._agents is None:
-            # TODO: set user_agent
-            # Lazy import of AgentsClient only when this property is accessed
-            try:
-                from azure.ai.agents.aio import AgentsClient
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    "Failed to import AgentsClient. Please run 'pip install azure.ai.agents'"
-                ) from e
             self._agents = AgentsClient(
                 endpoint=self._config.endpoint,
                 credential=self._config.credential,

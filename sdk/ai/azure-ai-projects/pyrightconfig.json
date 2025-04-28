@@ -3,6 +3,10 @@
   "reportMissingImports": false,
   "pythonVersion": "3.11",
   "exclude": [
+    "azure/ai/projects/_client.py",
+    "azure/ai/projects/aio/_client.py",
+    "azure/ai/projects/operations/_operations.py",
+    "azure/ai/projects/aio/operations/_operations.py",
   ],
   "extraPaths": [
     "./../../core/azure-core",
