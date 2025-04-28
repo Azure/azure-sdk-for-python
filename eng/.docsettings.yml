@@ -114,6 +114,8 @@ known_content_issues:
   - ['sdk/openai/azure-openai/README.md', '#4554']
   - ['sdk/ai/azure-ai-generative/README.md', 'Deprecated package.']
   - ['sdk/ai/azure-ai-resources/README.md', 'Deprecated package.']
+  - ['sdk/ai/azure-ai-projects-onedp/tests/README.md', 'readme has at least one missing required section']
+  
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
