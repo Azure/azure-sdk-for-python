@@ -9,19 +9,16 @@ from azure.eventhub._eventprocessor.in_memory_checkpoint_store import (
     InMemoryCheckpointStore,
 )
 from azure.eventhub._constants import ALL_PARTITIONS
-from conftest import recorded_by_amqpproxy
 
 
 @pytest.mark.liveTest
-@recorded_by_amqpproxy
 def test_receive_storage_checkpoint(
     auth_credential_senders,
     uamqp_transport,
     checkpoint_store,
     live_eventhub,
     resource_mgmt_client,
-    *,
-    client_args={}
+    client_args,
 ):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
 

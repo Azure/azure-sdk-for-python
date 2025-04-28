@@ -53,11 +53,21 @@ EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
 # Set up the amqpproxy environment variables
-RECORD_AMQP_PROXY = True #os.environ.get("RECORD_AMQP_PROXY", False)
+AMQPPROXY_PATH = os.path.abspath(os.environ.get("AMQPPROXY_PATH", "."))
+RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY", False)
 AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
 if RECORD_AMQP_PROXY:
     if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
         os.makedirs(AMQPPROXY_RECORDINGS_DIR)
+
+# Create/overwrite the amqp proxy startup log file
+AMQPPROXY_STARTUP_LOG = os.path.join(AMQPPROXY_RECORDINGS_DIR, "amqpproxy_startup.log")
+# Create/overwrite the amqp proxy startup log file
+if os.path.exists(AMQPPROXY_STARTUP_LOG):
+    with open(AMQPPROXY_STARTUP_LOG, "w") as log_file:
+        log_file.write("")  # Overwrite the file with an empty string
+else:
+    open(AMQPPROXY_STARTUP_LOG, "w").close()  # Create the file if it doesn't exist
 
 AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS = "sb://localhost:5671"
 AMQPPROXY_TRANSPORT_TYPE = TransportType.Amqp
@@ -272,42 +282,123 @@ def connection_str(live_eventhub):
         live_eventhub["hostname"], live_eventhub["key_name"], live_eventhub["access_key"], live_eventhub["event_hub"]
     )
 
+@pytest.fixture()
+def skip_amqp_proxy(request):
+    """Helper method to determine if the AMQP proxy should be run for a test."""
+    if not RECORD_AMQP_PROXY:
+        return True 
+    if any(marker.name == "no_amqpproxy" for marker in request.node.own_markers):
+        return True
+    return False
 
-def recorded_by_amqpproxy(test_func: Callable) -> Callable:
-    """Decorator that redirects network requests to target the amqp proxy.
-    Uses the test function name as the logfile name.
+@pytest.fixture()
+def client_args(skip_amqp_proxy):
+    """Fixture that adds the amqpproxy client args to the test context."""
+    if skip_amqp_proxy:
+        return {}
+    # Add proxy args to test context
+    return AMQPPROXY_CLIENT_ARGS
+
+@pytest.fixture(autouse=True)
+def amqpproxy(live_eventhub, skip_amqp_proxy, request):
+    """Fixture that redirects network requests to target the amqp proxy.
+    Tests can opt out using @pytest.mark.no_amqpproxy or set the environment variable
+    RECORD_AMQP_PROXY=False.
     """
-    def wrapper(*args, **kwargs):
-        # If not recording, just run the test function
-        if not RECORD_AMQP_PROXY:
-            return test_func(*args, **kwargs)
+    test_name = request.node.name
 
-        # Try to get hostname from pytest request
-        live_eventhub = kwargs.get('live_eventhub')
-        if not live_eventhub:
-            raise ValueError("live_eventhub fixture not found in pytest context")
+    # Skip if not recording or test opted out
+    if skip_amqp_proxy:
+        yield
+        return
 
-        # Use test function name as logfile
-        logfile = test_func.__name__
+    # Use test name as logfile
+    test_file_path = os.path.relpath(request.node.fspath, start=os.path.dirname(__file__))
+    recording_file_path = f"{test_file_path}/{test_name}".replace("/", ".")
 
-        # Start amqpproxy process with dynamic hostname
+    # Start amqpproxy process 
+    log_file = open(AMQPPROXY_STARTUP_LOG, "a")
+    # Flush log after writing to ensure log line ordering is preserved
+    log_file.write(f"####### Starting amqpproxy for test: {test_name}\n")
+    log_file.flush()
+    try:
+        # Navigate to the amqpproxy directory and run the proxy
+        os.chdir(AMQPPROXY_PATH)
+        # Kill any existing process using the AMQP proxy port
+        try:
+            subprocess.run(
+            ["fuser", "-k", "5671/tcp"], check=True, stdout=log_file, stderr=log_file
+            )
+            log_file.write("Kill existing process on port 5671.\n")
+        except subprocess.CalledProcessError:
+            log_file.write("No existing process found on port 5671.\n")
+
+        # Start the AMQP proxy process
+        log_file.write("Starting amqpproxy process...\n")
+        log_file.flush()
         proxy_process = subprocess.Popen(
             ["go", "run", ".", 
-             "--host", live_eventhub["hostname"],
-             "--logs", "amqp_recordings",
-             "--logfile", logfile],
+            "--host", live_eventhub["hostname"],
+            "--logs", AMQPPROXY_RECORDINGS_DIR,
+            "--logfile", recording_file_path],
+            stdout=log_file,
+            stderr=log_file,
             preexec_fn=os.setsid
         )
+        
+        if not proxy_process:
+            log_file.write("Failed to start amqpproxy.\n")
+            raise RuntimeError(f"Failed to start amqpproxy. Check for errors in {AMQPPROXY_STARTUP_LOG}")
 
         try:
             time.sleep(1)
-            kwargs["client_args"] = AMQPPROXY_CLIENT_ARGS
-            return test_func(*args, **kwargs)
+            # Add proxy args to test context
+            request.node.user_properties.append(("client_args", AMQPPROXY_CLIENT_ARGS))
+            yield
         finally:
             os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
             proxy_process.wait()
+    finally:
+        log_file.write(f"####### Stopping amqpproxy for test: {test_name}\n")
+        log_file.flush()
+        log_file.close()
 
-    return wrapper
+
+#def recorded_by_amqpproxy(test_func: Callable) -> Callable:
+#    """Decorator that redirects network requests to target the amqp proxy.
+#    Uses the test function name as the logfile name.
+#    """
+#    def wrapper(*args, **kwargs):
+#        # If not recording, just run the test function
+#        if not RECORD_AMQP_PROXY:
+#            return test_func(*args, **kwargs)
+#
+#        # Try to get hostname from pytest request
+#        live_eventhub = kwargs.get('live_eventhub')
+#        if not live_eventhub:
+#            raise ValueError("live_eventhub fixture not found in pytest context")
+#
+#        # Use test function name as logfile
+#        logfile = test_func.__name__
+#
+#        # Start amqpproxy process with dynamic hostname
+#        proxy_process = subprocess.Popen(
+#            ["go", "run", ".", 
+#             "--host", live_eventhub["hostname"],
+#             "--logs", "amqp_recordings",
+#             "--logfile", logfile],
+#            preexec_fn=os.setsid
+#        )
+#
+#        try:
+#            time.sleep(1)
+#            kwargs["client_args"] = AMQPPROXY_CLIENT_ARGS
+#            return test_func(*args, **kwargs)
+#        finally:
+#            os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
+#            proxy_process.wait()
+#
+#    return wrapper
 
 
 @pytest.fixture()
@@ -428,16 +519,15 @@ def auth_credential_receivers_async(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_senders(live_eventhub, uamqp_transport):
+def auth_credential_senders(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
-    client_args = AMQPPROXY_CLIENT_ARGS if RECORD_AMQP_PROXY else {}
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
     partitions = client.get_partition_ids()
 
@@ -452,10 +542,9 @@ def auth_credential_senders(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_senders_async(live_eventhub, uamqp_transport):
+def auth_credential_senders_async(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
-    client_args = AMQPPROXY_CLIENT_ARGS if RECORD_AMQP_PROXY else {}
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
@@ -480,3 +569,4 @@ def auth_credential_senders_async(live_eventhub, uamqp_transport):
 def pytest_configure(config):
     # register an additional marker
     config.addinivalue_line("markers", "liveTest: mark test to be a live test only")
+    config.addinivalue_line("markers", "no_amqpproxy: mark test to opt out of amqp proxy recording")
