@@ -16,7 +16,8 @@
         "XDCG",
         "idcg",
         "qrel",
-        "qrels"
+        "qrels",
+        "ollama"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
