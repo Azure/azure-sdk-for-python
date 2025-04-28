@@ -54,7 +54,7 @@ async def sample_indexes_async() -> None:
         )
         print(index)
 
-        print("Get Index `{index_name}` version `{index_version}`:")
+        print(f"Get Index `{index_name}` version `{index_version}`:")
         index = await project_client.indexes.get(name=index_name, version=index_version)
         print(index)
 
@@ -66,7 +66,7 @@ async def sample_indexes_async() -> None:
         async for index in project_client.indexes.list_versions(name=index_name):
             print(index)
 
-        print("Delete Index`{index_name}` version `{index_version}`:")
+        print(f"Delete Index`{index_name}` version `{index_version}`:")
         await project_client.indexes.delete(name=index_name, version=index_version)
 
 
