@@ -19,7 +19,7 @@ USAGE:
     python queue_samples_message.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -30,7 +30,7 @@ import sys
 
 class QueueMessageSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def set_access_policy(self):
         if self.connection_string is None:

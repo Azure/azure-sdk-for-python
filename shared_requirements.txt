@@ -10,6 +10,7 @@ azure-core
 six
 isodate
 azure-appconfiguration
+azure-appconfiguration-provider
 azure-core-tracing-opentelemetry
 azure-keyvault-secrets
 azure-monitor-opentelemetry-exporter
@@ -75,5 +76,7 @@ httpx
 pandas
 nltk
 azure-monitor-opentelemetry
+python-dotenv
 pyrit
 prompty
+jinja2

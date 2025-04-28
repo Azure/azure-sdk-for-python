@@ -10,7 +10,7 @@ import logging
 import tempfile
 import time
 from datetime import datetime
-from typing import Callable, Dict, List, Optional, Union, cast
+from typing import Callable, Dict, List, Optional, Union, cast, Any
 import json
 from pathlib import Path
 import itertools
@@ -105,6 +105,10 @@ class RedTeam():
     def _create_retry_config(self):
         """Create a standard retry configuration for connection-related issues.
         
+        Creates a dictionary with retry configurations for various network and connection-related
+        exceptions. The configuration includes retry predicates, stop conditions, wait strategies,
+        and callback functions for logging retry attempts.
+        
         :return: Dictionary with retry configuration for different exception types
         :rtype: dict
         """
@@ -143,6 +147,9 @@ class RedTeam():
     def _log_retry_attempt(self, retry_state):
         """Log retry attempts for better visibility.
         
+        Logs information about connection issues that trigger retry attempts, including the 
+        exception type, retry count, and wait time before the next attempt.
+        
         :param retry_state: Current state of the retry
         :type retry_state: tenacity.RetryCallState
         """
@@ -156,6 +163,9 @@ class RedTeam():
     
     def _log_retry_error(self, retry_state):
         """Log the final error after all retries have been exhausted.
+        
+        Logs detailed information about the error that persisted after all retry attempts have been exhausted.
+        This provides visibility into what ultimately failed and why.
         
         :param retry_state: Final state of the retry
         :type retry_state: tenacity.RetryCallState
@@ -178,8 +188,29 @@ class RedTeam():
             num_objectives: int = 10,
             application_scenario: Optional[str] = None,
             custom_attack_seed_prompts: Optional[str] = None,
-            output_dir=None
+            output_dir="."
         ):
+        """Initialize a new Red Team agent for AI model evaluation.
+        
+        Creates a Red Team agent instance configured with the specified parameters.
+        This initializes the token management, attack objective generation, and logging
+        needed for running red team evaluations against AI models.
+        
+        :param azure_ai_project: Azure AI project details for connecting to services
+        :type azure_ai_project: dict
+        :param credential: Authentication credential for Azure services
+        :type credential: TokenCredential
+        :param risk_categories: List of risk categories to test (required unless custom prompts provided)
+        :type risk_categories: Optional[List[RiskCategory]]
+        :param num_objectives: Number of attack objectives to generate per risk category
+        :type num_objectives: int
+        :param application_scenario: Description of the application scenario for contextualizing attacks
+        :type application_scenario: Optional[str]
+        :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
+        :type custom_attack_seed_prompts: Optional[str]
+        :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
+        :type output_dir: str
+        """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
@@ -226,12 +257,17 @@ class RedTeam():
     ) -> EvalRun:
         """Start an MLFlow run for the Red Team Agent evaluation.
         
+        Initializes and configures an MLFlow run for tracking the Red Team Agent evaluation process.
+        This includes setting up the proper logging destination, creating a unique run name, and
+        establishing the connection to the MLFlow tracking server based on the Azure AI project details.
+        
         :param azure_ai_project: Azure AI project details for logging
         :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
         :param run_name: Optional name for the MLFlow run
         :type run_name: Optional[str]
         :return: The MLFlow run object
         :rtype: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
+        :raises EvaluationException: If no azure_ai_project is provided or trace destination cannot be determined
         """
         if not azure_ai_project:
             log_error(self.logger, "No azure_ai_project provided, cannot start MLFlow run")
@@ -265,7 +301,6 @@ class RedTeam():
         
         run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
         self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
-        
         eval_run = EvalRun(
             run_name=run_display_name,
             tracking_uri=cast(str, tracking_uri),
@@ -274,10 +309,12 @@ class RedTeam():
             workspace_name=ws_triad.workspace_name,
             management_client=management_client, # type: ignore
         )
+        eval_run._start_run()
+        self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
 
         self.trace_destination = trace_destination
         self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
-
+    
         return eval_run
 
 
@@ -285,7 +322,7 @@ class RedTeam():
         self,
         redteam_result: RedTeamResult,
         eval_run: EvalRun,
-        data_only: bool = False,
+        _skip_evals: bool = False,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
@@ -293,21 +330,21 @@ class RedTeam():
         :type redteam_result: ~azure.ai.evaluation.RedTeamResult
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
-        :param data_only: Whether to log only data without evaluation results
-        :type data_only: bool
+        :param _skip_evals: Whether to log only data without evaluation results
+        :type _skip_evals: bool
         :return: The URL to the run in Azure AI Studio, if available
         :rtype: Optional[str]
         """
-        self.logger.debug(f"Logging results to MLFlow, data_only={data_only}")
-        artifact_name = "instance_results.json" if not data_only else "instance_data.json"
+        self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
+        artifact_name = "instance_results.json"
 
         # If we have a scan output directory, save the results there first
         if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
             artifact_path = os.path.join(self.scan_output_dir, artifact_name)
             self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                if data_only:
-                    # In data_only mode, we write the conversations in conversation/messages format
+                if _skip_evals:
+                    # In _skip_evals mode, we write the conversations in conversation/messages format
                     f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                 elif redteam_result.scan_result:
                     # Create a copy to avoid modifying the original scan result
@@ -329,7 +366,7 @@ class RedTeam():
             eval_info_name = "redteam_info.json"
             eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
             self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
-            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+            with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 # Remove evaluation_result from red_team_info before logging
                 red_team_info_logged = {}
                 for strategy, harms_dict in self.red_team_info.items():
@@ -340,7 +377,7 @@ class RedTeam():
                 f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not data_only and redteam_result.scan_result:
+            if not _skip_evals and redteam_result.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     f.write(self._to_scorecard(redteam_result.scan_result))
@@ -353,7 +390,7 @@ class RedTeam():
             with tempfile.TemporaryDirectory() as tmpdir:
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
+                    if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get("scorecard", None)
@@ -400,7 +437,7 @@ class RedTeam():
             with tempfile.TemporaryDirectory() as tmpdir:
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
+                    if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         json.dump(redteam_result.scan_result, f)
@@ -425,7 +462,7 @@ class RedTeam():
                         if key != "risk_category":
                             eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
                             self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
-
+        eval_run._end_run()
         self.logger.info("Successfully logged results to MLFlow")
         return None
 
@@ -442,14 +479,18 @@ class RedTeam():
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
         
-        :param attack_objective_generator: The generator with risk categories to get attack objectives for
-        :type attack_objective_generator: ~azure.ai.evaluation.redteam._AttackObjectiveGenerator
+        Retrieves attack objectives based on the provided risk category and strategy. These objectives
+        can come from either the RAI service or from custom attack seed prompts if provided. The function 
+        handles different strategies, including special handling for jailbreak strategy which requires 
+        applying prefixes to messages. It also maintains a cache of objectives to ensure consistency 
+        across different strategies for the same risk category.
+        
         :param risk_category: The specific risk category to get objectives for
         :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
-        :type application_scenario: str
+        :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
-        :type strategy: str
+        :type strategy: Optional[str]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -687,21 +728,65 @@ class RedTeam():
 
     # Replace with utility function
     def _message_to_dict(self, message: ChatMessage):
+        """Convert a PyRIT ChatMessage object to a dictionary representation.
+        
+        Transforms a ChatMessage object into a standardized dictionary format that can be
+        used for serialization, storage, and analysis. The dictionary format is compatible 
+        with JSON serialization.
+        
+        :param message: The PyRIT ChatMessage to convert
+        :type message: ChatMessage
+        :return: Dictionary representation of the message
+        :rtype: dict
+        """
         from ._utils.formatting_utils import message_to_dict
         return message_to_dict(message)
     
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
+        """Get a standardized string name for an attack strategy or list of strategies.
+        
+        Converts an AttackStrategy enum value or a list of such values into a standardized
+        string representation used for logging, file naming, and result tracking. Handles both
+        single strategies and composite strategies consistently.
+        
+        :param attack_strategy: The attack strategy or list of strategies to name
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: Standardized string name for the strategy
+        :rtype: str
+        """
         from ._utils.formatting_utils import get_strategy_name
         return get_strategy_name(attack_strategy)
 
     # Replace with utility function
     def _get_flattened_attack_strategies(self, attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Union[AttackStrategy, List[AttackStrategy]]]:
+        """Flatten a nested list of attack strategies into a single-level list.
+        
+        Processes a potentially nested list of attack strategies to create a flat list
+        where composite strategies are handled appropriately. This ensures consistent
+        processing of strategies regardless of how they are initially structured.
+        
+        :param attack_strategies: List of attack strategies, possibly containing nested lists
+        :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :return: Flattened list of attack strategies
+        :rtype: List[Union[AttackStrategy, List[AttackStrategy]]]
+        """
         from ._utils.formatting_utils import get_flattened_attack_strategies
         return get_flattened_attack_strategies(attack_strategies)
     
     # Replace with utility function
     def _get_converter_for_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Union[PromptConverter, List[PromptConverter]]:
+        """Get the appropriate prompt converter(s) for a given attack strategy.
+        
+        Maps attack strategies to their corresponding prompt converters that implement
+        the attack technique. Handles both single strategies and composite strategies,
+        returning either a single converter or a list of converters as appropriate.
+        
+        :param attack_strategy: The attack strategy or strategies to get converters for
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: The prompt converter(s) for the specified strategy
+        :rtype: Union[PromptConverter, List[PromptConverter]]
+        """
         from ._utils.strategy_utils import get_converter_for_strategy
         return get_converter_for_strategy(attack_strategy)
 
@@ -716,19 +801,25 @@ class RedTeam():
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
         
+        Creates and configures a PyRIT PromptSendingOrchestrator to efficiently send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
         :param chat_target: The target to send prompts to
         :type chat_target: PromptChatTarget
-        :param all_prompts: List of prompts to send
+        :param all_prompts: List of prompts to process and send
         :type all_prompts: List[str]
-        :param converter: Converter or list of converters to use for prompt transformation
+        :param converter: Prompt converter or list of converters to transform prompts
         :type converter: Union[PromptConverter, List[PromptConverter]]
-        :param strategy_name: Name of the strategy being used (for logging)
+        :param strategy_name: Name of the attack strategy being used
         :type strategy_name: str
-        :param risk_category: Name of the risk category being evaluated (for logging)
+        :param risk_category: Risk category being evaluated
         :type risk_category: str
-        :param timeout: The timeout in seconds for API calls
+        :param timeout: Timeout in seconds for each prompt
         :type timeout: int
-        :return: The orchestrator instance with processed results
+        :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
         task_key = f"{strategy_name}_{risk_category}_orchestrator"
@@ -880,12 +971,23 @@ class RedTeam():
             raise
 
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
-        """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
+        """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
+        
+        Extracts conversation data from the PyRIT orchestrator's memory and writes it to a JSON lines file.
+        Each line in the file represents a conversation with messages in a standardized format.
+        The function handles file management including creating new files and appending to or updating 
+        existing files based on conversation counts.
         
         :param orchestrator: The orchestrator that generated the outputs
         :type orchestrator: Orchestrator
+        :param strategy_name: The name of the strategy used to generate the outputs
+        :type strategy_name: str
+        :param risk_category: The risk category being evaluated
+        :type risk_category: str
+        :param batch_idx: Optional batch index for multi-batch processing
+        :type batch_idx: Optional[int]
         :return: Path to the output file
-        :rtype: Union[str, os.PathLike]
+        :rtype: str
         """
         output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
@@ -932,11 +1034,35 @@ class RedTeam():
     
     # Replace with utility function
     def _get_chat_target(self, target: Union[PromptChatTarget,Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
+        """Convert various target types to a standardized PromptChatTarget object.
+        
+        Handles different input target types (function, model configuration, or existing chat target)
+        and converts them to a PyRIT PromptChatTarget object that can be used with orchestrators.
+        This function provides flexibility in how targets are specified while ensuring consistent
+        internal handling.
+        
+        :param target: The target to convert, which can be a function, model configuration, or chat target
+        :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        :return: A standardized PromptChatTarget object
+        :rtype: PromptChatTarget
+        """
         from ._utils.strategy_utils import get_chat_target
         return get_chat_target(target)
     
     # Replace with utility function
     def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
+        """Get appropriate orchestrator functions for the specified attack strategies.
+        
+        Determines which orchestrator functions should be used based on the attack strategies.
+        Returns a list of callable functions that can create orchestrators configured for the 
+        specified strategies. This function is crucial for mapping strategies to the appropriate
+        execution environment.
+        
+        :param attack_strategy: List of attack strategies to get orchestrators for
+        :type attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :return: List of callable functions that create appropriately configured orchestrators
+        :rtype: List[Callable]
+        """
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         call_to_orchestrators = []
         # Sending PromptSendingOrchestrator for each complexity level
@@ -952,15 +1078,29 @@ class RedTeam():
     
     # Replace with utility function
     def _get_attack_success(self, result: str) -> bool:
+        """Determine if an attack was successful based on the evaluation result string.
+        
+        Parses evaluation result strings (like "fail" or "pass") and converts them to boolean
+        values indicating whether an attack was successful. This standardizes the interpretation
+        of results across different evaluation formats.
+        
+        :param result: The evaluation result string to parse
+        :type result: str
+        :return: Boolean indicating whether the attack was successful
+        :rtype: bool
+        """
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
     def _to_red_team_result(self) -> RedTeamResult:
         """Convert tracking data from red_team_info to the RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
+        Processes the internal red_team_info tracking dictionary to build a structured RedTeamResult object.
+        This includes compiling information about the attack strategies used, complexity levels, risk categories,
+        conversation details, attack success rates, and risk assessments. The resulting object provides
+        a standardized representation of the red team evaluation results for reporting and analysis.
         
-        :return: Structured red team agent results
+        :return: Structured red team agent results containing evaluation metrics and conversation details
         :rtype: RedTeamResult
         """
         converters = []
@@ -1331,10 +1471,40 @@ class RedTeam():
 
     # Replace with utility function
     def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
+        """Convert RedTeamResult to a human-readable scorecard format.
+        
+        Creates a formatted scorecard string presentation of the red team evaluation results.
+        This scorecard includes metrics like attack success rates, risk assessments, and other
+        relevant evaluation information presented in an easily readable text format.
+        
+        :param redteam_result: The structured red team evaluation results
+        :type redteam_result: RedTeamResult
+        :return: A formatted text representation of the scorecard
+        :rtype: str
+        """
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
 
     async def _evaluate_conversation(self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int) -> None:
+        """Evaluate a single conversation using the specified metric and risk category.
+        
+        Processes a single conversation for evaluation, extracting assistant messages and applying
+        the appropriate evaluator based on the metric name and risk category. The evaluation results
+        are stored for later aggregation and reporting.
+        
+        :param conversation: Dictionary containing the conversation to evaluate
+        :type conversation: Dict
+        :param metric_name: Name of the evaluation metric to apply
+        :type metric_name: str
+        :param strategy_name: Name of the attack strategy used in the conversation
+        :type strategy_name: str
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param idx: Index of the conversation for tracking purposes
+        :type idx: int
+        :return: None
+        """
+
         messages = conversation["conversation"]["messages"]
         
         # Extract all assistant messages for evaluation
@@ -1400,25 +1570,33 @@ class RedTeam():
         risk_category: RiskCategory,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
-        data_only: bool = False,
-        output_path: Optional[Union[str, os.PathLike]] = None
+        output_path: Optional[Union[str, os.PathLike]] = None,
+        _skip_evals: bool = False,
     ) -> None:
-        """Call the evaluate method if not data_only.
-
-        :param scan_name: Optional name for the evaluation.
+        """Perform evaluation on collected red team attack data.
+        
+        Processes red team attack data from the provided data path and evaluates the conversations
+        against the appropriate metrics for the specified risk category. The function handles
+        evaluation result storage, path management, and error handling. If _skip_evals is True,
+        the function will not perform actual evaluations and only process the data.
+        
+        :param data_path: Path to the input data containing red team conversations
+        :type data_path: Union[str, os.PathLike]
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param strategy: Attack strategy or strategies used to generate the data
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :param scan_name: Optional name for the evaluation
         :type scan_name: Optional[str]
-        :param data_only: Whether to return only data paths instead of evaluation results.
-        :type data_only: bool
-        :param data_path: Path to the input data.
-        :type data_path: Optional[Union[str, os.PathLike]]
-        :param output_path: Path for output results.
+        :param output_path: Path for storing evaluation results
         :type output_path: Optional[Union[str, os.PathLike]]
-        :return: Evaluation results or data paths.
-        :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: None
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, scan_name={scan_name}")
-        if data_only:
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_evals={_skip_evals}, scan_name={scan_name}")
+        if _skip_evals:
             return None
         
         # If output_path is provided, use it; otherwise create one in the scan output directory if available
@@ -1504,24 +1682,44 @@ class RedTeam():
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
             scan_name: Optional[str] = None,
-            data_only: bool = False, 
+            skip_upload: bool = False,
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
+            _skip_evals: bool = False,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
+        
+        Executes a red team attack process using the specified strategy and risk category against the
+        target model or function. This includes creating an orchestrator, applying prompts through the
+        appropriate converter, saving results to files, and optionally evaluating the results.
+        The function handles progress tracking, logging, and error handling throughout the process.
         
         :param target: The target model or function to scan
         :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
         :param call_orchestrator: Function to call to create an orchestrator
+        :type call_orchestrator: Callable
         :param strategy: The attack strategy to use
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
+        :type risk_category: RiskCategory
         :param all_prompts: List of prompts to use for the scan
+        :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
+        :type progress_bar: tqdm
         :param progress_bar_lock: Lock for the progress bar
+        :type progress_bar_lock: asyncio.Lock
         :param scan_name: Optional name for the evaluation
-        :param data_only: Whether to return only data without evaluation
+        :type scan_name: Optional[str]
+        :param skip_upload: Whether to return only data without evaluation
+        :type skip_upload: bool
         :param output_path: Optional path for output
+        :type output_path: Optional[Union[str, os.PathLike]]
         :param timeout: The timeout in seconds for API calls
+        :type timeout: int
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: Evaluation result if available
+        :rtype: Optional[EvaluationResult]
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
@@ -1558,7 +1756,7 @@ class RedTeam():
                     scan_name=scan_name,
                     risk_category=risk_category,
                     strategy=strategy,
-                    data_only=data_only,
+                    _skip_evals=_skip_evals,
                     data_path=data_path,
                     output_path=output_path,
                 )
@@ -1611,12 +1809,14 @@ class RedTeam():
             scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
-            data_only: bool = False, 
+            skip_upload: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120
+            timeout: int = 120,
+            skip_evals: bool = False,
+            **kwargs: Any
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1628,8 +1828,8 @@ class RedTeam():
         :type num_turns: int
         :param attack_strategies: List of attack strategies to use
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-        :param data_only: Whether to return only data without evaluation
-        :type data_only: bool
+        :param skip_upload: Flag to determine if the scan results should be uploaded
+        :type skip_upload: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
         :param application_scenario: Optional description of the application scenario
@@ -1640,6 +1840,8 @@ class RedTeam():
         :type max_parallel_tasks: int
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
+        :param skip_evals: Whether to skip the evaluation process
+        :type skip_evals: bool
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
@@ -1701,7 +1903,7 @@ class RedTeam():
         self.logger.info(f"Scan ID: {self.scan_id}")
         self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
-        self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
+        self.logger.debug(f"skip_upload: {skip_upload}, output_path: {output_path}")
         self.logger.debug(f"Timeout: {timeout} seconds")
         
         # Clear, minimal output for start of scan
@@ -1779,241 +1981,236 @@ class RedTeam():
                 attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
                 self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
             
-        with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
-            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
+        if skip_upload:
+            self.ai_studio_url = None
+            eval_run = {}
+        else:
+            eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
 
+            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
             self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
-            
-            log_subsection_header(self.logger, "Setting up scan configuration")
-            flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-            self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
-            self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
-            
-            orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
-            self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
-            
-            # Calculate total tasks: #risk_categories * #converters * #orchestrators
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
-            # Show task count for user awareness
-            print(f"📋 Planning {self.total_tasks} total tasks")
-            self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
-            
-            # Initialize our tracking dictionary early with empty structures
-            # This ensures we have a place to store results even if tasks fail
-            self.red_team_info = {}
-            for strategy in flattened_attack_strategies:
-                strategy_name = self._get_strategy_name(strategy)
-                self.red_team_info[strategy_name] = {}
-                for risk_category in self.risk_categories:
-                    self.red_team_info[strategy_name][risk_category.value] = {
-                        "data_file": "",
-                        "evaluation_result_file": "",
-                        "evaluation_result": None,
-                        "status": TASK_STATUS["PENDING"]
-                    }
-            
-            self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
-            
-            # More visible progress bar with additional status
-            progress_bar = tqdm(
-                total=self.total_tasks,
-                desc="Scanning: ",
-                ncols=100,
-                unit="scan",
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-            )
-            progress_bar.set_postfix({"current": "initializing"})
-            progress_bar_lock = asyncio.Lock()
-            
-            # Process all API calls sequentially to respect dependencies between objectives
-            log_section_header(self.logger, "Fetching attack objectives")
-            
-            # Log the objective source mode
-            if using_custom_objectives:
-                self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-                print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-            else:
-                self.logger.info("Using attack objectives from Azure RAI service")
-                print("📚 Using attack objectives from Azure RAI service")
-            
-            # Dictionary to store all objectives
-            all_objectives = {}
-            
-            # First fetch baseline objectives for all risk categories
-            # This is important as other strategies depend on baseline objectives
-            self.logger.info("Fetching baseline objectives for all risk categories")
+        
+        log_subsection_header(self.logger, "Setting up scan configuration")
+        flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
+        self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
+        self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+        
+        orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
+        self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
+        
+        # Calculate total tasks: #risk_categories * #converters * #orchestrators
+        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
+        # Show task count for user awareness
+        print(f"📋 Planning {self.total_tasks} total tasks")
+        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
+        
+        # Initialize our tracking dictionary early with empty structures
+        # This ensures we have a place to store results even if tasks fail
+        self.red_team_info = {}
+        for strategy in flattened_attack_strategies:
+            strategy_name = self._get_strategy_name(strategy)
+            self.red_team_info[strategy_name] = {}
             for risk_category in self.risk_categories:
-                progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
-                self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
-                baseline_objectives = await self._get_attack_objectives(
+                self.red_team_info[strategy_name][risk_category.value] = {
+                    "data_file": "",
+                    "evaluation_result_file": "",
+                    "evaluation_result": None,
+                    "status": TASK_STATUS["PENDING"]
+                }
+        
+        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
+        
+        # More visible progress bar with additional status
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning: ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+        progress_bar_lock = asyncio.Lock()
+        
+        # Process all API calls sequentially to respect dependencies between objectives
+        log_section_header(self.logger, "Fetching attack objectives")
+        
+        # Log the objective source mode
+        if using_custom_objectives:
+            self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+            print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+        else:
+            self.logger.info("Using attack objectives from Azure RAI service")
+            print("📚 Using attack objectives from Azure RAI service")
+        
+        # Dictionary to store all objectives
+        all_objectives = {}
+        
+        # First fetch baseline objectives for all risk categories
+        # This is important as other strategies depend on baseline objectives
+        self.logger.info("Fetching baseline objectives for all risk categories")
+        for risk_category in self.risk_categories:
+            progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
+            self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
+            baseline_objectives = await self._get_attack_objectives(
+                risk_category=risk_category,
+                application_scenario=application_scenario,
+                strategy="baseline"
+            )
+            if "baseline" not in all_objectives:
+                all_objectives["baseline"] = {}
+            all_objectives["baseline"][risk_category.value] = baseline_objectives
+            print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
+        
+        # Then fetch objectives for other strategies
+        self.logger.info("Fetching objectives for non-baseline strategies")
+        strategy_count = len(flattened_attack_strategies)
+        for i, strategy in enumerate(flattened_attack_strategies):
+            strategy_name = self._get_strategy_name(strategy)
+            if strategy_name == "baseline":
+                continue  # Already fetched
+                
+            print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            all_objectives[strategy_name] = {}
+            
+            for risk_category in self.risk_categories:
+                progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
+                self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
+                objectives = await self._get_attack_objectives(
                     risk_category=risk_category,
                     application_scenario=application_scenario,
-                    strategy="baseline"
+                    strategy=strategy_name
                 )
-                if "baseline" not in all_objectives:
-                    all_objectives["baseline"] = {}
-                all_objectives["baseline"][risk_category.value] = baseline_objectives
-                print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
-            
-            # Then fetch objectives for other strategies
-            self.logger.info("Fetching objectives for non-baseline strategies")
-            strategy_count = len(flattened_attack_strategies)
-            for i, strategy in enumerate(flattened_attack_strategies):
-                strategy_name = self._get_strategy_name(strategy)
-                if strategy_name == "baseline":
-                    continue  # Already fetched
-                    
-                print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
-                all_objectives[strategy_name] = {}
+                all_objectives[strategy_name][risk_category.value] = objectives
                 
-                for risk_category in self.risk_categories:
-                    progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
-                    self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    objectives = await self._get_attack_objectives(
-                        risk_category=risk_category,
-                        application_scenario=application_scenario,
-                        strategy=strategy_name
-                    )
-                    all_objectives[strategy_name][risk_category.value] = objectives
-                    
+        self.logger.info("Completed fetching all attack objectives")
+        
+        log_section_header(self.logger, "Starting orchestrator processing")
+        
+        # Create all tasks for parallel processing
+        orchestrator_tasks = []
+        combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
+        
+        for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
+            strategy_name = self._get_strategy_name(strategy)
+            objectives = all_objectives[strategy_name][risk_category.value]
             
-            self.logger.info("Completed fetching all attack objectives")
+            if not objectives:
+                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
+                print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+                async with progress_bar_lock:
+                    progress_bar.update(1)
+                continue
             
-            log_section_header(self.logger, "Starting orchestrator processing")
-            # Removed console output
+            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
             
-            # Create all tasks for parallel processing
-            orchestrator_tasks = []
-            combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
-            
-            for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
-                strategy_name = self._get_strategy_name(strategy)
-                objectives = all_objectives[strategy_name][risk_category.value]
-                
-                if not objectives:
-                    self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                    print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
-                    self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
-                    async with progress_bar_lock:
-                        progress_bar.update(1)
-                    continue
-                
-                self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
-                
-                orchestrator_tasks.append(
-                    self._process_attack(
-                        target=target,
-                        call_orchestrator=call_orchestrator,
-                        all_prompts=objectives,
-                        strategy=strategy,
-                        progress_bar=progress_bar,
-                        progress_bar_lock=progress_bar_lock,
-                        scan_name=scan_name,
-                        data_only=data_only,
-                        output_path=output_path,
-                        risk_category=risk_category,
-                        timeout=timeout
-                    )
+            orchestrator_tasks.append(
+                self._process_attack(
+                    target=target,
+                    call_orchestrator=call_orchestrator,
+                    all_prompts=objectives,
+                    strategy=strategy,
+                    progress_bar=progress_bar,
+                    progress_bar_lock=progress_bar_lock,
+                    scan_name=scan_name,
+                    skip_upload=skip_upload,
+                    output_path=output_path,
+                    risk_category=risk_category,
+                    timeout=timeout,
+                    _skip_evals=skip_evals,
                 )
-                
-            # Process tasks in parallel with optimized batching
-            if parallel_execution and orchestrator_tasks:
-                print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                
-                # Create batches for processing
-                for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
-                    end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
-                    batch = orchestrator_tasks[i:end_idx]
-                    progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
-                    self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
-                    
-                    try:
-                        # Add timeout to each batch
-                        await asyncio.wait_for(
-                            asyncio.gather(*batch),
-                            timeout=timeout * 2  # Double timeout for batches
-                        )
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
-                        print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
-                        # Set task status to TIMEOUT
-                        batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
-                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
-                        continue
-            else:
-                # Sequential execution 
-                self.logger.info("Running orchestrator processing sequentially")
-                print("⚙️ Processing tasks sequentially")
-                for i, task in enumerate(orchestrator_tasks):
-                    progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
-                    self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
-                    
-                    try:
-                        # Add timeout to each task
-                        await asyncio.wait_for(task, timeout=timeout)
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
-                        print(f"⚠️ Task {i+1} timed out, continuing with next task")
-                        # Set task status to TIMEOUT
-                        task_key = f"scan_task_{i+1}"
-                        self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
-                        continue
-            
-            progress_bar.close()
-            
-            # Print final status
-            tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
-            tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
-            tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
-            
-            total_time = time.time() - self.start_time
-            # Only log the summary to file, don't print to console
-            self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
-            
-            # Process results
-            log_section_header(self.logger, "Processing results")
-            
-            # Convert results to RedTeamResult using only red_team_info
-            red_team_result = self._to_red_team_result()
-            scan_result = ScanResult(
-                scorecard=red_team_result["scorecard"],
-                parameters=red_team_result["parameters"],
-                attack_details=red_team_result["attack_details"],
-                studio_url=red_team_result["studio_url"],
             )
             
-            # Create output with either full results or just conversations
-            if data_only:
-                self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
-            else:
-                output = RedTeamResult(
-                    scan_result=red_team_result, 
-                    attack_details=red_team_result["attack_details"]
-                )
+        # Process tasks in parallel with optimized batching
+        if parallel_execution and orchestrator_tasks:
+            print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
             
-            # Log results to MLFlow
+            # Create batches for processing
+            for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
+                end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
+                batch = orchestrator_tasks[i:end_idx]
+                progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
+                self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
+                
+                try:
+                    # Add timeout to each batch
+                    await asyncio.wait_for(
+                        asyncio.gather(*batch),
+                        timeout=timeout * 2  # Double timeout for batches
+                    )
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
+                    print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
+                    self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                    continue
+        else:
+            # Sequential execution 
+            self.logger.info("Running orchestrator processing sequentially")
+            print("⚙️ Processing tasks sequentially")
+            for i, task in enumerate(orchestrator_tasks):
+                progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
+                self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
+                
+                try:
+                    # Add timeout to each task
+                    await asyncio.wait_for(task, timeout=timeout)
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
+                    print(f"⚠️ Task {i+1} timed out, continuing with next task")
+                    # Set task status to TIMEOUT
+                    task_key = f"scan_task_{i+1}"
+                    self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
+                    self.logger.debug(f"Error in task {i+1}: {str(e)}")
+                    continue
+        
+        progress_bar.close()
+        
+        # Print final status
+        tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
+        tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
+        tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
+        
+        total_time = time.time() - self.start_time
+        # Only log the summary to file, don't print to console
+        self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
+        
+        # Process results
+        log_section_header(self.logger, "Processing results")
+        
+        # Convert results to RedTeamResult using only red_team_info
+        red_team_result = self._to_red_team_result()
+        scan_result = ScanResult(
+            scorecard=red_team_result["scorecard"],
+            parameters=red_team_result["parameters"],
+            attack_details=red_team_result["attack_details"],
+            studio_url=red_team_result["studio_url"],
+        )
+        
+        output = RedTeamResult(
+            scan_result=red_team_result, 
+            attack_details=red_team_result["attack_details"]
+        )
+        
+        if not skip_upload:
             self.logger.info("Logging results to MLFlow")
             await self._log_redteam_results_to_mlflow(
                 redteam_result=output,
                 eval_run=eval_run,
-                data_only=data_only
+                _skip_evals=skip_evals
             )
         
-        if data_only: 
-            self.logger.info("Data-only mode, returning results without evaluation")
-            return output
         
         if output_path and output.scan_result:
             # Ensure output_path is an absolute path
@@ -2052,4 +2249,8 @@ class RedTeam():
         
         print(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
+        for handler in self.logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                self.logger.removeHandler(handler)
         return output

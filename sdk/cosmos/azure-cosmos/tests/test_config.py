@@ -53,6 +53,7 @@ class TestConfig(object):
     read_location2 = os.getenv('READ_LOCATION2', host)
 
     THROUGHPUT_FOR_5_PARTITIONS = 30000
+    THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
@@ -263,6 +264,13 @@ def get_full_text_policy(path):
             }
         ]
     }
+
+class ResponseHookCaller:
+    def __init__(self):
+        self.count = 0
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
 
 
 class FakeResponse:

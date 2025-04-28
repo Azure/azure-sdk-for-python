@@ -162,6 +162,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpRe
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
+                request.context["retry_count"] = len(retry_settings["history"])
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)

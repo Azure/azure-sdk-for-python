@@ -14,4 +14,5 @@ SUPPORTED_LANGUAGES_MAPPING = {
     SupportedLanguages.SimplifiedChinese: BASE_SUFFIX.replace("__language__", "simplified chinese"),
     SupportedLanguages.Portuguese: BASE_SUFFIX.replace("__language__", "portuguese"),
     SupportedLanguages.Japanese: BASE_SUFFIX.replace("__language__", "japanese"),
+    SupportedLanguages.Korean: BASE_SUFFIX.replace("__language__", "korean"),
 }

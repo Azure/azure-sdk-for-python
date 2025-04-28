@@ -47,7 +47,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function):
+    def __init__(self, client, resource_link, query, options, fetch_function, response_hook):
         """
         Constructor
         """
@@ -57,6 +57,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
+        self._response_hook = response_hook
 
     async def __anext__(self):
         """Returns the next query result.
@@ -127,7 +128,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._resource_link,
                                                                                         self._query,
                                                                                         self._options,
-                                                                                        query_execution_info)
+                                                                                        query_execution_info,
+                                                                                        self._response_hook)
             await execution_context_aggregator._configure_partition_ranges()
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
@@ -137,14 +139,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._resource_link,
                                                                         self._options,
                                                                         query_execution_info,
-                                                                        hybrid_search_query_info)
+                                                                        hybrid_search_query_info,
+                                                                        self._response_hook)
             await execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
                                                                                                    self._query,
                                                                                                    self._options,
-                                                                                                   query_execution_info)
+                                                                                                   query_execution_info,
+                                                                                                   self._response_hook)
             await execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
