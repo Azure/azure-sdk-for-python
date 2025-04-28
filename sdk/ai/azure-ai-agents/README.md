@@ -188,7 +188,7 @@ To perform file search by an Agent, we first need to upload a file, create a vec
 <!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
 
 ```python
-file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose="agents")
+file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="agents")
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -267,7 +267,7 @@ Here is an example to upload a file and use it for code interpreter by an Agent:
 <!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
 
 ```python
-file = agents_client.upload_file_and_poll(
+file = agents_client.files.upload_and_poll(
     file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
 )
 print(f"Uploaded file, file ID: {file.id}")
@@ -729,7 +729,7 @@ In some scenarios, you might need to assign specific resources to individual thr
 <!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
 
 ```python
-file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="assistants")
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -861,7 +861,7 @@ The following examples demonstrate each method:
 
 ```python
 # Upload the local image file
-image_file = agents_client.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
+image_file = agents_client.files.upload_and_poll(file_path="image_file.png", purpose="assistants")
 
 # Construct content using uploaded image
 file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
