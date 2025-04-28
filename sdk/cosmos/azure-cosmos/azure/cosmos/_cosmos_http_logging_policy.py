@@ -34,9 +34,10 @@ import types
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
+from ._location_cache import LocationCache
 from .http_constants import HttpHeaders
 from ._global_endpoint_manager import _GlobalEndpointManager
-from .documents import DatabaseAccount
+from .documents import DatabaseAccount, ConnectionPolicy
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -220,7 +221,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 logger.info(log_string, extra=cosmos_logger_attributes)
 
             except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log request: %s", repr(err))
+                logger.warning("Failed to log request: %s", repr(err)) #pylint: disable=do-not-log-exceptions-if-not-debug
             return
         super().on_request(request)
 
@@ -305,25 +306,32 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     log_string += "\nResponse error message: {}".format(_format_error(http_response.text()))
                 logger.info(log_string, extra=log_data)
             except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log response: %s", repr(err), extra=log_data)
+                logger.warning("Failed to log response: %s", repr(err), extra=log_data) #pylint: disable=do-not-log-exceptions-if-not-debug
             return
         super().on_response(request, response)
 
     def __get_client_settings(self) -> Optional[Dict[str, Any]]:
         # Place any client settings we want to log here
-        client_info: Dict[str, Any] = {"Client Preferred Regions": [], "Client Available Read Regions": [],
-                                       "Client Available Write Regions": []}
+        client_preferred_regions = []
+        client_excluded_regions = []
+        client_account_read_regions = []
+        client_account_write_regions = []
+
         if self.__global_endpoint_manager:
-            client_info['Client Preferred Regions'] = self.__global_endpoint_manager.PreferredLocations \
-                if hasattr(self.__global_endpoint_manager, "PreferredLocations") else []
-            try:
-                location_cache = self.__global_endpoint_manager.location_cache
-                client_info["Client Available Read Regions"] = location_cache.available_read_locations
-                client_info["Client Available Write Regions"] = location_cache.available_write_locations
-            except AttributeError:
-                client_info["Client Available Read Regions"] = []
-                client_info["Client Available Write Regions"] = []
-        return client_info
+            if self.__global_endpoint_manager.Client and self.__global_endpoint_manager.Client.connection_policy:
+                connection_policy: ConnectionPolicy = self.__global_endpoint_manager.Client.connection_policy
+                client_preferred_regions = connection_policy.PreferredLocations
+                client_excluded_regions = connection_policy.ExcludedLocations
+
+            if self.__global_endpoint_manager.location_cache:
+                location_cache: LocationCache = self.__global_endpoint_manager.location_cache
+                client_account_read_regions = location_cache.account_read_locations
+                client_account_write_regions = location_cache.account_write_locations
+
+        return {"Client Preferred Regions": client_preferred_regions,
+                "Client Excluded Regions": client_excluded_regions,
+                "Client Account Read Regions": client_account_read_regions,
+                "Client Account Write Regions": client_account_write_regions}
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
         if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, '_database_account_cache'):
