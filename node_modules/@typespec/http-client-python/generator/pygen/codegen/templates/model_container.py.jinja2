@@ -1,0 +1,17 @@
+{% import 'operation_tools.jinja2' as op_tools %}
+# coding=utf-8
+{% if code_model.license_header %}
+{{ code_model.license_header }}
+{% endif %}
+{% if serializer.global_pylint_disables() %}
+{{ serializer.global_pylint_disables() }}
+{% endif %}
+
+{{ imports }}
+{% for model in models %}
+{% if model.base == "dpg" %}
+{% include "model_dpg.py.jinja2" %}
+{% elif model.base == "msrest" %}
+{% include "model_msrest.py.jinja2" %}
+{% endif %}
+{% endfor %}

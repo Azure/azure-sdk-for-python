@@ -1,0 +1,12 @@
+{% import 'operation_tools.jinja2' as op_tools %}
+# coding=utf-8
+{% if code_model.license_header %}
+{{ code_model.license_header }}
+{% endif %}
+{{ imports }}
+
+{{ op_tools.declare_serializer(code_model) }}
+{% for request_builder in request_builders %}
+
+{% include "request_builder.py.jinja2" %}
+{% endfor %}
