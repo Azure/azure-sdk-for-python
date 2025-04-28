@@ -50,6 +50,18 @@ def get_key_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], 
     return key_filter or kwargs.pop("key_filter", None), kwargs
 
 
+def get_name_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], Dict[str, Any]]:
+    name_filter = None
+    if len(args) > 0:
+        name_filter = args[0]
+        if "name_filter" in kwargs:
+            raise TypeError(
+                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument "
+                "'name_filter'"
+            )
+    return name_filter or kwargs.pop("name_filter", None), kwargs
+
+
 def get_label_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], Dict[str, Any]]:
     label_filter = None
     if len(args) > 1:
