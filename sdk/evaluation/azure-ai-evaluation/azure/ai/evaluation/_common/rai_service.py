@@ -646,6 +646,7 @@ async def evaluate_with_rai_service(
     if is_onedp_project(project_scope):
         client = AIProjectClient(endpoint=project_scope, credential=credential)
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        await ensure_service_availability_onedp(client, token, annotation_task)
         operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
         result = parse_response(annotation_response, metric_name, metric_display_name)
