@@ -37,7 +37,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         if include_credentials:
             return super()._get_with_credentials(name, **kwargs)
-        else:
-            return super()._get(name, **kwargs)
 
-
+        return super()._get(name, **kwargs)

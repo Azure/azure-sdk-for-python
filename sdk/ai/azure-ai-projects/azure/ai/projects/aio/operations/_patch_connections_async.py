@@ -23,7 +23,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :class:`~azure.ai.projects.aio.AIProjectClient`'s
         :attr:`connections` attribute.
     """
-    
+
     @distributed_trace_async
     async def get(self, name: str, *, include_credentials: Optional[bool] = False, **kwargs: Any) -> Connection:
         """Get a connection by name.
@@ -39,7 +39,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         if include_credentials:
             return await super()._get_with_credentials(name, **kwargs)
-        else:
-            return await super()._get(name, **kwargs)
 
-
+        return await super()._get(name, **kwargs)

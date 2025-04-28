@@ -44,7 +44,9 @@ async def sample_indexes_async() -> None:
         credential=DefaultAzureCredential(),
     ) as project_client:
 
-        print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
+        print(
+            f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
+        )
         index = await project_client.indexes.create_or_update(
             name=index_name,
             version=index_version,

@@ -58,6 +58,7 @@ async def sample_connections_async() -> None:
         connection = await project_client.connections.get(connection_name, include_credentials=True)
         print(connection)
 
+
 async def main():
     await sample_connections_async()
 
