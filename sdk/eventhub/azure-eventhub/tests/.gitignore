@@ -1,4 +1,5 @@
 # amqpproxy
+**/amqpproxy_startup.log
 *.bin
 
 # ignoring the key files so they don't get checked in.
