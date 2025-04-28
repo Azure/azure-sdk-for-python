@@ -1,0 +1,310 @@
+####### Starting amqpproxy for test: test_receive_storage_checkpoint[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:54:29 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:54:29 INFO Starting server...
+2025/04/28 15:54:29 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:54:29 INFO Server started, listening for connections...
+2025/04/28 15:54:30 INFO Connection started clientip=127.0.0.1:42596
+2025/04/28 15:54:30 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:54:33 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:54:33 INFO Connection started clientip=127.0.0.1:60178
+2025/04/28 15:54:33 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:42596 error="write tcp4 127.0.0.1:5671->127.0.0.1:42596: write: broken pipe"
+2025/04/28 15:54:33 INFO Connection mirroring failed clientip=127.0.0.1:42596 err="write tcp4 127.0.0.1:5671->127.0.0.1:42596: write: broken pipe"
+2025/04/28 15:54:33 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:42596: write: broken pipe" label=127.0.0.1:42596
+2025/04/28 15:54:33 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:42596"
+2025/04/28 15:54:33 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:54:35 INFO Connection started clientip=127.0.0.1:60186
+2025/04/28 15:54:35 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:54:40 INFO Connection started clientip=127.0.0.1:60198
+2025/04/28 15:54:40 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:54:43 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:54:43 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:60198 error="write tcp4 127.0.0.1:5671->127.0.0.1:60198: write: broken pipe"
+2025/04/28 15:54:43 INFO Connection mirroring failed clientip=127.0.0.1:60198 err="write tcp4 127.0.0.1:5671->127.0.0.1:60198: write: broken pipe"
+2025/04/28 15:54:43 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:60198: write: broken pipe" label=127.0.0.1:60198
+2025/04/28 15:54:43 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:60198"
+2025/04/28 15:54:44 INFO Connection started clientip=127.0.0.1:32902
+2025/04/28 15:54:44 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:54:44 INFO Connection started clientip=127.0.0.1:32918
+2025/04/28 15:54:44 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:03 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:03 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_storage_checkpoint[pyamqp]
+####### Starting amqpproxy for test: test_receive_no_partition[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:55:08 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:55:08 INFO Starting server...
+2025/04/28 15:55:08 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:55:08 INFO Server started, listening for connections...
+2025/04/28 15:55:09 INFO Connection started clientip=127.0.0.1:48630
+2025/04/28 15:55:09 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:12 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:12 INFO Connection started clientip=127.0.0.1:41830
+2025/04/28 15:55:12 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:48630 error="write tcp4 127.0.0.1:5671->127.0.0.1:48630: write: broken pipe"
+2025/04/28 15:55:12 INFO Connection mirroring failed clientip=127.0.0.1:48630 err="write tcp4 127.0.0.1:5671->127.0.0.1:48630: write: broken pipe"
+2025/04/28 15:55:12 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:48630: write: broken pipe" label=127.0.0.1:48630
+2025/04/28 15:55:12 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:48630"
+2025/04/28 15:55:12 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:14 INFO Connection started clientip=127.0.0.1:41840
+2025/04/28 15:55:14 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:16 INFO Connection started clientip=127.0.0.1:41848
+2025/04/28 15:55:16 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:20 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:20 INFO Connection started clientip=127.0.0.1:41864
+2025/04/28 15:55:20 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:41848 error="write tcp4 127.0.0.1:5671->127.0.0.1:41848: write: broken pipe"
+2025/04/28 15:55:20 INFO Connection mirroring failed clientip=127.0.0.1:41848 err="write tcp4 127.0.0.1:5671->127.0.0.1:41848: write: broken pipe"
+2025/04/28 15:55:20 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:41848: write: broken pipe" label=127.0.0.1:41848
+2025/04/28 15:55:20 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:41848"
+2025/04/28 15:55:20 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:20 INFO Connection started clientip=127.0.0.1:41868
+2025/04/28 15:55:21 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:36 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:36 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:36 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:41830 error="write tcp4 127.0.0.1:5671->127.0.0.1:41830: write: broken pipe"
+2025/04/28 15:55:36 INFO Connection mirroring failed clientip=127.0.0.1:41830 err="write tcp4 127.0.0.1:5671->127.0.0.1:41830: write: broken pipe"
+2025/04/28 15:55:36 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:41830: write: broken pipe" label=127.0.0.1:41830
+2025/04/28 15:55:36 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:41830"
+2025/04/28 15:55:36 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_no_partition[pyamqp]
+####### Starting amqpproxy for test: test_receive_partition[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:55:42 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:55:42 INFO Starting server...
+2025/04/28 15:55:42 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:55:42 INFO Server started, listening for connections...
+2025/04/28 15:55:43 INFO Connection started clientip=127.0.0.1:46966
+2025/04/28 15:55:43 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:45 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:46 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:46966 error="write tcp4 127.0.0.1:5671->127.0.0.1:46966: write: broken pipe"
+2025/04/28 15:55:46 INFO Connection mirroring failed clientip=127.0.0.1:46966 err="write tcp4 127.0.0.1:5671->127.0.0.1:46966: write: broken pipe"
+2025/04/28 15:55:46 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:46966: write: broken pipe" label=127.0.0.1:46966
+2025/04/28 15:55:46 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:46966"
+2025/04/28 15:55:46 INFO Connection started clientip=127.0.0.1:46972
+2025/04/28 15:55:46 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:47 INFO Connection started clientip=127.0.0.1:46982
+2025/04/28 15:55:47 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:51 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:55:51 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:46982 error="write tcp4 127.0.0.1:5671->127.0.0.1:46982: write: broken pipe"
+2025/04/28 15:55:51 INFO Connection mirroring failed clientip=127.0.0.1:46982 err="write tcp4 127.0.0.1:5671->127.0.0.1:46982: write: broken pipe"
+2025/04/28 15:55:51 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:46982: write: broken pipe" label=127.0.0.1:46982
+2025/04/28 15:55:51 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:46982"
+2025/04/28 15:55:51 INFO Connection started clientip=127.0.0.1:46986
+2025/04/28 15:55:51 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:55:57 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_partition[pyamqp]
+####### Starting amqpproxy for test: test_receive_load_balancing[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:56:04 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:56:04 INFO Starting server...
+2025/04/28 15:56:04 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:56:04 INFO Server started, listening for connections...
+2025/04/28 15:56:04 INFO Connection started clientip=127.0.0.1:53476
+2025/04/28 15:56:04 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:07 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:07 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:53476 error="write tcp4 127.0.0.1:5671->127.0.0.1:53476: write: broken pipe"
+2025/04/28 15:56:07 INFO Connection mirroring failed clientip=127.0.0.1:53476 err="write tcp4 127.0.0.1:5671->127.0.0.1:53476: write: broken pipe"
+2025/04/28 15:56:07 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:53476: write: broken pipe" label=127.0.0.1:53476
+2025/04/28 15:56:07 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:53476"
+2025/04/28 15:56:07 INFO Connection started clientip=127.0.0.1:53490
+2025/04/28 15:56:07 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:10 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:10 INFO Exiting loop label=in remoteaddr=127.0.0.1:53490
+2025/04/28 15:56:10 INFO Connection started clientip=127.0.0.1:53504
+2025/04/28 15:56:10 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:10 INFO Connection started clientip=127.0.0.1:53516
+2025/04/28 15:56:10 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:10 INFO Connection started clientip=127.0.0.1:53530
+2025/04/28 15:56:10 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:13 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:13 INFO Connection started clientip=127.0.0.1:42750
+2025/04/28 15:56:13 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:53530 error="write tcp4 127.0.0.1:5671->127.0.0.1:53530: write: broken pipe"
+2025/04/28 15:56:13 INFO Connection mirroring failed clientip=127.0.0.1:53530 err="write tcp4 127.0.0.1:5671->127.0.0.1:53530: write: broken pipe"
+2025/04/28 15:56:13 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:53530: write: broken pipe" label=127.0.0.1:53530
+2025/04/28 15:56:13 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:53530"
+2025/04/28 15:56:13 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:14 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:14 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:53504 error="write tcp4 127.0.0.1:5671->127.0.0.1:53504: write: broken pipe"
+2025/04/28 15:56:14 INFO Connection mirroring failed clientip=127.0.0.1:53504 err="write tcp4 127.0.0.1:5671->127.0.0.1:53504: write: broken pipe"
+2025/04/28 15:56:14 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:53504: write: broken pipe" label=127.0.0.1:53504
+2025/04/28 15:56:14 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:53504"
+####### Stopping amqpproxy for test: test_receive_load_balancing[pyamqp]
+####### Starting amqpproxy for test: test_receive_batch_no_max_wait_time[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:56:36 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:56:36 INFO Starting server...
+2025/04/28 15:56:36 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:56:36 INFO Server started, listening for connections...
+2025/04/28 15:56:37 INFO Connection started clientip=127.0.0.1:48096
+2025/04/28 15:56:37 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:40 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:40 INFO Exiting loop label=in remoteaddr=127.0.0.1:48096
+2025/04/28 15:56:40 INFO Connection started clientip=127.0.0.1:48098
+2025/04/28 15:56:40 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:42 INFO Connection started clientip=127.0.0.1:36188
+2025/04/28 15:56:42 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:44 INFO Connection started clientip=127.0.0.1:36190
+2025/04/28 15:56:44 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:46 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:56:46 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:36190 error="write tcp4 127.0.0.1:5671->127.0.0.1:36190: write: broken pipe"
+2025/04/28 15:56:46 INFO Connection mirroring failed clientip=127.0.0.1:36190 err="write tcp4 127.0.0.1:5671->127.0.0.1:36190: write: broken pipe"
+2025/04/28 15:56:46 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:36190: write: broken pipe" label=127.0.0.1:36190
+2025/04/28 15:56:46 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:36190"
+2025/04/28 15:56:46 INFO Connection started clientip=127.0.0.1:36206
+2025/04/28 15:56:47 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:56:47 INFO Connection started clientip=127.0.0.1:36222
+2025/04/28 15:56:47 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:04 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:04 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:36206 error="write tcp4 127.0.0.1:5671->127.0.0.1:36206: write: broken pipe"
+2025/04/28 15:57:04 INFO Connection mirroring failed clientip=127.0.0.1:36206 err="write tcp4 127.0.0.1:5671->127.0.0.1:36206: write: broken pipe"
+2025/04/28 15:57:04 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:36206: write: broken pipe" label=127.0.0.1:36206
+2025/04/28 15:57:04 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:36206"
+2025/04/28 15:57:05 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:05 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:36222 error="write tcp4 127.0.0.1:5671->127.0.0.1:36222: write: broken pipe"
+2025/04/28 15:57:05 INFO Connection mirroring failed clientip=127.0.0.1:36222 err="write tcp4 127.0.0.1:5671->127.0.0.1:36222: write: broken pipe"
+2025/04/28 15:57:05 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:36222: write: broken pipe" label=127.0.0.1:36222
+2025/04/28 15:57:05 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:36222"
+2025/04/28 15:57:05 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:05 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:05 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:48098 error="write tcp4 127.0.0.1:5671->127.0.0.1:48098: write: broken pipe"
+2025/04/28 15:57:05 INFO Connection mirroring failed clientip=127.0.0.1:48098 err="write tcp4 127.0.0.1:5671->127.0.0.1:48098: write: broken pipe"
+2025/04/28 15:57:05 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:48098: write: broken pipe" label=127.0.0.1:48098
+2025/04/28 15:57:05 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:48098"
+####### Stopping amqpproxy for test: test_receive_batch_no_max_wait_time[pyamqp]
+####### Starting amqpproxy for test: test_receive_batch_empty_with_max_wait_time[pyamqp-3-15-expected_result0]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:57:12 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:57:12 INFO Starting server...
+2025/04/28 15:57:12 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:57:12 INFO Server started, listening for connections...
+2025/04/28 15:57:13 INFO Connection started clientip=127.0.0.1:58356
+2025/04/28 15:57:13 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:15 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:15 INFO Connection started clientip=127.0.0.1:58368
+2025/04/28 15:57:15 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:58356 error="write tcp4 127.0.0.1:5671->127.0.0.1:58356: write: broken pipe"
+2025/04/28 15:57:15 INFO Connection mirroring failed clientip=127.0.0.1:58356 err="write tcp4 127.0.0.1:5671->127.0.0.1:58356: write: broken pipe"
+2025/04/28 15:57:15 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:58356: write: broken pipe" label=127.0.0.1:58356
+2025/04/28 15:57:15 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:58356"
+2025/04/28 15:57:16 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:16 INFO Connection started clientip=127.0.0.1:58382
+2025/04/28 15:57:16 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:28 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:28 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:58368 error="write tcp4 127.0.0.1:5671->127.0.0.1:58368: write: broken pipe"
+2025/04/28 15:57:28 INFO Connection mirroring failed clientip=127.0.0.1:58368 err="write tcp4 127.0.0.1:5671->127.0.0.1:58368: write: broken pipe"
+2025/04/28 15:57:28 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:58368: write: broken pipe" label=127.0.0.1:58368
+2025/04/28 15:57:28 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:58368"
+2025/04/28 15:57:28 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:28 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:58382 error="write tcp4 127.0.0.1:5671->127.0.0.1:58382: write: broken pipe"
+2025/04/28 15:57:28 INFO Connection mirroring failed clientip=127.0.0.1:58382 err="write tcp4 127.0.0.1:5671->127.0.0.1:58382: write: broken pipe"
+2025/04/28 15:57:28 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:58382: write: broken pipe" label=127.0.0.1:58382
+2025/04/28 15:57:28 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:58382"
+####### Stopping amqpproxy for test: test_receive_batch_empty_with_max_wait_time[pyamqp-3-15-expected_result0]
+####### Starting amqpproxy for test: test_receive_batch_empty_with_max_wait_time[pyamqp-3-2-None]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:57:34 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:57:34 INFO Starting server...
+2025/04/28 15:57:34 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:57:34 INFO Server started, listening for connections...
+2025/04/28 15:57:35 INFO Connection started clientip=127.0.0.1:56674
+2025/04/28 15:57:35 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+####### Stopping amqpproxy for test: test_receive_batch_empty_with_max_wait_time[pyamqp-3-2-None]
+####### Starting amqpproxy for test: test_receive_batch_early_callback[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:57:43 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:57:43 INFO Starting server...
+2025/04/28 15:57:43 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:57:43 INFO Server started, listening for connections...
+2025/04/28 15:57:43 INFO Connection started clientip=127.0.0.1:59806
+2025/04/28 15:57:43 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:44 INFO Connection started clientip=127.0.0.1:59822
+2025/04/28 15:57:44 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:46 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:46 INFO Exiting loop label=in remoteaddr=127.0.0.1:59822
+2025/04/28 15:57:46 INFO Connection started clientip=127.0.0.1:59830
+2025/04/28 15:57:47 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:49 INFO Connection started clientip=127.0.0.1:59832
+2025/04/28 15:57:49 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:51 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:51 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:59806 error="write tcp4 127.0.0.1:5671->127.0.0.1:59806: write: broken pipe"
+2025/04/28 15:57:51 INFO Connection mirroring failed clientip=127.0.0.1:59806 err="write tcp4 127.0.0.1:5671->127.0.0.1:59806: write: broken pipe"
+2025/04/28 15:57:51 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:59806: write: broken pipe" label=127.0.0.1:59806
+2025/04/28 15:57:51 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:59806"
+2025/04/28 15:57:52 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:52 INFO Exiting loop label=in remoteaddr=127.0.0.1:59832
+2025/04/28 15:57:52 INFO Connection started clientip=127.0.0.1:51618
+2025/04/28 15:57:52 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:57:59 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:57:59 INFO Exiting loop label=in remoteaddr=127.0.0.1:51618
+2025/04/28 15:58:00 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_batch_early_callback[pyamqp]
+####### Starting amqpproxy for test: test_receive_batch_tracing[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:58:06 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:58:06 INFO Starting server...
+2025/04/28 15:58:06 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:58:06 INFO Server started, listening for connections...
+2025/04/28 15:58:07 INFO Connection started clientip=127.0.0.1:60518
+2025/04/28 15:58:07 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:09 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:09 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:60518 error="write tcp4 127.0.0.1:5671->127.0.0.1:60518: write: broken pipe"
+2025/04/28 15:58:09 INFO Connection mirroring failed clientip=127.0.0.1:60518 err="write tcp4 127.0.0.1:5671->127.0.0.1:60518: write: broken pipe"
+2025/04/28 15:58:09 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:60518: write: broken pipe" label=127.0.0.1:60518
+2025/04/28 15:58:09 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:60518"
+2025/04/28 15:58:09 INFO Connection started clientip=127.0.0.1:60532
+2025/04/28 15:58:09 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:11 INFO Connection started clientip=127.0.0.1:60546
+2025/04/28 15:58:11 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:14 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:14 INFO Exiting loop label=in remoteaddr=127.0.0.1:60546
+2025/04/28 15:58:14 INFO Connection started clientip=127.0.0.1:36748
+2025/04/28 15:58:14 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:14 INFO Connection started clientip=127.0.0.1:36762
+2025/04/28 15:58:14 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:31 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:31 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:36748 error="write tcp4 127.0.0.1:5671->127.0.0.1:36748: write: broken pipe"
+2025/04/28 15:58:31 INFO Connection mirroring failed clientip=127.0.0.1:36748 err="write tcp4 127.0.0.1:5671->127.0.0.1:36748: write: broken pipe"
+2025/04/28 15:58:31 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:36748: write: broken pipe" label=127.0.0.1:36748
+2025/04/28 15:58:31 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:36748"
+2025/04/28 15:58:31 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:31 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:36762 error="write tcp4 127.0.0.1:5671->127.0.0.1:36762: write: broken pipe"
+2025/04/28 15:58:31 INFO Connection mirroring failed clientip=127.0.0.1:36762 err="write tcp4 127.0.0.1:5671->127.0.0.1:36762: write: broken pipe"
+2025/04/28 15:58:31 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:36762: write: broken pipe" label=127.0.0.1:36762
+2025/04/28 15:58:31 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:36762"
+2025/04/28 15:58:32 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_batch_tracing[pyamqp]
+####### Starting amqpproxy for test: test_receive_batch_large_event[pyamqp]
+No existing process found on port 5671.
+Starting amqpproxy process...
+2025/04/28 15:58:37 INFO Connecting host=swathip-eh.servicebus.windows.net
+2025/04/28 15:58:37 INFO Starting server...
+2025/04/28 15:58:37 INFO Certificate information: cert=server.crt key=server.key
+2025/04/28 15:58:37 INFO Server started, listening for connections...
+2025/04/28 15:58:38 INFO Connection started clientip=127.0.0.1:52376
+2025/04/28 15:58:38 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:41 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:41 INFO Connection started clientip=127.0.0.1:52380
+2025/04/28 15:58:41 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:52376 error="write tcp4 127.0.0.1:5671->127.0.0.1:52376: write: broken pipe"
+2025/04/28 15:58:41 INFO Connection mirroring failed clientip=127.0.0.1:52376 err="write tcp4 127.0.0.1:5671->127.0.0.1:52376: write: broken pipe"
+2025/04/28 15:58:41 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:52376: write: broken pipe" label=127.0.0.1:52376
+2025/04/28 15:58:41 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:52376"
+2025/04/28 15:58:41 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:43 INFO Connection started clientip=127.0.0.1:47204
+2025/04/28 15:58:43 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:45 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:45 INFO Exiting loop label=in remoteaddr=127.0.0.1:47204
+2025/04/28 15:58:45 INFO Connection started clientip=127.0.0.1:47206
+2025/04/28 15:58:45 INFO Setting up remote TLS connection remote=swathip-eh.servicebus.windows.net:5671
+2025/04/28 15:58:47 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+2025/04/28 15:58:47 ERROR Failed to write to remote endpoint label=in remoteaddr=127.0.0.1:47206 error="write tcp4 127.0.0.1:5671->127.0.0.1:47206: write: broken pipe"
+2025/04/28 15:58:47 INFO Connection mirroring failed clientip=127.0.0.1:47206 err="write tcp4 127.0.0.1:5671->127.0.0.1:47206: write: broken pipe"
+2025/04/28 15:58:47 WARN closeWithLogging type=*tls.Conn err="tls: failed to send closeNotify alert (but connection was closed anyway): write tcp4 127.0.0.1:5671->127.0.0.1:47206: write: broken pipe" label=127.0.0.1:47206
+2025/04/28 15:58:47 WARN closeWithLogging type=*tls.Conn err="use of closed network connection" label="local 127.0.0.1:47206"
+2025/04/28 15:58:53 INFO Exiting loop label=out remoteaddr=20.66.7.193:5671
+####### Stopping amqpproxy for test: test_receive_batch_large_event[pyamqp]
