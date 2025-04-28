@@ -19,7 +19,7 @@ USAGE:
     python queue_samples_message_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 from datetime import datetime, timedelta
@@ -30,7 +30,7 @@ import sys
 
 class QueueMessageSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def set_access_policy_async(self):
         if self.connection_string is None:
@@ -39,7 +39,7 @@ class QueueMessageSamplesAsync(object):
 
         # [START async_create_queue_client_from_connection_string]
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync1")
         if queue.account_name is None:
             print("Connection string did not provide an account name." + '\n' +
                   "Test: set_access_policy_async")
@@ -98,7 +98,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync2")
 
         # Create the queue
         async with queue:
@@ -125,7 +125,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync3")
 
         # Create the queue
         async with queue:
@@ -173,7 +173,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync4")
 
         # Create the queue
         async with queue:
@@ -210,7 +210,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync5")
 
         # Create the queue
         async with queue:
@@ -250,7 +250,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync6")
 
         # Create the queue
         async with queue:
@@ -289,7 +289,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync7")
 
         # Create the queue
         async with queue:
@@ -323,7 +323,7 @@ class QueueMessageSamplesAsync(object):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync8")
 
         # Create the queue
         async with queue:
