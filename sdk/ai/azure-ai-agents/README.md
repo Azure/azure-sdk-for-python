@@ -191,7 +191,7 @@ To perform file search by an Agent, we first need to upload a file, create a vec
 file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose="agents")
 print(f"Uploaded file, file ID: {file.id}")
 
-vector_store = agents_client.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
+vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 # Create file search tool with resources followed by creating agent
@@ -220,7 +220,7 @@ asset_uri = os.environ["AZURE_BLOB_URI"]
 
 # Create a vector store with no file and wait for it to be processed
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-vector_store = agents_client.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
+vector_store = agents_client.vector_stores.create_and_poll(data_sources=[ds], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 # Create a file search tool
@@ -244,12 +244,12 @@ We also can attach files to the existing vector store. In the code snippet below
 
 ```python
 # Create a vector store with no file and wait for it to be processed
-vector_store = agents_client.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
+vector_store = agents_client.vector_stores.create_and_poll(data_sources=[], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 # Add the file to the vector store or you can supply data sources in the vector store creation
-vector_store_file_batch = agents_client.create_vector_store_file_batch_and_poll(
+vector_store_file_batch = agents_client.vector_store_file_batches.create_and_poll(
     vector_store_id=vector_store.id, data_sources=[ds]
 )
 print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
@@ -355,7 +355,7 @@ get sensible result, the index needs to have "embedding", "token", "category" an
 
 ```python
 # Fetch and log all messages
-messages = agents_client.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 for message in messages.data:
     if message.role == MessageRole.AGENT and message.url_citation_annotations:
         placeholder_annotations = {
@@ -717,7 +717,7 @@ For each session or conversation, a thread is required.   Here is an example:
 <!-- SNIPPET:sample_agents_basics.create_thread -->
 
 ```python
-thread = agents_client.create_thread()
+thread = agents_client.threads.create()
 ```
 
 <!-- END SNIPPET -->
@@ -732,7 +732,7 @@ In some scenarios, you might need to assign specific resources to individual thr
 file = agents_client.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
 print(f"Uploaded file, file ID: {file.id}")
 
-vector_store = agents_client.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
+vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 # Create file search tool with resources followed by creating agent
@@ -749,7 +749,7 @@ print(f"Created agent, ID: {agent.id}")
 
 # Create thread with file resources.
 # If the agent has multiple threads, only this thread can search this file.
-thread = agents_client.create_thread(tool_resources=file_search.resources)
+thread = agents_client.threads.create(tool_resources=file_search.resources)
 ```
 
 <!-- END SNIPPET -->
@@ -761,7 +761,7 @@ To list all threads attached to a given agent, use the list_threads API:
 <!-- SNIPPET:sample_agents_basics.list_threads -->
 
 ```python
-threads = agents_client.list_threads()
+threads = agents_client.threads.list()
 ```
 
 <!-- END SNIPPET -->
@@ -773,7 +773,7 @@ To create a message for agent to process, you pass `user` as `role` and a questi
 <!-- SNIPPET:sample_agents_basics.create_message -->
 
 ```python
-message = agents_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
 ```
 
 <!-- END SNIPPET -->
@@ -786,7 +786,7 @@ To attach a file to a message for content searching, you use `MessageAttachment`
 
 ```python
 attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
 )
 ```
@@ -812,14 +812,14 @@ agent = agents_client.create_agent(
 )
 print(f"Created agent, agent ID: {agent.id}")
 
-thread = agents_client.create_thread()
+thread = agents_client.threads.create()
 print(f"Created thread, thread ID: {thread.id}")
 
 # Create an attachment
 attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
 
 # Create a message
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id,
     role="user",
     content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
@@ -840,7 +840,7 @@ ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDat
 
 # Create a message with the attachment
 attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
 )
 ```
@@ -871,7 +871,7 @@ content_blocks = [
 ]
 
 # Create the message
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id,
     role="user",
     content=content_blocks
@@ -892,7 +892,7 @@ content_blocks = [
 ]
 
 # Create the message
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id,
     role="user",
     content=content_blocks
@@ -922,7 +922,7 @@ content_blocks = [
 ]
 
 # Create the message
-message = agents_client.create_message(
+message = agents_client.messages.create(
     thread_id=thread.id,
     role="user",
     content=content_blocks
@@ -940,13 +940,13 @@ Here is an example of `create_run` and poll until the run is completed:
 <!-- SNIPPET:sample_agents_basics.create_run -->
 
 ```python
-run = agents_client.create_run(thread_id=thread.id, agent_id=agent.id)
+run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
 # Poll the run as long as run status is queued or in progress
 while run.status in ["queued", "in_progress", "requires_action"]:
     # Wait for a second
     time.sleep(1)
-    run = agents_client.get_run(thread_id=thread.id, run_id=run.id)
+    run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
 ```
 
 <!-- END SNIPPET -->
@@ -958,7 +958,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
 ```python
-run = agents_client.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 ```
 
 <!-- END SNIPPET -->
@@ -970,7 +970,7 @@ Here is an example of streaming:
 <!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
 
 ```python
-with agents_client.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
+with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
     for event_type, event_data, _ in stream:
 
@@ -1035,7 +1035,7 @@ class MyEventHandler(AgentEventHandler[str]):
 <!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
 
 ```python
-with agents_client.create_stream(
+with agents_client.runs.stream(
     thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
 ) as stream:
     for event_type, event_data, func_return in stream:
@@ -1065,7 +1065,7 @@ To retrieve messages from agents, use the following example:
 <!-- SNIPPET:sample_agents_basics.list_messages -->
 
 ```python
-messages = agents_client.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
 # The messages are following in the reverse order,
 # we will iterate them and output only text contents.
@@ -1088,14 +1088,14 @@ Here is an example retrieving file ids from messages and save to the local drive
 <!-- SNIPPET:sample_agents_code_interpreter.get_messages_and_save_files -->
 
 ```python
-messages = agents_client.list_messages(thread_id=thread.id)
+messages = agents_client.messages.list(thread_id=thread.id)
 print(f"Messages: {messages}")
 
 for image_content in messages.image_contents:
     file_id = image_content.image_file.file_id
     print(f"Image File ID: {file_id}")
     file_name = f"{file_id}_image_file.png"
-    agents_client.save_file(file_id=file_id, file_name=file_name)
+    agents_client.files.save(file_id=file_id, file_name=file_name)
     print(f"Saved image file to: {Path.cwd() / file_name}")
 
 for file_path_annotation in messages.file_path_annotations:
@@ -1120,7 +1120,7 @@ async def save_file_content(client, file_id: str, file_name: str, target_dir: Op
     path.mkdir(parents=True, exist_ok=True)
 
     # Retrieve the file content
-    file_content_stream = await client.get_file_content(file_id)
+    file_content_stream = await client.files.get_content(file_id)
     if not file_content_stream:
         raise RuntimeError(f"No content retrievable for file ID '{file_id}'.")
 
@@ -1148,10 +1148,10 @@ To remove resources after completing tasks, use the following functions:
 
 ```python
 # Delete the file when done
-agents_client.delete_vector_store(vector_store.id)
+agents_client.vector_stores.delete(vector_store.id)
 print("Deleted vector store")
 
-agents_client.delete_file(file_id=file.id)
+agents_client.files.delete(file_id=file.id)
 print("Deleted file")
 
 # Delete the agent when done
