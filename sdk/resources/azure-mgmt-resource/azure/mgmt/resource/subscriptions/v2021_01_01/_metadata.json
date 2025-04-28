@@ -5,13 +5,13 @@
         "name": "SubscriptionClient",
         "filename": "_subscription_client",
         "description": "All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.",
-        "host_value": "\"https://management.azure.com\"",
+        "host_value": null,
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_public_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \".._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -44,7 +44,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -67,7 +67,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
