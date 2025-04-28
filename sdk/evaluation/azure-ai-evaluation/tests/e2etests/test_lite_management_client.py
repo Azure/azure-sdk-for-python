@@ -1,7 +1,7 @@
 from typing import Any, Mapping
 import pytest
 import logging
-from azure.core.credentials import AzureSasCredential, TokenCredential
+from azure.core.credentials import AzureSasCredential, TokenCredential, AccessToken
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
@@ -31,7 +31,7 @@ class TestLiteAzureManagementClient(object):
         )
 
         token = client.get_token()
-        assert isinstance(token, str) and len(token) > 0
+        assert isinstance(token, AccessToken) and len(token) > 0
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [False, True])
