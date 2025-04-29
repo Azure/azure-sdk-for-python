@@ -37,9 +37,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .. import models as _models
 from ._client import AgentsClient as AgentsClientGenerated
 from .operations._patch import _has_errors_in_toolcalls_output
+from .. import _types
 
 if TYPE_CHECKING:
-    from .. import _types
 
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import AzureKeyCredential
