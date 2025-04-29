@@ -10,6 +10,7 @@ import pytest
 from unittest.mock import MagicMock, Mock, patch
 
 from azure.ai.agents import AgentsClient
+from azure.ai.agents.operations import RunsOperations
 from azure.ai.agents.models import (
     CodeInterpreterTool,
     FunctionTool,
@@ -62,8 +63,8 @@ class TestAgentsMock:
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
             credential=MagicMock(),
         )
-        client.submit_tool_outputs_to_run = MagicMock()
-        client.submit_tool_outputs_to_stream = MagicMock()
+        client.runs.submit_tool_outputs = MagicMock()
+        client.runs.submit_tool_outputs_stream = MagicMock()
         return client
 
     def get_toolset(self, file_id: Optional[str], function: Optional[str]) -> Optional[ToolSet]:
@@ -283,11 +284,11 @@ class TestAgentsMock:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset1)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run456", toolset2)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run456", toolset2)
             # Check that we cleanup tools after deleting agent.
             agents_client.delete_agent(agent1.id)
             agents_client.delete_agent(agent2.id)
@@ -389,11 +390,11 @@ class TestAgentsMock:
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
 
             # Create run with new tool set, which also can be none.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, sleep_interval=0)
             if toolset2 is not None:
-                self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset2)
+                self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset2)
             else:
-                self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset1)
+                self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
     @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(
@@ -439,8 +440,8 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset)
 
     def _assert_stream_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
         """Assert that stream has received the correct values."""
@@ -502,7 +503,7 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
+            run = agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
             self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
             agents_client._handle_submit_tool_outputs(run)
             self._assert_stream_call(agents_client.submit_tool_outputs_to_stream, "run123", toolset)
@@ -510,7 +511,7 @@ class TestAgentsMock:
 
 class TestIntegrationAgentsMock:
 
-    def submit_tool_outputs_to_run(
+    def submit_tool_outputs(
         self, thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
     ) -> Iterator[bytes]:
         assert thread_id == "thread_01"
@@ -528,15 +529,15 @@ class TestIntegrationAgentsMock:
         raise ValueError("Unexpected tool outputs")
 
     @patch(
-        "azure.ai.agents._operations.AgentsClientOperationsMixin.create_run",
+        "azure.ai.agents.operations._operations.RunsOperations.create",
         return_value=convert_to_byte_iterator(main_stream_response),
     )
     @patch("azure.ai.agents.AgentsClient.__init__", return_value=None)
     @patch(
-        "azure.ai.agents._operations.AgentsClientOperationsMixin.submit_tool_outputs_to_run",
+        "azure.ai.agents.operations._operations.RunsOperations.submit_tool_outputs",
     )
     def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
-        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
+        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs
         functions = FunctionTool(user_functions)
         toolset = ToolSet()
         toolset.add(functions)
@@ -545,6 +546,7 @@ class TestIntegrationAgentsMock:
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
             credential=MagicMock(),
         )
+        operation.runs =  RunsOperations(MagicMock(), MagicMock(), MagicMock(), MagicMock())
         operation.enable_auto_function_calls(toolset=toolset)
         count = 0
 

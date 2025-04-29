@@ -8,7 +8,7 @@ from requests.structures import CaseInsensitiveDict
 import inspect
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.aio import AgentsClient as AsyncAgentsClient
-from azure.ai.agents._model_base import SdkJSONEncoder
+from azure.ai.agents._utils.model_base import SdkJSONEncoder
 
 
 def dict_to_io_bytes(input: Dict[str, Any]) -> io.BytesIO:

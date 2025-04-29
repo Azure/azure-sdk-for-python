@@ -1,17 +1,20 @@
 # pylint: disable=line-too-long,useless-suppression
 from typing import Iterator, List
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 import pytest
 import os
 from azure.ai.agents.models import (
     AgentEventHandler,
+    AgentStreamEvent,
     BaseAgentEventHandler,
+    MessageDeltaChunk,
+    RunStep,
+    RunStepDeltaChunk,
     SubmitToolOutputsAction,
+    ThreadMessage,
     ThreadRun,
 )
 from azure.ai.agents.models._patch import _parse_event
-from azure.ai.agents.models import AgentStreamEvent
-from azure.ai.agents.models import ThreadRun, RunStep, ThreadMessage, MessageDeltaChunk, RunStepDeltaChunk
 
 
 def read_file(file_name: str) -> str:
@@ -178,7 +181,7 @@ class TestAgentEventHandler:
     @patch("azure.ai.agents.models._patch._parse_event")
     def test_tool_calls(self, mock_parse_event: Mock):
         # Test if the event type and status are met, submit function calls.
-        submit_tool_outputs = Mock()
+        submit_tool_outputs = MagicMock(return_value = [{'all': 'good'}])
         handler = self.MyAgentEventHandler()
 
         handler.initialize(convert_to_byte_iterator("event\n\n"), submit_tool_outputs)
@@ -194,7 +197,7 @@ class TestAgentEventHandler:
         assert mock_parse_event.call_count == 1
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
-        assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+        assert submit_tool_outputs.call_args[0] == (event_obj, handler, True)
 
     @patch("azure.ai.agents.models._patch.AgentEventHandler.on_unhandled_event")
     @pytest.mark.parametrize("event_type", [e.value for e in AgentStreamEvent])

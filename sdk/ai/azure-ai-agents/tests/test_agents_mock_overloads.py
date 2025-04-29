@@ -49,13 +49,13 @@ class TestSignatures:
         body = {"file_ids": file_ids}
 
         with patch(
-            "azure.ai.agents._operations.AgentsClientOperationsMixin.create_vector_store",
+            "azure.ai.agents.operations._operations.VectorStoresOperations.create",
             wraps=get_mock_fn(
-                agent.create_vector_store, return_val=VectorStore({"id": "store_1", "status": "in_progress"})
+                agent.vector_stores.create, return_val=VectorStore({"id": "store_1", "status": "in_progress"})
             ),
         ), patch(
-            "azure.ai.agents._operations.AgentsClientOperationsMixin.get_vector_store",
-            wraps=get_mock_fn(agent.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})),
+            "azure.ai.agents.operations._operations.VectorStoresOperations.get",
+            wraps=get_mock_fn(agent.vector_stores.get, return_val=VectorStore({"id": "store_1", "status": "completed"})),
         ):
 
             agent.vector_stores.create_and_poll(file_ids=file_ids, sleep_interval=0)
@@ -63,14 +63,14 @@ class TestSignatures:
             agent.vector_stores.create_and_poll(body=dict_to_io_bytes(body), sleep_interval=0)
 
         with patch(
-            "azure.ai.agents.aio._operations.AgentsClientOperationsMixin.create_vector_store",
+            "azure.ai.agents.aio.operations._operations.VectorStoresOperations.create",
             wraps=get_mock_fn(
-                async_agent.create_vector_store, return_val=VectorStore({"id": "store_1", "status": "in_progress"})
+                async_agent.vector_stores.create, return_val=VectorStore({"id": "store_1", "status": "in_progress"})
             ),
         ), patch(
-            "azure.ai.agents.aio._operations.AgentsClientOperationsMixin.get_vector_store",
+            "azure.ai.agents.aio.operations._operations.VectorStoresOperations.get",
             wraps=get_mock_fn(
-                async_agent.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})
+                async_agent.vector_stores.get, return_val=VectorStore({"id": "store_1", "status": "completed"})
             ),
         ):
             await async_agent.vector_stores.create_and_poll(file_ids=file_ids, sleep_interval=0)

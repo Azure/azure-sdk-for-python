@@ -5,7 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 import unittest
-from azure.ai.agents._model_base import _deserialize
+from azure.ai.agents._utils.model_base import _deserialize
 from azure.ai.agents.models import _models
 
 
