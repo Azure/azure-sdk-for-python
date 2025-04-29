@@ -12,6 +12,8 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque, Dict, List, Optional, Union
 from urllib.parse import urlparse
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from ._rai_client import RAIClient
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
@@ -78,7 +80,7 @@ class LLMBase(ABC):
     async def get_completion(
         self,
         prompt: str,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         **request_params,
     ) -> dict:
         """
@@ -100,7 +102,7 @@ class LLMBase(ABC):
     async def get_all_completions(
         self,
         prompts: List[str],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         api_call_max_parallel_count: int,
         api_call_delay_seconds: float,
         request_error_rate_threshold: float,
@@ -120,7 +122,7 @@ class LLMBase(ABC):
     async def get_conversation_completion(
         self,
         messages: List[dict],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         role: str,
         **request_params,
     ) -> dict:
@@ -274,7 +276,7 @@ class OpenAICompletionsModel(LLMBase):
     async def get_conversation_completion(
         self,
         messages: List[dict],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         role: str = "assistant",
         **request_params,
     ) -> dict:
@@ -304,7 +306,7 @@ class OpenAICompletionsModel(LLMBase):
     async def get_all_completions(  # type: ignore[override]
         self,
         prompts: List[Dict[str, str]],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
@@ -372,7 +374,7 @@ class OpenAICompletionsModel(LLMBase):
         self,
         request_datas: List[dict],
         output_collector: List,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
     ) -> None:
@@ -433,7 +435,7 @@ class OpenAICompletionsModel(LLMBase):
 
     async def request_api(
         self,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         request_data: dict,
     ) -> dict:
         """
@@ -476,11 +478,12 @@ class OpenAICompletionsModel(LLMBase):
         time_start = time.time()
         full_response = None
 
-        response = await session.post(url=self.endpoint_url, headers=headers, json=request_data, params=params)
-
-        response.raise_for_status()
-
-        response_data = response.json()
+        if(isinstance(session, AIProjectClient)):
+            response_data = session.red_teams.submit_simulation(request_data, headers, params)
+        else:
+            response = await session.post(url=self.endpoint_url, headers=headers, json=request_data, params=params)
+            response.raise_for_status()
+            response_data = response.json()
 
         self.logger.info(f"Response: {response_data}")
 
@@ -533,7 +536,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     async def get_conversation_completion(
         self,
         messages: List[dict],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         role: str = "assistant",
         **request_params,
     ) -> dict:
@@ -544,7 +547,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         ----------
         messages: List of messages to query the model with.
         Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: AsyncHttpPipeline object to query the model with.
+        session: Union[AsyncHttpPipeline, AIProjectClient] object to query the model with.
         role: Not used for this model, since it is a chat model.
         request_params: Additional parameters to pass to the model.
         """
@@ -560,7 +563,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     async def get_completion(
         self,
         prompt: str,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         **request_params,
     ) -> dict:
         """
@@ -569,7 +572,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         Parameters
         ----------
         prompt: Prompt str to query model with.
-        session: AsyncHttpPipeline object to use for the request.
+        session: Union[AsyncHttpPipeline, AIProjectClient] object to use for the request.
         **request_params: Additional parameters to pass to the request.
         """
         messages = [{"role": "system", "content": prompt}]
@@ -583,7 +586,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     async def get_all_completions(
         self,
         prompts: List[str],  # type: ignore[override]
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
