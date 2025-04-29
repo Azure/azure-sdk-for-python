@@ -34,22 +34,21 @@ async def sample_deployments_async() -> None:
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
     model_publisher = os.environ["MODEL_PUBLISHER"]
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        print("List all deployments:")
-        async for deployment in project_client.deployments.list():
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+            print("List all deployments:")
+            async for deployment in project_client.deployments.list():
+                print(deployment)
+
+            print(f"List all deployments by the model publisher `{model_publisher}`:")
+            async for deployment in project_client.deployments.list(model_publisher=model_publisher):
+                print(deployment)
+
+            print(f"Get a single deployment named `{model_deployment_name}`:")
+            deployment = await project_client.deployments.get(model_deployment_name)
             print(deployment)
-
-        print(f"List all deployments by the model publisher `{model_publisher}`:")
-        async for deployment in project_client.deployments.list(model_publisher=model_publisher):
-            print(deployment)
-
-        print(f"Get a single deployment named `{model_deployment_name}`:")
-        deployment = await project_client.deployments.get(model_deployment_name)
-        print(deployment)
 
 
 async def main():

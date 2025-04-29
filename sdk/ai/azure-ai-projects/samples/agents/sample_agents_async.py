@@ -6,8 +6,8 @@
 """
 DESCRIPTION:
     Given an asynchronous AIProjectClient, this sample demonstrates how to access an authenticated
-    asynchronous AgentsClient from the azure.ai.agents package, associated with your AI Foundry project.
-    For more information on the azure.ai.agents package see https://pypi.org/project/azure-ai-agents.
+    asynchronous AgentsClient from the azure-ai-agents, associated with your AI Foundry project.
+    For more information on the azure-ai-agents see https://pypi.org/project/azure-ai-agents.
     Find Agent samples here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples.
 
 USAGE:
@@ -34,23 +34,22 @@ async def sample_agents_async() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        agent = await project_client.agents.create_agent(
-            model=model_deployment_name,
-            name="my-agent",
-            instructions="You are helpful agent",
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # Do something with your Agent!
-        # See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
+            agent = await project_client.agents.create_agent(
+                model=model_deployment_name,
+                name="my-agent",
+                instructions="You are helpful agent",
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+            # Do something with your Agent!
+            # See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
+
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
 
 async def main():

@@ -549,8 +549,7 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
-     Required.
+     ``https://blob.windows.core.net/Container/Path``. Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -559,8 +558,7 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
-     <https://blob.windows.core.net/Container/Path>`_. Required."""
+    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )

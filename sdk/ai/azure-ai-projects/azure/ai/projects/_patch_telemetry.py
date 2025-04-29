@@ -201,10 +201,10 @@ def _configure_logging(log_exporter: Any) -> None:
         # OpenTelemetry Python API/SDK.
         # So it's ok to use them for local development, but we'll swallow
         # any errors in case of any breaking changes on OTel side.
-        from opentelemetry import _logs, _events
+        from opentelemetry import _logs, _events  # pylint: disable=import-error
         from opentelemetry.sdk._logs import LoggerProvider  # pylint: disable=import-error,no-name-in-module
         from opentelemetry.sdk._events import EventLoggerProvider  # pylint: disable=import-error,no-name-in-module
-        from opentelemetry.sdk._logs.export import (
+        from opentelemetry.sdk._logs.export import (  # pylint: disable=import-error
             SimpleLogRecordProcessor,
         )  # pylint: disable=import-error,no-name-in-module
 

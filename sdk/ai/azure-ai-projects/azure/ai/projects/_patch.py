@@ -7,13 +7,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import os
-from typing import List, Any, Optional
+from typing import List, Any, Optional, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core.credentials import TokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations, InferenceOperations
 from ._patch_prompts import PromptTemplate
 from ._patch_telemetry import enable_telemetry
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.ai.agents import AgentsClient
 
 _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
     "true",
@@ -91,8 +95,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-        self.telemetry = TelemetryOperations(self)
-        self.inference = InferenceOperations(self)
+        self.telemetry = TelemetryOperations(self)  # type: ignore
+        self.inference = InferenceOperations(self)  # type: ignore
         self._agents = None
 
     @property

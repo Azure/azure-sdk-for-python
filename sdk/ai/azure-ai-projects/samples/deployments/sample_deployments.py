@@ -30,21 +30,20 @@ endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 model_publisher = os.environ["MODEL_PUBLISHER"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    # [START deployments_sample]
-    print("List all deployments:")
-    for deployment in project_client.deployments.list():
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+        # [START deployments_sample]
+        print("List all deployments:")
+        for deployment in project_client.deployments.list():
+            print(deployment)
+
+        print(f"List all deployments by the model publisher `{model_publisher}`:")
+        for deployment in project_client.deployments.list(model_publisher=model_publisher):
+            print(deployment)
+
+        print(f"Get a single deployment named `{model_deployment_name}`:")
+        deployment = project_client.deployments.get(model_deployment_name)
         print(deployment)
-
-    print(f"List all deployments by the model publisher `{model_publisher}`:")
-    for deployment in project_client.deployments.list(model_publisher=model_publisher):
-        print(deployment)
-
-    print(f"Get a single deployment named `{model_deployment_name}`:")
-    deployment = project_client.deployments.get(model_deployment_name)
-    print(deployment)
-    # [END deployments_sample]
+        # [END deployments_sample]
