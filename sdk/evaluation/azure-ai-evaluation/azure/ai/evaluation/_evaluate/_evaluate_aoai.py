@@ -25,6 +25,7 @@ LOGGER = logging.getLogger(__name__)
 class OAIEvalRunCreationInfo(TypedDict, total=True):
     """Configuration for an evaluator"""
 
+    client: Union[AzureOpenAI, OpenAI]
     eval_group_id: str
     eval_run_id: str
     grader_name_map: Dict[str, str]
@@ -55,7 +56,6 @@ def _split_evaluators_and_grader_configs(
 
 @experimental
 def _begin_aoai_evaluation(
-        client: Union[OpenAI, AzureOpenAI],
         graders: Dict[str, AzureOpenAIGrader],
         column_mappings: Optional[Dict[str, Dict[str, str]]],
         data: pd.DataFrame,
@@ -88,11 +88,8 @@ def _begin_aoai_evaluation(
     LOGGER.info("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...")
     all_eval_run_info: List[OAIEvalRunCreationInfo] = []
 
-    if len(all_eval_run_info) > 1:
-        LOGGER.info("AOAI: Grader-specific column mappings detected. Splitting up evaluation runs to avoid conflicts...")
     for selected_graders, selected_column_mapping in _get_graders_and_column_mappings(graders, column_mappings):
         all_eval_run_info.append(_begin_single_aoai_evaluation(
-            client,
             selected_graders,
             data,
             selected_column_mapping,
@@ -102,7 +99,6 @@ def _begin_aoai_evaluation(
     return all_eval_run_info
 
 def _begin_single_aoai_evaluation(
-        client: Union[OpenAI, AzureOpenAI],
         graders: Dict[str, AzureOpenAIGrader],
         data: pd.DataFrame,
         column_mapping: Dict[str, str],
@@ -113,8 +109,6 @@ def _begin_single_aoai_evaluation(
     AOAI evaluation runs must be queried for completion, so this returns a poller to accomplish that task
     at a later time.
 
-    :param client: The AOAI client to use for the evaluation.
-    :type client: Union[OpenAI, AzureOpenAI]
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
     :param data_source_config: The data source configuration to apply to the
@@ -129,7 +123,10 @@ def _begin_single_aoai_evaluation(
     # Format data for eval group creation
     grader_name_list  = []
     grader_list = []
-    
+    # It's expected that all graders supplied for a single eval run use the same credentials
+    # so grab a client from the first grader.
+    client = list(graders.values())[0].get_client()
+
     for name, grader in graders.items():
         grader_name_list.append(name)
         grader_list.append(grader.get_grader_config())
@@ -163,7 +160,7 @@ def _begin_single_aoai_evaluation(
     LOGGER.info(f"AOAI: Eval run created with id {eval_run_id}." +
           " Results will be retrieved after normal evaluation is complete...")
 
-    return OAIEvalRunCreationInfo(eval_group_id=eval_group_info.id, eval_run_id=eval_run_id, grader_name_map=grader_name_map)
+    return OAIEvalRunCreationInfo(client=client, eval_group_id=eval_group_info.id, eval_run_id=eval_run_id, grader_name_map=grader_name_map)
 
 def _get_evaluation_run_results(
         client: Union[OpenAI, AzureOpenAI],
@@ -174,8 +171,6 @@ def _get_evaluation_run_results(
     pipeline to consume. This method accepts a list of eval run information, and will combine the
     results into a single dataframe and metrics dictionary.
     
-    :param client: The AOAI client to use for the evaluation.
-    :type client: Union[OpenAI, AzureOpenAI]
     :param all_run_info: A list of evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type all_run_info: List[OAIEvalRunCreationInfo]
@@ -188,25 +183,19 @@ def _get_evaluation_run_results(
     run_metrics = {}
     output_df = pd.DataFrame()
     for run_info in all_run_info:
-        cur_output_df, cur_run_metrics = _get_single_run_results(
-            client,
-            run_info
-        )
+        cur_output_df, cur_run_metrics = _get_single_run_results(run_info)
         output_df = pd.concat([output_df, cur_output_df], axis=1)
         run_metrics.update(cur_run_metrics)
 
     return output_df, run_metrics
 
 def _get_single_run_results(
-        client: Union[OpenAI, AzureOpenAI],
         run_info: OAIEvalRunCreationInfo,
     ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume.
     
-    :param client: The AOAI client to use for the evaluation.
-    :type client: Union[OpenAI, AzureOpenAI]
     :param run_info: The evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type run_info: OAIEvalRunCreationInfo
@@ -216,7 +205,7 @@ def _get_single_run_results(
     :raises EvaluationException: If the evaluation run fails or is not completed before timing out.
     """
     # Wait for evaluation run to complete
-    run_results = _wait_for_run_conclusion(client, run_info["eval_group_id"], run_info["eval_run_id"])
+    run_results = _wait_for_run_conclusion(run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"])
     if run_results.status != "completed":
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
@@ -248,7 +237,7 @@ def _get_single_run_results(
     # The passed and score values are then added to the results dictionary, prepended with the grader's name
     # as entered by the user in the inputted dictionary.
     # Other values, if they exist, are also added to the results dictionary.
-    raw_list_results = client.evals.runs.output_items.list(
+    raw_list_results = run_info["client"].evals.runs.output_items.list(
         eval_id=run_info["eval_group_id"],
         run_id=run_info["eval_run_id"]
     )
@@ -272,41 +261,6 @@ def _get_single_run_results(
     output_df = pd.DataFrame(listed_results)
 
     return output_df, run_metrics
-
-def _are_individual_runs_needed(
-        graders: Dict[str, AzureOpenAIGrader],
-        column_mapping: Optional[Dict[str, str]] = None
-    ) -> bool:
-    """
-    Given an input set of graders and their column mapping, determine if
-    the graders can be executed together under a single evaluation run,
-    or if they must be handled individually.
-
-    For simplicity's sake, the individual run condition is met if there are at least
-    two graders, and if any of them have a unique column mapping.
-
-    This is done to avoid the possibility of conflicting mappings, since OAI requires
-    unique input name assignments to each evaluation group.
-
-    :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
-    :type graders: Dict[str, AoaiGrader]
-    :param column_mapping: The column mapping to check.
-    :type column_mapping: Optional[Dict[str, str]]
-    :return: True if the graders require individual runs, False otherwise.
-    :rtype: bool
-    """
-    if len(graders) < 2:
-        # Only one grader, no need for individual runs.
-        return False
-    if column_mapping is None:
-        # No column mapping provided, no need for individual runs.
-        return False
-    # Check if any of the graders have a unique column mapping.
-    for name in graders.keys():
-        if name in column_mapping:
-            # Grader with a unique column mapping found. Individual runs are needed.
-            return True
-    return False
 
 
 def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AzureOpenAIGrader:
@@ -380,6 +334,10 @@ def _get_graders_and_column_mappings(
     the OAI API can't. So, if if there's a possibility that such a conflict might arise,
     we need to split the incoming data up.
 
+    Currently splits each grader into its own eval group/run to ensure they each use
+    their own credentials later on. Planned fast follow is to group things by
+    matching credentials later.
+
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
     :param column_mappings: The column mappings to use for the evaluation.
@@ -388,15 +346,9 @@ def _get_graders_and_column_mappings(
         and the column mapping they should use.
     :rtype: List[Tuple[Dict[str, AoaiGrader], Optional[Dict[str, str]]]]
     """
-    if column_mappings is None:
-        # No column mappings provided, no need to split.
-        return [(graders, None)]
+
     default_mapping = column_mappings.get("default", None)
-    if not any(name in column_mappings for name in graders.keys()):
-        # No unique column mappings provided, no need to split.
-        return [(graders, default_mapping)]
-    # At least one grader has a unique column mapping, split graders up
-    return [({name:grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
+    return [({name : grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
 def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """Produce a data source config that maps all columns from the supplied data source into
@@ -498,7 +450,6 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             "content": content,
         }
     }
-
 
 def _begin_eval_run(
         client: Union[OpenAI, AzureOpenAI],
