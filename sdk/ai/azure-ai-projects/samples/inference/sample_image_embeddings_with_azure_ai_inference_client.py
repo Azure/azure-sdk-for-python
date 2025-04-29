@@ -31,20 +31,19 @@ from azure.ai.inference.models import ImageEmbeddingInput
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with project_client.inference.get_image_embeddings_client() as client:
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        response = client.embed(
-            model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
-        )
+        with project_client.inference.get_image_embeddings_client() as client:
 
-        for item in response.data:
-            length = len(item.embedding)
-            print(
-                f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
-                f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+            response = client.embed(
+                model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
             )
+
+            for item in response.data:
+                length = len(item.embedding)
+                print(
+                    f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                    f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                )

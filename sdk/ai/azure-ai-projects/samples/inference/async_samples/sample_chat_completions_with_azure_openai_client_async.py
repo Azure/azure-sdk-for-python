@@ -38,10 +38,7 @@ async def sample_chat_completions_with_azure_openai_client_async():
 
     async with DefaultAzureCredential() as credential:
 
-        async with AIProjectClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential(),
-        ) as project_client:
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
             # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:
             async with await project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:

@@ -35,24 +35,27 @@ async def sample_connections_async() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
     connection_name = os.environ["CONNECTION_NAME"]
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        print("List the properties of all connections:")
-        async for connection in project_client.connections.list():
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+            print("List the properties of all connections:")
+            async for connection in project_client.connections.list():
+                print(connection)
+
+            print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
+            async for connection in project_client.connections.list(
+                connection_type=ConnectionType.AZURE_OPEN_AI,
+            ):
+                print(connection)
+
+            print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
+            connection = await project_client.connections.get(connection_name)
             print(connection)
 
-        print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
-        async for connection in project_client.connections.list(
-            connection_type=ConnectionType.AZURE_OPEN_AI,
-        ):
+            print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+            connection = await project_client.connections.get(connection_name, include_credentials=True)
             print(connection)
-
-        print(f"Get the properties of a connection named `{connection_name}`:")
-        connection = await project_client.connections.get(connection_name)
-        print(connection)
 
 
 async def main():

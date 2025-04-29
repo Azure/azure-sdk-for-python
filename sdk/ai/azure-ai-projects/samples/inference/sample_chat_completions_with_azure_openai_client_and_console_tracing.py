@@ -49,21 +49,20 @@ enable_telemetry(destination=sys.stdout)
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        response = client.chat.completions.create(
-            model=model_deployment_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": "How many feet are in a mile?",
-                },
-            ],
-        )
+        with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
-        print(response.choices[0].message.content)
+            response = client.chat.completions.create(
+                model=model_deployment_name,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "How many feet are in a mile?",
+                    },
+                ],
+            )
+
+            print(response.choices[0].message.content)

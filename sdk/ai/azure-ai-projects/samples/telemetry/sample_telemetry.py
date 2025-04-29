@@ -27,11 +27,10 @@ from azure.ai.projects import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    print("Get the Application Insights connection string:")
-    connection_string = project_client.telemetry.get_connection_string()
-    print(connection_string)
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+        print("Get the Application Insights connection string:")
+        connection_string = project_client.telemetry.get_connection_string()
+        print(connection_string)

@@ -32,14 +32,13 @@ async def sample_telemetry_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
 
-    async with AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        print("Get the Application Insights connection string:")
-        connection_string = await project_client.telemetry.get_connection_string()
-        print(connection_string)
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+
+            print("Get the Application Insights connection string:")
+            connection_string = await project_client.telemetry.get_connection_string()
+            print(connection_string)
 
 
 async def main():

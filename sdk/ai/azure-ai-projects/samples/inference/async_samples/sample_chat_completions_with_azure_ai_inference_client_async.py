@@ -37,10 +37,7 @@ async def sample_chat_completions_with_azure_ai_inference_client_async():
 
     async with DefaultAzureCredential() as credential:
 
-        async with AIProjectClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential(),
-        ) as project_client:
+        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
             async with project_client.inference.get_chat_completions_client() as client:
 
