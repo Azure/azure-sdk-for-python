@@ -38,7 +38,7 @@
       },
       "ArmConfig": {
         "MultiMaster": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = $true }"
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
         }
       }
     },
@@ -55,7 +55,7 @@
       },
       "ArmConfig": {
         "MultiRegion": {
-          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = $true }"
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
         }
       }
     },

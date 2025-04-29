@@ -23,9 +23,10 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation,
     REGION_2, REGION_1
 
 COLLECTION = "created_collection"
+logger = logging.getLogger('test')
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
+    logger.info(os.getenv("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"))
     client = CosmosClient(TestPerPartitionCircuitBreakerSmMrrAsync.host, TestPerPartitionCircuitBreakerSmMrrAsync.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_DATABASE_ID)
     await created_database.create_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,

@@ -20,8 +20,10 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
 from tests.test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
 
+logger = logging.getLogger('test')
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
+    logger.info(os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"))
     client = CosmosClient(TestPerPartitionCircuitBreakerMM.host,
                           TestPerPartitionCircuitBreakerMM.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMM.TEST_DATABASE_ID)
