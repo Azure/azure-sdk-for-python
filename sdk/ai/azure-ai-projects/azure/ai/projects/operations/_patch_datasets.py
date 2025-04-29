@@ -21,7 +21,7 @@ from ..models._models import (
     PendingUploadType,
     PendingUploadResponse,
 )
-from ..models._enums import DatasetType, CredentialType
+from ..models._enums import CredentialType
 
 logger = logging.getLogger(__name__)
 

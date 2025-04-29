@@ -4,7 +4,7 @@
   "pythonVersion": "3.11",
   "exclude": [
     "**/_client.py",
-    "**/_operations.py",
+    "**/_operations.py"
   ],
   "extraPaths": [
     "./../../core/azure-core",
