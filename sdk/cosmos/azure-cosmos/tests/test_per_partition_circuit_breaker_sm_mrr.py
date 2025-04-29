@@ -22,7 +22,6 @@ from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_p
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
 def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerSmMrr.host, TestPerPartitionCircuitBreakerSmMrr.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrr.TEST_DATABASE_ID)
     created_database.create_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID,

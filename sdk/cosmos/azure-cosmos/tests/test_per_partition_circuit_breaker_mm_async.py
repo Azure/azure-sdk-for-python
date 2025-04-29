@@ -40,7 +40,6 @@ PK_VALUE = "pk1"
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerMMAsync.host,
                           TestPerPartitionCircuitBreakerMMAsync.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMMAsync.TEST_DATABASE_ID)
