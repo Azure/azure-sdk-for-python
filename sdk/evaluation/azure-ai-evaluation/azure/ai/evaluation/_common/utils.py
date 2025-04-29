@@ -126,6 +126,17 @@ def construct_prompty_model_config(
 
     return prompty_model_config
 
+def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
+    """Check if the Azure AI project is an OneDP project.
+
+    :param azure_ai_project: The scope of the Azure AI project.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :return: True if the Azure AI project is an OneDP project, False otherwise.
+    :rtype: bool
+    """
+    if isinstance(azure_ai_project, str):
+        return True
+    return False
 
 def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}

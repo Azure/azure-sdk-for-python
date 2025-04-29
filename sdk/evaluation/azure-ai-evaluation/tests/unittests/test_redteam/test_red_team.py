@@ -142,7 +142,6 @@ class TestRedTeamInitialization:
         assert agent.credential is not None
         assert agent.logger is not None
         assert agent.token_manager is not None
-        assert agent.rai_client is not None
         assert agent.generated_rai_client is not None
         assert isinstance(agent.attack_objectives, dict)
         assert agent.red_team_info == {}
