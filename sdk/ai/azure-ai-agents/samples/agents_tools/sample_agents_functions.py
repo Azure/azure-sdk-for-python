@@ -20,11 +20,15 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
-import os, time
+import os, time, sys
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
-from utils.user_functions import user_functions
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
+from samples.utils.user_functions import user_functions
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
