@@ -406,7 +406,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         Note that deleting a queue is likely to take at least 40 seconds to complete.
         If an operation is attempted against the queue while it was being deleted,
-        an :class:`HttpResponseError` will be thrown.
+        an ~azure.core.exceptions.HttpResponseError will be thrown.
 
         :param queue:
             The queue to delete. This can either be the name of the queue,
@@ -438,7 +438,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
-        :returns: A :class:`~azure.storage.queue.QueueClient` object.
+        :returns: A ~azure.storage.queue.QueueClient object.
         :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:
