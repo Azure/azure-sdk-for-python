@@ -163,7 +163,6 @@ def _begin_single_aoai_evaluation(
     return OAIEvalRunCreationInfo(client=client, eval_group_id=eval_group_info.id, eval_run_id=eval_run_id, grader_name_map=grader_name_map)
 
 def _get_evaluation_run_results(
-        client: Union[OpenAI, AzureOpenAI],
         all_run_info: List[OAIEvalRunCreationInfo]
     ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
