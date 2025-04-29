@@ -256,9 +256,6 @@ class _PartitionHealthTracker(object):
             failure_rate_threshold,
             consecutive_failure_threshold
         )
-        print(pk_range_wrapper)
-        print(location)
-        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
 
     def _check_thresholds(
             self,
@@ -297,9 +294,6 @@ class _PartitionHealthTracker(object):
         else:
             health_info.read_success_count += 1
             health_info.read_consecutive_failure_count = 0
-        print(pk_range_wrapper)
-        print(location)
-        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
         self._transition_health_status_on_success(pk_range_wrapper, location)
 
 

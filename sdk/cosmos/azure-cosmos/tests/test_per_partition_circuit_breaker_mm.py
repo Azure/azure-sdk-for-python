@@ -21,10 +21,8 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
 from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
 
-logger = logging.getLogger('test')
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
-    logger.info(os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"))
     client = CosmosClient(TestPerPartitionCircuitBreakerMM.host,
                           TestPerPartitionCircuitBreakerMM.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMM.TEST_DATABASE_ID)
@@ -181,6 +179,7 @@ class TestPerPartitionCircuitBreakerMM:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
+    @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_consecutive_failure_threshold(self, setup_teardown, read_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
@@ -273,6 +272,7 @@ class TestPerPartitionCircuitBreakerMM:
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
+    @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_failure_rate_threshold(self, setup_teardown, read_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(

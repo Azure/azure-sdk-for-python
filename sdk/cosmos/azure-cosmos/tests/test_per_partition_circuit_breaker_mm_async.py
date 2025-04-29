@@ -40,6 +40,7 @@ PK_VALUE = "pk1"
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_teardown():
+    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerMMAsync.host,
                           TestPerPartitionCircuitBreakerMMAsync.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMMAsync.TEST_DATABASE_ID)
@@ -284,6 +285,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
 
+    @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
@@ -382,6 +384,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
         await cleanup_method([custom_setup, setup])
 
+    @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     async def test_read_failure_rate_threshold_async(self, setup_teardown, read_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
