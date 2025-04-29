@@ -101,7 +101,7 @@ def download_file(from_url: str, to_path: Path, with_file_name: str) -> None:
         with urlopen(from_url) as response:
             with open(f"{to_path}/{with_file_name}", "w", encoding="utf-8") as f:
                 f.write(response.read().decode("utf-8"))
-    except OSError as e:
+    except (OSError, URLError, HTTPError) as e:
         sys.exit(
             f"Connection error while trying to download file from {from_url}: {e}. Please try running the script again."
         )
