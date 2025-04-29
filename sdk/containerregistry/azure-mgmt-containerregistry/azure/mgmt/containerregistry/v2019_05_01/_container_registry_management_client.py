@@ -18,8 +18,8 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
-from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerRegistryManagementClientConfiguration
+from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, RegistriesOperations, ReplicationsOperations, WebhooksOperations
 
 if TYPE_CHECKING:
