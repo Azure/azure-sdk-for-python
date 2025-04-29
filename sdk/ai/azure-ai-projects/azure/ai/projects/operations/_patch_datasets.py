@@ -47,17 +47,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         pending_upload_response: PendingUploadResponse = self.pending_upload(
             name=name,
             version=input_version,
-            body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
+            body=PendingUploadRequest(pending_upload_type=PendingUploadType.BLOB_REFERENCE),
         )
         output_version: str = input_version
 
-        if not pending_upload_response.blob_reference_for_consumption:
+        if not pending_upload_response.blob_reference:
             raise ValueError("Blob reference for consumption is not present")
-        if not pending_upload_response.blob_reference_for_consumption.credential.type:
+        if not pending_upload_response.blob_reference.credential.type:
             raise ValueError("Credential type is not present")
-        if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
+        if pending_upload_response.blob_reference.credential.type != CredentialType.SAS:
             raise ValueError("Credential type is not SAS")
-        if not pending_upload_response.blob_reference_for_consumption.blob_uri:
+        if not pending_upload_response.blob_reference.blob_uri:
             raise ValueError("Blob URI is not present or empty")
 
         if logger.getEffectiveLevel() == logging.DEBUG:
@@ -68,22 +68,22 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             logger.debug(
                 "[_create_dataset_and_get_its_container_client] pending_upload_response.pending_upload_type = %s.",
                 pending_upload_response.pending_upload_type,
-            )  # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
+            )  # == PendingUploadType.BLOB_REFERENCE
             logger.debug(
-                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.",
-                pending_upload_response.blob_reference_for_consumption.blob_uri,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference.blob_uri = %s.",
+                pending_upload_response.blob_reference.blob_uri,
             )  # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
             logger.debug(
-                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.",
-                pending_upload_response.blob_reference_for_consumption.storage_account_arm_id,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference.storage_account_arm_id = %s.",
+                pending_upload_response.blob_reference.storage_account_arm_id,
             )  # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
             logger.debug(
-                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.credential.sas_uri = %s.",
-                pending_upload_response.blob_reference_for_consumption.credential.sas_uri,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference.credential.sas_uri = %s.",
+                pending_upload_response.blob_reference.credential.sas_uri,
             )
             logger.debug(
-                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
-                pending_upload_response.blob_reference_for_consumption.credential.type,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference.credential.type = %s.",
+                pending_upload_response.blob_reference.credential.type,
             )  # == CredentialType.SAS
 
         # For overview on Blob storage SDK in Python see:
@@ -93,7 +93,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
         return (
             ContainerClient.from_container_url(
-                container_url=pending_upload_response.blob_reference_for_consumption.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+                container_url=pending_upload_response.blob_reference.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
             ),
             output_version,
         )
@@ -147,8 +147,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                         body=FileDatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
-                            dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
-                            open_ai_purpose="what-should-this-be", # TODO: What should this be?
+                            data_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
                         ),
                     )
 
@@ -209,7 +208,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 body=FolderDatasetVersion(
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                     # Per above doc the ".url" contains SAS token... should this be stripped away?
-                    dataset_uri=container_client.url,  # "<account>.blob.windows.core.net/<container> ?"
+                    data_uri=container_client.url,  # "<account>.blob.windows.core.net/<container> ?"
                 ),
             )
 
