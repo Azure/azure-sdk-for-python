@@ -28,13 +28,13 @@ async def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestCircuitBreakerEmulatorAsync.host, TestCircuitBreakerEmulatorAsync.master_key)
     created_database = client.get_database_client(TestCircuitBreakerEmulatorAsync.TEST_DATABASE_ID)
-    created_database.create_container(TestCircuitBreakerEmulatorAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
+    await created_database.create_container(TestCircuitBreakerEmulatorAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
                                       partition_key=PartitionKey("/pk"),
                                       offer_throughput=10000)
     # allow some time for the container to be created as this method is in different event loop
     sleep(3)
     yield
-    created_database.delete_container(TestCircuitBreakerEmulatorAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
+    await created_database.delete_container(TestCircuitBreakerEmulatorAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 async def create_custom_transport_mm():
@@ -96,7 +96,7 @@ class TestCircuitBreakerEmulatorAsync:
     async def setup_info(self, error, mm=False):
         expected_uri = self.host
         uri_down = self.host.replace("localhost", "127.0.0.1")
-        custom_transport = create_custom_transport_mm() if mm else self.create_custom_transport_sm_mrr()
+        custom_transport = await create_custom_transport_mm() if mm else await self.create_custom_transport_sm_mrr()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_resource_type(r, ResourceType.Collection) and
@@ -108,7 +108,7 @@ class TestCircuitBreakerEmulatorAsync:
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("error", create_errors())
-    async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_sm(self, setup_teardown, error):
+    async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_sm_async(self, setup_teardown, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         fault_injection_container = custom_setup['col']
@@ -132,7 +132,7 @@ class TestCircuitBreakerEmulatorAsync:
 
 
     @pytest.mark.parametrize("error", create_errors())
-    async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_mm(self, setup_teardown, error):
+    async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']
@@ -187,7 +187,7 @@ class TestCircuitBreakerEmulatorAsync:
 
 
     @pytest.mark.parametrize("error", create_errors())
-    async def test_write_failure_rate_threshold_delete_all_items_by_pk_mm(self, setup_teardown, error):
+    async def test_write_failure_rate_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']
@@ -204,7 +204,7 @@ class TestCircuitBreakerEmulatorAsync:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
                     custom_transport.faults = []
-                    fault_injection_container.upsert_item(body=doc)
+                    await fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate,
                                                lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
                                                    0,
@@ -228,7 +228,7 @@ class TestCircuitBreakerEmulatorAsync:
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
     @pytest.mark.parametrize("error", create_errors())
-    async def test_write_failure_rate_threshold_delete_all_items_by_pk_sm(self, setup_teardown, error):
+    async def test_write_failure_rate_threshold_delete_all_items_by_pk_sm_async(self, setup_teardown, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         fault_injection_container = custom_setup['col']
@@ -245,7 +245,7 @@ class TestCircuitBreakerEmulatorAsync:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
                     custom_transport.faults = []
-                    fault_injection_container.upsert_item(body=doc)
+                    await fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate,
                                                lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
                                                    0,

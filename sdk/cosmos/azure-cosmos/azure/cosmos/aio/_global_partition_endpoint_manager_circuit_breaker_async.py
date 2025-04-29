@@ -51,7 +51,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
 
     async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
-        print(request.headers)
         properties = self.client._container_properties_cache[container_rid]
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
