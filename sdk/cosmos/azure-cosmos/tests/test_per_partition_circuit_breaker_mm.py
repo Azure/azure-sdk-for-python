@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import logging
 import os
 import unittest
 import uuid
@@ -17,7 +18,7 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
     QUERY_PK, QUERY, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS, REGION_1, REGION_2, \
     write_operations_and_errors, validate_unhealthy_partitions, read_operations_and_errors, PK_VALUE, operations, \
     create_doc
-from tests.test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
+from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
 
 logger = logging.getLogger('test')
