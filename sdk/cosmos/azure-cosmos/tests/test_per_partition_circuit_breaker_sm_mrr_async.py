@@ -13,7 +13,7 @@ from azure.core.exceptions import ServiceResponseError
 
 import test_config
 from azure.cosmos import PartitionKey, _partition_health_tracker, _location_cache
-from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
+from azure.cosmos._partition_health_tracker import UNHEALTHY_TENTATIVE, UNHEALTHY, HEALTH_STATUS
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync

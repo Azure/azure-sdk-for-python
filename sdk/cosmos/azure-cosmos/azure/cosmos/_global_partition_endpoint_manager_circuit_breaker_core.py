@@ -58,8 +58,9 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
                 and documents._OperationType.IsWriteOperation(request.operation_type)): # pylint: disable=protected-access
             return False
 
-        if (request.resource_type != ResourceType.Document
-                or request.operation_type == documents._OperationType.QueryPlan): # pylint: disable=protected-access
+        if ((request.resource_type != ResourceType.Document
+             and request.resource_type != ResourceType.PartitionKey)
+             or request.operation_type == documents._OperationType.QueryPlan): # pylint: disable=protected-access
             return False
 
         # this is for certain cross partition queries and read all items where we cannot discern partition information

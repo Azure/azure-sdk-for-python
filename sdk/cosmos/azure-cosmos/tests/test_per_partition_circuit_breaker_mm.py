@@ -17,6 +17,7 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
     QUERY_PK, QUERY, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS, REGION_1, REGION_2, \
     write_operations_and_errors, validate_unhealthy_partitions, read_operations_and_errors, PK_VALUE, operations, \
     create_doc
+from tests.test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
 
 @pytest.fixture(scope="class", autouse=True)
@@ -65,11 +66,9 @@ def perform_write_operation(operation, container, fault_injection_container, doc
         ]
         resp = fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
-    # elif operation == "delete_all_items_by_partition_key":
-    #     await container.create_item(body=doc)
-    #     await container.create_item(body=doc)
-    #     await container.create_item(body=doc)
-    #     resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
+    elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
+        container.create_item(body=doc)
+        resp = fault_injection_container.delete_all_items_by_partition_key(pk)
     if resp:
         validate_response_uri(resp, expected_uri)
 

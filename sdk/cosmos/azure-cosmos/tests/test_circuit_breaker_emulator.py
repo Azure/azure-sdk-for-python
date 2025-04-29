@@ -10,18 +10,21 @@ import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker
+from azure.cosmos import PartitionKey, _partition_health_tracker, documents
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
+from azure.cosmos.http_constants import ResourceType
 from test_per_partition_circuit_breaker_mm import perform_write_operation
-from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, create_errors
-from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
-from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
+from test_per_partition_circuit_breaker_mm_async import (create_doc, PK_VALUE, create_errors,
+                                                         DELETE_ALL_ITEMS_BY_PARTITION_KEY,
+                                                         validate_unhealthy_partitions as validate_unhealthy_partitions_mm)
+from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
 def setup_teardown():
+    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestCircuitBreakerEmulator.host, TestCircuitBreakerEmulator.master_key)
     created_database = client.get_database_client(TestCircuitBreakerEmulator.TEST_DATABASE_ID)
     created_database.create_container(TestCircuitBreakerEmulator.TEST_CONTAINER_SINGLE_PARTITION_ID,
@@ -31,14 +34,15 @@ def setup_teardown():
     sleep(3)
     yield
     created_database.delete_container(TestCircuitBreakerEmulator.TEST_CONTAINER_SINGLE_PARTITION_ID)
+    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 def create_custom_transport_mm():
     custom_transport = FaultInjectionTransport()
     is_get_account_predicate = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
     emulator_as_multi_write_region_account_transformation = \
         lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
-            first_region_name="First Region",
-            second_region_name="Second Region",
+            first_region_name="Write Region",
+            second_region_name="Read Region",
             inner=inner)
     custom_transport.add_response_transformation(
         is_get_account_predicate,
@@ -93,25 +97,26 @@ class TestCircuitBreakerEmulator:
         custom_transport = create_custom_transport_mm() if mm else self.create_custom_transport_sm_mrr()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
-        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_resource_type(r, ResourceType.Collection) and
+                                FaultInjectionTransport.predicate_is_operation_type(r, documents._OperationType.Delete) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate,
                                    error)
-        custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        setup = self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host, multiple_write_locations=mm)
+        setup = self.setup_method_with_custom_transport(None, default_endpoint=self.host, multiple_write_locations=mm)
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("error", create_errors())
     def test_write_consecutive_failure_threshold_delete_all_items_by_pk_sm(self, setup_teardown, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
-        container = setup['col']
         fault_injection_container = custom_setup['col']
-        global_endpoint_manager = container.client_connection._global_endpoint_manager
+        container = setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
         # writes should fail in sm mrr with circuit breaker and should not mark unavailable a partition
         for i in range(6):
-            validate_unhealthy_partitions(global_endpoint_manager, 0)
+            validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
             with pytest.raises((CosmosHttpResponseError, ServiceResponseError)):
                 perform_write_operation(
                     DELETE_ALL_ITEMS_BY_PARTITION_KEY,
@@ -122,15 +127,15 @@ class TestCircuitBreakerEmulator:
                     expected_uri,
                 )
 
-        validate_unhealthy_partitions(global_endpoint_manager, 0)
+        validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
 
 
     @pytest.mark.parametrize("error", create_errors())
     def test_write_consecutive_failure_threshold_delete_all_items_by_pk_mm(self, setup_teardown, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, mm=True)
-        container = setup['col']
         fault_injection_container = custom_setup['col']
+        container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
         with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
@@ -142,7 +147,7 @@ class TestCircuitBreakerEmulator:
                                           expected_uri)
         assert exc_info.value == error
 
-        validate_unhealthy_partitions(global_endpoint_manager, 0)
+        validate_unhealthy_partitions_mm(global_endpoint_manager, 0)
 
         # writes should fail but still be tracked
         for i in range(4):
@@ -163,7 +168,7 @@ class TestCircuitBreakerEmulator:
                                       PK_VALUE,
                                       expected_uri)
 
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        validate_unhealthy_partitions_mm(global_endpoint_manager, 1)
         # remove faults and reduce initial recover time and perform a write
         original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
         _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
@@ -177,15 +182,15 @@ class TestCircuitBreakerEmulator:
                                           uri_down)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
-        validate_unhealthy_partitions(global_endpoint_manager, 0)
+        validate_unhealthy_partitions_mm(global_endpoint_manager, 0)
 
 
     @pytest.mark.parametrize("error", create_errors())
     def test_write_failure_rate_threshold_delete_all_items_by_pk_mm(self, setup_teardown, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, mm=True)
-        container = setup['col']
         fault_injection_container = custom_setup['col']
+        container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
@@ -193,7 +198,7 @@ class TestCircuitBreakerEmulator:
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
-                validate_unhealthy_partitions(global_endpoint_manager, 0)
+                validate_unhealthy_partitions_mm(global_endpoint_manager, 0)
                 if i == 4 or i == 8:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
@@ -214,7 +219,7 @@ class TestCircuitBreakerEmulator:
                                                       expected_uri)
                     assert exc_info.value == error
 
-            validate_unhealthy_partitions(global_endpoint_manager, 1)
+            validate_unhealthy_partitions_mm(global_endpoint_manager, 1)
 
         finally:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
@@ -222,11 +227,11 @@ class TestCircuitBreakerEmulator:
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
     @pytest.mark.parametrize("error", create_errors())
-    def test_write_failure_rate_threshold_delete_all_items_by_pk_sm(self, setup_teardown, write_operation, error):
+    def test_write_failure_rate_threshold_delete_all_items_by_pk_sm(self, setup_teardown, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
-        container = setup['col']
         fault_injection_container = custom_setup['col']
+        container = setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
@@ -234,7 +239,7 @@ class TestCircuitBreakerEmulator:
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
-                validate_unhealthy_partitions(global_endpoint_manager, 0)
+                validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
                 if i == 4 or i == 8:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
@@ -247,7 +252,7 @@ class TestCircuitBreakerEmulator:
                                                ))
                 else:
                     with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                        perform_write_operation(write_operation,
+                        perform_write_operation(DELETE_ALL_ITEMS_BY_PARTITION_KEY,
                                                       container,
                                                       fault_injection_container,
                                                       str(uuid.uuid4()),
@@ -255,7 +260,7 @@ class TestCircuitBreakerEmulator:
                                                       expected_uri)
                     assert exc_info.value == error
 
-            validate_unhealthy_partitions(global_endpoint_manager, 0)
+            validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
 
         finally:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
