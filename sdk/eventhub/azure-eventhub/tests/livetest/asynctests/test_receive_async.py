@@ -201,6 +201,7 @@ async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_tr
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
+@pytest.mark.no_amqpproxy # Proxy requires TransportType.Amqp
 async def test_receive_over_websocket_async(auth_credential_senders_async, uamqp_transport, client_args):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"

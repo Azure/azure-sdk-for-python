@@ -402,7 +402,7 @@ def invalid_policy(live_eventhub):
 
 
 @pytest.fixture()
-def connstr_receivers(live_eventhub, uamqp_transport):
+def connstr_receivers(live_eventhub, uamqp_transport, client_args):
     connection_str = live_eventhub["connection_str"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
     receivers = []
@@ -419,7 +419,7 @@ def connstr_receivers(live_eventhub, uamqp_transport):
         else:
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
@@ -439,7 +439,7 @@ def auth_credentials_async(live_eventhub):
 
 
 @pytest.fixture()
-def auth_credential_receivers(live_eventhub, uamqp_transport):
+def auth_credential_receivers(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -458,7 +458,7 @@ def auth_credential_receivers(live_eventhub, uamqp_transport):
             # TODO: TokenAuth should be fine?
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
@@ -468,7 +468,7 @@ def auth_credential_receivers(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_receivers_async(live_eventhub, uamqp_transport):
+def auth_credential_receivers_async(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -487,7 +487,7 @@ def auth_credential_receivers_async(live_eventhub, uamqp_transport):
             # TODO: TokenAuth should be fine?
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
