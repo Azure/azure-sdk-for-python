@@ -22,6 +22,7 @@ extends:
         # Use dedicated storage pool in canadacentral with higher memory capacity
         - Pool=.*LINUXPOOL.*/azsdk-pool-storage
         - Pool=.*WINDOWSPOOL.*/azsdk-pool-storage
+        - TestSamples=.*/true
       ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
         MatrixConfigs:
           - Name: Storage_all_versions_live_test
