@@ -8,7 +8,6 @@ import pytest
 import os
 import json
 import time
-import pytest
 import functools
 from typing import Set, Callable, Any
 from azure.ai.agents.models import (
@@ -690,7 +689,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             """
             # In a real-world scenario, you'd integrate with a weather API.
             # Here, we'll mock the response.
-            mock_weather_data = {"New York": "Sunny", "London": "Cloudy", "Sofia": "Дъждовно"}
+            mock_weather_data = {"New York": "Sunny", "London": "Cloudy", "Sofia": "Ð”ÑŠÐ¶Ð´Ð¾Ð²Ð½Ð¾"}
             weather = mock_weather_data.get(location, f"Weather data not available for this location: {location}")
             weather_json = json.dumps({"weather": weather}, ensure_ascii=False)
             return weather_json
@@ -715,7 +714,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         client.enable_auto_function_calls(toolset=toolset)
 
         thread = client.threads.create()
-        message = client.messages.create(thread_id=thread.id, role="user", content="Времето в София?")
+        message = client.messages.create(thread_id=thread.id, role="user", content="Ð’Ñ€ÐµÐ¼ÐµÑ‚Ð¾ Ð² Ð¡Ð¾Ñ„Ð¸Ñ�?")
 
         with client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
             stream.until_done()
@@ -738,7 +737,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
-                    "gen_ai.event.content": '{"content": "Времето в София?", "role": "user"}',
+                    "gen_ai.event.content": '{"content": "Ð’Ñ€ÐµÐ¼ÐµÑ‚Ð¾ Ð² Ð¡Ð¾Ñ„Ð¸Ñ�?", "role": "user"}',
                 },
             }
         ]
@@ -751,7 +750,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         expected_events = [
             {
                 "name": "gen_ai.tool.message",
-                "attributes": {"gen_ai.event.content": '{"content": "{\\"weather\\": \\"Дъждовно\\"}", "id": "*"}'},
+                "attributes": {"gen_ai.event.content": '{"content": "{\\"weather\\": \\"Ð”ÑŠÐ¶Ð´Ð¾Ð²Ð½Ð¾\\"}", "id": "*"}'},
             },
             {
                 "name": "gen_ai.assistant.message",
