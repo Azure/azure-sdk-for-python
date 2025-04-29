@@ -66,6 +66,7 @@ agent_team_default_functions: Set = {
 
 default_function_tool = FunctionTool(functions=agent_team_default_functions)
 
+agents_client.enable_auto_function_calls(functions={create_task})
 
 if model_deployment_name is not None:
     AgentTraceConfigurator(agents_client=agents_client).setup_tracing()
