@@ -14,28 +14,6 @@ from testpreparer import AIProjectClientTestBase, AIProjectPreparer
 class TestAIProjectConnectionsOperations(AIProjectClientTestBase):
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_connections_get(self, aiproject_endpoint):
-        client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.connections.get(
-            name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy
-    def test_connections_get_with_credentials(self, aiproject_endpoint):
-        client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.connections.get_with_credentials(
-            name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy
     def test_connections_list(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
         response = client.connections.list()

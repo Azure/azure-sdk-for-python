@@ -26,18 +26,18 @@ class TestAIProjectIndexesOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_indexes_list_latest(self, aiproject_endpoint):
+    async def test_indexes_list(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = client.indexes.list_latest()
+        response = client.indexes.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_indexes_get_version(self, aiproject_endpoint):
+    async def test_indexes_get(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.indexes.get_version(
+        response = await client.indexes.get(
             name="str",
             version="str",
         )
@@ -47,9 +47,9 @@ class TestAIProjectIndexesOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_indexes_delete_version(self, aiproject_endpoint):
+    async def test_indexes_delete(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.indexes.delete_version(
+        response = await client.indexes.delete(
             name="str",
             version="str",
         )
@@ -59,9 +59,9 @@ class TestAIProjectIndexesOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_indexes_create_or_update_version(self, aiproject_endpoint):
+    async def test_indexes_create_or_update(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.indexes.create_or_update_version(
+        response = await client.indexes.create_or_update(
             name="str",
             version="str",
             body={
@@ -72,7 +72,6 @@ class TestAIProjectIndexesOperationsAsync(AIProjectClientTestBaseAsync):
                 "version": "str",
                 "description": "str",
                 "id": "str",
-                "stage": "str",
                 "tags": {"str": "str"},
             },
         )

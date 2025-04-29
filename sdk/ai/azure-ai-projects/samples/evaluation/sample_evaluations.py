@@ -71,7 +71,7 @@ with AIProjectClient(
                 data_mapping={
                     "query": "${data.query}",
                     "response": "${data.response}",
-                }
+                },
             ),
         },
     )

@@ -25,18 +25,18 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_list_latest(self, aiproject_endpoint):
+    def test_datasets_list(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.list_latest()
+        response = client.datasets.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_get_version(self, aiproject_endpoint):
+    def test_datasets_get(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.get_version(
+        response = client.datasets.get(
             name="str",
             version="str",
         )
@@ -46,9 +46,9 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_delete_version(self, aiproject_endpoint):
+    def test_datasets_delete(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.delete_version(
+        response = client.datasets.delete(
             name="str",
             version="str",
         )
@@ -58,21 +58,19 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_create_or_update_version(self, aiproject_endpoint):
+    def test_datasets_create_or_update(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.create_or_update_version(
+        response = client.datasets.create_or_update(
             name="str",
             version="str",
             body={
-                "datasetUri": "str",
+                "dataUri": "str",
                 "name": "str",
-                "openAIPurpose": "str",
                 "type": "uri_file",
                 "version": "str",
                 "description": "str",
                 "id": "str",
                 "isReference": bool,
-                "stage": "str",
                 "tags": {"str": "str"},
             },
         )
@@ -82,9 +80,9 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_start_pending_upload_version(self, aiproject_endpoint):
+    def test_datasets_pending_upload(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.start_pending_upload_version(
+        response = client.datasets.pending_upload(
             name="str",
             version="str",
             body={"pendingUploadType": "str", "connectionName": "str", "pendingUploadId": "str"},

@@ -138,24 +138,13 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search"""
 
 
-class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List View Type Definition."""
-
-    ACTIVE_ONLY = "ActiveOnly"
-    """List only active items."""
-    ARCHIVED_ONLY = "ArchivedOnly"
-    """List only archived items."""
-    ALL = "All"
-    """List all items."""
-
-
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
     NONE = "None"
     """No pending upload."""
-    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
-    """Temporary Blob Reference is the only supported type."""
+    BLOB_REFERENCE = "BlobReference"
+    """Blob Reference is the only supported type."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
