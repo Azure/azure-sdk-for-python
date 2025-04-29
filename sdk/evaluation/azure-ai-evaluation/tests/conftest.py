@@ -344,7 +344,6 @@ def mock_project_scope() -> Dict[str, str]:
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
-        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
 @pytest.fixture(scope="session")
