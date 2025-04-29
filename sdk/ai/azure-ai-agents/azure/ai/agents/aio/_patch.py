@@ -10,24 +10,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio  # pylint: disable = do-not-import-asyncio
 import io
 import logging
-import os
-import time
-
-from pathlib import Path
 
 from typing import (
     IO,
     TYPE_CHECKING,
     Any,
-    AsyncIterator,
     Dict,
     List,
     MutableMapping,
     Optional,
-    Sequence,
-    TextIO,
     Union,
-    cast,
     Callable,
     Set,
     overload,

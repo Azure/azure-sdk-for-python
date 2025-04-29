@@ -9,24 +9,17 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import io
 import logging
-import os
 import sys
 import time
-from pathlib import Path
 from typing import (
     IO,
-    TYPE_CHECKING,
     Any,
     Dict,
-    Iterator,
     List,
     Optional,
-    Sequence,
-    TextIO,
     Union,
     Callable,
     Set,
-    cast,
     overload,
 )
 

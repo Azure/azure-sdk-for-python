@@ -22,25 +22,17 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
-    TextIO,
     Union,
-    Callable,
-    Set,
     cast,
     overload,
 )
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ..models._enums import FilePurpose, RunStatus
-from ._operations import ThreadsOperations as ThreadsOperationsGenerated
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
-from ._operations import MessagesOperations as MessagesOperationsGenerated
-from ._operations import RunStepsOperations as StepsOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
@@ -1290,9 +1282,6 @@ class RunsOperations(RunsOperationsGenerated):
 
 class FilesOperations(FilesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     # pylint: disable=arguments-differ
     @overload
     def upload(  # pylint: disable=arguments-differ
@@ -1582,9 +1571,6 @@ class FilesOperations(FilesOperationsGenerated):
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     def create_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1745,9 +1731,6 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     def create_and_poll(
         self,
@@ -1906,9 +1889,6 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
 
 class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
 
     @overload
     def create_and_poll(

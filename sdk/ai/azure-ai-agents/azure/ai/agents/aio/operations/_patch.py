@@ -8,7 +8,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
-import concurrent.futures
 import io
 import logging
 import os
@@ -23,19 +22,12 @@ from typing import (
     AsyncIterator,
     Dict,
     List,
-    MutableMapping,
     Optional,
-    Sequence,
-    TextIO,
     Union,
     cast,
-    Callable,
-    Set,
     overload,
 )
 
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
@@ -1278,9 +1270,6 @@ class RunsOperations(RunsOperationsGenerated):
 
 class FilesOperations(FilesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     # pylint: disable=arguments-differ
     @overload
     async def upload(  # pylint: disable=arguments-differ
@@ -1580,9 +1569,6 @@ class FilesOperations(FilesOperationsGenerated):
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     async def create_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1745,9 +1731,6 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     async def create_and_poll(
         self,
@@ -1908,9 +1891,6 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
 
 class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
 
     @overload
     async def create_and_poll(

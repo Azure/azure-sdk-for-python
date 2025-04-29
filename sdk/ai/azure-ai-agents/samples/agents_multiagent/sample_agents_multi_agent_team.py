@@ -20,8 +20,15 @@ USAGE:
 """
 
 import os
+from typing import Set
 
-from utils.user_functions_with_traces import *
+from utils.user_functions_with_traces import (
+    fetch_current_datetime,
+    fetch_weather,
+    send_email_using_recipient_name,
+    convert_temperature,
+)
+
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
