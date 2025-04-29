@@ -38,7 +38,7 @@ from .._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
 
-logger = logging.getLogger("azure.cosmos.aio_GlobalEndpointManager")
+logger = logging.getLogger("azure.cosmos.aio._GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """

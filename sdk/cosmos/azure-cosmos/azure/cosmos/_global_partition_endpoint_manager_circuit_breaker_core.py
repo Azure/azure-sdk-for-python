@@ -58,8 +58,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
                 and documents._OperationType.IsWriteOperation(request.operation_type)): # pylint: disable=protected-access
             return False
 
-        if ((request.resource_type != ResourceType.Document
-             and request.resource_type != ResourceType.PartitionKey)
+        if (request.resource_type not in (ResourceType.Document, ResourceType.PartitionKey)
              or request.operation_type == documents._OperationType.QueryPlan): # pylint: disable=protected-access
             return False
 
