@@ -49,7 +49,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=bing.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
     # [END create_agent_with_bing_grounding_tool]
 

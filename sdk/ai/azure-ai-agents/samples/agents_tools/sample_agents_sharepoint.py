@@ -48,7 +48,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=sharepoint.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
     print(f"Created agent, ID: {agent.id}")
 
