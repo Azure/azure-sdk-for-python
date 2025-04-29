@@ -123,7 +123,7 @@ class _PartitionHealthTracker(object):
         # partition -> regions -> health info
         self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
-        self.stale_partiton_lock = threading.Lock()
+        self.stale_partition_lock = threading.Lock()
 
     def mark_partition_unavailable(self, pk_range_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
         # mark the partition key range as unavailable
@@ -180,7 +180,7 @@ class _PartitionHealthTracker(object):
                     if _should_mark_healthy_tentative(partition_health_info, current_time):
                         # unhealthy or unhealthy tentative -> healthy tentative
                         # only one request should be used to recover
-                        with self.stale_partiton_lock:
+                        with self.stale_partition_lock:
                             if _should_mark_healthy_tentative(partition_health_info, current_time):
                                 # this will trigger one attempt to recover
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)

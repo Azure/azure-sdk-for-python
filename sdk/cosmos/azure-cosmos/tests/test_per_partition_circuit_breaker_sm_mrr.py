@@ -20,9 +20,8 @@ from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, wr
 from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture()
+@pytest_asyncio.fixture(scope="class", autouse=True)
 def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerSmMrr.host, TestPerPartitionCircuitBreakerSmMrr.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrr.TEST_DATABASE_ID)
     created_database.create_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID,
@@ -32,7 +31,6 @@ def setup_teardown():
     sleep(3)
     yield
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
 @pytest.mark.usefixtures("setup_teardown")
@@ -45,7 +43,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=["Write Region", "Read Region"],
+                              preferred_locations=[REGION_1, REGION_2],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)

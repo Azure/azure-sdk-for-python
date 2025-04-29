@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation,
     REGION_2, REGION_1
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture()
+@pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerSmMrrAsync.host, TestPerPartitionCircuitBreakerSmMrrAsync.master_key)
@@ -36,7 +36,6 @@ async def setup_teardown():
     yield
     await created_database.delete_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     await client.close()
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 def validate_unhealthy_partitions(global_endpoint_manager,
                                   expected_unhealthy_partitions):
@@ -69,7 +68,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=["Write Region", "Read Region"],
+                              preferred_locations=[REGION_1, REGION_2],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
@@ -79,29 +78,6 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     async def cleanup_method(initialized_objects: Dict[str, Any]):
         method_client: CosmosClient = initialized_objects["client"]
         await method_client.close()
-
-    async def create_custom_transport_sm_mrr(self):
-        custom_transport =  FaultInjectionTransportAsync()
-        # Inject rule to disallow writes in the read-only region
-        is_write_operation_in_read_region_predicate = lambda \
-                r: FaultInjectionTransportAsync.predicate_is_write_operation(r, self.host)
-
-        custom_transport.add_fault(
-            is_write_operation_in_read_region_predicate,
-            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_write_forbidden()))
-
-        # Inject topology transformation that would make Emulator look like a single write region
-        # account with two read regions
-        is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_region_sm_account_transformation = \
-            lambda r, inner: FaultInjectionTransportAsync.transform_topology_swr_mrr(
-                write_region_name="Write Region",
-                read_region_name="Read Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_region_sm_account_transformation)
-        return custom_transport
 
     async def setup_info(self, error):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)

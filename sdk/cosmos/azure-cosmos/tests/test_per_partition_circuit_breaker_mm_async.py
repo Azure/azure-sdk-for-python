@@ -40,7 +40,6 @@ PK_VALUE = "pk1"
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerMMAsync.host,
                           TestPerPartitionCircuitBreakerMMAsync.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMMAsync.TEST_DATABASE_ID)
@@ -52,10 +51,8 @@ async def setup_teardown():
     yield
     await created_database.delete_container(TestPerPartitionCircuitBreakerMMAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     await client.close()
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
-def write_operations_and_errors():
-    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]# "delete_all_items_by_partition_key"]
+def create_errors():
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -63,6 +60,11 @@ def write_operations_and_errors():
             status_code=error_code,
             message="Some injected error."))
     errors.append(ServiceResponseError(message="Injected Service Response Error."))
+    return errors
+
+def write_operations_and_errors():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    errors = create_errors()
     params = []
     for write_operation in write_operations:
         for error in errors:
@@ -78,13 +80,7 @@ def create_doc():
 
 def read_operations_and_errors():
     read_operations = [READ, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK]
-    errors = []
-    error_codes = [408, 500, 502, 503]
-    for error_code in error_codes:
-        errors.append(CosmosHttpResponseError(
-            status_code=error_code,
-            message="Some injected error."))
-    errors.append(ServiceResponseError(message="Injected Service Response Error."))
+    errors = create_errors()
     params = []
     for read_operation in read_operations:
         for error in errors:

@@ -100,10 +100,10 @@ class Range(object):
         normalized_max = self.max
 
         if not self.isMinInclusive:
-            normalized_min = self.add_to_effective_partition_key(self.min, -1).upper()
+            normalized_min = self.add_to_effective_partition_key(self.min, -1)
 
         if self.isMaxInclusive:
-            normalized_max = self.add_to_effective_partition_key(self.max, 1).upper()
+            normalized_max = self.add_to_effective_partition_key(self.max, 1)
 
         return Range(normalized_min, normalized_max, True, False)
 

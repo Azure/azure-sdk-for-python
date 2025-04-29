@@ -21,7 +21,6 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
 
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPerPartitionCircuitBreakerMM.host,
                           TestPerPartitionCircuitBreakerMM.master_key)
     created_database = client.get_database_client(TestPerPartitionCircuitBreakerMM.TEST_DATABASE_ID)
@@ -33,7 +32,6 @@ def setup_teardown():
     yield
 
     created_database.delete_container(TestPerPartitionCircuitBreakerMM.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
     doc = {'id': doc_id,
