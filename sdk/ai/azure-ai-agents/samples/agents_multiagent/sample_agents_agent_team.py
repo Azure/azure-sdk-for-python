@@ -22,13 +22,15 @@ USAGE:
 import os
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from utils.agent_team import AgentTeam
+from utils.agent_team import AgentTeam, _create_task
 from utils.agent_trace_configurator import AgentTraceConfigurator
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
+
+agents_client.enable_auto_function_calls(functions={_create_task})
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 
