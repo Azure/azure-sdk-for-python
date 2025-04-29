@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "typespec": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${workspaceFolder}/tools/mcp/typespec-story/",
+                "run",
+                "main.py"
+            ],
+        }
+    }   
+}
