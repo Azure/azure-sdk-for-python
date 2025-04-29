@@ -25,7 +25,7 @@ from utils.user_functions_with_traces import *
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
-from utils.agent_team import AgentTeam
+from utils.agent_team import AgentTeam, _create_task
 from utils.agent_trace_configurator import AgentTraceConfigurator
 
 agents_client = AgentsClient(
@@ -38,6 +38,16 @@ user_function_set_1: Set = {fetch_current_datetime, fetch_weather}
 user_function_set_2: Set = {send_email_using_recipient_name}
 
 user_function_set_3: Set = {convert_temperature}
+
+agents_client.enable_auto_function_calls(
+    functions={
+        _create_task,
+        fetch_current_datetime,
+        fetch_weather,
+        send_email_using_recipient_name,
+        convert_temperature,
+    }
+)
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 

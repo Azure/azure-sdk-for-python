@@ -874,7 +874,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # create run
         if use_body:
-            body = {"agent_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
+            body = {"assistant_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
             if use_io:
                 binary_body = json.dumps(body).encode("utf-8")
                 body = io.BytesIO(binary_body)
@@ -1370,7 +1370,7 @@ class TestAgentClient(AzureRecordedTestCase):
         # create run
         if use_body:
             body = {
-                "agent_id": agent.id,
+                "assistant_id": agent.id,
                 "metadata": {"key1": "value1", "key2": "value2"},
             }
             if use_io:
@@ -1532,7 +1532,7 @@ class TestAgentClient(AzureRecordedTestCase):
             steps = client.run_steps.list(thread_id=thread.id, run_id=run.id)
             assert steps["data"].__len__() > 0
             step = steps["data"][0]
-            get_step = client.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
+            get_step = client.run_steps.get(thread_id=thread.id, run_id=run.id, step_id=step.id)
             assert step == get_step
 
             # delete agent and close client
@@ -1607,7 +1607,7 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create body for stream
-            body = {"agent_id": agent.id, "stream": True}
+            body = {"assistant_id": agent.id, "stream": True}
 
             # create stream
             with client.runs.stream(thread_id=thread.id, body=body, stream=True) as stream:
