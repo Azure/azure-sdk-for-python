@@ -4,11 +4,41 @@
 
 ### Features Added
 
+- Added knowledge agents operations in `SearchIndexClient`.
+- Added `resync` method in `SearchIndexerClient`.
+
+- Added new models:
+    - `azure.search.documents.QueryResultDocumentInnerHit`
+    - `azure.search.documents.indexes.ChatCompletionExtraParametersBehavior`
+    - `azure.search.documents.indexes.ChatCompletionResponseFormat`
+    - `azure.search.documents.indexes.ChatCompletionResponseFormatType`
+    - `azure.search.documents.indexes.ChatCompletionResponseFormatJsonSchemaProperties`
+    - `azure.search.documents.indexes.ChatCompletionSchema`
+    - `azure.search.documents.indexes.ChatCompletionSkill`
+    - `azure.search.documents.indexes.CommonModelParameters`
+    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingProperties`
+    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingUnit`
+    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillExtractionOptions`
+    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputFormat`
+    - `azure.search.documents.indexes.IndexerPermissionOption`
+    - `azure.search.documents.indexes.IndexerResyncOption`
+    - `azure.search.documents.indexes.KnowledgeAgent`
+    - `azure.search.documents.indexes.KnowledgeAgentAzureOpenAIModel`
+    - `azure.search.documents.indexes.KnowledgeAgentModel`
+    - `azure.search.documents.indexes.KnowledgeAgentModelKind`
+    - `azure.search.documents.indexes.KnowledgeAgentRequestLimits`
+    - `azure.search.documents.indexes.KnowledgeAgentTargetIndex`
+    - `azure.search.documents.indexes.PermissionFilter`
+    - `azure.search.documents.indexes.RankingOrder`
+    - `azure.search.documents.indexes.SearchIndexPermissionFilterOption`
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated the API version to "2025-05-01-preview"
 
 ## 11.6.0b11 (2025-03-25)
 

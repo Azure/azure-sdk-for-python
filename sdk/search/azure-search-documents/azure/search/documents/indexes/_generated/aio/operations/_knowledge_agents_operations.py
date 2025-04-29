@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -18,18 +20,18 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
-from ...operations._skillsets_operations import (
+from ...operations._knowledge_agents_operations import (
     build_create_or_update_request,
     build_create_request,
     build_delete_request,
     build_get_request,
     build_list_request,
-    build_reset_skills_request,
 )
 from .._configuration import SearchServiceClientConfiguration
 
@@ -37,14 +39,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class SkillsetsOperations:
+class KnowledgeAgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.indexes.aio.SearchServiceClient`'s
-        :attr:`skillsets` attribute.
+        :attr:`knowledge_agents` attribute.
     """
 
     models = _models
@@ -59,145 +61,110 @@ class SkillsetsOperations:
     @overload
     async def create_or_update(
         self,
-        skillset_name: str,
+        agent_name: str,
         prefer: Union[str, _models.Enum0],
-        skillset: _models.SearchIndexerSkillset,
+        knowledge_agent: _models.KnowledgeAgent,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
-
-        :param skillset_name: The name of the skillset to create or update. Required.
-        :type skillset_name: str
+        :param agent_name: The name of the agent to create or update. Required.
+        :type agent_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param knowledge_agent: The definition of the agent to create or update. Required.
+        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
-        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :type skip_indexer_reset_requirement_for_cache: bool
-        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update(
         self,
-        skillset_name: str,
+        agent_name: str,
         prefer: Union[str, _models.Enum0],
-        skillset: IO[bytes],
+        knowledge_agent: IO[bytes],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
-
-        :param skillset_name: The name of the skillset to create or update. Required.
-        :type skillset_name: str
+        :param agent_name: The name of the agent to create or update. Required.
+        :type agent_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Required.
-        :type skillset: IO[bytes]
+        :param knowledge_agent: The definition of the agent to create or update. Required.
+        :type knowledge_agent: IO[bytes]
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
-        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :type skip_indexer_reset_requirement_for_cache: bool
-        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create_or_update(
         self,
-        skillset_name: str,
+        agent_name: str,
         prefer: Union[str, _models.Enum0],
-        skillset: Union[_models.SearchIndexerSkillset, IO[bytes]],
+        knowledge_agent: Union[_models.KnowledgeAgent, IO[bytes]],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
-
-        :param skillset_name: The name of the skillset to create or update. Required.
-        :type skillset_name: str
+        :param agent_name: The name of the agent to create or update. Required.
+        :type agent_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Is either a SearchIndexerSkillset type or a IO[bytes] type. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or IO[bytes]
+        :param knowledge_agent: The definition of the agent to create or update. Is either a
+         KnowledgeAgent type or a IO[bytes] type. Required.
+        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent or IO[bytes]
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
-        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :type skip_indexer_reset_requirement_for_cache: bool
-        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -213,7 +180,7 @@ class SkillsetsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SearchIndexerSkillset] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeAgent] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
@@ -221,19 +188,17 @@ class SkillsetsOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(skillset, (IOBase, bytes)):
-            _content = skillset
+        if isinstance(knowledge_agent, (IOBase, bytes)):
+            _content = knowledge_agent
         else:
-            _json = self._serialize.body(skillset, "SearchIndexerSkillset")
+            _json = self._serialize.body(knowledge_agent, "KnowledgeAgent")
 
         _request = build_create_or_update_request(
-            skillset_name=skillset_name,
+            agent_name=agent_name,
             prefer=prefer,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -258,7 +223,7 @@ class SkillsetsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SearchIndexerSkillset", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeAgent", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -268,19 +233,16 @@ class SkillsetsOperations:
     @distributed_trace_async
     async def delete(
         self,
-        skillset_name: str,
+        agent_name: str,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> None:
-        """Deletes a skillset in a search service.
+        """Deletes an existing agent.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/delete-skillset
-
-        :param skillset_name: The name of the skillset to delete. Required.
-        :type skillset_name: str
+        :param agent_name: The name of the agent to delete. Required.
+        :type agent_name: str
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
@@ -312,7 +274,7 @@ class SkillsetsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _request = build_delete_request(
-            skillset_name=skillset_name,
+            agent_name=agent_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -342,19 +304,16 @@ class SkillsetsOperations:
 
     @distributed_trace_async
     async def get(
-        self, skillset_name: str, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Retrieves a skillset in a search service.
+        self, agent_name: str, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
+    ) -> _models.KnowledgeAgent:
+        """Retrieves an agent definition.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/get-skillset
-
-        :param skillset_name: The name of the skillset to retrieve. Required.
-        :type skillset_name: str
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -369,14 +328,14 @@ class SkillsetsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SearchIndexerSkillset] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeAgent] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _request = build_get_request(
-            skillset_name=skillset_name,
+            agent_name=agent_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             api_version=api_version,
             headers=_headers,
@@ -399,32 +358,32 @@ class SkillsetsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SearchIndexerSkillset", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeAgent", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(
-        self, select: Optional[str] = None, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
-    ) -> _models.ListSkillsetsResult:
-        """List all skillsets in a search service.
+    @distributed_trace
+    def list(
+        self, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.KnowledgeAgent"]:
+        """Lists all agents available for a search service.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/list-skillset
-
-        :param select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         comma-separated list of JSON property names, or '*' for all properties. The default is all
-         properties. Default value is None.
-        :type select: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: ListSkillsetsResult or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.ListSkillsetsResult
+        :return: An iterator like instance of either KnowledgeAgent or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ListKnowledgeAgentsResult] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -433,120 +392,134 @@ class SkillsetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                _x_ms_client_request_id = None
+                if request_options is not None:
+                    _x_ms_client_request_id = request_options.x_ms_client_request_id
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ListSkillsetsResult] = kwargs.pop("cls", None)
+                _request = build_list_request(
+                    x_ms_client_request_id=_x_ms_client_request_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _x_ms_client_request_id = None
-        if request_options is not None:
-            _x_ms_client_request_id = request_options.x_ms_client_request_id
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
-        _request = build_list_request(
-            select=select,
-            x_ms_client_request_id=_x_ms_client_request_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ListKnowledgeAgentsResult", pipeline_response)
+            list_of_elem = deserialized.knowledge_agents
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ListSkillsetsResult", pipeline_response.http_response)
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create(
         self,
-        skillset: _models.SearchIndexerSkillset,
+        knowledge_agent: _models.KnowledgeAgent,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
-
-        :param skillset: The skillset containing one or more skills to create in a search service.
-         Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param knowledge_agent: The definition of the agent to create. Required.
+        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
         self,
-        skillset: IO[bytes],
+        knowledge_agent: IO[bytes],
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
-
-        :param skillset: The skillset containing one or more skills to create in a search service.
-         Required.
-        :type skillset: IO[bytes]
+        :param knowledge_agent: The definition of the agent to create. Required.
+        :type knowledge_agent: IO[bytes]
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create(
         self,
-        skillset: Union[_models.SearchIndexerSkillset, IO[bytes]],
+        knowledge_agent: Union[_models.KnowledgeAgent, IO[bytes]],
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
-    ) -> _models.SearchIndexerSkillset:
-        """Creates a new skillset in a search service.
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
-
-        :param skillset: The skillset containing one or more skills to create in a search service. Is
-         either a SearchIndexerSkillset type or a IO[bytes] type. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or IO[bytes]
+        :param knowledge_agent: The definition of the agent to create. Is either a KnowledgeAgent type
+         or a IO[bytes] type. Required.
+        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent or IO[bytes]
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :return: KnowledgeAgent or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -562,7 +535,7 @@ class SkillsetsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SearchIndexerSkillset] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeAgent] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
@@ -570,10 +543,10 @@ class SkillsetsOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(skillset, (IOBase, bytes)):
-            _content = skillset
+        if isinstance(knowledge_agent, (IOBase, bytes)):
+            _content = knowledge_agent
         else:
-            _json = self._serialize.body(skillset, "SearchIndexerSkillset")
+            _json = self._serialize.body(knowledge_agent, "KnowledgeAgent")
 
         _request = build_create_request(
             x_ms_client_request_id=_x_ms_client_request_id,
@@ -601,147 +574,9 @@ class SkillsetsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SearchIndexerSkillset", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeAgent", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    async def reset_skills(
-        self,
-        skillset_name: str,
-        skill_names: _models.SkillNames,
-        request_options: Optional[_models.RequestOptions] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        .. seealso::
-           - https://aka.ms/reset-skills
-
-        :param skillset_name: The name of the skillset to reset. Required.
-        :type skillset_name: str
-        :param skill_names: The names of skills to reset. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames
-        :param request_options: Parameter group. Default value is None.
-        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def reset_skills(
-        self,
-        skillset_name: str,
-        skill_names: IO[bytes],
-        request_options: Optional[_models.RequestOptions] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        .. seealso::
-           - https://aka.ms/reset-skills
-
-        :param skillset_name: The name of the skillset to reset. Required.
-        :type skillset_name: str
-        :param skill_names: The names of skills to reset. Required.
-        :type skill_names: IO[bytes]
-        :param request_options: Parameter group. Default value is None.
-        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def reset_skills(
-        self,
-        skillset_name: str,
-        skill_names: Union[_models.SkillNames, IO[bytes]],
-        request_options: Optional[_models.RequestOptions] = None,
-        **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        .. seealso::
-           - https://aka.ms/reset-skills
-
-        :param skillset_name: The name of the skillset to reset. Required.
-        :type skillset_name: str
-        :param skill_names: The names of skills to reset. Is either a SkillNames type or a IO[bytes]
-         type. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames or IO[bytes]
-        :param request_options: Parameter group. Default value is None.
-        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _x_ms_client_request_id = None
-        if request_options is not None:
-            _x_ms_client_request_id = request_options.x_ms_client_request_id
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(skill_names, (IOBase, bytes)):
-            _content = skill_names
-        else:
-            _json = self._serialize.body(skill_names, "SkillNames")
-
-        _request = build_reset_skills_request(
-            skillset_name=skillset_name,
-            x_ms_client_request_id=_x_ms_client_request_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore

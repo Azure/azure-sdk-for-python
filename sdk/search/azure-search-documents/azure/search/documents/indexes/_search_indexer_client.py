@@ -14,6 +14,7 @@ from ._generated.models import (
     SkillNames,
     SearchIndexerStatus,
     DocumentKeysOrIds,
+    IndexerResyncOption,
 )
 from ._utils import (
     get_access_conditions,
@@ -320,6 +321,31 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = indexer
         return self._client.indexers.reset_docs(name, overwrite=overwrite, **kwargs)
+
+    @distributed_trace
+    def resync(
+        self,
+        indexer: Union[str, SearchIndexer],
+        indexer_resync_options: List[Union[str, IndexerResyncOption]],
+        **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.
+
+        :param indexer: The indexer to resync for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer_resync_options: Required.
+        :type indexer_resync_options: list[str or
+         ~azure.search.documents.indexes.models.IndexerResyncOption]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = indexer.name  # type: ignore
+        except AttributeError:
+            name = indexer
+        return self._client.indexers.resync(name, indexer_resync_options, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:

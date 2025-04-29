@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
 from typing_extensions import Self
-from .._generated import _serialization
+from .._generated._utils import serialization as _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,

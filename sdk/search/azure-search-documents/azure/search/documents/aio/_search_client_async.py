@@ -703,16 +703,12 @@ class SearchClient(HeadersMixin):
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
-            batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos], **kwargs
-            )
+            batch_response_first_half = await self._index_documents_actions(actions=actions[:pos], **kwargs)
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
-            batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:], **kwargs
-            )
+            batch_response_second_half = await self._index_documents_actions(actions=actions[pos:], **kwargs)
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
             else:
