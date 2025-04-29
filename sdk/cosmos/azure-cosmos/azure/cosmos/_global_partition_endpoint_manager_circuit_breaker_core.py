@@ -21,7 +21,6 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
-import logging
 import os
 
 from azure.cosmos import documents
@@ -33,8 +32,6 @@ from azure.cosmos._request_object import RequestObject
 from azure.cosmos.http_constants import ResourceType, HttpHeaders
 from azure.cosmos._constants import _Constants as Constants
 
-
-logger = logging.getLogger("azure.cosmos._GlobalEndpointManagerForCircuitBreakerCore")
 
 class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
     """

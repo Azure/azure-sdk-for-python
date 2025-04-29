@@ -2271,6 +2271,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
+            await kwargs["containerProperties"]
+            new_options = dict(options)
+            new_options["containerRID"] = self.__container_properties_cache[database_or_container_link]["_rid"]
             return (
                 await self.__QueryFeed(
                     path,
@@ -2279,7 +2282,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     lambda r: r["Documents"],
                     lambda _, b: b,
                     query,
-                    options,
+                    new_options,
                     response_hook=response_hook,
                     **kwargs
                 ),
@@ -2882,9 +2885,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         cont_prop = kwargs.pop("containerProperties", None)
         if cont_prop:
             cont_prop = await cont_prop()
-            # TODO: @tvaron3 move this logic as this isn't thread safe
-            options["containerRID"] = cont_prop["_rid"]
-
 
 
         # Copy to make sure that default_headers won't be changed.

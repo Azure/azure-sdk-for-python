@@ -26,8 +26,8 @@
       }
     },
     {
-      "PPCBMultiWriteTestConfig": {
-        "Ubuntu2004_313_ppcb": {
+      "CircuitBreakerMultiWriteTestConfig": {
+        "Ubuntu2004_313_circuit_breaker": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",
@@ -38,13 +38,13 @@
       },
       "ArmConfig": {
         "MultiMaster": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; ppcbEnabled = $true }"
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = $true }"
         }
       }
     },
     {
-      "PPCBMultiRegionTestConfig": {
-        "Ubuntu2004_39_ppcb": {
+      "CircuitBreakerMultiRegionTestConfig": {
+        "Ubuntu2004_39_circuit_breaker": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
@@ -55,7 +55,7 @@
       },
       "ArmConfig": {
         "MultiRegion": {
-          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; ppcbEnabled = $true }"
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = $true }"
         }
       }
     },

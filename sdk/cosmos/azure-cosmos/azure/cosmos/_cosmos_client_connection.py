@@ -2070,7 +2070,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        documents._OperationType.Patch,
                                        headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -2162,7 +2161,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        documents._OperationType.Batch,
                                        headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         return cast(
             Tuple[List[Dict[str, Any]], CaseInsensitiveDict],
             self.__Post(path, request_params, batch_operations, headers, **kwargs)
@@ -2225,7 +2223,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = RequestObject(http_constants.ResourceType.PartitionKey,
                                        documents._OperationType.Delete,
                                        headers)
-        request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         _, last_response_headers = self.__Post(
             path=path,
@@ -2398,7 +2395,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
         request_params = RequestObject("sprocs", documents._OperationType.ExecuteJavaScript, headers)
-        request_params.set_excluded_location_from_options(options)
         result, self.last_response_headers = self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
@@ -2732,7 +2728,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(typ, documents._OperationType.Upsert, headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -2777,7 +2772,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(typ, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2820,7 +2814,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Read will use ReadEndpoint since it uses GET operation
         request_params = RequestObject(typ, documents._OperationType.Read, headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
         if response_hook:
@@ -2860,7 +2853,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                   options)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(typ, documents._OperationType.Delete, headers)
-        request_params.set_excluded_location_from_options(options)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
