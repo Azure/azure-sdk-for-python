@@ -6,6 +6,7 @@
 
 - Added knowledge agents operations in `SearchIndexClient`.
 - Added `resync` method in `SearchIndexerClient`.
+- Exposed `@search.reranker_boosted_score` in the search results.
 
 - Added new models:
     - `azure.search.documents.QueryResultDocumentInnerHit`
