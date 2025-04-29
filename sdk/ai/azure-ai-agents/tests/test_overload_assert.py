@@ -1,12 +1,11 @@
 # pylint: disable=line-too-long,useless-suppression
-import unittest
 import pytest
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.aio import AgentsClient as AsyncAgentsOperations
 from overload_assert_utils import OverloadAssertion, assert_same_http_requests
 
 
-class TestDeclarator(unittest.TestCase):
+class TestDeclarator:
 
     @pytest.mark.asyncio
     @assert_same_http_requests
