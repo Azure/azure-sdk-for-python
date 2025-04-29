@@ -205,7 +205,7 @@ class TestAsyncAgentEventHandler:
         assert mock_parse_event.call_count == 1
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
-        assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+        assert submit_tool_outputs.call_args[0] == (event_obj, handler, True)
 
     @pytest.mark.asyncio
     @patch("azure.ai.agents.models._patch.AsyncAgentEventHandler.on_unhandled_event")

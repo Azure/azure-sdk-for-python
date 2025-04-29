@@ -10,6 +10,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 from azure.ai.agents.aio import AgentsClient
+from azure.ai.agents.aio.operations import RunsOperations
 from azure.ai.agents.models import (
     AsyncFunctionTool,
     AsyncToolSet,
@@ -62,8 +63,8 @@ class TestAgentsMock:
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
             credential=AsyncMock(),
         )
-        client.submit_tool_outputs_to_run = AsyncMock()
-        client.submit_tool_outputs_to_stream = AsyncMock()
+        client.runs.submit_tool_outputs = AsyncMock()
+        client.runs.submit_tool_outputs_stream = AsyncMock()
         # Set sync method to avoid warning.
         client._client.format_url = MagicMock()
         return client
@@ -286,11 +287,11 @@ class TestAgentsMock:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset1)
+            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
-            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run456", toolset2)
+            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run456", toolset2)
 
     @pytest.mark.asyncio
     @patch("azure.ai.agents.aio._client.AsyncPipelineClient")
@@ -391,11 +392,11 @@ class TestAgentsMock:
 
             self._set_toolcalls(agents_client, toolset1, toolset2)
             # Create run with new tool set, which also can be none.
-            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2)
+            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, sleep_interval=0)
             if toolset2 is not None:
-                self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset2)
+                self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset2)
             else:
-                self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset1)
+                self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
     @pytest.mark.asyncio
     @patch("azure.ai.agents.aio._client.AsyncPipelineClient")
@@ -442,8 +443,8 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
-            self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
+            await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset)
 
     def _assert_stream_call(self, submit_tool_mock: AsyncMock, run_id: str, tool_set: Optional[AsyncToolSet]) -> None:
         """Assert that stream has received the correct values."""
@@ -506,7 +507,7 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id)
+            run = await agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
             self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
             await agents_client._handle_submit_tool_outputs(run)
             self._assert_stream_call(agents_client.submit_tool_outputs_to_stream, "run123", toolset)
@@ -514,7 +515,7 @@ class TestAgentsMock:
 
 class TestIntegrationAgentsClient:
 
-    def submit_tool_outputs_to_run(
+    def submit_tool_outputs(
         self, thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
     ) -> AsyncIterator[bytes]:
         assert thread_id == "thread_01"
@@ -533,15 +534,15 @@ class TestIntegrationAgentsClient:
 
     @pytest.mark.asyncio
     @patch(
-        "azure.ai.agents.aio._operations.AgentsClientOperationsMixin.create_run",
+        "azure.ai.agents.aio.operations._operations.RunsOperations.create",
         return_value=convert_to_byte_iterator(main_stream_response),
     )
     @patch("azure.ai.agents.aio.AgentsClient.__init__", return_value=None)
     @patch(
-        "azure.ai.agents.aio._operations.AgentsClientOperationsMixin.submit_tool_outputs_to_run",
+        "azure.ai.agents.aio.operations._operations.RunsOperations.submit_tool_outputs",
     )
     async def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
-        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
+        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs
         functions = AsyncFunctionTool(user_functions)
         toolset = AsyncToolSet()
         toolset.add(functions)
@@ -550,6 +551,7 @@ class TestIntegrationAgentsClient:
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
             credential=AsyncMock(),
         )
+        operation.runs = RunsOperations(AsyncMock(), MagicMock(), MagicMock(), MagicMock())
         operation.enable_auto_function_calls(toolset=toolset)
         count = 0
 

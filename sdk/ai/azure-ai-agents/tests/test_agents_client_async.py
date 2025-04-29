@@ -1025,7 +1025,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create body for run
-            body = {"agent_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
+            body = {"assistant_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
             binary_body = json.dumps(body).encode("utf-8")
 
             # create run
@@ -1903,7 +1903,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create body for thread
             body = {
-                "agent_id": agent.id,
+                "assistant_id": agent.id,
                 "metadata": {"key1": "value1", "key2": "value2"},
             }
 
@@ -1961,7 +1961,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create body for thread
             body = {
-                "agent_id": agent.id,
+                "assistant_id": agent.id,
                 "metadata": {"key1": "value1", "key2": "value2"},
             }
             binary_body = json.dumps(body).encode("utf-8")
@@ -2127,7 +2127,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             steps = await client.run_steps.list(thread_id=thread.id, run_id=run.id)
             assert steps["data"].__len__() > 0
             step = steps["data"][0]
-            get_step = await client.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
+            get_step = await client.run_steps.get(thread_id=thread.id, run_id=run.id, step_id=step.id)
             assert step == get_step
 
             # delete agent and close client
