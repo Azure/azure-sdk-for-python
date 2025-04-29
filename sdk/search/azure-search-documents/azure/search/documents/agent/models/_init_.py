@@ -41,6 +41,7 @@ from .._generated.models import (
     KnowledgeAgentSearchActivityRecordQuery,
     KnowledgeAgentSemanticRankerActivityRecord,
     RequestOptions,
+    KnowledgeAgentMessageContentType,
 )
 
 
