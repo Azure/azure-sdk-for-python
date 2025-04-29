@@ -299,6 +299,14 @@ def client_args(skip_amqp_proxy):
     # Add proxy args to test context
     return AMQPPROXY_CLIENT_ARGS
 
+def remove_existing_recordings(path, file_name):
+    """Remove existing recordings for the test."""
+    # Remove any existing recordings for the test
+    for file in os.listdir(path):
+        if file.startswith(file_name) and file.endswith(".json"):
+            os.remove(os.path.join(path, file))
+            print(f"Removed existing recording: {file}")
+
 @pytest.fixture(autouse=True)
 def amqpproxy(live_eventhub, skip_amqp_proxy, request):
     """Fixture that redirects network requests to target the amqp proxy.
@@ -315,10 +323,13 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
     # Mirror relative path in AMQPPROXY_RECORDINGS_PATH for recording files
     relative_path = os.path.relpath(request.node.fspath, start=os.path.dirname(__file__))
     recording_dir_path = os.path.join(AMQPPROXY_RECORDINGS_DIR, os.path.dirname(relative_path))
-    if not os.path.exists(recording_dir_path):
-        os.makedirs(recording_dir_path)
     file_name = os.path.splitext(os.path.basename(request.node.fspath))[0]
     recording_file = f"{file_name}.{test_name}"
+    if not os.path.exists(recording_dir_path):
+        os.makedirs(recording_dir_path)
+    else:
+        # Remove any existing recordings with the same test name, so that we overwrite instead of add
+        remove_existing_recordings(recording_dir_path, recording_file)
 
     # Start amqpproxy process 
     log_file = open(AMQPPROXY_STARTUP_LOG, "a")
