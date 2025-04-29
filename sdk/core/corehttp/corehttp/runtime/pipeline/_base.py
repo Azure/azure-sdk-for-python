@@ -34,7 +34,7 @@ from . import (
     PipelineContext,
 )
 from ..policies import HTTPPolicy, SansIOHTTPPolicy
-from ._tools import await_result as _await_result
+from ._tools import sanitize_transport_options, await_result as _await_result
 from ...transport import HttpTransport
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -103,6 +103,7 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :return: The PipelineResponse object.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
+        sanitize_transport_options(request.context.options)
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),

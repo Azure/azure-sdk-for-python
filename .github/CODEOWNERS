@@ -316,6 +316,13 @@
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
+
+# PRLabel: %Azure Projects
+/sdk/projects/                                                      @annatisch
+
 # ServiceLabel: %Purview
 # PRLabel: %Purview
 /sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
@@ -841,3 +848,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence
+/sdk/**/ci.yml                                                       @msyyc @lmazuel

@@ -1,9 +1,0 @@
-[packaging]
-package_name = "azure-cognitiveservices-search-customimagesearch"
-package_nspkg = "azure-cognitiveservices-search-nspkg"
-package_pprint_name = "Cognitive Services Custom Image Search"
-package_doc_id = "cognitive-services"
-is_stable = false
-is_arm = false
-need_msrestazure = false
-auto_update = false

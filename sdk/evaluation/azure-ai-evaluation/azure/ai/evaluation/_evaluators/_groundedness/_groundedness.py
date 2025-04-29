@@ -33,7 +33,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the groundedness evaluator. Default is 5.
+    :param threshold: The threshold for the groundedness evaluator. Default is 3.
     :type threshold: int
         
     .. admonition:: Example:
