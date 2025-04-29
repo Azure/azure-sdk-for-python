@@ -26,4 +26,4 @@
 
 from ._generated import KnowledgeAgentRetrievalClient
 
-__all__ = "KnowledgeAgentRetrievalClient"
+__all__ = ("KnowledgeAgentRetrievalClient")
