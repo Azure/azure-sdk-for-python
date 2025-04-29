@@ -11,6 +11,9 @@ parameters:
   - name: TargetPath
     type: string
     default: $(Build.SourcesDirectory)
+  - name: WorkingDirectory
+    type: string
+    default: $(Build.SourcesDirectory)
   - name: ScriptDirectory
     type: string
     default: eng/common/scripts
