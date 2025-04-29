@@ -13,7 +13,7 @@ param enableMultipleRegions bool = false
 param location string = resourceGroup().location
 
 @description('Whether Per Partition Circuit Breaker should be enabled.')
-param ppcbEnabled bool = false 
+param circuitBreakerEnabled bool = false 
 
 @description('The api version to be used by Bicep to create resources')
 param apiVersion string = '2023-04-15'
@@ -104,6 +104,6 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
-output AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER bool = ppcbEnabled
+output AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER bool = circuitBreakerEnabled
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
 output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey

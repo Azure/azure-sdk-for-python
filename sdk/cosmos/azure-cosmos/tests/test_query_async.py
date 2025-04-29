@@ -18,7 +18,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
-@pytest.mark.cosmosPPCBMultiWrite
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""

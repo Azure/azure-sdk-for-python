@@ -152,8 +152,8 @@ def __get_authorization_token_using_resource_token(resource_tokens, path, resour
             segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
             if not segment in resource_types:
-                for path, resource_token in resource_tokens.items():
-                    if sub_path in path:
+                for resource_path, resource_token in resource_tokens.items():
+                    if sub_path in resource_path:
                         return resource_tokens[path]
 
     return None

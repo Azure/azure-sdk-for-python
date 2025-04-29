@@ -681,11 +681,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
+        properties = self._get_properties()
         if partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
             if self.__is_prefix_partitionkey(partition_key):
                 kwargs["isPrefixPartitionQuery"] = True
-                properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
                 kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
             else:
@@ -701,7 +701,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
-        self._get_properties()
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,

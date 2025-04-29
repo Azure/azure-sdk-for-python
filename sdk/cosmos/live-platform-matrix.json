@@ -27,26 +27,35 @@
     },
     {
       "PPCBMultiWriteTestConfig": {
-        "Ubuntu2004_39_ppcb": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosPPCBMultiRegion"
-        },
         "Ubuntu2004_313_ppcb": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosPPCBMultiWrite"
+          "TestMarkArgument": "cosmosCircuitBreaker"
         }
       },
       "ArmConfig": {
         "MultiMaster": {
           "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; ppcbEnabled = $true }"
+        }
+      }
+    },
+    {
+      "PPCBMultiRegionTestConfig": {
+        "Ubuntu2004_39_ppcb": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.9",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; ppcbEnabled = $true }"
         }
       }
     },
