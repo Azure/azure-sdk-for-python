@@ -31,14 +31,14 @@ from azure.ai.projects.models import (
     InputDataset,
     EvaluatorConfiguration,
     EvaluatorIds,
-    DatasetVersion,
+    # DatasetVersion,
 )
 from dotenv import load_dotenv
 
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-dataset_name = os.environ["DATASET_NAME"]
+#dataset_name = os.environ["DATASET_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -60,13 +60,17 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation",
             description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-            data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
+            data=InputDataset(id="<>"),  # TODO: update this to use the correct id
             evaluators={
                 "relevance": EvaluatorConfiguration(
-                    id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
+                    id=EvaluatorIds.RELEVANCE.value,
                     init_params={
-                        "deployment_name": "gpt-4o",
+                        "deployment_name": "gpt-4o-mini",
                     },
+                    data_mapping={
+                        "query": "${data.query}",
+                        "response": "${data.response}",
+                    }
                 ),
             },
         )
@@ -75,7 +79,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(evaluation_response)
 
         print("Get evaluation")
-        get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.id)
+        get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
 
         print(get_evaluation_response)
 

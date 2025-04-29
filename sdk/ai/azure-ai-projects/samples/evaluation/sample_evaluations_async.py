@@ -31,7 +31,7 @@ from azure.ai.projects.models import (
     InputDataset,
     EvaluatorConfiguration,
     EvaluatorIds,
-    DatasetVersion,
+    #DatasetVersion,
 )
 from dotenv import load_dotenv
 
@@ -40,7 +40,7 @@ load_dotenv()
 
 async def sample_evaluations_async() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    dataset_name = os.environ["DATASET_NAME"]
+    #dataset_name = os.environ["DATASET_NAME"]
 
     async with DefaultAzureCredential() as credential:
 
@@ -77,7 +77,7 @@ async def sample_evaluations_async() -> None:
             print(evaluation_response)
 
             print("Get evaluation")
-            get_evaluation_response: Evaluation = await project_client.evaluations.get(evaluation_response.id)
+            get_evaluation_response: Evaluation = await project_client.evaluations.get(evaluation_response.name)
 
             print(get_evaluation_response)
 
