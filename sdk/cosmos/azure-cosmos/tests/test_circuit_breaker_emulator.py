@@ -17,7 +17,7 @@ from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import perform_write_operation
 from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, create_errors
 from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
-from tests.test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
+from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", autouse=True)
