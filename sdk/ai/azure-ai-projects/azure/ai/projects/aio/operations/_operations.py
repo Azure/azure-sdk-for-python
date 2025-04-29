@@ -2055,6 +2055,7 @@ class DeploymentsOperations:
         *,
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
+        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
@@ -2066,6 +2067,9 @@ class DeploymentsOperations:
         :keyword model_name: Model name (the publisher specific name) to filter models by. Default
          value is None.
         :paramtype model_name: str
+        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
+         is None.
+        :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -2094,6 +2098,7 @@ class DeploymentsOperations:
                 _request = build_deployments_list_request(
                     model_publisher=model_publisher,
                     model_name=model_name,
+                    deployment_type=deployment_type,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
