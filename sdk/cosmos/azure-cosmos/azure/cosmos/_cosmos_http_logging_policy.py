@@ -99,6 +99,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def on_request(
             # pylint: disable=too-many-return-statements, too-many-statements, too-many-nested-blocks, too-many-branches
+            # pylint: disable=too-many-locals
             self, request: PipelineRequest[HTTPRequestType]
     ) -> None:
         """Logs HTTP method, url and headers.
@@ -109,6 +110,16 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
             http_request = request.http_request
             request.context["start_time"] = time.time()
+            options = request.context.options
+            # Get logger in my context first (request has been retried)
+            # then read from kwargs (pop if that's the case)
+            # then use my instance logger
+            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+            # If filtered is applied, and we are not calling on request from on response, just return to avoid logging
+            # the request again
+            filter_applied = (logger.filters) or any(bool(h.filters) for h in logger.handlers)
+            if filter_applied and 'logger_attributes' not in request.context:
+                return
             operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
             try:
                 url = request.http_request.url
@@ -127,11 +138,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     colls_index = url_parts.index('colls')
                     if colls_index + 1 < len(url_parts):
                         collection_name = url_parts[url_parts.index('colls') + 1]
-            options = request.context.options
-            # Get logger in my context first (request has been retried)
-            # then read from kwargs (pop if that's the case)
-            # then use my instance logger
-            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+
             if not logger.isEnabledFor(logging.INFO):
                 return
             try:
@@ -144,11 +151,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
                 multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
 
-                if 'logger_attributes' in request.context:
+                if filter_applied and 'logger_attributes' in request.context:
                     cosmos_logger_attributes = request.context['logger_attributes']
                     cosmos_logger_attributes['is_request'] = True
-                elif logger.filters:
-                    return
                 else:
                     cosmos_logger_attributes = {
                         'duration': None,
@@ -220,7 +225,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             return
         super().on_request(request)
 
-    def on_response(  # pylint: disable=too-many-statements, too-many-branches
+    def on_response(  # pylint: disable=too-many-statements, too-many-branches, too-many-locals
             self,
             request: PipelineRequest[HTTPRequestType],
             response: PipelineResponse[HTTPRequestType, HTTPResponseType],
@@ -259,9 +264,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
             options = context.options
             logger = context.setdefault("logger", options.pop("logger", self.logger))
-
-            context["logger_attributes"] = log_data.copy()
-            self.on_request(request)
+            filter_applied = bool(logger.filters) or any(bool(h.filters) for h in logger.handlers)
+            if filter_applied:
+                context["logger_attributes"] = log_data.copy()
+                self.on_request(request)
 
             try:
                 if not logger.isEnabledFor(logging.INFO):
