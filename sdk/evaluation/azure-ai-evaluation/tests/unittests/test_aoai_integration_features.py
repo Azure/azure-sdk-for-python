@@ -71,8 +71,8 @@ class TestAoaiIntegrationFeatures:
         # test general creation creation
         grader = _convert_remote_eval_params_to_grader(AzureOpenAIGrader.id, init_params=init_params)
         assert isinstance(grader, AzureOpenAIGrader)
-        assert grader.get_model_config() == mock_aoai_model_config
-        assert grader.get_grader_config() == mock_grader_config
+        assert grader._model_config == mock_aoai_model_config
+        assert grader._grader_config == mock_grader_config
 
         # Test text similarity creation
         init_params = {
@@ -85,7 +85,7 @@ class TestAoaiIntegrationFeatures:
         }
         grader = _convert_remote_eval_params_to_grader(AzureOpenAITextSimilarityGrader.id, init_params=init_params)
         assert isinstance(grader, AzureOpenAITextSimilarityGrader)
-        assert grader.get_model_config() == mock_aoai_model_config
+        assert grader._model_config == mock_aoai_model_config
 
         # Test string check creation
         init_params = {
@@ -97,7 +97,7 @@ class TestAoaiIntegrationFeatures:
         }
         grader = _convert_remote_eval_params_to_grader(AzureOpenAIStringCheckGrader.id, init_params=init_params)
         assert isinstance(grader, AzureOpenAIStringCheckGrader)
-        assert grader.get_model_config() == mock_aoai_model_config
+        assert grader._model_config == mock_aoai_model_config
 
         # Test label creation
         init_params = {
@@ -110,7 +110,7 @@ class TestAoaiIntegrationFeatures:
         }
         grader = _convert_remote_eval_params_to_grader(AzureOpenAILabelGrader.id, init_params=init_params)
         assert isinstance(grader, AzureOpenAILabelGrader)
-        assert grader.get_model_config() == mock_aoai_model_config
+        assert grader._model_config == mock_aoai_model_config
 
     def test_grader_initialization(self, mock_aoai_model_config, mock_grader_config):
         bad_model_config = AzureOpenAIModelConfiguration(
@@ -151,7 +151,7 @@ class TestAoaiIntegrationFeatures:
         """
         built_in_eval = F1ScoreEvaluator()
         custom_eval = lambda x: x
-        aoai_grader = AzureOpenAIGrader(mock_aoai_model_config, mock_grader_config)
+        aoai_grader = AzureOpenAIGrader(model_config=mock_aoai_model_config, grader_config=mock_grader_config)
         evaluators = {
             "f1_score": built_in_eval,
             "custom_eval": custom_eval,
