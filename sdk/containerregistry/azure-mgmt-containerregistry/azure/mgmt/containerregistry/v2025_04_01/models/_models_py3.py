@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -1902,8 +1902,8 @@ class LoginServerProperties(_serialization.Model):
 
     :ivar host: The host of the connected registry. Can be FQDN or IP.
     :vartype host: str
-    :ivar tls:
-    :vartype tls: ~azure.mgmt.containerregistry.v2025_04_01.models.LoginServerPropertiesTls
+    :ivar tls: The TLS properties of the connected registry login server.
+    :vartype tls: ~azure.mgmt.containerregistry.v2025_04_01.models.TlsProperties
     """
 
     _validation = {
@@ -1913,56 +1913,14 @@ class LoginServerProperties(_serialization.Model):
 
     _attribute_map = {
         "host": {"key": "host", "type": "str"},
-        "tls": {"key": "tls", "type": "LoginServerPropertiesTls"},
+        "tls": {"key": "tls", "type": "TlsProperties"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.host: Optional[str] = None
-        self.tls: Optional["_models.LoginServerPropertiesTls"] = None
-
-
-class TlsProperties(_serialization.Model):
-    """The TLS properties of the connected registry login server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: Indicates whether HTTPS is enabled for the login server. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.containerregistry.v2025_04_01.models.TlsStatus
-    :ivar certificate:
-    :vartype certificate: ~azure.mgmt.containerregistry.v2025_04_01.models.TlsPropertiesCertificate
-    """
-
-    _validation = {
-        "status": {"readonly": True},
-        "certificate": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "certificate": {"key": "certificate", "type": "TlsPropertiesCertificate"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.status: Optional[Union[str, "_models.TlsStatus"]] = None
-        self.certificate: Optional["_models.TlsPropertiesCertificate"] = None
-
-
-class LoginServerPropertiesTls(TlsProperties):
-    """LoginServerPropertiesTls.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: Indicates whether HTTPS is enabled for the login server. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.containerregistry.v2025_04_01.models.TlsStatus
-    :ivar certificate:
-    :vartype certificate: ~azure.mgmt.containerregistry.v2025_04_01.models.TlsPropertiesCertificate
-    """
+        self.tls: Optional["_models.TlsProperties"] = None
 
 
 class NetworkRuleSet(_serialization.Model):
@@ -4160,16 +4118,33 @@ class TlsCertificateProperties(_serialization.Model):
         self.location: Optional[str] = None
 
 
-class TlsPropertiesCertificate(TlsCertificateProperties):
-    """TlsPropertiesCertificate.
+class TlsProperties(_serialization.Model):
+    """The TLS properties of the connected registry login server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of certificate location. "LocalDirectory"
-    :vartype type: str or ~azure.mgmt.containerregistry.v2025_04_01.models.CertificateType
-    :ivar location: Indicates the location of the certificates.
-    :vartype location: str
+    :ivar status: Indicates whether HTTPS is enabled for the login server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.containerregistry.v2025_04_01.models.TlsStatus
+    :ivar certificate: The certificate used to configure HTTPS for the login server.
+    :vartype certificate: ~azure.mgmt.containerregistry.v2025_04_01.models.TlsCertificateProperties
     """
+
+    _validation = {
+        "status": {"readonly": True},
+        "certificate": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "certificate": {"key": "certificate", "type": "TlsCertificateProperties"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.status: Optional[Union[str, "_models.TlsStatus"]] = None
+        self.certificate: Optional["_models.TlsCertificateProperties"] = None
 
 
 class Token(ProxyResource):
