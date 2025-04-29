@@ -26,6 +26,7 @@ import asyncio
 import json
 import logging
 import sys
+from importlib.resources import is_resource
 from typing import Callable, Optional, Any, Dict, List, Awaitable, MutableMapping
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
@@ -141,6 +142,11 @@ class FaultInjectionTransportAsync(AioHttpTransport):
                                  ResourceType.Document)
 
         return is_document_operation
+
+    @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+        return is_resource_type
 
     @staticmethod
     def predicate_is_operation_type(r: HttpRequest, operation_type: str) -> bool:
