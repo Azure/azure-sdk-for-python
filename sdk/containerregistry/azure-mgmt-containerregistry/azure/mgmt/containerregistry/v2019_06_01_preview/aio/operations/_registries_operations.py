@@ -29,7 +29,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ...._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._registries_operations import build_get_build_source_upload_url_request, build_schedule_run_request
 from .._configuration import ContainerRegistryManagementClientConfiguration
 

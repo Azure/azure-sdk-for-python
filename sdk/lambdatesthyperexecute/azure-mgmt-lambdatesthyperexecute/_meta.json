@@ -1,0 +1,6 @@
+{
+  "commit": "107def49d48609596e91c3dcc4dc2bec5a4adf30",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/liftrhyperexecute/LambdaTest.HyperExecute.Management",
+  "@azure-tools/typespec-python": "0.42.3"
+}
