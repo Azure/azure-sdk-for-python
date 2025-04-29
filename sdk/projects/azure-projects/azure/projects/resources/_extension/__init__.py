@@ -137,26 +137,12 @@ def _build_role_assignment(
     return new_role.__bicep__(fields, parameters=parameters)[0]
 
 
-def load_roles(
-    roles_parameter: Parameter, parameters: Dict[str, Parameter]  # pylint: disable=unused-argument  # TODO
-) -> List[Union[str, RoleAssignment]]:
-    # TODO: How to resolve a parameter with a list of names? Need to pass in provision config.
-    # Can use _setting.convert_parameter logic.
-    # if roles_parameter.name in parameters:
-    #     return parameters[roles_parameter.name]
-    if roles_parameter.default:
-        return roles_parameter.default
-    raise ValueError(f"Unable to resolve parameter '{roles_parameter.name}' to build role assignments.")
-
-
-def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
+def add_roles(fields: "FieldsType", parameters: Dict[str, Parameter]) -> None:
     for field in list(fields.values()):
         if not isinstance(parameters["managedIdentityPrincipalId"], PlaceholderParameter):
             roles = field.extensions.get("managed_identity_roles", [])
-            if isinstance(roles, Parameter):
-                roles = load_roles(roles, parameters)
             role_symbols = []
-            for role in roles:
+            for role in roles:  # type: ignore[union-attr]
                 role_symbols.append(
                     _build_role_assignment(
                         clean_name(field.resource),
@@ -170,31 +156,22 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                         principal_type="ServicePrincipal",
                     )
                 )
-            # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
-            # symbols or if we can just safely remove it.
-            field.extensions["managed_identity_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
-        if parameters.get("principalId"):
-            roles = field.extensions.get("user_roles", [])
-            if isinstance(roles, Parameter):
-                roles = load_roles(roles, parameters)
-            role_symbols = []
-            for role in roles:
-                role_symbols.append(
-                    _build_role_assignment(
-                        clean_name(field.resource),
-                        role,
-                        fields,
-                        field.properties["name"],
-                        parent=field.properties.get("parent"),
-                        parameters=parameters,
-                        symbol=field.symbol,
-                        principal_id=parameters["principalId"],
-                        principal_type="User",
-                    )
+        roles = field.extensions.get("user_roles", [])
+        role_symbols = []
+        for role in roles:  # type: ignore[union-attr]
+            role_symbols.append(
+                _build_role_assignment(
+                    clean_name(field.resource),
+                    role,
+                    fields,
+                    field.properties["name"],
+                    parent=field.properties.get("parent"),
+                    parameters=parameters,
+                    symbol=field.symbol,
+                    principal_id=parameters["principalId"],
+                    principal_type="User",
                 )
-            # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
-            # symbols or if we can just safely remove it.
-            field.extensions["user_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
+            )
 
     # We need to set up a special role for deploying config settings.
     config_stores = [field for field in fields.values() if field.identifier == ResourceIdentifiers.config_store]

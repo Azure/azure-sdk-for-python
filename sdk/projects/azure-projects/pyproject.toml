@@ -7,5 +7,5 @@ pyright = false
 pylint = true
 black = true
 sphinx = true
-# absolute_cov = true
-# absolute_cov_percent = 80.00
+absolute_cov = true
+absolute_cov_percent = 70.00

@@ -175,6 +175,10 @@ class Parameter(Expression):
     def type(self) -> str:
         return self._get_type(self.default)
 
+    @property
+    def public(self) -> bool:
+        return True
+
     def _get_type(self, value: Any) -> str:
         if self._type:
             return self._type
@@ -241,12 +245,11 @@ class Parameter(Expression):
         return {}
 
 
-class PlaceholderParameter(Parameter): ...
+class PlaceholderParameter(Parameter):
 
-
-# TODO:
-# class RequiredParameter(Parameter):
-#     ...
+    @property
+    def public(self) -> bool:
+        return False
 
 
 class Variable(Parameter):
@@ -308,6 +311,10 @@ class Output(Parameter):
 
     def __hash__(self):
         return hash(self.value + self.name)
+
+    @property
+    def public(self) -> bool:
+        return False
 
     @property
     def value(self) -> str:

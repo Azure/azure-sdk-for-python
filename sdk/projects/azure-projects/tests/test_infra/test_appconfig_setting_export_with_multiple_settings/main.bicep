@@ -25,11 +25,11 @@ var azdTags = {
   'azd-env-name': environmentName
 }
 
-param ValueA string
+param ValueA string = 'foo'
 
-param ValueB string
+param ValueB string = 'bar'
 
-param ValueC string
+param ValueC string = 'baz'
 
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: defaultName

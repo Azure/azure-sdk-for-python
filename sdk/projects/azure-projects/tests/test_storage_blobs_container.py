@@ -159,9 +159,6 @@ def test_storage_blobs_container_properties():
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].resource_group == None
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].name == param2
     assert fields["storageaccount_testa.blobservice_testa.container_testa_testb"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_storage_blobs_container_reference():
@@ -250,7 +247,7 @@ def test_storage_blobs_container_defaults():
     r = BlobContainer(default_encryption_scope=scope)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -299,7 +296,7 @@ def test_storage_blobs_container_export_with_properties(export_dir):
                 enable_nfsv3_root_squash=True,
                 immutable_storage_with_versioning_enabled=True,
                 metadata={"foo": "bar"},
-                public_access=False,
+                public_access="None",
             )
         )
 
@@ -322,7 +319,7 @@ def test_storage_blobs_container_export_with_no_user_access(export_dir):
             default=BlobContainer(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_storage_blobs_container_export_with_field_reference_with_default_str(export_dir):

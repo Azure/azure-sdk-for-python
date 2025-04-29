@@ -48,9 +48,8 @@ output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_STORAGE_ID_R string = test_module.outputs.AZURE_STORAGE_ID_R
-output AZURE_STORAGE_NAME_R string = test_module.outputs.AZURE_STORAGE_NAME_R
-output AZURE_STORAGE_RESOURCE_GROUP_R string = test_module.outputs.AZURE_STORAGE_RESOURCE_GROUP_R
-output AZURE_BLOBS_ENDPOINT_R string = test_module.outputs.AZURE_BLOBS_ENDPOINT_R
+output AZURE_STORAGE_ID_STORAGE string = test_module.outputs.AZURE_STORAGE_ID_STORAGE
+output AZURE_STORAGE_NAME_STORAGE string = test_module.outputs.AZURE_STORAGE_NAME_STORAGE
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGE string = test_module.outputs.AZURE_STORAGE_RESOURCE_GROUP_STORAGE
 
 

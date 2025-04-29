@@ -126,9 +126,6 @@ def test_appconfig_properties():
     assert fields["configurationstore_testa"].resource_group == None
     assert fields["configurationstore_testa"].name == param1
     assert fields["configurationstore_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_appconfig_reference():
@@ -186,13 +183,15 @@ def test_appconfig_reference():
 
 
 def test_appconfig_defaults():
-    sku_param = Parameter("ConfigSku", default="Standard")
+    sku_param = Parameter("ConfigSku")
     r = ConfigStore(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params)
+    with pytest.raises(ValueError):
+        add_defaults(fields, parameters=params, values={})
+    add_defaults(fields, parameters=params, values={"ConfigSku": "foo"})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -220,7 +219,7 @@ def test_appconfig_export(export_dir):
 
 def test_appconfig_export_existing(export_dir):
     class test(AzureInfrastructure):
-        r: ConfigStore = field(default=ConfigStore.reference(name="test"))
+        r: ConfigStore = field(default=ConfigStore.reference(name="teststore"))
 
     export(
         test(resource_group=ResourceGroup.reference(name="test"), identity=None),
@@ -262,7 +261,7 @@ def test_appconfig_export_with_no_user_access(export_dir):
     class test(AzureInfrastructure):
         r: ConfigStore = field(default=ConfigStore(roles=["Contributor"], user_roles=["Contributor"]))
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_appconfig_export_multiple_services(export_dir):
@@ -270,7 +269,7 @@ def test_appconfig_export_multiple_services(export_dir):
     # Is that correct?
     class test(AzureInfrastructure):
         r1: ConfigStore = ConfigStore()
-        r2: ConfigStore = ConfigStore(name="foo", public_network_access="Enabled")
+        r2: ConfigStore = ConfigStore(name="foobar", public_network_access="Enabled")
 
     export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 

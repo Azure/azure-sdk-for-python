@@ -44,7 +44,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: defaultName
   location: location
   tags: azdTags
@@ -79,6 +79,17 @@ resource tableservice 'Microsoft.Storage/storageAccounts/tableServices@2024-01-0
           allowedMethods: [
             'GET'
             'HEAD'
+          ]
+          allowedOrigins: [
+            '*'
+          ]
+          exposedHeaders: [
+            'x-ms-meta-data'
+            'x-ms-meta-target'
+          ]
+          maxAgeInSeconds: 3600
+          allowedHeaders: [
+            '*'
           ]
         }
       ]

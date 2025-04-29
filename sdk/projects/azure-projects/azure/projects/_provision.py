@@ -30,7 +30,7 @@ from ._parameters import GLOBAL_PARAMS
 from ._bicep.utils import resolve_value, serialize_dict
 from ._bicep.expressions import MISSING, Output, Parameter, PlaceholderParameter, ResourceSymbol
 from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
-from .resources._extension import add_extensions
+from .resources._extension import add_roles
 from .resources import ResourceIdentifiers
 from .resources.appconfig.setting import ConfigSetting
 from .resources.appservice.site import AppSite
@@ -57,9 +57,7 @@ def get_settings() -> Dict[str, Any]:
 def _deploy_project(name: str, label: Optional[str] = None) -> int:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "deploy", project_name, "-e", project_name]
-    print("Running: ", args)
     output = subprocess.run(args, check=False)
-    print(output)
     return output.returncode
 
 
@@ -68,18 +66,14 @@ def _deprovision_project(name: str, label: Optional[str] = None, purge: bool = F
     args = ["azd", "down", "-e", project_name, "--force"]
     if purge:
         args.append("--purge")
-    print("Running: ", args)
     output = subprocess.run(args, check=False)
-    print(output)
     return output.returncode
 
 
 def _provision_project(name: str, label: Optional[str] = None) -> int:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "provision", "-e", project_name]
-    print("Running: ", args)
     output = subprocess.run(args, check=False)
-    print(output)
     return output.returncode
 
 
@@ -133,15 +127,11 @@ def _init_project(
 
     returncode = 0
     if not os.path.isdir(azure_dir) or not os.path.isdir(project_dir):
-        print(f"Adding environment: {project_name}.")
         output = subprocess.run(["azd", "env", "new", project_name], check=False)
-        print(output)
         returncode = output.returncode
     if location:
         output = subprocess.run(["azd", "env", "set", "AZURE_LOCATION", location, "-e", project_name], check=False)
-        print(output)
         returncode = output.returncode
-    print("Finished environment setup.")
     return returncode
 
 
@@ -171,21 +161,21 @@ def provision(
     infra_dir: str = "infra",
     main_bicep: str = "main",
     output_dir: str = ".",
-    user_access: bool = True,
+    local_access: bool = True,
     location: Optional[str] = None,
     parameters: Optional[Mapping[str, Any]] = None,
 ) -> Mapping[str, Any]:
     deployment_name = deployment.__class__.__name__
-    parameters = parameters or {}
+    parameter_values = dict(parameters or {})
     working_dir = os.path.abspath(output_dir)
     export(
         deployment,
         infra_dir=infra_dir,
         main_bicep=main_bicep,
         output_dir=output_dir,
-        user_access=user_access,
+        local_access=local_access,
         location=location,
-        parameters=parameters,
+        parameters=parameter_values,
     )
     returncode = _init_project(
         root_path=working_dir,
@@ -201,7 +191,7 @@ def provision(
     if returncode != 0:
         raise RuntimeError()
     env_config = _load_dev_environment(deployment_name)
-    return ChainMap(env_config)
+    return ChainMap(env_config, parameter_values)
 
 
 def export(
@@ -210,21 +200,16 @@ def export(
     infra_dir: str = "infra",
     main_bicep: str = "main",
     output_dir: str = ".",
-    user_access: bool = True,
+    local_access: bool = True,
     location: Optional[str] = None,
     parameters: Optional[Mapping[str, Any]] = None,
 ) -> None:
     deployment_name = deployment.__class__.__name__
-    parameter_values = parameters or {}
-    # TODO: Replace print statements with logging
-    print("Building bicep...")
+    parameter_values = dict(parameters or {})
     working_dir = os.path.abspath(output_dir)
     infra_dir = os.path.join(working_dir, infra_dir)
     # Not sure why a TypedDict is incompatible with SupportsKeysAndGetItem
     export_parameters: Dict[str, Parameter] = dict(GLOBAL_PARAMS)  # type: ignore[arg-type]
-    if not user_access:
-        # If we don't want any local access, simply remove the parameter.
-        export_parameters.pop("principalId")
     if location:
         export_parameters["location"].default = location
 
@@ -236,8 +221,8 @@ def export(
         component_resources=_get_component_resources(deployment),
         component_fields=fields,
     )
-    add_defaults(fields, export_parameters)
-    add_extensions(fields, export_parameters)
+    add_defaults(fields, export_parameters, parameter_values, local_access=local_access)
+    add_roles(fields, export_parameters)
 
     try:
         os.makedirs(infra_dir)
@@ -247,8 +232,7 @@ def export(
     with open(bicep_main, "w", encoding="utf-8") as main:
         main.write("targetScope = 'subscription'\n\n")
         for parameter in export_parameters.values():
-            # TODO: Maybe add a "public: bool" attribute to Outputs and Placeholders?
-            if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
+            if parameter.name and parameter.public:
                 main.write(parameter.__bicep__(parameter_values.get(parameter.name, MISSING)))
         _write_resources(
             bicep=main,

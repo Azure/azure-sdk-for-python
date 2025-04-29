@@ -35,7 +35,7 @@ resource resourcegroup_rgtest 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   scope: subscription()
 }
 
-resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
   name: 'storagetest'
   scope: resourcegroup_rgtest
 }

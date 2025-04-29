@@ -89,9 +89,6 @@ def test_identity_properties():
     assert fields["userassignedidentity_testa"].name == param1
     assert fields["userassignedidentity_testa"].defaults
 
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-
 
 def test_identity_reference():
     r = UserAssignedIdentity.reference(name="foo")
@@ -174,7 +171,9 @@ def test_identity_defaults():
     r = UserAssignedIdentity(name=ua_name)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    with pytest.raises(ValueError):
+        add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={"uaName": "foo"})
     field: FieldType = fields.popitem()[1]
     assert field.properties == {
         "name": ua_name,

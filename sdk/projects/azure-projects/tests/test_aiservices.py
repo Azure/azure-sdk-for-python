@@ -140,9 +140,6 @@ def test_aiservices_properties():
     assert fields["aiservices_account_testa"].resource_group == None
     assert fields["aiservices_account_testa"].name == param1
     assert fields["aiservices_account_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_aiservices_reference():
@@ -206,7 +203,7 @@ def test_aiservices_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params)
+    add_defaults(fields, parameters=params, values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
@@ -272,7 +269,7 @@ def test_aiservices_export_with_no_user_access(export_dir):
             )
         )
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_aiservices_export_multiple_cogservices(export_dir):

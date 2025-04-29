@@ -188,9 +188,6 @@ def test_aiservices_embeddings_properties():
     assert fields["aiservices_account.embeddings_deployment_foo"].resource_group == None
     assert fields["aiservices_account.embeddings_deployment_foo"].name == "foo"
     assert fields["aiservices_account.embeddings_deployment_foo"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_aiservices_embeddings_reference():
@@ -275,7 +272,7 @@ def test_aiservices_embeddings_defaults():
     r = AIEmbeddings()
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-embeddings-deployment"),

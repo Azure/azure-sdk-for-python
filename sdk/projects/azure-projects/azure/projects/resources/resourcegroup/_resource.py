@@ -11,7 +11,7 @@ from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ..._parameters import GLOBAL_PARAMS
-from ..._utils import find_last_resource_match
+from ..._utils import find_resource_match
 from ..._bicep.expressions import Parameter, ResourceSymbol, Subscription
 from ..._resource import Resource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
@@ -134,7 +134,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
         infra_component: Optional["AzureInfrastructure"] = None,
         **kwargs,
     ) -> Tuple[ResourceSymbol, ...]:
-        properties = self._resolve_resource(parameters, infra_component)
+        properties, _ = self._resolve_resource(infra_component)
         if self._existing:
             ref_properties = {"name": properties["name"]}
             if properties.get("subscription"):
@@ -156,7 +156,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
             fields[self._get_field_id(symbol, ())] = field
             return (symbol,)
 
-        field_match = find_last_resource_match(fields, resource=self.identifier, name=properties.get("name"))
+        field_match = find_resource_match(fields, resource=self.identifier, name=properties.get("name"))
         if field_match:
             params = field_match.properties
             symbol = field_match.symbol

@@ -135,9 +135,6 @@ def test_appconfig_setting_properties():
     assert fields["configurationstore_testa.keyvalue_testa_testb"].resource_group == None
     assert fields["configurationstore_testa.keyvalue_testa_testb"].name == param2
     assert fields["configurationstore_testa.keyvalue_testa_testb"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_appconfig_setting_reference():
@@ -222,7 +219,7 @@ def test_appconfig_setting_defaults():
     r = ConfigSetting(name="setting", value="value", content_type=contenttype)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": "setting",
@@ -289,7 +286,14 @@ def test_appconfig_setting_export_with_multiple_settings(export_dir):
         b: ConfigSetting = ConfigSetting(name="setting_B", value=param_b)
         c: ConfigSetting = ConfigSetting(name="setting_C", value=param_c)
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
+    with pytest.raises(ValueError):
+        export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
+    export(
+        test(),
+        output_dir=export_dir[0],
+        infra_dir=export_dir[2],
+        parameters={"ValueA": "foo", "ValueB": "bar", "ValueC": "baz"},
+    )
 
 
 def test_appconfig_setting_export_with_field_reference_with_default_str(export_dir):

@@ -30,7 +30,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
   name: 'storagetest'
 }
 

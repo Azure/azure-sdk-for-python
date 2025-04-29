@@ -13,6 +13,9 @@ param defaultNamePrefix string = 'azproj'
 
 param defaultName string = '${defaultNamePrefix}${uniqueString(subscription().subscriptionId, environmentName, location)}'
 
+@sys.description('ID of the user or app to assign application roles')
+param principalId string
+
 @sys.secure()
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
@@ -21,9 +24,6 @@ param tenantId string = subscription().tenantId
 var azdTags = {
   'azd-env-name': environmentName
 }
-
-@sys.description('ID of the user or app to assign application roles')
-param principalId string
 
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: defaultName
@@ -39,9 +39,9 @@ module test_module 'test.bicep' = {
     environmentName: environmentName
     defaultNamePrefix: defaultNamePrefix
     defaultName: defaultName
+    principalId: principalId
     tenantId: tenantId
     azdTags: azdTags
-    principalId: principalId
   }
 }
 output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID

@@ -10,7 +10,7 @@ from typing import TypedDict, Literal, Union
 
 from ..._bicep.expressions import Parameter
 
-ERSION = '2024-01-01'
+VERSION = '2024-01-01'
 
 
 class StorageAccountAccountImmutabilityPolicyProperties(TypedDict, total=False):

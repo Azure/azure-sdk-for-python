@@ -98,7 +98,7 @@ output AZURE_SEARCH_RESOURCE_GROUP_SEARCH string = resourceGroup().name
 output AZURE_SEARCH_ENDPOINT_SEARCH string = 'https://${searchservice.name}.search.windows.net/'
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: defaultName
   location: location
   tags: azdTags
@@ -154,7 +154,7 @@ output AZURE_KEYVAULT_RESOURCE_GROUP_VAULT string = resourceGroup().name
 output AZURE_KEYVAULT_ENDPOINT_VAULT string = vault.properties.vaultUri
 
 
-resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
+resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-preview' = {
   kind: 'Hub'
   properties: {
     primaryUserAssignedIdentity: userassignedidentity.id
@@ -229,7 +229,7 @@ resource connection_hmdjuiutdbnirxnlxqbn 'Microsoft.MachineLearningServices/work
 
 
 
-resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
+resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-preview' = {
   kind: 'Project'
   properties: {
     primaryUserAssignedIdentity: userassignedidentity.id

@@ -11,7 +11,7 @@ from typing import TypedDict, Literal, Union, Any
 from ...._bicep.expressions import Parameter
 
 
-VERSION = '2025-04-01-preview'
+VERSION = '2024-10-01'
 
 
 class DeploymentResourceDeploymentCapacitySettings(TypedDict, total=False):
@@ -60,7 +60,7 @@ class DeploymentResourceDeploymentScaleSettings(TypedDict, total=False):
     """Deployment scale type."""
 
 
-class DeploymentResourceResource(TypedDict, total=False):
+class DeploymentResource(TypedDict, total=False):
     name: Union[str, Parameter]
     """The resource name"""
     properties: Union[DeploymentResourceDeploymentProperties, Parameter]

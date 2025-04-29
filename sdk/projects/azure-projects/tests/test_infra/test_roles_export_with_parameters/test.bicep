@@ -44,8 +44,8 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
-  name: defaultName
+resource storageaccount_foo 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  name: 'foo'
   location: location
   tags: azdTags
   kind: 'StorageV2'
@@ -65,9 +65,9 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   }
 }
 
-output AZURE_STORAGE_ID_R string = storageaccount.id
-output AZURE_STORAGE_NAME_R string = storageaccount.name
-output AZURE_STORAGE_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_STORAGE_ID_STORAGE string = storageaccount_foo.id
+output AZURE_STORAGE_NAME_STORAGE string = storageaccount_foo.name
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGE string = resourceGroup().name
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -110,29 +110,29 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID_R'
+  name: 'AZURE_STORAGE_ID_STORAGE'
   properties: {
-    value: storageaccount.id
+    value: storageaccount_foo.id
   }
 }
 
 
 
-resource keyvalue_azurestoragenamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestoragenamestorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_NAME_R'
+  name: 'AZURE_STORAGE_NAME_STORAGE'
   properties: {
-    value: storageaccount.name
+    value: storageaccount_foo.name
   }
 }
 
 
 
-resource keyvalue_azurestorageresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageresourcegroupstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_RESOURCE_GROUP_R'
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_STORAGE'
   properties: {
     value: resourceGroup().name
   }
@@ -168,6 +168,38 @@ resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssign
 
   }
   scope: configurationstore
+}
+
+
+
+resource roleassignment_gboydciltcskfcrohmlb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccounts', environmentName, 'foo', 'ServicePrincipal', 'Owner')
+  properties: {
+    principalId: userassignedidentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
+    )
+
+  }
+  scope: storageaccount_foo
+}
+
+
+
+resource roleassignment_ndcdtyhfbnkzlywlsgjm 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccounts', environmentName, 'foo', 'User', 'Storage Blob Data Contributor')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    )
+
+  }
+  scope: storageaccount_foo
 }
 
 

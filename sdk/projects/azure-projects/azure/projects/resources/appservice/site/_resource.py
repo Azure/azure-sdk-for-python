@@ -406,6 +406,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
             "PYTHON_ENABLE_GUNICORN_MULTIWORKERS": "true",
             "AZURE_CLIENT_ID": parameters["managedIdentityClientId"],
         }
+        # TODO: This wont work if there's multiple app config references.
         app_config = find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
         if app_config:
             app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"][0]

@@ -180,7 +180,9 @@ def test_resourcegroup_defaults():
     r = ResourceGroup(name=rg_name)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    with pytest.raises(ValueError):
+        add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={"rgName": "foo"})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": rg_name,
@@ -235,8 +237,8 @@ def test_resourcegroup_export_existing(export_dir):
 
 
 def test_resourcegroup_export_existing_with_parameter(export_dir):
-    rg_name = Parameter("RgName")
-    rg_sub = Parameter("RgSub")
+    rg_name = Parameter("RgName", default="foo")
+    rg_sub = Parameter("RgSub", default=TEST_SUB)
 
     class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup.reference(name=rg_name, subscription=rg_sub))

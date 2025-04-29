@@ -128,9 +128,6 @@ def test_storage_blobs_properties():
     assert fields["storageaccount_testa.blobservice_testa"].resource_group == None
     assert fields["storageaccount_testa.blobservice_testa"].name == None
     assert fields["storageaccount_testa.blobservice_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_storage_blobs_reference():
@@ -202,7 +199,7 @@ def test_storage_blobs_defaults():
     r = BlobStorage(is_versioning_enabled=versioning)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": "default",
@@ -252,7 +249,15 @@ def test_storage_blobs_export_with_properties(export_dir):
                 {"properties": {}},
                 account=StorageAccount(),
                 is_versioning_enabled=True,
-                cors_rules=[{"allowedMethods": ["GET", "HEAD"], "maxAgeInSeconds": 5}],
+                cors_rules=[
+                    {
+                        "allowedMethods": ["GET", "HEAD"],
+                        "allowedOrigins": ["*"],
+                        "exposedHeaders": ["x-ms-meta-data", "x-ms-meta-target"],
+                        "maxAgeInSeconds": 3600,
+                        "allowedHeaders": ["*"],
+                    }
+                ],
                 automatic_snapshot_policy_enabled=True,
             )
         )
@@ -273,7 +278,7 @@ def test_storage_blobs_export_with_no_user_access(export_dir):
             default=BlobStorage(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_storage_blobs_client():

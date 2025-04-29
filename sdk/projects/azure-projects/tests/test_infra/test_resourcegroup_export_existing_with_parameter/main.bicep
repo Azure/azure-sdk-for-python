@@ -25,9 +25,9 @@ var azdTags = {
   'azd-env-name': environmentName
 }
 
-param RgName string
+param RgName string = 'foo'
 
-param RgSub string
+param RgSub string = '25b4d56c-0dc2-4c45-9a13-c3653a70b912'
 
 resource resourcegroup_rgname 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: RgName

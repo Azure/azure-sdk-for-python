@@ -38,8 +38,8 @@ from azure.core.settings import _unset
 from .resources._identifiers import ResourceIdentifiers
 from ._utils import (
     run_coroutine_sync,
-    resolve_properties,
-    find_last_resource_match,
+    resolve_component,
+    find_resource_match,
     find_resource_group,
 )
 from ._setting import StoredPrioritizedSetting
@@ -61,6 +61,7 @@ if TYPE_CHECKING:
 
 
 def _load_dev_environment(name: Optional[str] = None, label: Optional[str] = None) -> Dict[str, Optional[str]]:
+    # TODO: Remove this and use azd environment instead.
     azd_dir = os.path.join(os.getcwd(), ".azure")
     if name and not name.endswith(".env"):
         if not os.path.isdir(azd_dir):
@@ -151,7 +152,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         self.extensions: ExtensionResources = kwargs.pop("extensions", {})
         self.identifier = kwargs.pop("identifier")
         self.parent: Optional[Resource] = kwargs.pop("parent", self.properties.get("parent"))
-        self._subresource: Optional[str] = kwargs.pop("subresource", "")
+        self._subresource: str = kwargs.pop("subresource", "")
         self._existing: bool = kwargs.pop("existing", False)
         if self.parent and not self._subresource:
             raise ValueError("Parent must be specified with subresource.")
@@ -163,12 +164,6 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         self._env_suffix = kwargs.pop("env_suffix", None)
         if self._env_suffix:
             self._env_suffix = f"_{self._env_suffix.upper()}"
-
-        # These determine how resource properties are handled when building up the bicep
-        # definitions for the same resource declared in multiple places. Anything in the
-        # 'properties' field of a resource will error on conflict
-        # TODO: Should be able to remove this.
-        self._properties_to_merge: List[str] = kwargs.pop("properties_to_merge", ["properties", "tags"])
 
         self._settings: Dict[str, StoredPrioritizedSetting] = {
             "name": StoredPrioritizedSetting(
@@ -327,9 +322,16 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 current_properties[key] = value
         return current_properties
 
-    def _merge_resource(self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs) -> None:
+    def _merge_resource(
+            self, current_properties: Dict[str, Any],
+            new_properties: Dict[str, Any],
+            *,
+            merge_properties: Optional[List[str]] = None,
+            **kwargs
+    ) -> None:
+        merge_properties = merge_properties or ["properties", "tags"]
         for key, value in new_properties.items():
-            if key in ["properties", "tags"]:
+            if key in merge_properties:
                 merged = self._merge_properties(current_properties.get(key, {}), value, **kwargs)
                 if merged:
                     current_properties[key] = merged
@@ -340,15 +342,36 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             else:
                 current_properties[key] = value
 
-    def _resolve_resource(self, parameters, component):
+    def _merge_extensions(self, current_extensions: ExtensionResources, new_extensions: ExtensionResources) -> None:
+        for key, value in new_extensions.items():
+            if key in current_extensions:
+                if current_extensions[key] != value:  # type: ignore[literal-required]
+                    raise ValueError(
+                        f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_extensions[key]}'."  # type: ignore[literal-required]
+                    )
+            else:
+                current_extensions[key] = value  # type: ignore[literal-required]
+
+    def _resolve_resource(self, component):
         from ._component import ComponentField
 
         name = self.properties.get("name")
         if isinstance(name, ComponentField):
+            if not component:
+                raise ValueError(f"ComponentField '{name}' must be resolved with a component.")
             resolved = name.get(component)
             if isinstance(resolved, Resource):
-                return resolved._resolve_resource(parameters, component)  # pylint: disable=protected-access
-        return resolve_properties(self.properties, parameters, component)
+                if not isinstance(resolved, self.__class__):
+                    if isinstance(resolved.parent, self.__class__):
+                        # TODO: Test this further - should only be needed in cases where we merged
+                        # the resource with it's parent, e.g. BlobStorage.
+                        resolved = resolved.parent
+                    else:
+                        raise ValueError(f"ComponentField '{name}' must resolve to a {self.__class__.__name__}.")
+                return resolved._resolve_resource(component)  # pylint: disable=protected-access
+        properties = resolve_component(self.properties, component)
+        extensions = resolve_component(self.extensions, component)
+        return properties, extensions
 
     def __bicep__(  # pylint: disable=too-many-statements
         self,
@@ -360,9 +383,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         attrname: Optional[str] = None,
     ) -> Tuple[ResourceSymbol, ...]:
         suffix = f"_{attrname.upper()}" if attrname else ""
-        properties = self._resolve_resource(parameters, infra_component)
-        extensions: ExtensionResources = defaultdict(list)  # type: ignore[assignment]  # Doesn't like defaultdict
-        extensions.update(self.extensions)
+        properties, extensions = self._resolve_resource(infra_component)
         parents: Tuple[ResourceSymbol, ...] = ()
         if self.parent:
             if "parent" in properties:
@@ -408,39 +429,27 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             )
             fields[self._get_field_id(symbol, parents)] = field
             return (symbol, *parents)
-
+        if self.parent and self.parent._existing:  # pylint: disable=protected-access
+            raise ValueError(f"Cannot deploy new resource '{self}' with existing parent '{self.parent}'.")
         # TODO: Is this going to pick up an existing RG that we don't want to deploy to?
         # We can probably remove this and just default using the current RG scope.
         rg = find_resource_group(fields)
         if not parents:
-            field_match = find_last_resource_match(
+            field_match = find_resource_match(
                 fields, resource=self.identifier, resource_group=rg, name=properties.get("name")
             )
         else:
-            field_match = find_last_resource_match(
+            field_match = find_resource_match(
                 fields, resource=self.identifier, parent=parents[0], name=properties.get("name")
             )
-
         if field_match:
             params = field_match.properties
+            ext = field_match.extensions
             symbol = field_match.symbol
             outputs = field_match.outputs
-            if "managed_identity_roles" in self.extensions:
-                # TODO: Need to confirm the behaviour here as I think this might be mutating the original copy
-                # of extensions.
-                # We don't really care if this causes duplicate roles because they should be
-                # cleaned up when exported to bicep.
-                # TODO: Should maybe replace the namedtuple with a slotted-dataclass so we can mutate the
-                # value and assign a fresh list here.
-                field_match.extensions["managed_identity_roles"].extend(  # type: ignore[union-attr]  # TODO
-                    extensions["managed_identity_roles"]
-                )
-            if "user_roles" in self.extensions:
-                field_match.extensions["user_roles"].extend(  # type: ignore[union-attr]  # TODO
-                    extensions["user_roles"]
-                )
         else:
             params = {}
+            ext = {}
             if depends_on:
                 params["dependsOn"] = depends_on
             if self.parent:
@@ -456,7 +465,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 outputs=outputs,
                 resource_group=rg,
                 version=self.version,
-                extensions=extensions,
+                extensions=ext,
                 existing=False,
                 name=properties.get("name"),
                 defaults={
@@ -473,6 +482,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             symbol=symbol,
             resource_group=rg,
         )
+        self._merge_extensions(ext, extensions)
         if attrname or not field_match:
             # TODO: Figure out correct behaviour for parent outputs here.
             # attrname will be None in the case of resolving a parent bicep, which is fine?
@@ -491,7 +501,6 @@ class _ClientResource(Resource):
         settings_passthrough = "settings" in kwargs
         super().__init__(properties, **kwargs)
         if not settings_passthrough:
-            # TODO: Add public getters and setters for these?
             self._settings.update(
                 {
                     "audience": StoredPrioritizedSetting(

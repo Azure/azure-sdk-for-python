@@ -44,7 +44,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: defaultName
   location: location
   tags: azdTags

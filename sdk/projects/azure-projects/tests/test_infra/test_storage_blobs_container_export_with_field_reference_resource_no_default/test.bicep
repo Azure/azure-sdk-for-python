@@ -44,7 +44,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount_teststorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount_teststorage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: 'teststorage'
   location: location
   tags: azdTags
@@ -82,7 +82,7 @@ output AZURE_BLOBS_ENDPOINT_R string = storageaccount_teststorage.properties.pri
 output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount_teststorage.properties.primaryEndpoints.blob
 
 
-resource container_teststorage 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+resource container_teststorage 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
   parent: blobservice_teststorage
   name: defaultName
 }

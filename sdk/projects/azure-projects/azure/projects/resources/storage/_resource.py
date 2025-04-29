@@ -6,8 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, Generic, List, Literal, Mapping, Union, Optional, cast
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict, Generic, Literal, Mapping, Union, Optional, cast
+from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ..._resource import Resource, ExtensionResources, ResourceReference
@@ -17,12 +17,11 @@ from ..resourcegroup import ResourceGroup
 from ..._parameters import GLOBAL_PARAMS
 
 if TYPE_CHECKING:
-    from .types import (
+    from ._types import (
         StorageAccountResource,
-        StorageNetworkRuleSet,
-        AzureFilesIdentityBasedAuthentication,
-        StorageEncryption,
-        CustomDomain,
+        StorageAccountNetworkRuleSet,
+        StorageAccountAzureFilesIdentityBasedAuthentication,
+        StorageAccountEncryption
     )
 
 
@@ -49,7 +48,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     Key. If false, then all requests, including shared access signatures, must be authorized with Azure Active
     Directory (Azure AD). The default value is null, which is equivalent to true.
     """
-    azure_files_identity_auth: Union["AzureFilesIdentityBasedAuthentication", Parameter]
+    azure_files_identity_auth: Union["StorageAccountAzureFilesIdentityBasedAuthentication", Parameter]
     """Provides the identity based authentication settings for Azure Files."""
     custom_domain_name: Union[str, Parameter]
     """Sets the custom domain name assigned to the storage account. Name is the CNAME source."""
@@ -74,7 +73,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """If true, enables Secure File Transfer Protocol for the storage account. Requires enableHierarchicalNamespace
     to be true.
     """
-    encryption: Union["StorageEncryption", Parameter]
+    encryption: Union["StorageAccountEncryption", Parameter]
     """Encryption settings to be used for server-side encryption for the storage account."""
     is_local_user_enabled: Union[bool, Parameter]
     """Enables local users feature, if set to true."""
@@ -101,7 +100,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """Set the minimum TLS version on request to storage. The TLS versions 1.0 and 1.1 are deprecated and not
     supported anymore.
     """
-    network_acls: Union["StorageNetworkRuleSet", Parameter]
+    network_acls: Union["StorageAccountNetworkRuleSet", Parameter]
     """Networks ACLs, this value contains IPs to whitelist and/or Subnet information. If in use, bypass needs to be
     supplied. For security reasons, it is recommended to set the DefaultAction Deny.
     """
@@ -120,7 +119,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -156,7 +155,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """Array of role assignments to create for user-assigned identity."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -209,7 +208,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """Storage Account Sku Name."""
     supports_https_traffic_only: Union[bool, Parameter]
     """Allows HTTPS traffic only to storage service if sets to true."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
 
 
@@ -248,7 +247,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword allow_shared_key_access: Allow requests to be authorized with account access key
     :paramtype allow_shared_key_access: bool | Parameter
     :keyword azure_files_identity_auth: Identity based authentication settings for Azure Files
-    :paramtype azure_files_identity_auth: AzureFilesIdentityBasedAuthentication | Parameter
+    :paramtype azure_files_identity_auth: StorageAccountAzureFilesIdentityBasedAuthentication | Parameter
     :keyword custom_domain_name: Custom domain name for storage account
     :paramtype custom_domain_name: str | Parameter
     :keyword custom_domain_use_subdomain_name: Enable/disable indirect CName validation
@@ -262,7 +261,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword enable_sftp: Enable SFTP support
     :paramtype enable_sftp: bool | Parameter
     :keyword encryption: Server-side encryption settings
-    :paramtype encryption: StorageEncryption | Parameter
+    :paramtype encryption: StorageAccountEncryption | Parameter
     :keyword is_local_user_enabled: Enable local users feature
     :paramtype is_local_user_enabled: bool | Parameter
     :keyword kind: Type of Storage Account
@@ -276,15 +275,15 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword minimum_tls_version: Minimum TLS version
     :paramtype minimum_tls_version: Literal["TLS1_2", "TLS1_3"] | Parameter
     :keyword network_acls: Network access rules configuration
-    :paramtype network_acls: StorageNetworkRuleSet | Parameter
+    :paramtype network_acls: StorageAccountNetworkRuleSet | Parameter
     :keyword public_network_access: Public network access configuration
     :paramtype public_network_access: Literal["Disabled", "Enabled", "SecuredByPerimeter"] | Parameter
     :keyword require_infrastructure_encryption: Enable infrastructure encryption
     :paramtype require_infrastructure_encryption: bool | Parameter
     :keyword roles: Role assignments for managed identity
-    :paramtype roles: List[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
+    :paramtype roles: list[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
     :keyword user_roles: Role assignments for user principal
-    :paramtype user_roles: List[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
+    :paramtype user_roles: list[Union[Parameter, RoleAssignment, Literal[...]]] | Parameter
     :keyword sas_expiration_period: SAS token expiration period (DD.HH:MM:SS)
     :paramtype sas_expiration_period: str | Parameter
     :keyword sku: Storage Account SKU
@@ -292,7 +291,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword supports_https_traffic_only: Allow only HTTPS traffic
     :paramtype supports_https_traffic_only: bool | Parameter
     :keyword tags: Resource tags
-    :paramtype tags: Dict[str, str | Parameter] | Parameter
+    :paramtype tags: dict[str, str | Parameter] | Parameter
 
     :ivar DEFAULTS: Default storage account configuration
     :vartype DEFAULTS: StorageAccountResource
@@ -305,7 +304,6 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :ivar version: API version string
     :vartype version: str
     """
-
     DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT  # type: ignore[assignment]
     properties: StorageAccountResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]
@@ -403,7 +401,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 

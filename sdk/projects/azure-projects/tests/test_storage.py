@@ -111,9 +111,6 @@ def test_storage_properties():
     assert fields["storageaccount_testa"].resource_group == None
     assert fields["storageaccount_testa"].name == param1
     assert fields["storageaccount_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_storage_reference():
@@ -177,7 +174,7 @@ def test_storage_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params)
+    add_defaults(fields, parameters=params, values={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -268,7 +265,7 @@ def test_storage_export_with_no_user_access(export_dir):
             default=StorageAccount(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_storage_client():

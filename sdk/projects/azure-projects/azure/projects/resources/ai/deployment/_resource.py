@@ -189,8 +189,6 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
             identifier=kwargs.pop("identifier", ResourceIdentifiers.ai_deployment),  # type: ignore[typeddict-item]
             **kwargs,
         )
-        self._properties_to_merge.append("sku")
-        self._properties_to_merge.append("model")
         self._settings["model_name"] = StoredPrioritizedSetting(
             name="model_name", env_vars=_build_envs(self._prefixes, ["MODEL_NAME"]), suffix=self._env_suffix
         )
@@ -291,7 +289,12 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
     def _merge_resource(  # type: ignore[override]  # Parameter superset
         self, current_properties: dict[str, Any], new_properties: dict[str, Any], *, fields: FieldsType, **kwargs
     ):
-        super()._merge_resource(current_properties, new_properties, **kwargs)
+        super()._merge_resource(
+            current_properties,
+            new_properties,
+            merge_properties=["properties", "tags", "sku"],
+            **kwargs
+        )
         for field in find_all_resource_match(
             fields,
             parent=current_properties["parent"],

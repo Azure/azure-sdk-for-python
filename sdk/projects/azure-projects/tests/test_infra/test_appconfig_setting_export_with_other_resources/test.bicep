@@ -48,7 +48,7 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore_testconfig.propertie
 output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_testconfig.properties.endpoint
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: defaultName
   location: location
   tags: azdTags
