@@ -245,6 +245,10 @@
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
+# PRLabel: %Durable Task Scheduler
+# ServiceLabel: %Durable Task Scheduler %Service Attention
+/sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
+
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
