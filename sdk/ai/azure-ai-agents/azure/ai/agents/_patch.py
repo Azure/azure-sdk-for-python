@@ -608,7 +608,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
         return super().delete_agent(agent_id, **kwargs)
 
-    @overload # pylint: disable=client-method-missing-kwargs
+    @overload  # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]], max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -620,7 +620,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type max_retry: int
         """
 
-    @overload # pylint: disable=client-method-missing-kwargs
+    @overload  # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, function_tool: _models.FunctionTool, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -632,7 +632,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type max_retry: int
         """
 
-    @overload # pylint: disable=client-method-missing-kwargs
+    @overload  # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, toolset: _models.ToolSet, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -645,7 +645,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
 
     @distributed_trace
-    def enable_auto_function_calls( # pylint: disable=client-method-missing-kwargs
+    def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
         self,
         *,
         functions: Optional[Set[Callable[..., Any]]] = None,
@@ -702,7 +702,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ThreadRun:
         """
         Creates a new agent thread and immediately starts a run using that new thread.
@@ -752,11 +752,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
     @overload
     def create_thread_and_run(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """
         Creates a new agent thread and immediately starts a run using a JSON body.
@@ -772,11 +768,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
     @overload
     def create_thread_and_run(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """
         Creates a new agent thread and immediately starts a run using a binary body.
@@ -810,7 +802,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         response_format: Optional[_types.AgentsApiResponseFormatOption] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ThreadRun:
         """
         Creates a new agent thread and immediately starts a run using the specified parameters.
@@ -863,20 +855,12 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         # JSON‐body overload
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
-            return super().create_thread_and_run(
-                body,  # JSON payload
-                content_type=content_type,
-                **kwargs
-            )
+            return super().create_thread_and_run(body, content_type=content_type, **kwargs)  # JSON payload
 
         # Binary‐body overload
         if isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
-            return super().create_thread_and_run(
-                body,  # binary stream
-                content_type=content_type,
-                **kwargs
-            )
+            return super().create_thread_and_run(body, content_type=content_type, **kwargs)  # binary stream
 
         # Keyword‐only overload
         if agent_id is not _Unset:
@@ -887,7 +871,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 instructions=instructions,
                 tools=tools,
                 tool_resources=tool_resources,
-                stream_parameter=False,      # force non‐streaming
+                stream_parameter=False,  # force non‐streaming
                 temperature=temperature,
                 top_p=top_p,
                 max_prompt_tokens=max_prompt_tokens,
@@ -897,7 +881,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 response_format=response_format,
                 parallel_tool_calls=parallel_tool_calls,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
 
         # Nothing matched
@@ -1027,7 +1011,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        run2 = self.runs.submit_tool_outputs(thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        run2 = self.runs.submit_tool_outputs(
+                            thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
                         logging.info("Tool outputs submitted to run: %s", run2.id)
 
             logging.info("Current run status: %s", run.status)

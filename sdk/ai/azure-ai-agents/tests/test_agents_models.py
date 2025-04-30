@@ -181,7 +181,7 @@ class TestAgentEventHandler:
     @patch("azure.ai.agents.models._patch._parse_event")
     def test_tool_calls(self, mock_parse_event: Mock):
         # Test if the event type and status are met, submit function calls.
-        submit_tool_outputs = MagicMock(return_value = [{'all': 'good'}])
+        submit_tool_outputs = MagicMock(return_value=[{"all": "good"}])
         handler = self.MyAgentEventHandler()
 
         handler.initialize(convert_to_byte_iterator("event\n\n"), submit_tool_outputs)

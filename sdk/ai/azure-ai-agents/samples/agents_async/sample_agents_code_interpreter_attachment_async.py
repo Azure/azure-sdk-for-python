@@ -25,17 +25,14 @@ from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder
 from azure.identity.aio import DefaultAzureCredential
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
+
 
 async def main():
     async with DefaultAzureCredential() as creds:
         async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as agents_client:
             # Upload a file and wait for it to be processed
-            file = await agents_client.files.upload_and_poll(
-                file_path=asset_file_path, purpose=FilePurpose.AGENTS
-            )
+            file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
             print(f"Uploaded file, file ID: {file.id}")
 
             code_interpreter = CodeInterpreterTool()

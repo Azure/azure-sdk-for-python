@@ -556,9 +556,7 @@ class RunsOperations(RunsOperationsGenerated):
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        await self.submit_tool_outputs(
-                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
-                        )
+                        await self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             logging.info("Current run status: %s", run.status)
 
@@ -2044,9 +2042,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         while vector_store_file.status == "in_progress":
             time.sleep(sleep_interval)
-            vector_store_file = await super().get(
-                vector_store_id=vector_store_id, file_id=vector_store_file.id
-            )
+            vector_store_file = await super().get(vector_store_id=vector_store_id, file_id=vector_store_file.id)
 
         return vector_store_file
 

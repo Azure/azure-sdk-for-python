@@ -55,7 +55,9 @@ class TestSignatures:
             ),
         ), patch(
             "azure.ai.agents.operations._operations.VectorStoresOperations.get",
-            wraps=get_mock_fn(agent.vector_stores.get, return_val=VectorStore({"id": "store_1", "status": "completed"})),
+            wraps=get_mock_fn(
+                agent.vector_stores.get, return_val=VectorStore({"id": "store_1", "status": "completed"})
+            ),
         ):
 
             agent.vector_stores.create_and_poll(file_ids=file_ids, sleep_interval=0)

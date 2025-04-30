@@ -28,9 +28,7 @@ from azure.ai.agents.models import AgentStreamEvent, FileSearchTool, RunStepDelt
 from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun, FilePurpose
 from azure.identity import DefaultAzureCredential
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

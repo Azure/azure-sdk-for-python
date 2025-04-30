@@ -26,33 +26,22 @@ import os
 import time
 
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    AgentThreadCreationOptions,
-    ThreadMessageOptions,
-    MessageTextContent,
-    ListSortOrder
-)
+from azure.ai.agents.models import AgentThreadCreationOptions, ThreadMessageOptions, MessageTextContent, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential()
-)
+agents_client = AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
 with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="sample-agent",
-        instructions="You are a helpful assistant that tells jokes."
+        instructions="You are a helpful assistant that tells jokes.",
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     # [START create_thread_and_run]
     # Prepare the initial user message
-    initial_message = ThreadMessageOptions(
-        role="user",
-        content="Hello! Can you tell me a joke?"
-    )
+    initial_message = ThreadMessageOptions(role="user", content="Hello! Can you tell me a joke?")
 
     # Create a new thread and immediately start a run on it
     run = agents_client.create_thread_and_run(
@@ -72,10 +61,7 @@ with agents_client:
         print(f"Run error: {run.last_error}")
 
     # List all messages in the thread, in ascending order of creation
-    messages = agents_client.messages.list(
-        thread_id=run.thread_id,
-        order=ListSortOrder.ASCENDING
-    )
+    messages = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
 
     for msg in messages.data:
         # The content of a message may be a list of blocks; we only print text blocks here

@@ -750,7 +750,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         expected_events = [
             {
                 "name": "gen_ai.tool.message",
-                "attributes": {"gen_ai.event.content": '{"content": "{\\"weather\\": \\"Ð”ÑŠÐ¶Ð´Ð¾Ð²Ð½Ð¾\\"}", "id": "*"}'},
+                "attributes": {
+                    "gen_ai.event.content": '{"content": "{\\"weather\\": \\"Ð”ÑŠÐ¶Ð´Ð¾Ð²Ð½Ð¾\\"}", "id": "*"}'
+                },
             },
             {
                 "name": "gen_ai.assistant.message",

@@ -29,13 +29,9 @@ from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import OpenApiTool, OpenApiAnonymousAuthDetails
 
-weather_asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json")
-)
+weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
 
-countries_asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/countries.json")
-)
+countries_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/countries.json"))
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

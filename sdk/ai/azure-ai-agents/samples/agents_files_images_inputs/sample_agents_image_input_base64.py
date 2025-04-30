@@ -33,9 +33,8 @@ from azure.ai.agents.models import (
     MessageInputImageUrlBlock,
 )
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/image_file.png")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/image_file.png"))
+
 
 def image_to_base64(image_path: str) -> str:
     """

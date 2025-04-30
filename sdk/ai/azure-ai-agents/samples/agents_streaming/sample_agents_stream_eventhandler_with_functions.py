@@ -37,6 +37,7 @@ from azure.ai.agents.models import (
     ToolOutput,
 )
 from azure.identity import DefaultAzureCredential
+
 current_path = os.path.dirname(__file__)
 root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
 if root_path not in sys.path:

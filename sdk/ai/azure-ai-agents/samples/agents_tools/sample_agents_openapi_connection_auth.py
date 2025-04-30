@@ -39,9 +39,7 @@ from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json"))
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
