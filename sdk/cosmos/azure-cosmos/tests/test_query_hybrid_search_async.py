@@ -232,6 +232,125 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(result_list) == 10
         assert response_hook.count == 1
 
+    async def test_hybrid_search_weighted_reciprocal_rank_fusion_async(self):
+        # Test case 1
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, 1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        assert result_list in [
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+        ]
+
+        # Test case 2
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [10, 10])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        assert result_list in [
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+        ]
+
+        # Test case 3
+        query = """
+                    SELECT TOP 10 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [0.1, 0.1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        assert result_list == [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+
+        # Test case 4
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [-1, -1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        assert result_list in [
+            [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81],
+            [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
+        ]
+
+    async def test_invalid_hybrid_search_queries_wrrf_async(self):
+        try:
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
+            results = self.test_container.query_items(query)
+            [item async for item in results]
+            pytest.fail("Attempting to project RRF in a query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    async def test_weighted_vs_non_weighted_rrf_async(self):
+        # Non-weighted RRF query
+        query_non_weighted = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))
+        """
+        results_non_weighted = self.test_container.query_items(query_non_weighted)
+        result_list_non_weighted = [res['index'] async for res in results_non_weighted]
+
+        # Weighted RRF query with equal weights
+        query_weighted_equal = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, 1])
+        """
+        results_weighted_equal = self.test_container.query_items(query_weighted_equal)
+        result_list_weighted_equal = [res['index'] async for res in results_weighted_equal]
+
+        # Weighted RRF query with different direction weights
+        query_weighted_different = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, -0.5])
+        """
+        results_weighted_different = self.test_container.query_items(query_weighted_different)
+        result_list_weighted_different = [res['index'] async for res in results_weighted_different]
+
+        # Assertions
+        assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
+        assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently direction weighted RRF results should not match."
+
+    async def test_rrf_with_missing_weights_async(self):
+        try:
+            # Weighted RRF query with one weight missing
+            query_missing_weight = """
+                SELECT TOP 10 c.index, c.title FROM c
+                ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1])
+            """
+            res = self.test_container.query_items(query_missing_weight)
+            [item async for item in res]
+            pytest.fail("Query with missing weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    async def test_weighted_rrf_with_response_hook_async(self):
+        response_hook = test_config.ResponseHookCaller()
+        query_weighted_rrf = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, 0.5])
+        """
+        results = self.test_container.query_items(query_weighted_rrf, response_hook=response_hook)
+        result_list = [item async for item in results]
+        assert len(result_list) == 10
+        assert response_hook.count > 0  # Ensure the response hook was called
+
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

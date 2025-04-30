@@ -5,6 +5,7 @@
 #### Features Added
 * Added ability to set `throughput_bucket` header at the client level and for all requests. See [PR 40340](https://github.com/Azure/azure-sdk-for-python/pull/40340).
 * Added ability to use Filters from Logging module on Diagnostics Logging based on Http request/response related attributes. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897).
+* Added ability to use weighted RRF (Reciprocal Rank Fusion) for Hybrid full text search queries. See [PR #####]().
 
 #### Breaking Changes
 
