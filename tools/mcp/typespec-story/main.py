@@ -3,7 +3,8 @@ import subprocess
 from typing import Dict, Optional, Any
 import logging
 import sys
-from github import Github
+import os
+from github import Github, Auth
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -34,7 +35,9 @@ def get_latest_commit(package_name: str) -> str:
     logger.info(f"Looking for commits in folder: {folder_path}")
     
     try:
-        g = Github()
+        auth = Auth.Token(os.getenv("GH_TOKEN"))
+        g = Github(auth=auth)
+        logger.info(f"Authenticated to GitHub with token: {g}")
         repo = g.get_repo("Azure/azure-rest-api-specs")
         
         # Get commits that affect the specific folder
