@@ -1291,7 +1291,7 @@ class JobOperations(_ScopeDependentOperations):
 
         # path can be empty if the job was created from builder functions
         if isinstance(entry, Input) and not entry.path:
-            msg = "Input path can't be empty for jobs."
+            msg = "Input path can't be empty for jobs. Input entry: {}".format(entry)
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.JOB,
