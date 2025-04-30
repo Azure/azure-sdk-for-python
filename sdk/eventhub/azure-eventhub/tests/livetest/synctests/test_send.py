@@ -445,7 +445,6 @@ def test_send_multiple_partitions_with_app_prop(auth_credential_receivers, uamqp
         eventhub_name=eventhub_name,
         credential=credential(),
         uamqp_transport=uamqp_transport,
-        transport_type=TransportType.Amqp,
         **client_args
     )
     with client:
@@ -541,7 +540,6 @@ def test_send_list(auth_credential_receivers, uamqp_transport, timeout_factor, c
         eventhub_name=eventhub_name,
         credential=credential(),
         uamqp_transport=uamqp_transport,
-        transport_type=uamqp_TransportType.Amqp,
         **client_args
     )
     payload = "A1"
@@ -674,6 +672,7 @@ def test_send_with_keep_alive(auth_credential_receivers, keep_alive, uamqp_trans
     assert client._producers["all-partitions"]._keep_alive == keep_alive
 
 
+# TODO: This test fails both sync and async with amqp proxy and keep_alive=30. Investigate.
 @pytest.mark.parametrize("keep_alive", [None, 5, 30])
 @pytest.mark.liveTest
 def test_send_long_wait_idle_timeout(auth_credential_receivers, keep_alive, uamqp_transport, client_args):

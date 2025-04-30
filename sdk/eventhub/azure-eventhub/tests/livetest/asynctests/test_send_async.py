@@ -651,10 +651,11 @@ async def test_send_with_keep_alive_async(auth_credentials_async, keep_alive, ua
     assert client._producers["all-partitions"]._keep_alive == keep_alive
 
 
+# TODO: This test fails both sync and async with amqp proxy and keep_alive=30. Investigate.
 @pytest.mark.parametrize("keep_alive", [None, 5, 30])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-@pytest.mark.no_amqpproxy # 30 seconds keep alive results in a timeout, related to issue #39519
+@pytest.mark.no_amqpproxy
 async def test_send_long_wait_idle_timeout(auth_credentials_async, keep_alive, uamqp_transport, client_args):
     if uamqp_transport:
         amqp_transport = UamqpTransport

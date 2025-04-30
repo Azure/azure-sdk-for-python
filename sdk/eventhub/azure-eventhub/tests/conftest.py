@@ -307,6 +307,16 @@ def remove_existing_recordings(path, file_name):
             os.remove(os.path.join(path, file))
             print(f"Removed existing recording: {file}")
 
+def stop_existing_amqpproxy(log_file):
+    # Kill any existing process using the AMQP proxy port
+    try:
+        subprocess.run(
+        ["fuser", "-k", "5671/tcp"], check=True, stdout=log_file, stderr=log_file
+        )
+        log_file.write("Kill existing process on port 5671.\n")
+    except subprocess.CalledProcessError:
+        log_file.write("No existing process found on port 5671.\n")
+
 @pytest.fixture(autouse=True)
 def amqpproxy(live_eventhub, skip_amqp_proxy, request):
     """Fixture that redirects network requests to target the amqp proxy.
@@ -339,14 +349,7 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
     try:
         # Navigate to the amqpproxy directory and run the proxy
         os.chdir(AMQPPROXY_PATH)
-        # Kill any existing process using the AMQP proxy port
-        try:
-            subprocess.run(
-            ["fuser", "-k", "5671/tcp"], check=True, stdout=log_file, stderr=log_file
-            )
-            log_file.write("Kill existing process on port 5671.\n")
-        except subprocess.CalledProcessError:
-            log_file.write("No existing process found on port 5671.\n")
+        stop_existing_amqpproxy(log_file)
 
         # Start the AMQP proxy process
         log_file.write("Starting amqpproxy process...\n")
