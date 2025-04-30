@@ -333,9 +333,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :rtype: str
         """
         params_override = params_override or []
-        # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
-        if deployment_name:
-            self._validate_deployment_name(endpoint_name, deployment_name)
+        import pdb; pdb.set_trace()
 
         with open(request_file, "rb") as f:  # type: ignore[arg-type]
             data = json.loads(f.read())
@@ -343,6 +341,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             return self._local_endpoint_helper.invoke(
                 endpoint_name=endpoint_name, data=data, deployment_name=deployment_name
             )
+        # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
+        if deployment_name:
+            self._validate_deployment_name(endpoint_name, deployment_name)
         endpoint = self._online_operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
