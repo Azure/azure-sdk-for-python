@@ -74,7 +74,7 @@ def _get_stream_with_tool_calls() -> Iterator[bytes]:
     return _convert_to_byte_iterator(fetch_current_datetime_and_weather_stream_response)
 
 
-class TestAgentsOperations:
+class TestAgentsMock:
     """Tests for agent operations"""
 
     LOCAL_FN = {function1.__name__: function1, function2.__name__: function2}
@@ -402,7 +402,7 @@ class TestAgentsOperations:
             assert mock_cancel_run.call_count == 1
             assert event_handler.current_retry == 4
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
         [
