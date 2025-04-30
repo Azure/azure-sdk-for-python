@@ -41,7 +41,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # [START indexes_sample]
-        print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
+        print(
+            f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
+        )
         index = project_client.indexes.create_or_update(
             name=index_name,
             version=index_version,

@@ -181,7 +181,7 @@ def build_evaluations_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_create_run_request(**kwargs: Any) -> HttpRequest:
+def build_evaluations_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -657,7 +657,7 @@ def build_red_teams_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_red_teams_create_run_request(**kwargs: Any) -> HttpRequest:
+def build_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1137,7 +1137,7 @@ class EvaluationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def create_run(
+    def create(
         self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -1153,9 +1153,7 @@ class EvaluationsOperations:
         """
 
     @overload
-    def create_run(
-        self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Evaluation:
+    def create(self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
 
         :param evaluation: Evaluation to be run. Required.
@@ -1169,7 +1167,7 @@ class EvaluationsOperations:
         """
 
     @overload
-    def create_run(
+    def create(
         self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -1189,7 +1187,7 @@ class EvaluationsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
     )
-    def create_run(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
+    def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
 
         :param evaluation: Evaluation to be run. Is one of the following types: Evaluation, JSON,
@@ -1220,7 +1218,7 @@ class EvaluationsOperations:
         else:
             _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluations_create_run_request(
+        _request = build_evaluations_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2877,7 +2875,7 @@ class RedTeamsOperations:
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def create_run(
+    def create(
         self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
@@ -2893,7 +2891,7 @@ class RedTeamsOperations:
         """
 
     @overload
-    def create_run(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
+    def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
@@ -2907,9 +2905,7 @@ class RedTeamsOperations:
         """
 
     @overload
-    def create_run(
-        self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RedTeam:
+    def create(self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
@@ -2927,7 +2923,7 @@ class RedTeamsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
     )
-    def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+    def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
@@ -2958,7 +2954,7 @@ class RedTeamsOperations:
         else:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_red_teams_create_run_request(
+        _request = build_red_teams_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
