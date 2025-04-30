@@ -147,21 +147,33 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             self._format_final_results(drained_results)
             return
 
+        # Get the Components weights if any
+        if self._hybrid_search_query_info.get('componentWeights'):
+            component_weights = self._hybrid_search_query_info['componentWeights']
+            component_count = len(self._hybrid_search_query_info['componentQueryInfos'])
+            component_weights = [component_weights[x] if x < len(component_weights)
+                                 else 1.0 for x in range(component_count)]
+        else:
+            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
+
         # Sort drained results by _rid
         drained_results.sort(key=lambda x: x['_rid'])
 
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
 
-        # Sort by scores in descending order
-        for score_tuples in component_scores:
-            score_tuples.sort(key=lambda x: x[0], reverse=True)
+        # Sort by scores using component weights
+        for index, score_tuples in enumerate(component_scores):
+            # Negative Weights will change sorting from Descending to Ascending
+            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
+            comparison_factor = False if (ordering.lower() == 'ascending') else True
+            score_tuples.sort(key=lambda x: abs(component_weights[index]) * x[0], reverse=comparison_factor)
 
         # Compute the ranks
         ranks = _compute_ranks(component_scores)
 
         # Compute the RRF scores and add them to output
-        _compute_rrf_scores(ranks, drained_results)
+        _compute_rrf_scores(ranks, component_weights, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
