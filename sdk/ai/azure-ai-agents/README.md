@@ -952,7 +952,7 @@ With streaming, polling need not be considered. If `function tools` are provided
 
 Here is an example of streaming:
 
-<!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
+<!-- SNIPPET:sample_agents_basics_stream_iteration.iterate_stream -->
 
 ```python
 with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
