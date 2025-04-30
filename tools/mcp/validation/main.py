@@ -90,8 +90,8 @@ def tox_tool(package_path: str, environment: Optional[str] = None, config_file: 
 
     current_file = Path(__file__)
     repo_root = current_file.parents[4]
-    tox_ini_path = os.paths.abspath(repo_root / "eng" / "tox" / "tox.ini")
-    if not tox_ini_path.exists():
+    tox_ini_path = os.path.abspath(repo_root / "eng" / "tox" / "tox.ini")
+    if not tox_ini_path:
         raise FileNotFoundError(f"tox.ini file not found at expected location: {tox_ini_path}")
 
     command = ["tox", "run"]
