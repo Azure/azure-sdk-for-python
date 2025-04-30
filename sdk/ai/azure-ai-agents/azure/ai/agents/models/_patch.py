@@ -910,6 +910,18 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
             )
         ]
 
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
 
 class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     """
@@ -948,7 +960,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     @property
     def resources(self) -> ToolResources:
         """
-        Get the connection tool resources.
+        Get the tool resources.
 
         :rtype: ToolResources
         """
