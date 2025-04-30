@@ -191,6 +191,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             arguments = {
                 "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
             }
+        elif tool_call.details["type"] == "azure_ai_search":
+            arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
+        elif tool_call.details["type"] == "fabric_dataagent":
+            arguments = {"input": tool_call.details["fabric_dataagent"]["input"]}
         else:
             # unsupported tool type, skip
             return messages
@@ -231,6 +235,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                     }
                     for result in tool_call.details.file_search.results
                 ]
+            elif tool_call.details.type == "azure_ai_search":
+                output = tool_call.details.azure_ai_search["output"]
+            elif tool_call.details.type == "fabric_dataagent":
+                output = tool_call.details.fabric_dataagent["output"]
         except:
             return messages
 
