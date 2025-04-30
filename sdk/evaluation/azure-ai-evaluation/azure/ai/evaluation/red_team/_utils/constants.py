@@ -63,3 +63,5 @@ TASK_STATUS = {
     "TIMEOUT": "timeout",
     "INCOMPLETE": "incomplete",
 }
+
+USER_AGENT = "azure-ai-evaluation-redteam"
