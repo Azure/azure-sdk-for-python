@@ -91,19 +91,13 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperationsAsync(Azu
                 resource_group_name=resource_group.name,
                 workspace_name="str",
                 properties={
-                    "location": "str",
-                    "id": "str",
                     "identity": {
                         "type": "str",
                         "principalId": "str",
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "name": "str",
                     "properties": {
-                        "appConfigurationResourceId": "str",
-                        "logAnalyticsWorkspaceResourceId": "str",
-                        "logsExporterStorageAccountResourceId": "str",
                         "encryption": {
                             "customerManagedKeyEncryption": {
                                 "keyEncryptionKeyIdentity": {
@@ -114,21 +108,11 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperationsAsync(Azu
                                 "keyEncryptionKeyUrl": "str",
                             }
                         },
-                        "endpoint": "str",
-                        "provisioningState": "str",
-                        "workspaceId": "str",
+                        "logAnalyticsWorkspaceResourceId": "str",
+                        "logsExporterStorageAccountResourceId": "str",
                     },
                     "sku": {"name": "str", "tier": "str"},
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

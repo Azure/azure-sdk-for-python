@@ -425,6 +425,105 @@ class OnlineExperimentWorkspace(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
+class OnlineExperimentWorkspacePatch(_model_base.Model):
+    """Partial update of an online experiment workspace resource.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.onlineexperimentation.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
+    :vartype sku: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSku
+    :ivar properties: Updatable properties of the online experiment workspace resource.
+    :vartype properties:
+     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatchProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    sku: Optional["_models.OnlineExperimentationWorkspaceSku"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU (Stock Keeping Unit) assigned to this resource."""
+    properties: Optional["_models.OnlineExperimentWorkspacePatchProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Updatable properties of the online experiment workspace resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.OnlineExperimentationWorkspaceSku"] = None,
+        properties: Optional["_models.OnlineExperimentWorkspacePatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OnlineExperimentWorkspacePatchProperties(_model_base.Model):
+    """OnlineExperimentWorkspacePatchProperties.
+
+    :ivar log_analytics_workspace_resource_id: The resource identifier of the Log Analytics
+     workspace which online experiment workspace uses for generating experiment analysis results.
+    :vartype log_analytics_workspace_resource_id: str
+    :ivar logs_exporter_storage_account_resource_id: The resource identifier of storage account
+     where logs are exported from Log Analytics workspace. Online Experiment workspace uses it
+     generating experiment analysis results.
+    :vartype logs_exporter_storage_account_resource_id: str
+    :ivar encryption: The encryption configuration for the online experiment workspace resource.
+    :vartype encryption: ~azure.mgmt.onlineexperimentation.models.ResourceEncryptionConfiguration
+    """
+
+    log_analytics_workspace_resource_id: Optional[str] = rest_field(
+        name="logAnalyticsWorkspaceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource identifier of the Log Analytics workspace which online experiment workspace uses
+     for generating experiment analysis results."""
+    logs_exporter_storage_account_resource_id: Optional[str] = rest_field(
+        name="logsExporterStorageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource identifier of storage account where logs are exported from Log Analytics
+     workspace. Online Experiment workspace uses it generating experiment analysis results."""
+    encryption: Optional["_models.ResourceEncryptionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encryption configuration for the online experiment workspace resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        log_analytics_workspace_resource_id: Optional[str] = None,
+        logs_exporter_storage_account_resource_id: Optional[str] = None,
+        encryption: Optional["_models.ResourceEncryptionConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OnlineExperimentWorkspaceProperties(_model_base.Model):
     """The properties of an online experiment workspace.
 

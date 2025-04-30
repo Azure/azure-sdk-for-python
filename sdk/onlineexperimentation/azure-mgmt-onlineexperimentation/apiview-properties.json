@@ -11,6 +11,8 @@
         "azure.mgmt.onlineexperimentation.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.onlineexperimentation.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace": "Microsoft.OnlineExperimentation.OnlineExperimentWorkspace",
+        "azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatch": "Microsoft.OnlineExperimentation.OnlineExperimentWorkspacePatch",
+        "azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatchProperties": "Microsoft.OnlineExperimentation.OnlineExperimentWorkspacePatch.properties.anonymous",
         "azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspaceProperties": "Microsoft.OnlineExperimentation.OnlineExperimentWorkspaceProperties",
         "azure.mgmt.onlineexperimentation.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.onlineexperimentation.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",

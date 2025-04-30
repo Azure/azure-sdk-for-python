@@ -485,7 +485,7 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.OnlineExperimentWorkspace, JSON, IO[bytes]],
+        properties: Union[_models.OnlineExperimentWorkspacePatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -557,7 +557,7 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: _models.OnlineExperimentWorkspace,
+        properties: _models.OnlineExperimentWorkspacePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -570,7 +570,7 @@ class OnlineExperimentWorkspacesOperations:
         :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace
+        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -644,7 +644,7 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.OnlineExperimentWorkspace, JSON, IO[bytes]],
+        properties: Union[_models.OnlineExperimentWorkspacePatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OnlineExperimentWorkspace]:
         """Patch an experiment workspace.
@@ -655,9 +655,9 @@ class OnlineExperimentWorkspacesOperations:
         :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         OnlineExperimentWorkspace, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace or JSON or
-         IO[bytes]
+         OnlineExperimentWorkspacePatch, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatch or
+         JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OnlineExperimentWorkspace. The
          OnlineExperimentWorkspace is compatible with MutableMapping
         :rtype:
