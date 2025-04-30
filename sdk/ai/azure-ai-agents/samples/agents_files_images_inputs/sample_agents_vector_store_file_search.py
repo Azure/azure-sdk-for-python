@@ -24,9 +24,7 @@ from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

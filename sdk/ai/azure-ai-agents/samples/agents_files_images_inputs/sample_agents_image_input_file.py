@@ -34,9 +34,7 @@ from azure.ai.agents.models import (
     FilePurpose,
 )
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/image_file.png")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/image_file.png"))
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

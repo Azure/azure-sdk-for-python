@@ -28,9 +28,8 @@ from pathlib import Path
 
 import os
 
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/nifty_500_quarterly_results.csv")
-)
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/nifty_500_quarterly_results.csv"))
+
 
 async def main() -> None:
 
@@ -38,9 +37,7 @@ async def main() -> None:
 
         async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as agents_client:
             # Upload a file and wait for it to be processed
-            file = await agents_client.files.upload_and_poll(
-                file_path=asset_file_path, purpose=FilePurpose.AGENTS
-            )
+            file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
             print(f"Uploaded file, file ID: {file.id}")
 
             code_interpreter = CodeInterpreterTool(file_ids=[file.id])

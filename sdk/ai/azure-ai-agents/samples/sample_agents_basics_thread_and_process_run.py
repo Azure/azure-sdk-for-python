@@ -25,24 +25,16 @@ USAGE:
 
 import os
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    AgentThreadCreationOptions,
-    ThreadMessageOptions,
-    MessageTextContent,
-    ListSortOrder
-)
+from azure.ai.agents.models import AgentThreadCreationOptions, ThreadMessageOptions, MessageTextContent, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential()
-)
+agents_client = AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
 with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="process-run-sample-agent",
-        instructions="You are a friendly assistant that generates jokes."
+        instructions="You are a friendly assistant that generates jokes.",
     )
     print(f"Created agent: {agent.id}")
 
@@ -50,13 +42,8 @@ with agents_client:
     run = agents_client.create_thread_and_process_run(
         agent_id=agent.id,
         thread=AgentThreadCreationOptions(
-            messages=[
-                ThreadMessageOptions(
-                    role="user",
-                    content="Hi! Tell me your favorite programming joke."
-                )
-            ]
-        )
+            messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
+        ),
     )
     # [END create_thread_and_process_run]
     print(f"Run completed with status: {run.status!r}")
@@ -65,10 +52,7 @@ with agents_client:
         print("Run failed:", run.last_error)
 
     # List out all messages in the thread
-    msgs = agents_client.messages.list(
-        thread_id=run.thread_id,
-        order=ListSortOrder.ASCENDING
-    )
+    msgs = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
     for msg in msgs.data:
         for block in msg.content:
             if isinstance(block, MessageTextContent):

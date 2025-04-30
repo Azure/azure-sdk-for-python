@@ -390,7 +390,9 @@ class TestAgentsMock:
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
 
             # Create run with new tool set, which also can be none.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, sleep_interval=0)
+            agents_client.runs.create_and_process(
+                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, sleep_interval=0
+            )
             if toolset2 is not None:
                 self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset2)
             else:
@@ -503,7 +505,9 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            run = agents_client.runs.create_and_process(
+                thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0
+            )
             self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
             agents_client._handle_submit_tool_outputs(run)
             self._assert_stream_call(agents_client.submit_tool_outputs_to_stream, "run123", toolset)
@@ -546,7 +550,7 @@ class TestIntegrationAgentsMock:
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
             credential=MagicMock(),
         )
-        operation.runs =  RunsOperations(MagicMock(), MagicMock(), MagicMock(), MagicMock())
+        operation.runs = RunsOperations(MagicMock(), MagicMock(), MagicMock(), MagicMock())
         operation.enable_auto_function_calls(toolset=toolset)
         count = 0
 

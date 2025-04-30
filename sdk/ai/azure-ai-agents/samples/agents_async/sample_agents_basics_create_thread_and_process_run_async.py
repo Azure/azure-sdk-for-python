@@ -52,13 +52,8 @@ async def main() -> None:
             run = await agents_client.create_thread_and_process_run(
                 agent_id=agent.id,
                 thread=AgentThreadCreationOptions(
-                    messages=[
-                        ThreadMessageOptions(
-                            role="user",
-                            content="Hi! Tell me your favorite programming joke."
-                        )
-                    ]
-                )
+                    messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
+                ),
             )
 
             if run.status == "failed":

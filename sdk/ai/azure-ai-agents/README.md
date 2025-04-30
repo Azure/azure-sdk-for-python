@@ -429,34 +429,33 @@ The AI agent leverages Azure Functions triggered asynchronously via Azure Storag
 Example Python snippet illustrating how you create an agent utilizing the Azure Function Tool:
 
 ```python
-storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
-
 azure_function_tool = AzureFunctionTool(
-    name="get_weather",
-    description="Get weather information using Azure Function",
+    name="foo",
+    description="Get answers from the foo bot.",
     parameters={
-            "type": "object",
-            "properties": {
-                "location": {"type": "string", "description": "The location of the weather."},
-            },
-            "required": ["location"],
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "The question to ask."},
+            "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
         },
+    },
     input_queue=AzureFunctionStorageQueue(
-        queue_name="input",
+        queue_name="azure-function-foo-input",
         storage_service_endpoint=storage_service_endpoint,
     ),
     output_queue=AzureFunctionStorageQueue(
-        queue_name="output",
+        queue_name="azure-function-tool-output",
         storage_service_endpoint=storage_service_endpoint,
     ),
 )
 
 agent = agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="azure-function-agent",
-    instructions=f"You are a helpful support agent. .",
+    name="azure-function-agent-foo",
+    instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
     tools=azure_function_tool.definitions,
 )
+print(f"Created agent, agent ID: {agent.id}")
 ```
 
 ---
@@ -743,13 +742,9 @@ thread = agents_client.threads.create(tool_resources=file_search.resources)
 
 To list all threads attached to a given agent, use the list_threads API:
 
-<!-- SNIPPET:sample_agents_basics.list_threads -->
-
 ```python
 threads = agents_client.threads.list()
 ```
-
-<!-- END SNIPPET -->
 
 ### Create Message
 

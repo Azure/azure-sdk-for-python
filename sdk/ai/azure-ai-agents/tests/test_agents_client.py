@@ -287,7 +287,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert isinstance(client, AgentsClient)
             self._do_test_update_agent(client=client, use_body=True, use_io=True)
 
-    def _do_test_update_agent(self, client : AgentsClient, use_body, use_io):
+    def _do_test_update_agent(self, client: AgentsClient, use_body, use_io):
         """helper function for updating agent with different body inputs"""
 
         # create agent
@@ -2282,7 +2282,9 @@ class TestAgentClient(AzureRecordedTestCase):
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-        vector_store = ai_client.vector_stores.create_and_poll(file_ids=file_ids, data_sources=ds, name="my_vectorstore")
+        vector_store = ai_client.vector_stores.create_and_poll(
+            file_ids=file_ids, data_sources=ds, name="my_vectorstore"
+        )
         assert vector_store.id
         self._test_file_search(ai_client, vector_store, file_id, streaming)
 
