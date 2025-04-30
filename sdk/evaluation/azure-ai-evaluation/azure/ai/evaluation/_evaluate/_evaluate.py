@@ -915,6 +915,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     # Done with all evaluations, message outputs into final forms, and log results if needed.
     name_map = _map_names_to_builtins(evaluators, graders)
+    studio_url = None
     if azure_ai_project is not None:
         if isinstance(azure_ai_project, str):
             studio_url = _log_metrics_and_instance_results_onedp(
@@ -923,7 +924,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         else:
             # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
             trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-            studio_url = None
             if trace_destination:
                 studio_url = _log_metrics_and_instance_results(
                     metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
