@@ -46,7 +46,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=fabric.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
     # [END create_agent_with_fabric_tool]
     print(f"Created Agent, ID: {agent.id}")

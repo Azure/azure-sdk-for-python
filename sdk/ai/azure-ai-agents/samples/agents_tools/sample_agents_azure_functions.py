@@ -37,9 +37,9 @@ agents_client = AgentsClient(
 
 with agents_client:
 
+    # [START create_agent_with_azure_function_tool]
     storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]
 
-    # [START create_agent_with_azure_function_tool]
     azure_function_tool = AzureFunctionTool(
         name="foo",
         description="Get answers from the foo bot.",

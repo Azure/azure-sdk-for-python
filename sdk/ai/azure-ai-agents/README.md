@@ -3,8 +3,6 @@
 
 Use the AI Agents client library (in preview) to:
 
-* **Enumerate connections** in your Azure AI Foundry project and get connection properties.
-For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
 * **Develop Agents using the Azure AI Agents Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agents Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
 * **Enable OpenTelemetry tracing**.
 
@@ -17,7 +15,7 @@ For example, get the inference endpoint URL and credentials associated with your
 
 ## Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-agents" in the title or content.
 
 ## Table of contents
 
@@ -64,7 +62,7 @@ To report an issue with the client library, or request additional features, plea
 - Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project connection string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
+- The project endpoint string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_ENDPOINT_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -90,7 +88,7 @@ from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential = AzureKeyCredential(os.environ["API_KEY"])
+    credential=DefaultAzureCredential(),
 )
 ```
 
@@ -110,7 +108,7 @@ from azure.core.credentials import AzureKeyCredential
 
 agent_client = AgentsClient(
    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=AzureKeyCredential(os.environ["API_KEY"]),
+   credential=DefaultAzureCredential(),
 )
 ```
 
@@ -188,7 +186,7 @@ To perform file search by an Agent, we first need to upload a file, create a vec
 <!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
 
 ```python
-file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="agents")
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -267,9 +265,7 @@ Here is an example to upload a file and use it for code interpreter by an Agent:
 <!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
 
 ```python
-file = agents_client.files.upload_and_poll(
-    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-)
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
@@ -309,7 +305,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=bing.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -399,10 +394,10 @@ agent = agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
+For asynchronous functions, you must import `AgentsClient` from `azure.ai.agents.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
 
 ```python
-from azure.ai.projects.aio import AIProjectClient
+from azure.ai.agents.aio import AgentsClient
 ```
 
 <!-- SNIPPET:sample_agents_run_with_toolset_async.create_agent_with_async_function_tool -->
@@ -432,8 +427,6 @@ Notice that if `enable_auto_function_calls` is called, the SDK will invoke the f
 The AI agent leverages Azure Functions triggered asynchronously via Azure Storage Queues. To enable the agent to perform Azure Function calls, you must set up the corresponding `AzureFunctionTool`, specifying input and output queues as well as parameter definitions.
 
 Example Python snippet illustrating how you create an agent utilizing the Azure Function Tool:
-
-<!-- SNIPPET:sample_agents_azure_functions.create_agent_with_azure_function_tool -->
 
 ```python
 storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
@@ -465,7 +458,6 @@ agent = agents_client.create_agent(
     tools=azure_function_tool.definitions,
 )
 ```
-<!-- END SNIPPET -->
 
 ---
 
@@ -491,13 +483,14 @@ import json
 
 app = func.FunctionApp()
 
-@app.get_weather(arg_name="inputQueue",
+@app.function_name(name="GetWeather")
+@app.queue_trigger(arg_name="inputQueue",
                    queue_name="input",
-                   connection="AzureWebJobsStorage")
+                   connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
 @app.queue_output(arg_name="outputQueue",
                   queue_name="output",
-                  connection="AzureWebJobsStorage")
-def get_weather(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
+                  connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
+def queue_trigger(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
     try:
         messagepayload = json.loads(inputQueue.get_body().decode("utf-8"))
         location = messagepayload["location"]
@@ -590,7 +583,7 @@ With the above steps complete, your Azure Function integration with your AI Agen
 
 ### Create Agent With Logic Apps
 
-Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/agents-logic-apps#create-logic-apps-workflows-for-function-calling).
+Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps).
 
 Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions.
 
@@ -600,7 +593,7 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 
 ```python
 
-# Create the project client
+# Create the agents client
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
@@ -644,10 +637,10 @@ Here is an example creating an OpenAPI tool (using anonymous authentication):
 
 ```python
 
-with open("./weather_openapi.json", "r") as f:
+with open(weather_asset_file_path, "r") as f:
     openapi_weather = jsonref.loads(f.read())
 
-with open("./countries.json", "r") as f:
+with open(countries_asset_file_path, "r") as f:
     openapi_countries = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
@@ -655,17 +648,10 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather",
-    spec=openapi_weather,
-    description="Retrieve weather information for a location",
-    auth=auth,
-    default_parameters=["format"],
+    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
 )
 openapi_tool.add_definition(
-    name="get_countries",
-    spec=openapi_countries,
-    description="Retrieve a list of countries",
-    auth=auth,
+    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
 )
 
 # Create agent with OpenApi tool and process agent run
@@ -703,7 +689,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=fabric.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -729,7 +714,7 @@ In some scenarios, you might need to assign specific resources to individual thr
 <!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
 
 ```python
-file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="assistants")
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -967,7 +952,7 @@ With streaming, polling need not be considered. If `function tools` are provided
 
 Here is an example of streaming:
 
-<!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
+<!-- SNIPPET:sample_agents_basics_stream_iteration.iterate_stream -->
 
 ```python
 with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
@@ -1001,7 +986,7 @@ with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream
 
 In the code above, because an `event_handler` object is not passed to the `create_stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
 
-<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
+<!-- SNIPPET:sample_agents_basics_stream_eventhandler.stream_event_handler -->
 
 ```python
 # With AgentEventHandler[str], the return type for each event functions is optional string.
@@ -1032,12 +1017,10 @@ class MyEventHandler(AgentEventHandler[str]):
 <!-- END SNIPPET -->
 
 
-<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
+<!-- SNIPPET:sample_agents_basics_stream_eventhandler.create_stream -->
 
 ```python
-with agents_client.runs.stream(
-    thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-) as stream:
+with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
     for event_type, event_data, func_return in stream:
         print(f"Received data.")
         print(f"Streaming receive Event Type: {event_type}")
@@ -1261,7 +1244,7 @@ logger.addHandler(handler)
 By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable = True` to the client constructor:
 
 ```python
-agents_client = AIProjectClient.from_connection_string(
+agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
     logging_enable = True

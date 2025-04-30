@@ -22,25 +22,17 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
-    TextIO,
     Union,
-    Callable,
-    Set,
     cast,
     overload,
 )
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ..models._enums import FilePurpose, RunStatus
-from ._operations import ThreadsOperations as ThreadsOperationsGenerated
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
-from ._operations import MessagesOperations as MessagesOperationsGenerated
-from ._operations import RunStepsOperations as StepsOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
@@ -127,7 +119,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -143,10 +135,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -175,17 +167,17 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+         or ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -195,7 +187,7 @@ class RunsOperations(RunsOperationsGenerated):
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -219,12 +211,12 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -248,12 +240,12 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -291,7 +283,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword agent_id: The ID of the agent that should run the thread. Required.
         :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
@@ -306,10 +298,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -338,17 +330,17 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+         or ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -358,7 +350,7 @@ class RunsOperations(RunsOperationsGenerated):
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -433,7 +425,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword model: The overridden model name that the agent should use to run the thread.
          Default value is None.
         :paramtype model: str
@@ -446,10 +438,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and
          `tool_resources`). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.agents.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -478,19 +470,19 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+         ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.models.AgentsApiResponseFormat
+         ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+         ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -503,7 +495,7 @@ class RunsOperations(RunsOperationsGenerated):
             Default value is 1.
         :paramtype sleep_interval: int
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Create and initiate the run with additional parameters
@@ -605,7 +597,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword agent_id: The ID of the agent that should run the thread. Required.
         :paramtype agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -623,10 +615,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -655,17 +647,17 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+         or ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -677,7 +669,7 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword event_handler: None
         :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -716,7 +708,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -732,10 +724,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -764,17 +756,17 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+         or ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -785,9 +777,9 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -814,14 +806,14 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword event_handler: None
         :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -848,15 +840,15 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -897,7 +889,7 @@ class RunsOperations(RunsOperationsGenerated):
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword agent_id: The ID of the agent that should run the thread. Required.
         :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
@@ -912,10 +904,10 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -944,17 +936,17 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+         or ~azure.ai.agents.models.AgentsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -965,9 +957,9 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :rtype: ~azure.ai.agents.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1035,15 +1027,15 @@ class RunsOperations(RunsOperationsGenerated):
         :param run_id: Required.
         :type run_id: str
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1065,7 +1057,7 @@ class RunsOperations(RunsOperationsGenerated):
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1087,7 +1079,7 @@ class RunsOperations(RunsOperationsGenerated):
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1112,9 +1104,9 @@ class RunsOperations(RunsOperationsGenerated):
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1163,7 +1155,7 @@ class RunsOperations(RunsOperationsGenerated):
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1190,12 +1182,12 @@ class RunsOperations(RunsOperationsGenerated):
         :param run_id: Required.
         :type run_id: str
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1221,9 +1213,9 @@ class RunsOperations(RunsOperationsGenerated):
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
+        :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1290,9 +1282,6 @@ class RunsOperations(RunsOperationsGenerated):
 
 class FilesOperations(FilesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     # pylint: disable=arguments-differ
     @overload
     def upload(  # pylint: disable=arguments-differ
@@ -1304,9 +1293,9 @@ class FilesOperations(FilesOperationsGenerated):
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1318,14 +1307,14 @@ class FilesOperations(FilesOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
+        :paramtype file: ~azure.ai.agents._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1336,7 +1325,7 @@ class FilesOperations(FilesOperationsGenerated):
         :param body: Required.
         :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1412,7 +1401,7 @@ class FilesOperations(FilesOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1429,17 +1418,17 @@ class FilesOperations(FilesOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
+        :paramtype file: ~azure.ai.agents._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1453,12 +1442,12 @@ class FilesOperations(FilesOperationsGenerated):
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1582,9 +1571,6 @@ class FilesOperations(FilesOperationsGenerated):
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     def create_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1600,7 +1586,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1629,12 +1615,12 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1644,7 +1630,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1663,7 +1649,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1695,12 +1681,12 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1710,7 +1696,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1745,9 +1731,6 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     def create_and_poll(
         self,
@@ -1771,7 +1754,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1794,18 +1777,18 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1832,7 +1815,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1861,14 +1844,14 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword content_type: Body parameter content-type. Defaults to "application/json".
         :paramtype content_type: str
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1907,9 +1890,6 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
 class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @overload
     def create_and_poll(
         self,
@@ -1933,7 +1913,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1959,15 +1939,15 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.agents.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1994,7 +1974,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2022,15 +2002,15 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.agents.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 

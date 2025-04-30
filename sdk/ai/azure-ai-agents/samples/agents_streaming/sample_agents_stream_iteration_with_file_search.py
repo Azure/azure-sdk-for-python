@@ -40,7 +40,6 @@ agents_client = AgentsClient(
 with agents_client:
 
     # Upload file and create vector store
-    # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
     file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 

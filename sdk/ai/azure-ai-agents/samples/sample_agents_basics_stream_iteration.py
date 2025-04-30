@@ -9,7 +9,7 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_iteration.py
+    python sample_agents_basics_stream_iteration.py
 
     Before running the sample:
 

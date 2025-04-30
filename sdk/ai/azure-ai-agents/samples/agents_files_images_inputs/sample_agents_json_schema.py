@@ -56,7 +56,6 @@ class Planet(BaseModel):
 
 with agents_client:
 
-    # [START create_agent]
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -69,24 +68,18 @@ with agents_client:
             )
         ),
     )
-    # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
 
-    # [START create_thread]
     thread = agents_client.threads.create()
-    # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
-    # [START create_message]
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
         content=("The mass of the Mars is 6.4171E23 kg; the mass of the Earth is 5.972168E24 kg;"),
     )
-    # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
-    # [START create_run]
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
     if run.status != RunStatus.COMPLETED:
@@ -95,7 +88,6 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    # [START list_messages]
     messages = agents_client.messages.list(thread_id=thread.id)
 
     # The messages are following in the reverse order,
@@ -106,5 +98,3 @@ with agents_client:
         if isinstance(last_message_content, MessageTextContent) and data_point.role == MessageRole.AGENT:
             planet = TypeAdapter(Planet).validate_json(last_message_content.text.value)
             print(f"The mass of {planet.planet} is {planet.mass} kg.")
-
-    # [END list_messages]
