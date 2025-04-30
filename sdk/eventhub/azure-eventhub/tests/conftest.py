@@ -53,7 +53,7 @@ EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
 # Set up the amqpproxy environment variables
-AMQPPROXY_PATH = os.path.abspath(os.environ.get("AMQPPROXY_PATH", "."))
+AMQPPROXY_PATH = os.path.abspath(os.environ.get("AMQPPROXY_PATH", None))
 RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY") == 'true'
 AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
 if RECORD_AMQP_PROXY:
@@ -285,7 +285,7 @@ def connection_str(live_eventhub):
 @pytest.fixture()
 def skip_amqp_proxy(request):
     """Helper method to determine if the AMQP proxy should be run for a test."""
-    if not RECORD_AMQP_PROXY:
+    if not RECORD_AMQP_PROXY or not AMQPPROXY_PATH:
         return True 
     if any(marker.name == "no_amqpproxy" for marker in request.node.own_markers):
         return True
