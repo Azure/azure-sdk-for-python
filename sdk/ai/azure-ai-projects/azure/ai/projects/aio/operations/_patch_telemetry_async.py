@@ -58,7 +58,7 @@ class TelemetryOperations:
             if not connection_name:
                 raise ResourceNotFoundError("No Application Insights connection found.")
 
-            connection = await self._outer_instance.connections.get_with_credentials(name=connection_name)
+            connection = await self._outer_instance.connections._get_with_credentials(name=connection_name)
 
             if isinstance(connection.credentials, ApiKeyCredentials):
                 if not connection.credentials.api_key:
