@@ -267,9 +267,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
 
-        # # Sort by scores in descending order
-        # for score_tuples in component_scores:
-        #     score_tuples.sort(key=lambda x: x[0], reverse=True)
         # Sort by scores using component weights
         for index, score_tuples in enumerate(component_scores):
             ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
