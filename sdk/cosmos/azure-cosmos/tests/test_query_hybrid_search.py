@@ -280,7 +280,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
         ]
 
-    def test_invalid_hybrid_search_queries_wrrf(self):
+    def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion(self):
         try:
             query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
@@ -289,7 +289,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
-    def test_weighted_vs_non_weighted_rrf(self):
+    def test_weighted_vs_non_weighted_reciprocal_rank_fusion(self):
         # Non-weighted RRF query
         query_non_weighted = """
             SELECT TOP 10 c.index, c.title FROM c
@@ -307,7 +307,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                                                                  enable_cross_partition_query=True)
         result_list_weighted_equal = [res['index'] for res in results_weighted_equal]
 
-        # Weighted RRF query with different weights
+        # Weighted RRF query with different direction weights
         query_weighted_different = """
             SELECT TOP 10 c.index, c.title FROM c
             ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, -0.5])
@@ -320,7 +320,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
         assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently weighted RRF results should not match."
 
-    def test_rrf_with_missing_weights(self):
+    def test_weighted_reciprocal_rank_fusion_with_missing_weights(self):
         try:
             # Weighted RRF query with one weight missing
             query_missing_weight = """
@@ -333,7 +333,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
-    def test_weighted_rrf_with_response_hook(self):
+    def test_weighted_reciprocal_rank_fusion_with_response_hook(self):
         response_hook = test_config.ResponseHookCaller()
         query_weighted_rrf = """
             SELECT TOP 10 c.index, c.title FROM c
