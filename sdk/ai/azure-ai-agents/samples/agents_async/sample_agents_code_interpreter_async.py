@@ -28,7 +28,7 @@ from pathlib import Path
 
 import os
 
-asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/nifty_500_quarterly_results.csv"))
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv"))
 
 
 async def main() -> None:
