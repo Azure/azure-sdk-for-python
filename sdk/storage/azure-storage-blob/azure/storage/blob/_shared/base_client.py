@@ -84,7 +84,7 @@ class StorageAccountHostsMixin(object):
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
         service_name = service.split('-')[0]
-        account = parsed_url.netloc.split(f".{service_name}.core.")
+        account = parsed_url.netloc.split(f".{service_name}.preprod.core.")
 
         self.account_name = account[0] if len(account) > 1 else None
         if not self.account_name and parsed_url.netloc.startswith("localhost") \
