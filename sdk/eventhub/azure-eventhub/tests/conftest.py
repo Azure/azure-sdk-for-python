@@ -60,14 +60,14 @@ if RECORD_AMQP_PROXY:
     if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
         os.makedirs(AMQPPROXY_RECORDINGS_DIR)
 
-# Create/overwrite the amqp proxy startup log file
-AMQPPROXY_STARTUP_LOG = os.path.join(AMQPPROXY_RECORDINGS_DIR, "amqpproxy_startup.log")
-# Create/overwrite the amqp proxy startup log file
-if os.path.exists(AMQPPROXY_STARTUP_LOG):
-    with open(AMQPPROXY_STARTUP_LOG, "w") as log_file:
-        log_file.write("")  # Overwrite the file with an empty string
-else:
-    open(AMQPPROXY_STARTUP_LOG, "w").close()  # Create the file if it doesn't exist
+    # Create/overwrite the amqp proxy startup log file
+    AMQPPROXY_STARTUP_LOG = os.path.join(AMQPPROXY_RECORDINGS_DIR, "amqpproxy_startup.log")
+    # Create/overwrite the amqp proxy startup log file
+    if os.path.exists(AMQPPROXY_STARTUP_LOG):
+        with open(AMQPPROXY_STARTUP_LOG, "w") as log_file:
+            log_file.write("")  # Overwrite the file with an empty string
+    else:
+        open(AMQPPROXY_STARTUP_LOG, "w").close()  # Create the file if it doesn't exist
 
 AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS = "sb://localhost:5671"
 AMQPPROXY_TRANSPORT_TYPE = TransportType.Amqp
