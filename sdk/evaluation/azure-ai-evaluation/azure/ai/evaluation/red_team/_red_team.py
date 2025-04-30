@@ -468,7 +468,7 @@ class RedTeam():
                         if key != "risk_category":
                             eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
                             self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
-        eval_run._end_run()
+        eval_run._end_run("FINISHED")
         self.logger.info("Successfully logged results to MLFlow")
         return None
 
