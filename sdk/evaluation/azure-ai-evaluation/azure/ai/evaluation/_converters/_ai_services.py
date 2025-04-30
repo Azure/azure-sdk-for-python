@@ -202,6 +202,7 @@ class AIAgentConverter:
 
                 final_tools.append(
                     ToolDefinition(
+                        type="function",
                         name=tool_function.name,
                         description=tool_function.description,
                         parameters=parameters,
@@ -213,6 +214,7 @@ class AIAgentConverter:
                 if tool.type in _BUILT_IN_DESCRIPTIONS and tool.type in _BUILT_IN_PARAMS:
                     final_tools.append(
                         ToolDefinition(
+                            type=tool.type,
                             name=tool.type,
                             description=_BUILT_IN_DESCRIPTIONS[tool.type],
                             parameters=_BUILT_IN_PARAMS[tool.type],

@@ -98,6 +98,8 @@ class ToolDefinition(BaseModel):
 
     :param name: The name of the tool.
     :type name: str
+    :param type: The type of the tool.
+    :type type: str
     :param description: A description of the tool.
     :type description: str
     :param parameters: The parameters required by the tool.
@@ -105,6 +107,7 @@ class ToolDefinition(BaseModel):
     """
 
     name: str
+    type: str
     description: Optional[str] = None
     parameters: dict
 
