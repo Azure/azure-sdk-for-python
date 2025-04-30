@@ -1,0 +1,55 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_invalid_metric_definition?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "61",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "Invalid Test Metric"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 24 Apr 2025 20:10:56 GMT",
+        "mise-correlation-id": "36198fb7-51af-4c5b-a73e-a9a6d9ebb6aa",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-error-code": "InvalidOrUnsupportedError",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidOrUnsupportedError",
+          "message": "Invalid or unsupported Input",
+          "target": null,
+          "details": [
+            {
+              "code": "FailedSchemaValidation",
+              "message": "Invalid or unsupported Input",
+              "target": null,
+              "details": [],
+              "innerError": null
+            }
+          ],
+          "innerError": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

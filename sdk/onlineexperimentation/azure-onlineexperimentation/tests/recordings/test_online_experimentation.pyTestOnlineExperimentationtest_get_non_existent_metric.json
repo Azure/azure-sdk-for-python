@@ -1,0 +1,43 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/non_existent_metric_id?api-version=2025-05-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 24 Apr 2025 20:10:21 GMT",
+        "mise-correlation-id": "44adf7e3-1a37-4628-b21f-23c4bc395174",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-error-code": "NotFound",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotFound",
+          "message": "Metric not found",
+          "target": "non_existent_metric_id",
+          "details": [],
+          "innerError": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

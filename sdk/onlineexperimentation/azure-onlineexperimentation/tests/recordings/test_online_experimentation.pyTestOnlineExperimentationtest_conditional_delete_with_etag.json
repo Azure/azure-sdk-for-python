@@ -1,0 +1,137 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "284",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "lifecycle": "Active",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "desiredDirection": "Increase",
+        "definition": {
+          "type": "EventCount",
+          "event": {
+            "eventName": "TestEvent"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "365",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 24 Apr 2025 20:10:39 GMT",
+        "ETag": "\"UeSbbGIPX0g=\"",
+        "Last-Modified": "Thu, 24 Apr 2025 20:10:39 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "cf4f293f-28bf-4cf4-bed8-9e90520a101d",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "lifecycle": "Active",
+        "desiredDirection": "Increase",
+        "id": "Sanitized",
+        "displayName": "Test Metric test_metric_fixed_id",
+        "description": "A metric created for testing purposes (test_metric_fixed_id)",
+        "categories": [
+          "Test"
+        ],
+        "definition": {
+          "event": {
+            "eventName": "TestEvent"
+          },
+          "type": "EventCount"
+        },
+        "eTag": "\"UeSbbGIPX0g=\"",
+        "lastModifiedAt": "2025-04-24T20:10:39.3548938+00:00"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "If-Match": "\"UeSbbGIPX0g=\"",
+        "User-Agent": "azsdk-python-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Date": "Thu, 24 Apr 2025 20:10:39 GMT",
+        "mise-correlation-id": "6fb17e3d-4441-4288-a73c-bb2cf73f995f",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.eastus2.exp.azure.net/experiment-metrics/test_metric_fixed_id?api-version=2025-05-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-onlineexperimentation/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2025-05-31-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 24 Apr 2025 20:10:39 GMT",
+        "mise-correlation-id": "6d7d4f8b-cf63-4f67-b245-b04c66eeaa2f",
+        "Request-Context": "appId=cid-v1:4ae78417-7f25-4068-bd96-557cb165ec62",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-error-code": "NotFound",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotFound",
+          "message": "Metric not found",
+          "target": "test_metric_fixed_id",
+          "details": [],
+          "innerError": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
