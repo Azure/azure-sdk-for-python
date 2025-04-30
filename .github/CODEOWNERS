@@ -76,7 +76,7 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
@@ -216,10 +216,10 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @YalinLi0312
+/sdk/containerregistry/                                              @lmazuel
 
 # ServiceLabel: %Container Service
 # PRLabel: %Container Service
@@ -329,7 +329,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
+/sdk/purview/                                                        @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -381,12 +381,12 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @catalinaperalta
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @YalinLi0312
+/sdk/formrecognizer/                                                 @catalinaperalta
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Document Intelligence
