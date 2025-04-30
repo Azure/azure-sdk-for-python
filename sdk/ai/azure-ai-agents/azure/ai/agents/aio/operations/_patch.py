@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import ast
 import asyncio  # pylint: disable=do-not-import-asyncio
 import io
 import logging
@@ -1230,6 +1231,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
+    async def _to_async_iterator(self, byte_str: bytes) -> AsyncIterator[bytes]:
+        yield byte_str
+
     async def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler, submit_with_error: bool
     ) -> Any:
@@ -1255,9 +1259,16 @@ class RunsOperations(RunsOperationsGenerated):
                         logging.warning("Tool outputs contain errors - retrying")
                     else:
                         logging.warning("Tool outputs contain errors - reaching max retry limit")
-                        await self.cancel(thread_id=run.thread_id, run_id=run.id)
-                        return tool_outputs
+                        response = await self.cancel(thread_id=run.thread_id, run_id=run.id)
+                        response_json = ast.literal_eval(str(response))
+                        response_json_str = json.dumps(response_json)
 
+                        event_data_str = f"event: thread.run.cancelled\ndata: {response_json_str}"
+                        byte_string = event_data_str.encode("utf-8")
+
+                        event_handler.initialize(self._to_async_iterator(byte_string), self._handle_submit_tool_outputs)
+
+                        return tool_outputs
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     await self.submit_tool_outputs_stream(

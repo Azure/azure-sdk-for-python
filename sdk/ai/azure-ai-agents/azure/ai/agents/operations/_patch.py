@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import ast
 import io
 import logging
 import os
@@ -1266,7 +1267,16 @@ class RunsOperations(RunsOperationsGenerated):
                         logging.warning("Tool outputs contain errors - retrying")
                     else:
                         logging.warning("Tool outputs contain errors - reaching max retry limit")
-                        self.cancel(thread_id=run.thread_id, run_id=run.id)
+
+                        response = self.cancel(thread_id=run.thread_id, run_id=run.id)
+                        response_json = ast.literal_eval(str(response))
+                        response_json_str = json.dumps(response_json)
+
+                        event_data_str = f"event: thread.run.cancelled\ndata: {response_json_str}"
+                        byte_string = event_data_str.encode("utf-8")
+
+                        event_handler.initialize(iter([byte_string]), self._handle_submit_tool_outputs)
+
                         return tool_outputs
 
                 logger.info("Tool outputs: %s", tool_outputs)

@@ -1255,7 +1255,7 @@ class ToolSet(BaseToolSet):
                     output = tool.execute(tool_call)
                     tool_output = {
                         "tool_call_id": tool_call.id,
-                        "output": output,
+                        "output": str(output),
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
@@ -1300,7 +1300,7 @@ class AsyncToolSet(BaseToolSet):
                     output = await tool.execute(tool_call)
                     tool_output = {
                         "tool_call_id": tool_call.id,
-                        "output": output,
+                        "output": str(output),
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
