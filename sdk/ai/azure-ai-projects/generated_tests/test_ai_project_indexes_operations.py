@@ -71,7 +71,6 @@ class TestAIProjectIndexesOperations(AIProjectClientTestBase):
                 "version": "str",
                 "description": "str",
                 "id": "str",
-                "stage": "str",
                 "tags": {"str": "str"},
             },
         )

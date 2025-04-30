@@ -77,7 +77,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/connections/{name}/getconnectionwithcredentials"
+    _url = "/connections/{name}/getConnectionWithCredentials"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -226,13 +226,7 @@ def build_evaluations_create_agent_evaluation_request(**kwargs: Any) -> HttpRequ
 
 
 def build_datasets_list_versions_request(
-    name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
+    name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -250,14 +244,10 @@ def build_datasets_list_versions_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -265,14 +255,7 @@ def build_datasets_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_datasets_list_request(*, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -284,14 +267,10 @@ def build_datasets_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -433,13 +412,7 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
 
 
 def build_indexes_list_versions_request(
-    name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
+    name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -457,14 +430,10 @@ def build_indexes_list_versions_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -472,14 +441,7 @@ def build_indexes_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_indexes_list_request(*, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -491,14 +453,10 @@ def build_indexes_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1444,31 +1402,15 @@ class DatasetsOperations:
 
     @distributed_trace
     def list_versions(
-        self,
-        name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
+        self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1491,10 +1433,7 @@ class DatasetsOperations:
 
                 _request = build_datasets_list_versions_request(
                     name=name,
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
+                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1554,28 +1493,13 @@ class DatasetsOperations:
 
     @distributed_trace
     def list(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
+        self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1597,10 +1521,7 @@ class DatasetsOperations:
             if not next_link:
 
                 _request = build_datasets_list_request(
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
+                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2150,31 +2071,15 @@ class IndexesOperations:
 
     @distributed_trace
     def list_versions(
-        self,
-        name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
+        self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of Index
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2197,10 +2102,7 @@ class IndexesOperations:
 
                 _request = build_indexes_list_versions_request(
                     name=name,
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
+                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2259,29 +2161,12 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.Index"]:
+    def list(self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> Iterable["_models.Index"]:
         """List the latest version of each Index.
 
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of Index
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2303,10 +2188,7 @@ class IndexesOperations:
             if not next_link:
 
                 _request = build_indexes_list_request(
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
+                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

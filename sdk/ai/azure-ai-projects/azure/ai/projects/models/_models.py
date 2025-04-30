@@ -343,12 +343,12 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
 class AssetCredentialResponse(_Model):
     """Represents a reference to a blob for consumption.
 
-    :ivar blob_reference_for_consumption: Credential info to access the storage account. Required.
-    :vartype blob_reference_for_consumption: ~azure.ai.projects.models.BlobReferenceForConsumption
+    :ivar blob_reference: Credential info to access the storage account. Required.
+    :vartype blob_reference: ~azure.ai.projects.models.BlobReference
     """
 
-    blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
-        name="blobReferenceForConsumption", visibility=["read", "create", "update", "delete", "query"]
+    blob_reference: "_models.BlobReference" = rest_field(
+        name="blobReference", visibility=["read", "create", "update", "delete", "query"]
     )
     """Credential info to access the storage account. Required."""
 
@@ -356,7 +356,7 @@ class AssetCredentialResponse(_Model):
     def __init__(
         self,
         *,
-        blob_reference_for_consumption: "_models.BlobReferenceForConsumption",
+        blob_reference: "_models.BlobReference",
     ) -> None: ...
 
     @overload
@@ -379,9 +379,7 @@ class Index(_Model):
     :ivar type: Type of index. Required. Known values are: "AzureSearch",
      "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
     :vartype type: str or ~azure.ai.projects.models.IndexType
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -397,10 +395,8 @@ class Index(_Model):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
-    stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """Asset stage."""
     id: Optional[str] = rest_field(visibility=["read"])
-    """A unique identifier for the asset, assetId probably?."""
+    """Asset ID, a unique identifier for the asset."""
     name: str = rest_field(visibility=["read"])
     """The name of the resource. Required."""
     version: str = rest_field(visibility=["read"])
@@ -415,7 +411,6 @@ class Index(_Model):
         self,
         *,
         type: str,
-        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -434,9 +429,7 @@ class Index(_Model):
 class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     """Azure AI Search Index Definition.
 
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -467,7 +460,6 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         *,
         connection_name: str,
         index_name: str,
-        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -553,8 +545,8 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
         super().__init__(*args, type="AzureOpenAIModel", **kwargs)
 
 
-class BlobReferenceForConsumption(_Model):
-    """Represents a reference to a blob for consumption.
+class BlobReference(_Model):
+    """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
      ``https://blob.windows.core.net/Container/Path``. Required.
@@ -633,9 +625,7 @@ class Connection(_Model):
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     """CosmosDB Vector Store Index Definition.
 
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -678,7 +668,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         database_name: str,
         container_name: str,
         embedding_configuration: "_models.EmbeddingConfiguration",
-        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -730,17 +719,16 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar dataset_uri: [Required] Uri of the data. Example:
-     ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
-    :vartype dataset_uri: str
+    :ivar data_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
     :vartype is_reference: bool
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -753,17 +741,16 @@ class DatasetVersion(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
-    """[Required] Uri of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
+    data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
+    """[Required] Uri of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
     """Indicates if dataset is reference only or managed by dataset service. If true, the underlying
      data will be deleted when the dataset version is deleted."""
-    stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """Asset stage."""
     id: Optional[str] = rest_field(visibility=["read"])
-    """A unique identifier for the asset, assetId probably?."""
+    """Asset ID, a unique identifier for the asset."""
     name: str = rest_field(visibility=["read"])
     """The name of the resource. Required."""
     version: str = rest_field(visibility=["read"])
@@ -777,9 +764,8 @@ class DatasetVersion(_Model):
     def __init__(
         self,
         *,
-        dataset_uri: str,
+        data_uri: str,
         type: str,
-        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1008,15 +994,14 @@ class EvaluatorConfiguration(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar dataset_uri: [Required] Uri of the data. Example:
-     ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
-    :vartype dataset_uri: str
+    :ivar data_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
     :vartype is_reference: bool
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -1028,24 +1013,16 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     :vartype tags: dict[str, str]
     :ivar type: Dataset type. Required. URI file.
     :vartype type: str or ~azure.ai.projects.models.URI_FILE
-    :ivar open_ai_purpose: Indicates OpenAI Purpose. FileDatasets created with this field will be
-     compatible with OpenAI-specific features. Required.
-    :vartype open_ai_purpose: str
     """
 
     type: Literal[DatasetType.URI_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Dataset type. Required. URI file."""
-    open_ai_purpose: str = rest_field(name="openAIPurpose", visibility=["read", "create", "update", "delete", "query"])
-    """Indicates OpenAI Purpose. FileDatasets created with this field will be compatible with
-     OpenAI-specific features. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        dataset_uri: str,
-        open_ai_purpose: str,
-        stage: Optional[str] = None,
+        data_uri: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1064,15 +1041,14 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar dataset_uri: [Required] Uri of the data. Example:
-     ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
-    :vartype dataset_uri: str
+    :ivar data_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
     :vartype is_reference: bool
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -1093,8 +1069,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     def __init__(
         self,
         *,
-        dataset_uri: str,
-        stage: Optional[str] = None,
+        data_uri: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1177,9 +1152,7 @@ class InputDataset(InputData, discriminator="dataset"):
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     """Managed Azure AI Search Index Definition.
 
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
+    :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -1205,7 +1178,6 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         self,
         *,
         vector_store_id: str,
-        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1307,9 +1279,9 @@ class PendingUploadRequest(_Model):
     :ivar connection_name: Name of Azure blob storage connection to use for generating temporary
      SAS token.
     :vartype connection_name: str
-    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
-     Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
+    :ivar pending_upload_type: BlobReference is the only supported type. Required. Blob Reference
+     is the only supported type.
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.BLOB_REFERENCE
     """
 
     pending_upload_id: Optional[str] = rest_field(
@@ -1320,17 +1292,16 @@ class PendingUploadRequest(_Model):
         name="connectionName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of Azure blob storage connection to use for generating temporary SAS token."""
-    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
+    pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """TemporaryBlobReference is the only supported type. Required. Temporary Blob Reference is the
-     only supported type."""
+    """BlobReference is the only supported type. Required. Blob Reference is the only supported type."""
 
     @overload
     def __init__(
         self,
         *,
-        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
+        pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE],
         pending_upload_id: Optional[str] = None,
         connection_name: Optional[str] = None,
     ) -> None: ...
@@ -1349,45 +1320,42 @@ class PendingUploadRequest(_Model):
 class PendingUploadResponse(_Model):
     """Represents the response for a pending upload request.
 
-    :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
-    :vartype blob_reference_for_consumption: ~azure.ai.projects.models.BlobReferenceForConsumption
+    :ivar blob_reference: Container-level read, write, list SAS. Required.
+    :vartype blob_reference: ~azure.ai.projects.models.BlobReference
     :ivar pending_upload_id: ID for this upload request. Required.
     :vartype pending_upload_id: str
-    :ivar dataset_version: Version of dataset to be created if user did not specify version when
-     initially creating upload.
-    :vartype dataset_version: str
-    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
-     Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
+    :ivar version: Version of asset to be created if user did not specify version when initially
+     creating upload.
+    :vartype version: str
+    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required. Blob
+     Reference is the only supported type.
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.BLOB_REFERENCE
     """
 
-    blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
-        name="blobReferenceForConsumption", visibility=["read", "create", "update", "delete", "query"]
+    blob_reference: "_models.BlobReference" = rest_field(
+        name="blobReference", visibility=["read", "create", "update", "delete", "query"]
     )
     """Container-level read, write, list SAS. Required."""
     pending_upload_id: str = rest_field(
         name="pendingUploadId", visibility=["read", "create", "update", "delete", "query"]
     )
     """ID for this upload request. Required."""
-    dataset_version: Optional[str] = rest_field(
-        name="datasetVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Version of dataset to be created if user did not specify version when initially creating
-     upload."""
-    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version of asset to be created if user did not specify version when initially creating upload."""
+    pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """TemporaryBlobReference is the only supported type. Required. Temporary Blob Reference is the
-     only supported type."""
+    """TemporaryBlobReference is the only supported type. Required. Blob Reference is the only
+     supported type."""
 
     @overload
     def __init__(
         self,
         *,
-        blob_reference_for_consumption: "_models.BlobReferenceForConsumption",
+        blob_reference: "_models.BlobReference",
         pending_upload_id: str,
-        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
-        dataset_version: Optional[str] = None,
+        pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE],
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload

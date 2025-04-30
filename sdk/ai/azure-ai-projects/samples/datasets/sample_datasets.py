@@ -28,7 +28,7 @@ USAGE:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import DatasetVersion, ListViewType
+from azure.ai.projects.models import DatasetVersion
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-test")

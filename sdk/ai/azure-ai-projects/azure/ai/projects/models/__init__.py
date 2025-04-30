@@ -24,7 +24,7 @@ from ._models import (  # type: ignore
     AzureAISearchIndex,
     AzureOpenAIModelConfiguration,
     BaseCredentials,
-    BlobReferenceForConsumption,
+    BlobReference,
     Connection,
     CosmosDBIndex,
     CustomCredential,
@@ -58,7 +58,6 @@ from ._enums import (  # type: ignore
     DatasetType,
     DeploymentType,
     IndexType,
-    ListViewType,
     PendingUploadType,
     RiskCategory,
 )
@@ -77,7 +76,7 @@ __all__ = [
     "AzureAISearchIndex",
     "AzureOpenAIModelConfiguration",
     "BaseCredentials",
-    "BlobReferenceForConsumption",
+    "BlobReference",
     "Connection",
     "CosmosDBIndex",
     "CustomCredential",
@@ -108,7 +107,6 @@ __all__ = [
     "DatasetType",
     "DeploymentType",
     "IndexType",
-    "ListViewType",
     "PendingUploadType",
     "RiskCategory",
 ]

@@ -65,15 +65,13 @@ class TestAIProjectDatasetsOperationsAsync(AIProjectClientTestBaseAsync):
             name="str",
             version="str",
             body={
-                "datasetUri": "str",
+                "dataUri": "str",
                 "name": "str",
-                "openAIPurpose": "str",
                 "type": "uri_file",
                 "version": "str",
                 "description": "str",
                 "id": "str",
                 "isReference": bool,
-                "stage": "str",
                 "tags": {"str": "str"},
             },
         )
