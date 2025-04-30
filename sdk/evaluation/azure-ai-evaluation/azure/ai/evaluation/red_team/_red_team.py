@@ -48,7 +48,7 @@ from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingPara
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 from ._utils._rai_service_target import AzureRAIServiceTarget
-from ._utils._rai_service_scorer import AzureRAIServiceScorer
+from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -1034,7 +1034,7 @@ class RedTeam():
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")  
             try: 
-                azure_rai_service_scorer = AzureRAIServiceScorer(
+                azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
                     api_version=None,
                     model="gpt-4",
@@ -1057,7 +1057,7 @@ class RedTeam():
                 orchestrator = RedTeamingOrchestrator(
                     objective_target=chat_target,
                     adversarial_chat=azure_rai_service_target,
-                    adversarial_chat_seed_prompt=prompt,
+                    # adversarial_chat_seed_prompt=prompt,
                     max_turns=max_turns,
                     prompt_converters=converter_list,
                     objective_scorer=azure_rai_service_scorer,
@@ -1218,8 +1218,8 @@ class RedTeam():
     
     
     # Replace with utility function
-    def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
-        """Get appropriate orchestrator functions for the specified attack strategies.
+    def _get_orchestrator_for_attack_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Callable:
+        """Get appropriate orchestrator functions for the specified attack strategy.
         
         Determines which orchestrator functions should be used based on the attack strategies, max turns.
         Returns a list of callable functions that can create orchestrators configured for the 
@@ -1227,31 +1227,14 @@ class RedTeam():
         execution environment.
         
         :param attack_strategy: List of attack strategies to get orchestrators for
-        :type attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]
-        :param max_turns: Maximum number of turns in conversations
-        :type max_turns: int
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
         :return: List of callable functions that create appropriately configured orchestrators
         :rtype: List[Callable]
         """
-        #TODO: Clean this up
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
-        call_to_orchestrators = []
-        # if max_turns > 1: 
-        #     self.logger.debug(f"Using multi-turn orchestrator for {max_turns} turns")
-        #     call_to_orchestrators.append(self._multi_turn_orchestrator)
-        # else:
-            # Sending PromptSendingOrchestrator for each complexity level
-        if AttackStrategy.MultiTurn in attack_strategy:
-            call_to_orchestrators.extend([self._multi_turn_orchestrator])
-        elif AttackStrategy.EASY in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        elif AttackStrategy.MODERATE in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        elif AttackStrategy.DIFFICULT in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        else:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        return call_to_orchestrators
+        if AttackStrategy.MultiTurn == attack_strategy:
+            return self._multi_turn_orchestrator
+        return self._prompt_sending_orchestrator
     
     # Replace with utility function
     def _get_attack_success(self, result: str) -> bool:
@@ -1846,8 +1829,6 @@ class RedTeam():
 
     async def _process_attack(
             self, 
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-            call_orchestrator: Callable, 
             strategy: Union[AttackStrategy, List[AttackStrategy]],
             risk_category: RiskCategory,
             all_prompts: List[str],
@@ -1866,10 +1847,6 @@ class RedTeam():
         appropriate converter, saving results to files, and optionally evaluating the results.
         The function handles progress tracking, logging, and error handling throughout the process.
         
-        :param target: The target model or function to scan
-        :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
-        :param call_orchestrator: Function to call to create an orchestrator
-        :type call_orchestrator: Callable
         :param strategy: The attack strategy to use
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
@@ -1903,6 +1880,7 @@ class RedTeam():
             log_strategy_start(self.logger, strategy_name, risk_category.value)
             
             converter = self._get_converter_for_strategy(strategy)
+            call_orchestrator = self._get_orchestrator_for_attack_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
                 orchestrator = await call_orchestrator(chat_target=self.chat_target, all_prompts=all_prompts, converter=converter, strategy_name=strategy_name, risk_category=risk_category, risk_category_name=risk_category.value, timeout=timeout)
@@ -2165,15 +2143,13 @@ class RedTeam():
         flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
         self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
         self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+
         
-        orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategy=attack_strategies)
-        self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
-        
-        # Calculate total tasks: #risk_categories * #converters * #orchestrators
-        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
+        # Calculate total tasks: #risk_categories * #converters
+        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) 
         # Show task count for user awareness
         print(f"📋 Planning {self.total_tasks} total tasks")
-        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
+        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)")
         
         # Initialize our tracking dictionary early with empty structures
         # This ensures we have a place to store results even if tasks fail
@@ -2259,9 +2235,9 @@ class RedTeam():
         
         # Create all tasks for parallel processing
         orchestrator_tasks = []
-        combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
+        combinations = list(itertools.product(flattened_attack_strategies, self.risk_categories))
         
-        for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
+        for combo_idx, (strategy, risk_category) in enumerate(combinations):
             strategy_name = self._get_strategy_name(strategy)
             objectives = all_objectives[strategy_name][risk_category.value]
             
@@ -2273,12 +2249,10 @@ class RedTeam():
                     progress_bar.update(1)
                 continue
             
-            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
+            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {strategy_name} + {risk_category.value}")
             
             orchestrator_tasks.append(
                 self._process_attack(
-                    target=target,
-                    call_orchestrator=call_orchestrator,
                     all_prompts=objectives,
                     strategy=strategy,
                     progress_bar=progress_bar,

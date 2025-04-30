@@ -2,24 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import json
 import logging
-import asyncio
-from typing import Dict, List, Any, Optional, Tuple, Union
-from enum import Enum
+from typing import List, Optional
 
-import tqdm
-from pyrit.models import PromptRequestResponse, Score, PromptRequestPiece, UnvalidatedScore
+from pyrit.models import Score, PromptRequestPiece, UnvalidatedScore
 from pyrit.score.scorer import Scorer
 
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ._rai_service_target import AzureRAIServiceTarget, setup_file_logger
 from ._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 from .._attack_objective_generator import RiskCategory
 
 
-class AzureRAIServiceScorer(Scorer):
+class AzureRAIServiceTrueFalseScorer(Scorer):
     """Scorer for Azure RAI service.
     
     This class extends the PyRIT Scorer class to support scoring prompts using
@@ -57,13 +51,12 @@ class AzureRAIServiceScorer(Scorer):
         self._api_version = api_version
         self._model = model
         self._prompt_template_key = prompt_template_key
-        self.logger = logger or setup_file_logger("azure_rai_service_scorer")
+        self.logger = logger
 
         # Use AzureRAIServiceTarget for scoring as well
         self._scoring_target_red_llm = RAIServiceEvalChatTarget(
             logger=self.logger,
             credential=credential,
-            # evaluator_name=risk_category.value,
             azure_ai_project=azure_ai_project,
             risk_category=risk_category,
         )
@@ -97,7 +90,7 @@ class AzureRAIServiceScorer(Scorer):
 
         score = unvalidated_score.to_score(score_value=unvalidated_score.raw_score_value)
 
-        self._memory.add_scores_to_memory(scores=[score])
+        # self._memory.add_scores_to_memory(scores=[score])
         return [score]
         
     def validate(self, request_response, *, task: Optional[str] = None):
