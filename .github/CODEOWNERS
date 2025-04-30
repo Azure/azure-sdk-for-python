@@ -19,7 +19,7 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel
+/sdk/ @lmazuel @lirenhe
 
 # Core
 # PRLabel: %Core.Http
@@ -81,7 +81,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @YalinLi0312
+/sdk/appconfiguration/                                               @xiangyan99
 
 # ServiceOwners: @mrm9084
 # ServiceLabel: %App Configuration Provider
