@@ -11,6 +11,10 @@ logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stderr)
 logger.addHandler(handler)
 
+_CURRENT_FILE = Path(__file__)
+_REPO_ROOT = _CURRENT_FILE.parents[4]
+_TOX_INI_PATH = os.path.abspath(_REPO_ROOT / "eng" / "tox" / "tox.ini")
+
 # Initialize FastMCP server
 mcp = FastMCP("validation")
 
@@ -18,6 +22,9 @@ def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]
     """Run a command and return the result."""
     logger.info(f"Running command: {' '.join(command)}")
     try:
+        if not cwd:
+            cwd = os.getcwd()
+            logger.info(f"Using current working directory: {cwd}")
         result = subprocess.run(
             command,
             check=True,
@@ -69,9 +76,9 @@ def verify_setup_tool(venv: Optional[str] = None) -> Dict[str, Any]:
 
     # Check if tox is installed
     if venv:
-        tox_command = [os.path.join(venv, "bin", "tox"), "--version"] if os.name != "nt" else [os.path.join(venv, "Scripts", "tox"), "--version"]
+        tox_command = [os.path.join(venv, "bin", "tox"), "--version"] if os.name != "nt" else [os.path.join(venv, "Scripts", "tox.exe"), "--version", "-c", _TOX_INI_PATH]
     else:
-        tox_command = ["tox", "--version"]
+        tox_command = ["tox", "--version", "-c", _TOX_INI_PATH]
 
     results["tox"] = verify_installation(tox_command, "tox")
 
