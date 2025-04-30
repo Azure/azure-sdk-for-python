@@ -186,7 +186,7 @@ To perform file search by an Agent, we first need to upload a file, create a vec
 <!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
 
 ```python
-file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="agents")
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -265,9 +265,7 @@ Here is an example to upload a file and use it for code interpreter by an Agent:
 <!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
 
 ```python
-file = agents_client.files.upload_and_poll(
-    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-)
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
@@ -307,7 +305,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=bing.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -431,8 +428,6 @@ The AI agent leverages Azure Functions triggered asynchronously via Azure Storag
 
 Example Python snippet illustrating how you create an agent utilizing the Azure Function Tool:
 
-<!-- SNIPPET:sample_agents_azure_functions.create_agent_with_azure_function_tool -->
-
 ```python
 storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
 
@@ -463,7 +458,6 @@ agent = agents_client.create_agent(
     tools=azure_function_tool.definitions,
 )
 ```
-<!-- END SNIPPET -->
 
 ---
 
@@ -605,7 +599,7 @@ agents_client = AgentsClient(
     credential=DefaultAzureCredential(),
 )
 
-# Get subscription and resource group from the environment
+# Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]
 
@@ -643,10 +637,10 @@ Here is an example creating an OpenAPI tool (using anonymous authentication):
 
 ```python
 
-with open("./weather_openapi.json", "r") as f:
+with open(weather_asset_file_path, "r") as f:
     openapi_weather = jsonref.loads(f.read())
 
-with open("./countries.json", "r") as f:
+with open(countries_asset_file_path, "r") as f:
     openapi_countries = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
@@ -654,17 +648,10 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather",
-    spec=openapi_weather,
-    description="Retrieve weather information for a location",
-    auth=auth,
-    default_parameters=["format"],
+    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
 )
 openapi_tool.add_definition(
-    name="get_countries",
-    spec=openapi_countries,
-    description="Retrieve a list of countries",
-    auth=auth,
+    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
 )
 
 # Create agent with OpenApi tool and process agent run
@@ -702,7 +689,6 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=fabric.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -728,7 +714,7 @@ In some scenarios, you might need to assign specific resources to individual thr
 <!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
 
 ```python
-file = agents_client.files.upload_and_poll(file_path="product_info_1.md", purpose="assistants")
+file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 print(f"Uploaded file, file ID: {file.id}")
 
 vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")

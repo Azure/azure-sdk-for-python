@@ -38,7 +38,6 @@ agents_client = AgentsClient(
 
 with agents_client:
 
-    # [START create_agent]
     code_interpreter = CodeInterpreterTool()
 
     # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
@@ -48,7 +47,6 @@ with agents_client:
         instructions="You are helpful agent",
         tools=code_interpreter.definitions,
     )
-    # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = agents_client.threads.create()

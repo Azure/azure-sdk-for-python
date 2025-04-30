@@ -50,7 +50,7 @@ from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
 
 # [START register_logic_app]
 
-# Create the project client
+# Create the agents client
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),

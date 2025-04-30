@@ -26,12 +26,12 @@ from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder, MessageTextContent
 
-# [START create_project_client]
+# [START create_agents_client]
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
-# [END create_project_client]
+# [END create_agents_client]
 
 with agents_client:
 
@@ -48,6 +48,11 @@ with agents_client:
     thread = agents_client.threads.create()
     # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
+
+    # List all threads for the agent
+    # [START list_threads]
+    threads = agents_client.threads.list()
+    # [END list_threads]
 
     # [START create_message]
     message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
