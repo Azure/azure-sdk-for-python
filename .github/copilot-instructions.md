@@ -3,6 +3,9 @@
 
 # General Repository Guidelines
 - DO check this [website](https://azure.github.io/azure-sdk/python_design.html), and link to pages found there, if possible, when asked about guidelines, or guidance on how to write SDKs. The general guidelines for SDK in this repo are defined there.
+- DO ensure folks have the appropriate setup when working with this repository. Use the verify_setup tool in the azure-sdk-validation server.
+
+When someone asks to run validation on their library, ask them what supported environments they would like to run, such as pylint or mypy. Use the tox tool defined in the azure-sdk-validation server.
 
 # Pylint
 
