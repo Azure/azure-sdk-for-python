@@ -4,6 +4,7 @@ import json
 from pydantic import BaseModel
 
 from azure.ai.projects.models import RunStepFunctionToolCall
+from ._ai_services import _AZURE_AI_SEARCH, _FABRIC_DATAAGENT, _FILE_SEARCH, _CODE_INTERPRETER, _BING_GROUNDING
 
 from typing import List, Optional, Union
 
@@ -194,6 +195,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             arguments = {
                 "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
             }
+        elif tool_call.details["type"] == "azure_ai_search":
+            arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
+        elif tool_call.details["type"] == "fabric_dataagent":
+            arguments = {"input": tool_call.details["fabric_dataagent"]["input"]}
         else:
             # unsupported tool type, skip
             return messages
@@ -220,11 +225,11 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             # Some built-ins may have output, others may not
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
-            if tool_call.details.type == "code_interpreter":
+            if tool_call.details.type == _CODE_INTERPRETER:
                 output = tool_call.details.code_interpreter.outputs
-            elif tool_call.details.type == "bing_grounding":
+            elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
-            elif tool_call.details.type == "file_search":
+            elif tool_call.details.type == _FILE_SEARCH:
                 output = [
                     {
                         "file_id": result.file_id,
@@ -234,6 +239,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                     }
                     for result in tool_call.details.file_search.results
                 ]
+            elif tool_call.details.type == _AZURE_AI_SEARCH:
+                output = tool_call.details.azure_ai_search["output"]
+            elif tool_call.details.type == _FABRIC_DATAAGENT:
+                output = tool_call.details.fabric_dataagent["output"]
         except:
             return messages
 
