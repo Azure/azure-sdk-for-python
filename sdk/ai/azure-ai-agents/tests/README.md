@@ -1,4 +1,4 @@
-# Azure AI Agents client library tests for Python
+# Azure AI Agents Smoke Test for Python
 
 This directory contains the **live-service and recorded tests** for the Azure AI Agents client library.
 
