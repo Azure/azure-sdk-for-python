@@ -286,7 +286,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
         ]
 
-    async def test_invalid_hybrid_search_queries_wrrf_async(self):
+    async def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async(self):
         try:
             query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query)
@@ -295,7 +295,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
-    async def test_weighted_vs_non_weighted_rrf_async(self):
+    async def test_weighted_vs_non_weighted_reciprocal_rank_fusion_async(self):
         # Non-weighted RRF query
         query_non_weighted = """
             SELECT TOP 10 c.index, c.title FROM c
@@ -324,7 +324,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
         assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently direction weighted RRF results should not match."
 
-    async def test_rrf_with_missing_weights_async(self):
+    async def test_weighted_reciprocal_rank_fusion_with_missing_weights_async(self):
         try:
             # Weighted RRF query with one weight missing
             query_missing_weight = """
@@ -337,7 +337,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
-    async def test_weighted_rrf_with_response_hook_async(self):
+    async def test_weighted_reciprocal_rank_fusion_with_response_hook_async(self):
         response_hook = test_config.ResponseHookCaller()
         query_weighted_rrf = """
             SELECT TOP 10 c.index, c.title FROM c
