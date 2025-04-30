@@ -100,7 +100,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def upload_file(self, *, name: str, version: str, file: str, **kwargs: Any) -> DatasetVersion:
+    async def upload_file(self, *, name: str, version: str, file_path: str, **kwargs: Any) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -109,17 +109,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :paramtype name: str
         :keyword version: The version identifier for the dataset. Required.
         :paramtype version: str
-        :keyword file: The file name (including optional path) to be uploaded. Required.
-        :paramtype file: str
+        :keyword file_path: The file name (including optional path) to be uploaded. Required.
+        :paramtype file_path: str
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
-        path_file = Path(file)
-        if not path_file.exists():
+        pathlib_file_path = Path(file_path)
+        if not pathlib_file_path.exists():
             raise ValueError("The provided file does not exist.")
-        if path_file.is_dir():
+        if pathlib_file_path.is_dir():
             raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
         container_client, output_version = await self._create_dataset_and_get_its_container_client(
@@ -128,12 +128,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         async with container_client:
 
-            with open(file=file, mode="rb") as data:  # TODO: What is the best async options for file reading?
+            with open(file=file_path, mode="rb") as data:  # TODO: What is the best async options for file reading?
 
-                blob_name = path_file.name  # Extract the file name from the path.
+                blob_name = pathlib_file_path.name  # Extract the file name from the path.
                 logger.debug(
                     "[upload_file] Start uploading file `%s` as blob `%s`.",
-                    file,
+                    file_path,
                     blob_name,
                 )
 
