@@ -4,7 +4,7 @@
             "command": "uv",
             "args": [
                 "--directory",
-                "${workspaceFolder}/tools/mcp/typespec-story/",
+                "${workspaceFolder}/tools/mcp/typespec/",
                 "run",
                 "main.py"
             ]
