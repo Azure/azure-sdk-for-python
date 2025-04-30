@@ -55,7 +55,7 @@ class RedTeamSamples(object):
         categories and then use it to scan a target function with basic attack strategies.
         """
         # [START red_team_basic_callback]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -69,7 +69,7 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], num_objectives=2) 
+        agent = RedTeam(azure_ai_project=self.azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], num_objectives=2) 
 
         # Define a simple callback function that simulates a chatbot
         def simple_callback(query: str) -> str:
@@ -84,7 +84,7 @@ class RedTeamSamples(object):
             application_scenario="A customer service chatbot for a retail company"
         )
 
-        print(f"Scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_basic_callback]
         return results
 
@@ -95,7 +95,7 @@ class RedTeamSamples(object):
         with an asynchronous callback that processes message history in a chat format.
         """
         # [START red_team_advanced_callback]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -109,7 +109,7 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[
+        agent = RedTeam(azure_ai_project=self.azure_ai_project, credential=credential, risk_categories=[
                 RiskCategory.Violence, 
                 RiskCategory.Sexual, 
                 RiskCategory.SelfHarm, 
@@ -148,7 +148,7 @@ class RedTeamSamples(object):
             application_scenario="An AI assistant for educational content"
         )
 
-        print(f"Advanced scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Advanced scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_advanced_callback]
         return results
 
@@ -159,7 +159,7 @@ class RedTeamSamples(object):
         set up and pass configuration for a model to be tested directly.
         """
         # [START red_team_direct_model]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -173,7 +173,7 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence],
+        agent = RedTeam(azure_ai_project=self.azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence],
             num_objectives=1,)
 
         # Configuration for Azure OpenAI model
@@ -185,7 +185,7 @@ class RedTeamSamples(object):
 
         # Run scan directly against a model configuration
         model_results = await agent.scan(
-            target=azure_openai_config,
+            target=self.azure_openai_config,
             scan_name="Direct-Model-Test",
             attack_strategies=[
                 AttackStrategy.Flip,
@@ -196,7 +196,7 @@ class RedTeamSamples(object):
             timeout=360
         )
 
-        print(f"Model test completed with {len(model_results.redteaming_data) if model_results.redteaming_data else 0} conversations")
+        print(f"Model test completed with {len(model_results.scan_result) if model_results.scan_result else 0} conversations")
         # [END red_team_direct_model]
         return model_results
 
@@ -207,7 +207,7 @@ class RedTeamSamples(object):
         test a target with attacks of varying sophistication.
         """
         # [START red_team_complexity_levels]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -221,7 +221,7 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential,risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=2)
+        agent = RedTeam(azure_ai_project=self.azure_ai_project, credential=credential,risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=2)
 
         # Create a simple callback function
         def callback(query: str) -> str:
@@ -239,7 +239,7 @@ class RedTeamSamples(object):
             application_scenario="A financial advisor chatbot"
         )
 
-        print(f"Complexity levels test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Complexity levels test completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_complexity_levels]
         return results
 
@@ -250,7 +250,7 @@ class RedTeamSamples(object):
         a target's resilience against particular evasion methods.
         """
         # [START red_team_specific_strategies]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -265,7 +265,7 @@ class RedTeamSamples(object):
         }
         credential = DefaultAzureCredential()
         agent = RedTeam(
-            azure_ai_project=azure_ai_project, 
+            azure_ai_project=self.azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.SelfHarm, RiskCategory.HateUnfairness],
             num_objectives=2
@@ -289,7 +289,7 @@ class RedTeamSamples(object):
             application_scenario="A medical information assistant"
         )
 
-        print(f"Specific strategies test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Specific strategies test completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_specific_strategies]
         return results
 
@@ -300,7 +300,7 @@ class RedTeamSamples(object):
         responses for later analysis or when you want to implement your own evaluation.
         """
         # [START red_team_data_only]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -315,7 +315,7 @@ class RedTeamSamples(object):
         }
         credential = DefaultAzureCredential()
         agent = RedTeam(
-            azure_ai_project=azure_ai_project, 
+            azure_ai_project=self.azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.Sexual, RiskCategory.HateUnfairness],
             num_objectives=2
@@ -335,7 +335,7 @@ class RedTeamSamples(object):
         )
 
         # Access the collected conversation data
-        conversations = results.redteaming_data
+        conversations = results.scan_result
         print(f"Collected {len(conversations) if conversations else 0} conversations without evaluation")
         # [END red_team_data_only]
         return results
@@ -349,7 +349,7 @@ class RedTeamSamples(object):
         # [START red_team_output_path]
         import os
         from datetime import datetime
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -364,7 +364,7 @@ class RedTeamSamples(object):
         }
         credential = DefaultAzureCredential()
         agent = RedTeam(
-            azure_ai_project=azure_ai_project, 
+            azure_ai_project=self.azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.HateUnfairness, RiskCategory.Violence],
             num_objectives=2
@@ -400,7 +400,7 @@ class RedTeamSamples(object):
         target with its own guardrails and conversation tracking.
         """
         # [START red_team_custom_application]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -415,7 +415,7 @@ class RedTeamSamples(object):
         }
         credential = DefaultAzureCredential()
         agent = RedTeam(
-            azure_ai_project=azure_ai_project, 
+            azure_ai_project=self.azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.HateUnfairness, RiskCategory.Violence],
             num_objectives=2
@@ -468,7 +468,7 @@ class RedTeamSamples(object):
             application_scenario="A content creation assistant for bloggers and writers"
         )
 
-        print(f"Custom application test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"Custom application test completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_custom_application]
         return results
 
@@ -479,7 +479,7 @@ class RedTeamSamples(object):
         the more sophisticated target interfaces provided by PyRIT.
         """
         # [START red_team_pyrit_target]
-        from azure.ai.evaluation import (
+        from azure.ai.evaluation.red_team import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -495,7 +495,7 @@ class RedTeamSamples(object):
         }
         credential = DefaultAzureCredential()
         agent = RedTeam(
-            azure_ai_project=azure_ai_project, 
+            azure_ai_project=self.azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.SelfHarm, RiskCategory.HateUnfairness],
             num_objectives=2
@@ -520,7 +520,7 @@ class RedTeamSamples(object):
             application_scenario="A general-purpose AI assistant"
         )
         
-        print(f"PyRIT target scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
+        print(f"PyRIT target scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
         # [END red_team_pyrit_target]
         return results
 
@@ -533,9 +533,9 @@ async def run_samples():
     
     # Uncomment the samples you want to run
     sample_runners = [
-        # samples.basic_callback_example(),
+        samples.basic_callback_example(),
         # samples.advanced_callback_example(),
-        samples.direct_model_testing_example(),
+        # samples.direct_model_testing_example(),
         # samples.strategy_complexity_levels_example(),
         # samples.specific_attack_strategies_example(),
         # samples.data_only_mode_example(),
