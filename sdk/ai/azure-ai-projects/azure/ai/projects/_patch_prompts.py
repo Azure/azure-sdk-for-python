@@ -18,6 +18,7 @@ from typing_extensions import Self
 if TYPE_CHECKING:
     from prompty import Prompty  # type: ignore[import]
 
+
 class PromptTemplate:
     """A helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
     Prompty library is required to use this class (`pip install prompty`).

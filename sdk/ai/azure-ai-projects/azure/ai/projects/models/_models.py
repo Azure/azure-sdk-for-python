@@ -549,7 +549,8 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     ``https://blob.windows.core.net/Container/Path``. Required.
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -558,7 +559,8 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -719,8 +721,7 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: [Required] Uri of the data. Example:
-     `https://go.microsoft.com/fwlink/?linkid=2202330
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
@@ -742,7 +743,7 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """[Required] Uri of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
@@ -994,8 +995,7 @@ class EvaluatorConfiguration(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: [Required] Uri of the data. Example:
-     `https://go.microsoft.com/fwlink/?linkid=2202330
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
@@ -1041,8 +1041,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: [Required] Uri of the data. Example:
-     `https://go.microsoft.com/fwlink/?linkid=2202330
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
@@ -1327,8 +1326,8 @@ class PendingUploadResponse(_Model):
     :ivar version: Version of asset to be created if user did not specify version when initially
      creating upload.
     :vartype version: str
-    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required. Blob
-     Reference is the only supported type.
+    :ivar pending_upload_type: BlobReference is the only supported type. Required. Blob Reference
+     is the only supported type.
     :vartype pending_upload_type: str or ~azure.ai.projects.models.BLOB_REFERENCE
     """
 
@@ -1345,8 +1344,7 @@ class PendingUploadResponse(_Model):
     pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """TemporaryBlobReference is the only supported type. Required. Blob Reference is the only
-     supported type."""
+    """BlobReference is the only supported type. Required. Blob Reference is the only supported type."""
 
     @overload
     def __init__(

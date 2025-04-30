@@ -43,7 +43,9 @@ async def sample_connections_async() -> None:
             async for connection in project_client.connections.list():
                 print(connection)
 
-            print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
+            print(
+                "List the properties of all connections of a particular type (in this case, Azure OpenAI connections):"
+            )
             async for connection in project_client.connections.list(
                 connection_type=ConnectionType.AZURE_OPEN_AI,
             ):
