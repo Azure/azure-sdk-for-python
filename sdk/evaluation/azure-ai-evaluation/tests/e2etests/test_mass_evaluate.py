@@ -312,14 +312,24 @@ class TestMassEvaluate:
             "b64_images",
         ],
     )
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
     def test_evaluate_multimodal(
         self,
         multi_modal_input_type,
         multimodal_input_selector,
-        azure_cred,
-        project_scope,
+        request, 
+        proj_scope, 
+        cred,
         run_from_temp_dir,
     ):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         evaluators = {
             "content_safety": ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
             "protected_material": ProtectedMaterialEvaluator(credential=azure_cred, azure_ai_project=project_scope),
@@ -398,7 +408,17 @@ class TestMassEvaluate:
         assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
-    def test_evaluate_code_based_inputs(self, azure_cred, project_scope, code_based_data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "data_file"),
+        (
+            ("project_scope", "azure_cred", "code_based_data_file"),
+            ("project_scope_onedp", "azure_cred_onedp", "code_based_data_file"),
+        )
+    )
+    def test_evaluate_code_based_inputs(self, request, proj_scope, cred, data_file):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        code_based_data_file = request.getfixturevalue(data_file)
         evaluators = {
             "code_vulnerability": CodeVulnerabilityEvaluator(azure_cred, project_scope),
         }
@@ -573,7 +593,17 @@ class TestMassEvaluate:
         assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
 
-    def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "data_file"),
+        (
+            ("project_scope", "azure_cred", "chat_based_data_file"),
+            ("project_scope_onedp", "azure_cred_onedp", "chat_based_data_file"),
+        )
+    )
+    def test_evaluate_chat_inputs(self, request, proj_scope, cred, data_file):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        chat_based_data_file = request.getfixturevalue(data_file)
         evaluators = {
             "ungrounded_attributes": UngroundedAttributesEvaluator(azure_cred, project_scope),
         }
