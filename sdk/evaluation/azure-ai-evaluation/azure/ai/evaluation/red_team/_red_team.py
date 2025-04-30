@@ -1064,8 +1064,8 @@ class RedTeam():
                     use_score_as_feedback=False,
                 )
             
-                # Debug log the first few characters of each prompt
-                self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 # Initialize output path for memory labelling
                 base_path = str(uuid.uuid4())
