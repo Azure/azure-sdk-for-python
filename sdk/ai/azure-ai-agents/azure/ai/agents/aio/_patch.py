@@ -608,7 +608,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
         return await super().delete_agent(agent_id, **kwargs)
 
-    @overload
+    @overload # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]], max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -620,7 +620,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type max_retry: int
         """
 
-    @overload
+    @overload # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, function_tool: _models.AsyncFunctionTool, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -632,7 +632,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type max_retry: int
         """
 
-    @overload
+    @overload # pylint: disable=client-method-missing-kwargs
     def enable_auto_function_calls(self, *, toolset: _models.AsyncToolSet, max_retry: int = 10) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
@@ -651,7 +651,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         function_tool: Optional[_models.AsyncFunctionTool] = None,
         toolset: Optional[_models.AsyncToolSet] = None,
         max_retry: int = 10,
-    ) -> None:
+    ) -> None: # pylint: disable=client-method-missing-kwargs
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
         If automatic function calls fail, the agents will receive error messages allowing it to retry with another
@@ -676,8 +676,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         self._function_tool_max_retry = max_retry
 
         # Propagate into the RunsOperations instance
+        # pylint: disable=protected-access
         self.runs._function_tool = self._function_tool
         self.runs._function_tool_max_retry = self._function_tool_max_retry
+        # pylint: enable=protected-access
 
     @overload
     async def create_thread_and_run(
@@ -704,43 +706,43 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
         Creates a new agent thread and immediately starts a run using that new thread.
 
-        :param agent_id: The ID of the agent for which the thread should be created. Required.
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
         :type agent_id: str
-        :param content_type: Body Parameter content-type for JSON body. Default is "application/json".
+        :keyword content_type: Body Parameter content-type for JSON body. Default is "application/json".
         :type content_type: str
-        :param thread: The details used to create the new thread. If none provided, an empty thread is
+        :keyword thread: The details used to create the new thread. If none provided, an empty thread is
                        created.
         :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
-        :param model: Override the model the agent uses for this run.
+        :keyword model: Override the model the agent uses for this run.
         :type model: str
-        :param instructions: Override the system instructions for this run.
+        :keyword instructions: Override the system instructions for this run.
         :type instructions: str
-        :param tools: Override the list of enabled tools for this run.
+        :keyword tools: Override the list of enabled tools for this run.
         :type tools: list[~azure.ai.agents.models.ToolDefinition]
-        :param tool_resources: Override the tools the agent can use for this run.
+        :keyword tool_resources: Override the tools the agent can use for this run.
         :type tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
-        :param temperature: Sampling temperature between 0 and 2. Higher = more random.
+        :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
         :type temperature: float
-        :param top_p: Nucleus sampling parameter between 0 and 1.
+        :keyword top_p: Nucleus sampling parameter between 0 and 1.
         :type top_p: float
-        :param max_prompt_tokens: Max prompt tokens to use across the run.
+        :keyword max_prompt_tokens: Max prompt tokens to use across the run.
         :type max_prompt_tokens: int
-        :param max_completion_tokens: Max completion tokens to use across the run.
+        :keyword max_completion_tokens: Max completion tokens to use across the run.
         :type max_completion_tokens: int
-        :param truncation_strategy: Strategy for dropping old messages as context grows.
+        :keyword truncation_strategy: Strategy for dropping old messages as context grows.
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
-        :param tool_choice: Controls which tool the model will call.
+        :keyword tool_choice: Controls which tool the model will call.
         :type tool_choice: str or
                           ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
-        :param response_format: Specifies the format the model must output.
+        :keyword response_format: Specifies the format the model must output.
         :type response_format: str or
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode or
                                ~azure.ai.agents.models.AgentsApiResponseFormat or
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType
-        :param parallel_tool_calls: If True, tools will be invoked in parallel.
+        :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
         :type parallel_tool_calls: bool
-        :param metadata: Up to 16 key/value pairs for structured metadata on the run.
+        :keyword metadata: Up to 16 key/value pairs for structured metadata on the run.
         :type metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
@@ -760,7 +762,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         :param body: The request payload as a JSON-serializable dict.
         :type body: JSON
-        :param content_type: Body Parameter content-type for JSON body. Default is "application/json".
+        :keyword content_type: Body Parameter content-type for JSON body. Default is "application/json".
         :type content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
@@ -780,7 +782,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         :param body: The request payload as a byte-stream.
         :type body: IO[bytes]
-        :param content_type: Body Parameter content-type for binary body. Default is "application/json".
+        :keyword content_type: Body Parameter content-type for binary body. Default is "application/json".
         :type content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
@@ -815,51 +817,48 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :param body: Either a JSON payload (dict) or a binary stream (IO[bytes]). Use JSON overload for
                      dict bodies and binary overload for IO[bytes].
         :type body: JSON or IO[bytes]
-        :param agent_id: The ID of the agent for which the thread should be created.
+        :keyword agent_id: The ID of the agent for which the thread should be created.
                          Required when not using the JSON/body overload.
         :type agent_id: str
-        :param thread: The details used to create the new thread. If none provided, an empty thread is
+        :keyword thread: The details used to create the new thread. If none provided, an empty thread is
                        created.
         :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
-        :param model: Override the model the agent uses for this run.
+        :keyword model: Override the model the agent uses for this run.
         :type model: str
-        :param instructions: Override the system instructions for this run.
+        :keyword instructions: Override the system instructions for this run.
         :type instructions: str
-        :param tools: Override the list of enabled tools for this run.
+        :keyword tools: Override the list of enabled tools for this run.
         :type tools: list[~azure.ai.agents.models.ToolDefinition]
-        :param tool_resources: Override the tools the agent can use for this run.
+        :keyword tool_resources: Override the tools the agent can use for this run.
         :type tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
-        :param temperature: Sampling temperature between 0 and 2. Higher = more random.
+        :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
         :type temperature: float
-        :param top_p: Nucleus sampling parameter between 0 and 1.
+        :keyword top_p: Nucleus sampling parameter between 0 and 1.
         :type top_p: float
-        :param max_prompt_tokens: Max prompt tokens to use across the run.
+        :keyword max_prompt_tokens: Max prompt tokens to use across the run.
         :type max_prompt_tokens: int
-        :param max_completion_tokens: Max completion tokens to use across the run.
+        :keyword max_completion_tokens: Max completion tokens to use across the run.
         :type max_completion_tokens: int
-        :param truncation_strategy: Strategy for dropping old messages as context grows.
+        :keyword truncation_strategy: Strategy for dropping old messages as context grows.
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
-        :param tool_choice: Controls which tool the model will call.
+        :keyword tool_choice: Controls which tool the model will call.
         :type tool_choice: str or
                           ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
-        :param response_format: Specifies the format the model must output.
+        :keyword response_format: Specifies the format the model must output.
         :type response_format: str or
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode or
                                ~azure.ai.agents.models.AgentsApiResponseFormat or
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType
-        :param parallel_tool_calls: If True, tools will be invoked in parallel.
+        :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
         :type parallel_tool_calls: bool
-        :param metadata: Up to 16 key/value pairs for structured metadata on the run.
+        :keyword metadata: Up to 16 key/value pairs for structured metadata on the run.
         :type metadata: dict[str, str]
-        :param kwargs: Additional parameters; `stream_parameter` will be dropped if provided.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ValueError: If the combination of arguments is invalid.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        # Ensure no streaming is ever requested
-        kwargs.pop("stream_parameter", None)
 
         # JSON‐body overload
         if isinstance(body, dict):
@@ -932,39 +931,37 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         Creates a new agent thread and run in one call, then polls until the run enters a terminal
         state, executing any required tool calls via the provided ToolSet.
 
-        :param agent_id: The unique identifier of the agent to run. Required if `body` is unset.
+        :keyword agent_id: The unique identifier of the agent to run. Required if `body` is unset.
         :type agent_id: str
-        :param thread: Options for creating the new thread (initial messages, metadata, tool resources).
+        :keyword thread: Options for creating the new thread (initial messages, metadata, tool resources).
         :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
-        :param model: Optional override of the model deployment name to use for this run.
+        :keyword model: Optional override of the model deployment name to use for this run.
         :type model: str, optional
-        :param instructions: Optional override of the system instructions for this run.
+        :keyword instructions: Optional override of the system instructions for this run.
         :type instructions: str, optional
-        :param toolset: A ToolSet instance containing both `.definitions` and `.resources` for tools.
+        :keyword toolset: A ToolSet instance containing both `.definitions` and `.resources` for tools.
                         If provided, its definitions/resources are used; otherwise no tools are passed.
         :type toolset: azure.ai.agents._tools.ToolSet, optional
-        :param temperature: Sampling temperature for the model (0.0-2.0), higher is more random.
+        :keyword temperature: Sampling temperature for the model (0.0-2.0), higher is more random.
         :type temperature: float, optional
-        :param top_p: Nucleus sampling value (0.0-1.0), alternative to temperature.
+        :keyword top_p: Nucleus sampling value (0.0-1.0), alternative to temperature.
         :type top_p: float, optional
-        :param max_prompt_tokens: Maximum total prompt tokens across turns; run ends “incomplete” if exceeded.
+        :keyword max_prompt_tokens: Maximum total prompt tokens across turns; run ends “incomplete” if exceeded.
         :type max_prompt_tokens: int, optional
-        :param max_completion_tokens: Maximum total completion tokens across turns; run ends “incomplete” if exceeded.
+        :keyword max_completion_tokens: Maximum total completion tokens across turns; run ends “incomplete” if exceeded.
         :type max_completion_tokens: int, optional
-        :param truncation_strategy: Strategy for dropping old messages when context window overflows.
+        :keyword truncation_strategy: Strategy for dropping old messages when context window overflows.
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
-        :param tool_choice: Controls which tool (if any) the model is allowed to call.
+        :keyword tool_choice: Controls which tool (if any) the model is allowed to call.
         :type tool_choice: str or ~azure.ai.agents.models.AgentsApiToolChoiceOption, optional
-        :param response_format: Specifies the required format for the model’s output.
+        :keyword response_format: Specifies the required format for the model’s output.
         :type response_format: str or ~azure.ai.agents.models.AgentsApiResponseFormatOption, optional
-        :param parallel_tool_calls: If True, allows tool calls to be executed in parallel.
+        :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
         :type parallel_tool_calls: bool, optional
-        :param metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
+        :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
         :type metadata: dict[str, str], optional
-        :param sleep_interval: Seconds to wait between polling attempts for run status. Default is 1.
+        :keyword sleep_interval: Seconds to wait between polling attempts for run status. Default is 1.
         :type sleep_interval: int, optional
-        :param kwargs: Additional keyword arguments to forward to `create_thread_and_run`.
-        :type kwargs: Any
         :return: The final ThreadRun object, in a terminal state (succeeded, failed, or cancelled).
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
