@@ -33,7 +33,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     :param reference: The reference text. This may include template strings.
     :type reference: str
     :param kwargs: Additional keyword arguments to pass to the grader.
-    :type kwargs: Dict[str, Any]
+    :type kwargs: Any
 
 
     """
@@ -42,6 +42,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
 
     def __init__(
         self,
+        *,
         model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: str,
         name: str,
@@ -52,7 +53,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             "ilike",
         ],
         reference: str,
-        **kwargs: Dict[str, Any]
+        **kwargs: Any
     ):
         grader = EvalStringCheckGrader(
             input=input,
@@ -61,4 +62,4 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             reference=reference,
             type="string_check",
         )
-        super().__init__(model_config, grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
