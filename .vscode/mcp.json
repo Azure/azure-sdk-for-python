@@ -1,4 +1,12 @@
 {
+    "inputs": [
+          {
+            "type": "promptString",
+            "id": "gh_token",
+            "description": "GitHub Token",
+            "password": true
+          }
+        ],
     "servers": {
         "typespec-python": {
             "command": "uv",
@@ -7,7 +15,10 @@
                 "${workspaceFolder}/tools/mcp/typespec-story/",
                 "run",
                 "main.py"
-            ]
+            ],
+            "env": {
+                "GH_TOKEN": "${input:gh_token}"
+            },
         },
         "azure-sdk-validation": {
             "command": "uv",
