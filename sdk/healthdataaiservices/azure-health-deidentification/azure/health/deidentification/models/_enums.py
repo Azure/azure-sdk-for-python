@@ -10,23 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DeidentificationJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List of statuses a job can have."""
-
-    NOT_STARTED = "NotStarted"
-    """Job has been submitted and is waiting to be processed."""
-    RUNNING = "Running"
-    """Job has been started."""
-    SUCCEEDED = "Succeeded"
-    """Job has completed successfully. All documents have succeeded."""
-    PARTIAL_FAILED = "PartialFailed"
-    """Job has completed with at least a single document failing."""
-    FAILED = "Failed"
-    """Job has completed with all documents failing, or a validation failure."""
-    CANCELED = "Canceled"
-    """Job has been canceled after user request."""
-
-
 class DeidentificationOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of supported Operation Types."""
 

@@ -33,7 +33,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
 
         finished_job: DeidentificationJob = lro.result()
 
-        assert finished_job.status == DeidentificationJobStatus.SUCCEEDED
+        assert finished_job.status == OperationState.SUCCEEDED
         assert finished_job.name == jobname
         assert finished_job.operation == DeidentificationOperationType.SURROGATE
         assert finished_job.summary is not None

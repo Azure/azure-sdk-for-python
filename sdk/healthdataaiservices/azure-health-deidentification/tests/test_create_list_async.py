@@ -44,7 +44,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
 
         assert job is not None
         assert job.name == jobname
-        assert job.status == DeidentificationJobStatus.NOT_STARTED or job.status == DeidentificationJobStatus.RUNNING
+        assert job.status == OperationState.NOT_STARTED or job.status == OperationState.RUNNING
         assert job.operation == DeidentificationOperationType.TAG
         assert job.error is None
         assert job.created_at is not None

@@ -33,17 +33,17 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
         await client.begin_deidentify_documents(jobname, job)
 
         job = await client.get_job(jobname)
-        while job.status == DeidentificationJobStatus.NOT_STARTED:
+        while job.status == OperationState.NOT_STARTED:
             self.sleep(2)
             job = await client.get_job(jobname)
 
         assert job.error is None, "Job should not have an error"
-        assert job.status == DeidentificationJobStatus.RUNNING, "Job should be running"
+        assert job.status == OperationState.RUNNING, "Job should be running"
 
         job = await client.cancel_job(jobname)
 
         assert job.error is None, "Job should not have an error after cancelling"
-        assert job.status == DeidentificationJobStatus.CANCELED, "Job should be cancelled"
+        assert job.status == OperationState.CANCELED, "Job should be cancelled"
 
         await client.delete_job(jobname)
 

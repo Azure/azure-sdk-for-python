@@ -34,8 +34,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
         )
 
-        lro: LROPoller = client.begin_deidentify_documents(jobname, job)
-        lro.wait(timeout=60)
+        client.begin_deidentify_documents(jobname, job).result(180)
         job_documents = client.list_job_documents(job_name=jobname, maxpagesize=2)
 
         _get_next = job_documents._args[0]

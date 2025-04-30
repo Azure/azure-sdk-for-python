@@ -39,6 +39,7 @@ class DeidentificationClient(DeidentificationClientOperationsMixin):
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = DeidentificationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

@@ -4,7 +4,8 @@ import os
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_continuation_sanitizer,
-    add_general_regex_sanitizer,
+    add_uri_regex_sanitizer,
+    add_uri_string_sanitizer,
     remove_batch_sanitizers,
     test_proxy,
 )
@@ -26,6 +27,7 @@ def create_session_uniquifier():
     if (
         os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"  # Don't override uniquifier by default
         and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() != "true"
+        and os.environ.get("AZURE_TEST_KEEP_UNIQUIFIER", "false").lower() != "true"
     ):
         print("Creating new uniquifier for live test run.")
         uniquifier = uuid.uuid4().hex[:6]
@@ -45,7 +47,5 @@ def add_sanitizers(test_proxy):
     # $..id
     # uri sanitization in favor of substitution
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK4001"])
-    add_general_regex_sanitizer(
-        regex="continuationToken=[^&]*",
-        value="continuationToken=Sanitized"
-    )
+    add_uri_regex_sanitizer(regex="continuationToken=[^&\"}]*", value="continuationToken=Sanitized")
+    add_uri_string_sanitizer(target=os.environ["healthdataaiservices_storage_container_name"], value="containername")

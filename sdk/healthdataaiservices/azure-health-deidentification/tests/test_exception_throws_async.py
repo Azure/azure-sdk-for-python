@@ -39,7 +39,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
 
         job = await client.get_job(jobname)
 
-        assert job.status == DeidentificationJobStatus.FAILED
+        assert job.status == OperationState.FAILED
         assert job.error is not None
         assert job.error.code == "EmptyJob"
         assert job.error.message is not None

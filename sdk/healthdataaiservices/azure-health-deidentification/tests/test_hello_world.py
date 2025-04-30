@@ -2,10 +2,8 @@ from deid_base_test_case import DeidBaseTestCase, RealtimeEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
-import pytest
 
 from azure.health.deidentification.models import *
-
 
 class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
     @RealtimeEnv()

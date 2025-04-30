@@ -22,8 +22,6 @@ if TYPE_CHECKING:
 class DeidentificationContent(_model_base.Model):
     """Request body for de-identification operation.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar input_text: Input text to de-identify. Required.
     :vartype input_text: str
     :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
@@ -34,12 +32,16 @@ class DeidentificationContent(_model_base.Model):
      ~azure.health.deidentification.models.DeidentificationCustomizationOptions
     """
 
-    input_text: str = rest_field(name="inputText")
+    input_text: str = rest_field(name="inputText", visibility=["read", "create", "update", "delete", "query"])
     """Input text to de-identify. Required."""
-    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field()
+    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
      \"Tag\"."""
-    customizations: Optional["_models.DeidentificationCustomizationOptions"] = rest_field()
+    customizations: Optional["_models.DeidentificationCustomizationOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Customization parameters to override default service behaviors."""
 
     @overload
@@ -66,14 +68,26 @@ class DeidentificationCustomizationOptions(_model_base.Model):
     """Customizations options to override default service behaviors for synchronous usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
+     Please refer to
+     `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
+     <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
+     more details.
     :vartype redaction_format: str
     :ivar surrogate_locale: Locale in which the output surrogates are written.
     :vartype surrogate_locale: str
     """
 
-    redaction_format: Optional[str] = rest_field(name="redactionFormat")
-    """Format of the redacted output. Only valid when Operation is Redact."""
-    surrogate_locale: Optional[str] = rest_field(name="surrogateLocale")
+    redaction_format: Optional[str] = rest_field(
+        name="redactionFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Format of the redacted output. Only valid when Operation is Redact.
+     Please refer to
+     `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
+     <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
+     more details."""
+    surrogate_locale: Optional[str] = rest_field(
+        name="surrogateLocale", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Locale in which the output surrogates are written."""
 
     @overload
@@ -98,9 +112,6 @@ class DeidentificationCustomizationOptions(_model_base.Model):
 class DeidentificationDocumentDetails(_model_base.Model):
     """Details of a single document in a job.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Id of the document details. Required.
     :vartype id: str
     :ivar input: Location for the input. Required.
@@ -116,14 +127,20 @@ class DeidentificationDocumentDetails(_model_base.Model):
 
     id: str = rest_field(visibility=["read"])
     """Id of the document details. Required."""
-    input: "_models.DeidentificationDocumentLocation" = rest_field()
+    input: "_models.DeidentificationDocumentLocation" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Location for the input. Required."""
-    output: Optional["_models.DeidentificationDocumentLocation"] = rest_field()
+    output: Optional["_models.DeidentificationDocumentLocation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Location for the output."""
-    status: Union[str, "_models.OperationState"] = rest_field()
+    status: Union[str, "_models.OperationState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the document. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
      \"Failed\", and \"Canceled\"."""
-    error: Optional[ODataV4Format] = rest_field()
+    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error when document fails."""
 
     @overload
@@ -150,16 +167,13 @@ class DeidentificationDocumentDetails(_model_base.Model):
 class DeidentificationDocumentLocation(_model_base.Model):
     """Location of a document.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar location: Location of document in storage. Required.
     :vartype location: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
 
-    location: str = rest_field()
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of document in storage. Required."""
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
@@ -185,9 +199,6 @@ class DeidentificationDocumentLocation(_model_base.Model):
 class DeidentificationJob(_model_base.Model):
     """A job containing a batch of documents to de-identify.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar name: The name of a job. Required.
     :vartype name: str
     :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
@@ -201,8 +212,8 @@ class DeidentificationJob(_model_base.Model):
     :vartype customizations:
      ~azure.health.deidentification.models.DeidentificationJobCustomizationOptions
     :ivar status: Current status of a job. Required. Known values are: "NotStarted", "Running",
-     "Succeeded", "PartialFailed", "Failed", and "Canceled".
-    :vartype status: str or ~azure.health.deidentification.models.DeidentificationJobStatus
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.health.deidentification.models.OperationState
     :ivar error: Error when job fails in it's entirety.
     :vartype error: ~azure.core.ODataV4Format
     :ivar last_updated_at: Date and time when the job was completed.
@@ -221,18 +232,26 @@ class DeidentificationJob(_model_base.Model):
 
     name: str = rest_field(visibility=["read"])
     """The name of a job. Required."""
-    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field()
+    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
      \"Tag\"."""
-    source_location: "_models.SourceStorageLocation" = rest_field(name="sourceLocation")
+    source_location: "_models.SourceStorageLocation" = rest_field(
+        name="sourceLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Storage location to perform the operation on. Required."""
-    target_location: "_models.TargetStorageLocation" = rest_field(name="targetLocation")
+    target_location: "_models.TargetStorageLocation" = rest_field(
+        name="targetLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Target location to store output of operation. Required."""
-    customizations: Optional["_models.DeidentificationJobCustomizationOptions"] = rest_field()
+    customizations: Optional["_models.DeidentificationJobCustomizationOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Customization parameters to override default service behaviors."""
-    status: Union[str, "_models.DeidentificationJobStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.OperationState"] = rest_field(visibility=["read"])
     """Current status of a job. Required. Known values are: \"NotStarted\", \"Running\",
-     \"Succeeded\", \"PartialFailed\", \"Failed\", and \"Canceled\"."""
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
     error: Optional[ODataV4Format] = rest_field(visibility=["read"])
     """Error when job fails in it's entirety."""
     last_updated_at: datetime.datetime = rest_field(name="lastUpdatedAt", visibility=["read"], format="rfc3339")
@@ -273,14 +292,26 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
     """Customizations options to override default service behaviors for job usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
+     Please refer to
+     `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
+     <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
+     more details.
     :vartype redaction_format: str
     :ivar surrogate_locale: Locale in which the output surrogates are written.
     :vartype surrogate_locale: str
     """
 
-    redaction_format: Optional[str] = rest_field(name="redactionFormat")
-    """Format of the redacted output. Only valid when Operation is Redact."""
-    surrogate_locale: Optional[str] = rest_field(name="surrogateLocale")
+    redaction_format: Optional[str] = rest_field(
+        name="redactionFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Format of the redacted output. Only valid when Operation is Redact.
+     Please refer to
+     `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
+     <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
+     more details."""
+    surrogate_locale: Optional[str] = rest_field(
+        name="surrogateLocale", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Locale in which the output surrogates are written."""
 
     @overload
@@ -305,7 +336,6 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
 class DeidentificationJobSummary(_model_base.Model):
     """Summary metrics of a job.
 
-
     :ivar successful: Number of documents that have completed. Required.
     :vartype successful: int
     :ivar failed: Number of documents that have failed. Required.
@@ -318,15 +348,15 @@ class DeidentificationJobSummary(_model_base.Model):
     :vartype bytes_processed: int
     """
 
-    successful: int = rest_field()
+    successful: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have completed. Required."""
-    failed: int = rest_field()
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have failed. Required."""
-    canceled: int = rest_field()
+    canceled: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have been canceled. Required."""
-    total: int = rest_field()
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents total. Required."""
-    bytes_processed: int = rest_field(name="bytesProcessed")
+    bytes_processed: int = rest_field(name="bytesProcessed", visibility=["read", "create", "update", "delete", "query"])
     """Number of bytes processed. Required."""
 
     @overload
@@ -360,9 +390,13 @@ class DeidentificationResult(_model_base.Model):
     :vartype tagger_result: ~azure.health.deidentification.models.PhiTaggerResult
     """
 
-    output_text: Optional[str] = rest_field(name="outputText")
+    output_text: Optional[str] = rest_field(
+        name="outputText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Output text after de-identification. Not available for \"Tag\" operation."""
-    tagger_result: Optional["_models.PhiTaggerResult"] = rest_field(name="taggerResult")
+    tagger_result: Optional["_models.PhiTaggerResult"] = rest_field(
+        name="taggerResult", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Result of the \"Tag\" operation. Only available for \"Tag\" Operation."""
 
     @overload
@@ -387,7 +421,6 @@ class DeidentificationResult(_model_base.Model):
 class PhiEntity(_model_base.Model):
     """PHI Entity tag in the input.
 
-
     :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
      "Age", "BioID", "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email", "Fax",
      "HealthPlan", "Hospital", "IDNum", "IPAddress", "License", "LocationOther", "MedicalRecord",
@@ -404,19 +437,21 @@ class PhiEntity(_model_base.Model):
     :vartype confidence_score: float
     """
 
-    category: Union[str, "_models.PhiCategory"] = rest_field()
+    category: Union[str, "_models.PhiCategory"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """PHI Category of the entity. Required. Known values are: \"Unknown\", \"Account\", \"Age\",
      \"BioID\", \"City\", \"CountryOrRegion\", \"Date\", \"Device\", \"Doctor\", \"Email\", \"Fax\",
      \"HealthPlan\", \"Hospital\", \"IDNum\", \"IPAddress\", \"License\", \"LocationOther\",
      \"MedicalRecord\", \"Organization\", \"Patient\", \"Phone\", \"Profession\",
      \"SocialSecurity\", \"State\", \"Street\", \"Url\", \"Username\", \"Vehicle\", and \"Zip\"."""
-    offset: "_models.StringIndex" = rest_field()
+    offset: "_models.StringIndex" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Starting index of the location from within the input text. Required."""
-    length: "_models.StringIndex" = rest_field()
+    length: "_models.StringIndex" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Length of the input text. Required."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text of the entity."""
-    confidence_score: Optional[float] = rest_field(name="confidenceScore")
+    confidence_score: Optional[float] = rest_field(
+        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence score of the category match."""
 
     @overload
@@ -444,12 +479,11 @@ class PhiEntity(_model_base.Model):
 class PhiTaggerResult(_model_base.Model):
     """Result of the "Tag" operation.
 
-
     :ivar entities: List of entities detected in the input. Required.
     :vartype entities: list[~azure.health.deidentification.models.PhiEntity]
     """
 
-    entities: List["_models.PhiEntity"] = rest_field()
+    entities: List["_models.PhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of entities detected in the input. Required."""
 
     @overload
@@ -473,7 +507,6 @@ class PhiTaggerResult(_model_base.Model):
 class SourceStorageLocation(_model_base.Model):
     """Storage location.
 
-
     :ivar location: URL to storage location. Required.
     :vartype location: str
     :ivar prefix: Prefix to filter path by. Required.
@@ -482,11 +515,11 @@ class SourceStorageLocation(_model_base.Model):
     :vartype extensions: list[str]
     """
 
-    location: str = rest_field()
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL to storage location. Required."""
-    prefix: str = rest_field()
+    prefix: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Prefix to filter path by. Required."""
-    extensions: Optional[List[str]] = rest_field()
+    extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of extensions to filter path by."""
 
     @overload
@@ -512,7 +545,6 @@ class SourceStorageLocation(_model_base.Model):
 class StringIndex(_model_base.Model):
     """String index encoding model.
 
-
     :ivar utf8: The offset or length of the substring in UTF-8 encoding. Required.
     :vartype utf8: int
     :ivar utf16: The offset or length of the substring in UTF-16 encoding.
@@ -525,13 +557,13 @@ class StringIndex(_model_base.Model):
     :vartype code_point: int
     """
 
-    utf8: int = rest_field()
+    utf8: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The offset or length of the substring in UTF-8 encoding. Required."""
-    utf16: int = rest_field()
+    utf16: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The offset or length of the substring in UTF-16 encoding.
      
      Primary encoding used by .NET, Java, and JavaScript. Required."""
-    code_point: int = rest_field(name="codePoint")
+    code_point: int = rest_field(name="codePoint", visibility=["read", "create", "update", "delete", "query"])
     """The offset or length of the substring in CodePoint encoding.
      
      Primary encoding used by Python. Required."""
@@ -559,7 +591,6 @@ class StringIndex(_model_base.Model):
 class TargetStorageLocation(_model_base.Model):
     """Storage location.
 
-
     :ivar location: URL to storage location. Required.
     :vartype location: str
     :ivar prefix: Replaces the input prefix of a file path with the output prefix, preserving the
@@ -577,9 +608,9 @@ class TargetStorageLocation(_model_base.Model):
     :vartype overwrite: bool
     """
 
-    location: str = rest_field()
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL to storage location. Required."""
-    prefix: str = rest_field()
+    prefix: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Replaces the input prefix of a file path with the output prefix, preserving the rest of the
      path structure.
      
@@ -589,7 +620,7 @@ class TargetStorageLocation(_model_base.Model):
      Output Prefix: \"output_docs/\"
      
      Output file: \"output_docs/note.txt\". Required."""
-    overwrite: Optional[bool] = rest_field()
+    overwrite: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """When set to true during a job, the service will overwrite the output location if it already
      exists."""
 

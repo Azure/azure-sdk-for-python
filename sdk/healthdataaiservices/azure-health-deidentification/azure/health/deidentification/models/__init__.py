@@ -30,7 +30,6 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    DeidentificationJobStatus,
     DeidentificationOperationType,
     OperationState,
     PhiCategory,
@@ -53,7 +52,6 @@ __all__ = [
     "SourceStorageLocation",
     "StringIndex",
     "TargetStorageLocation",
-    "DeidentificationJobStatus",
     "DeidentificationOperationType",
     "OperationState",
     "PhiCategory",
