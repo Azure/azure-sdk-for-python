@@ -675,6 +675,7 @@ def test_send_with_keep_alive(auth_credential_receivers, keep_alive, uamqp_trans
 # TODO: This test fails both sync and async with amqp proxy and keep_alive=30. Investigate.
 @pytest.mark.parametrize("keep_alive", [None, 5, 30])
 @pytest.mark.liveTest
+@pytest.mark.no_amqpproxy
 def test_send_long_wait_idle_timeout(auth_credential_receivers, keep_alive, uamqp_transport, client_args):
     if uamqp_transport:
         amqp_transport = UamqpTransport
