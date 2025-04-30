@@ -53,7 +53,8 @@ EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
 # Set up the amqpproxy environment variables
-AMQPPROXY_PATH = os.path.abspath(os.environ.get("AMQPPROXY_PATH", None))
+path = os.environ.get("AMQPPROXY_PATH")
+AMQPPROXY_PATH = os.path.abspath(path) if path else None
 RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY") == 'true'
 AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
 if RECORD_AMQP_PROXY:
