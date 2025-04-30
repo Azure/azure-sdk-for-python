@@ -354,3 +354,25 @@ def test_tracer_caching_different_args():
 
     assert tracer1 is tracer2
     assert tracer1 is not tracer3
+
+
+def test_tracer_set_span_error(tracing_helper):
+    """Test that the tracer's set_span_status method works correctly."""
+    tracer = get_tracer()
+    assert tracer
+
+    with tracer.start_as_current_span(name="ok-span") as span:
+        tracer.set_span_error_status(span)
+
+    with tracer.start_as_current_span(name="ok-span") as span:
+        tracer.set_span_error_status(span, "This is an error")
+
+    # Verify status on finished spans
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 2
+
+    assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+    assert finished_spans[0].status.description is None
+
+    assert finished_spans[1].status.status_code == OtelStatusCode.ERROR
+    assert finished_spans[1].status.description == "This is an error"

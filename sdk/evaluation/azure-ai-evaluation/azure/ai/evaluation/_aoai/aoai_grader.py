@@ -30,14 +30,14 @@ class AzureOpenAIGrader():
         the TestingCriterion alias specified in (OpenAI's SDK)[https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L151].
     :type grader_config: Dict[str, Any]
     :param kwargs: Additional keyword arguments to pass to the grader.
-    :type kwargs: Dict[str, Any]
+    :type kwargs: Any
 
 
     """
 
     id = "aoai://general"
 
-    def __init__(self, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Dict[str, Any], **kwargs: Dict[str, Any]):        
+    def __init__(self, *, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Dict[str, Any], **kwargs: Any):
         self._model_config = model_config
         self._grader_config = grader_config
 
@@ -62,23 +62,6 @@ class AzureOpenAIGrader():
         """Validate the grader configuration that this grader wrapper is using."""
 
         return
-
-
-    def get_model_config(self) -> AzureOpenAIModelConfiguration:
-        """Get the model configuration that this grader wrapper is using.
-
-        :return: The model configuration.
-        :rtype: AzureOpenAIModelConfiguration
-        """
-        return self._model_config
-    
-    def get_grader_config(self) -> Any:
-        """Get the grader configuration that this grader wrapper is using.
-
-        :return: The grader configuration.
-        :rtype: Any
-        """
-        return self._grader_config
 
     def get_client(self) -> Any:
         """Construct an appropriate OpenAI client using this grader's model configuration.

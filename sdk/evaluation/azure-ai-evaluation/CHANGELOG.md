@@ -11,11 +11,12 @@
     - AzureOpenAITextSimilarityGrader
 
 ### Breaking Changes
+- In the experimental RedTeam's scan method, the `data_only` param has been replaced with `skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
 
 ### Bugs Fixed
 - Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
     ```
-    "query1": "some query", "response: "some response"
+    "query1": "some query", "response": "some response"
     ```
     throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
     Now, users may import data containing fields with numeric characters. 
