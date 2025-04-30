@@ -2,7 +2,7 @@
 name = "validation-mcp"
 version = "0.1.0"
 description = "MCP server for Azure SDK validation tools"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = "MIT"
 readme = "README.md"
 authors = [
@@ -14,5 +14,6 @@ dependencies = [
     "mypy>=1.9.0",
     "pyright>=1.1.287",
     "bandit>=1.7.0",
-    "tox<5"
+    "tox<5",
+    "httpx>=0.28.1",
 ]
