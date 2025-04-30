@@ -1,3 +1,4 @@
+import re
 from mcp.server.fastmcp import FastMCP
 import subprocess
 from typing import Dict, Optional, Any
@@ -14,7 +15,7 @@ logger.addHandler(hander)
 # Initialize FastMCP server
 mcp = FastMCP("typespec")
 
-def get_latest_commit(package_name: str) -> str:
+def get_latest_commit(tspurl: str) -> str:
     """Get the URL to the tspconfig.yaml file for a given package name from the GitHub repository.
     
     Args:
@@ -23,48 +24,57 @@ def get_latest_commit(package_name: str) -> str:
     Returns:
         The URL to the tspconfig.yaml file for the package in the Azure/azure-rest-api-specs repository.
     """
-    # Extract the service name from the package name
-    # For example, extract "eventgrid" from "azure-eventgrid"
-    if package_name.startswith("azure-"):
-        service_name = package_name[len("azure-"):]
-    else:
-        service_name = package_name
-    
-    # Define the folder path in the repo
-    folder_path = f"specification/{service_name}"
-    logger.info(f"Looking for commits in folder: {folder_path}")
-    
+    # Extract the service name, repo, commit, and tspconfig path from the URL
+    # Example URL: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/eventgrid/Azure.Messaging.EventGrid/tspconfig.yaml
     try:
+        # Use regex to validate and extract components from the URL
+        configUrl = tspurl
+        res = re.match(
+            r"^https://(?P<urlRoot>github|raw.githubusercontent).com/(?P<repo>[^/]*/azure-rest-api-specs(-pr)?)/(tree/|blob/)?(?P<commit>[0-9a-f]{40})/(?P<path>.*)/tspconfig.yaml$",
+            configUrl
+        )
+        
+        if res:
+            groups = res.groupdict()
+            latest_commit = groups["commit"]
+            folder_path = groups["path"]
+            # Extract service name from path (usually the second component)
+            path_parts = folder_path.split("/")
+            service_name = path_parts[1] if len(path_parts) > 1 else "unknown"
+            logger.info(f"Using explicit commit from URL: {latest_commit}")
+            return latest_commit
+        
+        # Parse the URL to extract the path within the repository
+        repo_parts = tspurl.split("/")
+        repo_name = f"{repo_parts[3]}/{repo_parts[4]}"
+        
+        parts = tspurl.split("azure-rest-api-specs/blob/")[1].split("/")
+        parts.pop(0)  # Remove the branch name (e.g., 'main')
+        
+        # Join all parts until the last directory (containing tspconfig.yaml)
+        folder_path = "/".join(parts[:-1])
+        logger.info(f"Extracted folder path from URL: {folder_path}")
+        
+        # Extract service name for logging
+        service_name = parts[1] if len(parts) > 1 else "unknown"
+
+        # try:
         auth = Auth.Token(os.getenv("GH_TOKEN"))
         g = Github(auth=auth)
         logger.info(f"Authenticated to GitHub with token: {g}")
-        repo = g.get_repo("Azure/azure-rest-api-specs")
-        
+        repo = g.get_repo(repo_name)
+
         # Get commits that affect the specific folder
         commits = repo.get_commits(path=folder_path)
-        
-        if commits.totalCount == 0:
-            logger.warning(f"No commits found for path: {folder_path}")
-            # Fall back to main branch
-            tspconfig_url = f"https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/{folder_path}/tspconfig.yaml"
-        else:
-            # Get the most recent commit
-            latest_commit = commits[0].sha
-            logger.info(f"Found latest commit for {service_name}: {latest_commit}")
-            
-            # Construct the URL to the tspconfig.yaml file
-            tspconfig_url = f"https://raw.githubusercontent.com/Azure/azure-rest-api-specs/{latest_commit}/{folder_path}/tspconfig.yaml"
-        
-        logger.info(f"tspconfig URL: {tspconfig_url}")
-        return tspconfig_url
-    
-    except Exception as e:
-        logger.error(f"Error getting latest commit: {str(e)}")
-        # Fallback to main branch if there's an error
-        fallback_url = f"https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/{folder_path}/tspconfig.yaml"
-        logger.info(f"Falling back to URL: {fallback_url}")
-        return fallback_url
 
+        latest_commit = commits[0].sha
+        logger.info(f"Found latest commit for {service_name}: {latest_commit}")
+        return latest_commit
+
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
+        raise
+            
 
 # Helper function to run CLI commands
 def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optional[str] = None) -> Dict[str, Any]:
@@ -73,17 +83,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     
     # Convert args dict to CLI arguments
     for key, value in args.items():
-        if key == "_":
-            # Handle positional arguments
-            if isinstance(value, list):
-                cli_args.extend(value)
-            else:
-                cli_args.append(value)
-        elif value is True:
-            cli_args.append(f"--{key}")
-        elif value is not False and value is not None:
-            cli_args.append(f"--{key}")
-            cli_args.append(str(value))
+        cli_args.append(f"--{key}")
+        cli_args.append(str(value))
 
     logger.info(f"Running command: {' '.join(cli_args)}")
     
@@ -116,22 +117,23 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
 
 # Register tools for each TypeSpec client generator CLI command
 @mcp.tool("init")
-def init_tool(package_name: str, root_dir: Optional[str] = None) -> Dict[str, Any]:
-    """Initialize a typespec client library directory given the package name.
+def init_tool(tsp_config_url: str, root_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Initialize a typespec client library directory given the package url.
     
     Args:
-        package_name: The name of the package to initialize.
+        tsp_config_url: The URL to the tspconfig.yaml file for the package.
         root_dir: The root directory where the client library will be generated.
     
     Returns:
         A dictionary containing the result of the command.
     """
     # Get the URL to the tspconfig.yaml file
-    tspconfig_url = get_latest_commit(package_name)
+    commit_id = get_latest_commit(tsp_config_url)
     
     # Prepare arguments for the CLI command
     args = {}
-    args["tsp-config"] = "--tsp-config " + tspconfig_url
+    args["tsp-config"] = tsp_config_url
+    args["commit"] = commit_id
     
     return run_typespec_cli_command("init", args, root_dir=root_dir)
 
