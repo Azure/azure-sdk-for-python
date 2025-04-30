@@ -10,18 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AvailablePhoneNumberStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the status of the phone number. Possible values include: 'available', 'reserved',
-    'expired', 'error', 'purchased'.
-    """
-
-    AVAILABLE = "available"
-    RESERVED = "reserved"
-    EXPIRED = "expired"
-    ERROR = "error"
-    PURCHASED = "purchased"
-
-
 class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The frequency with which the cost gets billed."""
 
@@ -42,6 +30,18 @@ class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PERSON = "person"
     APPLICATION = "application"
+
+
+class PhoneNumberAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the status of the phone number. Possible values include: 'available', 'reserved',
+    'expired', 'error', 'purchased'.
+    """
+
+    AVAILABLE = "available"
+    RESERVED = "reserved"
+    EXPIRED = "expired"
+    ERROR = "error"
+    PURCHASED = "purchased"
 
 
 class PhoneNumberCapabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

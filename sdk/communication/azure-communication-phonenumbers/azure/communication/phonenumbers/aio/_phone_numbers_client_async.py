@@ -37,7 +37,8 @@ from .._generated.models import (
     PhoneNumbersReservationPurchaseRequest,
     PhoneNumbersReservation,
     PhoneNumbersBrowseRequest,
-    PhoneNumberAssignmentType
+    PhoneNumberAssignmentType,
+    PhoneNumbersBrowseResult
 )
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
@@ -416,7 +417,7 @@ class PhoneNumbersClient:
         await self._phone_number_client.__aexit__()
 
     @distributed_trace_async
-    async def get_phone_numbers_reservation(
+    async def get_reservation(
         self, reservation_id: str, **kwargs: Any
     ) -> PhoneNumbersReservation:
         """Gets a reservation by its ID.
@@ -434,7 +435,7 @@ class PhoneNumbersClient:
         )
 
     @distributed_trace
-    def list_phone_numbers_reservations(
+    def list_reservations(
         self, *, max_page_size=100, **kwargs: Any
     ) -> AsyncItemPaged[PhoneNumbersReservation]:
         """Lists all reservations.
@@ -457,7 +458,7 @@ class PhoneNumbersClient:
     @distributed_trace_async
     async def create_or_update_reservation(
         self, *,
-        reservation_id: Optional[str] = None,
+        reservation_id: str,
         numbers_to_add: Optional[List[AvailablePhoneNumber]] = None,
         numbers_to_remove: Optional[List[str]] = None,
         **kwargs: Any
@@ -472,8 +473,8 @@ class PhoneNumbersClient:
         Partial success is possible, in which case the result will contain phone numbers with error status.
 
         
-        :keyword reservation_id: The ID of the reservation. If not provided, a new GUID will be generated.
-        :paramtype reservation_id: str
+        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservatioin, 
+         with that ID exists it will be updated; ortherwise a new reservation will be created.
         :keyword numbers_to_add: List of phone numbers to add to the reservation.
         :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
         :keyword numbers_to_remove: List of phone number IDs to remove from the reservation.
@@ -481,8 +482,13 @@ class PhoneNumbersClient:
         :return: The updated reservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
+        if reservation_id is None:
+            raise ValueError("reservation_id cannot be None")
 
-        _reservation_id = reservation_id or str(uuid.uuid4())
+        try:
+            uuid.UUID(reservation_id)
+        except ValueError as exc:
+            raise ValueError("reservation_id must be in valid UUID format") from exc
 
         phone_numbers = {}
         if numbers_to_add:
@@ -495,7 +501,7 @@ class PhoneNumbersClient:
         reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
 
         return await self._phone_number_client.phone_numbers.create_or_update_reservation(
-            _reservation_id, reservation, **kwargs
+            reservation_id, reservation, **kwargs
         )
 
     @distributed_trace_async
@@ -553,15 +559,15 @@ class PhoneNumbersClient:
     @distributed_trace_async
     async def browse_available_phone_numbers(
             self,
+            *,
             country_code: str,
             phone_number_type: Union[str, PhoneNumberType],
-            *,
             sms_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
             calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
             assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
             phone_number_prefixes: Optional[List[str]] = None,
             **kwargs: Any,
-    ) -> List[AvailablePhoneNumber]:
+    ) -> PhoneNumbersBrowseResult:
         """Browses for available phone numbers to purchase.
 
         Browses for available phone numbers to purchase. The response will be a randomized list of
@@ -569,11 +575,11 @@ class PhoneNumbersClient:
         paginated. Since the results are randomized, repeating the same request will not guarantee the
         same results.
 
-        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
-        :type country_code: str
-        :param phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
+        :keyword country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :paramtype country_code: str
+        :keyword phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
             or tollFree. Possible values include: "geographic", "tollFree".
-        :type phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword sms_capability: The SMS capability to search for. Known values are: "inbound",
             "outbound", "inbound_outbound", "none".
         :paramtype sms_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
@@ -587,8 +593,13 @@ class PhoneNumbersClient:
             be limited to phone numbers that start with any of the given prefixes.
         :paramtype phone_number_prefixes: list[str]
         :return: A list of available phone numbers matching the browsing criteria.
-        :rtype: List[~azure.communication.phonenumbers.models.AvailablePhoneNumber]
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
         """
+        if not country_code:
+            raise ValueError("country_code is required.")
+        if not phone_number_type:
+            raise ValueError("phone_number_type is required.")
+
         browse_capabilities = None
         if sms_capability is not None or calling_capability is not None:
             browse_capabilities = PhoneNumberBrowseCapabilitiesRequest(
@@ -601,10 +612,8 @@ class PhoneNumbersClient:
             assignment_type=assignment_type,
             phone_number_prefixes=phone_number_prefixes
         )
-        result = await self._phone_number_client.phone_numbers.browse_available_numbers(
+        return await self._phone_number_client.phone_numbers.browse_available_numbers(
             country_code,
             browse_request,
             **kwargs
         )
-
-        return result.phone_numbers

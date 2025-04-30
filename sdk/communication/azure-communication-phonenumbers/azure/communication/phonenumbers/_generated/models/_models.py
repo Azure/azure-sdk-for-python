@@ -43,7 +43,7 @@ class AvailablePhoneNumber(_serialization.Model):
     :ivar status: Represents the status of the phone number. Possible values include: 'available',
      'reserved', 'expired', 'error', 'purchased'. Known values are: "available", "reserved",
      "expired", "error", and "purchased".
-    :vartype status: str or ~azure.communication.phonenumbers.models.AvailablePhoneNumberStatus
+    :vartype status: str or ~azure.communication.phonenumbers.models.PhoneNumberAvailabilityStatus
     :ivar is_agreement_to_not_resell_required: Indicates if do not resell agreement is required. If
      true, the phone number cannot be acquired unless the customer provides explicit agreement to
      not resell it.
@@ -109,7 +109,7 @@ class AvailablePhoneNumber(_serialization.Model):
         self.phone_number_type = phone_number_type
         self.assignment_type = assignment_type
         self.cost: Optional["_models.PhoneNumberCost"] = None
-        self.status: Optional[Union[str, "_models.AvailablePhoneNumberStatus"]] = None
+        self.status: Optional[Union[str, "_models.PhoneNumberAvailabilityStatus"]] = None
         self.is_agreement_to_not_resell_required: Optional[bool] = None
         self.error: Optional["_models.AvailablePhoneNumberError"] = None
 

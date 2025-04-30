@@ -31,7 +31,7 @@ from ._generated.models import (
 
 from ._generated.models._enums import (
     ReservationStatus,
-    AvailablePhoneNumberStatus,
+    PhoneNumberAvailabilityStatus,
 )
 
 __all__ = [
@@ -57,5 +57,5 @@ __all__ = [
     'AvailablePhoneNumber',
     'AvailablePhoneNumberError',
     'ReservationStatus',
-    'AvailablePhoneNumberStatus',
+    'PhoneNumberAvailabilityStatus',
 ]
