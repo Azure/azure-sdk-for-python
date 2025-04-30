@@ -1232,7 +1232,10 @@ class RedTeam():
         :rtype: List[Callable]
         """
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
-        if AttackStrategy.MultiTurn == attack_strategy:
+        if isinstance(attack_strategy, list):
+            if AttackStrategy.MultiTurn in attack_strategy:
+                return self._multi_turn_orchestrator
+        elif AttackStrategy.MultiTurn == attack_strategy:
             return self._multi_turn_orchestrator
         return self._prompt_sending_orchestrator
     
