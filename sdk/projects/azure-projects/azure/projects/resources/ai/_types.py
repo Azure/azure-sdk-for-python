@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import Literal, TypedDict, Union
 
 from ..._bicep.expressions import Parameter
+from .._extension import Identity
 
 
 VERSION = "2024-10-01"
@@ -43,7 +44,7 @@ class CognitiveServicesAccountProperties(TypedDict, total=False):
     """A collection of rules governing the accessibility from specific network locations."""
     networkInjections: Union[CognitiveServicesAccountNetworkInjections, Parameter]
     """Specifies in AI Foundry where virtual network injection occurs to secure scenarios like Agents entirely within the user's private network, eliminating public internet exposure while maintaining control over network configurations and resources."""
-    publicNetworkAccess: Union[Literal['Enabled', 'Disabled'], Parameter]
+    publicNetworkAccess: Union[Literal["Enabled", "Disabled"], Parameter]
     """Whether or not public endpoint access is allowed for this account."""
     raiMonitorConfig: Union[CognitiveServicesAccountRaiMonitorConfig, Parameter]
     """Cognitive Services Rai Monitor Config."""
@@ -79,17 +80,10 @@ class CognitiveServicesAccountApiProperties(TypedDict, total=False):
 
 
 class CognitiveServicesAccountEncryption(TypedDict, total=False):
-    keySource: Union[Literal['Microsoft.CognitiveServices', 'Microsoft.KeyVault'], Parameter]
+    keySource: Union[Literal["Microsoft.CognitiveServices", "Microsoft.KeyVault"], Parameter]
     """Enumerates the possible value of keySource for Encryption"""
     keyVaultProperties: Union[CognitiveServicesAccountKeyVaultProperties, Parameter]
     """Properties of KeyVault"""
-
-
-class CognitiveServicesAccountIdentity(TypedDict, total=False):
-    type: Union[Literal['SystemAssigned, UserAssigned', 'SystemAssigned', 'None', 'UserAssigned'], Parameter]
-    """The identity type."""
-    userAssignedIdentities: dict[Union[str, Parameter], Union[dict, Parameter]]
-    """The list of user assigned identities associated with the resource. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}"""
 
 
 class CognitiveServicesAccountIpRule(TypedDict, total=False):
@@ -109,7 +103,7 @@ class CognitiveServicesAccountKeyVaultProperties(TypedDict, total=False):
 
 
 class CognitiveServicesAccountResource(TypedDict, total=False):
-    identity: Union[CognitiveServicesAccountIdentity, Parameter]
+    identity: Union[Identity, Parameter]
     """Identity for the resource."""
     kind: Union[str, Parameter]
     """The Kind of the resource."""
@@ -117,7 +111,7 @@ class CognitiveServicesAccountResource(TypedDict, total=False):
     """The geo-location where the resource lives"""
     name: Union[str, Parameter]
     """The resource name"""
-    properties: Union[CognitiveServicesAccountProperties, Parameter]
+    properties: CognitiveServicesAccountProperties
     """Properties of Cognitive Services account."""
     sku: Union[CognitiveServicesAccountSku, Parameter]
     """The resource model definition representing SKU"""
@@ -128,12 +122,12 @@ class CognitiveServicesAccountResource(TypedDict, total=False):
 class CognitiveServicesAccountMultiRegionSettings(TypedDict, total=False):
     regions: Union[list[CognitiveServicesAccountRegionSetting], Parameter]
     """"""
-    routingMethod: Union[Literal['Weighted', 'Performance', 'Priority'], Parameter]
+    routingMethod: Union[Literal["Weighted", "Performance", "Priority"], Parameter]
     """Multiregion routing methods."""
 
 
 class CognitiveServicesAccountNetworkInjections(TypedDict, total=False):
-    scenario: Union[Literal['agent', 'none'], Parameter]
+    scenario: Union[Literal["agent", "none"], Parameter]
     """Specifies what features in AI Foundry network injection applies to. Currently only supports 'agent' for agent scenarios. 'none' means no network injection."""
     subnetArmId: Union[str, Parameter]
     """Specify the subnet for which your Agent Client is injected into."""
@@ -142,9 +136,9 @@ class CognitiveServicesAccountNetworkInjections(TypedDict, total=False):
 
 
 class CognitiveServicesAccountNetworkRuleSet(TypedDict, total=False):
-    bypass: Union[Literal['AzureServices', 'None'], Parameter]
+    bypass: Union[Literal["AzureServices", "None"], Parameter]
     """Setting for trusted services."""
-    defaultAction: Union[Literal['Deny', 'Allow'], Parameter]
+    defaultAction: Union[Literal["Deny", "Allow"], Parameter]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
     ipRules: Union[list[CognitiveServicesAccountIpRule], Parameter]
     """The list of IP address rules."""
@@ -177,7 +171,7 @@ class CognitiveServicesAccountSku(TypedDict, total=False):
     """The name of the SKU. Ex - P3. It is typically a letter+number code"""
     size: Union[str, Parameter]
     """The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code."""
-    tier: Union[Literal['Basic', 'Enterprise', 'Standard', 'Premium', 'Free'], Parameter]
+    tier: Union[Literal["Basic", "Enterprise", "Standard", "Premium", "Free"], Parameter]
     """This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT."""
 
 

@@ -290,10 +290,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         self, current_properties: dict[str, Any], new_properties: dict[str, Any], *, fields: FieldsType, **kwargs
     ):
         super()._merge_resource(
-            current_properties,
-            new_properties,
-            merge_properties=["properties", "tags", "sku"],
-            **kwargs
+            current_properties, new_properties, merge_properties=["properties", "tags", "sku"], **kwargs
         )
         for field in find_all_resource_match(
             fields,
@@ -623,7 +620,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
     :vartype DEFAULTS: DeploymentResource
     :ivar DEFAULT_EXTENSIONS: Default extensions configuration
     :vartype DEFAULT_EXTENSIONS: ExtensionResources
-    :ivar properties: Resource properties 
+    :ivar properties: Resource properties
     :vartype properties: AIDeploymentResourceType
     :ivar parent: Parent AI Services account
     :vartype parent: AIServices

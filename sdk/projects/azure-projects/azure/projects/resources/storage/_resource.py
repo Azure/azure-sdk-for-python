@@ -21,7 +21,7 @@ if TYPE_CHECKING:
         StorageAccountResource,
         StorageAccountNetworkRuleSet,
         StorageAccountAzureFilesIdentityBasedAuthentication,
-        StorageAccountEncryption
+        StorageAccountEncryption,
     )
 
 
@@ -234,7 +234,8 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :param name: Name of the storage account
     :type name: str | Parameter | None
 
-    :keyword access_tier: Storage tier for billing. Required for BlobStorage accounts. Premium is default for premium block blobs
+    :keyword access_tier: Storage tier for billing. Required for BlobStorage accounts.
+     Premium is default for premium block blobs
     :paramtype access_tier: Literal["Cool", "Hot", "Premium"] | Parameter
     :keyword enable_hierarchical_namespace: Enable hierarchical namespace. Required for SFTP or NFS v3
     :paramtype enable_hierarchical_namespace: bool | Parameter
@@ -287,7 +288,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword sas_expiration_period: SAS token expiration period (DD.HH:MM:SS)
     :paramtype sas_expiration_period: str | Parameter
     :keyword sku: Storage Account SKU
-    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :paramtype sku: str | Parameter
     :keyword supports_https_traffic_only: Allow only HTTPS traffic
     :paramtype supports_https_traffic_only: bool | Parameter
     :keyword tags: Resource tags
@@ -304,6 +305,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :ivar version: API version string
     :vartype version: str
     """
+
     DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT  # type: ignore[assignment]
     properties: StorageAccountResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]

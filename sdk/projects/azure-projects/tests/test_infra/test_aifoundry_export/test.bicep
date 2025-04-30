@@ -80,7 +80,7 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
     name: 'basic'
   }
   properties: {
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'disabled'
   }
   location: location
   tags: azdTags

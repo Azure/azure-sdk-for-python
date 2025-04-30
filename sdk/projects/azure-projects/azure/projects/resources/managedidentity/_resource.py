@@ -41,7 +41,7 @@ _DEFAULT_USER_ASSIGNED_IDENTITY: "UserAssignedIdentityResource" = {
 class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
     """A user-assigned managed identity in Azure.
 
-    User-assigned managed identities are Azure resources that can be used to authenticate to services 
+    User-assigned managed identities are Azure resources that can be used to authenticate to services
     that support Azure AD authentication.
 
     :ivar DEFAULTS: Default values for the resource properties
@@ -68,6 +68,7 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
     :keyword dict tags: Tags of the User Assigned Identity.
     :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """
+
     DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY  # type: ignore[assignment]
     properties: UserAssignedIdentityResourceType
     parent: None

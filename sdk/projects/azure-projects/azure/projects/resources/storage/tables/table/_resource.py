@@ -112,9 +112,9 @@ class Table(_ClientResource, Generic[TableResourceType]):
     :param account: The storage account name or reference
     :type account: str | Parameter | TableStorage | None
     :keyword roles: Array of role assignments to create for user-assigned identity
-    :paramtype roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :paramtype roles: Parameter | list[Parameter | RoleAssignment | str]
     :keyword user_roles: Array of role assignments to create for user principal ID
-    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | str]
 
     :ivar DEFAULTS: Default values for table resource properties
     :vartype DEFAULTS: TableResource

@@ -55,7 +55,8 @@ T = TypeVar("T")
 
 def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -> T:
     # TODO: Found this on StackOverflow - needs further inspection
-    # https://stackoverflow.com/questions/55647753/call-async-function-from-sync-function-while-the-synchronous-function-continues
+    # https://stackoverflow.com/questions/55647753/
+    # call-async-function-from-sync-function-while-the-synchronous-function-continues
 
     def run_in_new_loop():
         new_loop = asyncio.new_event_loop()
@@ -131,6 +132,7 @@ def validate_parameter(
     replace: bool = False,
 ) -> Any:
     from ._bicep.expressions import MISSING
+
     if (
         parameter.name not in GLOBAL_PARAMS
         and parameter.public
@@ -162,6 +164,7 @@ def resolve_parameters(
     replace: bool = False,
 ) -> Dict[Union[str, "Parameter"], Any]:
     # TODO We also need to resolve resource references to a ResourceSymbol.id.
+    # pylint: disable=protected-access
     from ._bicep.expressions import Parameter, Expression
 
     new_props: Dict[Union[str, "Parameter"], Any] = {}
@@ -172,12 +175,10 @@ def resolve_parameters(
 
         if isinstance(value, Parameter) and value.name:
             new_props[key] = validate_parameter(value, parameters, values, replace=replace)
-        elif isinstance(value, Expression) and isinstance(value._value, Parameter):  # pylint: disable=protected-access
+        elif isinstance(value, Expression) and isinstance(value._value, Parameter):
             # This is currently here to support parameterized subscription scope - may need to be
             # expanded further.
-            value._value = validate_parameter(
-                value._value, parameters, values, replace=replace
-            )  # pylint: disable=protected-access
+            value._value = validate_parameter(value._value, parameters, values, replace=replace)
         elif isinstance(value, list):
             resolved_items = []
             for item in value:

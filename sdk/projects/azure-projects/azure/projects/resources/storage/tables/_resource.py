@@ -66,7 +66,8 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
     :type account: str | StorageAccount | Parameter | None
     :keyword cors_rules: Specifies CORS rules for the Table service. Up to five CorsRule elements allowed.
     :paramtype cors_rules: List[TableServiceCorsRule | Parameter] | Parameter
-    :keyword access_tier: Required if the Storage Account kind is set to BlobStorage. The access tier is used for billing.
+    :keyword access_tier: Required if the Storage Account kind is set to BlobStorage.
+     The access tier is used for billing.
     :paramtype access_tier: Literal["Cool", "Hot", "Premium"] | Parameter
     :keyword enable_hierarchical_namespace: If true, enables Hierarchical Namespace for the storage account.
     :paramtype enable_hierarchical_namespace: bool | Parameter
@@ -105,15 +106,15 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
     :keyword sas_expiration_period: The SAS expiration period in DD.HH:MM:SS format.
     :paramtype sas_expiration_period: str | Parameter
     :keyword sku: Storage Account Sku Name.
-    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :paramtype sku: str | Parameter
     :keyword supports_https_traffic_only: Allows HTTPS traffic only if true.
     :paramtype supports_https_traffic_only: bool | Parameter
     :keyword tags: Resource tags.
     :paramtype tags: Dict[str, Union[str, Parameter]] | Parameter
     :keyword roles: Array of role assignments to create for user-assigned identity
-    :paramtype roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :paramtype roles: Parameter | list[Parameter | RoleAssignment | str]
     :keyword user_roles: Array of role assignments to create for user principal ID
-    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | Literal["Contributor", "Owner", "Reader", "Reader and Data Access", "Role Based Access Control Administrator", "Storage Account Backup Contributor", "Storage Account Contributor", "Storage Account Key Operator Service Role", "Storage Table Data Contributor", "Storage Table Data Reader", "User Access Administrator"]]
+    :paramtype user_roles: Parameter | list[Parameter | RoleAssignment | str]
 
     :ivar DEFAULTS: Default values for table service resource properties
     :vartype DEFAULTS: TableServiceResource

@@ -199,7 +199,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
                 sku = kwargs.pop("sku")
-                properties["sku"] = {"name": sku, "tier": "sku"}
+                properties["sku"] = {"name": sku, "tier": sku}
                 properties["sku"] = properties.get("sku", {})
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
@@ -357,9 +357,9 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
     :keyword public_network_access: Whether public network access is allowed
     :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
     :keyword roles: Array of role assignments to create
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword user_roles: Array of Role assignments to create for user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword tags: Tags of the resource
     :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
 
@@ -372,7 +372,7 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
     :ivar parent: Parent resource (None for AI Hub)
     :vartype parent: None
     """
-    
+
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_AI_HUB
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_HUB_EXTENSIONS
     properties: MachineLearningWorkspaceResourceType
@@ -486,9 +486,9 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
     :keyword public_network_access: Whether public network access is allowed
     :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
     :keyword roles: Array of role assignments to create
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword user_roles: Array of Role assignments to create for user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["AzureML Compute Operator", "AzureML Data Scientist", "AzureML Metrics Writer (preview)", "AzureML Registry User", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword tags: Tags of the resource
     :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
 

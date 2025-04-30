@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import TypedDict, Union
@@ -11,8 +11,7 @@ from typing import TypedDict, Union
 from ..._bicep.expressions import Parameter
 
 
-
-VERSION = '2024-04-01'
+VERSION = "2024-04-01"
 
 
 class AppServicePlanProperties(TypedDict, total=False):
@@ -81,7 +80,7 @@ class AppServicePlanResource(TypedDict, total=False):
     """Resource Location."""
     name: Union[str, Parameter]
     """The resource name"""
-    properties: Union[AppServicePlanProperties, Parameter]
+    properties: AppServicePlanProperties
     """AppServicePlan resource specific properties"""
     sku: Union[AppServicePlanSkuDescription, Parameter]
     """Description of a SKU for a scalable resource."""

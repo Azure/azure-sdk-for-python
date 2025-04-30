@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import Union, TypedDict, Any
@@ -11,13 +11,13 @@ from typing import Union, TypedDict, Any
 from ....._bicep.expressions import Parameter
 
 
-VERSION = '2024-01-01'
+VERSION = "2024-01-01"
 
 
 class TableResource(TypedDict, total=False):
     name: Union[str, Parameter]
     """The resource name"""
-    properties: Union[TableProperties, Parameter]
+    properties: TableProperties
     """Table resource properties."""
     parent: Any
     """The Symbolic name of the resource that is the parent for this resource."""

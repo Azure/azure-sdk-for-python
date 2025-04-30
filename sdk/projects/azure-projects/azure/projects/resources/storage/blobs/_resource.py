@@ -121,7 +121,7 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
     :keyword sas_expiration_period: SAS token expiration period (DD.HH:MM:SS)
     :paramtype sas_expiration_period: str | Parameter
     :keyword sku: Storage Account SKU
-    :paramtype sku: Literal["Premium_LRS", "Premium_ZRS", "Standard_GRS", "Standard_GZRS", "Standard_LRS", "Standard_RAGRS", "Standard_RAGZRS", "Standard_ZRS"] | Parameter
+    :paramtype sku: str | Parameter
     :keyword supports_https_traffic_only: Allow only HTTPS traffic
     :paramtype supports_https_traffic_only: bool | Parameter
     :keyword tags: Resource tags
@@ -142,6 +142,7 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
     :ivar settings: Configuration settings for the resource.
     :vartype settings: Dict[str, Setting]
     """
+
     DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_BLOB_SERVICE_EXTENSIONS
     properties: BlobServiceResourceType

@@ -71,6 +71,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
     :keyword tags: Tags to be applied to the Resource Group
     :paramtype tags: dict[str, str | Parameter] | Parameter
     """
+
     DEFAULTS: "ResourceGroupResource" = _DEFAULT_RESOURCE_GROUP  # type: ignore[assignment]
     properties: ResourceGroupResourceType
     parent: None

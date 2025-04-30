@@ -27,7 +27,11 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from ._types import CognitiveServicesAccountResource, CognitiveServicesAccountApiProperties, CognitiveServicesAccountNetworkRuleSet
+    from ._types import (
+        CognitiveServicesAccountResource,
+        CognitiveServicesAccountApiProperties,
+        CognitiveServicesAccountNetworkRuleSet,
+    )
 
 
 class CognitiveServicesKwargs(TypedDict, total=False):
@@ -456,7 +460,7 @@ _DEFAULT_AI_SERVICES_EXTENSIONS: ExtensionResources = {
 class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType]):
     """Azure AI Services account resource.
 
-    This class represents an Azure AI Services account, which is a specialized type of Cognitive Services 
+    This class represents an Azure AI Services account, which is a specialized type of Cognitive Services
     account specifically for AI services.
 
     :param properties: Optional dictionary containing the resource properties
@@ -469,7 +473,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
     :keyword allowed_fqdn_list: List of allowed FQDN
     :paramtype allowed_fqdn_list: Union[List[Union[str, Parameter]], Parameter]
     :keyword disable_local_auth: Allow only Azure AD authentication
-    :paramtype disable_local_auth: Union[bool, Parameter]  
+    :paramtype disable_local_auth: Union[bool, Parameter]
     :keyword dynamic_throttling_enabled: Flag to enable dynamic throttling
     :paramtype dynamic_throttling_enabled: Union[bool, Parameter]
     :keyword location: Location for all Resources
@@ -491,7 +495,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
     :keyword user_roles: Array of Role assignments for user principal ID
     :paramtype user_roles: Union[Parameter, List[Union[Parameter, RoleAssignment, Literal[...]]]]
     :keyword sku: SKU of the Cognitive Services account
-    :paramtype sku: Union[Literal["C2", "C3", "C4", "F0", "F1", "S", "S0", "S1", "S10", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9"], Parameter]
+    :paramtype sku: Union[str, Parameter]
     :keyword tags: Resource tags
     :paramtype tags: Union[Dict[str, Union[str, Parameter]], Parameter]
 
@@ -504,6 +508,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
     :ivar parent: Parent resource (None for this resource type)
     :vartype parent: None
     """
+
     DEFAULTS: "CognitiveServicesAccountResource" = _DEFAULT_AI_SERVICES
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_SERVICES_EXTENSIONS
 

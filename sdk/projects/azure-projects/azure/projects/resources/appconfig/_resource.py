@@ -33,7 +33,7 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from ._types import ConfigStoreResource
+    from ._types import ConfigurationStoreResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -126,9 +126,11 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Resource tags."""
 
 
-ConfigStoreResourceType = TypeVar("ConfigStoreResourceType", bound=Mapping[str, Any], default="ConfigStoreResource")
+ConfigStoreResourceType = TypeVar(
+    "ConfigStoreResourceType", bound=Mapping[str, Any], default="ConfigurationStoreResource"
+)
 ClientType = TypeVar("ClientType")
-_DEFAULT_CONFIG_STORE: "ConfigStoreResource" = {
+_DEFAULT_CONFIG_STORE: "ConfigurationStoreResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "sku": {"name": "Standard"},
     "properties": {
@@ -156,7 +158,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     of application settings and feature flags.
 
     :ivar DEFAULTS: Default configuration settings for the Config Store resource
-    :vartype DEFAULTS: ConfigStoreResource
+    :vartype DEFAULTS: ConfigurationStoreResource
     :ivar DEFAULT_EXTENSIONS: Default role assignments and extensions configuration
     :vartype DEFAULT_EXTENSIONS: ExtensionResources
     :ivar properties: Properties of the Config Store resource
@@ -165,7 +167,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     :vartype parent: None
 
     :param properties: Optional dictionary containing the Config Store resource properties
-    :type properties: Optional[ConfigStoreResource]
+    :type properties: Optional[ConfigurationStoreResource]
     :param name: Optional name for the Config Store
     :type name: Optional[Union[str, Parameter]]
     :keyword create_mode: Indicates whether the configuration store needs to be recovered
@@ -181,24 +183,26 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     :keyword public_network_access: Whether or not public network access is allowed for this resource
     :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
     :keyword roles: Array of role assignments to create for the managed identity
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["App Compliance Automation Administrator", "App Compliance Automation Reader", "App Configuration Contributor", "App Configuration Data Owner", "App Configuration Data Reader", "App Configuration Reader", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword user_roles: Array of role assignments to create for the user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["App Compliance Automation Administrator", "App Compliance Automation Reader", "App Configuration Contributor", "App Configuration Data Owner", "App Configuration Data Reader", "App Configuration Reader", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword sku: Pricing tier of App Configuration
     :paramtype sku: Literal["Free", "Standard"]
-    :keyword soft_delete_retention: The amount of time in days that the configuration store will be retained when soft deleted
+    :keyword soft_delete_retention: The amount of time in days that the configuration store will be
+     retained when soft deleted
     :paramtype soft_delete_retention: int
     :keyword tags: Resource tags
     :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """
-    DEFAULTS: "ConfigStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
+
+    DEFAULTS: "ConfigurationStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_STORE_EXTENSIONS
     properties: ConfigStoreResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
-        properties: Optional["ConfigStoreResource"] = None,
+        properties: Optional["ConfigurationStoreResource"] = None,
         /,
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[ConfigStoreKwargs],

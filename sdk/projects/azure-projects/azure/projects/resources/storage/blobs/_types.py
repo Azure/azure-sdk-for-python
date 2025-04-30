@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import Literal, Any, Union, TypedDict
@@ -11,17 +11,17 @@ from typing import Literal, Any, Union, TypedDict
 from ...._bicep.expressions import Parameter
 
 
-VERSION = '2024-01-01'
+VERSION = "2024-01-01"
 
 
-class BlobServicePropertiesProperties(TypedDict, total=False):
+class BlobServiceProperties(TypedDict, total=False):
     automaticSnapshotPolicyEnabled: Union[bool, Parameter]
     """Deprecated in favor of isVersioningEnabled property."""
     changeFeed: Union[BlobServiceChangeFeed, Parameter]
     """The blob service properties for change feed events."""
     containerDeleteRetentionPolicy: Union[BlobServiceDeleteRetentionPolicy, Parameter]
     """The blob service properties for container soft delete."""
-    cors: Union[BlobServiceCorsRule, Parameter]
+    cors: Union[BlobServiceCorsRules, Parameter]
     """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
     defaultServiceVersion: Union[str, Parameter]
     """defaultServiceVersion"""
@@ -45,7 +45,9 @@ class BlobServiceChangeFeed(TypedDict, total=False):
 class BlobServiceCorsRule(TypedDict, total=False):
     allowedHeaders: Union[list[Union[str, Parameter]], Parameter]
     """Required if CorsRule element is present. A list of headers allowed to be part of the cross-origin request."""
-    allowedMethods: Union[Literal['CONNECT', 'OPTIONS', 'HEAD', 'MERGE', 'DELETE', 'GET', 'PATCH', 'PUT', 'TRACE', 'POST'], Parameter]
+    allowedMethods: Union[
+        Literal["CONNECT", "OPTIONS", "HEAD", "MERGE", "DELETE", "GET", "PATCH", "PUT", "TRACE", "POST"], Parameter
+    ]
     """Required if CorsRule element is present. A list of HTTP methods that are allowed to be executed by the origin."""
     allowedOrigins: Union[list[Union[str, Parameter]], Parameter]
     """Required if CorsRule element is present. A list of origin domains that will be allowed via CORS, or \"*\" to allow all domains"""
@@ -56,7 +58,7 @@ class BlobServiceCorsRule(TypedDict, total=False):
 
 
 class BlobServiceCorsRules(TypedDict, total=False):
-    corsRules: Union[list[BlobServiceCorsRule], Parameter]
+    corsRules: Union[list[Union[BlobServiceCorsRule, Parameter]], Parameter]
     """The List of CORS rules. You can include up to five CorsRule elements in the request."""
 
 
@@ -74,16 +76,16 @@ class BlobServiceLastAccessTimeTrackingPolicy(TypedDict, total=False):
     """An array of predefined supported blob types. Only blockBlob is the supported value. This field is currently read only"""
     enable: Union[bool, Parameter]
     """When set to true last access time based tracking is enabled."""
-    name: Union[Literal['AccessTimeTracking'], Parameter]
+    name: Union[Literal["AccessTimeTracking"], Parameter]
     """Name of the policy. The valid value is AccessTimeTracking. This field is currently read only"""
     trackingGranularityInDays: Union[int, Parameter]
     """The field specifies blob object tracking granularity in days, typically how often the blob object should be tracked.This field is currently read only with value as 1"""
 
 
 class BlobServiceResource(TypedDict, total=False):
-    name: Union[Literal['default'], Parameter]
+    name: Union[Literal["default"], Parameter]
     """The resource name"""
-    properties: Union[BlobServicePropertiesProperties, Parameter]
+    properties: BlobServiceProperties
     """properties"""
     parent: Any
     """The Symbolic name of the resource that is the parent for this resource."""
@@ -94,4 +96,3 @@ class BlobServiceRestorePolicyProperties(TypedDict, total=False):
     """how long this blob can be restored. It should be great than zero and less than DeleteRetentionPolicy.days."""
     enabled: Union[bool, Parameter]
     """Blob restore is enabled if set to true."""
-

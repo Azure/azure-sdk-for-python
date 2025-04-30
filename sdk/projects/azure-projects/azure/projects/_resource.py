@@ -323,11 +323,12 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         return current_properties
 
     def _merge_resource(
-            self, current_properties: Dict[str, Any],
-            new_properties: Dict[str, Any],
-            *,
-            merge_properties: Optional[List[str]] = None,
-            **kwargs
+        self,
+        current_properties: Dict[str, Any],
+        new_properties: Dict[str, Any],
+        *,
+        merge_properties: Optional[List[str]] = None,
+        **kwargs,
     ) -> None:
         merge_properties = merge_properties or ["properties", "tags"]
         for key, value in new_properties.items():
@@ -345,9 +346,10 @@ class Resource:  # pylint: disable=too-many-instance-attributes
     def _merge_extensions(self, current_extensions: ExtensionResources, new_extensions: ExtensionResources) -> None:
         for key, value in new_extensions.items():
             if key in current_extensions:
-                if current_extensions[key] != value:  # type: ignore[literal-required]
+                current_value = current_extensions[key]  # type: ignore[literal-required]
+                if current_value != value:
                     raise ValueError(
-                        f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_extensions[key]}'."  # type: ignore[literal-required]
+                        f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_value}'."
                     )
             else:
                 current_extensions[key] = value  # type: ignore[literal-required]

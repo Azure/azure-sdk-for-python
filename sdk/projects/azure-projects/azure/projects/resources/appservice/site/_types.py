@@ -3,15 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import Literal, TypedDict, Union
 
 from ...._bicep.expressions import Parameter
+from ..._extension import Identity
 
 
-VERSION = '2024-04-01'
+VERSION = "2024-04-01"
 
 
 class AppSiteApiDefinitionInfo(TypedDict, total=False):
@@ -25,7 +26,7 @@ class AppSiteApiManagementConfig(TypedDict, total=False):
 
 
 class AppSiteAutoHealActions(TypedDict, total=False):
-    actionType: Union[Literal['Recycle', 'LogEvent', 'CustomAction'], Parameter]
+    actionType: Union[Literal["Recycle", "LogEvent", "CustomAction"], Parameter]
     """Predefined action to be taken."""
     customAction: Union[AppSiteAutoHealCustomAction, Parameter]
     """Custom action to be taken."""
@@ -69,11 +70,11 @@ class AppSiteAzureStorageInfoValue(TypedDict, total=False):
     """Name of the storage account."""
     mountPath: Union[str, Parameter]
     """Path to mount the storage within the site's runtime environment."""
-    protocol: Union[Literal['Smb', 'Nfs', 'Http'], Parameter]
+    protocol: Union[Literal["Smb", "Nfs", "Http"], Parameter]
     """Mounting protocol to use for the storage account."""
     shareName: Union[str, Parameter]
     """Name of the file share (container name, for Blob storage)."""
-    type: Union[Literal['AzureBlob', 'AzureFiles'], Parameter]
+    type: Union[Literal["AzureBlob", "AzureFiles"], Parameter]
     """Type of storage."""
 
 
@@ -107,7 +108,22 @@ class AppSiteConnStringInfo(TypedDict, total=False):
     """Connection string value."""
     name: Union[str, Parameter]
     """Name of connection string."""
-    type: Union[Literal['RedisCache', 'SQLAzure', 'Custom', 'MySql', 'PostgreSQL', 'DocDb', 'EventHub', 'SQLServer', 'ApiHub', 'ServiceBus', 'NotificationHub'], Parameter]
+    type: Union[
+        Literal[
+            "RedisCache",
+            "SQLAzure",
+            "Custom",
+            "MySql",
+            "PostgreSQL",
+            "DocDb",
+            "EventHub",
+            "SQLServer",
+            "ApiHub",
+            "ServiceBus",
+            "NotificationHub",
+        ],
+        Parameter,
+    ]
     """Type of database."""
 
 
@@ -131,7 +147,7 @@ class AppSiteDaprConfig(TypedDict, total=False):
     """Increasing max size of request body http servers parameter in MB to handle uploading of big files. Default is 4 MB."""
     httpReadBufferSize: Union[int, Parameter]
     """Dapr max size of http header read buffer in KB to handle when sending multi-KB headers. Default is 65KB."""
-    logLevel: Union[Literal['debug', 'info', 'warn', 'error'], Parameter]
+    logLevel: Union[Literal["debug", "info", "warn", "error"], Parameter]
     """Sets the log level for the Dapr sidecar. Allowed values are debug, info, warn, error. Default is info."""
 
 
@@ -169,7 +185,7 @@ class AppSiteFunctionsDeployment(TypedDict, total=False):
 class AppSiteFunctionsDeploymentStorage(TypedDict, total=False):
     authentication: Union[AppSiteFunctionsDeployment, Parameter]
     """Authentication method to access the storage account for deployment."""
-    type: Union[Literal['blobContainer'], Parameter]
+    type: Union[Literal["blobContainer"], Parameter]
     """Property to select Azure Storage type. Available options: blobContainer."""
     value: Union[str, Parameter]
     """Property to set the URL for the selected Azure Storage type. Example: For blobContainer, the value could be https://<storageAccountName>.blob.core.windows.net/<containerName>."""
@@ -178,14 +194,14 @@ class AppSiteFunctionsDeploymentStorage(TypedDict, total=False):
 class AppSiteFunctionsDeploymentStorageAuthentication(TypedDict, total=False):
     storageAccountConnectionStringName: Union[str, Parameter]
     """Use this property for StorageAccountConnectionString. Set the name of the app setting that has the storage account connection string. Do not set a value for this property when using other authentication type."""
-    type: Union[Literal['StorageAccountConnectionString', 'SystemAssignedIdentity', 'UserAssignedIdentity'], Parameter]
+    type: Union[Literal["StorageAccountConnectionString", "SystemAssignedIdentity", "UserAssignedIdentity"], Parameter]
     """Property to select authentication type to access the selected storage account. Available options: SystemAssignedIdentity, UserAssignedIdentity, StorageAccountConnectionString."""
     userAssignedIdentityResourceId: Union[str, Parameter]
     """Use this property for UserAssignedIdentity. Set the resource ID of the identity. Do not set a value for this property when using other authentication type."""
 
 
 class AppSiteFunctionsRuntime(TypedDict, total=False):
-    name: Union[Literal['powershell', 'dotnet-isolated', 'node', 'java', 'custom', 'python'], Parameter]
+    name: Union[Literal["powershell", "dotnet-isolated", "node", "java", "custom", "python"], Parameter]
     """Function app runtime name. Available options: dotnet-isolated, node, java, powershell, python, custom"""
     version: Union[str, Parameter]
     """Function app runtime version. Example: 8 (for dotnet-isolated)"""
@@ -227,11 +243,11 @@ class AppSiteHostingEnvironmentProfile(TypedDict, total=False):
 
 
 class AppSiteHostNameSslState(TypedDict, total=False):
-    hostType: Union[Literal['Repository', 'Standard'], Parameter]
+    hostType: Union[Literal["Repository", "Standard"], Parameter]
     """Indicates whether the hostname is a standard or repository hostname."""
     name: Union[str, Parameter]
     """Hostname."""
-    sslState: Union[Literal['SniEnabled', 'Disabled', 'IpBasedEnabled'], Parameter]
+    sslState: Union[Literal["SniEnabled", "Disabled", "IpBasedEnabled"], Parameter]
     """SSL type."""
     thumbprint: Union[str, Parameter]
     """SSL certificate thumbprint."""
@@ -258,7 +274,7 @@ class AppSiteIpSecurityRestriction(TypedDict, total=False):
     """Subnet mask for the range of IP addresses the restriction is valid for."""
     subnetTrafficTag: Union[int, Parameter]
     """(internal) Subnet traffic tag"""
-    tag: Union[Literal['XffProxy', 'ServiceTag', 'Default'], Parameter]
+    tag: Union[Literal["XffProxy", "ServiceTag", "Default"], Parameter]
     """Defines what this IP filter will be used for. This is to support IP filtering on proxies."""
     vnetSubnetResourceId: Union[str, Parameter]
     """Virtual network resource id"""
@@ -266,17 +282,10 @@ class AppSiteIpSecurityRestriction(TypedDict, total=False):
     """(internal) Vnet traffic tag"""
 
 
-class AppSiteManagedServiceIdentity(TypedDict, total=False):
-    type: Union[Literal['None', 'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned'], Parameter]
-    """Type of managed service identity."""
-    userAssignedIdentities: dict[Union[str, Parameter], Union[dict, Parameter]]
-    """The list of user assigned identities associated with the resource. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}"""
-
-
 class AppSiteResource(TypedDict, total=False):
     extendedLocation: Union[AppSiteExtendedLocation, Parameter]
     """Extended Location."""
-    identity: Union[AppSiteManagedServiceIdentity, Parameter]
+    identity: Union[Identity, Parameter]
     """Managed service identity."""
     kind: Union[str, Parameter]
     """Kind of resource. If the resource is an app, you can refer to https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference for details supported values for kind."""
@@ -284,7 +293,7 @@ class AppSiteResource(TypedDict, total=False):
     """Resource Location."""
     name: Union[str, Parameter]
     """The resource name"""
-    properties: Union[AppSiteProperties, Parameter]
+    properties: AppSiteProperties
     """Site resource specific properties"""
     tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Resource tags"""
@@ -385,7 +394,7 @@ class AppSiteConfig(TypedDict, total=False):
     """Maximum number of workers that a site can scale out to.This setting only applies to apps in plans where ElasticScaleEnabled is <code>true</code>"""
     experiments: Union[AppSiteExperiments, Parameter]
     """This is work around for polymorphic types."""
-    ftpsState: Union[Literal['AllAllowed', 'Disabled', 'FtpsOnly'], Parameter]
+    ftpsState: Union[Literal["AllAllowed", "Disabled", "FtpsOnly"], Parameter]
     """State of FTP / FTPS service"""
     functionAppScaleLimit: Union[int, Parameter]
     """Maximum number of workers that a site can scale out to.This setting only applies to the Consumption and Elastic Premium Plans"""
@@ -401,7 +410,7 @@ class AppSiteConfig(TypedDict, total=False):
     """<code>true</code> if HTTP logging is enabled; otherwise, <code>false</code>."""
     ipSecurityRestrictions: Union[list[AppSiteIpSecurityRestriction], Parameter]
     """IP security restrictions for main."""
-    ipSecurityRestrictionsDefaultAction: Union[Literal['Deny', 'Allow'], Parameter]
+    ipSecurityRestrictionsDefaultAction: Union[Literal["Deny", "Allow"], Parameter]
     """Default action for main access restriction if no rules are matched."""
     javaContainer: Union[str, Parameter]
     """Java container."""
@@ -415,13 +424,24 @@ class AppSiteConfig(TypedDict, total=False):
     """Site limits."""
     linuxFxVersion: Union[str, Parameter]
     """Linux App Framework and version"""
-    loadBalancing: Union[Literal['LeastRequests', 'LeastRequestsWithTieBreaker', 'WeightedRoundRobin', 'WeightedTotalTraffic', 'LeastResponseTime', 'PerSiteRoundRobin', 'RequestHash'], Parameter]
+    loadBalancing: Union[
+        Literal[
+            "LeastRequests",
+            "LeastRequestsWithTieBreaker",
+            "WeightedRoundRobin",
+            "WeightedTotalTraffic",
+            "LeastResponseTime",
+            "PerSiteRoundRobin",
+            "RequestHash",
+        ],
+        Parameter,
+    ]
     """Site load balancing."""
     localMySqlEnabled: Union[bool, Parameter]
     """<code>true</code> to enable local MySQL; otherwise, <code>false</code>."""
     logsDirectorySizeLimit: Union[int, Parameter]
     """HTTP logs directory size limit."""
-    managedPipelineMode: Union[Literal['Classic', 'Integrated'], Parameter]
+    managedPipelineMode: Union[Literal["Classic", "Integrated"], Parameter]
     """Managed pipeline mode."""
     managedServiceIdentityId: Union[int, Parameter]
     """Managed Service Identity Id"""
@@ -429,9 +449,30 @@ class AppSiteConfig(TypedDict, total=False):
     """Application metadata. This property cannot be retrieved, since it may contain secrets."""
     minimumElasticInstanceCount: Union[int, Parameter]
     """Number of minimum instance count for a siteThis setting only applies to the Elastic Plans"""
-    minTlsCipherSuite: Union[Literal['TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256', 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256', 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA', 'TLS_RSA_WITH_AES_128_GCM_SHA256', 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384', 'TLS_RSA_WITH_AES_256_GCM_SHA384', 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA', 'TLS_AES_128_GCM_SHA256', 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256', 'TLS_RSA_WITH_AES_128_CBC_SHA256', 'TLS_RSA_WITH_AES_256_CBC_SHA256', 'TLS_RSA_WITH_AES_256_CBC_SHA', 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384', 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256', 'TLS_RSA_WITH_AES_128_CBC_SHA', 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384', 'TLS_AES_256_GCM_SHA384'], Parameter]
+    minTlsCipherSuite: Union[
+        Literal[
+            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+            "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+            "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+            "TLS_RSA_WITH_AES_128_GCM_SHA256",
+            "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+            "TLS_RSA_WITH_AES_256_GCM_SHA384",
+            "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+            "TLS_AES_128_GCM_SHA256",
+            "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+            "TLS_RSA_WITH_AES_128_CBC_SHA256",
+            "TLS_RSA_WITH_AES_256_CBC_SHA256",
+            "TLS_RSA_WITH_AES_256_CBC_SHA",
+            "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+            "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+            "TLS_RSA_WITH_AES_128_CBC_SHA",
+            "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+            "TLS_AES_256_GCM_SHA384",
+        ],
+        Parameter,
+    ]
     """The minimum strength TLS cipher suite allowed for an application"""
-    minTlsVersion: Union[Literal['1.0', '1.3', '1.1', '1.2'], Parameter]
+    minTlsVersion: Union[Literal["1.0", "1.3", "1.1", "1.2"], Parameter]
     """MinTlsVersion: configures the minimum version of TLS required for SSL requests"""
     netFrameworkVersion: Union[str, Parameter]
     """.NET Framework version."""
@@ -463,13 +504,31 @@ class AppSiteConfig(TypedDict, total=False):
     """Request tracing expiration time."""
     scmIpSecurityRestrictions: Union[list[AppSiteIpSecurityRestriction], Parameter]
     """IP security restrictions for scm."""
-    scmIpSecurityRestrictionsDefaultAction: Union[Literal['Deny', 'Allow'], Parameter]
+    scmIpSecurityRestrictionsDefaultAction: Union[Literal["Deny", "Allow"], Parameter]
     """Default action for scm access restriction if no rules are matched."""
     scmIpSecurityRestrictionsUseMain: Union[bool, Parameter]
     """IP security restrictions for scm to use main."""
-    scmMinTlsVersion: Union[Literal['1.0', '1.3', '1.1', '1.2'], Parameter]
+    scmMinTlsVersion: Union[Literal["1.0", "1.3", "1.1", "1.2"], Parameter]
     """ScmMinTlsVersion: configures the minimum version of TLS required for SSL requests for SCM site"""
-    scmType: Union[Literal['ExternalGit', 'ExternalHg', 'VSO', 'CodePlexHg', 'BitbucketGit', 'VSTSRM', 'Tfs', 'Dropbox', 'CodePlexGit', 'None', 'BitbucketHg', 'GitHub', 'OneDrive', 'LocalGit'], Parameter]
+    scmType: Union[
+        Literal[
+            "ExternalGit",
+            "ExternalHg",
+            "VSO",
+            "CodePlexHg",
+            "BitbucketGit",
+            "VSTSRM",
+            "Tfs",
+            "Dropbox",
+            "CodePlexGit",
+            "None",
+            "BitbucketHg",
+            "GitHub",
+            "OneDrive",
+            "LocalGit",
+        ],
+        Parameter,
+    ]
     """SCM type."""
     tracingOptions: Union[str, Parameter]
     """Tracing options."""
@@ -516,7 +575,9 @@ class AppSiteLimits(TypedDict, total=False):
 
 
 class AppSiteProperties(TypedDict, total=False):
-    autoGeneratedDomainNameLabelScope: Union[Literal['NoReuse', 'ResourceGroupReuse', 'TenantReuse', 'SubscriptionReuse'], Parameter]
+    autoGeneratedDomainNameLabelScope: Union[
+        Literal["NoReuse", "ResourceGroupReuse", "TenantReuse", "SubscriptionReuse"], Parameter
+    ]
     """Specifies the scope of uniqueness for the default hostname during resource creation"""
     clientAffinityEnabled: Union[bool, Parameter]
     """<code>true</code> to enable client affinity; <code>false</code> to stop sending session affinity cookies, which route client requests in the same session to the same instance. Default is <code>true</code>."""
@@ -524,7 +585,7 @@ class AppSiteProperties(TypedDict, total=False):
     """<code>true</code> to enable client certificate authentication (TLS mutual authentication); otherwise, <code>false</code>. Default is <code>false</code>."""
     clientCertExclusionPaths: Union[str, Parameter]
     """client certificate authentication comma-separated exclusion paths"""
-    clientCertMode: Union[Literal['Optional', 'Required', 'OptionalInteractiveUser'], Parameter]
+    clientCertMode: Union[Literal["Optional", "Required", "OptionalInteractiveUser"], Parameter]
     """This composes with ClientCertEnabled setting.- ClientCertEnabled: false means ClientCert is ignored.- ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.- ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or accepted."""
     cloningInfo: Union[AppSiteCloningInfo, Parameter]
     """If specified during app creation, the app is cloned from a source app."""
@@ -554,7 +615,7 @@ class AppSiteProperties(TypedDict, total=False):
     """HttpsOnly: configures a web site to accept only https requests. Issues redirect forhttp requests"""
     hyperV: Union[bool, Parameter]
     """Hyper-V sandbox."""
-    ipMode: Union[Literal['IPv4', 'IPv6', 'IPv4AndIPv6'], Parameter]
+    ipMode: Union[Literal["IPv4", "IPv6", "IPv4AndIPv6"], Parameter]
     """Specifies the IP mode of the app."""
     isXenon: Union[bool, Parameter]
     """Obsolete: Hyper-V sandbox."""
@@ -564,7 +625,7 @@ class AppSiteProperties(TypedDict, total=False):
     """Azure Resource Manager ID of the customer's selected Managed Environment on which to host this app. This must be of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}"""
     publicNetworkAccess: Union[str, Parameter]
     """Property to allow or block all public traffic. Allowed Values: 'Enabled', 'Disabled' or an empty string."""
-    redundancyMode: Union[Literal['Manual', 'ActiveActive', 'GeoRedundant', 'Failover', 'None'], Parameter]
+    redundancyMode: Union[Literal["Manual", "ActiveActive", "GeoRedundant", "Failover", "None"], Parameter]
     """Site redundancy mode"""
     reserved: Union[bool, Parameter]
     """<code>true</code> if reserved; otherwise, <code>false</code>."""

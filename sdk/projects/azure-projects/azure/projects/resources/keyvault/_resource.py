@@ -140,9 +140,9 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
     :keyword public_network_access: Whether or not public network access is allowed for this resource
     :paramtype public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter]
     :keyword roles: Array of role assignments to create
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Contributor", "Key Vault Administrator", "Key Vault Contributor", "Key Vault Reader", "Key Vault Secrets Officer", "Key Vault Secrets User", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword user_roles: Array of Role assignments to create for user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Contributor", "Key Vault Administrator", "Key Vault Contributor", "Key Vault Reader", "Key Vault Secrets Officer", "Key Vault Secrets User", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword sku: Specifies the SKU for the vault
     :paramtype sku: Union[Literal["premium", "standard"], Parameter]
     :keyword tags: Resource tags

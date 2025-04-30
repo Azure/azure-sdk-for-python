@@ -64,9 +64,9 @@ class SearchServiceKwargs(TypedDict, total=False):
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
     # whenever possible.
     # """
-    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    public_network_access: Union[Literal["disabled", "enabled"], Parameter]
     """This value can be set to 'Enabled' to avoid breaking changes on existing customer resources and templates. If
-    set to 'Disabled', traffic over public interface is not allowed, and private endpoint connections would be the
+    set to 'disabled', traffic over public interface is not allowed, and private endpoint connections would be the
     exclusive access method.
     """
     replica_count: Union[int, Parameter]
@@ -136,7 +136,7 @@ _DEFAULT_SEARCH_SERVICE: "SearchServiceResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "sku": {"name": "basic"},
     "properties": {
-        "publicNetworkAccess": "Disabled",
+        "publicNetworkAccess": "disabled",
     },
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
@@ -287,8 +287,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> "SearchClient":
-        ...
+    ) -> "SearchClient": ...
     @overload
     def get_client(
         self,
@@ -302,8 +301,7 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> "AsyncSearchClient":
-        ...
+    ) -> "AsyncSearchClient": ...
     @overload
     def get_client(
         self,

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, name-too-long
 
 from __future__ import annotations
 from typing import TypedDict, Literal, Union
@@ -11,7 +11,7 @@ from typing import TypedDict, Literal, Union
 from ..._bicep.expressions import Parameter
 
 
-VERSION = '2024-12-01-preview'
+VERSION = "2024-12-01-preview"
 
 
 class KeyVaultAccessPolicyEntry(TypedDict, total=False):
@@ -35,16 +35,16 @@ class KeyVaultResource(TypedDict, total=False):
     """The supported Azure location where the key vault should be created."""
     name: Union[str, Parameter]
     """The resource name"""
-    properties: Union[KeyVaultVaultProperties, Parameter]
+    properties: KeyVaultVaultProperties
     """Properties of the vault"""
     tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Resource tags"""
 
 
 class KeyVaultNetworkRuleSet(TypedDict, total=False):
-    bypass: Union[Literal['None', 'AzureServices'], Parameter]
+    bypass: Union[Literal["None", "AzureServices"], Parameter]
     """Tells what traffic can bypass network rules. This can be 'AzureServices' or 'None'.  If not specified the default is 'AzureServices'."""
-    defaultAction: Union[Literal['Deny', 'Allow'], Parameter]
+    defaultAction: Union[Literal["Deny", "Allow"], Parameter]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
     ipRules: Union[list[KeyVaultIPRule], Parameter]
     """The list of IP address rules."""
@@ -53,27 +53,92 @@ class KeyVaultNetworkRuleSet(TypedDict, total=False):
 
 
 class KeyVaultPermissions(TypedDict, total=False):
-    certificates: Union[Literal['restore', 'update', 'get', 'deleteissuers', 'recover', 'setissuers', 'purge', 'backup', 'all', 'delete', 'managecontacts', 'list', 'import', 'getissuers', 'create', 'listissuers', 'manageissuers'], Parameter]
+    certificates: Union[
+        Literal[
+            "restore",
+            "update",
+            "get",
+            "deleteissuers",
+            "recover",
+            "setissuers",
+            "purge",
+            "backup",
+            "all",
+            "delete",
+            "managecontacts",
+            "list",
+            "import",
+            "getissuers",
+            "create",
+            "listissuers",
+            "manageissuers",
+        ],
+        Parameter,
+    ]
     """Permissions to certificates"""
-    keys: Union[Literal['verify', 'restore', 'recover', 'purge', 'backup', 'unwrapKey', 'import', 'create', 'release', 'get', 'getrotationpolicy', 'sign', 'wrapKey', 'rotate', 'list', 'setrotationpolicy', 'decrypt', 'update', 'all', 'delete', 'encrypt'], Parameter]
+    keys: Union[
+        Literal[
+            "verify",
+            "restore",
+            "recover",
+            "purge",
+            "backup",
+            "unwrapKey",
+            "import",
+            "create",
+            "release",
+            "get",
+            "getrotationpolicy",
+            "sign",
+            "wrapKey",
+            "rotate",
+            "list",
+            "setrotationpolicy",
+            "decrypt",
+            "update",
+            "all",
+            "delete",
+            "encrypt",
+        ],
+        Parameter,
+    ]
     """Permissions to keys"""
-    secrets: Union[Literal['restore', 'get', 'recover', 'purge', 'backup', 'all', 'delete', 'list', 'set'], Parameter]
+    secrets: Union[Literal["restore", "get", "recover", "purge", "backup", "all", "delete", "list", "set"], Parameter]
     """Permissions to secrets"""
-    storage: Union[Literal['restore', 'update', 'get', 'recover', 'purge', 'backup', 'getsas', 'all', 'delete', 'list', 'set', 'listsas', 'setsas', 'regeneratekey', 'deletesas'], Parameter]
+    storage: Union[
+        Literal[
+            "restore",
+            "update",
+            "get",
+            "recover",
+            "purge",
+            "backup",
+            "getsas",
+            "all",
+            "delete",
+            "list",
+            "set",
+            "listsas",
+            "setsas",
+            "regeneratekey",
+            "deletesas",
+        ],
+        Parameter,
+    ]
     """Permissions to storage accounts"""
 
 
 class KeyVaultSku(TypedDict, total=False):
-    family: Union[Literal['A'], Parameter]
+    family: Union[Literal["A"], Parameter]
     """SKU family name"""
-    name: Union[Literal['premium', 'standard'], Parameter]
+    name: Union[Literal["premium", "standard"], Parameter]
     """SKU name to specify whether the key vault is a standard vault or a premium vault."""
 
 
 class KeyVaultVaultProperties(TypedDict, total=False):
     accessPolicies: Union[list[KeyVaultAccessPolicyEntry], Parameter]
     """An array of 0 to 1024 identities that have access to the key vault. All identities in the array must use the same tenant ID as the key vault's tenant ID. When createMode is set to recover, access policies are not required. Otherwise, access policies are required."""
-    createMode: Union[Literal['default', 'recover'], Parameter]
+    createMode: Union[Literal["default", "recover"], Parameter]
     """The vault's create mode to indicate whether the vault need to be recovered or not."""
     enabledForDeployment: Union[bool, Parameter]
     """Property to specify whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault."""
@@ -89,7 +154,7 @@ class KeyVaultVaultProperties(TypedDict, total=False):
     """Property to specify whether the 'soft delete' functionality is enabled for this key vault. If it's not set to any value(true or false) when creating new key vault, it will be set to true by default. Once set to true, it cannot be reverted to false."""
     networkAcls: Union[KeyVaultNetworkRuleSet, Parameter]
     """Rules governing the accessibility of the key vault from specific network locations."""
-    provisioningState: Union[Literal['Succeeded', 'RegisteringDns'], Parameter]
+    provisioningState: Union[Literal["Succeeded", "RegisteringDns"], Parameter]
     """Provisioning state of the vault."""
     publicNetworkAccess: Union[str, Parameter]
     """Property to specify whether the vault will accept traffic from public internet. If set to 'disabled' all traffic except private endpoint traffic and that that originates from trusted services will be blocked. This will override the set firewall rules, meaning that even if the firewall rules are present we will not honor the rules."""

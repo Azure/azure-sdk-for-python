@@ -39,20 +39,23 @@ if TYPE_CHECKING:
 
 
 class AppSiteKwargs(TypedDict, total=False):
-    kind: Union[Literal[
-        "api",
-        "app",
-        "app,container,windows",
-        "app,linux",
-        "app,linux,container",
-        "functionapp",
-        "functionapp,linux",
-        "functionapp,linux,container",
-        "functionapp,linux,container,azurecontainerapps",
-        "functionapp,workflowapp",
-        "functionapp,workflowapp,linux",
-        "linux,api",
-    ], Parameter]
+    kind: Union[
+        Literal[
+            "api",
+            "app",
+            "app,container,windows",
+            "app,linux",
+            "app,linux,container",
+            "functionapp",
+            "functionapp,linux",
+            "functionapp,linux,container",
+            "functionapp,linux,container,azurecontainerapps",
+            "functionapp,workflowapp",
+            "functionapp,workflowapp,linux",
+            "linux,api",
+        ],
+        Parameter,
+    ]
     """Type of site to deploy."""
     # app_service_plan: Union[str, Parameter]
     # """The resource ID of the app service plan to use for the site."""
@@ -177,9 +180,10 @@ class AppSiteKwargs(TypedDict, total=False):
     # function executions.
     # """
     # storage_account_use_identity_authentication: bool
-    # """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false).
-    # When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account
-    # is 'Storage Blob Data Owner'.
+    # """If the provided storage account requires Identity based authentication
+    # ('allowSharedKeyAccess' is set to false).
+    # When set to true, the minimum role assignment required for the App Service Managed
+    # Identity to the storage account is 'Storage Blob Data Owner'.
     # """
     tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
@@ -229,9 +233,9 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
     :type plan: Optional[Union[str, Parameter, AppServicePlan]]
 
     :keyword kind: Type of site to deploy
-    :paramtype kind: Union[Literal["api", "app", "app,container,windows", "app,linux", "app,linux,container", 
-                    "functionapp", "functionapp,linux", "functionapp,linux,container", 
-                    "functionapp,linux,container,azurecontainerapps", "functionapp,workflowapp", 
+    :paramtype kind: Union[Literal["api", "app", "app,container,windows", "app,linux", "app,linux,container",
+                    "functionapp", "functionapp,linux", "functionapp,linux,container",
+                    "functionapp,linux,container,azurecontainerapps", "functionapp,workflowapp",
                     "functionapp,workflowapp,linux", "linux,api"], Parameter]
     :keyword app_settings: App settings key-value pairs
     :paramtype app_settings: dict[str, str]
@@ -260,14 +264,14 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
     :keyword redundancy_mode: Site redundancy mode
     :paramtype redundancy_mode: Literal["ActiveActive", "Failover", "GeoRedundant", "Manual", "None"]
     :keyword roles: Array of role assignments to create
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", 
-                    "Website Contributor", "App Compliance Automation Administrator", "Contributor", 
-                    "Owner", "Reader", "Role Based Access Control Administrator", 
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor",
+                    "Website Contributor", "App Compliance Automation Administrator", "Contributor",
+                    "Owner", "Reader", "Role Based Access Control Administrator",
                     "User Access Administrator"]]]]
     :keyword user_roles: Array of Role assignments to create for user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", 
-                         "Website Contributor", "App Compliance Automation Administrator", "Contributor", 
-                         "Owner", "Reader", "Role Based Access Control Administrator", 
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor",
+                         "Website Contributor", "App Compliance Automation Administrator", "Contributor",
+                         "Owner", "Reader", "Role Based Access Control Administrator",
                          "User Access Administrator"]]]]
     :keyword tags: Tags of the resource
     :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
@@ -281,12 +285,13 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
     :ivar parent: The parent resource (None for App Sites)
     :vartype parent: None
     """
+
     DEFAULTS: "AppSiteResource" = _DEFAULT_APP_SITE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_APP_SITE_EXTENSIONS
     properties: AppSiteResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-branches
         self,
         properties: Optional["AppSiteResource"] = None,
         /,

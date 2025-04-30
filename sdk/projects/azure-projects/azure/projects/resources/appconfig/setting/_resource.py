@@ -7,9 +7,7 @@
 
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Generic,
-    List,
     Literal,
     Mapping,
     Union,
@@ -36,7 +34,7 @@ class ConfigSettingKwargs(TypedDict, total=False):
     """The content type of the key-value's value. Providing a proper content-type can enable
     transformations of values when they are retrieved by applications.
     """
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Union[dict[str, Union[str, Parameter]], Parameter]
     """A dictionary of tags that can help identify what a key-value may be applicable for."""
 
 
@@ -75,7 +73,7 @@ class ConfigSetting(Resource, Generic[ConfigSettingResourceType]):
     :ivar parent: The parent ConfigStore resource
     :vartype parent: ConfigStore
     """
-    
+
     DEFAULTS: "ConfigSettingResource" = _DEFAULT_CONFIG_SETTING  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_SETTING_EXTENSIONS
     properties: ConfigSettingResourceType
@@ -163,5 +161,5 @@ class ConfigSetting(Resource, Generic[ConfigSettingResourceType]):
             suffix_str += f"_{clean_name(suffix).lower()}"
         return ResourceSymbol(f"keyvalue{suffix_str}")
 
-    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, **kwargs) -> dict[str, list[Output]]:
         return {}

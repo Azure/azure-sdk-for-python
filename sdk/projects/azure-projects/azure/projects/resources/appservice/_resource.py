@@ -153,9 +153,9 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
     :keyword per_site_scaling: If true, apps can be scaled independently
     :paramtype per_site_scaling: bool
     :keyword roles: Array of role assignments to create
-    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", "Website Contributor", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword user_roles: Array of Role assignments to create for user principal ID
-    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, Literal["Web Plan Contributor", "Website Contributor", "Contributor", "Owner", "Reader", "Role Based Access Control Administrator", "User Access Administrator"]]]]
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword capacity: Number of workers associated with the App Service Plan (defaults to 3)
     :paramtype capacity: Union[int, Parameter]
     :keyword sku: Name of the SKU determining tier, size, family of App Service Plan (defaults to P1v3)
@@ -180,7 +180,7 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
     :ivar parent: Parent resource (None for App Service Plan)
     :vartype parent: None
     """
-    
+
     DEFAULTS: "AppServicePlanResource" = _DEFAULT_APP_SERVICE_PLAN  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_APP_SERVICE_PLAN_EXTENSIONS
     properties: AppServicePlanResourceType
