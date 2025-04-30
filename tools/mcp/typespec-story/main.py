@@ -65,8 +65,8 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
 
             latest_commit = commits[0].sha
             logger.info(f"Found latest commit for {latest_commit}")
-            return f"https://{groups['urlRoot']}.com/{groups['repo']}/blob/{latest_commit}/{groups['path']}/tspconfig.yaml"
-        return f"https://{groups['urlRoot']}.com/{groups['repo']}/blob/{commit}/{groups['path']}/tspconfig.yaml"
+            return f"https://raw.githubusercontent.com/{groups['repo']}/{latest_commit}/{groups['path']}/tspconfig.yaml"
+        return f"https://raw.githubusercontent.com/{groups['repo']}/{commit}/{groups['path']}/tspconfig.yaml"
 
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
@@ -89,10 +89,9 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
         # Run the command and capture the output
         result = subprocess.run(
             cli_args,
-            # check=True,
+            check=True,
             capture_output=True,
             text=True,
-            # cwd=root_dir,
         )
         logger.info(f"Command output: {result.stdout}")
         
@@ -102,15 +101,10 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
             "stderr": result.stderr,
             "code": result.returncode
         }
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         logger.error(f"Command failed with error: {str(e)}")
-        return {
-            "success": False,
-            "stdout": e.stdout,
-            "stderr": e.stderr,
-            "code": e.returncode,
-            "error": str(e)
-        }
+        raise
+
 
 # Register tools for each TypeSpec client generator CLI command
 @mcp.tool("init")
