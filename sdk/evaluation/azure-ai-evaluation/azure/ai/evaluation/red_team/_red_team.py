@@ -39,6 +39,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation import evaluate
+from azure.ai.evaluation._common import RedTeamUpload, ResultType
 
 # Azure Core imports
 from azure.core.credentials import TokenCredential
@@ -77,7 +78,7 @@ from ._utils.logging_utils import (
 )
 
 @experimental
-class RedTeam():
+class RedTeam:
     """
     This class uses various attack strategies to test the robustness of AI models against adversarial inputs.
     It logs the results of these evaluations and provides detailed scorecards summarizing the attack success rates.
@@ -212,14 +213,15 @@ class RedTeam():
         :type output_dir: str
         """
 
-        self.azure_ai_project = azure_ai_project if is_onedp_project(azure_ai_project) else validate_azure_ai_project(azure_ai_project)
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
-        
+        self._one_dp_project = is_onedp_project(azure_ai_project)
+
         # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
         
-        if not is_onedp_project(azure_ai_project):
+        if not self._one_dp_project:
             self.token_manager = ManagedIdentityAPITokenManager(
                 token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
                 logger=logging.getLogger("RedTeamLogger"),
@@ -276,52 +278,67 @@ class RedTeam():
         :raises EvaluationException: If no azure_ai_project is provided or trace destination cannot be determined
         """
         if not azure_ai_project:
-            log_error(self.logger, "No azure_ai_project provided, cannot start MLFlow run")
+            log_error(self.logger, "No azure_ai_project provided, cannot upload run")
             raise EvaluationException(
                 message="No azure_ai_project provided",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.RED_TEAM
             )
-        
-        trace_destination = _trace_destination_from_project_scope(azure_ai_project)
-        if not trace_destination:
-            self.logger.warning("Could not determine trace destination from project scope")
-            raise EvaluationException(
-                message="Could not determine trace destination",
-                blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.UNKNOWN,
-                target=ErrorTarget.RED_TEAM
-            )
-        
-        ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
-        
-        management_client = LiteMLClient(
-            subscription_id=ws_triad.subscription_id,
-            resource_group=ws_triad.resource_group_name,
-            logger=self.logger,
-            credential=azure_ai_project.get("credential")
-        )
-        
-        tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
-        
-        run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-        self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
-        eval_run = EvalRun(
-            run_name=run_display_name,
-            tracking_uri=cast(str, tracking_uri),
-            subscription_id=ws_triad.subscription_id,
-            group_name=ws_triad.resource_group_name,
-            workspace_name=ws_triad.workspace_name,
-            management_client=management_client, # type: ignore
-        )
-        eval_run._start_run()
-        self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
 
-        self.trace_destination = trace_destination
-        self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
-    
-        return eval_run
+        if self._one_dp_project:
+            response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
+                red_team=RedTeamUpload(
+                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                )
+            )
+
+            self.ai_studio_url = response.properties.get("AiStudioEvaluationUri")
+
+            return response
+
+        else:
+            trace_destination = _trace_destination_from_project_scope(azure_ai_project)
+            if not trace_destination:
+                self.logger.warning("Could not determine trace destination from project scope")
+                raise EvaluationException(
+                    message="Could not determine trace destination",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.UNKNOWN,
+                    target=ErrorTarget.RED_TEAM
+                )
+
+            ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
+
+            management_client = LiteMLClient(
+                subscription_id=ws_triad.subscription_id,
+                resource_group=ws_triad.resource_group_name,
+                logger=self.logger,
+                credential=azure_ai_project.get("credential")
+            )
+
+            tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
+
+            run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
+            eval_run = EvalRun(
+                run_name=run_display_name,
+                tracking_uri=cast(str, tracking_uri),
+                subscription_id=ws_triad.subscription_id,
+                group_name=ws_triad.resource_group_name,
+                workspace_name=ws_triad.workspace_name,
+                management_client=management_client, # type: ignore
+            )
+            eval_run._start_run()
+            self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
+
+            self.trace_destination = trace_destination
+            self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
+
+            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination,
+                                                    evaluation_id=eval_run.info.run_id)
+
+            return eval_run
 
 
     async def _log_redteam_results_to_mlflow(
@@ -343,6 +360,8 @@ class RedTeam():
         """
         self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
         artifact_name = "instance_results.json"
+        eval_info_name = "redteam_info.json"
+        properties = {}
 
         # If we have a scan output directory, save the results there first
         if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
@@ -369,7 +388,6 @@ class RedTeam():
                     
                     json.dump(result_with_conversations, f)
 
-            eval_info_name = "redteam_info.json"
             eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
             self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
             with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
@@ -425,19 +443,14 @@ class RedTeam():
                         self.logger.warning(f"Failed to copy file {file} to artifact directory: {str(e)}")
                 
                 # Log the entire directory to MLFlow
-                try:
-                    eval_run.log_artifact(tmpdir, artifact_name)
-                    eval_run.log_artifact(tmpdir, eval_info_name)
-                    self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
-                except Exception as e:
-                    self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
-            
-            # Also log a direct property to capture the scan output directory
-            try:
-                eval_run.write_properties_to_run_history({"scan_output_dir": str(self.scan_output_dir)})
-                self.logger.debug("Logged scan_output_dir property to MLFlow")
-            except Exception as e:
-                self.logger.warning(f"Failed to log scan_output_dir property to MLFlow: {str(e)}")
+                # try:
+                #     eval_run.log_artifact(tmpdir, artifact_name)
+                #     eval_run.log_artifact(tmpdir, eval_info_name)
+                #     self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
+                # except Exception as e:
+                #     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
+
+            properties.update({"scan_output_dir": str(self.scan_output_dir)})
         else:
             # Use temporary directory as before if no scan output directory exists
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -447,16 +460,17 @@ class RedTeam():
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         json.dump(redteam_result.scan_result, f)
-                eval_run.log_artifact(tmpdir, artifact_name)
+                # eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
-        eval_run.write_properties_to_run_history({
+        properties.update({
             EvaluationRunProperties.RUN_TYPE: "eval_run",
             "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
             EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
         })
 
+        metrics = {}
         if redteam_result.scan_result:
             scorecard = redteam_result.scan_result["scorecard"]
             joint_attack_summary = scorecard["joint_risk_attack_summary"]
@@ -466,10 +480,54 @@ class RedTeam():
                     risk_category = risk_category_summary.get("risk_category").lower()
                     for key, value in risk_category_summary.items():
                         if key != "risk_category":
-                            eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
+                            metrics.update({
+                                f"{risk_category}_{key}": cast(float, value)
+                            })
+                            # eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
                             self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
-        eval_run._end_run("FINISHED")
-        self.logger.info("Successfully logged results to MLFlow")
+
+        if self._one_dp_project:
+            try:
+                create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                    name=uuid.uuid4(),
+                    path=tmpdir,
+                    metrics=metrics,
+                    ResultType=ResultType.REDTEAM
+                )
+
+                update_run_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result.update_evaluation_run(
+                    name=eval_run.id,
+                    evaluation=RedTeamUpload(
+                        display_name=eval_run.display_name,
+                        status="Completed",
+                        outputs={
+                            'evaluationResultId': create_evaluation_result_response.id,
+                        },
+                        properties=properties,
+                    )
+                )
+            except Exception as e:
+                self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+
+        else:
+            # Log the entire directory to MLFlow
+            try:
+                eval_run.log_artifact(tmpdir, artifact_name)
+                if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                    eval_run.log_artifact(tmpdir, eval_info_name)
+                self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
+            except Exception as e:
+                self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
+
+            for k,v in metrics.items():
+                eval_run.log_metric(k, v)
+                self.logger.debug(f"Logged metric: {k} = {v}")
+
+            eval_run.write_properties_to_run_history(properties)
+
+            eval_run._end_run("FINISHED")
+
+        self.logger.info("Successfully logged results to AI Foundry")
         return None
 
     # Using the utility function from strategy_utils.py instead
@@ -1993,10 +2051,9 @@ class RedTeam():
         else:
             eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
 
-            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
-            self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
+            self.logger.info(f"Started Uploading run: {self.ai_studio_url}")
         
         log_subsection_header(self.logger, "Setting up scan configuration")
         flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
@@ -2210,7 +2267,7 @@ class RedTeam():
         )
         
         if not skip_upload:
-            self.logger.info("Logging results to MLFlow")
+            self.logger.info("Logging results to AI Foundry")
             await self._log_redteam_results_to_mlflow(
                 redteam_result=output,
                 eval_run=eval_run,

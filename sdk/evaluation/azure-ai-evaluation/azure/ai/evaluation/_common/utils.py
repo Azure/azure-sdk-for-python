@@ -141,6 +141,9 @@ def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
 def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
 
+    if is_onedp_project(o):
+        return o
+
     if not isinstance(o, dict):
         msg = "The 'azure_ai_project' parameter must be a dictionary."
         raise EvaluationException(
