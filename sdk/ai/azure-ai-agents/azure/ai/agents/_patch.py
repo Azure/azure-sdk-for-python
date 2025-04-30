@@ -977,7 +977,6 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             instructions=instructions,
             tools=tools,
             tool_resources=tool_resources,
-            stream_parameter=False,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
