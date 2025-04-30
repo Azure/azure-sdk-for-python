@@ -986,7 +986,7 @@ with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream
 
 In the code above, because an `event_handler` object is not passed to the `create_stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
 
-<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
+<!-- SNIPPET:sample_agents_basics_stream_eventhandler.stream_event_handler -->
 
 ```python
 # With AgentEventHandler[str], the return type for each event functions is optional string.
@@ -1017,7 +1017,7 @@ class MyEventHandler(AgentEventHandler[str]):
 <!-- END SNIPPET -->
 
 
-<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
+<!-- SNIPPET:sample_agents_basics_stream_eventhandler.create_stream -->
 
 ```python
 with agents_client.runs.stream(
