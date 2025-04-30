@@ -1016,9 +1016,13 @@ class RedTeam():
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
         
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-        
+        converter_list = []
         # Create converter list from single converter or list of converters
-        converter_list = [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
+        if converter and isinstance(converter, PromptConverter):
+            converter_list = [converter]
+        elif converter and isinstance(converter, list):
+            # Filter out None values from the converter list
+            converter_list = [c for c in converter if c is not None]
         
         # Log which converter is being used
         if converter_list:
