@@ -7,9 +7,7 @@
 
 from typing import (
     Any,
-    cast,
     Dict,
-    Iterable,
     List,
     Optional,
     Union,
@@ -50,7 +48,7 @@ class BlobServiceClient(  # type: ignore [misc]
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
-):
+):  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
