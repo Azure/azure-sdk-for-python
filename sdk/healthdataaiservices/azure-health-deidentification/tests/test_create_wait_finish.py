@@ -25,7 +25,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
                 prefix=input_prefix,
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
-            operation=DeidentificationOperationType.SURROGATE,
+            operation_type=DeidentificationOperationType.SURROGATE,
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)
@@ -33,13 +33,13 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
 
         finished_job: DeidentificationJob = lro.result()
 
-        assert finished_job.status == OperationState.SUCCEEDED
-        assert finished_job.name == jobname
-        assert finished_job.operation == DeidentificationOperationType.SURROGATE
+        assert finished_job.status == OperationStatus.SUCCEEDED
+        assert finished_job.job_name == jobname
+        assert finished_job.operation_type == DeidentificationOperationType.SURROGATE
         assert finished_job.summary is not None
-        assert finished_job.summary.total == 3
-        assert finished_job.summary.successful == 3
-        assert finished_job.summary.failed == 0
+        assert finished_job.summary.total_count == 3
+        assert finished_job.summary.successful_count == 3
+        assert finished_job.summary.failed_count == 0
         assert finished_job.started_at is not None and finished_job.started_at > finished_job.created_at
         assert finished_job.last_updated_at > finished_job.started_at
         assert finished_job.customizations is not None
@@ -51,9 +51,9 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         count = 0
         for my_file in files:
             assert len(my_file.id) == 36  # GUID
-            assert input_prefix in my_file.input.location
-            assert my_file.status == OperationState.SUCCEEDED
-            assert my_file.output is not None
-            assert self.OUTPUT_PATH in my_file.output.location
+            assert input_prefix in my_file.input_location.location
+            assert my_file.status == OperationStatus.SUCCEEDED
+            assert my_file.output_location is not None
+            assert self.OUTPUT_PATH in my_file.output_location.location
             count += 1
         assert count == 3, f"Expected 3 files, found {count}"

@@ -15,7 +15,7 @@
         "azure.health.deidentification.models.StringIndex": "HealthDataAIServices.DeidServices.StringIndex",
         "azure.health.deidentification.models.TargetStorageLocation": "HealthDataAIServices.DeidServices.TargetStorageLocation",
         "azure.health.deidentification.models.DeidentificationOperationType": "HealthDataAIServices.DeidServices.DeidentificationOperationType",
-        "azure.health.deidentification.models.OperationState": "Azure.Core.Foundations.OperationState",
+        "azure.health.deidentification.models.OperationStatus": "Azure.Core.Foundations.OperationState",
         "azure.health.deidentification.models.PhiCategory": "HealthDataAIServices.DeidServices.PhiCategory",
         "azure.health.deidentification.DeidentificationClient.get_job": "HealthDataAIServices.DeidServices.getJob",
         "azure.health.deidentification.DeidentificationClient.begin_deidentify_documents": "HealthDataAIServices.DeidServices.deidentifyDocuments",

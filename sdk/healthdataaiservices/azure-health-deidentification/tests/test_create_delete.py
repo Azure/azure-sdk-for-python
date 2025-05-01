@@ -27,23 +27,23 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
                 prefix="example_patient_1",
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
-            operation=DeidentificationOperationType.SURROGATE,
+            operation_type=DeidentificationOperationType.SURROGATE,
         )
 
         client.begin_deidentify_documents(jobname, job)
 
         job = client.get_job(jobname)
-        while job.status == OperationState.NOT_STARTED:
+        while job.status == OperationStatus.NOT_STARTED:
             self.sleep(2)
             job = client.get_job(jobname)
 
         assert job.error is None, "Job should not have an error"
-        assert job.status == OperationState.RUNNING, "Job should be running"
+        assert job.status == OperationStatus.RUNNING, "Job should be running"
 
         job = client.cancel_job(jobname)
 
         assert job.error is None, "Job should not have an error after cancelling"
-        assert job.status == OperationState.CANCELED, "Job should be cancelled"
+        assert job.status == OperationStatus.CANCELED, "Job should be cancelled"
 
         client.delete_job(jobname)
 

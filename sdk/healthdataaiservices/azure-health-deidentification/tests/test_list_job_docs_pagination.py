@@ -4,7 +4,6 @@ from devtools_testutils import (
 )
 
 from azure.health.deidentification.models import *
-from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
 
@@ -30,15 +29,15 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
                 prefix=inputPrefix,
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
-            operation=DeidentificationOperationType.REDACT,
+            operation_type=DeidentificationOperationType.REDACT,
             customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
         )
 
         client.begin_deidentify_documents(jobname, job).result(180)
         job_documents = client.list_job_documents(job_name=jobname, maxpagesize=2)
 
-        _get_next = job_documents._args[0]
-        _extract_data = job_documents._args[1]
+        _get_next = job_documents._args[0] # type: ignore
+        _extract_data = job_documents._args[1] # type: ignore
 
         job_documents_paged = ItemPaged(
             get_next=_get_next,

@@ -29,7 +29,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
                 prefix="no_files_in_this_folder",
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
-            operation=DeidentificationOperationType.SURROGATE,
+            operation_type=DeidentificationOperationType.SURROGATE,
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)
@@ -38,7 +38,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
 
         job = client.get_job(jobname)
 
-        assert job.status == OperationState.FAILED
+        assert job.status == OperationStatus.FAILED
         assert job.error is not None
         assert job.error.code == "EmptyJob"
         assert job.error.message is not None

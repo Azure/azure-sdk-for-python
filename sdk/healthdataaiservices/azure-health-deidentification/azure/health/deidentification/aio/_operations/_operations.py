@@ -52,13 +52,13 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace_async
-    async def get_job(self, name: str, **kwargs: Any) -> _models.DeidentificationJob:
+    async def get_job(self, job_name: str, **kwargs: Any) -> _models.DeidentificationJob:
         """Get a de-identification job.
 
         Resource read operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :return: DeidentificationJob. The DeidentificationJob is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -77,7 +77,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         cls: ClsType[_models.DeidentificationJob] = kwargs.pop("cls", None)
 
         _request = build_deidentification_get_job_request(
-            name=name,
+            job_name=job_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -119,7 +119,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return deserialized  # type: ignore
 
     async def _deidentify_documents_initial(
-        self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
+        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -143,7 +143,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_deidentification_deidentify_documents_request(
-            name=name,
+            job_name=job_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -185,14 +185,19 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @overload
     async def begin_deidentify_documents(
-        self, name: str, resource: _models.DeidentificationJob, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_name: str,
+        resource: _models.DeidentificationJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.health.deidentification.models.DeidentificationJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -207,14 +212,14 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @overload
     async def begin_deidentify_documents(
-        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, job_name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :param resource: The resource instance. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -229,14 +234,14 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @overload
     async def begin_deidentify_documents(
-        self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, job_name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :param resource: The resource instance. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -251,14 +256,14 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace_async
     async def begin_deidentify_documents(
-        self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
+        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :param resource: The resource instance. Is one of the following types: DeidentificationJob,
          JSON, IO[bytes] Required.
         :type resource: ~azure.health.deidentification.models.DeidentificationJob or JSON or IO[bytes]
@@ -278,7 +283,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._deidentify_documents_initial(
-                name=name,
+                job_name=job_name,
                 resource=resource,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -423,14 +428,14 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace
     def _list_job_documents_internal(
-        self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+        self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         Resource list operation template.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :keyword continuation_token_parameter: Token to continue a previous query. Default value is
          None.
         :paramtype continuation_token_parameter: str
@@ -457,7 +462,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             if not next_link:
 
                 _request = build_deidentification_list_job_documents_internal_request(
-                    name=name,
+                    job_name=job_name,
                     maxpagesize=maxpagesize,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
@@ -518,7 +523,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def cancel_job(self, name: str, **kwargs: Any) -> _models.DeidentificationJob:
+    async def cancel_job(self, job_name: str, **kwargs: Any) -> _models.DeidentificationJob:
         """Cancel a de-identification job.
 
         Cancels a job that is in progress.
@@ -528,8 +533,8 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         If the job is already complete, this will have no effect.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :return: DeidentificationJob. The DeidentificationJob is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -548,7 +553,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         cls: ClsType[_models.DeidentificationJob] = kwargs.pop("cls", None)
 
         _request = build_deidentification_cancel_job_request(
-            name=name,
+            job_name=job_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -590,13 +595,13 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_job(self, name: str, **kwargs: Any) -> None:
+    async def delete_job(self, job_name: str, **kwargs: Any) -> None:
         """Delete a de-identification job.
 
         Removes the record of the job from the service. Does not delete any documents.
 
-        :param name: The name of a job. Required.
-        :type name: str
+        :param job_name: The name of a job. Required.
+        :type job_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -615,7 +620,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_deidentification_delete_job_request(
-            name=name,
+            job_name=job_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

@@ -43,9 +43,11 @@ class DeidBaseTestCase(AzureRecordedTestCase):
 
     def make_client_async(self, endpoint) -> DeidentificationClientAsync:
         credential = self.get_credential(DeidentificationClientAsync)
-        print(endpoint)
         client = self.create_client_from_credential(
-            DeidentificationClientAsync, credential=credential, endpoint=endpoint, connection_verify=False # If not set, the test proxy overwrites the endpoint to localhost:5001 
+            DeidentificationClientAsync,
+            credential=credential,
+            endpoint=endpoint,
+            connection_verify=False,  # If not set, the test proxy overwrites the endpoint to localhost:5001
         )
         return client
 

@@ -26,7 +26,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
                 prefix=inputPrefix,
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
-            operation=DeidentificationOperationType.TAG,
+            operation_type=DeidentificationOperationType.TAG,
         )
 
         await client.begin_deidentify_documents(jobname, job)
@@ -36,16 +36,16 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         jobsToLookThrough = 10
         async for j in jobs:
             jobsToLookThrough -= 1
-            if j.name == jobname:
+            if j.job_name == jobname:
                 job = j
                 break
             elif jobsToLookThrough <= 0:
                 raise Exception("Job not found in list_jobs")
 
         assert job is not None
-        assert job.name == jobname
-        assert job.status == OperationState.NOT_STARTED or job.status == OperationState.RUNNING
-        assert job.operation == DeidentificationOperationType.TAG
+        assert job.job_name == jobname
+        assert job.status == OperationStatus.NOT_STARTED or job.status == OperationStatus.RUNNING
+        assert job.operation_type == DeidentificationOperationType.TAG
         assert job.error is None
         assert job.created_at is not None
         assert job.last_updated_at is not None

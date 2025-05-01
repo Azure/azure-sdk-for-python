@@ -31,7 +31,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     DeidentificationOperationType,
-    OperationState,
+    OperationStatus,
     PhiCategory,
 )
 from ._patch import __all__ as _patch_all
@@ -53,7 +53,7 @@ __all__ = [
     "StringIndex",
     "TargetStorageLocation",
     "DeidentificationOperationType",
-    "OperationState",
+    "OperationStatus",
     "PhiCategory",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

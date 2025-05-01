@@ -24,9 +24,10 @@ class DeidentificationContent(_model_base.Model):
 
     :ivar input_text: Input text to de-identify. Required.
     :vartype input_text: str
-    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
+    :ivar operation_type: Operation to perform on the input documents. Known values are: "Redact",
      "Surrogate", and "Tag".
-    :vartype operation: str or ~azure.health.deidentification.models.DeidentificationOperationType
+    :vartype operation_type: str or
+     ~azure.health.deidentification.models.DeidentificationOperationType
     :ivar customizations: Customization parameters to override default service behaviors.
     :vartype customizations:
      ~azure.health.deidentification.models.DeidentificationCustomizationOptions
@@ -34,8 +35,8 @@ class DeidentificationContent(_model_base.Model):
 
     input_text: str = rest_field(name="inputText", visibility=["read", "create", "update", "delete", "query"])
     """Input text to de-identify. Required."""
-    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
+        name="operation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
      \"Tag\"."""
@@ -49,7 +50,7 @@ class DeidentificationContent(_model_base.Model):
         self,
         *,
         input_text: str,
-        operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
+        operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
         customizations: Optional["_models.DeidentificationCustomizationOptions"] = None,
     ) -> None: ...
 
@@ -114,28 +115,29 @@ class DeidentificationDocumentDetails(_model_base.Model):
 
     :ivar id: Id of the document details. Required.
     :vartype id: str
-    :ivar input: Location for the input. Required.
-    :vartype input: ~azure.health.deidentification.models.DeidentificationDocumentLocation
-    :ivar output: Location for the output.
-    :vartype output: ~azure.health.deidentification.models.DeidentificationDocumentLocation
+    :ivar input_location: Location for the input. Required.
+    :vartype input_location: ~azure.health.deidentification.models.DeidentificationDocumentLocation
+    :ivar output_location: Location for the output.
+    :vartype output_location:
+     ~azure.health.deidentification.models.DeidentificationDocumentLocation
     :ivar status: Status of the document. Required. Known values are: "NotStarted", "Running",
      "Succeeded", "Failed", and "Canceled".
-    :vartype status: str or ~azure.health.deidentification.models.OperationState
+    :vartype status: str or ~azure.health.deidentification.models.OperationStatus
     :ivar error: Error when document fails.
     :vartype error: ~azure.core.ODataV4Format
     """
 
     id: str = rest_field(visibility=["read"])
     """Id of the document details. Required."""
-    input: "_models.DeidentificationDocumentLocation" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    input_location: "_models.DeidentificationDocumentLocation" = rest_field(
+        name="input", visibility=["read", "create", "update", "delete", "query"]
     )
     """Location for the input. Required."""
-    output: Optional["_models.DeidentificationDocumentLocation"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    output_location: Optional["_models.DeidentificationDocumentLocation"] = rest_field(
+        name="output", visibility=["read", "create", "update", "delete", "query"]
     )
     """Location for the output."""
-    status: Union[str, "_models.OperationState"] = rest_field(
+    status: Union[str, "_models.OperationStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Status of the document. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
@@ -147,9 +149,9 @@ class DeidentificationDocumentDetails(_model_base.Model):
     def __init__(
         self,
         *,
-        input: "_models.DeidentificationDocumentLocation",
-        status: Union[str, "_models.OperationState"],
-        output: Optional["_models.DeidentificationDocumentLocation"] = None,
+        input_location: "_models.DeidentificationDocumentLocation",
+        status: Union[str, "_models.OperationStatus"],
+        output_location: Optional["_models.DeidentificationDocumentLocation"] = None,
         error: Optional[ODataV4Format] = None,
     ) -> None: ...
 
@@ -199,11 +201,12 @@ class DeidentificationDocumentLocation(_model_base.Model):
 class DeidentificationJob(_model_base.Model):
     """A job containing a batch of documents to de-identify.
 
-    :ivar name: The name of a job. Required.
-    :vartype name: str
-    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
+    :ivar job_name: The name of a job. Required.
+    :vartype job_name: str
+    :ivar operation_type: Operation to perform on the input documents. Known values are: "Redact",
      "Surrogate", and "Tag".
-    :vartype operation: str or ~azure.health.deidentification.models.DeidentificationOperationType
+    :vartype operation_type: str or
+     ~azure.health.deidentification.models.DeidentificationOperationType
     :ivar source_location: Storage location to perform the operation on. Required.
     :vartype source_location: ~azure.health.deidentification.models.SourceStorageLocation
     :ivar target_location: Target location to store output of operation. Required.
@@ -213,7 +216,7 @@ class DeidentificationJob(_model_base.Model):
      ~azure.health.deidentification.models.DeidentificationJobCustomizationOptions
     :ivar status: Current status of a job. Required. Known values are: "NotStarted", "Running",
      "Succeeded", "Failed", and "Canceled".
-    :vartype status: str or ~azure.health.deidentification.models.OperationState
+    :vartype status: str or ~azure.health.deidentification.models.OperationStatus
     :ivar error: Error when job fails in it's entirety.
     :vartype error: ~azure.core.ODataV4Format
     :ivar last_updated_at: Date and time when the job was completed.
@@ -230,10 +233,10 @@ class DeidentificationJob(_model_base.Model):
     :vartype summary: ~azure.health.deidentification.models.DeidentificationJobSummary
     """
 
-    name: str = rest_field(visibility=["read"])
+    job_name: str = rest_field(name="name", visibility=["read"])
     """The name of a job. Required."""
-    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
+        name="operation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
      \"Tag\"."""
@@ -249,7 +252,7 @@ class DeidentificationJob(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Customization parameters to override default service behaviors."""
-    status: Union[str, "_models.OperationState"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.OperationStatus"] = rest_field(visibility=["read"])
     """Current status of a job. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
     error: Optional[ODataV4Format] = rest_field(visibility=["read"])
@@ -273,7 +276,7 @@ class DeidentificationJob(_model_base.Model):
         *,
         source_location: "_models.SourceStorageLocation",
         target_location: "_models.TargetStorageLocation",
-        operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
+        operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
         customizations: Optional["_models.DeidentificationJobCustomizationOptions"] = None,
     ) -> None: ...
 
@@ -336,25 +339,25 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
 class DeidentificationJobSummary(_model_base.Model):
     """Summary metrics of a job.
 
-    :ivar successful: Number of documents that have completed. Required.
-    :vartype successful: int
-    :ivar failed: Number of documents that have failed. Required.
-    :vartype failed: int
-    :ivar canceled: Number of documents that have been canceled. Required.
-    :vartype canceled: int
-    :ivar total: Number of documents total. Required.
-    :vartype total: int
+    :ivar successful_count: Number of documents that have completed. Required.
+    :vartype successful_count: int
+    :ivar failed_count: Number of documents that have failed. Required.
+    :vartype failed_count: int
+    :ivar canceled_count: Number of documents that have been canceled. Required.
+    :vartype canceled_count: int
+    :ivar total_count: Number of documents total. Required.
+    :vartype total_count: int
     :ivar bytes_processed: Number of bytes processed. Required.
     :vartype bytes_processed: int
     """
 
-    successful: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    successful_count: int = rest_field(name="successful", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have completed. Required."""
-    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    failed_count: int = rest_field(name="failed", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have failed. Required."""
-    canceled: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    canceled_count: int = rest_field(name="canceled", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that have been canceled. Required."""
-    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    total_count: int = rest_field(name="total", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents total. Required."""
     bytes_processed: int = rest_field(name="bytesProcessed", visibility=["read", "create", "update", "delete", "query"])
     """Number of bytes processed. Required."""
@@ -363,10 +366,10 @@ class DeidentificationJobSummary(_model_base.Model):
     def __init__(
         self,
         *,
-        successful: int,
-        failed: int,
-        canceled: int,
-        total: int,
+        successful_count: int,
+        failed_count: int,
+        canceled_count: int,
+        total_count: int,
         bytes_processed: int,
     ) -> None: ...
 

@@ -22,7 +22,7 @@ class DeidentificationOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     document."""
 
 
-class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
     NOT_STARTED = "NotStarted"

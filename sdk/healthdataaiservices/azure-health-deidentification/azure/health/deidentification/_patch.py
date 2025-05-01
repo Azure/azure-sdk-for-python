@@ -40,7 +40,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._list_job_documents_internal(name=job_name, continuation_token_parameter=None, **kwargs)
+        return super()._list_job_documents_internal(job_name=job_name, continuation_token_parameter=None, **kwargs)
 
 
 def patch_sdk():
