@@ -189,6 +189,9 @@ class _SharedAccessHelper(object):
         if val:
             self.query_dict[name] = str(val) if val is not None else None
 
+    def add_encryption_scope(self, **kwargs):
+        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
+
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
             start = _to_utc_datetime(start)

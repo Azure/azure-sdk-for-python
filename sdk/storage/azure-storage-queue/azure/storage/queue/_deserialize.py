@@ -33,8 +33,8 @@ def deserialize_queue_creation(response: "PipelineResponse", obj: Any, headers: 
                 f"Time:{headers['Date']}\n"
                 f"ErrorCode:{error_code}"
             ),
-            response=response,
-        )  # type: ignore
+            response=response,  # type: ignore [arg-type]
+        )
         error.error_code = error_code  # type: ignore
         error.additional_info = {}  # type: ignore
         raise error
