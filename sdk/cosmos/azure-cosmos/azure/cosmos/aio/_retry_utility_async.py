@@ -204,8 +204,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    if args:
-                        await global_endpoint_manager.record_failure(args[0])
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:

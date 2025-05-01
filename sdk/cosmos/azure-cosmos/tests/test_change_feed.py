@@ -18,7 +18,7 @@ from azure.cosmos.partition_key import PartitionKey
 def setup():
     config = test_config.TestConfig()
     use_multiple_write_locations = False
-    if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+    if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
         use_multiple_write_locations = True
     if (config.masterKey == '[YOUR_KEY_HERE]' or
             config.host == '[YOUR_ENDPOINT_HERE]'):
@@ -26,7 +26,8 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(config.host, config.masterKey),
+    test_client = cosmos_client.CosmosClient(config.host, config.masterKey,
+                                             multiple_write_location=use_multiple_write_locations),
     return {
         "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
         "is_emulator": config.is_emulator

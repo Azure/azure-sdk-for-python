@@ -20,7 +20,7 @@ from azure.cosmos.partition_key import PartitionKey
 @pytest_asyncio.fixture()
 async def setup():
     use_multiple_write_locations = False
-    if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+    if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
         use_multiple_write_locations = True
     config = test_config.TestConfig()
     if config.masterKey == '[YOUR_KEY_HERE]' or config.host == '[YOUR_ENDPOINT_HERE]':

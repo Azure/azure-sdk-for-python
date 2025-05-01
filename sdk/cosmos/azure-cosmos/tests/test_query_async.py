@@ -36,7 +36,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls):
         cls.use_multiple_write_locations = False
-        if os.environ.get("AZURE_COSMOS_ENABLE_MULTIPLE_WRITE_LOCATIONS", "False") == "True":
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             cls.use_multiple_write_locations = True
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):

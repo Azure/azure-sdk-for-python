@@ -142,7 +142,7 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[Re
 
     return applicable_regional_routing_contexts
 
-def current_time_millis():
+def current_time_millis() -> int:
     return int(round(time.time() * 1000))
 
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes

@@ -206,8 +206,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    if args:
-                        global_endpoint_manager.record_failure(args[0])
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
@@ -247,7 +245,16 @@ def _has_database_account_header(request_headers):
         return True
     return False
 
-def _handle_service_request_retries(client, request_retry_policy, exception, *args):
+def _handle_service_request_retries(
+        client,
+        request_retry_policy,
+        exception,
+        start_time,
+        global_endpoint_manager,
+        client_timeout,
+        *args,
+        **kwargs
+):
     # we resolve the request endpoint to the next preferred region
     # once we are out of preferred regions we stop retrying
     retry_policy = request_retry_policy
@@ -255,6 +262,8 @@ def _handle_service_request_retries(client, request_retry_policy, exception, *ar
         if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
         raise exception
+    else:
+        check_client_timeout(args, client_timeout, global_endpoint_manager, start_time, kwargs)
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
     if request and _has_read_retryable_headers(request.headers):
