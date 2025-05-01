@@ -19,7 +19,7 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel
+/sdk/ @lmazuel @lirenhe
 
 # Core
 # PRLabel: %Core.Http
@@ -81,7 +81,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @YalinLi0312
+/sdk/appconfiguration/                                               @xiangyan99
 
 # ServiceOwners: @mrm9084
 # ServiceLabel: %App Configuration Provider
@@ -245,6 +245,10 @@
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
+# PRLabel: %Durable Task Scheduler
+# ServiceLabel: %Durable Task Scheduler %Service Attention
+/sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
+
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
@@ -315,6 +319,13 @@
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
+
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
+
+# PRLabel: %Azure Projects
+/sdk/projects/                                                      @annatisch
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
@@ -841,3 +852,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence
+/sdk/**/ci.yml                                                       @msyyc @lmazuel

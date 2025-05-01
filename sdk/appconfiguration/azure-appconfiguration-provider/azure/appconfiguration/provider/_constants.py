@@ -20,6 +20,7 @@ ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
 TELEMETRY_KEY = "telemetry"
 METADATA_KEY = "metadata"
 
+ALLOCATION_ID_KEY = "AllocationId"
 ETAG_KEY = "ETag"
 FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 

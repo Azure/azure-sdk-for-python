@@ -16,8 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.evaluation._exceptions import ErrorTarget
-from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation._common.constants import TokenScope
+from azure.ai.evaluation._constants import DefaultOpenEncoding, TokenScope
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
     PromptyException,
@@ -415,7 +414,7 @@ class AsyncPrompty:
         :rtype: Optional[AsyncAzureADTokenProvider]
         """
         async def _wrapper() -> str:
-            token = cred.get_token(TokenScope.CognitiveServices)
+            token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
             if isinstance(token, Awaitable):
                 token = await token
             return token.token

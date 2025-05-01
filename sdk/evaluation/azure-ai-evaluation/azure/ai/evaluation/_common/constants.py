@@ -74,11 +74,3 @@ class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ECI = "eci"
-
-
-class TokenScope(str, Enum):
-    """Token scopes for Azure auth"""
-
-    AzureManagement = "https://management.azure.com/.default"
-    AzureML = "https://ml.azure.com/.default"
-    CognitiveServices = "https://cognitiveservices.azure.com/.default"

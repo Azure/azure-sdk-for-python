@@ -12,12 +12,14 @@ import uuid
 from tqdm import tqdm
 
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
@@ -35,7 +37,6 @@ from ._model_tools import (
     ManagedIdentityAPITokenManager,
     ProxyChatCompletionsModel,
     RAIClient,
-    TokenScope,
 )
 from ._model_tools._template_handler import AdversarialTemplate, TemplateParameters
 from ._utils import JsonLineList
@@ -65,26 +66,37 @@ class AdversarialSimulator:
                 2 conversation turns each (4 messages per result).
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
 
-        try:
-            self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
-        except EvaluationException as e:
-            raise EvaluationException(
-                message=e.message,
-                internal_message=e.internal_message,
-                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
-                category=e.category,
-                blame=e.blame,
-            ) from e
-
-        self.token_manager = ManagedIdentityAPITokenManager(
-            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("AdversarialSimulator"),
-            credential=cast(TokenCredential, credential),
-        )
-        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        if is_onedp_project(azure_ai_project):
+            self.azure_ai_project = azure_ai_project
+            self.credential = cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+        else:
+            try:
+                self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
+            except EvaluationException as e:
+                raise EvaluationException(
+                    message=e.message,
+                    internal_message=e.internal_message,
+                    target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                    category=e.category,
+                    blame=e.blame,
+                ) from e
+            self.credential = cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+                            
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
@@ -212,7 +224,10 @@ class AdversarialSimulator:
         total_tasks = min(total_tasks, max_simulation_results)
         _jailbreak_type = kwargs.get("_jailbreak_type", None)
         if _jailbreak_type:
-            jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(type=_jailbreak_type)
+            if isinstance(self.rai_client, RAIClient):
+                jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(type=_jailbreak_type)
+            elif isinstance(self.rai_client, AIProjectClient):
+                jailbreak_dataset = self.rai_client.red_teams.get_jail_break_dataset_with_type(type=_jailbreak_type)
         progress_bar = tqdm(
             total=total_tasks,
             desc="generating jailbreak simulations" if _jailbreak_type else "generating simulations",
@@ -342,22 +357,24 @@ class AdversarialSimulator:
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
         )
         bots = [user_bot, system_bot]
-        session = get_async_http_client().with_policies(
-            retry_policy=AsyncRetryPolicy(
-                retry_total=api_call_retry_limit,
-                retry_backoff_factor=api_call_retry_sleep_sec,
-                retry_mode=RetryMode.Fixed,
+        
+        if isinstance(self.rai_client, AIProjectClient):
+            session = self.rai_client
+        else:    
+            session = get_async_http_client().with_policies(
+                retry_policy=AsyncRetryPolicy(
+                    retry_total=api_call_retry_limit,
+                    retry_backoff_factor=api_call_retry_sleep_sec,
+                    retry_mode=RetryMode.Fixed,
+                )
             )
+        _, conversation_history = await simulate_conversation(
+            bots=bots,
+            session=session,
+            turn_limit=max_conversation_turns,
+            api_call_delay_sec=api_call_delay_sec,
+            language=language,
         )
-
-        async with semaphore, session:
-            _, conversation_history = await simulate_conversation(
-                bots=bots,
-                session=session,
-                turn_limit=max_conversation_turns,
-                api_call_delay_sec=api_call_delay_sec,
-                language=language,
-            )
 
         return self._to_chat_protocol(
             conversation_history=conversation_history,
@@ -367,11 +384,12 @@ class AdversarialSimulator:
     def _get_user_proxy_completion_model(
         self, template_key: str, template_parameters: TemplateParameters, simulation_id: str = ""
     ) -> ProxyChatCompletionsModel:
+        endpoint_url = self.rai_client._config.endpoint + "/redTeams/simulation/chat/completions/submit" if isinstance(self.rai_client, AIProjectClient) else self.rai_client.simulation_submit_endpoint    
         return ProxyChatCompletionsModel(
             name="raisvc_proxy_model",
             template_key=template_key,
             template_parameters=template_parameters,
-            endpoint_url=self.rai_client.simulation_submit_endpoint,
+            endpoint_url=endpoint_url,
             token_manager=self.token_manager,
             api_version="2023-07-01-preview",
             max_tokens=1200,

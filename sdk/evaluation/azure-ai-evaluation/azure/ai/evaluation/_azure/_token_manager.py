@@ -112,7 +112,7 @@ class AzureMLTokenManager(APITokenManager):
         )
 
     def _update_token(self, access_token: AccessToken) -> None:
-        self.token = cast(str, access_token.token)
+        self.token = access_token.token
         self.token_expiry_time = access_token.expires_on
         self.last_refresh_time = time.time()
         self.logger.info("Refreshed Azure management token.")

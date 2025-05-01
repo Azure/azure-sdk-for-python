@@ -11,10 +11,9 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Optional, Union
 
+from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
-
-from ..._common.constants import TokenScope
 
 AZURE_TOKEN_REFRESH_INTERVAL = int(
     os.getenv("AZURE_TOKEN_REFRESH_INTERVAL", "600")
@@ -99,7 +98,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     """API Token Manager for Azure Managed Identity
 
     :param token_scope: Token scope for Azure endpoint
-    :type token_scope: ~azure.ai.evaluation.simulator._model_tools.TokenScope
+    :type token_scope: ~azure.ai.evaluation._constants.TokenScope
     :param logger: Logger object
     :type logger: logging.Logger
     :keyword kwargs: Additional keyword arguments
@@ -180,7 +179,7 @@ class PlainTokenManager(APITokenManager):
         credential: Optional[TokenCredential] = None,
     ) -> None:
         super().__init__(logger, auth_header=auth_header, credential=credential)
-        self.token = openapi_key
+        self.token: str = openapi_key
 
     def get_token(self) -> str:
         """Get the API token
@@ -188,4 +187,4 @@ class PlainTokenManager(APITokenManager):
         :return: API token
         :rtype: str
         """
-        return self.token or ""
+        return self.token

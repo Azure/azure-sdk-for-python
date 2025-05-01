@@ -30,10 +30,8 @@ class CapabilityHostConfigurationOptions(object):
         # [END load_capability_host]
 
         # [START capability_host_object_create]
-        from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
-            CapabilityHost,
-        )
         from azure.ai.ml.constants._workspace import CapabilityHostKind
+        from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
 
         # CapabilityHost in Hub workspace. For Hub workspace, only name and description are required.
         capability_host = CapabilityHost(
@@ -50,16 +48,15 @@ class CapabilityHostConfigurationOptions(object):
             ai_services_connections=["connection1"],
             storage_connections=["projectname/workspaceblobstore"],
             vector_store_connections=["connection1"],
+            thread_storage_connections=["connection1"],
         )
         # [END capability_host_object_create]
 
         # [START capability_host_begin_create_or_update_operation]
         from azure.ai.ml import MLClient
-        from azure.identity import DefaultAzureCredential
-        from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
-            CapabilityHost,
-        )
         from azure.ai.ml.constants._workspace import CapabilityHostKind
+        from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]

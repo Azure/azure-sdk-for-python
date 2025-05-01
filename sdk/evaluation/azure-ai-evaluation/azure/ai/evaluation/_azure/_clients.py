@@ -13,7 +13,7 @@ from azure.core.rest import HttpResponse
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
 from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
-from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenScope
+from azure.ai.evaluation._constants import TokenScope
 from ._models import BlobStoreInfo, Workspace
 
 

@@ -15,6 +15,7 @@ import jinja2
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RAIClient
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 
@@ -145,7 +146,7 @@ class ConversationBot:
 
     async def generate_response(
         self,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
@@ -255,7 +256,7 @@ class CallbackConversationBot(ConversationBot):
 
     async def generate_response(
         self,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
@@ -329,7 +330,7 @@ class MultiModalConversationBot(ConversationBot):
         callback: Callable,
         user_template: str,
         user_template_parameters: TemplateParameters,
-        rai_client: RAIClient,
+        rai_client: Union[RAIClient, AIProjectClient],
         *args,
         **kwargs,
     ) -> None:
@@ -342,7 +343,7 @@ class MultiModalConversationBot(ConversationBot):
 
     async def generate_response(
         self,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
@@ -418,7 +419,10 @@ class MultiModalConversationBot(ConversationBot):
         contents = []
         for msg in messages:
             if msg.startswith("image_understanding/"):
-                encoded_image = await self.rai_client.get_image_data(msg)
+                if(isinstance(self.rai_client, RAIClient)):
+                    encoded_image = await self.rai_client.get_image_data(msg)
+                else:
+                    encoded_image = self.rai_client.red_teams.get_template_parameters_image(path=msg)
                 contents.append(
                     {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded_image}"}},
                 )
