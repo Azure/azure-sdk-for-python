@@ -49,7 +49,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -68,7 +67,7 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "requests>=2.21.0",
         "six>=1.11.0",
