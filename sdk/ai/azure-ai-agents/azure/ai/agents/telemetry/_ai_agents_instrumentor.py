@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast, TYPE
 from urllib.parse import urlparse
 
 from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, _models
-from azure.ai.agents.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
+from azure.ai.agents.models._enums import AgentsResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
@@ -596,16 +596,16 @@ class _AIAgentsInstrumentorPreview:
         Convert response_format to string.
 
         :param response_format: The response format.
-        :type response_format: ~azure.ai.agents._types.AgentsApiResponseFormatOption
+        :type response_format: ~azure.ai.agents._types.AgentsResponseFormatOption
         :returns: string for the response_format.
         :rtype: Optional[str]
-        :raises: Value error if response_format is not of type AgentsApiResponseFormatOption.
+        :raises: Value error if response_format is not of type AgentsResponseFormatOption.
         """
         if isinstance(response_format, str) or response_format is None:
             return response_format
-        if isinstance(response_format, AgentsApiResponseFormatMode):
+        if isinstance(response_format, AgentsResponseFormatMode):
             return response_format.value
-        if isinstance(response_format, _models.AgentsApiResponseFormat):
+        if isinstance(response_format, _models.AgentsResponseFormat):
             return response_format.type
         if isinstance(response_format, _models.ResponseFormatJsonSchemaType):
             return response_format.type
@@ -626,7 +626,7 @@ class _AIAgentsInstrumentorPreview:
         _tools: Optional[List[ToolDefinition]] = None,
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             operation_name,
@@ -700,7 +700,7 @@ class _AIAgentsInstrumentorPreview:
         _toolset: Optional[ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
