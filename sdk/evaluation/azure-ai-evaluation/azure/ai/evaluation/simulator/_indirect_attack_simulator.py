@@ -16,10 +16,11 @@ from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, Supporte
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._constants import TokenScope
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
 
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient
 
 logger = logging.getLogger(__name__)
 
