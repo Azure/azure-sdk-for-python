@@ -178,7 +178,8 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport, clien
 
 # New feature only for Pure Python AMQP, not uamqp.
 @pytest.mark.liveTest
-def test_client_with_ssl_context(auth_credentials, socket_transport, client_args):
+@pytest.mark.no_amqpproxy # testing ssl_context
+def test_client_with_ssl_context(auth_credentials, socket_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
 
     # Check that SSLContext with invalid/nonexistent cert file raises an error
