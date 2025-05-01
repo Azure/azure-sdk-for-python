@@ -11,8 +11,8 @@ import time
 import functools
 from typing import Set, Callable, Any
 from azure.ai.agents.models import (
-    AgentsApiResponseFormatMode,
-    AgentsApiResponseFormat,
+    AgentsResponseFormatMode,
+    AgentsResponseFormat,
     AgentEventHandler,
     FunctionTool,
     MessageDeltaChunk,
@@ -108,12 +108,12 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         [
             (None, None),
             ("neep", "neep"),
-            (AgentsApiResponseFormatMode.AUTO, "auto"),
-            (AgentsApiResponseFormat(type="test"), "test"),
+            (AgentsResponseFormatMode.AUTO, "auto"),
+            (AgentsResponseFormat(type="test"), "test"),
         ],
     )
     def test_convert_api_response_format(self, fmt, expected):
-        """Test conversion of AgentsApiResponseFormatOption to string"""
+        """Test conversion of AgentsResponseFormatOption to string"""
         actual = _AIAgentsInstrumentorPreview.agent_api_response_to_str(fmt)
         assert actual == expected
 
