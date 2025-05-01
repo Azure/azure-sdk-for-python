@@ -14,15 +14,11 @@ from typing import Optional, Union
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
+from ..._common.constants import TokenScope
+
 AZURE_TOKEN_REFRESH_INTERVAL = int(
     os.getenv("AZURE_TOKEN_REFRESH_INTERVAL", "600")
 )  # token refresh interval in seconds
-
-
-class TokenScope(Enum):
-    """Token scopes for Azure endpoints"""
-
-    DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
 
 
 class APITokenManager(ABC):
@@ -184,7 +180,7 @@ class PlainTokenManager(APITokenManager):
         credential: Optional[TokenCredential] = None,
     ) -> None:
         super().__init__(logger, auth_header=auth_header, credential=credential)
-        self.token: str = openapi_key
+        self.token = openapi_key
 
     def get_token(self) -> str:
         """Get the API token
@@ -192,4 +188,4 @@ class PlainTokenManager(APITokenManager):
         :return: API token
         :rtype: str
         """
-        return self.token
+        return self.token or ""

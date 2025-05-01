@@ -29,6 +29,7 @@ from .constants import (
     RAIService,
     Tasks,
     _InternalEvaluationMetrics,
+    TokenScope,
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
@@ -524,7 +525,7 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
             if (exp_time - current_time) >= 300:
                 return token
 
-    return credential.get_token("https://management.azure.com/.default").token
+    return credential.get_token(TokenScope.AzureManagement).token
 
 
 async def evaluate_with_rai_service(
