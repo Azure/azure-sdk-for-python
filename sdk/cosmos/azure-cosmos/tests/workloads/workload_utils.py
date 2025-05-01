@@ -6,14 +6,17 @@ import os
 import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
-from workload_configs import NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY
+
+from azure.monitor.opentelemetry import configure_azure_monitor
+from workload_configs import (NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY, USER_AGENT_PREFIX,
+                              APP_INSIGHTS_CONNECTION_STRING, CIRCUIT_BREAKER_ENABLED)
 
 _NOISY_ERRORS = set([404, 409, 412])
 _NOISY_SUB_STATUS_CODES = set([0, None])
 _REQUIRED_ATTRIBUTES = ["resource_type", "verb", "operation_type", "status_code", "sub_status_code", "duration"]
 
 def get_user_agent(client_id):
-    return str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
+    return USER_AGENT_PREFIX + "-" + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
 def get_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
@@ -103,15 +106,21 @@ async def perform_query_concurrently(container, excluded_locations):
     items = [item async for item in results]
 
 def create_logger(file_name):
-    logger = logging.getLogger('azure.cosmos')
+    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = str(CIRCUIT_BREAKER_ENABLED)
+    logger = logging.getLogger()
+    if APP_INSIGHTS_CONNECTION_STRING:
+        configure_azure_monitor(
+            logger_name="azure.cosmos",
+            connection_string=APP_INSIGHTS_CONNECTION_STRING,
+        )
     prefix = os.path.splitext(file_name)[0] + "-" + str(os.getpid())
     # Create a rotating file handler
     handler = RotatingFileHandler(
-        "log-" + prefix + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
+        "log-" + get_user_agent(prefix) + '.log',
         maxBytes=1024 * 1024 * 10,  # 10 mb
-        backupCount=3
+        backupCount=2
     )
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     # create filters for the logger handler to reduce the noise
     workload_logger_filter = WorkloadLoggerFilter()
     handler.addFilter(workload_logger_filter)

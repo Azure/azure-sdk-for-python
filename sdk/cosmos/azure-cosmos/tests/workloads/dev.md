@@ -3,12 +3,13 @@ This directory contains the scale testing workloads for the SDK. The workloads a
 and scalability of the SDK under various conditions. There are different types of workloads and each will create a log 
 file when run. These logs are named in this format `<file name>-<process id>-<date time>.log`. 
 
-### Setup VM
+### Setup Scale Testing
 1. Create a VM in Azure with the following configuration:
    - 8 vCPUs
    - 32 GB RAM
    - Ubuntu
    - Accelerated networking
+1. Create a Azure App Insights Resource (Optional)
 1. Fork and clone this repository
 1. Go to azure cosmos folder
    - `cd azure-sdk-for-python/sdk/cosmos/azure-cosmos`
@@ -19,6 +20,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
    - `python3 -m venv azure-cosmosdb-sdk-environment`
    - `source azure-cosmosdb-sdk-environment/bin/activate`
    - `pip install -r dev_requirements.txt`
+   - `pip install azure-monitor-opentelemetry`
 1. Checkout the branch with the changes to test. 
 1. Install azure-cosmos
    - `pip install .`
@@ -40,3 +42,9 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
 ### Monitor Run
 - `ps -eaf | grep "python3"` to see the running processes
 - `tail -f <log_file>` to see the logs in real time 
+
+### Close Workloads
+- If you want to keep the logs and stop the scripts,  
+   `./shutdown_workloads.sh --no-remove-logs` 
+- If you want to remove the logs and stop the scripts,        
+   `./shutdown_workloads.sh`
