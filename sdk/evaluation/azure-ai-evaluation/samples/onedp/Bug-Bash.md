@@ -31,12 +31,8 @@ To pull latest code from the Bug bash branch.
 
 git clone https://github.com/Azure/azure-sdk-for-python.git
 cd azure-sdk-for-python
-git pull
-git remote add w-javed https://github.com/w-javed/azure-sdk-for-python.git
-git remote -v
-git fetch w-javed
-git checkout -b Bug-Bash-SDK-Evaluations-1DP-Project w-javed/Bug-Bash-SDK-Evaluations-1DP-Project
-cd sdk/evaluation/azure-ai-evaluation/samples/onedp/bugbash
+git checkout -b SDK-Evaluations-1DP-Project origin/SDK-Evaluations-1DP-Project
+cd sdk/evaluation/azure-ai-evaluation/samples/onedp
 ```
 
 ### 3. Install Azure AI Evaluation
