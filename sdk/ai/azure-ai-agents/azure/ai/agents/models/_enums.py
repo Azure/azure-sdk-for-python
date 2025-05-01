@@ -10,24 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the mode in which the model will handle the return format of a tool call."""
-
-    AUTO = "auto"
-    """Default value. Let the model handle the return format."""
-    NONE = "none"
-    """Setting the value to ``none``, will result in a 400 Bad request."""
-
-
-class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the tool choice will be used."""
-
-    NONE = "none"
-    """The model will not call a function and instead generates a message."""
-    AUTO = "auto"
-    """The model can pick between generating a message or calling a function."""
-
-
 class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available tool types for agents named tools."""
 
@@ -49,6 +31,24 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_custom_search``"""
     CONNECTED_AGENT = "connected_agent"
     """Tool type ``connected_agent``"""
+
+
+class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the mode in which the model will handle the return format of a tool call."""
+
+    AUTO = "auto"
+    """Default value. Let the model handle the return format."""
+    NONE = "none"
+    """Setting the value to ``none``, will result in a 400 Bad request."""
+
+
+class AgentsToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how the tool choice will be used."""
+
+    NONE = "none"
+    """The model will not call a function and instead generates a message."""
+    AUTO = "auto"
+    """The model can pick between generating a message or calling a function."""
 
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

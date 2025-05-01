@@ -60,9 +60,8 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

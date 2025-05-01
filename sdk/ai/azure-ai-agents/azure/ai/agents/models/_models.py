@@ -62,10 +62,10 @@ class Agent(_Model):
      We generally recommend altering this or temperature but not both. Required.
     :vartype top_p: float
     :ivar response_format: The response format of the tool calls used by this agent. Is one of the
-     following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
-    :vartype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-     ~azure.ai.agents.models.AgentsApiResponseFormat or
+     following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+     ResponseFormatJsonSchemaType
+    :vartype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+     ~azure.ai.agents.models.AgentsResponseFormat or
      ~azure.ai.agents.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
@@ -106,11 +106,11 @@ class Agent(_Model):
      So 0.1 means only the tokens comprising the top 10% probability mass are considered.
      
      We generally recommend altering this or temperature but not both. Required."""
-    response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field(
+    response_format: Optional["_types.AgentsResponseFormatOption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The response format of the tool calls used by this agent. Is one of the following types: str,
-     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     Union[str, \"_models.AgentsResponseFormatMode\"], AgentsResponseFormat,
      ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
@@ -132,7 +132,7 @@ class Agent(_Model):
         temperature: float,
         top_p: float,
         metadata: Dict[str, str],
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
     ) -> None: ...
 
     @overload
@@ -187,39 +187,6 @@ class AgentDeletionStatus(_Model):
         self.object: Literal["assistant.deleted"] = "assistant.deleted"
 
 
-class AgentsApiResponseFormat(_Model):
-    """An object describing the expected output of the model. If ``json_object`` only ``function``
-    type ``tools`` are allowed to be passed to the Run.
-    If ``text`` the model can return text or any value needed.
-
-    :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
-     "json_object".
-    :vartype type: str or ~azure.ai.agents.models.ResponseFormat
-    """
-
-    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ResponseFormat"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AgentsNamedToolChoice(_Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
@@ -248,6 +215,39 @@ class AgentsNamedToolChoice(_Model):
         *,
         type: Union[str, "_models.AgentsNamedToolChoiceType"],
         function: Optional["_models.FunctionName"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentsResponseFormat(_Model):
+    """An object describing the expected output of the model. If ``json_object`` only ``function``
+    type ``tools`` are allowed to be passed to the Run.
+    If ``text`` the model can return text or any value needed.
+
+    :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
+     "json_object".
+    :vartype type: str or ~azure.ai.agents.models.ResponseFormat
+    """
+
+    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ResponseFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -391,8 +391,10 @@ class AISearchIndexResource(_Model):
     :vartype query_type: str or ~azure.ai.agents.models.AzureAISearchQueryType
     :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
-    :ivar filter: Odata filter string for search resource.
+    :ivar filter: filter string for search resource.
     :vartype filter: str
+    :ivar index_asset_id: Index asset id for search resource.
+    :vartype index_asset_id: str
     """
 
     index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -407,7 +409,9 @@ class AISearchIndexResource(_Model):
     top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents to retrieve from search and present to the model."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Odata filter string for search resource."""
+    """filter string for search resource."""
+    index_asset_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Index asset id for search resource."""
 
     @overload
     def __init__(
@@ -418,6 +422,7 @@ class AISearchIndexResource(_Model):
         query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
         top_k: Optional[int] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        index_asset_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -682,6 +687,96 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
         super().__init__(*args, type="azure_function", **kwargs)
 
 
+class BingCustomSearchConfiguration(_Model):
+    """A bing custom search configuration.
+
+    :ivar connection_id: Connection id for grounding with bing search. Required.
+    :vartype connection_id: str
+    :ivar instance_name: Name of the custom configuration instance given to config. Required.
+    :vartype instance_name: str
+    :ivar market: The market where the results come from.
+    :vartype market: str
+    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :vartype set_lang: str
+    :ivar count: The number of search results to return in the bing api response.
+    :vartype count: int
+    :ivar freshness: Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :vartype freshness: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connection id for grounding with bing search. Required."""
+    instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the custom configuration instance given to config. Required."""
+    market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The market where the results come from."""
+    set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language to use for user interface strings when calling Bing API."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of search results to return in the bing api response."""
+    freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        instance_name: str,
+        market: Optional[str] = None,
+        set_lang: Optional[str] = None,
+        count: Optional[int] = None,
+        freshness: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BingCustomSearchConfigurationList(_Model):
+    """A list of search configurations currently used by the ``bing_custom_search`` tool.
+
+    :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
+     connection
+     resource attached to the tool. Required.
+    :vartype search_configurations: list[~azure.ai.agents.models.BingCustomSearchConfiguration]
+    """
+
+    search_configurations: List["_models.BingCustomSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connections attached to this tool. There can be a maximum of 1 connection
+     resource attached to the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_configurations: List["_models.BingCustomSearchConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_search"):
     """The input definition information for a Bing custom search tool as used to configure an agent.
 
@@ -690,13 +785,13 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
     :vartype type: str
     :ivar bing_custom_search: The list of search configurations used by the bing custom search
      tool. Required.
-    :vartype bing_custom_search: ~azure.ai.agents.models.SearchConfigurationList
+    :vartype bing_custom_search: ~azure.ai.agents.models.BingCustomSearchConfigurationList
     """
 
     type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
-    bing_custom_search: "_models.SearchConfigurationList" = rest_field(
+    bing_custom_search: "_models.BingCustomSearchConfigurationList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of search configurations used by the bing custom search tool. Required."""
@@ -705,7 +800,7 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
     def __init__(
         self,
         *,
-        bing_custom_search: "_models.SearchConfigurationList",
+        bing_custom_search: "_models.BingCustomSearchConfigurationList",
     ) -> None: ...
 
     @overload
@@ -719,6 +814,91 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
         super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
+class BingGroundingSearchConfiguration(_Model):
+    """Search configuration for Bing Grounding.
+
+    :ivar connection_id: Connection id for grounding with bing search. Required.
+    :vartype connection_id: str
+    :ivar market: The market where the results come from.
+    :vartype market: str
+    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :vartype set_lang: str
+    :ivar count: The number of search results to return in the bing api response.
+    :vartype count: int
+    :ivar freshness: Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :vartype freshness: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connection id for grounding with bing search. Required."""
+    market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The market where the results come from."""
+    set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language to use for user interface strings when calling Bing API."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of search results to return in the bing api response."""
+    freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        market: Optional[str] = None,
+        set_lang: Optional[str] = None,
+        count: Optional[int] = None,
+        freshness: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BingGroundingSearchConfigurationList(_Model):
+    """A list of search configurations currently used by the ``bing_grounding`` tool.
+
+    :ivar search_configurations: The search configurations attached to this tool. There can be a
+     maximum of 1
+     search configuration resource attached to the tool. Required.
+    :vartype search_configurations: list[~azure.ai.agents.models.BingGroundingSearchConfiguration]
+    """
+
+    search_configurations: List["_models.BingGroundingSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The search configurations attached to this tool. There can be a maximum of 1
+     search configuration resource attached to the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_configurations: List["_models.BingGroundingSearchConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
@@ -726,23 +906,24 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: The list of connections used by the bing grounding tool. Required.
-    :vartype bing_grounding: ~azure.ai.agents.models.ToolConnectionList
+    :ivar bing_grounding: The list of search configurations used by the bing grounding tool.
+     Required.
+    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchConfigurationList
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: "_models.ToolConnectionList" = rest_field(
+    bing_grounding: "_models.BingGroundingSearchConfigurationList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of connections used by the bing grounding tool. Required."""
+    """The list of search configurations used by the bing grounding tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bing_grounding: "_models.ToolConnectionList",
+        bing_grounding: "_models.BingGroundingSearchConfigurationList",
     ) -> None: ...
 
     @overload
@@ -939,25 +1120,101 @@ class FileDeletionStatus(_Model):
         self.object: Literal["file"] = "file"
 
 
+class FileInfo(_Model):
+    """Represents an agent that can call the model and use tools.
+
+    :ivar object: The object type, which is always 'file'. Required. Default value is "file".
+    :vartype object: str
+    :ivar id: The identifier, which can be referenced in API endpoints. Required.
+    :vartype id: str
+    :ivar bytes: The size of the file, in bytes. Required.
+    :vartype bytes: int
+    :ivar filename: The name of the file. Required.
+    :vartype filename: str
+    :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
+     Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar purpose: The intended purpose of a file. Required. Known values are: "fine-tune",
+     "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
+    :vartype purpose: str or ~azure.ai.agents.models.FilePurpose
+    :ivar status: The state of the file. This field is available in Azure OpenAI only. Known values
+     are: "uploaded", "pending", "running", "processed", "error", "deleting", and "deleted".
+    :vartype status: str or ~azure.ai.agents.models.FileState
+    :ivar status_details: The error message with details in case processing of this file failed.
+     This field is available in Azure OpenAI only.
+    :vartype status_details: str
+    """
+
+    object: Literal["file"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'file'. Required. Default value is \"file\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier, which can be referenced in API endpoints. Required."""
+    bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The size of the file, in bytes. Required."""
+    filename: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file. Required."""
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp, in seconds, representing when this object was created. Required."""
+    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The intended purpose of a file. Required. Known values are: \"fine-tune\",
+     \"fine-tune-results\", \"assistants\", \"assistants_output\", \"batch\", \"batch_output\", and
+     \"vision\"."""
+    status: Optional[Union[str, "_models.FileState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of the file. This field is available in Azure OpenAI only. Known values are:
+     \"uploaded\", \"pending\", \"running\", \"processed\", \"error\", \"deleting\", and
+     \"deleted\"."""
+    status_details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error message with details in case processing of this file failed. This field is available
+     in Azure OpenAI only."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bytes: int,
+        filename: str,
+        created_at: datetime.datetime,
+        purpose: Union[str, "_models.FilePurpose"],
+        status: Optional[Union[str, "_models.FileState"]] = None,
+        status_details: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["file"] = "file"
+
+
 class FileListResponse(_Model):
     """The response data from a file list operation.
 
     :ivar object: The object type, which is always 'list'. Required. Default value is "list".
     :vartype object: str
     :ivar data: The files returned for the request. Required.
-    :vartype data: list[~azure.ai.agents.models.OpenAIFile]
+    :vartype data: list[~azure.ai.agents.models.FileInfo]
     """
 
     object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'list'. Required. Default value is \"list\"."""
-    data: List["_models.OpenAIFile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: List["_models.FileInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The files returned for the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        data: List["_models.OpenAIFile"],
+        data: List["_models.FileInfo"],
     ) -> None: ...
 
     @overload
@@ -2613,82 +2870,6 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataag
         super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
-class OpenAIFile(_Model):
-    """Represents an agent that can call the model and use tools.
-
-    :ivar object: The object type, which is always 'file'. Required. Default value is "file".
-    :vartype object: str
-    :ivar id: The identifier, which can be referenced in API endpoints. Required.
-    :vartype id: str
-    :ivar bytes: The size of the file, in bytes. Required.
-    :vartype bytes: int
-    :ivar filename: The name of the file. Required.
-    :vartype filename: str
-    :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
-     Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar purpose: The intended purpose of a file. Required. Known values are: "fine-tune",
-     "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
-    :vartype purpose: str or ~azure.ai.agents.models.FilePurpose
-    :ivar status: The state of the file. This field is available in Azure OpenAI only. Known values
-     are: "uploaded", "pending", "running", "processed", "error", "deleting", and "deleted".
-    :vartype status: str or ~azure.ai.agents.models.FileState
-    :ivar status_details: The error message with details in case processing of this file failed.
-     This field is available in Azure OpenAI only.
-    :vartype status_details: str
-    """
-
-    object: Literal["file"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'file'. Required. Default value is \"file\"."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The identifier, which can be referenced in API endpoints. Required."""
-    bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The size of the file, in bytes. Required."""
-    filename: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the file. Required."""
-    created_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The intended purpose of a file. Required. Known values are: \"fine-tune\",
-     \"fine-tune-results\", \"assistants\", \"assistants_output\", \"batch\", \"batch_output\", and
-     \"vision\"."""
-    status: Optional[Union[str, "_models.FileState"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The state of the file. This field is available in Azure OpenAI only. Known values are:
-     \"uploaded\", \"pending\", \"running\", \"processed\", \"error\", \"deleting\", and
-     \"deleted\"."""
-    status_details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error message with details in case processing of this file failed. This field is available
-     in Azure OpenAI only."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        bytes: int,
-        filename: str,
-        created_at: datetime.datetime,
-        purpose: Union[str, "_models.FilePurpose"],
-        status: Optional[Union[str, "_models.FileState"]] = None,
-        status_details: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.object: Literal["file"] = "file"
-
-
 class OpenAIPageableListOfAgent(_Model):
     """The response data for a requested list of items.
 
@@ -3741,7 +3922,7 @@ class RunStepToolCall(_Model):
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepCustomSearchToolCall, RunStepBingGroundingToolCall,
+    RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
     RunStepCodeInterpreterToolCall, RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall,
     RunStepFunctionToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
@@ -3815,6 +3996,46 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
+    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed search with bing custom search.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: Reserved for future use. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
@@ -4101,46 +4322,6 @@ class RunStepCompletionUsage(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class RunStepCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
-    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed search with bing custom search.
-
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
-    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
-     "bing_custom_search".
-    :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
-    :vartype bing_custom_search: dict[str, str]
-    """
-
-    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'bing_custom_search'. Required. Default value is
-     \"bing_custom_search\"."""
-    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        bing_custom_search: Dict[str, str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepDelta(_Model):
@@ -4981,18 +5162,12 @@ class RunStepFunctionToolCallDetails(_Model):
     :ivar arguments: The arguments that the model requires are provided to the named function.
      Required.
     :vartype arguments: str
-    :ivar output: The output of the function, only populated for function calls that have already
-     have had their outputs submitted. Required.
-    :vartype output: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function. Required."""
     arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments that the model requires are provided to the named function. Required."""
-    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output of the function, only populated for function calls that have already have had their
-     outputs submitted. Required."""
 
     @overload
     def __init__(
@@ -5000,7 +5175,6 @@ class RunStepFunctionToolCallDetails(_Model):
         *,
         name: str,
         arguments: str,
-        output: str,
     ) -> None: ...
 
     @overload
@@ -5233,72 +5407,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
-
-
-class SearchConfiguration(_Model):
-    """A custom search configuration.
-
-    :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
-    :vartype connection_id: str
-    :ivar instance_name: Name of the custom configuration instance given to config. Required.
-    :vartype instance_name: str
-    """
-
-    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A connection in a ToolConnectionList attached to this tool. Required."""
-    instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the custom configuration instance given to config. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
-        instance_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchConfigurationList(_Model):
-    """A list of search configurations currently used by the ``bing_custom_search`` tool.
-
-    :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
-     connection
-     resource attached to the tool. Required.
-    :vartype search_configurations: list[~azure.ai.agents.models.SearchConfiguration]
-    """
-
-    search_configurations: List["_models.SearchConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        search_configurations: List["_models.SearchConfiguration"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
@@ -5693,15 +5801,15 @@ class ThreadRun(_Model):
      moves forward. Required.
     :vartype truncation_strategy: ~azure.ai.agents.models.TruncationObject
     :ivar tool_choice: Controls whether or not and which tool is called by the model. Required. Is
-     one of the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+     one of the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
      AgentsNamedToolChoice
-    :vartype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+    :vartype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
      ~azure.ai.agents.models.AgentsNamedToolChoice
     :ivar response_format: The response format of the tool calls used in this run. Required. Is one
-     of the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
-    :vartype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-     ~azure.ai.agents.models.AgentsApiResponseFormat or
+     of the following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+     AgentsResponseFormat, ResponseFormatJsonSchemaType
+    :vartype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+     ~azure.ai.agents.models.AgentsResponseFormat or
      ~azure.ai.agents.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
@@ -5783,17 +5891,16 @@ class ThreadRun(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The strategy to use for dropping messages as the context windows moves forward. Required."""
-    tool_choice: "_types.AgentsApiToolChoiceOption" = rest_field(
+    tool_choice: "_types.AgentsToolChoiceOption" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls whether or not and which tool is called by the model. Required. Is one of the
-     following types: str, Union[str, \"_models.AgentsApiToolChoiceOptionMode\"],
-     AgentsNamedToolChoice"""
-    response_format: "_types.AgentsApiResponseFormatOption" = rest_field(
+     following types: str, Union[str, \"_models.AgentsToolChoiceOptionMode\"], AgentsNamedToolChoice"""
+    response_format: "_types.AgentsResponseFormatOption" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The response format of the tool calls used in this run. Required. Is one of the following
-     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     types: str, Union[str, \"_models.AgentsResponseFormatMode\"], AgentsResponseFormat,
      ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
@@ -5830,8 +5937,8 @@ class ThreadRun(_Model):
         max_prompt_tokens: int,
         max_completion_tokens: int,
         truncation_strategy: "_models.TruncationObject",
-        tool_choice: "_types.AgentsApiToolChoiceOption",
-        response_format: "_types.AgentsApiResponseFormatOption",
+        tool_choice: "_types.AgentsToolChoiceOption",
+        response_format: "_types.AgentsResponseFormatOption",
         metadata: Dict[str, str],
         parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
