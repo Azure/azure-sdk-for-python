@@ -82,7 +82,8 @@ def _drain_and_coalesce_results(document_producers_to_drain):
 def _rewrite_query_infos(hybrid_search_query_info, global_statistics):
     rewritten_query_infos = []
     for query_info in hybrid_search_query_info['componentQueryInfos']:
-        assert query_info['orderBy']
+        if query_info.get('orderBy') is None:
+            continue
         assert query_info['hasNonStreamingOrderBy']
         rewritten_order_by_expressions = []
         for order_by_expression in query_info['orderByExpressions']:
@@ -165,7 +166,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._document_producer_comparator = None
         self._response_hook = response_hook
 
-    def _run_hybrid_search(self):
+    def _run_hybrid_search(self):  # pylint: disable=call-var-from-loop, too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
@@ -269,8 +270,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         # Sort by scores using component weights
         for index, score_tuples in enumerate(component_scores):
+            # Ordering of the component query is based on if the weight is negative or positive
+            # A positive weight ordering means descending order, a negative weight ordering means ascending order
             ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = False if (ordering.lower() == 'ascending') else True
+            comparison_factor = not (ordering.lower() == 'ascending')
             score_tuples.sort(key=lambda x: abs(component_weights[index]) * x[0], reverse=comparison_factor)
 
         # Compute the ranks

@@ -3197,7 +3197,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf + "," +
-                                    documents._QueryFeature.WeightedRankFusion)
+                                    documents._QueryFeature.WeightedRankFusion + "," +
+                                    documents._QueryFeature.HybridSearchSkipOrderByReWrite)
         if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
                           Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
