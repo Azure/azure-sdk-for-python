@@ -391,8 +391,10 @@ class AISearchIndexResource(_Model):
     :vartype query_type: str or ~azure.ai.agents.models.AzureAISearchQueryType
     :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
-    :ivar filter: Odata filter string for search resource.
+    :ivar filter: filter string for search resource.
     :vartype filter: str
+    :ivar index_asset_id: Index asset id for search resource.
+    :vartype index_asset_id: str
     """
 
     index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -407,7 +409,9 @@ class AISearchIndexResource(_Model):
     top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents to retrieve from search and present to the model."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Odata filter string for search resource."""
+    """filter string for search resource."""
+    index_asset_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Index asset id for search resource."""
 
     @overload
     def __init__(
@@ -418,6 +422,7 @@ class AISearchIndexResource(_Model):
         query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
         top_k: Optional[int] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        index_asset_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -682,6 +687,96 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
         super().__init__(*args, type="azure_function", **kwargs)
 
 
+class BingCustomSearchConfiguration(_Model):
+    """A bing custom search configuration.
+
+    :ivar connection_id: Connection id for grounding with bing search. Required.
+    :vartype connection_id: str
+    :ivar instance_name: Name of the custom configuration instance given to config. Required.
+    :vartype instance_name: str
+    :ivar market: The market where the results come from.
+    :vartype market: str
+    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :vartype set_lang: str
+    :ivar count: The number of search results to return in the bing api response.
+    :vartype count: int
+    :ivar freshness: Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :vartype freshness: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connection id for grounding with bing search. Required."""
+    instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the custom configuration instance given to config. Required."""
+    market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The market where the results come from."""
+    set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language to use for user interface strings when calling Bing API."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of search results to return in the bing api response."""
+    freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        instance_name: str,
+        market: Optional[str] = None,
+        set_lang: Optional[str] = None,
+        count: Optional[int] = None,
+        freshness: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BingCustomSearchConfigurationList(_Model):
+    """A list of search configurations currently used by the ``bing_custom_search`` tool.
+
+    :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
+     connection
+     resource attached to the tool. Required.
+    :vartype search_configurations: list[~azure.ai.agents.models.BingCustomSearchConfiguration]
+    """
+
+    search_configurations: List["_models.BingCustomSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connections attached to this tool. There can be a maximum of 1 connection
+     resource attached to the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_configurations: List["_models.BingCustomSearchConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_search"):
     """The input definition information for a Bing custom search tool as used to configure an agent.
 
@@ -690,13 +785,13 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
     :vartype type: str
     :ivar bing_custom_search: The list of search configurations used by the bing custom search
      tool. Required.
-    :vartype bing_custom_search: ~azure.ai.agents.models.SearchConfigurationList
+    :vartype bing_custom_search: ~azure.ai.agents.models.BingCustomSearchConfigurationList
     """
 
     type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
-    bing_custom_search: "_models.SearchConfigurationList" = rest_field(
+    bing_custom_search: "_models.BingCustomSearchConfigurationList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of search configurations used by the bing custom search tool. Required."""
@@ -705,7 +800,7 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
     def __init__(
         self,
         *,
-        bing_custom_search: "_models.SearchConfigurationList",
+        bing_custom_search: "_models.BingCustomSearchConfigurationList",
     ) -> None: ...
 
     @overload
@@ -719,6 +814,91 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
         super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
+class BingGroundingSearchConfiguration(_Model):
+    """Search configuration for Bing Grounding.
+
+    :ivar connection_id: Connection id for grounding with bing search. Required.
+    :vartype connection_id: str
+    :ivar market: The market where the results come from.
+    :vartype market: str
+    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :vartype set_lang: str
+    :ivar count: The number of search results to return in the bing api response.
+    :vartype count: int
+    :ivar freshness: Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :vartype freshness: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connection id for grounding with bing search. Required."""
+    market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The market where the results come from."""
+    set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language to use for user interface strings when calling Bing API."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of search results to return in the bing api response."""
+    freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Filter search results by a specific time range. Accepted values:
+     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        market: Optional[str] = None,
+        set_lang: Optional[str] = None,
+        count: Optional[int] = None,
+        freshness: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BingGroundingSearchConfigurationList(_Model):
+    """A list of search configurations currently used by the ``bing_grounding`` tool.
+
+    :ivar search_configurations: The search configurations attached to this tool. There can be a
+     maximum of 1
+     search configuration resource attached to the tool. Required.
+    :vartype search_configurations: list[~azure.ai.agents.models.BingGroundingSearchConfiguration]
+    """
+
+    search_configurations: List["_models.BingGroundingSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The search configurations attached to this tool. There can be a maximum of 1
+     search configuration resource attached to the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_configurations: List["_models.BingGroundingSearchConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
@@ -726,23 +906,24 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: The list of connections used by the bing grounding tool. Required.
-    :vartype bing_grounding: ~azure.ai.agents.models.ToolConnectionList
+    :ivar bing_grounding: The list of search configurations used by the bing grounding tool.
+     Required.
+    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchConfigurationList
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: "_models.ToolConnectionList" = rest_field(
+    bing_grounding: "_models.BingGroundingSearchConfigurationList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of connections used by the bing grounding tool. Required."""
+    """The list of search configurations used by the bing grounding tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bing_grounding: "_models.ToolConnectionList",
+        bing_grounding: "_models.BingGroundingSearchConfigurationList",
     ) -> None: ...
 
     @overload
@@ -3741,7 +3922,7 @@ class RunStepToolCall(_Model):
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepCustomSearchToolCall, RunStepBingGroundingToolCall,
+    RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
     RunStepCodeInterpreterToolCall, RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall,
     RunStepFunctionToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
@@ -3815,6 +3996,46 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
+    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed search with bing custom search.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: Reserved for future use. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
@@ -4101,46 +4322,6 @@ class RunStepCompletionUsage(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class RunStepCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
-    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed search with bing custom search.
-
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
-    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
-     "bing_custom_search".
-    :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
-    :vartype bing_custom_search: dict[str, str]
-    """
-
-    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'bing_custom_search'. Required. Default value is
-     \"bing_custom_search\"."""
-    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        bing_custom_search: Dict[str, str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepDelta(_Model):
@@ -4981,18 +5162,12 @@ class RunStepFunctionToolCallDetails(_Model):
     :ivar arguments: The arguments that the model requires are provided to the named function.
      Required.
     :vartype arguments: str
-    :ivar output: The output of the function, only populated for function calls that have already
-     have had their outputs submitted. Required.
-    :vartype output: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function. Required."""
     arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments that the model requires are provided to the named function. Required."""
-    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output of the function, only populated for function calls that have already have had their
-     outputs submitted. Required."""
 
     @overload
     def __init__(
@@ -5000,7 +5175,6 @@ class RunStepFunctionToolCallDetails(_Model):
         *,
         name: str,
         arguments: str,
-        output: str,
     ) -> None: ...
 
     @overload
@@ -5233,72 +5407,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
-
-
-class SearchConfiguration(_Model):
-    """A custom search configuration.
-
-    :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
-    :vartype connection_id: str
-    :ivar instance_name: Name of the custom configuration instance given to config. Required.
-    :vartype instance_name: str
-    """
-
-    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A connection in a ToolConnectionList attached to this tool. Required."""
-    instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the custom configuration instance given to config. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
-        instance_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchConfigurationList(_Model):
-    """A list of search configurations currently used by the ``bing_custom_search`` tool.
-
-    :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
-     connection
-     resource attached to the tool. Required.
-    :vartype search_configurations: list[~azure.ai.agents.models.SearchConfiguration]
-    """
-
-    search_configurations: List["_models.SearchConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        search_configurations: List["_models.SearchConfiguration"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
