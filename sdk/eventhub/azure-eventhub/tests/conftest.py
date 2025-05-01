@@ -9,7 +9,14 @@ import pytest
 import logging
 import uuid
 import warnings
-import datetime
+import subprocess
+import time
+import signal
+import ssl
+import functools
+
+from typing import Callable
+
 from functools import partial
 from logging.handlers import RotatingFileHandler
 from azure.core.settings import settings
@@ -44,6 +51,37 @@ NAMESPACE_PREFIX = "eh-ns"
 EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
+
+# Set up the amqpproxy environment variables
+path = os.environ.get("AMQPPROXY_PATH")
+AMQPPROXY_PATH = os.path.abspath(path) if path else None
+RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY") == 'true'
+AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
+if RECORD_AMQP_PROXY:
+    if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
+        os.makedirs(AMQPPROXY_RECORDINGS_DIR)
+
+    # Create/overwrite the amqp proxy startup log file
+    AMQPPROXY_STARTUP_LOG = os.path.join(AMQPPROXY_RECORDINGS_DIR, "amqpproxy_startup.log")
+    # Create/overwrite the amqp proxy startup log file
+    if os.path.exists(AMQPPROXY_STARTUP_LOG):
+        with open(AMQPPROXY_STARTUP_LOG, "w") as log_file:
+            log_file.write("")  # Overwrite the file with an empty string
+    else:
+        open(AMQPPROXY_STARTUP_LOG, "w").close()  # Create the file if it doesn't exist
+
+AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS = "sb://localhost:5671"
+AMQPPROXY_TRANSPORT_TYPE = TransportType.Amqp
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+context.check_hostname = False
+context.verify_mode = ssl.CERT_NONE
+AMQPPROXY_SSL_CONTEXT = context
+AMQPPROXY_CLIENT_ARGS = {
+    "custom_endpoint_address": AMQPPROXY_CUSTOM_ENDPOINT_ADDRESS,
+    "ssl_context": AMQPPROXY_SSL_CONTEXT,
+    "transport_type": AMQPPROXY_TRANSPORT_TYPE,
+}
 
 
 def pytest_addoption(parser):
@@ -245,6 +283,105 @@ def connection_str(live_eventhub):
         live_eventhub["hostname"], live_eventhub["key_name"], live_eventhub["access_key"], live_eventhub["event_hub"]
     )
 
+@pytest.fixture()
+def skip_amqp_proxy(request):
+    """Helper method to determine if the AMQP proxy should be run for a test."""
+    if not RECORD_AMQP_PROXY or not AMQPPROXY_PATH:
+        return True 
+    if any(marker.name == "no_amqpproxy" for marker in request.node.own_markers):
+        return True
+    return False
+
+@pytest.fixture()
+def client_args(skip_amqp_proxy):
+    """Fixture that adds the amqpproxy client args to the test context."""
+    if skip_amqp_proxy:
+        return {}
+    # Add proxy args to test context
+    return AMQPPROXY_CLIENT_ARGS
+
+def remove_existing_recordings(path, file_name):
+    """Remove existing recordings for the test."""
+    # Remove any existing recordings for the test
+    for file in os.listdir(path):
+        if file.startswith(file_name) and file.endswith(".json"):
+            os.remove(os.path.join(path, file))
+            print(f"Removed existing recording: {file}")
+
+def stop_existing_amqpproxy(log_file):
+    # Kill any existing process using the AMQP proxy port
+    try:
+        subprocess.run(
+        ["fuser", "-k", "5671/tcp"], check=True, stdout=log_file, stderr=log_file
+        )
+        log_file.write("Kill existing process on port 5671.\n")
+    except subprocess.CalledProcessError:
+        log_file.write("No existing process found on port 5671.\n")
+
+@pytest.fixture(autouse=True)
+def amqpproxy(live_eventhub, skip_amqp_proxy, request):
+    """Fixture that redirects network requests to target the amqp proxy.
+    Tests can opt out using @pytest.mark.no_amqpproxy or set the environment variable
+    RECORD_AMQP_PROXY=False.
+    """
+    # Skip if not recording or test opted out
+    if skip_amqp_proxy:
+        yield
+        return
+
+    # Use test name as logfile
+    test_name = request.node.name
+    # Mirror relative path in AMQPPROXY_RECORDINGS_PATH for recording files
+    relative_path = os.path.relpath(request.node.fspath, start=os.path.dirname(__file__))
+    recording_dir_path = os.path.join(AMQPPROXY_RECORDINGS_DIR, os.path.dirname(relative_path))
+    file_name = os.path.splitext(os.path.basename(request.node.fspath))[0]
+    recording_file = f"{file_name}.{test_name}"
+    if not os.path.exists(recording_dir_path):
+        os.makedirs(recording_dir_path)
+    else:
+        # Remove any existing recordings with the same test name, so that we overwrite instead of add
+        remove_existing_recordings(recording_dir_path, recording_file)
+
+    # Start amqpproxy process 
+    log_file = open(AMQPPROXY_STARTUP_LOG, "a")
+    # Flush log after writing to ensure log line ordering is preserved
+    log_file.write(f"####### Starting amqpproxy for test: {test_name}\n")
+    log_file.flush()
+    try:
+        # Navigate to the amqpproxy directory and run the proxy
+        os.chdir(AMQPPROXY_PATH)
+        stop_existing_amqpproxy(log_file)
+
+        # Start the AMQP proxy process
+        log_file.write("Starting amqpproxy process...\n")
+        log_file.flush()
+        proxy_process = subprocess.Popen(
+            ["go", "run", ".", 
+            "--host", live_eventhub["hostname"],
+            "--logs", recording_dir_path,
+            "--logfile", recording_file],
+            stdout=log_file,
+            stderr=log_file,
+            preexec_fn=os.setsid
+        )
+        
+        if not proxy_process:
+            log_file.write("Failed to start amqpproxy.\n")
+            raise RuntimeError(f"Failed to start amqpproxy. Check for errors in {AMQPPROXY_STARTUP_LOG}")
+
+        try:
+            time.sleep(1)
+            # Add proxy args to test context
+            request.node.user_properties.append(("client_args", AMQPPROXY_CLIENT_ARGS))
+            yield
+        finally:
+            os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
+            proxy_process.wait()
+    finally:
+        log_file.write(f"####### Stopping amqpproxy for test: {test_name}\n")
+        log_file.flush()
+        log_file.close()
+
 
 @pytest.fixture()
 def invalid_hostname(live_eventhub):
@@ -269,7 +406,7 @@ def invalid_policy(live_eventhub):
 
 
 @pytest.fixture()
-def connstr_receivers(live_eventhub, uamqp_transport):
+def connstr_receivers(live_eventhub, uamqp_transport, client_args):
     connection_str = live_eventhub["connection_str"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
     receivers = []
@@ -286,7 +423,7 @@ def connstr_receivers(live_eventhub, uamqp_transport):
         else:
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
@@ -306,7 +443,7 @@ def auth_credentials_async(live_eventhub):
 
 
 @pytest.fixture()
-def auth_credential_receivers(live_eventhub, uamqp_transport):
+def auth_credential_receivers(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -325,7 +462,7 @@ def auth_credential_receivers(live_eventhub, uamqp_transport):
             # TODO: TokenAuth should be fine?
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
@@ -335,7 +472,7 @@ def auth_credential_receivers(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_receivers_async(live_eventhub, uamqp_transport):
+def auth_credential_receivers_async(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -354,7 +491,7 @@ def auth_credential_receivers_async(live_eventhub, uamqp_transport):
             # TODO: TokenAuth should be fine?
             sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
             receiver = ReceiveClient(
-                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500
+                live_eventhub["hostname"], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500, **client_args
             )
         receiver.open()
         receivers.append(receiver)
@@ -364,7 +501,7 @@ def auth_credential_receivers_async(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_senders(live_eventhub, uamqp_transport):
+def auth_credential_senders(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     client = EventHubProducerClient(
@@ -372,6 +509,7 @@ def auth_credential_senders(live_eventhub, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     partitions = client.get_partition_ids()
 
@@ -386,7 +524,7 @@ def auth_credential_senders(live_eventhub, uamqp_transport):
 
 
 @pytest.fixture()
-def auth_credential_senders_async(live_eventhub, uamqp_transport):
+def auth_credential_senders_async(live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace = live_eventhub["hostname"]
     eventhub_name = live_eventhub["event_hub"]
     client = EventHubProducerClient(
@@ -394,6 +532,7 @@ def auth_credential_senders_async(live_eventhub, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     partitions = client.get_partition_ids()
 
@@ -412,3 +551,4 @@ def auth_credential_senders_async(live_eventhub, uamqp_transport):
 def pytest_configure(config):
     # register an additional marker
     config.addinivalue_line("markers", "liveTest: mark test to be a live test only")
+    config.addinivalue_line("markers", "no_amqpproxy: mark test to opt out of amqp proxy recording")
