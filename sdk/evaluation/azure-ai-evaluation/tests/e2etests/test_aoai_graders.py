@@ -75,8 +75,8 @@ class TestAoaiEvaluation:
         )
         # Plug that into the general grader
         general_grader = AzureOpenAIGrader(
-            model_config,
-            oai_string_check_grader
+            model_config=model_config,
+            grader_config=oai_string_check_grader
         )
         
         evaluators = {

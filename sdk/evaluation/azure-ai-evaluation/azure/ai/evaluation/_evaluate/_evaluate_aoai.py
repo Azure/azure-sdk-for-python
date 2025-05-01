@@ -129,7 +129,7 @@ def _begin_single_aoai_evaluation(
 
     for name, grader in graders.items():
         grader_name_list.append(name)
-        grader_list.append(grader.get_grader_config())
+        grader_list.append(grader._grader_config)
     data_source_config = _generate_data_source_config(data, column_mapping)
 
     # Create eval group
