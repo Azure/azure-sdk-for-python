@@ -1238,7 +1238,8 @@ class RedTeam():
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         if isinstance(attack_strategy, list):
             if AttackStrategy.MultiTurn in attack_strategy:
-                return self._multi_turn_orchestrator
+                self.logger.error("MultiTurn strategy is not supported in composed attacks.")
+                raise ValueError("MultiTurn strategy is not supported in composed attacks.")
         elif AttackStrategy.MultiTurn == attack_strategy:
             return self._multi_turn_orchestrator
         return self._prompt_sending_orchestrator

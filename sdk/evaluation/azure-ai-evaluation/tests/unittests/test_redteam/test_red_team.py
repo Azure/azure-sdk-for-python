@@ -1256,3 +1256,31 @@ class TestRedTeamResult:
         assert "Category: violence" in simulation_text
         assert "Severity Level: high" in simulation_text
 
+@pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOrchestratorSelection:
+    """Test orchestrator selection in RedTeam."""
+
+    @pytest.mark.asyncio
+    async def test_get_orchestrator_raises_for_multiturn_in_list(self, red_team):
+        """Tests _get_orchestrator_for_attack_strategy raises ValueError for MultiTurn in a list."""
+        composed_strategy_with_multiturn = [AttackStrategy.MultiTurn, AttackStrategy.Base64]
+
+        with pytest.raises(ValueError, match="MultiTurn strategy is not supported in composed attacks."):
+            red_team._get_orchestrator_for_attack_strategy(composed_strategy_with_multiturn)
+
+    @pytest.mark.asyncio
+    async def test_get_orchestrator_selects_correctly(self, red_team):
+        """Tests _get_orchestrator_for_attack_strategy selects the correct orchestrator."""
+        # Test single MultiTurn
+        multi_turn_func = red_team._get_orchestrator_for_attack_strategy(AttackStrategy.MultiTurn)
+        assert multi_turn_func == red_team._multi_turn_orchestrator
+
+        # Test single non-MultiTurn
+        single_func = red_team._get_orchestrator_for_attack_strategy(AttackStrategy.Base64)
+        assert single_func == red_team._prompt_sending_orchestrator
+
+        # Test composed non-MultiTurn
+        composed_func = red_team._get_orchestrator_for_attack_strategy([AttackStrategy.Base64, AttackStrategy.Caesar])
+        assert composed_func == red_team._prompt_sending_orchestrator
+

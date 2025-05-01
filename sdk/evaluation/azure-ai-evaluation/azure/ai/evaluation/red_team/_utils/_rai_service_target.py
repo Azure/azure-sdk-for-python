@@ -276,7 +276,8 @@ class AzureRAIServiceTarget(PromptChatTarget):
                     
             except Exception as e:
                 last_error_message = str(e)
-                self.logger.warning(f"Error polling for operation result (attempt {retry+1}): {last_error_message}")
+                if not "Operation returned an invalid status \'Accepted\'" in last_error_message:
+                    self.logger.error(f"Error polling for operation result (attempt {retry+1}): {last_error_message}")
                 
                 # Check if this is an "operation ID not found" error
                 if "operation id" in last_error_message.lower() and "not found" in last_error_message.lower():
@@ -329,7 +330,6 @@ class AzureRAIServiceTarget(PromptChatTarget):
                 response = json.loads(response)
                 self.logger.debug("Successfully parsed response string as JSON")
             except json.JSONDecodeError as e:
-                self.logger.warning(f"Failed to parse response as JSON: {e}")
                 try:
                     # Try using ast.literal_eval for string that looks like dict
                     response = ast.literal_eval(response)
