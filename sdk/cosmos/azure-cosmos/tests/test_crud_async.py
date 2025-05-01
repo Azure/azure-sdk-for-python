@@ -4,7 +4,6 @@
 
 """End-to-end test.
 """
-import logging
 import os
 import time
 import unittest

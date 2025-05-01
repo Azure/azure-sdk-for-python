@@ -47,7 +47,7 @@ async def setup_teardown():
                                                                  partition_key=PartitionKey("/pk"),
                                                                  offer_throughput=10000)
     # allow some time for the container to be created as this method is in different event loop
-    await asyncio.sleep(3)
+    await asyncio.sleep(6)
     yield
     await created_database.delete_container(TestPerPartitionCircuitBreakerMMAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     await client.close()

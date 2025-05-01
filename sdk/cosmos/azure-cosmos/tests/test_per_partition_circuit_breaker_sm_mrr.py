@@ -28,7 +28,7 @@ def setup_teardown():
                                             partition_key=PartitionKey("/pk"),
                                             offer_throughput=10000)
     # allow some time for the container to be created as this method is in different event loop
-    sleep(3)
+    sleep(6)
     yield
     created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
 
