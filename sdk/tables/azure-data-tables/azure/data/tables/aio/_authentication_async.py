@@ -78,23 +78,31 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
 
 @overload
-def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureNamedKeyCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: SharedKeyCredentialPolicy, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureSasCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> AzureSasCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy: ...
+def _configure_credential(
+    credential: AsyncTokenCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> AsyncBearerTokenChallengePolicy: ...
 
 
 @overload
-def _configure_credential(credential: None) -> None: ...
+def _configure_credential(credential: None, cosmos_endpoint: bool = False, audience: Optional[str] = None) -> None: ...
 
 
 def _configure_credential(
@@ -102,10 +110,14 @@ def _configure_credential(
         Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, SharedKeyCredentialPolicy]
     ],
     cosmos_endpoint: bool = False,
+    audience: Optional[str] = None,
 ) -> Optional[Union[AsyncBearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(AsyncTokenCredential, credential)
-        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
+        if audience:
+            scope = audience.rstrip("/") + "/.default"
+        else:
+            scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
         return AsyncBearerTokenChallengePolicy(credential, scope)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
