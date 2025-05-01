@@ -3067,6 +3067,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert output_file_exist
 
     @agentClientPreparer()
+    @pytest.mark.skip("Azure Function does not work.")
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
