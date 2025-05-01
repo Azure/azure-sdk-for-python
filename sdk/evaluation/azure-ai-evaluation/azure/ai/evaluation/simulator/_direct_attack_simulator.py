@@ -7,6 +7,7 @@ import logging
 from random import randint
 from typing import Callable, Optional, cast, Union
 
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -16,7 +17,7 @@ from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient
 
 logger = logging.getLogger(__name__)
 

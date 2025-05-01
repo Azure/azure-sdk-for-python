@@ -8,22 +8,15 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import Optional, Union
 
+from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
 AZURE_TOKEN_REFRESH_INTERVAL = int(
     os.getenv("AZURE_TOKEN_REFRESH_INTERVAL", "600")
 )  # token refresh interval in seconds
-
-
-class TokenScope(Enum):
-    """Token scopes for Azure endpoints"""
-
-    DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
-    COGNITIVE_SERVICES_MANAGEMENT = "https://cognitiveservices.azure.com/.default"
 
 
 class APITokenManager(ABC):
@@ -104,7 +97,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     """API Token Manager for Azure Managed Identity
 
     :param token_scope: Token scope for Azure endpoint
-    :type token_scope: ~azure.ai.evaluation.simulator._model_tools.TokenScope
+    :type token_scope: ~azure.ai.evaluation._constants.TokenScope
     :param logger: Logger object
     :type logger: logging.Logger
     :keyword kwargs: Additional keyword arguments
