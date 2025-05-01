@@ -56,7 +56,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 name="test",
                 sampling_percent=0.5,
             ),
-            app_insights_connection_string="connection-string",
+            app_insights_connection_string=project_client.telemetry.get_connection_string(),
         )
 
         agent_evaluation_response = project_client.evaluations.create_agent_evaluation(
