@@ -31,7 +31,7 @@ class TestLiteAzureManagementClient(object):
         )
 
         token = client.get_token()
-        assert isinstance(token, AccessToken) and len(token) > 0
+        assert isinstance(token, str) and len(token) > 0
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [False, True])
