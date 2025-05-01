@@ -439,7 +439,7 @@ class _QueryFeature:
     HybridSearch: Literal["HybridSearch"] = "HybridSearch"
     CountIf: Literal["CountIf"] = "CountIf"
     WeightedRankFusion: Literal["WeightedRankFusion"] = "WeightedRankFusion"
-
+    HybridSearchSkipOrderByReWrite: Literal["HybridSearchSkipOrderByReWrite"] = "HybridSearchSkipOrderByReWrite"
 
 class _DistinctType:
     NoneType: Literal["None"] = "None"

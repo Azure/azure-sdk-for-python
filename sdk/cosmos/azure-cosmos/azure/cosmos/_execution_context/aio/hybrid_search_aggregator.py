@@ -59,7 +59,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._document_producer_comparator = None
         self._response_hook = response_hook
 
-    async def _run_hybrid_search(self):
+    async def _run_hybrid_search(self):  # pylint: disable=cell-var-from-loop, too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
@@ -166,7 +166,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         for index, score_tuples in enumerate(component_scores):
             # Negative Weights will change sorting from Descending to Ascending
             ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = False if (ordering.lower() == 'ascending') else True
+            comparison_factor = not (ordering.lower() == 'ascending')
             score_tuples.sort(key=lambda x: abs(component_weights[index]) * x[0], reverse=comparison_factor)
 
         # Compute the ranks
