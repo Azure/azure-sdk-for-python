@@ -8,10 +8,11 @@ os.environ["1DP_PROJECT_URL"] = "https://anksingtest1rp.cognitiveservices.azure.
 
 if __name__ == '__main__':
 
-
     azure_ai_project = os.environ.get("1DP_PROJECT_URL")
     azure_cred = DefaultAzureCredential()
-    path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+    
+    parent_dir = os.path.dirname(os.path.dirname(__file__))
+    path = os.path.join(parent_dir, "data", "evaluate_test_data.jsonl")
 
     print("===== Calling Evaluate API for Content Safety Eval =======")
     
