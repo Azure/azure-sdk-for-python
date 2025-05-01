@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+# pylint: disable=unused-argument
+
 from typing import (
     Any,
     Dict,
@@ -33,8 +40,8 @@ if TYPE_CHECKING:
     from ._shared.models import UserDelegationKey
 
 
-class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
-    def __init__(
+class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         credential: Optional[
