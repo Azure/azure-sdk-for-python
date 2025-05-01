@@ -85,7 +85,7 @@ class InferenceOperations:
         # TODO: Remove this before //build?
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
@@ -127,7 +127,7 @@ class InferenceOperations:
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = EmbeddingsClient(
             endpoint=endpoint,
@@ -169,7 +169,7 @@ class InferenceOperations:
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
