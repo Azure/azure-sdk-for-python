@@ -286,6 +286,18 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
         ]
 
+        # Test case 5
+        read_item = await self.test_container.read_item('50', '1')
+        item_vector = read_item['vector']
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {}), [1,1]) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = [res async for res in results]
+        assert len(result_list) == 10
+        result_list = [res['index'] for res in result_list]
+        assert result_list == [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+
     async def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async(self):
         try:
             query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
