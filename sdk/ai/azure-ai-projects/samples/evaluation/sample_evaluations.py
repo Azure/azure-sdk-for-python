@@ -75,7 +75,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             },
         )
 
-        evaluation_response: Evaluation = project_client.evaluations.create_run(evaluation)
+        evaluation_response: Evaluation = project_client.evaluations.create(evaluation)
         print(evaluation_response)
 
         print("Get evaluation")
