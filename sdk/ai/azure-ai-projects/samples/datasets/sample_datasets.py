@@ -46,7 +46,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         dataset: DatasetVersion = project_client.datasets.upload_file(
             name=dataset_name,
             version=dataset_version_1,
-            file="sample_folder/sample_file1.txt",
+            file_path="sample_folder/sample_file1.txt",
         )
         print(dataset)
 

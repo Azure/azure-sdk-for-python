@@ -23,7 +23,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
 """
 
 import os

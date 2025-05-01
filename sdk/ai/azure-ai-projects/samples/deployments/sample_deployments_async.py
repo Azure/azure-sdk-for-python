@@ -18,7 +18,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) DEPLOYMENT_NAME - Required. The name of the deployment to retrieve.
+    2) MODEL_DEPLOYMENT_NAME - Required. The name of the deployment to retrieve.
     3) MODEL_PUBLISHER - Required. The publisher of the model to filter by.       
 """
 

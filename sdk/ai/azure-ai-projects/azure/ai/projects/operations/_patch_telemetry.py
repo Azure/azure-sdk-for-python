@@ -44,9 +44,9 @@ class TelemetryOperations:
             # Returns an empty Iterable if no connections exits.
             connections: Iterable[Connection] = self._outer_instance.connections.list(
                 connection_type=ConnectionType.APPLICATION_INSIGHTS,
-                default_connection=True,
             )
 
+            # Note: there can't be more than one AppInsights connection.
             connection_name: Optional[str] = None
             for connection in connections:
                 connection_name = connection.name
@@ -54,7 +54,7 @@ class TelemetryOperations:
             if not connection_name:
                 raise ResourceNotFoundError("No Application Insights connection found.")
 
-            connection = self._outer_instance.connections.get_with_credentials(name=connection_name)
+            connection = self._outer_instance.connections._get_with_credentials(name=connection_name)  # pylint: disable=protected-access
 
             if isinstance(connection.credentials, ApiKeyCredentials):
                 if not connection.credentials.api_key:
