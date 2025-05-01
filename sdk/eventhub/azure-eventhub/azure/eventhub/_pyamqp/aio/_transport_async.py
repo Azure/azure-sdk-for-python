@@ -294,11 +294,11 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         return tcp_opts
 
     def _set_socket_options(self, sock, socket_settings):
-        tcp_opts = self._get_tcp_socket_defaults(sock)
         if socket_settings:
+            tcp_opts = self._get_tcp_socket_defaults(sock)
             tcp_opts.update(socket_settings)
-        for opt, val in tcp_opts.items():
-            sock.setsockopt(SOL_TCP, opt, val)
+            for opt, val in tcp_opts.items():
+                sock.setsockopt(SOL_TCP, opt, val)
 
     async def _read(
         self,
