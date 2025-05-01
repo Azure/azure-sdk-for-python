@@ -33,7 +33,7 @@ from azure.core.pipeline.policies import (
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .models import LocationMode
+from .models import LocationMode, StorageErrorCode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -83,6 +83,14 @@ def is_retry(response, mode):
         if status == 408:
             # Response code 408 is a timeout and should be retried.
             return True
+        if status >= 400:
+            error_code = response.http_response.headers.get('x-ms-copy-source-error-code')
+            if error_code in [
+                StorageErrorCode.OPERATION_TIMED_OUT,
+                StorageErrorCode.INTERNAL_ERROR,
+                StorageErrorCode.SERVER_BUSY
+            ]:
+                return True
         return False
     if status >= 500:
         # Response codes above 500 with the exception of 501 Not Implemented and
