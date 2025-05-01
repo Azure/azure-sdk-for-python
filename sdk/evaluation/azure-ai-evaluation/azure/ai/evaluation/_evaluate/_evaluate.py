@@ -529,7 +529,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    if azure_ai_project is not None and not is_onedp_project(azure_ai_project):
+    if azure_ai_project is not None:
         validate_azure_ai_project(azure_ai_project)
 
     if evaluation_name is not None:

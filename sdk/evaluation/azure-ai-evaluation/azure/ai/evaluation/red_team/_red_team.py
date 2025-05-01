@@ -212,7 +212,7 @@ class RedTeam():
         :type output_dir: str
         """
 
-        self.azure_ai_project = azure_ai_project if is_onedp_project(azure_ai_project) else validate_azure_ai_project(azure_ai_project)
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
         
