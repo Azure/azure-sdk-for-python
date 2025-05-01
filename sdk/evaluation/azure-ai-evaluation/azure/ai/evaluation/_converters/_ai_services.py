@@ -15,7 +15,7 @@ from typing import List, Union
 from azure.ai.evaluation._common._experimental import experimental
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
+from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION, _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -31,58 +31,6 @@ _AI_SERVICES_API_MAX_LIMIT = 100
 
 # Maximum number of workers allowed to make API calls at the same time.
 _MAX_WORKERS = 10
-
-# Constants to only be used internally in this file for the built-in tools.
-_CODE_INTERPRETER = "code_interpreter"
-_BING_GROUNDING = "bing_grounding"
-_FILE_SEARCH = "file_search"
-_AZURE_AI_SEARCH = "azure_ai_search"
-_FABRIC_DATAAGENT = "fabric_dataagent"
-
-# Built-in tool descriptions and parameters are hidden, but we include basic descriptions
-# for evaluation purposes.
-_BUILT_IN_DESCRIPTIONS = {
-    _CODE_INTERPRETER: "Use code interpreter to read and interpret information from datasets, "
-    + "generate code, and create graphs and charts using your data. Supports "
-    + "up to 20 files.",
-    _BING_GROUNDING: "Enhance model output with web data.",
-    _FILE_SEARCH: "Search for data across uploaded files.",
-    _AZURE_AI_SEARCH: "Search an Azure AI Search index for relevant data.",
-    _FABRIC_DATAAGENT: "Connect to Microsoft Fabric data agents to retrieve data across different data sources.",
-}
-
-# Built-in tool parameters are hidden, but we include basic parameters for evaluation purposes.
-_BUILT_IN_PARAMS = {
-    _CODE_INTERPRETER: {
-        "type": "object",
-        "properties": {"input": {"type": "string", "description": "Generated code to be executed."}},
-    },
-    _BING_GROUNDING: {
-        "type": "object",
-        "properties": {"requesturl": {"type": "string", "description": "URL used in Bing Search API."}},
-    },
-    _FILE_SEARCH: {
-        "type": "object",
-        "properties": {
-            "ranking_options": {
-                "type": "object",
-                "properties": {
-                    "ranker": {"type": "string", "description": "Ranking algorithm to use."},
-                    "score_threshold": {"type": "number", "description": "Threshold for search results."},
-                },
-                "description": "Ranking options for search results.",
-            }
-        },
-    },
-    _AZURE_AI_SEARCH: {
-        "type": "object",
-        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
-    },
-    _FABRIC_DATAAGENT: {
-        "type": "object",
-        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
-    },
-}
 
 @experimental
 class AIAgentConverter:
