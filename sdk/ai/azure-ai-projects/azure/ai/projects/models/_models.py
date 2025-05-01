@@ -321,7 +321,7 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
 
     type: Literal[CredentialType.API_KEY] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credentail type. Required. API Key credential"""
-    api_key: Optional[str] = rest_field(name="key", visibility=["read"])
+    api_key: Optional[str] = rest_field(name="Key", visibility=["read"])
     """API Key."""
 
     @overload

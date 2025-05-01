@@ -53,7 +53,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+        with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
 
             response = client.chat.completions.create(
                 model=model_deployment_name,

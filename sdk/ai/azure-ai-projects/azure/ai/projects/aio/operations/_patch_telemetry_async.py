@@ -48,9 +48,9 @@ class TelemetryOperations:
             # Returns an empty Iterable if no connections exits.
             connections: AsyncIterable[Connection] = self._outer_instance.connections.list(
                 connection_type=ConnectionType.APPLICATION_INSIGHTS,
-                default_connection=True,
             )
 
+            # Note: there can't be more than one AppInsights connection.
             connection_name: Optional[str] = None
             async for connection in connections:
                 connection_name = connection.name

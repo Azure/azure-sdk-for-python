@@ -118,9 +118,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         pathlib_file_path = Path(file_path)
         if not pathlib_file_path.exists():
-            raise ValueError("The provided file does not exist.")
+            raise ValueError(f"The provided file `{file_path}` does not exist.")
         if pathlib_file_path.is_dir():
-            raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
+            raise ValueError("The provided file is actually a folder. Use method `upload_folder` instead")
 
         container_client, output_version = await self._create_dataset_and_get_its_container_client(
             name=name, input_version=version
@@ -173,9 +173,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         """
         path_folder = Path(folder)
         if not Path(path_folder).exists():
-            raise ValueError("The provided folder does not exist.")
+            raise ValueError(f"The provided folder `{folder}` does not exist.")
         if Path(path_folder).is_file():
-            raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
+            raise ValueError("The provided folder is actually a file. Use method `upload_file` instead.")
 
         container_client, output_version = await self._create_dataset_and_get_its_container_client(
             name=name, input_version=version

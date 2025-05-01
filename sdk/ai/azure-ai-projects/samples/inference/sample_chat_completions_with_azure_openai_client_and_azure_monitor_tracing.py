@@ -21,7 +21,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
     3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 
@@ -54,7 +54,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+        with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
 
             response = client.chat.completions.create(
                 model=model_deployment_name,
