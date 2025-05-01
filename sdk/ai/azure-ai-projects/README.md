@@ -154,7 +154,7 @@ If not present the default Azure OpenAI connection will be used.
 <!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
 ```python
-with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
@@ -239,7 +239,7 @@ print(
 dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
     version=dataset_version_1,
-    file="sample_folder/sample_file1.txt",
+    file_path="sample_folder/sample_file1.txt",
 )
 print(dataset)
 
@@ -280,7 +280,9 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
+print(
+    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
+)
 index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
