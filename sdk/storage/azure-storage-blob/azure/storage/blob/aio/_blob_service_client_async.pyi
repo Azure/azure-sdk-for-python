@@ -7,7 +7,9 @@
 
 from typing import (
     Any,
+    cast,
     Dict,
+    Iterable,
     List,
     Optional,
     Union,
@@ -15,20 +17,24 @@ from typing import (
 )
 from typing_extensions import Self
 
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._blob_client import BlobClient
-from ._container_client import ContainerClient
-from ._encryption import StorageEncryptionMixin
-from ._models import ContainerProperties, CorsRule
-from ._shared.base_client import StorageAccountHostsMixin
+from azure.core.tracing.decorator_async import distributed_trace_async
+
+from ._blob_client_async import BlobClient
+from ._container_client_async import ContainerClient
+from .._encryption import StorageEncryptionMixin
+from .._models import ContainerProperties, CorsRule
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 if TYPE_CHECKING:
     from azure.core import MatchConditions
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from ._lease import BlobLeaseClient
-    from ._models import (
+    from ._lease_async import BlobLeaseClient
+    from .._models import (
         BlobAnalyticsLogging,
         ContainerEncryptionScope,
         FilteredBlob,
@@ -37,15 +43,19 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite
     )
-    from ._shared.models import UserDelegationKey
+    from .._shared.models import UserDelegationKey
 
 
-class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
+class BlobServiceClient(  # type: ignore [misc]
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -67,7 +77,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -84,8 +94,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     ) -> Self:
         ...
 
-    @distributed_trace
-    def get_user_delegation_key(
+    @distributed_trace_async
+    async def get_user_delegation_key(
         self,
         key_start_time: "datetime",
         key_expiry_time: "datetime",
@@ -95,17 +105,17 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     ) -> "UserDelegationKey":
         ...
 
-    @distributed_trace
-    def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
+    @distributed_trace_async
+    async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
 
-    @distributed_trace
-    def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    @distributed_trace_async
+    async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
 
-    @distributed_trace
-    def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    @distributed_trace_async
+    async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
 
-    @distributed_trace
-    def set_service_properties(
+    @distributed_trace_async
+    async def set_service_properties(
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
@@ -114,8 +124,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         target_version: Optional[str] = None,
         delete_retention_policy: Optional["RetentionPolicy"] = None,
         static_website: Optional["StaticWebsite"] = None,
-        *,
-        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         ...
@@ -131,7 +139,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[ContainerProperties]:
+    ) -> AsyncItemPaged[ContainerProperties]:
         ...
 
     @distributed_trace
@@ -142,26 +150,26 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged["FilteredBlob"]:
+    ) -> AsyncItemPaged["FilteredBlob"]:
         ...
 
-    @distributed_trace
-    def create_container(
+    @distributed_trace_async
+    async def create_container(
         self,
         name: str,
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[Union["PublicAccess", str]] = None,
         *,
-        container_encryption_scope: Optional[Union[Dict, "ContainerEncryptionScope"]] = None,
+        container_encryption_scope: Optional[Union[dict, "ContainerEncryptionScope"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient:
         ...
 
-    @distributed_trace
-    def delete_container(
+    @distributed_trace_async
+    async def delete_container(
         self,
-        container: Union[ContainerProperties, str],
+        container: Union["ContainerProperties", str],
         lease: Optional[Union["BlobLeaseClient", str]] = None,
         *,
         if_modified_since: Optional["datetime"] = None,
@@ -173,8 +181,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     ) -> None:
         ...
 
-    @distributed_trace
-    def _rename_container(
+    @distributed_trace_async
+    async def _rename_container(
         self,
         name: str,
         new_name: str,
@@ -185,8 +193,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     ) -> ContainerClient:
         ...
 
-    @distributed_trace
-    def undelete_container(
+    @distributed_trace_async
+    async def undelete_container(
         self,
         deleted_container_name: str,
         deleted_container_version: str,
@@ -204,6 +212,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         blob: str,
         snapshot: Optional[Union[Dict[str, Any], str]] = None,
         *,
-        version_id: Optional[str] = None
+        version_id: Optional[str] = None,
+        **kwargs: Any
     ) -> BlobClient:
         ...
