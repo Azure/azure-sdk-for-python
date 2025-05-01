@@ -1370,8 +1370,8 @@ class PendingUploadResponse(_Model):
 class RedTeam(_Model):
     """Red team details.
 
-    :ivar id: Identifier of the red team. Required.
-    :vartype id: str
+    :ivar name: Identifier of the red team. Required.
+    :vartype name: str
     :ivar scan_name: Name of the red-team scan.
     :vartype scan_name: str
     :ivar num_turns: Number of simulation rounds. Required.
@@ -1398,7 +1398,7 @@ class RedTeam(_Model):
     :vartype target_config: ~azure.ai.projects.models.TargetConfig
     """
 
-    id: str = rest_field(visibility=["read"])
+    name: str = rest_field(name="id", visibility=["read"])
     """Identifier of the red team. Required."""
     scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the red-team scan."""

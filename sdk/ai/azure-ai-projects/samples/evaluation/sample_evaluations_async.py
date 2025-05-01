@@ -73,7 +73,7 @@ async def sample_evaluations_async() -> None:
                 },
             )
 
-            evaluation_response: Evaluation = await project_client.evaluations.create_run(evaluation)
+            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation)
             print(evaluation_response)
 
             print("Get evaluation")
