@@ -38,7 +38,8 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         with project_client.inference.get_image_embeddings_client() as client:
 
             response = client.embed(
-                model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
+                model=model_deployment_name,
+                input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")],
             )
 
             for item in response.data:

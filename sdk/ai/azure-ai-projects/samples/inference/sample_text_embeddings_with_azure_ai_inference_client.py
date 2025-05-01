@@ -36,7 +36,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         with project_client.inference.get_embeddings_client() as client:
 
-            response = client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
+            response = client.embed(
+                model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
+            )
 
             for item in response.data:
                 length = len(item.embedding)

@@ -50,8 +50,8 @@
         "azure.ai.projects.aio.operations.EvaluationsOperations.get": "Azure.AI.Projects.Evaluations.get",
         "azure.ai.projects.operations.EvaluationsOperations.list": "Azure.AI.Projects.Evaluations.list",
         "azure.ai.projects.aio.operations.EvaluationsOperations.list": "Azure.AI.Projects.Evaluations.list",
-        "azure.ai.projects.operations.EvaluationsOperations.create_run": "Azure.AI.Projects.Evaluations.createRun",
-        "azure.ai.projects.aio.operations.EvaluationsOperations.create_run": "Azure.AI.Projects.Evaluations.createRun",
+        "azure.ai.projects.operations.EvaluationsOperations.create": "Azure.AI.Projects.Evaluations.create",
+        "azure.ai.projects.aio.operations.EvaluationsOperations.create": "Azure.AI.Projects.Evaluations.create",
         "azure.ai.projects.operations.EvaluationsOperations.create_agent_evaluation": "Azure.AI.Projects.Evaluations.createAgentEvaluation",
         "azure.ai.projects.aio.operations.EvaluationsOperations.create_agent_evaluation": "Azure.AI.Projects.Evaluations.createAgentEvaluation",
         "azure.ai.projects.operations.DatasetsOperations.list_versions": "Azure.AI.Projects.ServicePatterns.Datasets.listVersions",
@@ -86,7 +86,7 @@
         "azure.ai.projects.aio.operations.RedTeamsOperations.get": "Azure.AI.Projects.RedTeams.get",
         "azure.ai.projects.operations.RedTeamsOperations.list": "Azure.AI.Projects.RedTeams.list",
         "azure.ai.projects.aio.operations.RedTeamsOperations.list": "Azure.AI.Projects.RedTeams.list",
-        "azure.ai.projects.operations.RedTeamsOperations.create_run": "Azure.AI.Projects.RedTeams.createRun",
-        "azure.ai.projects.aio.operations.RedTeamsOperations.create_run": "Azure.AI.Projects.RedTeams.createRun"
+        "azure.ai.projects.operations.RedTeamsOperations.create": "Azure.AI.Projects.RedTeams.create",
+        "azure.ai.projects.aio.operations.RedTeamsOperations.create": "Azure.AI.Projects.RedTeams.create"
     }
 }

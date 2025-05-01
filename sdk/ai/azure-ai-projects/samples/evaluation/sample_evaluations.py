@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-#dataset_name = os.environ["DATASET_NAME"]
+# dataset_name = os.environ["DATASET_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -70,12 +70,12 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     data_mapping={
                         "query": "${data.query}",
                         "response": "${data.response}",
-                    }
+                    },
                 ),
             },
         )
 
-        evaluation_response: Evaluation = project_client.evaluations.create_run(evaluation)
+        evaluation_response: Evaluation = project_client.evaluations.create(evaluation)
         print(evaluation_response)
 
         print("Get evaluation")
