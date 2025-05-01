@@ -90,7 +90,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Agent:
@@ -153,7 +153,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Agent:
@@ -243,7 +243,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -273,7 +273,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword top_p: Nucleus sampling parameter.
         :paramtype top_p: Optional[float]
         :keyword response_format: Response format for tool calls.
-        :paramtype response_format: Optional["_types.AgentsApiResponseFormatOption"]
+        :paramtype response_format: Optional["_types.AgentsResponseFormatOption"]
         :keyword metadata: Key/value pairs for storing additional information.
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
@@ -322,7 +322,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Agent:
@@ -390,7 +390,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Agent:
@@ -490,7 +490,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -697,8 +697,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -733,7 +733,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls which tool the model will call.
         :type tool_choice: str or
-                          ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+                          ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format the model must output.
         :type response_format: str or
@@ -797,8 +797,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional[_types.AgentsApiToolChoiceOption] = None,
-        response_format: Optional[_types.AgentsApiResponseFormatOption] = None,
+        tool_choice: Optional[_types.AgentsToolChoiceOption] = None,
+        response_format: Optional[_types.AgentsResponseFormatOption] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -835,7 +835,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls which tool the model will call.
         :type tool_choice: str or
-                          ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+                          ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format the model must output.
         :type response_format: str or
@@ -904,8 +904,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
@@ -937,9 +937,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword truncation_strategy: Strategy for dropping old messages when context window overflows.
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
         :keyword tool_choice: Controls which tool (if any) the model is allowed to call.
-        :type tool_choice: str or ~azure.ai.agents.models.AgentsApiToolChoiceOption, optional
+        :type tool_choice: str or ~azure.ai.agents.models.AgentsToolChoiceOption, optional
         :keyword response_format: Specifies the required format for the model’s output.
-        :type response_format: str or ~azure.ai.agents.models.AgentsApiResponseFormatOption, optional
+        :type response_format: str or ~azure.ai.agents.models.AgentsResponseFormatOption, optional
         :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
         :type parallel_tool_calls: bool, optional
         :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
