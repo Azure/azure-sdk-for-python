@@ -140,7 +140,7 @@ class AzureEnvironmentClient:
             async with _ASYNC_LOCK:
                 recursive_update(_KNOWN_AZURE_ENVIRONMENTS, clouds)
         return clouds
-    
+
     async def close(self) -> None:
         await self._async_client.close()
 
@@ -189,7 +189,7 @@ class AzureEnvironmentClient:
                     "storage_suffix": cloud["suffixes"]["storage"],
                     "registry_discovery_endpoint": append_trailing_slash(discovery_url),
                 }
-            except KeyError as ex:
+            except KeyError:
                 continue
 
         return clouds

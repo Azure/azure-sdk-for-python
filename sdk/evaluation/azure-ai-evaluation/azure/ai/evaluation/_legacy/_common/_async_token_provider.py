@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Any, AsyncContextManager, Final, Optional, Tuple
+from typing import Any, AsyncContextManager, Optional
 
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedIdentityCredential
@@ -58,7 +58,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
             tenant_id=tenant_id,
             enable_cae=enable_cae,
             **kwargs)
-    
+
     async def __aenter__(self) -> "AsyncAzureTokenProvider":
         self._credential = await self._initialize_async(self._env_client)
         return self
@@ -73,8 +73,8 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
 
     @staticmethod
     async def _initialize_async(client: Optional[AzureEnvironmentClient]) -> TokenCredential:
-        """Determine which credential to use based on the configured Azure cloud environment variables
-        and possibly making network calls to Azure to get the correct Azure cloud metadata."""
+        # Determine which credential to use based on the configured Azure cloud environment variables
+        # and possibly making network calls to Azure to get the correct Azure cloud metadata.
         if client is None:
             raise EvaluationException(
                 f"{AsyncAzureTokenProvider.__name__} instance has already been closed.",

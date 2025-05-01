@@ -410,6 +410,7 @@ class AsyncPrompty:
     def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> AsyncAzureADTokenProvider:
         """Get the token provider for the prompty.
 
+        :param Union[TokenCredential, AsyncTokenCredential] cred: The Azure authentication credential.
         :return: The token provider if a credential is provided, otherwise None.
         :rtype: Optional[AsyncAzureADTokenProvider]
         """
@@ -420,5 +421,3 @@ class AsyncPrompty:
             return token.token
 
         return _wrapper
-
-
