@@ -241,7 +241,6 @@ class EventData:
         event_data._message = amqp_message
         event_data._raw_amqp_message = AmqpAnnotatedMessage(message=amqp_message)
         return event_data
-
     @classmethod
     def _from_message(
         cls,

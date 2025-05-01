@@ -79,6 +79,12 @@ CBS_OPERATION = "operation"
 CBS_TYPE = "type"
 CBS_EXPIRATION = "expiration"
 
+# Add a DESCRIPTOR constant for Microsoft DateTimeOffset
+VENDOR = b"com.microsoft"
+DATETIME_OFFSET_SYMBOL = b"%b:datetime-offset" % VENDOR
+TICKS_MASK = 0x3FFFFFFFFFFFFFFF
+KIND_SHIFT = 62
+
 SEND_DISPOSITION_ACCEPT = "accepted"
 SEND_DISPOSITION_REJECT = "rejected"
 
