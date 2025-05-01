@@ -14,7 +14,7 @@ from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -529,7 +529,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    if azure_ai_project is not None and not isinstance(azure_ai_project, str):
+    if azure_ai_project is not None and not is_onedp_project(azure_ai_project):
         validate_azure_ai_project(azure_ai_project)
 
     if evaluation_name is not None:
@@ -915,19 +915,18 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     # Done with all evaluations, message outputs into final forms, and log results if needed.
     name_map = _map_names_to_builtins(evaluators, graders)
-    studio_url = None
-    if azure_ai_project is not None:
-        if isinstance(azure_ai_project, str):
-            studio_url = _log_metrics_and_instance_results_onedp(
-                metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
+    if is_onedp_project(azure_ai_project):
+        studio_url = _log_metrics_and_instance_results_onedp(
+            metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
+        )
+    else:
+        # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
+        trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
+        studio_url = None
+        if trace_destination:
+            studio_url = _log_metrics_and_instance_results(
+                metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
             )
-        else:
-            # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-            trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-            if trace_destination:
-                studio_url = _log_metrics_and_instance_results(
-                    metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
-                )
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
