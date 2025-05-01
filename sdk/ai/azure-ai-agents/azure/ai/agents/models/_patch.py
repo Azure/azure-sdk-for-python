@@ -67,8 +67,10 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
-    SearchConfiguration,
-    SearchConfigurationList,
+    BingCustomSearchConfiguration,
+    BingCustomSearchConfigurationList,
+    BingGroundingSearchConfiguration,
+    BingGroundingSearchConfigurationList,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -607,6 +609,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
+        index_asset_id: str = "",
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -622,6 +625,8 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type filter: str
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
+        :param index_asset_id: Index asset ID to be used by tool.
+        :type filter: str
         """
         self.index_list = [
             AISearchIndexResource(
@@ -630,6 +635,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
                 query_type=query_type,
                 filter=filter,
                 top_k=top_k,
+                index_asset_id=index_asset_id,
             )
         ]
 
@@ -867,10 +873,29 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         pass
 
 
-class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
+class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
     """
+    def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
+        """
+        Initialize Bing Custom Search with a connection_id.
+
+        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :param market:
+        :param set_lang:
+        :param count:
+        :param freshness:
+        """
+        self.connection_ids = [
+            BingGroundingSearchConfiguration(
+                connection_id=connection_id,
+                market=market,
+                set_lang=set_lang,
+                count=count,
+                freshness=freshness
+            )
+        ]
 
     @property
     def definitions(self) -> List[BingGroundingToolDefinition]:
@@ -879,7 +904,23 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+        return [
+            BingGroundingToolDefinition(
+                bing_grounding=BingGroundingSearchConfigurationList(search_configurations=self.connection_ids)
+            )
+        ]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
 
 
 class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
@@ -894,7 +935,12 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
         :param instance_name: Config instance name used by tool.
         """
-        self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+        self.connection_ids = [
+            BingCustomSearchConfiguration(
+                connection_id=connection_id,
+                instance_name=instance_name
+            )
+        ]
 
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
@@ -905,14 +951,16 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         """
         return [
             BingCustomSearchToolDefinition(
-                bing_custom_search=SearchConfigurationList(search_configurations=self.connection_ids)
+                bing_custom_search=BingCustomSearchConfigurationList(
+                    search_configurations=self.connection_ids
+                )
             )
         ]
 
     @property
     def resources(self) -> ToolResources:
         """
-        Get the connection tool resources.
+        Get the tool resources.
 
         :rtype: ToolResources
         """
