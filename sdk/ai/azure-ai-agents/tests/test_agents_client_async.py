@@ -2679,7 +2679,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await ai_client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("Azure Function does not work.")
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
