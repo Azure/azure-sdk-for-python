@@ -63,7 +63,7 @@ class EvaluationRunProperties:
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
     NAME_MAP = "_azureml.evaluation_name_map"
-    NAME_MAP_LENGTH = "azureml.evaluation_name_map_length"
+    NAME_MAP_LENGTH = "_azureml.evaluation_name_map_length"
 
 
 @experimental
