@@ -242,7 +242,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
             )
-    
+
         get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
             pool_id,
             node_id,
@@ -310,7 +310,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
             )
-    
+
         get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
             job_id,
             task_id,
