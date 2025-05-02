@@ -92,6 +92,7 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
             check=True,
             capture_output=True,
             text=True,
+            cwd=root_dir,
         )
         logger.info(f"Command output: {result.stdout}")
         
@@ -103,7 +104,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
         }
     except Exception as e:
         logger.error(f"Command failed with error: {str(e)}")
-        raise
+        logger.error(e)
+        # raise
 
 
 # Register tools for each TypeSpec client generator CLI command
