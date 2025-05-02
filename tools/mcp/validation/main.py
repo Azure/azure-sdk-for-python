@@ -11,8 +11,7 @@ logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stderr)
 logger.addHandler(handler)
 
-_CURRENT_FILE = Path(__file__)
-_REPO_ROOT = _CURRENT_FILE.parents[4]
+_REPO_ROOT = Path(__file__).parents[3]
 _TOX_INI_PATH = os.path.abspath(_REPO_ROOT / "eng" / "tox" / "tox.ini")
 
 # Initialize FastMCP server
@@ -46,6 +45,12 @@ def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]
             "code": e.returncode,
             "error": str(e)
         }
+    except Exception as e:
+        logger.error(f"Error running command: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 @mcp.tool("verify_setup")
 def verify_setup_tool(venv: Optional[str] = None) -> Dict[str, Any]:
@@ -76,7 +81,8 @@ def verify_setup_tool(venv: Optional[str] = None) -> Dict[str, Any]:
 
     # Check if tox is installed
     if venv:
-        tox_command = [os.path.join(venv, "bin", "tox"), "--version"] if os.name != "nt" else [os.path.join(venv, "Scripts", "tox.exe"), "--version", "-c", _TOX_INI_PATH]
+        logger.info(f"Using virtual environment: {venv}")
+        tox_command = [os.path.join(venv, "bin", "tox"), "--version"] if os.name != "nt" else [os.path.join(venv, "Scripts", "tox.exe"), "--version", "-c", _TOX_INI_PATH, "--root", str(_REPO_ROOT)]
     else:
         tox_command = ["tox", "--version", "-c", _TOX_INI_PATH]
 
@@ -94,18 +100,11 @@ def tox_tool(package_path: str, environment: Optional[str] = None, config_file: 
         environment: Optional tox environment to run (e.g., 'pylint', 'mypy')
         config_file: Optional path to a tox configuration file
     """
-
-    current_file = Path(__file__)
-    repo_root = current_file.parents[4]
-    tox_ini_path = os.path.abspath(repo_root / "eng" / "tox" / "tox.ini")
-    if not tox_ini_path:
-        raise FileNotFoundError(f"tox.ini file not found at expected location: {tox_ini_path}")
-
     command = ["tox", "run"]
     if environment:
         command.extend(["-e", environment])
     if config_file:
-        command.extend(["-c", config_file or tox_ini_path])
+        command.extend(["-c", config_file or _TOX_INI_PATH])
     command.extend(["--root", package_path])
     return run_command(command, cwd=package_path)
 
