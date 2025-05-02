@@ -50,10 +50,12 @@ extends:
     #    Selection: sparse
     #    GenerateVMJobs: true
     Artifacts:
-    - name: azure-ai-projects
-      safeName: azureaiprojects
-    - name: azure-ai-inference
-      safeName: azureaiinference
+    # Uncommentbefore merging to main branch
+    # - name: azure-ai-projects
+    #  safeName: azureaiprojects
+    #- name: azure-ai-inference
+    #  safeName: azureaiinference
+    #######################################
     - name: azure-ai-agents
       safeName: azureaiagents
     # These packages are deprecated: 
