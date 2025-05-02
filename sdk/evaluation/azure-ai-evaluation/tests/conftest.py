@@ -1,15 +1,12 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 
-import re
 import os
 import json
-import multiprocessing
 import time
 from datetime import datetime, timedelta
 import jwt
 from copy import deepcopy
 from logging import Logger
-from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
@@ -598,3 +595,12 @@ def run_from_temp_dir(tmp_path):
     os.chdir(tmp_path)
     yield
     os.chdir(original_cwd)
+
+
+@pytest.fixture
+def restore_env_vars():
+    """Fixture to restore environment variables after the test."""
+    original_vars = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(original_vars)

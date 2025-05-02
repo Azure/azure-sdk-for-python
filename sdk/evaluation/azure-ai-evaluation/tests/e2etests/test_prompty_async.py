@@ -185,3 +185,13 @@ class TestPrompty:
         response: str = result.choices[0].message.content or ""
         assert "Bob" in response
         assert "Paris" in response
+
+    @pytest.mark.asyncio
+    async def test_entra_id(self, prompty_config: Dict[str, Any]):
+        from azure.identity import DefaultAzureCredential
+
+        prompty_config["model"]["configuration"].pop("api_key", None)
+        prompty = AsyncPrompty(BASIC_PROMPTY, token_credential=DefaultAzureCredential(), **prompty_config)
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
+        assert isinstance(result, str)
+        assert "Paris" in result

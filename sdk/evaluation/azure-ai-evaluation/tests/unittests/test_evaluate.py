@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List
 import json
 import math
 import os
@@ -96,15 +96,6 @@ def questions_answers_basic_file():
 @pytest.fixture
 def questions_answers_korean_file():
     return _get_file("questions_answers_korean.jsonl")
-
-
-@pytest.fixture
-def restore_env_vars():
-    """Fixture to restore environment variables after the test."""
-    original_vars = os.environ.copy()
-    yield
-    os.environ.clear()
-    os.environ.update(original_vars)
 
 
 def _target_fn(query):

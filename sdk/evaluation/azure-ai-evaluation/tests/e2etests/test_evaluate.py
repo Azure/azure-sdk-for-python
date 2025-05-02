@@ -1,4 +1,4 @@
-import json
+import copy
 import math
 import os
 import pathlib
@@ -8,10 +8,14 @@ import requests
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
+    CoherenceEvaluator,
+    EvaluationResult,
     F1ScoreEvaluator,
     FluencyEvaluator,
     evaluate,
 )
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import TokenScope
@@ -500,3 +504,56 @@ class TestEvaluate:
             == 1
         )
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None
+
+    @pytest.mark.parametrize("use_entra_id_auth", [False, True])
+    @pytest.mark.parametrize("use_run_submitter_client", [False, True])
+    @pytest.mark.parametrize("use_legacy_prompty", [False, True])
+    @pytest.mark.usefixtures("restore_env_vars")  # Reset environment variables after the test
+    def test_evaluate_with_auth(
+        self,
+        model_config: AzureOpenAIModelConfiguration,
+        data_file: str,
+        use_entra_id_auth: bool,
+        use_run_submitter_client: bool,
+        use_legacy_prompty: bool
+    ) -> None:
+        """Test the evaluate function using a Prompty based evaluator with different auth methods.
+        
+        :param AzureOpenAIModelConfiguration model_config: The model configuration to use for the evaluator.
+        :param str data_file: The path to the data file to use for evaluation.
+        :param bool use_entra_id_auth: True to use Entra ID authentication. False to pass the API key for auth
+        :param bool use_run_submitter_client: True to use the new run submitter client, false to use the old
+            PFClient based batch engine
+        :param bool use_legacy_prompty: True to use the legacy prompty engine, false to use the new one.
+        """
+
+        # use the coherence evaluator since it is Prompty based
+        assert(issubclass(CoherenceEvaluator, PromptyEvaluatorBase))
+
+        model_config = copy.deepcopy(model_config)
+        if use_entra_id_auth:
+            del model_config["api_key"]
+
+        if use_legacy_prompty:
+            os.environ["AI_EVALS_USE_PF_PROMPTY"] = "true"
+        else:
+            os.environ.pop("AI_EVALS_USE_PF_PROMPTY", None)
+
+        result: EvaluationResult = evaluate(
+            data=data_file,
+            evaluators={
+                "coherence": CoherenceEvaluator(model_config=model_config),
+            },
+            _use_run_submitter_client=use_run_submitter_client,
+        )
+
+        metrics = result["metrics"]
+        required_keys = ["coherence.coherence", "coherence.gpt_coherence", "coherence.coherence_threshold"]
+        for key in required_keys:
+            assert key in metrics, f"Missing key: {key}"
+
+        if use_run_submitter_client:
+            required_keys = ["coherence.prompt_tokens", "coherence.completion_tokens", "coherence.total_tokens"]
+            for key in required_keys:
+                assert key in metrics, f"Missing key: {key}"
+
