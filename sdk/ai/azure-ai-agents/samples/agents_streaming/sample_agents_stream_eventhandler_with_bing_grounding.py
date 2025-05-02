@@ -115,7 +115,7 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    response_message = agents_client.messages.list(thread_id=thread.id).get_last_message_by_role(MessageRole.AGENT)
+    response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
         for text_message in response_message.text_messages:
             print(f"Agent response: {text_message.text.value}")

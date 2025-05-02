@@ -78,12 +78,8 @@ with agents_client:
 
     # [START list_messages]
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-
-    # The messages are following in the reverse order,
-    # we will iterate them and output only text contents.
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
             print(f"{msg.role}: {last_text.text.value}")
-
     # [END list_messages]

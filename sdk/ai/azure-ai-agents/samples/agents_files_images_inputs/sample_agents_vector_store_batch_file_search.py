@@ -23,7 +23,7 @@ USAGE:
 
 import os
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import FileSearchTool, FilePurpose
+from azure.ai.agents.models import FileSearchTool, FilePurpose, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
@@ -100,5 +100,9 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
