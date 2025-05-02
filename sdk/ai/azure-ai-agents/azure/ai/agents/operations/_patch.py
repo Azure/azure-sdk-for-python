@@ -1402,7 +1402,9 @@ class FilesOperations(FilesOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    def upload_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.FileInfo:
+    def upload_and_poll(
+        self, body: JSON, *, sleep_interval: float = 1, timeout: Optional[float] = None, **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -1410,9 +1412,12 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: FileInfo. The FileInfo is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.FileInfo
+        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :paramtype timeout: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1423,6 +1428,7 @@ class FilesOperations(FilesOperationsGenerated):
         purpose: Union[str, _models.FilePurpose],
         filename: Optional[str] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
@@ -1437,15 +1443,24 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: FileInfo. The FileInfo is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.FileInfo
+        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :paramtype timeout: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
     def upload_and_poll(
-        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
-    ) -> _models.FileInfo:
+        self,
+        *,
+        file_path: str,
+        purpose: Union[str, _models.FilePurpose],
+        sleep_interval: float = 1,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :keyword file_path: Required.
@@ -1456,9 +1471,12 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: FileInfo. The FileInfo is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.FileInfo
+        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :paramtype timeout: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @distributed_trace
@@ -1471,6 +1489,7 @@ class FilesOperations(FilesOperationsGenerated):
         purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.FileInfo:
         """
@@ -1490,12 +1509,17 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: FileInfo. The FileInfo is compatible with MutableMapping
-        :rtype: _models.FileInfo
+        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :paramtype timeout: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
+        :raises TimeoutError: If the operation times out while polling for status.
         """
+
+        curr_time = time.monotonic()
         if body is not None:
             uploaded_file = self.upload(body=body, **kwargs)
         elif file is not None and purpose is not None:
@@ -1504,11 +1528,15 @@ class FilesOperations(FilesOperationsGenerated):
             uploaded_file = self.upload(file_path=file_path, purpose=purpose, **kwargs)
         else:
             raise ValueError(
-                "Invalid parameters for upload_file_and_poll. Please provide either 'body', "
+                "Invalid parameters for upload_and_poll. Please provide either 'body', "
                 "or both 'file' and 'purpose', or both 'file_path' and 'purpose'."
             )
 
         while uploaded_file.status in ["uploaded", "pending", "running"]:
+
+            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+                raise TimeoutError("Timeout reached. Stopping polling.")
+
             time.sleep(sleep_interval)
             uploaded_file = self.get(uploaded_file.id)
 
@@ -1583,7 +1611,13 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
     @overload
     def create_and_poll(
-        self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1595,9 +1629,12 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1612,6 +1649,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
@@ -1639,14 +1677,23 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
     def create_and_poll(
-        self, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1658,9 +1705,12 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @distributed_trace
@@ -1676,6 +1726,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
@@ -1705,10 +1756,15 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
+
+        curr_time = time.monotonic()
 
         if body is not _Unset:
             if isinstance(body, dict):
@@ -1733,6 +1789,10 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
             )
 
         while vector_store.status == "in_progress":
+
+            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+                raise TimeoutError("Timeout reached. Stopping polling.")
+
             time.sleep(sleep_interval)
             vector_store = super().get(vector_store.id)
 
@@ -1749,6 +1809,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         *,
         content_type: str = "application/json",
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
@@ -1763,9 +1824,12 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1778,6 +1842,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
@@ -1797,9 +1862,12 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1810,6 +1878,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         *,
         content_type: str = "application/json",
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
@@ -1824,9 +1893,12 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @distributed_trace
@@ -1840,6 +1912,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         content_type: str = "application/json",
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
@@ -1860,10 +1933,15 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
+
+        curr_time = time.monotonic()
 
         if body is not _Unset:
             if isinstance(body, dict):
@@ -1892,6 +1970,10 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
             )
 
         while vector_store_file_batch.status == "in_progress":
+
+            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+                raise TimeoutError("Timeout reached. Stopping polling.")
+
             time.sleep(sleep_interval)
             vector_store_file_batch = super().get(vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id)
 
@@ -1908,6 +1990,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         *,
         content_type: str = "application/json",
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
@@ -1922,9 +2005,12 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1937,6 +2023,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
@@ -1956,9 +2043,12 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @overload
@@ -1969,6 +2059,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         *,
         content_type: str = "application/json",
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
@@ -1983,9 +2074,12 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises TimeoutError: If the operation times out while polling for status.
         """
 
     @distributed_trace
@@ -1999,6 +2093,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
+        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
@@ -2019,11 +2114,15 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
+        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raise TimeoutError: If the operation times out while polling for status.
         """
 
+        curr_time = time.monotonic()
         if body is not _Unset:
             if isinstance(body, dict):
                 vector_store_file = super().create(
@@ -2051,6 +2150,10 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
             )
 
         while vector_store_file.status == "in_progress":
+
+            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+                raise TimeoutError("Timeout reached. Stopping polling.")
+
             time.sleep(sleep_interval)
             vector_store_file = super().get(vector_store_id=vector_store_id, file_id=vector_store_file.id)
 

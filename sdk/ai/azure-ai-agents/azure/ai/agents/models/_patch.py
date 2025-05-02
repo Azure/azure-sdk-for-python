@@ -877,6 +877,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
     """
+
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
         Initialize Bing Custom Search with a connection_id.
@@ -889,11 +890,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(
-                connection_id=connection_id,
-                market=market,
-                set_lang=set_lang,
-                count=count,
-                freshness=freshness
+                connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
             )
         ]
 
@@ -935,12 +932,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
         :param instance_name: Config instance name used by tool.
         """
-        self.connection_ids = [
-            BingCustomSearchConfiguration(
-                connection_id=connection_id,
-                instance_name=instance_name
-            )
-        ]
+        self.connection_ids = [BingCustomSearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
 
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
@@ -951,9 +943,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         """
         return [
             BingCustomSearchToolDefinition(
-                bing_custom_search=BingCustomSearchConfigurationList(
-                    search_configurations=self.connection_ids
-                )
+                bing_custom_search=BingCustomSearchConfigurationList(search_configurations=self.connection_ids)
             )
         ]
 
