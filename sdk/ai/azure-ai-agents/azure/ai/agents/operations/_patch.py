@@ -1414,7 +1414,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype sleep_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
@@ -1445,7 +1445,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype sleep_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
@@ -1473,7 +1473,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype sleep_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
@@ -1511,7 +1511,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype sleep_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
