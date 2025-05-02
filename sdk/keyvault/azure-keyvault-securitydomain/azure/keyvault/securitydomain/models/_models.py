@@ -9,14 +9,13 @@
 
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CertificateInfo(_model_base.Model):
+class CertificateInfo(_Model):
     """The Security Domain download operation requires customer to provide N certificates (minimum 3
     and maximum 10) containing a public key in JWK format.
 
@@ -54,37 +53,37 @@ class CertificateInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultError(_model_base.Model):
-    """The key vault error exception.
-
-    :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.securitydomain.models.KeyVaultErrorError
-    """
-
-    error: Optional["_models.KeyVaultErrorError"] = rest_field(visibility=["read"])
-    """The key vault server error."""
-
-
-class KeyVaultErrorError(_model_base.Model):
-    """KeyVaultErrorError.
+class Error(_Model):
+    """The key vault server error.
 
     :ivar code: The error code.
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.securitydomain.models.KeyVaultErrorError
+    :vartype inner_error: ~azure.keyvault.securitydomain.models.Error
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
     """The error code."""
     message: Optional[str] = rest_field(visibility=["read"])
     """The error message."""
-    inner_error: Optional["_models.KeyVaultErrorError"] = rest_field(name="innererror", visibility=["read"])
+    inner_error: Optional["_models.Error"] = rest_field(name="innererror", visibility=["read"])
     """The key vault server error."""
 
 
-class SecurityDomain(_model_base.Model):
+class KeyVaultError(_Model):
+    """The key vault error exception.
+
+    :ivar error: The key vault server error.
+    :vartype error: ~azure.keyvault.securitydomain.models.Error
+    """
+
+    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    """The key vault server error."""
+
+
+class SecurityDomain(_Model):
     """The Security Domain.
 
     :ivar value: The Security Domain. Required.
@@ -112,7 +111,7 @@ class SecurityDomain(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityDomainJsonWebKey(_model_base.Model):
+class SecurityDomainJsonWebKey(_Model):
     """A JSON Web Key (JWK) for use in a security domain operation.
 
     :ivar kid: Key identifier. Required.
@@ -191,7 +190,7 @@ class SecurityDomainJsonWebKey(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityDomainOperationStatus(_model_base.Model):
+class SecurityDomainOperationStatus(_Model):
     """The Security Domain operation status.
 
     :ivar status: Operation status. Known values are: "Success", "InProgress", and "Failed".
@@ -226,7 +225,7 @@ class SecurityDomainOperationStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferKey(_model_base.Model):
+class TransferKey(_Model):
     """Security Domain transfer key.
 
     :ivar key_format: Specifies the format of the transfer key.

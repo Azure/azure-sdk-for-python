@@ -14,7 +14,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import SecurityDomainClientConfiguration
 from ._operations import SecurityDomainClientOperationsMixin
 
@@ -37,6 +37,7 @@ class SecurityDomainClient(SecurityDomainClientOperationsMixin):
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{vaultBaseUrl}"
         self._config = SecurityDomainClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

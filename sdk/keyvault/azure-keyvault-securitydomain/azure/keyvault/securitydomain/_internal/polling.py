@@ -11,7 +11,7 @@ from azure.core.polling.base_polling import LROBasePolling, OperationFailed, Ope
 from azure.core.rest import AsyncHttpResponse, HttpResponse, HttpRequest
 
 from ..models import SecurityDomain, SecurityDomainOperationStatus
-from .._model_base import _deserialize
+from .._utils.model_base import _deserialize
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
