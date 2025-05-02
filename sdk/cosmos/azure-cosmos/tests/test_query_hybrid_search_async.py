@@ -242,6 +242,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 """
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
         assert result_list in [
             [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
             [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
@@ -256,6 +257,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 """
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
         assert result_list in [
             [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
             [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
@@ -281,6 +283,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 """
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
         assert result_list in [
             [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81],
             [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
@@ -336,7 +339,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
         assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently direction weighted RRF results should not match."
 
-    async def test_weighted_reciprocal_rank_fusion_with_missing_weights_async(self):
+    async def test_weighted_reciprocal_rank_fusion_with_missing_or_extra_weights_async(self):
         try:
             # Weighted RRF query with one weight missing
             query_missing_weight = """
@@ -348,6 +351,24 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Query with missing weights should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+        # Weighted RRF query with an extra weight
+        query_extra_weight = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, 1, 1])
+        """
+        results_extra_weight = self.test_container.query_items(query_extra_weight)
+        result_list_extra_weight = [res['index'] async for res in results_extra_weight]
+
+        # Weighted RRF query with just two weights
+        query_two_weights = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']), [1, 1])
+        """
+        results_two_weights = self.test_container.query_items(query_two_weights)
+        result_list_two_weights = [res['index'] async for res in results_two_weights]
+
+        # Assertions
+        assert result_list_extra_weight == result_list_two_weights, "Results with extra weights should match results with correct amount of weights."
 
     async def test_weighted_reciprocal_rank_fusion_with_response_hook_async(self):
         response_hook = test_config.ResponseHookCaller()
