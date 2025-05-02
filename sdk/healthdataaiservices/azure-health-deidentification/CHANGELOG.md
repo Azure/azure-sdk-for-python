@@ -27,18 +27,6 @@
 - Changed `outputPrefix` behavior to no longer include `job_name` by default.
 - Deprecated `path` and `location` from `TaggerResult` model.
 
-## 1.0.0b2 (2024-11-15)
-
-- Stable release of Azure Health Deidentification client library
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b1 (2024-08-15)
 
 - Azure Health Deidentification client library
