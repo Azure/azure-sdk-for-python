@@ -5,7 +5,7 @@ import os
 import logging
 import time
 import inspect
-from typing import cast, Optional, Union, Any
+from typing import cast, Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedIdentityCredential
@@ -71,7 +71,7 @@ class AzureMLTokenManager(APITokenManager):
             # Fall back to using the parent implementation
             return super().get_aad_credential()
 
-    def get_token(self, *scopes: str, claims: Union[str, None] = None, tenant_id: Union[str, None] = None, enable_cae: bool = False, **kwargs: Any) -> AccessToken:
+    def get_token(self) -> AccessToken:
         """Get the API token. If the token is not available or has expired, refresh the token.
 
         :return: API token
@@ -82,9 +82,9 @@ class AzureMLTokenManager(APITokenManager):
             access_token = credential.get_token(self.token_scope)
             self._update_token(access_token)
 
-        return self.token  # check for none is hidden in the _token_needs_update method
+        return cast(AccessToken, self.token)  # check for none is hidden in the _token_needs_update method
 
-    async def get_token_async(self) -> str:
+    async def get_token_async(self) -> AccessToken:
         """Get the API token asynchronously. If the token is not available or has expired, refresh it.
 
         :return: API token
@@ -99,7 +99,7 @@ class AzureMLTokenManager(APITokenManager):
                 access_token = get_token_method
             self._update_token(access_token)
 
-        return cast(str, self.token)  # check for none is hidden in the _token_needs_update method
+        return cast(AccessToken, self.token)  # check for none is hidden in the _token_needs_update method
 
     def _token_needs_update(self) -> bool:
         current_time = time.time()

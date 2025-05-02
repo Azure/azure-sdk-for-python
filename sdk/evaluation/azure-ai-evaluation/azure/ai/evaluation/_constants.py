@@ -80,11 +80,12 @@ class _AggregationType(enum.Enum):
     SUM = "sum"
     CUSTOM = "custom"
 
-class TokenScope(enum.Enum):
+class TokenScope(str, enum.Enum):
     """Defines the scope of the token used to access Azure resources."""
 
     DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
-    COGNITIVE_SERVICES = "https://cognitiveservices.azure.com/.default"
+    COGNITIVE_SERVICES_MANAGEMENT = "https://cognitiveservices.azure.com/.default"
+    AZURE_ML = "https://ml.azure.com/.default"
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
