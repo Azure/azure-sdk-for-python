@@ -30,14 +30,13 @@ class AgentsClientConfiguration:  # pylint: disable=too-many-instance-attributes
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-05-15-preview")
+        api_version: str = kwargs.pop("api_version", "v1")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

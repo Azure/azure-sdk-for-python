@@ -104,8 +104,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -170,9 +170,9 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -268,8 +268,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -333,9 +333,9 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -409,8 +409,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
@@ -473,10 +473,10 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -583,8 +583,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: None = None,
@@ -650,9 +650,9 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -692,8 +692,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: _models.BaseAgentEventHandlerT,
@@ -759,9 +759,9 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -871,8 +871,8 @@ class RunsOperations(RunsOperationsGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
@@ -939,9 +939,9 @@ class RunsOperations(RunsOperationsGenerated):
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
@@ -1296,7 +1296,7 @@ class FilesOperations(FilesOperationsGenerated):
     @overload
     def upload(  # pylint: disable=arguments-differ
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :keyword file_path: Required.
@@ -1304,8 +1304,8 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1313,7 +1313,7 @@ class FilesOperations(FilesOperationsGenerated):
     @overload
     def upload(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
@@ -1323,19 +1323,19 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def upload(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
+    def upload(self, body: JSON, **kwargs: Any) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :param body: Required.
         :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1349,7 +1349,7 @@ class FilesOperations(FilesOperationsGenerated):
         purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
 
@@ -1364,8 +1364,8 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: _models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: _models.FileInfo
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
@@ -1402,7 +1402,7 @@ class FilesOperations(FilesOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    def upload_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    def upload_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -1410,8 +1410,8 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1424,7 +1424,7 @@ class FilesOperations(FilesOperationsGenerated):
         filename: Optional[str] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
@@ -1437,15 +1437,15 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def upload_and_poll(
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :keyword file_path: Required.
@@ -1456,8 +1456,8 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1472,7 +1472,7 @@ class FilesOperations(FilesOperationsGenerated):
         filename: Optional[str] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
 
@@ -1490,8 +1490,8 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: _models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: _models.FileInfo
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.

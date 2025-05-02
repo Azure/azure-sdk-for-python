@@ -1187,8 +1187,8 @@ class RunsOperations:
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -1258,15 +1258,15 @@ class RunsOperations:
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -1358,8 +1358,8 @@ class RunsOperations:
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -1428,15 +1428,15 @@ class RunsOperations:
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -2355,20 +2355,20 @@ class FilesOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _upload_file(self, body: _models._models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile: ...
+    async def _upload_file(self, body: _models._models.UploadFileRequest, **kwargs: Any) -> _models.FileInfo: ...
     @overload
-    async def _upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile: ...
+    async def _upload_file(self, body: JSON, **kwargs: Any) -> _models.FileInfo: ...
 
     @distributed_trace_async
     async def _upload_file(
         self, body: Union[_models._models.UploadFileRequest, JSON], **kwargs: Any
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
         :type body: ~azure.ai.agents.models._models.UploadFileRequest or JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2382,7 +2382,7 @@ class FilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FileInfo] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: List[str] = ["file"]
@@ -2420,7 +2420,7 @@ class FilesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OpenAIFile, response.json())
+            deserialized = _deserialize(_models.FileInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2488,13 +2488,13 @@ class FilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, file_id: str, **kwargs: Any) -> _models.OpenAIFile:
+    async def get(self, file_id: str, **kwargs: Any) -> _models.FileInfo:
         """Returns information about a specific file. Does not retrieve file content.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2508,7 +2508,7 @@ class FilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FileInfo] = kwargs.pop("cls", None)
 
         _request = build_files_get_request(
             file_id=file_id,
@@ -2540,7 +2540,7 @@ class FilesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OpenAIFile, response.json())
+            deserialized = _deserialize(_models.FileInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3984,7 +3984,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
@@ -4020,10 +4020,10 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -4078,7 +4078,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
@@ -4113,10 +4113,10 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -4362,7 +4362,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
@@ -4402,10 +4402,10 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -4467,7 +4467,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
@@ -4506,10 +4506,10 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -4671,8 +4671,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -4734,15 +4734,15 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -4806,8 +4806,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -4868,15 +4868,15 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat or
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
          ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.

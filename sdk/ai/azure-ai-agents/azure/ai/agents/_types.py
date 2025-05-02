@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,11 +13,7 @@ if TYPE_CHECKING:
     from . import models as _models
 MessageInputContent = Union[str, List["_models.MessageInputContentBlock"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
-AgentsApiToolChoiceOption = Union[str, str, "_models.AgentsApiToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
-AgentsApiResponseFormatOption = Union[
-    str,
-    str,
-    "_models.AgentsApiResponseFormatMode",
-    "_models.AgentsApiResponseFormat",
-    "_models.ResponseFormatJsonSchemaType",
+AgentsToolChoiceOption = Union[str, str, "_models.AgentsToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
+AgentsResponseFormatOption = Union[
+    str, str, "_models.AgentsResponseFormatMode", "_models.AgentsResponseFormat", "_models.ResponseFormatJsonSchemaType"
 ]

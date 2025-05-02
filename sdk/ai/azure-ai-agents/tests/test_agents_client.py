@@ -43,7 +43,7 @@ from azure.ai.agents.models import (
     MessageDeltaChunk,
     MessageTextContent,
     MessageRole,
-    OpenAIFile,
+    FileInfo,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
@@ -3017,7 +3017,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
 
-                file: OpenAIFile = client.files.upload_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
+                file: FileInfo = client.files.upload_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
 
                 # create agent
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
@@ -3067,6 +3067,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert output_file_exist
 
     @agentClientPreparer()
+    @pytest.mark.skip("Azure Function does not work.")
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
