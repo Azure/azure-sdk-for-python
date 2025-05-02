@@ -6,6 +6,8 @@ import pandas as pd
 import pytest
 import requests
 from ci_tools.variables import in_ci
+from typing import Optional
+from unittest.mock import AsyncMock
 
 from azure.ai.evaluation import (
     CoherenceEvaluator,
@@ -513,6 +515,7 @@ class TestEvaluate:
         self,
         model_config: AzureOpenAIModelConfiguration,
         data_file: str,
+        prompty_patched_credential: Optional[AsyncMock],
         use_entra_id_auth: bool,
         use_run_submitter_client: bool,
         use_legacy_prompty: bool
@@ -556,4 +559,8 @@ class TestEvaluate:
             required_keys = ["coherence.prompt_tokens", "coherence.completion_tokens", "coherence.total_tokens"]
             for key in required_keys:
                 assert key in metrics, f"Missing key: {key}"
+        
+        if use_entra_id_auth and not use_legacy_prompty and prompty_patched_credential:
+            # in used Entra auth, and running in playback mode, the credential should be called only once
+            prompty_patched_credential.assert_awaited_once()
 

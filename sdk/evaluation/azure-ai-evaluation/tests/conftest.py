@@ -8,8 +8,9 @@ import jwt
 from copy import deepcopy
 from logging import Logger
 from pathlib import Path
-from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
-from unittest.mock import patch
+from typing import Any, Dict, Final, Generator, Mapping, Optional
+from unittest.mock import patch, AsyncMock
+from inspect import isclass, isfunction
 
 import pytest
 from ci_tools.variables import in_ci
@@ -604,3 +605,28 @@ def restore_env_vars():
     yield
     os.environ.clear()
     os.environ.update(original_vars)
+
+
+@pytest.fixture
+def prompty_patched_credential(mocker: MockerFixture, azure_cred: TokenCredential) -> Optional[AsyncMock]:
+    """Injects a fake credential for tests that rely on Prompty getting credentials."""
+
+    mocked_method: Optional[AsyncMock] = None
+
+    if not is_live():
+        from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
+        class_to_patch = AsyncAzureTokenProvider
+        assert isclass(class_to_patch)
+        method_to_patch = class_to_patch._initialize_async
+        assert isfunction(method_to_patch)
+
+        # Explicitly set the spec here to ensure that we are matching the method signature
+        mocked_method = AsyncMock(spec=method_to_patch, return_value=azure_cred)
+        
+        # mocker.patch(f"{method_to_patch.__module__}.{method_to_patch.__qualname__}", side_effect=mocked_method)
+        mocker.patch.object(
+            target=class_to_patch,
+            attribute=method_to_patch.__name__,
+            new_callable=lambda: mocked_method)
+
+    return mocked_method

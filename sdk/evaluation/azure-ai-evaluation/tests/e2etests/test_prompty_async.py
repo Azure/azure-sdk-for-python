@@ -11,6 +11,7 @@ from typing import Any, AsyncGenerator, DefaultDict, Dict, Final, Mapping, Optio
 
 from openai.types.chat import ChatCompletion
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
@@ -187,11 +188,9 @@ class TestPrompty:
         assert "Paris" in response
 
     @pytest.mark.asyncio
-    async def test_entra_id(self, prompty_config: Dict[str, Any]):
-        from azure.identity import DefaultAzureCredential
-
+    async def test_entra_id(self, prompty_config: Dict[str, Any], azure_cred: TokenCredential):
         prompty_config["model"]["configuration"].pop("api_key", None)
-        prompty = AsyncPrompty(BASIC_PROMPTY, token_credential=DefaultAzureCredential(), **prompty_config)
+        prompty = AsyncPrompty(BASIC_PROMPTY, token_credential=azure_cred, **prompty_config)
         result = await prompty(firstName="Bob", question="What is the capital of France?")
         assert isinstance(result, str)
         assert "Paris" in result
