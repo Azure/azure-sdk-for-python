@@ -53,7 +53,10 @@ async def sample_create_and_wait_job_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
+        target_location=TargetStorageLocation(
+            location=storage_location,
+            prefix=outputPrefix,
+            overwrite=True),
     )
 
     async with client:
@@ -62,9 +65,9 @@ async def sample_create_and_wait_job_async():
 
     await credential.close()
 
-    print(f"Job Name: {finished_job.name}")
+    print(f"Job Name:   {finished_job.job_name}")
     print(f"Job Status: {finished_job.status}")  # Succeeded
-    print(f"File Count: {finished_job.summary.total if finished_job.summary is not None else 0}")
+    print(f"File Count: {finished_job.summary.total_count if finished_job.summary is not None else 0}")
     # [END sample_create_and_wait_job_async]
 
 

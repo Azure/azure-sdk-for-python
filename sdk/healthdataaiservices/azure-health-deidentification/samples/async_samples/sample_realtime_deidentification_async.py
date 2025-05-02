@@ -38,11 +38,11 @@ async def sample_realtime_deidentification_async():
     body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 
     async with client:
-        result: DeidentificationResult = await client.deidentify(body)
+        result: DeidentificationResult = await client.deidentify_text(body)
 
     await credential.close()
-    print(f'Original Text:     "{body.input_text}"')
-    print(f'Deidentified Text: "{result.output_text}"')
+    print(f'Original Text:      "{body.input_text}"')
+    print(f'De-identified Text: "{result.output_text}"')
     # [END realtime_deidentification]
 
 

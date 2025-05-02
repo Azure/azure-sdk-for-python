@@ -3,7 +3,6 @@ import pytest
 import os
 from devtools_testutils import (
     add_uri_regex_sanitizer,
-    add_uri_string_sanitizer,
     remove_batch_sanitizers,
     test_proxy,
 )
@@ -22,8 +21,6 @@ uniquifier_file = os.path.join(os.path.dirname(__file__), "uniquifier.conf")
 
 @pytest.fixture(scope="session", autouse=True)
 def create_session_uniquifier():
-    print(os.environ["AZURE_TEST_RUN_LIVE"])
-    print(os.environ["healthdataaiservices_deid_service_endpoint"])
     if (
         os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"  # Don't override uniquifier by default
         and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() != "true"
@@ -48,4 +45,3 @@ def add_sanitizers(test_proxy):
     # uri sanitization in favor of substitution
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK4001"])
     add_uri_regex_sanitizer(regex='continuationToken=[^&"}]*', value="continuationToken=Sanitized")
-    add_uri_string_sanitizer(target=os.environ["healthdataaiservices_storage_container_name"], value="containername")

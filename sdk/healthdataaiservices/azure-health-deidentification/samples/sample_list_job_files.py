@@ -53,7 +53,10 @@ def sample_list_job_documents():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
+        target_location=TargetStorageLocation(
+            location=storage_location,
+            prefix=outputPrefix,
+            overwrite=True),
     )
 
     print(f"Creating job with name: {jobname}")
@@ -63,12 +66,12 @@ def sample_list_job_documents():
     job = poller.result()
     print(f"Job Status: {job.status}")
 
-    files = client.list_job_documents(job.name)
+    files = client.list_job_documents(jobname)
 
     print("Completed files (Max 10):")
     filesToLookThrough = 10
     for f in files:
-        print(f"\t - {f.input.path}")
+        print(f"\t - {f.input_location.location}")
 
         filesToLookThrough -= 1
         if filesToLookThrough <= 0:

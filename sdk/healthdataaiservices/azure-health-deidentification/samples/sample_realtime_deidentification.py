@@ -26,8 +26,6 @@ def sample_realtime_deidentification():
     from azure.health.deidentification.models import (
         DeidentificationResult,
         DeidentificationContent,
-        OperationType,
-        DocumentDataType,
     )
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
@@ -38,9 +36,9 @@ def sample_realtime_deidentification():
 
     body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 
-    result: DeidentificationResult = client.deidentify(body)
-    print(f'Original Text:     "{body.input_text}"')
-    print(f'Deidentified Text: "{result.output_text}"')
+    result: DeidentificationResult = client.deidentify_text(body)
+    print(f'Original Text:      "{body.input_text}"')
+    print(f'De-identified Text: "{result.output_text}"')
     # [END realtime_deidentification]
 
 

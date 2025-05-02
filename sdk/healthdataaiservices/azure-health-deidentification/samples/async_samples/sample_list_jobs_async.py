@@ -20,7 +20,6 @@ USAGE:
     3) INPUT_PREFIX - the prefix of the input files in the storage account.
 """
 import asyncio
-import uuid
 
 
 async def sample_list_jobs_async():
@@ -41,7 +40,7 @@ async def sample_list_jobs_async():
         print("Listing latest 5 jobs:")
         jobsToLookThrough = 5
         async for j in jobs:
-            print(f"Job Name: {j.name}")
+            print(f"Job Name: {j.job_name}")
 
             jobsToLookThrough -= 1
             if jobsToLookThrough <= 0:

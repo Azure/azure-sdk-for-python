@@ -41,7 +41,7 @@ def sample_list_jobs():
     print("Listing latest 5 jobs:")
     jobsToLookThrough = 5
     for j in jobs:
-        print(f"Job Name: {j.name}")
+        print(f"Job Name: {j.job_name}")
 
         jobsToLookThrough -= 1
         if jobsToLookThrough <= 0:
