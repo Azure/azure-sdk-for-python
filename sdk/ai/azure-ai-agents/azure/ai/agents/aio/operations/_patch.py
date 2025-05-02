@@ -1499,7 +1499,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
-        :rtype: _models.OpenAIFile
+        :rtype: _models.FileInfo
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
