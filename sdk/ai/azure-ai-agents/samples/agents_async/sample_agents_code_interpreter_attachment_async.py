@@ -22,7 +22,7 @@ USAGE:
 import asyncio
 import os
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder
+from azure.ai.agents.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder, MessageTextContent
 from azure.identity.aio import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
@@ -69,8 +69,11 @@ async def main():
             await agents_client.delete_agent(agent.id)
             print("Deleted agent")
 
-            messages = await agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            print(f"Messages: {messages}")
+            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+            async for msg in messages:
+                last_part = msg.content[-1]
+                if isinstance(last_part, MessageTextContent):
+                    print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

@@ -31,45 +31,48 @@ import os
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
-        agent_client = AgentsClient(
+        agents_client = AgentsClient(
             endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
         )
 
-        async with agent_client:
-            agent = await agent_client.create_agent(
+        async with agents_client:
+            agent = await agents_client.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
             )
             print(f"Created agent, agent ID: {agent.id}")
 
-            thread = await agent_client.threads.create()
+            thread = await agents_client.threads.create()
             print(f"Created thread, thread ID: {thread.id}")
 
-            message = await agent_client.messages.create(
+            message = await agents_client.messages.create(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await agent_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+            run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
             # Poll the run as long as run status is queued or in progress
             while run.status in ["queued", "in_progress", "requires_action"]:
                 # Wait for a second
                 time.sleep(1)
-                run = await agent_client.runs.get(thread_id=thread.id, run_id=run.id)
+                run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
                 print(f"Run status: {run.status}")
 
             if run.status == "failed":
                 print(f"Run error: {run.last_error}")
 
-            await agent_client.delete_agent(agent.id)
+            await agents_client.delete_agent(agent.id)
             print("Deleted agent")
 
-            messages = await agent_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            for data_point in messages.data:
-                last_message_content = data_point.content[-1]
-                if isinstance(last_message_content, MessageTextContent):
-                    print(f"{data_point.role}: {last_message_content.text.value}")
+            messages = agents_client.messages.list(
+                thread_id=thread.id,
+                order=ListSortOrder.ASCENDING,
+            )
+            async for msg in messages:
+                last_part = msg.content[-1]
+                if isinstance(last_part, MessageTextContent):
+                    print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

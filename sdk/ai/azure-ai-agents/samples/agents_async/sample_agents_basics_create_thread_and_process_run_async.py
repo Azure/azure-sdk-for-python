@@ -60,15 +60,14 @@ async def main() -> None:
                 print(f"Run error: {run.last_error}")
 
             # List all messages in the thread, in ascending order of creation
-            messages = await agents_client.messages.list(
+            messages = agents_client.messages.list(
                 thread_id=run.thread_id,
                 order=ListSortOrder.ASCENDING,
             )
-
-            for msg in messages.data:
-                for block in msg.content:
-                    if isinstance(block, MessageTextContent):
-                        print(f"{msg.role}: {block.text.value}")
+            async for msg in messages:
+                last_part = msg.content[-1]
+                if isinstance(last_part, MessageTextContent):
+                    print(f"{msg.role}: {last_part.text.value}")
 
             await agents_client.delete_agent(agent.id)
             print(f"Deleted agent {agent.id!r}")
