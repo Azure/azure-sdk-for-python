@@ -24,6 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.aio import KnowledgeAgentRetrievalClient
+from ._agent_client_async import KnowledgeAgentRetrievalClient
 
 __all__ = ("KnowledgeAgentRetrievalClient",)
