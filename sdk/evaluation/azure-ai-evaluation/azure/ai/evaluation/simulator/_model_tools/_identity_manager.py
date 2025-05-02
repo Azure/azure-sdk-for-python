@@ -8,7 +8,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
 from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import AccessToken, TokenCredential
@@ -77,7 +77,8 @@ class APITokenManager(ABC):
         return DefaultAzureCredential()
 
     @abstractmethod
-    def get_token(self) -> str:
+    def get_token(
+            self, scopes: Union[str, None] = None, claims: Union[str, None] = None, tenant_id: Union[str, None] = None, enable_cae: bool = False, **kwargs: Any) -> AccessToken:
         """Async method to get the API token. Subclasses should implement this method.
 
         :return: API token
