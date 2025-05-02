@@ -1404,7 +1404,7 @@ class FilesOperations(FilesOperationsGenerated):
     @overload
     def upload_and_poll(
         self, body: JSON, *, sleep_interval: float = 1, timeout: Optional[float] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -1460,7 +1460,7 @@ class FilesOperations(FilesOperationsGenerated):
         sleep_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ) -> _models.OpenAIFile:
+    ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :keyword file_path: Required.
