@@ -42,6 +42,8 @@ socket_transport_ids = ["amqp", "ws"]
 
 from devtools_testutils import get_region_override, get_credential as get_devtools_credential
 from tracing_common import FakeSpan
+import re
+import json
 
 collect_ignore = []
 PARTITION_COUNT = 2
@@ -377,11 +379,28 @@ def amqpproxy(live_eventhub, skip_amqp_proxy, request):
         finally:
             os.killpg(os.getpgid(proxy_process.pid), signal.SIGTERM)
             proxy_process.wait()
+            sanitize_amqp_recording(recording_dir_path, recording_file)
     finally:
         log_file.write(f"####### Stopping amqpproxy for test: {test_name}\n")
         log_file.flush()
         log_file.close()
 
+def sanitize_amqp_recording(recording_path, file_name):
+    """Sanitize AMQP recordings.
+    """
+    for recording_file in os.listdir(recording_path):
+        if recording_file.startswith(file_name) and recording_file.endswith(".json"):
+            try:
+                with open(os.path.join(recording_path, recording_file), 'r') as f:
+                    content = f.read()
+
+                # Find and replace "MessageFormat":<number> with "MessageFormat":"***", since it's causing credscan issues
+                sanitized_content = re.sub(r'"MessageFormat":(\d+)', r'"MessageFormat":"***"', content)
+
+                with open(os.path.join(recording_path, recording_file), 'w') as f:
+                    f.write(sanitized_content)
+            except (IOError, json.JSONDecodeError) as e:
+                log.warning(f"Failed to sanitize recording file {recording_file}: {str(e)}")
 
 @pytest.fixture()
 def invalid_hostname(live_eventhub):
