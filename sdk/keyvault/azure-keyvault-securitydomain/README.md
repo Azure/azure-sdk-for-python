@@ -199,8 +199,8 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [pypi_package]: https://pypi.org/project/azure-keyvault-securitydomain/
 
-[reference_docs]: https://aka.ms/azsdk/python/keyvault-securitydomain/docs
+[reference_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/azure/keyvault/securitydomain
 
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/samples
-[securitydomain_client_docs]: https://aka.ms/azsdk/python/keyvault-securitydomain/docs#azure.keyvault.securitydomain.SecurityDomainClient
+[securitydomain_client_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/azure/keyvault/securitydomain/_patch.py
 [securitydomain_docs]: https://learn.microsoft.com/azure/key-vault/managed-hsm/security-domain

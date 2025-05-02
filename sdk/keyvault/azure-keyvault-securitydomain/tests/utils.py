@@ -44,7 +44,7 @@ def _public_rsa_key_to_jwk(rsa_key, encoding=None):
 class Utils:
     @staticmethod
     def is_little_endian():
-        a = array.array("H", [1]).tobytes()
+        a = bytes(array.array("H", [1]))
         # little endian: b'\x01\x00'
         # big endian: b'\x00\x01'
         return a[0] == 1
