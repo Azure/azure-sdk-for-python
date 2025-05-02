@@ -257,9 +257,19 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         if self._hybrid_search_query_info.get('componentWeights'):
             component_weights = self._hybrid_search_query_info['componentWeights']
             component_count = len(self._hybrid_search_query_info['componentQueryInfos'])
-            component_weights = [component_weights[x] if x < len(component_weights)
-                                 else 1.0 for x in range(component_count)]
+            # If the number of weights is less than the number of components, we fill the rest with 1.0
+            # Unlikely to be the case since a bad request should be returned if weights are less than components,
+            # and any extra weights relative to components are ignored, but we handle it here anyway.
+            if len(component_weights) != component_count:
+                if len(component_weights) < component_count:
+                    # Fill the rest with 1.0
+                    component_weights = [component_weights[x] if x < len(component_weights)
+                                         else 1.0 for x in range(component_count)]
+                else:
+                    # Drop the excess values
+                    component_weights = component_weights[:component_count]
         else:
+            # If no weights are provided, we assume all components have equal weight
             component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
 
         # Sort drained results by _rid

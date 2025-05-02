@@ -868,8 +868,7 @@ All of these mentioned queries would look something like this:
 - `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}))"`
 
 You can also use Weighted Reciprocal Rank Fusion to assign different weights to the different scores being used in the RRF function.
-This is done by passing in a list of weights to the RRF function, which will be used to multiply the scores before the fusion is done.
-A Negative value on a weight will reverse the ordering for that score. Usually it is descending, but a negative weight will order it ascending.
+This is done by passing in a list of weights to the RRF function in the query.
 - `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [0.5, 0.3, 0.2])`
 
 
