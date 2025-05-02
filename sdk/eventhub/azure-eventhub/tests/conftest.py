@@ -395,7 +395,7 @@ def sanitize_amqp_recording(recording_path, file_name):
                     content = f.read()
 
                 # Find and replace "MessageFormat":<number> with "MessageFormat":"***", since it's causing credscan issues
-                sanitized_content = re.sub(r'"MessageFormat":(\d+)', r'"MessageFormat":"***"', content)
+                sanitized_content = re.sub(r'"MessageFormat":(\d+)', r'"MessageFormat":0', content)
 
                 with open(os.path.join(recording_path, recording_file), 'w') as f:
                     f.write(sanitized_content)
