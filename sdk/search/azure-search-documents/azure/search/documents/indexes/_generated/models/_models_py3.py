@@ -1059,8 +1059,9 @@ class AzureOpenAIVectorizerParameters(_serialization.Model):
     :ivar auth_identity: The user-assigned managed identity used for outbound connections.
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
-     path. Known values are: "text-embedding-ada-002", "text-embedding-3-large", and
-     "text-embedding-3-small".
+     path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
+     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", and
+     "gpt-4.1-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
@@ -1092,8 +1093,9 @@ class AzureOpenAIVectorizerParameters(_serialization.Model):
         :keyword auth_identity: The user-assigned managed identity used for outbound connections.
         :paramtype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         :keyword model_name: The name of the embedding model that is deployed at the provided
-         deploymentId path. Known values are: "text-embedding-ada-002", "text-embedding-3-large", and
-         "text-embedding-3-small".
+         deploymentId path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
+         "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", and
+         "gpt-4.1-nano".
         :paramtype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
         """
         super().__init__(**kwargs)
@@ -1119,8 +1121,9 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, AzureOpenAIVectorizerParamet
     :ivar auth_identity: The user-assigned managed identity used for outbound connections.
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
-     path. Known values are: "text-embedding-ada-002", "text-embedding-3-large", and
-     "text-embedding-3-small".
+     path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
+     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", and
+     "gpt-4.1-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     :ivar odata_type: A URI fragment specifying the type of skill. Required.
     :vartype odata_type: str
@@ -1192,8 +1195,9 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, AzureOpenAIVectorizerParamet
         :keyword auth_identity: The user-assigned managed identity used for outbound connections.
         :paramtype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         :keyword model_name: The name of the embedding model that is deployed at the provided
-         deploymentId path. Known values are: "text-embedding-ada-002", "text-embedding-3-large", and
-         "text-embedding-3-small".
+         deploymentId path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
+         "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", and
+         "gpt-4.1-nano".
         :paramtype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
@@ -7632,7 +7636,7 @@ class PatternAnalyzer(LexicalAnalyzer):
         *,
         name: str,
         lower_case_terms: bool = True,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         stopwords: Optional[List[str]] = None,
         **kwargs: Any
@@ -7857,7 +7861,7 @@ class PatternTokenizer(LexicalTokenizer):
         self,
         *,
         name: str,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         group: int = -1,
         **kwargs: Any

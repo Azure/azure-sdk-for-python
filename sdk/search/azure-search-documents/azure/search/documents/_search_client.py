@@ -182,6 +182,7 @@ class SearchClient(HeadersMixin):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         hybrid_search: Optional[HybridSearch] = None,
+        x_ms_query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -305,10 +306,14 @@ class SearchClient(HeadersMixin):
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
-             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+            vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword x_ms_query_source_authorization: Token identifying the user for which the query is being
+            executed. This token is used to enforce security restrictions on documents. Default value is
+            None.
+        :paramtype x_ms_query_source_authorization: str
         :return: List of search results.
         :rtype:  SearchItemPaged[dict]
 
@@ -397,6 +402,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["x_ms_query_source_authorization"] = x_ms_query_source_authorization
         kwargs["api_version"] = self._api_version
         return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
 

@@ -30,6 +30,11 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
     TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
     TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
+    GPT4_O = "gpt-4o"
+    GPT4_O_MINI = "gpt-4o-mini"
+    GPT41 = "gpt-4.1"
+    GPT41_MINI = "gpt-4.1-mini"
+    GPT41_NANO = "gpt-4.1-nano"
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):

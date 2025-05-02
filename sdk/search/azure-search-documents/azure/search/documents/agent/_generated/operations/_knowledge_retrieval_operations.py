@@ -32,7 +32,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_retrieve_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_retrieve_request(
+    *,
+    x_ms_client_request_id: Optional[str] = None,
+    x_ms_query_source_authorization: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -49,6 +54,10 @@ def build_retrieve_request(*, x_ms_client_request_id: Optional[str] = None, **kw
     # Construct headers
     if x_ms_client_request_id is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+    if x_ms_query_source_authorization is not None:
+        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
+            "x_ms_query_source_authorization", x_ms_query_source_authorization, "str"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -81,6 +90,7 @@ class KnowledgeRetrievalOperations:
     def retrieve(
         self,
         retrieval_request: _models.KnowledgeAgentRetrievalRequest,
+        x_ms_query_source_authorization: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -90,6 +100,10 @@ class KnowledgeRetrievalOperations:
 
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: ~azure.search.documents.agent.models.KnowledgeAgentRetrievalRequest
+        :param x_ms_query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :type x_ms_query_source_authorization: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.agent.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -104,6 +118,7 @@ class KnowledgeRetrievalOperations:
     def retrieve(
         self,
         retrieval_request: IO[bytes],
+        x_ms_query_source_authorization: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -113,6 +128,10 @@ class KnowledgeRetrievalOperations:
 
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
+        :param x_ms_query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :type x_ms_query_source_authorization: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.agent.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -127,6 +146,7 @@ class KnowledgeRetrievalOperations:
     def retrieve(
         self,
         retrieval_request: Union[_models.KnowledgeAgentRetrievalRequest, IO[bytes]],
+        x_ms_query_source_authorization: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> _models.KnowledgeAgentRetrievalResponse:
@@ -136,6 +156,10 @@ class KnowledgeRetrievalOperations:
          KnowledgeAgentRetrievalRequest type or a IO[bytes] type. Required.
         :type retrieval_request: ~azure.search.documents.agent.models.KnowledgeAgentRetrievalRequest or
          IO[bytes]
+        :param x_ms_query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :type x_ms_query_source_authorization: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.agent.models.RequestOptions
         :return: KnowledgeAgentRetrievalResponse or the result of cls(response)
@@ -170,6 +194,7 @@ class KnowledgeRetrievalOperations:
 
         _request = build_retrieve_request(
             x_ms_client_request_id=_x_ms_client_request_id,
+            x_ms_query_source_authorization=x_ms_query_source_authorization,
             api_version=api_version,
             content_type=content_type,
             json=_json,
