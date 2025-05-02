@@ -13,6 +13,7 @@ by url reference (new). See new sample `sample_chat_completions_with_audio_url.p
 ### Breaking Changes
 
 * `AudioContentItem` has been renamed to `AudioDataContentItem`
+* Remove `PromptTemplate`, replace with Prompty sample code with native Prompty APIs
 
 ### Other Noteable Changes
 
