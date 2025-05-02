@@ -107,8 +107,15 @@ def start_span(
     gen_ai_system: Optional[str] = AZ_AI_AGENT_SYSTEM,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
+    global _span_impl_type
     if _span_impl_type is None:
-        return None
+        # Try to reinitialize the span implementation type.
+        # This is a workaround for the case when the tracing implementation is not set up yet when the agent telemetry is imported.
+        # This code should not even get called if settings.tracing_implementation() returns None since that is also checked in
+        # _trace_sync_function and _trace_async_function functions in the AIAgentsInstrumentor.
+        _span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
+        if _span_impl_type is None:
+            return None
 
     span = _span_impl_type(name=span_name or operation_name.value, kind=kind)
 

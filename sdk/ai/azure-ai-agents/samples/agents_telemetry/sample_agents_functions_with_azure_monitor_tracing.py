@@ -22,16 +22,20 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
+    4) AI_APPINSIGHTS_CONNECTION_STRING - Set to the connection string of your Application Insights resource.
+       This is used to send telemetry data to Azure Monitor. You can also get the connection string programmatically
+       from AIProjectClient using the `telemetry.get_connection_string` method. A code sample showing how to do this
+       can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
 from typing import Any, Callable, Set
 
 import os, time, json
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.telemetry import trace_function, enable_telemetry
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.ai.agents.telemetry import trace_function, enable_telemetry
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
