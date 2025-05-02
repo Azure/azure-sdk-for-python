@@ -1415,7 +1415,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
         """
@@ -1446,7 +1446,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
         """
@@ -1474,7 +1474,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIFile
+        :rtype: ~azure.ai.agents.models.FileInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises TimeoutError: If the operation times out while polling for status.
         """
