@@ -46,7 +46,7 @@ class AgentsClientConfiguration:  # pylint: disable=too-many-instance-attributes
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-agents/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

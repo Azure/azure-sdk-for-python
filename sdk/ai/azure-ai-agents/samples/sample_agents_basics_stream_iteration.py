@@ -80,6 +80,3 @@ with agents_client:
 
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
-
-    messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")

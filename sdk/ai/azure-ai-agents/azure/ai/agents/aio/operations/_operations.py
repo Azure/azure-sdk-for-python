@@ -9,9 +9,24 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    TypeVar,
+    Union,
+    overload,
+)
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -24,6 +39,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -259,16 +275,15 @@ class ThreadsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfAgentThread:
+    ) -> AsyncIterable["_models.AgentThread"]:
         """Gets a list of threads that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -277,21 +292,20 @@ class ThreadsOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfAgentThread. The OpenAIPageableListOfAgentThread is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfAgentThread
+        :return: An iterator like instance of AgentThread
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.AgentThread]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentThread]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -300,50 +314,46 @@ class ThreadsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfAgentThread] = kwargs.pop("cls", None)
+            _request = build_threads_list_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_threads_list_request(
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.AgentThread], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfAgentThread, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
@@ -833,18 +843,17 @@ class MessagesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         thread_id: str,
         *,
         run_id: Optional[str] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfThreadMessage:
+    ) -> AsyncIterable["_models.ThreadMessage"]:
         """Gets a list of messages that exist on a thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -857,21 +866,20 @@ class MessagesOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfThreadMessage. The OpenAIPageableListOfThreadMessage is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfThreadMessage
+        :return: An iterator like instance of ThreadMessage
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.ThreadMessage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ThreadMessage]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -880,52 +888,48 @@ class MessagesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
+            _request = build_messages_list_request(
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_messages_list_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ThreadMessage], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfThreadMessage, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
@@ -1533,17 +1537,16 @@ class RunsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         thread_id: str,
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfThreadRun:
+    ) -> AsyncIterable["_models.ThreadRun"]:
         """Gets a list of runs for a specified thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -1554,21 +1557,20 @@ class RunsOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfThreadRun. The OpenAIPageableListOfThreadRun is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfThreadRun
+        :return: An iterator like instance of ThreadRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.ThreadRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ThreadRun]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1577,51 +1579,47 @@ class RunsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop("cls", None)
+            _request = build_runs_list_request(
+                thread_id=thread_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_runs_list_request(
-            thread_id=thread_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ThreadRun], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfThreadRun, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
@@ -2171,8 +2169,8 @@ class RunStepsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         thread_id: str,
         run_id: str,
@@ -2180,10 +2178,9 @@ class RunStepsOperations:
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfRunStep:
+    ) -> AsyncIterable["_models.RunStep"]:
         """Gets a list of run steps from a thread run.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2201,21 +2198,20 @@ class RunStepsOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfRunStep. The OpenAIPageableListOfRunStep is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfRunStep
+        :return: An iterator like instance of RunStep
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.RunStep]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RunStep]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2224,53 +2220,49 @@ class RunStepsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop("cls", None)
+            _request = build_run_steps_list_request(
+                thread_id=thread_id,
+                run_id=run_id,
+                include=include,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_run_steps_list_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            include=include,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.RunStep], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfRunStep, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class FilesOperations:
@@ -2622,16 +2614,15 @@ class VectorStoresOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStore:
+    ) -> AsyncIterable["_models.VectorStore"]:
         """Returns a list of vector stores.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -2640,21 +2631,20 @@ class VectorStoresOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfVectorStore. The OpenAIPageableListOfVectorStore is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfVectorStore
+        :return: An iterator like instance of VectorStore
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.VectorStore]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStore]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2663,50 +2653,46 @@ class VectorStoresOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop("cls", None)
+            _request = build_vector_stores_list_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_vector_stores_list_request(
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStore], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStore, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create(
@@ -3187,18 +3173,17 @@ class VectorStoreFilesOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         vector_store_id: str,
         *,
         filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStoreFile:
+    ) -> AsyncIterable["_models.VectorStoreFile"]:
         """Returns a list of vector store files.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -3212,21 +3197,20 @@ class VectorStoreFilesOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfVectorStoreFile
+        :return: An iterator like instance of VectorStoreFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.VectorStoreFile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStoreFile]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3235,52 +3219,48 @@ class VectorStoreFilesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
+            _request = build_vector_store_files_list_request(
+                vector_store_id=vector_store_id,
+                filter=filter,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_vector_store_files_list_request(
-            vector_store_id=vector_store_id,
-            filter=filter,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create(
@@ -3869,8 +3849,8 @@ class VectorStoreFileBatchesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_files(
+    @distributed_trace
+    def list_files(
         self,
         vector_store_id: str,
         batch_id: str,
@@ -3878,10 +3858,9 @@ class VectorStoreFileBatchesOperations:
         filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStoreFile:
+    ) -> AsyncIterable["_models.VectorStoreFile"]:
         """Returns a list of vector store files in a batch.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -3897,21 +3876,20 @@ class VectorStoreFileBatchesOperations:
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfVectorStoreFile
+        :return: An iterator like instance of VectorStoreFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.VectorStoreFile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStoreFile]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3920,53 +3898,48 @@ class VectorStoreFileBatchesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
+            _request = build_vector_store_file_batches_list_files_request(
+                vector_store_id=vector_store_id,
+                batch_id=batch_id,
+                filter=filter,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_vector_store_file_batches_list_files_request(
-            vector_store_id=vector_store_id,
-            batch_id=batch_id,
-            filter=filter,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClientConfiguration]):
@@ -4202,16 +4175,15 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_agents(
+    @distributed_trace
+    def list_agents(
         self,
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfAgent:
+    ) -> AsyncIterable["_models.Agent"]:
         """Gets a list of agents that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -4220,21 +4192,20 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. before is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfAgent. The OpenAIPageableListOfAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.agents.models.OpenAIPageableListOfAgent
+        :return: An iterator like instance of Agent
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.agents.models.Agent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Agent]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4243,50 +4214,46 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop("cls", None)
+            _request = build_agents_list_agents_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        _request = build_agents_list_agents_request(
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Agent], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfAgent, response.json())
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:

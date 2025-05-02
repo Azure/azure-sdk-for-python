@@ -81,9 +81,9 @@ with agents_client:
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.
-    for data_point in messages.data:
-        last_message_content = data_point.content[-1]
-        if isinstance(last_message_content, MessageTextContent):
-            print(f"{data_point.role}: {last_message_content.text.value}")
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
 
     # [END list_messages]

@@ -17,11 +17,13 @@ USAGE:
     1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_BLOB_URI - The URI of the blob storage where the file is uploaded. In the format:
+         azureml://subscriptions/{subscription-id}/resourcegroups/{resource-group-name}/workspaces/{workspace-name}/datastores/{datastore-name}/paths/{path-to-file}
 """
 
 import os
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
+from azure.ai.agents.models import FileSearchTool, ListSortOrder, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(
@@ -71,5 +73,8 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
