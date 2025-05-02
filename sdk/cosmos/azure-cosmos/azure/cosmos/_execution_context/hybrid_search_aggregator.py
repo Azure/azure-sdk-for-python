@@ -3,12 +3,12 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
+from typing import List, Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
-from typing import List, Union
+
 
 # pylint: disable=protected-access
 RRF_CONSTANT = 60
