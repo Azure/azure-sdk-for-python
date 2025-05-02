@@ -4,34 +4,38 @@
 
 ### Features Added
 
+- Added `azure.search.documents.agent.KnowledgeAgentRetrievalClient`.
 - Added knowledge agents operations in `SearchIndexClient`.
 - Added `resync` method in `SearchIndexerClient`.
 - Exposed `@search.reranker_boosted_score` in the search results.
+- Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
+- Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
+- Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
 
 - Added new models:
-    - `azure.search.documents.QueryResultDocumentInnerHit`
-    - `azure.search.documents.indexes.ChatCompletionExtraParametersBehavior`
-    - `azure.search.documents.indexes.ChatCompletionResponseFormat`
-    - `azure.search.documents.indexes.ChatCompletionResponseFormatType`
-    - `azure.search.documents.indexes.ChatCompletionResponseFormatJsonSchemaProperties`
-    - `azure.search.documents.indexes.ChatCompletionSchema`
-    - `azure.search.documents.indexes.ChatCompletionSkill`
-    - `azure.search.documents.indexes.CommonModelParameters`
-    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingProperties`
-    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingUnit`
-    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillExtractionOptions`
-    - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputFormat`
-    - `azure.search.documents.indexes.IndexerPermissionOption`
-    - `azure.search.documents.indexes.IndexerResyncOption`
-    - `azure.search.documents.indexes.KnowledgeAgent`
-    - `azure.search.documents.indexes.KnowledgeAgentAzureOpenAIModel`
-    - `azure.search.documents.indexes.KnowledgeAgentModel`
-    - `azure.search.documents.indexes.KnowledgeAgentModelKind`
-    - `azure.search.documents.indexes.KnowledgeAgentRequestLimits`
-    - `azure.search.documents.indexes.KnowledgeAgentTargetIndex`
-    - `azure.search.documents.indexes.PermissionFilter`
-    - `azure.search.documents.indexes.RankingOrder`
-    - `azure.search.documents.indexes.SearchIndexPermissionFilterOption`
+    - `azure.search.documents.models.QueryResultDocumentInnerHit`
+    - `azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormat`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatType`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatJsonSchemaProperties`
+    - `azure.search.documents.indexes.models.ChatCompletionSchema`
+    - `azure.search.documents.indexes.models.ChatCompletionSkill`
+    - `azure.search.documents.indexes.models.CommonModelParameters`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingProperties`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingUnit`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillExtractionOptions`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillOutputFormat`
+    - `azure.search.documents.indexes.models.IndexerPermissionOption`
+    - `azure.search.documents.indexes.models.IndexerResyncOption`
+    - `azure.search.documents.indexes.models.KnowledgeAgent`
+    - `azure.search.documents.indexes.models.KnowledgeAgentAzureOpenAIModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModelKind`
+    - `azure.search.documents.indexes.models.KnowledgeAgentRequestLimits`
+    - `azure.search.documents.indexes.models.KnowledgeAgentTargetIndex`
+    - `azure.search.documents.indexes.models.PermissionFilter`
+    - `azure.search.documents.indexes.models.RankingOrder`
+    - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
 
 ### Breaking Changes
 
