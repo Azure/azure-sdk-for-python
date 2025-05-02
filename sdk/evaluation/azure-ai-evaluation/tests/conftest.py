@@ -34,6 +34,7 @@ from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
 
@@ -492,11 +493,11 @@ def azure_cred() -> TokenCredential:
 
     try:
         credential = AzureCliCredential()
-        token = credential.get_token("https://management.azure.com/.default")
+        token = credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     except Exception:
         credential = DefaultAzureCredential()
         # ensure we can get token
-        token = credential.get_token("https://management.azure.com/.default")
+        token = credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
 
     assert token is not None
     return credential
@@ -525,7 +526,7 @@ def azure_cred_onedp() -> TokenCredential:
 def user_object_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
-    access_token = azure_cred.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["oid"]
 
@@ -534,7 +535,7 @@ def user_object_id(azure_cred: TokenCredential) -> str:
 def tenant_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.TENANT_ID
-    access_token = azure_cred.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["tid"]
 

@@ -15,6 +15,7 @@ from azure.eventhub._constants import ALL_PARTITIONS
 def test_receive_storage_checkpoint(
     auth_credential_senders,
     uamqp_transport,
+    client_args,
     checkpoint_store,
     live_eventhub,
     resource_mgmt_client,
@@ -37,6 +38,7 @@ def test_receive_storage_checkpoint(
         consumer_group="$default",
         checkpoint_store=checkpoint_store,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     sequence_numbers_0 = []
@@ -88,7 +90,7 @@ def test_receive_storage_checkpoint(
 
 
 @pytest.mark.liveTest
-def test_receive_no_partition(auth_credential_senders, uamqp_transport):
+def test_receive_no_partition(auth_credential_senders, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
@@ -99,6 +101,7 @@ def test_receive_no_partition(auth_credential_senders, uamqp_transport):
         consumer_group="$default",
         receive_timeout=1,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     def on_event(partition_context, event):
@@ -133,7 +136,7 @@ def test_receive_no_partition(auth_credential_senders, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_receive_partition(auth_credential_senders, uamqp_transport):
+def test_receive_partition(auth_credential_senders, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     senders[0].send(EventData("Test EventData"))
     client = EventHubConsumerClient(
@@ -142,6 +145,7 @@ def test_receive_partition(auth_credential_senders, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     def on_event(partition_context, event):
@@ -168,7 +172,7 @@ def test_receive_partition(auth_credential_senders, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
+def test_receive_load_balancing(auth_credential_senders, uamqp_transport, client_args):
     if sys.platform.startswith("darwin"):
         pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")
 
@@ -182,6 +186,7 @@ def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
         checkpoint_store=cs,
         load_balancing_interval=1,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     client2 = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -191,6 +196,7 @@ def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
         checkpoint_store=cs,
         load_balancing_interval=1,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     def on_event(partition_context, event):
@@ -209,7 +215,7 @@ def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
 
 
-def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport):
+def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport, client_args):
     """Test whether callback is called when max_wait_time is None and max_batch_size has reached"""
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     senders[0].send(EventData("Test EventData"))
@@ -220,6 +226,7 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -270,7 +277,7 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
 
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result", [(3, 15, []), (3, 2, None)])
 def test_receive_batch_empty_with_max_wait_time(
-    auth_credentials, uamqp_transport, max_wait_time, sleep_time, expected_result
+    auth_credentials, uamqp_transport, client_args, max_wait_time, sleep_time, expected_result
 ):
     """Test whether event handler is called when max_wait_time > 0 and no event is received"""
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
@@ -280,6 +287,7 @@ def test_receive_batch_empty_with_max_wait_time(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -298,7 +306,7 @@ def test_receive_batch_empty_with_max_wait_time(
     worker.join()
 
 
-def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport):
+def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport, client_args):
     """Test whether the callback is called once max_batch_size reaches and before max_wait_time reaches."""
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     for _ in range(10):
@@ -309,6 +317,7 @@ def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -334,7 +343,7 @@ def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
+def test_receive_batch_tracing(auth_credential_senders, uamqp_transport, client_args):
     """Test that that receive and process spans are properly created and linked."""
 
     # TODO: Commenting out tracing for now. Need to fix this issue first: #36571
@@ -364,6 +373,7 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     # with fake_span(name="ReceiveSpan") as root_receive:
@@ -400,7 +410,7 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_receive_batch_large_event(auth_credential_senders, uamqp_transport):
+def test_receive_batch_large_event(auth_credential_senders, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     senders[0].send(EventData("A" * 15700))
     client = EventHubConsumerClient(
@@ -409,6 +419,7 @@ def test_receive_batch_large_event(auth_credential_senders, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     def on_event(partition_context, event):

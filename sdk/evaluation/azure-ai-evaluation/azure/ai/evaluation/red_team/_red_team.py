@@ -23,7 +23,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding, EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding, EVALUATION_PASS_FAIL_MAPPING, TokenScope
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
 from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
 from azure.ai.evaluation._version import VERSION
@@ -32,7 +32,7 @@ from azure.ai.evaluation._evaluate._utils import _write_output
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import  EvaluationResult
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, RAIClient
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -212,7 +212,7 @@ class RedTeam():
         :type output_dir: str
         """
 
-        self.azure_ai_project = azure_ai_project if is_onedp_project(azure_ai_project) else validate_azure_ai_project(azure_ai_project)
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
         

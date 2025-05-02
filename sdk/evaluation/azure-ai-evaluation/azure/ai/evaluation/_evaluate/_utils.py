@@ -141,7 +141,7 @@ def _log_metrics_and_instance_results_onedp(
     from azure.ai.evaluation._common import EvaluationServiceOneDPClient, EvaluationUpload
 
     credentials = AzureMLTokenManager(
-        TokenScope.COGNITIVE_SERVICES.value, LOGGER, credential=kwargs.get("credential")
+        TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value, LOGGER, credential=kwargs.get("credential")
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,

@@ -9,6 +9,7 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._common.onedp import AIProjectClient
 import jwt
@@ -147,4 +148,4 @@ class GeneratedRAIClient:
                 if (exp_time - current_time) >= 300:
                     return token
 
-        return credential.get_token("https://management.azure.com/.default").token
+        return credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT).token
