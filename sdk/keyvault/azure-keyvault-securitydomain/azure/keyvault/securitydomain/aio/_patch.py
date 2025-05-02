@@ -195,10 +195,8 @@ class SecurityDomainClient(KeyVaultClient):
         :keyword str content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
 
-        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
