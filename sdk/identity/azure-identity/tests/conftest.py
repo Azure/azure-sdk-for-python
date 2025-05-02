@@ -63,7 +63,6 @@ def record_imds_test(request):
 @pytest.fixture()
 def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
-    pytest.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/35957")
     missing_variables = [
         v
         for v in (
@@ -118,6 +117,7 @@ def get_certificate_with_password_parameters(password_protected_content: bytes, 
 
 @pytest.fixture()
 def live_pem_certificate(live_service_principal):
+    pytest.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/35957")
     content = os.environ.get("PEM_CONTENT")
     password_protected_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
@@ -143,6 +143,7 @@ def live_pem_certificate(live_service_principal):
 @pytest.fixture()
 def live_pfx_certificate(live_service_principal):
     # PFX bytes arrive base64 encoded because Key Vault secrets have string values
+    pytest.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/35957")
     encoded_content = os.environ.get("PFX_CONTENTS")
     encoded_password_protected_content = os.environ.get("PFX_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
