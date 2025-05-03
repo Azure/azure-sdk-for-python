@@ -58,6 +58,8 @@ from azure.ai.agents.telemetry._utils import (
     OperationName,
     start_span,
 )
+from azure.ai.agents.telemetry._paged_wrappers import _InstrumentedPaged, _InstrumentedAsyncPaged
+
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -74,6 +76,7 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:
     from .. import _types
+    from opentelemetry.trace import Span, StatusCode
 
 
 __all__ = [
@@ -1352,61 +1355,57 @@ class _AIAgentsInstrumentorPreview:
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        span_cm = self.start_list_messages_span(
+            server_address=server_address,
+            thread_id=thread_id,
+        )
 
-        if span is None:
+        # If no span is to be created, just execute the original call.
+        if span_cm is None:
             return function(*args, **kwargs)
 
-        with span:
-            try:
-                result = function(*args, **kwargs)
-                for message in result.data:
-                    self.add_thread_message_event(span, message)
+        paged = function(*args, **kwargs)         # the real SDK call
 
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
+        return _InstrumentedPaged(
+            paged=paged,
+            span_cm=span_cm,
+            add_evt=self.add_thread_message_event,
+            on_error=self._record_error_on_span,
+        )
 
-        return result
+    def _record_error_on_span(self, span_cm, exc: Exception) -> None:
+        if isinstance(span_cm.span_instance, Span):
+            span_cm.span_instance.set_status(
+                StatusCode.ERROR, description=str(exc)
+            )
+        module = getattr(exc, "__module__", "")
+        module = "" if module == "builtins" else module
+        error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+        self._set_attributes(span_cm, ("error.type", error_type))
 
-    async def trace_list_messages_async(self, function, *args, **kwargs):
+    def trace_list_messages_async(self, function, *args: Any, **kwargs: Any):
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        span_cm = self.start_list_messages_span(
+            server_address=server_address,
+            thread_id=thread_id,
+        )
 
-        if span is None:
-            return await function(*args, **kwargs)
+        # Call the real SDK method – it already returns AsyncItemPaged.
+        paged = function(*args, **kwargs)
 
-        with span:
-            try:
-                result = await function(*args, **kwargs)
-                for message in result.data:
-                    self.add_thread_message_event(span, message)
+        # If tracing is disabled just return what we got.
+        if span_cm is None:
+            return paged
 
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
+        # Otherwise return the lazy, telemetry-aware proxy.
+        return _InstrumentedAsyncPaged(
+            paged=paged,
+            span_cm=span_cm,
+            add_evt=self.add_thread_message_event,
+            on_error=self._record_error_on_span,
+        )
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
@@ -1664,7 +1663,7 @@ class _AIAgentsInstrumentorPreview:
                 return await self.trace_create_stream_async(function, *args, **kwargs)
             if class_function_name.startswith("MessagesOperations.list"):
                 kwargs.setdefault("merge_span", True)
-                return await self.trace_list_messages_async(function, *args, **kwargs)
+                return self.trace_list_messages_async(function, *args, **kwargs)
             if class_function_name.startswith("RunStepsOperations.list"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_run_steps_async(function, *args, **kwargs)
