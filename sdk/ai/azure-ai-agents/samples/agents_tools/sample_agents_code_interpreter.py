@@ -98,7 +98,7 @@ with agents_client:
             print(f"  Text: {ann.text}")
             print(f"  File ID: {ann.file_path.file_id}")
             print(f"  Start Index: {ann.start_index}")
-            print(f"  End Index: {ann.end_index}")    
+            print(f"  End Index: {ann.end_index}")
     # [END get_messages_and_save_files]
 
     last_msg = agents_client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)

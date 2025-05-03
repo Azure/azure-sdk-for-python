@@ -36,7 +36,7 @@ from typing import (
     overload,
 )
 
-from ._enums import AgentStreamEvent, MessageRole, AzureAISearchQueryType
+from ._enums import AgentStreamEvent, AzureAISearchQueryType
 from ._models import (
     AISearchIndexResource,
     AzureAISearchResource,
