@@ -2081,9 +2081,9 @@ class MessagesOperations(MessagesOperationsGenerated):
         :return: The most recent message authored by *role* in the thread, or None if no such message exists.
         :rtype: Optional[~azure.ai.agents.models.ThreadMessage]
         """
-        pageable = await self.list(thread_id, **kwargs)  # type: ignore[arg-type]
+        pageable = self.list(thread_id, **kwargs)  # type: ignore[arg-type]
 
-        for message in pageable:
+        async for message in pageable:
             if message.role == role:
                 return message
         return None

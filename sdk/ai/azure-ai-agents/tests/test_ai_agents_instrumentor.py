@@ -192,7 +192,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -336,7 +337,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -501,7 +503,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -722,7 +725,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -832,7 +836,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -1055,7 +1060,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         print("Deleted agent")
         messages = [msg for msg in client.messages.list(thread_id=thread.id)]
         assert len(messages) > 1
-        client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id)
+        steps = [step for step in client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id)]
+        assert len(steps) >= 1
         client.close()
 
         self.exporter.force_flush()
