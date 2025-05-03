@@ -30,7 +30,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.inference.models import UserMessage
 
 
-async def sample_chat_completions_with_azure_ai_inference_client_async():
+async def main():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -45,10 +45,6 @@ async def sample_chat_completions_with_azure_ai_inference_client_async():
                     model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
                 )
                 print(response.choices[0].message.content)
-
-
-async def main():
-    await sample_chat_completions_with_azure_ai_inference_client_async()
 
 
 if __name__ == "__main__":

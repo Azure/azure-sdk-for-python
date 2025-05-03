@@ -31,7 +31,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.inference.models import ImageEmbeddingInput
 
 
-async def sample_image_embeddings_with_azure_ai_inference_client_async():
+async def main():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -53,10 +53,6 @@ async def sample_image_embeddings_with_azure_ai_inference_client_async():
                         f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
                         f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
                     )
-
-
-async def main():
-    await sample_image_embeddings_with_azure_ai_inference_client_async()
 
 
 if __name__ == "__main__":

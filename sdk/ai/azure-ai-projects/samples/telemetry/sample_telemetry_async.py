@@ -28,7 +28,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 
 
-async def sample_telemetry_async() -> None:
+async def main() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
 
@@ -39,10 +39,6 @@ async def sample_telemetry_async() -> None:
             print("Get the Application Insights connection string:")
             connection_string = await project_client.telemetry.get_connection_string()
             print(connection_string)
-
-
-async def main():
-    await sample_telemetry_async()
 
 
 if __name__ == "__main__":

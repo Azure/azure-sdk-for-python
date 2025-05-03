@@ -46,6 +46,13 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         ):
             print(connection)
 
+        print("To list the default connection of a particular type  (in this case, Azure Store Account):")
+        for connection in project_client.connections.list(
+            connection_type=ConnectionType.AZURE_STORAGE_ACCOUNT,
+            default_connection=True,
+        ):
+            print(connection)
+
         print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
         connection = project_client.connections.get(connection_name)
         print(connection)

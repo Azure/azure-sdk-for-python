@@ -313,15 +313,15 @@ class BaseCredentials(_Model):
 class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
     """API Key Credential definition.
 
-    :ivar type: The credentail type. Required. API Key credential
+    :ivar type: The credential type. Required. API Key credential
     :vartype type: str or ~azure.ai.projects.models.API_KEY
     :ivar api_key: API Key.
     :vartype api_key: str
     """
 
     type: Literal[CredentialType.API_KEY] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
-    """The credentail type. Required. API Key credential"""
-    api_key: Optional[str] = rest_field(name="Key", visibility=["read"])
+    """The credential type. Required. API Key credential"""
+    api_key: Optional[str] = rest_field(name="key", visibility=["read"])
     """API Key."""
 
     @overload

@@ -31,8 +31,13 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion
 
+# Construct the full folder path `sample_folder`, and full file path `sample_folder/sample_file1.txt`
+script_dir = os.path.dirname(os.path.abspath(__file__))
+folder_path = os.path.join(script_dir, "sample_folder")
+file_path = os.path.join(folder_path, "sample_file1.txt")
 
-async def sample_datasets_async() -> None:
+
+async def main() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
@@ -49,7 +54,7 @@ async def sample_datasets_async() -> None:
             dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
                 version=dataset_version_1,
-                file_path="sample_folder/sample_file1.txt",
+                file_path=file_path,
             )
             print(dataset)
 
@@ -59,7 +64,7 @@ async def sample_datasets_async() -> None:
             dataset = await project_client.datasets.upload_folder(
                 name=dataset_name,
                 version=dataset_version_2,
-                folder="sample_folder",
+                folder=folder_path,
             )
             print(dataset)
 
@@ -78,10 +83,6 @@ async def sample_datasets_async() -> None:
             print("Delete all Dataset versions created above:")
             await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
             await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
-
-
-async def main():
-    await sample_datasets_async()
 
 
 if __name__ == "__main__":

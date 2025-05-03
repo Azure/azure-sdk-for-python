@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-async def sample_evaluations_async() -> None:
+async def main() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
     # dataset_name = os.environ["DATASET_NAME"]
 
@@ -86,10 +86,6 @@ async def sample_evaluations_async() -> None:
                 print(evaluation)
 
             # [END evaluations_sample]
-
-
-async def main():
-    await sample_evaluations_async()
 
 
 if __name__ == "__main__":
