@@ -1366,12 +1366,22 @@ class _AIAgentsInstrumentorPreview:
 
         paged = function(*args, **kwargs)         # the real SDK call
 
-        return _InstrumentedPaged(
-            paged=paged,
-            span_cm=span_cm,
-            add_evt=self.add_thread_message_event,
-            on_error=self._record_error_on_span,
-        )
+        if ".aio." in function.__module__:
+            # It's the async client. Return an async pager so the user can do 'async for ... in ...'
+            return _InstrumentedAsyncPaged(
+                paged=paged,
+                span_cm=span_cm,
+                add_evt=self.add_thread_message_event,
+                on_error=self._record_error_on_span,
+            )
+        else:
+            # It's the sync client. Return a sync pager for ordinary 'for ... in ...'
+            return _InstrumentedPaged(
+                paged=paged,
+                span_cm=span_cm,
+                add_evt=self.add_thread_message_event,
+                on_error=self._record_error_on_span,
+            )
 
     def _record_error_on_span(self, span_cm, exc: Exception) -> None:
         if isinstance(span_cm.span_instance, Span):
@@ -1383,29 +1393,6 @@ class _AIAgentsInstrumentorPreview:
         error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
         self._set_attributes(span_cm, ("error.type", error_type))
 
-    def trace_list_messages_async(self, function, *args: Any, **kwargs: Any):
-        server_address = self.get_server_address_from_arg(args[0])
-        thread_id = kwargs.get("thread_id")
-
-        span_cm = self.start_list_messages_span(
-            server_address=server_address,
-            thread_id=thread_id,
-        )
-
-        # Call the real SDK method – it already returns AsyncItemPaged.
-        paged = function(*args, **kwargs)
-
-        # If tracing is disabled just return what we got.
-        if span_cm is None:
-            return paged
-
-        # Otherwise return the lazy, telemetry-aware proxy.
-        return _InstrumentedAsyncPaged(
-            paged=paged,
-            span_cm=span_cm,
-            add_evt=self.add_thread_message_event,
-            on_error=self._record_error_on_span,
-        )
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
@@ -1661,9 +1648,6 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.stream"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_stream_async(function, *args, **kwargs)
-            if class_function_name.startswith("MessagesOperations.list"):
-                kwargs.setdefault("merge_span", True)
-                return self.trace_list_messages_async(function, *args, **kwargs)
             if class_function_name.startswith("RunStepsOperations.list"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_run_steps_async(function, *args, **kwargs)
@@ -1720,6 +1704,7 @@ class _AIAgentsInstrumentorPreview:
             ),
             ("azure.ai.agents.operations", "RunsOperations", "stream", TraceType.AGENTS, "stream"),
             ("azure.ai.agents.operations", "MessagesOperations", "list", TraceType.AGENTS, "list_messages"),
+            ("azure.ai.agents.aio.operations", "MessagesOperations", "list", TraceType.AGENTS, "list_messages"),
             ("azure.ai.agents.operations", "RunStepsOperations", "list", TraceType.AGENTS, "list_run_steps"),
             ("azure.ai.agents.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
@@ -1780,13 +1765,6 @@ class _AIAgentsInstrumentorPreview:
                 "stream",
                 TraceType.AGENTS,
                 "stream",
-            ),
-            (
-                "azure.ai.agents.aio.operations",
-                "MessagesOperations",
-                "list",
-                TraceType.AGENTS,
-                "list_messages",
             ),
             (
                 "azure.ai.agents.aio.operations",
