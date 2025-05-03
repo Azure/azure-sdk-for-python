@@ -30,7 +30,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 
 
-async def sample_connections_async() -> None:
+async def main() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     connection_name = os.environ["CONNECTION_NAME"]
@@ -51,6 +51,13 @@ async def sample_connections_async() -> None:
             ):
                 print(connection)
 
+            print("To list the default connection of a particular type  (in this case, Azure Store Account):")
+            async for connection in project_client.connections.list(
+                connection_type=ConnectionType.AZURE_STORAGE_ACCOUNT,
+                default_connection=True,
+            ):
+                print(connection)
+
             print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
             connection = await project_client.connections.get(connection_name)
             print(connection)
@@ -58,10 +65,6 @@ async def sample_connections_async() -> None:
             print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
             connection = await project_client.connections.get(connection_name, include_credentials=True)
             print(connection)
-
-
-async def main():
-    await sample_connections_async()
 
 
 if __name__ == "__main__":

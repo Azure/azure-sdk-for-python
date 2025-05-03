@@ -31,7 +31,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-async def sample_chat_completions_with_azure_openai_client_async():
+async def main():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -54,10 +54,6 @@ async def sample_chat_completions_with_azure_openai_client_async():
                 )
 
                 print(response.choices[0].message.content)
-
-
-async def main():
-    await sample_chat_completions_with_azure_openai_client_async()
 
 
 if __name__ == "__main__":

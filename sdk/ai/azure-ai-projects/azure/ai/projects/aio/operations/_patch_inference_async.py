@@ -250,7 +250,9 @@ class InferenceOperations:
         # If the connection uses API key authentication, we need to make another service call to get
         # the connection with API key populated.
         if connection.credentials.type == CredentialType.API_KEY:
-            connection = await self._outer_instance.connections._get_with_credentials(name=connection_name, **kwargs) # pylint: disable=protected-access
+            connection = await self._outer_instance.connections._get_with_credentials(  # pylint: disable=protected-access
+                name=connection_name, **kwargs
+            )
 
         logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 

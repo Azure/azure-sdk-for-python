@@ -29,7 +29,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 
 
-async def sample_agents_async() -> None:
+async def main() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -50,10 +50,6 @@ async def sample_agents_async() -> None:
 
             await project_client.agents.delete_agent(agent.id)
             print("Deleted agent")
-
-
-async def main():
-    await sample_agents_async()
 
 
 if __name__ == "__main__":

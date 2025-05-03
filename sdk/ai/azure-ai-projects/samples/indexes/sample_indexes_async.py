@@ -32,7 +32,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AzureAISearchIndex
 
 
-async def sample_indexes_async() -> None:
+async def main() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     index_name = os.environ.get("INDEX_NAME", "index-test")
@@ -68,10 +68,6 @@ async def sample_indexes_async() -> None:
 
             print(f"Delete Index`{index_name}` version `{index_version}`:")
             await project_client.indexes.delete(name=index_name, version=index_version)
-
-
-async def main():
-    await sample_indexes_async()
 
 
 if __name__ == "__main__":

@@ -19,7 +19,8 @@ USAGE:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - Required. The name of the deployment to retrieve.
-    3) MODEL_PUBLISHER - Required. The publisher of the model to filter by.
+    3) MODEL_PUBLISHER - Optional. The publisher of the model to filter by.
+    4) MODEL_NAME - Optional. The name of the model to filter by.
 """
 
 import os
@@ -28,7 +29,8 @@ from azure.ai.projects import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
-model_publisher = os.environ["MODEL_PUBLISHER"]
+model_publisher = os.environ.get("MODEL_PUBLISHER", "Microsoft")
+model_name = os.environ.get("MODEL_NAME", "Phi-4")
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -41,6 +43,10 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         print(f"List all deployments by the model publisher `{model_publisher}`:")
         for deployment in project_client.deployments.list(model_publisher=model_publisher):
+            print(deployment)
+
+        print(f"List all deployments of model `{model_name}`:")
+        for deployment in project_client.deployments.list(model_name=model_name):
             print(deployment)
 
         print(f"Get a single deployment named `{model_deployment_name}`:")

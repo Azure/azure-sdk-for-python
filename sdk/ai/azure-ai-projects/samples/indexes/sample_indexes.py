@@ -63,6 +63,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         for index in project_client.indexes.list_versions(name=index_name):
             print(index)
 
-        print(f"Delete Index`{index_name}` version `{index_version}`:")
+        print(f"Delete Index `{index_name}` version `{index_version}`:")
         project_client.indexes.delete(name=index_name, version=index_version)
         # [END indexes_sample]

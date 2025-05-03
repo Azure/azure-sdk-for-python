@@ -189,6 +189,10 @@ print(f"List all deployments by the model publisher `{model_publisher}`:")
 for deployment in project_client.deployments.list(model_publisher=model_publisher):
     print(deployment)
 
+print(f"List all deployments of model `{model_name}`:")
+for deployment in project_client.deployments.list(model_name=model_name):
+    print(deployment)
+
 print(f"Get a single deployment named `{model_deployment_name}`:")
 deployment = project_client.deployments.get(model_deployment_name)
 print(deployment)
@@ -211,6 +215,13 @@ for connection in project_client.connections.list():
 print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
 for connection in project_client.connections.list(
     connection_type=ConnectionType.AZURE_OPEN_AI,
+):
+    print(connection)
+
+print("To list the default connection of a particular type  (in this case, Azure Store Account):")
+for connection in project_client.connections.list(
+    connection_type=ConnectionType.AZURE_STORAGE_ACCOUNT,
+    default_connection=True,
 ):
     print(connection)
 
@@ -239,7 +250,7 @@ print(
 dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
     version=dataset_version_1,
-    file_path="sample_folder/sample_file1.txt",
+    file_path=file_path,
 )
 print(dataset)
 
@@ -249,7 +260,7 @@ print(
 dataset = project_client.datasets.upload_folder(
     name=dataset_name,
     version=dataset_version_2,
-    folder="sample_folder",
+    folder=folder_path,
 )
 print(dataset)
 
@@ -302,7 +313,7 @@ print(f"Listing all versions of the Index named `{index_name}`:")
 for index in project_client.indexes.list_versions(name=index_name):
     print(index)
 
-print(f"Delete Index`{index_name}` version `{index_version}`:")
+print(f"Delete Index `{index_name}` version `{index_version}`:")
 project_client.indexes.delete(name=index_name, version=index_version)
 ```
 

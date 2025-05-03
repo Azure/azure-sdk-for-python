@@ -35,6 +35,11 @@ dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
 dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
 dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
 
+# Construct the full folder path `sample_folder`, and full file path `sample_folder/sample_file1.txt`
+script_dir = os.path.dirname(os.path.abspath(__file__))
+folder_path = os.path.join(script_dir, "sample_folder")
+file_path = os.path.join(folder_path, "sample_file1.txt")
+
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
@@ -46,7 +51,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         dataset: DatasetVersion = project_client.datasets.upload_file(
             name=dataset_name,
             version=dataset_version_1,
-            file_path="sample_folder/sample_file1.txt",
+            file_path=file_path,
         )
         print(dataset)
 
@@ -56,7 +61,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         dataset = project_client.datasets.upload_folder(
             name=dataset_name,
             version=dataset_version_2,
-            folder="sample_folder",
+            folder=folder_path,
         )
         print(dataset)
 
