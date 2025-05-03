@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 
 from azure.ai.projects import _types
-from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, _models
+from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, RunStepMessageCreationDetails, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.projects.models import (
     MessageAttachment,
@@ -583,8 +583,9 @@ class _AIAgentsInstrumentorPreview:
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
         if run and span and span.span_instance.is_recording:
             span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(run.status))
+            span.add_attribute(GEN_AI_THREAD_RUN_ID, self._status_to_string(run.id))
             span.add_attribute(GEN_AI_RESPONSE_MODEL, run.model)
-            if run and run.usage:
+            if run.usage:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
 
@@ -1069,6 +1070,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 if span.span_instance.is_recording:
                     span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(result.status))
+                    span.add_attribute(GEN_AI_THREAD_RUN_ID, self._status_to_string(result.id))
                     span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
                     if result.usage:
                         span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
@@ -1975,6 +1977,13 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             )
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
+            if (
+                self.span
+                and self.span.span_instance.is_recording
+                and isinstance(step.step_details, RunStepMessageCreationDetails)
+            ):
+                self.span.add_attribute(GEN_AI_MESSAGE_ID, step.step_details.message_creation.message_id)
+
             self.last_message = None
 
         return retval  # type: ignore
@@ -2084,6 +2093,13 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             )
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
+            if (
+                self.span
+                and self.span.span_instance.is_recording
+                and isinstance(step.step_details, RunStepMessageCreationDetails)
+            ):
+                self.span.add_attribute(GEN_AI_MESSAGE_ID, step.step_details.message_creation.message_id)
+
             self.last_message = None
 
         return retval  # type: ignore
