@@ -1079,7 +1079,7 @@ for msg in messages:
         print(f"  Text: {ann.text}")
         print(f"  File ID: {ann.file_path.file_id}")
         print(f"  Start Index: {ann.start_index}")
-        print(f"  End Index: {ann.end_index}") 
+        print(f"  End Index: {ann.end_index}")
 ```
 
 <!-- END SNIPPET -->
