@@ -2680,7 +2680,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         request_params = RequestObject(typ, documents._OperationType.Create, headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
