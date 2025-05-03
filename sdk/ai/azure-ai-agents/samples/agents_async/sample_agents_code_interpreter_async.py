@@ -81,7 +81,7 @@ async def main() -> None:
                 for img in msg.image_contents:
                     file_id = img.image_file.file_id
                     file_name = f"{file_id}_image_file.png"
-                    agents_client.files.save(file_id=file_id, file_name=file_name)
+                    await agents_client.files.save(file_id=file_id, file_name=file_name)
                     print(f"Saved image file to: {Path.cwd() / file_name}")
 
                 # Print details of every file-path annotation
