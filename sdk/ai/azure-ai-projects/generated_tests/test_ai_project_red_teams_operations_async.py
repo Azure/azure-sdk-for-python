@@ -35,9 +35,9 @@ class TestAIProjectRedTeamsOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_red_teams_create_run(self, aiproject_endpoint):
+    async def test_red_teams_create(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.red_teams.create_run(
+        response = await client.red_teams.create(
             red_team={
                 "attackStrategies": ["str"],
                 "id": "str",

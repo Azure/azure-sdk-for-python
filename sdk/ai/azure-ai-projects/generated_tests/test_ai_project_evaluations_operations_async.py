@@ -35,9 +35,9 @@ class TestAIProjectEvaluationsOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_evaluations_create_run(self, aiproject_endpoint):
+    async def test_evaluations_create(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.evaluations.create_run(
+        response = await client.evaluations.create(
             evaluation={
                 "data": "input_data",
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
