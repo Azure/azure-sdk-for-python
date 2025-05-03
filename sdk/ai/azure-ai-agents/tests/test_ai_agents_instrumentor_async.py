@@ -138,7 +138,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
         await client.close()
 
         self.exporter.force_flush()
@@ -279,7 +279,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
         await client.close()
 
         self.exporter.force_flush()
@@ -450,7 +450,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
         await client.close()
 
         self.exporter.force_flush()
@@ -672,7 +672,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
         await client.close()
 
         self.exporter.force_flush()
