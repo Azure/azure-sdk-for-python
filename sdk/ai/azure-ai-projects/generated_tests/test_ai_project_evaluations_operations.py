@@ -34,9 +34,9 @@ class TestAIProjectEvaluationsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_evaluations_create_run(self, aiproject_endpoint):
+    def test_evaluations_create(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.evaluations.create_run(
+        response = client.evaluations.create(
             evaluation={
                 "data": "input_data",
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},

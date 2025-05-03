@@ -34,9 +34,9 @@ class TestAIProjectRedTeamsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_red_teams_create_run(self, aiproject_endpoint):
+    def test_red_teams_create(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.red_teams.create_run(
+        response = client.red_teams.create(
             red_team={
                 "attackStrategies": ["str"],
                 "id": "str",
