@@ -11,7 +11,8 @@ import logging
 import os
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast, TYPE_CHECKING,\
+    AsyncIterator
 from urllib.parse import urlparse
 
 from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, _models
@@ -61,6 +62,8 @@ from azure.ai.agents.telemetry._utils import (
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
+from asyncio.futures import Future
+
 
 _Unset: Any = object()
 
@@ -90,6 +93,20 @@ class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disabl
 
     AGENTS = "Agents"
 
+class _AsyncList:
+    """The list class to mimic the AsyncPageable returned bu a list."""
+    def __init__(self, sync_list):
+        self._sync_iter = iter(sync_list)
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        try:
+            return next(self._sync_iter)
+        except StopIteration:
+            raise StopAsyncIteration()
+        
 
 class AIAgentsInstrumentor:
     """
@@ -1360,8 +1377,10 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = function(*args, **kwargs)
-                for message in result.data:
+                downloaded_result = []
+                for message in result:
                     self.add_thread_message_event(span, message)
+                    downloaded_result.append(message)
 
             except Exception as exc:
                 # Set the span status to error
@@ -1376,22 +1395,25 @@ class _AIAgentsInstrumentorPreview:
                 self._set_attributes(span, ("error.type", error_type))
                 raise
 
-        return result
+        return downloaded_result
 
     async def trace_list_messages_async(self, function, *args, **kwargs):
+        # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
         span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
         if span is None:
-            return await function(*args, **kwargs)
+            return function(*args, **kwargs)
 
         with span:
             try:
-                result = await function(*args, **kwargs)
-                for message in result.data:
+                messages = function(*args, **kwargs)
+                sync_messages = []
+                async for message in messages:
                     self.add_thread_message_event(span, message)
+                    sync_messages.append(message)
 
             except Exception as exc:
                 # Set the span status to error
@@ -1406,7 +1428,7 @@ class _AIAgentsInstrumentorPreview:
                 self._set_attributes(span, ("error.type", error_type))
                 raise
 
-        return result
+        return _AsyncList(sync_messages)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
@@ -1421,9 +1443,10 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = function(*args, **kwargs)
-                if hasattr(result, "data") and result.data is not None:
-                    for step in result.data:
-                        self.add_run_step_event(span, step)
+                downloaded_result = []
+                for step in result:
+                    self.add_run_step_event(span, step)
+                    downloaded_result.append(step)
 
             except Exception as exc:
                 # Set the span status to error
@@ -1438,9 +1461,10 @@ class _AIAgentsInstrumentorPreview:
                 self._set_attributes(span, ("error.type", error_type))
                 raise
 
-        return result
+        return downloaded_result
 
     async def trace_list_run_steps_async(self, function, *args, **kwargs):
+        # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
@@ -1452,10 +1476,11 @@ class _AIAgentsInstrumentorPreview:
 
         with span:
             try:
-                result = await function(*args, **kwargs)
-                if hasattr(result, "data") and result.data is not None:
-                    for step in result.data:
-                        self.add_run_step_event(span, step)
+                run_steps = function(*args, **kwargs)
+                sync_steps = []
+                for step in run_steps:
+                    self.add_run_step_event(span, step)
+                    sync_steps.append(step)
 
             except Exception as exc:
                 # Set the span status to error
@@ -1470,7 +1495,7 @@ class _AIAgentsInstrumentorPreview:
                 self._set_attributes(span, ("error.type", error_type))
                 raise
 
-        return result
+        return _AsyncList(futures_result)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
@@ -1812,6 +1837,7 @@ class _AIAgentsInstrumentorPreview:
                     module = importlib.import_module(module_name)
                     api = getattr(module, class_name)
                     if hasattr(api, method_name):
+                        # The function list is sync in both sync and async classes.
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
