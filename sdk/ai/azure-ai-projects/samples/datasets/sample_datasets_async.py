@@ -23,6 +23,7 @@ USAGE:
     2) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     3) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.
     4) DATASET_VERSION_2 - Optional. The second version of the Dataset to create and use in this sample.
+    5) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 
 import asyncio
@@ -31,10 +32,10 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion
 
-# Construct the full folder path `sample_folder`, and full file path `sample_folder/sample_file1.txt`
+# Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
-folder_path = os.path.join(script_dir, "sample_folder")
-file_path = os.path.join(folder_path, "sample_file1.txt")
+data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
+data_file = os.path.join(data_folder, "data_file1.txt")
 
 
 async def main() -> None:
@@ -54,7 +55,7 @@ async def main() -> None:
             dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
                 version=dataset_version_1,
-                file_path=file_path,
+                file_path=data_file,
             )
             print(dataset)
 
@@ -64,7 +65,7 @@ async def main() -> None:
             dataset = await project_client.datasets.upload_folder(
                 name=dataset_name,
                 version=dataset_version_2,
-                folder=folder_path,
+                folder=data_folder,
             )
             print(dataset)
 

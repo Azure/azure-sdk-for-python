@@ -250,7 +250,7 @@ print(
 dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
     version=dataset_version_1,
-    file_path=file_path,
+    file_path=data_file,
 )
 print(dataset)
 
@@ -260,7 +260,7 @@ print(
 dataset = project_client.datasets.upload_folder(
     name=dataset_name,
     version=dataset_version_2,
-    folder=folder_path,
+    folder=data_folder,
 )
 print(dataset)
 
