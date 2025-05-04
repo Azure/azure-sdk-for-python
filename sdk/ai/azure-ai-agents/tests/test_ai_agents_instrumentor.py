@@ -192,7 +192,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
         client.close()
 
@@ -337,7 +337,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
         client.close()
 
@@ -503,7 +503,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
         client.close()
 
@@ -725,7 +725,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
         client.close()
 
@@ -836,7 +836,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
         client.close()
 
@@ -1058,9 +1058,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = [msg for msg in client.messages.list(thread_id=thread.id)]
+        messages = list(client.messages.list(thread_id=thread.id))
         assert len(messages) > 1
-        steps = [step for step in client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id)]
+        steps = list(client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id))
         assert len(steps) >= 1
         client.close()
 
