@@ -66,6 +66,10 @@ from azure.ai.agents.telemetry._utils import (
     OperationName,
     start_span,
 )
+from azure.ai.agents.telemetry._instrument_paged_wrappers import (
+    _AsyncInstrumentedItemPaged,
+    _InstrumentedItemPaged
+)
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -87,8 +91,6 @@ if TYPE_CHECKING:
 __all__ = [
     "AIAgentsInstrumentor",
 ]
-
-from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _InstrumentedItemPaged
 
 _agents_traces_enabled: bool = False
 _trace_agents_content: bool = False
@@ -790,8 +792,7 @@ class _AIAgentsInstrumentorPreview:
         :rtype: str
         """
         if hasattr(arg, "_config") and hasattr(
-            arg._config,
-            "endpoint",  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            arg._config, "endpoint",  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
         ):
             endpoint = (
                 arg._config.endpoint  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
