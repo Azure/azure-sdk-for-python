@@ -23,6 +23,7 @@ USAGE:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    3) DATA_FOLDER - Optional. The folder path where the Prompty file is located.
 """
 
 import os
@@ -32,14 +33,17 @@ from azure.ai.projects import AIProjectClient, PromptTemplate
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
+# Construct the path to the Prompty file used in this sample
+data_folder = os.environ.get("DATA_FOLDER", os.path.dirname(os.path.abspath(__file__)))
+prompty_file = os.path.join(data_folder, "sample1.prompty")
+
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         with project_client.inference.get_chat_completions_client() as client:
 
-            path = "./sample1.prompty"
-            prompt_template = PromptTemplate.from_prompty(file_path=path)
+            prompt_template = PromptTemplate.from_prompty(file_path=prompty_file)
 
             input = "When I arrived, can I still have breakfast?"
             rules = [
