@@ -23,7 +23,13 @@ USAGE:
 import os, time, sys
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, ListSortOrder, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
+from azure.ai.agents.models import (
+    FunctionTool,
+    ListSortOrder,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
 
 current_path = os.path.dirname(__file__)
 root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))

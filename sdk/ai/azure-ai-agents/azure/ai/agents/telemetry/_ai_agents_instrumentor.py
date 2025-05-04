@@ -789,7 +789,7 @@ class _AIAgentsInstrumentorPreview:
         :rtype: str
         """
         if hasattr(arg, "_config") and hasattr(
-            arg._config, # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            arg._config,  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
             "endpoint",
         ):
             endpoint = (

@@ -24,7 +24,13 @@ from typing import Any
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
-from azure.ai.agents.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet, ListSortOrder, MessageTextContent
+from azure.ai.agents.models import (
+    AsyncAgentEventHandler,
+    AsyncFunctionTool,
+    AsyncToolSet,
+    ListSortOrder,
+    MessageTextContent,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -71,7 +77,7 @@ async def main() -> None:
             toolset = AsyncToolSet()
             toolset.add(functions)
 
-            agents_client.enable_auto_function_calls(functions=user_async_functions)
+            agents_client.enable_auto_function_calls(user_async_functions)
             agent = await agents_client.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-agent",

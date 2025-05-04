@@ -22,7 +22,14 @@ import asyncio
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import AgentStreamEvent
-from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun, ListSortOrder, MessageTextContent
+from azure.ai.agents.models import (
+    MessageDeltaChunk,
+    RunStep,
+    ThreadMessage,
+    ThreadRun,
+    ListSortOrder,
+    MessageTextContent,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 import os

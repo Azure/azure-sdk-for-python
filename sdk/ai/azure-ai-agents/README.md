@@ -122,11 +122,12 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-agent = agents_client.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-agent",
-    instructions="You are helpful agent",
-)
+
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are helpful agent",
+    )
 ```
 
 <!-- END SNIPPET -->
@@ -145,7 +146,7 @@ toolset.add(functions)
 toolset.add(code_interpreter)
 
 # To enable tool calls executed automatically
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -380,7 +381,7 @@ Here is an example to use [user functions](https://github.com/Azure/azure-sdk-fo
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
 toolset.add(functions)
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -405,7 +406,7 @@ functions = AsyncFunctionTool(user_async_functions)
 
 toolset = AsyncToolSet()
 toolset.add(functions)
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = await agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],

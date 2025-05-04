@@ -530,7 +530,10 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            raise ValueError(f"Function '{function_name}' not found.")
+            raise ValueError(
+                f"Function '{function_name}' not found. Provide this function "
+                f"to `enable_auto_function_calls` function call."
+            )
 
         function = self._functions[function_name]
 

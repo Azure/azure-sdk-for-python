@@ -40,7 +40,13 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput, ListSortOrder
+from azure.ai.agents.models import (
+    FunctionTool,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+    ListSortOrder,
+)
 from azure.ai.agents.telemetry import trace_function
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
 

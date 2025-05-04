@@ -492,7 +492,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")
@@ -714,7 +714,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="Ð’Ñ€ÐµÐ¼ÐµÑ‚Ð¾ Ð² Ð¡Ð¾Ñ„Ð¸Ñ�?")
@@ -819,14 +819,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         agent = client.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")
 
@@ -1046,7 +1046,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")

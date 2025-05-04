@@ -30,7 +30,7 @@ agents_client = AgentsClient(
     credential=DefaultAzureCredential(),
 )
 
-agents_client.enable_auto_function_calls(functions={_create_task})
+agents_client.enable_auto_function_calls({_create_task})
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 
