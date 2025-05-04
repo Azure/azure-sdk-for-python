@@ -15,7 +15,11 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast, TYPE
 from urllib.parse import urlparse
 
 from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, _models
-from azure.ai.agents.models._enums import AgentsResponseFormatMode, MessageRole, RunStepStatus
+from azure.ai.agents.models._enums import (
+    AgentsResponseFormatMode,
+    MessageRole,
+    RunStepStatus,
+)
 from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
@@ -33,7 +37,11 @@ from azure.ai.agents.models import (
     ToolOutput,
     ToolResources,
 )
-from azure.ai.agents.models._patch import AgentEventHandler, AsyncAgentEventHandler, ToolSet
+from azure.ai.agents.models._patch import (
+    AgentEventHandler,
+    AsyncAgentEventHandler,
+    ToolSet,
+)
 from azure.ai.agents.telemetry._utils import (
     AZ_AI_AGENT_SYSTEM,
     ERROR_TYPE,
@@ -62,6 +70,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 
+
 _Unset: Any = object()
 
 try:
@@ -75,11 +84,11 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from .. import _types
 
-
 __all__ = [
     "AIAgentsInstrumentor",
 ]
 
+from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _InstrumentedItemPaged
 
 _agents_traces_enabled: bool = False
 _trace_agents_content: bool = False
@@ -321,7 +330,10 @@ class _AIAgentsInstrumentorPreview:
         return attrs
 
     def add_thread_message_event(
-        self, span, message: ThreadMessage, usage: Optional[_models.RunStepCompletionUsage] = None
+        self,
+        span,
+        message: ThreadMessage,
+        usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
         content_body = {}
         if _trace_agents_content:
@@ -642,7 +654,11 @@ class _AIAgentsInstrumentorPreview:
         )
         if span and span.span_instance.is_recording and instructions and additional_instructions:
             self._add_instructions_event(
-                span, instructions, additional_instructions, thread_id=thread_id, agent_id=agent_id
+                span,
+                instructions,
+                additional_instructions,
+                thread_id=thread_id,
+                agent_id=agent_id,
             )
 
             if additional_messages:
@@ -667,7 +683,12 @@ class _AIAgentsInstrumentorPreview:
         else:
             recorded = False
 
-        span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, server_address, thread_id=thread_id, run_id=run_id)
+        span = start_span(
+            OperationName.SUBMIT_TOOL_OUTPUTS,
+            server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
         if not recorded:
             self._add_tool_message_events(span, tool_outputs)
         return span
@@ -678,11 +699,15 @@ class _AIAgentsInstrumentorPreview:
         if span and span.span_instance.is_recording and tool_outputs:
             for tool_output in tool_outputs:
                 if _trace_agents_content:
-                    body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
+                    body = {
+                        "content": tool_output["output"],
+                        "id": tool_output["tool_call_id"],
+                    }
                 else:
                     body = {"content": "", "id": tool_output["tool_call_id"]}
                 span.span_instance.add_event(
-                    "gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body, ensure_ascii=False)}
+                    "gen_ai.tool.message",
+                    {"gen_ai.event.content": json.dumps(body, ensure_ascii=False)},
                 )
             return True
 
@@ -736,13 +761,23 @@ class _AIAgentsInstrumentorPreview:
     def start_list_messages_span(
         self, server_address: Optional[str] = None, thread_id: Optional[str] = None
     ) -> "Optional[AbstractSpan]":
-        return start_span(OperationName.LIST_MESSAGES, server_address=server_address, thread_id=thread_id)
+        return start_span(
+            OperationName.LIST_MESSAGES,
+            server_address=server_address,
+            thread_id=thread_id,
+        )
 
     def start_list_run_steps_span(
-        self, server_address: Optional[str] = None, run_id: Optional[str] = None, thread_id: Optional[str] = None
+        self,
+        server_address: Optional[str] = None,
+        run_id: Optional[str] = None,
+        thread_id: Optional[str] = None,
     ) -> "Optional[AbstractSpan]":
         return start_span(
-            OperationName.LIST_RUN_STEPS, server_address=server_address, run_id=run_id, thread_id=thread_id
+            OperationName.LIST_RUN_STEPS,
+            server_address=server_address,
+            run_id=run_id,
+            thread_id=thread_id,
         )
 
     def get_server_address_from_arg(self, arg: Any) -> Optional[str]:
@@ -755,7 +790,8 @@ class _AIAgentsInstrumentorPreview:
         :rtype: str
         """
         if hasattr(arg, "_config") and hasattr(
-            arg._config, "endpoint"  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            arg._config,
+            "endpoint",  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
         ):
             endpoint = (
                 arg._config.endpoint  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
@@ -926,7 +962,11 @@ class _AIAgentsInstrumentorPreview:
         attachments = kwargs.get("attachments")
 
         span = self.start_create_message_span(
-            server_address=server_address, thread_id=thread_id, content=content, role=role, attachments=attachments
+            server_address=server_address,
+            thread_id=thread_id,
+            content=content,
+            role=role,
+            attachments=attachments,
         )
 
         if span is None:
@@ -959,7 +999,11 @@ class _AIAgentsInstrumentorPreview:
         attachments = kwargs.get("attachments")
 
         span = self.start_create_message_span(
-            server_address=server_address, thread_id=thread_id, content=content, role=role, attachments=attachments
+            server_address=server_address,
+            thread_id=thread_id,
+            content=content,
+            role=role,
+            attachments=attachments,
         )
 
         if span is None:
@@ -1354,59 +1398,16 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
-        if span is None:
-            return function(*args, **kwargs)
+        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
 
-        with span:
-            try:
-                result = function(*args, **kwargs)
-                for message in result.data:
-                    self.add_thread_message_event(span, message)
-
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
-
-    async def trace_list_messages_async(self, function, *args, **kwargs):
+    def trace_list_messages_async(self, function, *args, **kwargs):
+        # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
         span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
-        if span is None:
-            return await function(*args, **kwargs)
-
-        with span:
-            try:
-                result = await function(*args, **kwargs)
-                for message in result.data:
-                    self.add_thread_message_event(span, message)
-
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
+        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
@@ -1415,62 +1416,17 @@ class _AIAgentsInstrumentorPreview:
 
         span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
 
-        if span is None:
-            return function(*args, **kwargs)
+        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
 
-        with span:
-            try:
-                result = function(*args, **kwargs)
-                if hasattr(result, "data") and result.data is not None:
-                    for step in result.data:
-                        self.add_run_step_event(span, step)
-
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
-
-    async def trace_list_run_steps_async(self, function, *args, **kwargs):
+    def trace_list_run_steps_async(self, function, *args, **kwargs):
+        # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
         span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
 
-        if span is None:
-            return function(*args, **kwargs)
-
-        with span:
-            try:
-                result = await function(*args, **kwargs)
-                if hasattr(result, "data") and result.data is not None:
-                    for step in result.data:
-                        self.add_run_step_event(span, step)
-
-            except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
-                raise
-
-        return result
+        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
@@ -1491,7 +1447,9 @@ class _AIAgentsInstrumentorPreview:
             agent_run_stream.event_handler.__aexit__(exc_type, exc_val, exc_tb)
 
     def wrap_handler(
-        self, handler: "Optional[AgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
+        self,
+        handler: "Optional[AgentEventHandler]" = None,
+        span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AgentEventHandler]":
         # Do not create a handler wrapper if we do not have handler in the first place.
         if not handler:
@@ -1506,7 +1464,9 @@ class _AIAgentsInstrumentorPreview:
         return handler
 
     def wrap_async_handler(
-        self, handler: "Optional[AsyncAgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
+        self,
+        handler: "Optional[AsyncAgentEventHandler]" = None,
+        span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AsyncAgentEventHandler]":
         # Do not create a handler wrapper if we do not have handler in the first place.
         if not handler:
@@ -1662,12 +1622,6 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.stream"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_stream_async(function, *args, **kwargs)
-            if class_function_name.startswith("MessagesOperations.list"):
-                kwargs.setdefault("merge_span", True)
-                return await self.trace_list_messages_async(function, *args, **kwargs)
-            if class_function_name.startswith("RunStepsOperations.list"):
-                kwargs.setdefault("merge_span", True)
-                return await self.trace_list_run_steps_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1675,8 +1629,53 @@ class _AIAgentsInstrumentorPreview:
 
         return inner
 
+    def _trace_async_list_function(
+        self,
+        function: Callable,
+        *,
+        _args_to_ignore: Optional[List[str]] = None,
+        _trace_type=TraceType.AGENTS,
+        _name: Optional[str] = None,
+    ) -> Callable:
+        """
+        Decorator that adds tracing to an asynchronous function.
+
+        :param function: The function to be traced.
+        :type function: Callable
+        :param args_to_ignore: A list of argument names to be ignored in the trace.
+                            Defaults to None.
+        :type: args_to_ignore: [List[str]], optional
+        :param trace_type: The type of the trace. Defaults to TraceType.AGENTS.
+        :type trace_type: TraceType, optional
+        :param name: The name of the trace, will set to func name if not provided.
+        :type name: str, optional
+        :return: The traced function.
+        :rtype: Callable
+        """
+
+        @functools.wraps(function)
+        def inner(*args, **kwargs):  # pylint: disable=R0911
+            span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
+            if span_impl_type is None:
+                return function(*args, **kwargs)
+
+            class_function_name = function.__qualname__
+            if class_function_name.startswith("MessagesOperations.list"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_list_messages_async(function, *args, **kwargs)
+            if class_function_name.startswith("RunStepsOperations.list"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_list_run_steps_async(function, *args, **kwargs)
+            # Handle the default case (if the function name does not match)
+            return None  # Ensure all paths return
+
+        return inner
+
     def _inject_async(self, f, _trace_type, _name):
-        wrapper_fun = self._trace_async_function(f)
+        if _name.startswith("list"):
+            wrapper_fun = self._trace_async_list_function(f)
+        else:
+            wrapper_fun = self._trace_async_function(f)
         wrapper_fun._original = f  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
         return wrapper_fun
 
@@ -1687,10 +1686,34 @@ class _AIAgentsInstrumentorPreview:
 
     def _agents_apis(self):
         sync_apis = (
-            ("azure.ai.agents", "AgentsClient", "create_agent", TraceType.AGENTS, "agent_create"),
-            ("azure.ai.agents.operations", "ThreadsOperations", "create", TraceType.AGENTS, "thread_create"),
-            ("azure.ai.agents.operations", "MessagesOperations", "create", TraceType.AGENTS, "message_create"),
-            ("azure.ai.agents.operations", "RunsOperations", "create", TraceType.AGENTS, "create_run"),
+            (
+                "azure.ai.agents",
+                "AgentsClient",
+                "create_agent",
+                TraceType.AGENTS,
+                "agent_create",
+            ),
+            (
+                "azure.ai.agents.operations",
+                "ThreadsOperations",
+                "create",
+                TraceType.AGENTS,
+                "thread_create",
+            ),
+            (
+                "azure.ai.agents.operations",
+                "MessagesOperations",
+                "create",
+                TraceType.AGENTS,
+                "message_create",
+            ),
+            (
+                "azure.ai.agents.operations",
+                "RunsOperations",
+                "create",
+                TraceType.AGENTS,
+                "create_run",
+            ),
             (
                 "azure.ai.agents.operations",
                 "RunsOperations",
@@ -1719,10 +1742,36 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "_handle_submit_tool_outputs",
             ),
-            ("azure.ai.agents.operations", "RunsOperations", "stream", TraceType.AGENTS, "stream"),
-            ("azure.ai.agents.operations", "MessagesOperations", "list", TraceType.AGENTS, "list_messages"),
-            ("azure.ai.agents.operations", "RunStepsOperations", "list", TraceType.AGENTS, "list_run_steps"),
-            ("azure.ai.agents.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
+            (
+                "azure.ai.agents.operations",
+                "RunsOperations",
+                "stream",
+                TraceType.AGENTS,
+                "stream",
+            ),
+            # Switching off the instrumentation for list method as it requires
+            # monkey patching inside pageable class.
+            (
+                "azure.ai.agents.operations",
+                "MessagesOperations",
+                "list",
+                TraceType.AGENTS,
+                "list_messages",
+            ),
+            (
+                "azure.ai.agents.operations",
+                "RunStepsOperations",
+                "list",
+                TraceType.AGENTS,
+                "list_run_steps",
+            ),
+            (
+                "azure.ai.agents.models",
+                "AgentRunStream",
+                "__exit__",
+                TraceType.AGENTS,
+                "__exit__",
+            ),
         )
         async_apis = (
             (
@@ -1746,7 +1795,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "agents_thread_message_create",
             ),
-            ("azure.ai.agents.aio.operations", "RunsOperations", "create", TraceType.AGENTS, "create_run"),
+            (
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
+                "create",
+                TraceType.AGENTS,
+                "create_run",
+            ),
             (
                 "azure.ai.agents.aio.operations",
                 "RunsOperations",
@@ -1782,6 +1837,8 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "stream",
             ),
+            # Switching off the instrumentation for list method as it requires
+            # monkey patching inside async pageable class.
             (
                 "azure.ai.agents.aio.operations",
                 "MessagesOperations",
@@ -1796,7 +1853,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "list_run_steps",
             ),
-            ("azure.ai.agents.models", "AsyncAgentRunStream", "__aexit__", TraceType.AGENTS, "__aexit__"),
+            (
+                "azure.ai.agents.models",
+                "AsyncAgentRunStream",
+                "__aexit__",
+                TraceType.AGENTS,
+                "__aexit__",
+            ),
         )
         return sync_apis, async_apis
 
@@ -1812,6 +1875,7 @@ class _AIAgentsInstrumentorPreview:
                     module = importlib.import_module(module_name)
                     api = getattr(module, class_name)
                     if hasattr(api, method_name):
+                        # The function list is sync in both sync and async classes.
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
@@ -1927,7 +1991,10 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     ) -> None:
         self.submit_tool_outputs = submit_tool_outputs
         if self.inner_handler:
-            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
+            self.inner_handler.initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     def __next__(self) -> Any:
         if self.inner_handler:
@@ -2035,7 +2102,10 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     ) -> None:
         self.submit_tool_outputs = submit_tool_outputs
         if self.inner_handler:
-            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
+            self.inner_handler.initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     # cspell:disable-next-line
     async def __anext__(self) -> Any:
