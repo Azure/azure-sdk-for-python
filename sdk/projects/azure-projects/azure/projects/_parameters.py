@@ -33,9 +33,6 @@ LOCAL_PRINCIPAL = Parameter(
     env_var="AZURE_PRINCIPAL_ID",
     type="string",
 )
-AZD_TAGS = Variable(
-    "azdTags", value={"azd-env-name": ENV_NAME}, description="Tags to apply to all resources in AZD environment."
-)
 TENANT_ID = Parameter(
     "tenantId",
     description="The Azure Active Directory tenant ID.",
@@ -77,7 +74,6 @@ class GlobalParamsType(TypedDict):
     defaultName: Parameter
     principalId: Parameter
     tenantId: Parameter
-    azdTags: Parameter
     managedIdentityId: Parameter
     managedIdentityPrincipalId: Parameter
     managedIdentityClientId: Parameter
@@ -90,7 +86,6 @@ GLOBAL_PARAMS: GlobalParamsType = {
     "defaultName": DEFAULT_NAME,
     "principalId": LOCAL_PRINCIPAL,
     "tenantId": TENANT_ID,
-    "azdTags": AZD_TAGS,
     "managedIdentityId": _MANAGED_IDENTITY_ID,
     "managedIdentityPrincipalId": _MANAGED_IDENTITY_PRINCIPAL_ID,
     "managedIdentityClientId": _MANAGED_IDENTITY_CLIENT_ID,

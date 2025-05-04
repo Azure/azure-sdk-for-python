@@ -140,7 +140,6 @@ _DEFAULT_CONFIG_STORE: "ConfigurationStoreResource" = {
         "publicNetworkAccess": "Enabled",
     },
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
@@ -238,6 +237,10 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,

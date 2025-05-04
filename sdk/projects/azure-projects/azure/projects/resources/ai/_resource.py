@@ -164,7 +164,6 @@ CognitiveServicesAccountResourceType = TypeVar(
 _DEFAULT_COGNITIVE_SERVICES: "CognitiveServicesAccountResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
 }
 _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -256,6 +255,10 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
                 properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         # The kwarg identifier can be passed by child classes.
         super().__init__(
             properties,
@@ -430,7 +433,6 @@ class AIServicesKwargs(TypedDict, total=False):
 _DEFAULT_AI_SERVICES: "CognitiveServicesAccountResource" = {
     "name": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "kind": "AIServices",
     "sku": {"name": "S0"},
     "properties": {

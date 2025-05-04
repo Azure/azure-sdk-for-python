@@ -178,6 +178,10 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
                 properties["properties"]["raiPolicyName"] = kwargs.pop("rai_policy")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
             properties,
@@ -290,7 +294,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         self, current_properties: dict[str, Any], new_properties: dict[str, Any], *, fields: FieldsType, **kwargs
     ):
         super()._merge_resource(
-            current_properties, new_properties, merge_properties=["properties", "tags", "sku"], **kwargs
+            current_properties, new_properties, merge_properties=["properties", "sku"], **kwargs
         )
         for field in find_all_resource_match(
             fields,

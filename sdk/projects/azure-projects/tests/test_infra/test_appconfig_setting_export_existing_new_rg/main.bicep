@@ -20,15 +20,12 @@ param principalId string
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 
-@sys.description('Tags to apply to all resources in AZD environment.')
-var azdTags = {
-  'azd-env-name': environmentName
-}
-
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   location: location
-  tags: azdTags
 }
 
 module test_module 'test.bicep' = {
@@ -41,7 +38,6 @@ module test_module 'test.bicep' = {
     defaultName: defaultName
     principalId: principalId
     tenantId: tenantId
-    azdTags: azdTags
   }
 }
 output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID

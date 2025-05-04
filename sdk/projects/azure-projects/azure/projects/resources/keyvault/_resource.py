@@ -107,7 +107,6 @@ _DEFAULT_KEY_VAULT: "KeyVaultResource" = {
         "enableRbacAuthorization": True,
     },
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
 }
 _DEFAULT_KEY_VAULT_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": ["Key Vault Administrator"],
@@ -184,6 +183,10 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
                 properties["properties"]["sku"] = {"family": "A", "name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,

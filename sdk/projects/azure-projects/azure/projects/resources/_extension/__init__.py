@@ -44,7 +44,7 @@ class RoleAssignment(TypedDict, total=False):
 
 
 class Identity(TypedDict, total=False):
-    type: Required[Union[Literal["None", "SystemAssigned", "SystemAssigned,UserAssigned", "UserAssigned"], Parameter]]
+    type: Union[Literal["None", "SystemAssigned", "SystemAssigned,UserAssigned", "UserAssigned"], Parameter]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter], Any]
     """Gets or sets a list of key value pairs that describe the set of User Assigned identities that will

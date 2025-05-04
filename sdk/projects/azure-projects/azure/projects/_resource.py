@@ -322,6 +322,27 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 current_properties[key] = value
         return current_properties
 
+    def _merge_tags(
+        self,
+        current_tags: Dict[str, Any],
+        new_tags: Dict[str, Any],
+        *,
+        parameters: Dict[str, Parameter],
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
+        for key, value in new_tags.items():
+            if key == "azd-env-name":
+                continue
+            elif key in current_tags:
+                if current_tags[key] != value:
+                    raise ValueError(
+                        f"{repr(self)} cannot set tag '{key}' to '{value}', already set to: '{current_tags[key]}'."
+                    )
+            else:
+                current_tags[key] = value
+        current_tags["azd-env-name"] = parameters["environmentName"]
+        return current_tags
+
     def _merge_resource(
         self,
         current_properties: Dict[str, Any],
@@ -330,10 +351,14 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         merge_properties: Optional[List[str]] = None,
         **kwargs,
     ) -> None:
-        merge_properties = merge_properties or ["properties", "tags"]
+        merge_properties = merge_properties or ["properties"]
         for key, value in new_properties.items():
             if key in merge_properties:
                 merged = self._merge_properties(current_properties.get(key, {}), value, **kwargs)
+                if merged:
+                    current_properties[key] = merged
+            elif key == "tags":
+                merged = self._merge_tags(current_properties.get(key, {}), value, **kwargs)  
                 if merged:
                     current_properties[key] = merged
             elif key in current_properties and current_properties[key] != value:

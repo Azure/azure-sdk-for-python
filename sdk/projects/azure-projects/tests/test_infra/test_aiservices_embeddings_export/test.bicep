@@ -4,7 +4,6 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 param aiEmbeddingsModel string
 param aiEmbeddingsModelFormat string
 param aiEmbeddingsModelVersion string
@@ -12,14 +11,19 @@ param aiEmbeddingsModelSku string
 param aiEmbeddingsModelCapacity int
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -34,7 +38,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -51,9 +54,11 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: '${defaultName}-aiservices'
   location: location
-  tags: azdTags
   sku: {
     name: 'S0'
   }
@@ -81,6 +86,9 @@ output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account.properties.end
 
 resource embeddings_deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   parent: aiservices_account
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: '${defaultName}-embeddings-deployment'
   properties: {
     model: {

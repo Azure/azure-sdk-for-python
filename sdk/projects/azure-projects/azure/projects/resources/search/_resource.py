@@ -139,7 +139,6 @@ _DEFAULT_SEARCH_SERVICE: "SearchServiceResource" = {
         "publicNetworkAccess": "disabled",
     },
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
@@ -198,6 +197,10 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
                 properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,

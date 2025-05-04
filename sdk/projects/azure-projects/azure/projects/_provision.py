@@ -221,7 +221,21 @@ def export(
         component_resources=_get_component_resources(deployment),
         component_fields=fields,
     )
-    add_defaults(fields, export_parameters, parameter_values, local_access=local_access)
+    defaults_file = os.path.join(working_dir, "resources.yaml")
+    if os.path.isfile(defaults_file):
+        with open(defaults_file, "r", encoding="utf-8") as resources:
+            resource_defaults = yaml.safe_load(resources)
+            if deployment_name in resource_defaults:
+                resource_defaults.update(resource_defaults[deployment_name])
+    else:
+        resource_defaults = {}
+    add_defaults(
+        fields,
+        export_parameters,
+        parameter_values,
+        local_access=local_access,
+        resource_defaults=resource_defaults
+    )
     add_roles(fields, export_parameters)
 
     try:

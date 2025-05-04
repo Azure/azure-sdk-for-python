@@ -119,7 +119,6 @@ AppServicePlanResourceType = TypeVar(
 _DEFAULT_APP_SERVICE_PLAN: "AppServicePlanResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "kind": "linux",
     "properties": {
         "reserved": True,
@@ -237,6 +236,10 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
                     raise ValueError(f"Cannot set property 'capacity' to {existing_sku}.") from e
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,

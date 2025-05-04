@@ -247,7 +247,7 @@ def test_storage_blobs_container_defaults():
     r = BlobContainer(default_encryption_scope=scope)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],

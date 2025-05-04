@@ -23,7 +23,6 @@ if TYPE_CHECKING:
 _DEFAULT_RESOURCE_GROUP: "ResourceGroupResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
 }
 
 
@@ -94,6 +93,10 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
                 properties["location"] = kwargs.pop("location")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,
@@ -181,5 +184,5 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
                 },
             )
             fields[self._get_field_id(symbol, ())] = field
-        self._merge_resource(params, properties, symbol=symbol, resource_group=symbol)
+        self._merge_resource(params, properties, symbol=symbol, resource_group=symbol, parameters=parameters)
         return (symbol,)

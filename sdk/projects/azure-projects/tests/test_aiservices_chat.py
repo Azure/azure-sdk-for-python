@@ -53,7 +53,7 @@ def _get_outputs(suffix="", parent="", rg=None):
 
 def test_aiservices_chat_properties():
     r = AIChat()
-    assert r.properties == {"properties": {}}
+    assert r.properties == {"properties": {}, 'tags': {'azd-env-name': None}}
     assert r.extensions == {}
     assert r._existing == False
     assert r.identifier == ResourceIdentifiers.ai_chat_deployment
@@ -67,6 +67,7 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account.chat_deployment"].resource == "Microsoft.CognitiveServices/accounts/deployments"
     assert fields["aiservices_account.chat_deployment"].properties == {
         "parent": ResourceSymbol("aiservices_account"),
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
     assert fields["aiservices_account.chat_deployment"].outputs == _get_outputs()
     assert fields["aiservices_account.chat_deployment"].extensions == {}
@@ -78,7 +79,7 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account.chat_deployment"].defaults
 
     r2 = AIChat(model="gpt-4o", capacity=10)
-    assert r2.properties == {"name": "gpt-4o", "sku": {"capacity": 10}, "properties": {"model": {"name": "gpt-4o"}}}
+    assert r2.properties == {"name": "gpt-4o", "sku": {"capacity": 10}, "properties": {"model": {"name": "gpt-4o"}}, 'tags': {'azd-env-name': None}}
     symbols = r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == [
         "aiservices_account",
@@ -97,6 +98,7 @@ def test_aiservices_chat_properties():
         "dependsOn": [
             ResourceSymbol("chat_deployment"),
         ],
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
     assert fields["aiservices_account.chat_deployment_gpt4o"].outputs == _get_outputs("_gpt4o")
     assert fields["aiservices_account.chat_deployment_gpt4o"].extensions == {}
@@ -108,14 +110,14 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account.chat_deployment_gpt4o"].defaults
 
     r3 = AIChat(model="gpt-4o", capacity=30)
-    assert r3.properties == {"name": "gpt-4o", "sku": {"capacity": 30}, "properties": {"model": {"name": "gpt-4o"}}}
+    assert r3.properties == {"name": "gpt-4o", "sku": {"capacity": 30}, "properties": {"model": {"name": "gpt-4o"}}, 'tags': {'azd-env-name': None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = AIChat(
         model="secret", account=AIServices(name="foo", tags={"test": "value"}, public_network_access="Disabled")
     )
-    assert r4.properties == {"properties": {"model": {"name": "secret"}}, "name": "secret"}
+    assert r4.properties == {"properties": {"model": {"name": "secret"}}, "name": "secret", "tags": {'azd-env-name': None}}
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == [
         "aiservices_account",
@@ -131,6 +133,7 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account_foo.chat_deployment_foo_secret"].properties == {
         "properties": {"model": {"name": "secret"}},
         "name": "secret",
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "parent": ResourceSymbol("aiservices_account_foo"),
     }
     assert fields["aiservices_account_foo.chat_deployment_foo_secret"].outputs == _get_outputs("_foo_secret", "_foo")
@@ -150,6 +153,7 @@ def test_aiservices_chat_properties():
         "name": "foo",
         "sku": {"name": param2, "capacity": param3},
         "properties": {"model": param1},
+        "tags": {'azd-env-name': None},
     }
     params = dict(GLOBAL_PARAMS)
     fields = {}
@@ -163,6 +167,7 @@ def test_aiservices_chat_properties():
         "sku": {"name": param2, "capacity": param3},
         "properties": {"model": param1},
         "parent": ResourceSymbol("aiservices_account"),
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
     assert fields["aiservices_account.chat_deployment_foo"].outputs == _get_outputs("_foo")
     assert fields["aiservices_account.chat_deployment_foo"].extensions == {}
@@ -254,7 +259,7 @@ def test_aiservices_chat_defaults():
     r = AIChat()
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": Parameter("aiChatModel", default="o1-mini"),
@@ -270,6 +275,7 @@ def test_aiservices_chat_defaults():
             }
         },
         "parent": ResourceSymbol("aiservices_account"),
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
 
 
@@ -335,7 +341,7 @@ def test_aiservices_chat_infra():
     infra = TestInfra()
     assert isinstance(infra.chat_a, AIChat)
     assert infra.chat_a._settings["name"]() == "gpt-4o-mini"
-    assert infra.chat_a.properties == {"name": "gpt-4o-mini", "properties": {"model": {"name": "gpt-4o-mini"}}}
+    assert infra.chat_a.properties == {"name": "gpt-4o-mini", "properties": {"model": {"name": "gpt-4o-mini"}}, "tags": {'azd-env-name': None}}
 
     infra = TestInfra(chat_b=AIChat.reference(name="foo", account="bar"))
     assert infra.chat_b._settings["name"]() == "foo"

@@ -218,7 +218,6 @@ StorageAccountResourceType = TypeVar(
 _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "kind": "StorageV2",
     "sku": {"name": "Standard_GRS"},
     "properties": {"accessTier": "Hot", "allowCrossTenantReplication": False, "allowSharedKeyAccess": False},
@@ -387,6 +386,10 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
                 properties["properties"]["supportsHttpsTrafficOnly"] = kwargs.pop("supports_https_traffic_only")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
 
         super().__init__(
             properties,

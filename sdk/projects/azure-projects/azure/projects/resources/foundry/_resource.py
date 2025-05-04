@@ -144,7 +144,6 @@ MachineLearningWorkspaceResourceType = TypeVar(
 _DEFAULT_ML_WORKSPACE: "MachineLearningWorkspaceResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
         "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
     },
@@ -203,6 +202,10 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 properties["sku"] = properties.get("sku", {})
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
             properties,
@@ -316,7 +319,6 @@ _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
     "kind": "Hub",
     "name": GLOBAL_PARAMS["defaultName"].format("{}-hub"),
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
         "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
         "publicNetworkAccess": "Enabled",
@@ -441,7 +443,6 @@ _DEFAULT_AI_PROJECT: "MachineLearningWorkspaceResource" = {
     "kind": "Project",
     "name": GLOBAL_PARAMS["defaultName"].format("{}-project"),
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
         "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
         "publicNetworkAccess": "Enabled",

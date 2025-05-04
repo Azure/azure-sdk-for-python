@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import collections
 from concurrent.futures import ThreadPoolExecutor
 import asyncio  # pylint: disable=do-not-import-asyncio
 import threading
 import importlib.util
 import sys
 import os
-from typing import Coroutine, Any, Dict, Generator, List, Mapping, Optional, Union, TYPE_CHECKING
+from typing import Coroutine, Any, Dict, Generator, List, Mapping, MutableMapping, Optional, Union, TYPE_CHECKING
 from typing_extensions import TypeVar
 
 from .resources import ResourceIdentifiers
@@ -201,27 +202,30 @@ def resolve_parameters(
 
 
 def add_defaults(
-    fields: "FieldsType", parameters: Dict[str, "Parameter"], values: Dict[str, Any], *, local_access: bool = False
+    fields: "FieldsType",
+    parameters: Dict[str, "Parameter"],
+    values: Dict[str, Any],
+    *,
+    resource_defaults: Mapping[str, Any],
+    local_access: bool = False
 ) -> None:
     # TODO: loads defaults from store.
     from ._bicep.expressions import PlaceholderParameter
 
     for field in fields.values():  # pylint: disable=too-many-nested-blocks
         if field.defaults:
-            for key, value in field.defaults["resource"].items():
+            # field.defaults will be None if the field is an existing resource.
+            defaults = field.defaults["resource"]
+            defaults.update(resource_defaults.get(field.resource, {}))
+            for key, value in defaults.items():
                 if key == "identity" and isinstance(parameters["managedIdentityId"], PlaceholderParameter):
                     # This indicates that no managed identity is being deployed, so skip it.
                     continue
                 if field.properties.get(key):
                     if key in ["tags", "properties"]:
-                        try:
-                            updated_default = value.copy()
-                            updated_default.update(field.properties[key])
-                            field.properties[key] = updated_default
-                        except AttributeError:
-                            # We probably got an Expression
-                            # TODO: support bicep union operation?
-                            pass
+                        updated_default = value.copy()
+                        updated_default.update(field.properties[key])
+                        field.properties[key] = updated_default
                 else:
                     field.properties[key] = value
 

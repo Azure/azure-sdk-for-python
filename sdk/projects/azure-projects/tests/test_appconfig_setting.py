@@ -219,7 +219,7 @@ def test_appconfig_setting_defaults():
     r = ConfigSetting(name="setting", value="value", content_type=contenttype)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": "setting",

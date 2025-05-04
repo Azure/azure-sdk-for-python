@@ -30,7 +30,7 @@ def _get_outputs(suffix="", rg=None):
 
 def test_keyvault_properties():
     r = KeyVault()
-    assert r.properties == {"properties": {}}
+    assert r.properties == {"properties": {}, "tags": {'azd-env-name': None}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -40,7 +40,7 @@ def test_keyvault_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["vault"]
     assert fields["vault"].resource == "Microsoft.KeyVault/vaults"
-    assert fields["vault"].properties == {}
+    assert fields["vault"].properties == {"tags": {'azd-env-name': GLOBAL_PARAMS["environmentName"]}}
     assert fields["vault"].outputs == _get_outputs()
     assert fields["vault"].extensions == {}
     assert fields["vault"].existing == False
@@ -51,13 +51,14 @@ def test_keyvault_properties():
     assert fields["vault"].defaults
 
     r2 = KeyVault(location="westus", sku="premium")
-    assert r2.properties == {"location": "westus", "properties": {"sku": {"name": "premium", "family": "A"}}}
+    assert r2.properties == {"location": "westus", "properties": {"sku": {"name": "premium", "family": "A"}}, "tags": {'azd-env-name': None}}
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["vault"]
     assert fields["vault"].resource == "Microsoft.KeyVault/vaults"
     assert fields["vault"].properties == {
         "location": "westus",
         "properties": {"sku": {"name": "premium", "family": "A"}},
+        "tags": {'azd-env-name': GLOBAL_PARAMS["environmentName"]}
     }
     assert fields["vault"].outputs == _get_outputs()
     assert fields["vault"].extensions == {}
@@ -69,14 +70,14 @@ def test_keyvault_properties():
     assert fields["vault"].defaults
 
     r3 = KeyVault(sku="standard")
-    assert r3.properties == {"properties": {"sku": {"name": "standard", "family": "A"}}}
+    assert r3.properties == {"properties": {"sku": {"name": "standard", "family": "A"}}, "tags": {'azd-env-name': None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = KeyVault(name="foo", tags={"test": "value"}, public_network_access="Disabled")
     assert r4.properties == {
         "name": "foo",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": None},
         "properties": {"publicNetworkAccess": "Disabled"},
     }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
@@ -84,7 +85,7 @@ def test_keyvault_properties():
     assert fields["vault_foo"].resource == "Microsoft.KeyVault/vaults"
     assert fields["vault_foo"].properties == {
         "name": "foo",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "properties": {"publicNetworkAccess": "Disabled"},
     }
     assert fields["vault_foo"].outputs == _get_outputs("_foo")
@@ -103,6 +104,7 @@ def test_keyvault_properties():
     assert r5.properties == {
         "name": param1,
         "properties": {"sku": {"name": param2, "family": "A"}, "publicNetworkAccess": param3},
+        "tags": {'azd-env-name': None},
     }
     params = dict(GLOBAL_PARAMS)
     fields = {}
@@ -112,6 +114,7 @@ def test_keyvault_properties():
     assert fields["vault_testa"].properties == {
         "name": param1,
         "properties": {"sku": {"name": param2, "family": "A"}, "publicNetworkAccess": param3},
+        "tags": {'azd-env-name': params["environmentName"]},
     }
     assert fields["vault_testa"].outputs == _get_outputs("_testa")
     assert fields["vault_testa"].extensions == {}
@@ -182,7 +185,7 @@ def test_keyvault_defaults():
     r = KeyVault(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -194,7 +197,7 @@ def test_keyvault_defaults():
             "publicNetworkAccess": "Disabled",
             "tenantId": GLOBAL_PARAMS["tenantId"],
         },
-        "tags": GLOBAL_PARAMS["azdTags"],
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
 
 
@@ -304,7 +307,7 @@ def test_keyvault_infra():
         infra = TestInfra()
     infra = TestInfra(kv=KeyVault())
     assert isinstance(infra.kv, KeyVault)
-    assert infra.kv.properties == {"properties": {}}
+    assert infra.kv.properties == {"properties": {}, "tags": {'azd-env-name': None}}
 
     infra = TestInfra(kv=KeyVault(name="foo"))
     assert infra.kv._settings["name"]() == "foo"

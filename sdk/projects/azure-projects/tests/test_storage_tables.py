@@ -73,7 +73,7 @@ def test_storage_tables_properties():
     assert fields["storageaccount.tableservice"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
-    assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}}
+    assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}, "tags": {'azd-env-name': None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -200,7 +200,7 @@ def test_storage_tables_defaults():
     r = TableStorage(cors_rules=rules)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": "default",

@@ -42,7 +42,7 @@ def _get_outputs(suffix="", rg=None):
 
 def test_aiservices_properties():
     r = AIServices()
-    assert r.properties == {"kind": "AIServices", "properties": {}}
+    assert r.properties == {"kind": "AIServices", "properties": {}, "tags": {"azd-env-name": None}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -52,7 +52,7 @@ def test_aiservices_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account"]
     assert fields["aiservices_account"].resource == "Microsoft.CognitiveServices/accounts"
-    assert fields["aiservices_account"].properties == {"kind": "AIServices"}
+    assert fields["aiservices_account"].properties == {"kind": "AIServices", "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}}
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}
     assert fields["aiservices_account"].existing == False
@@ -63,7 +63,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].defaults
 
     r2 = AIServices(location="westus", sku="F1")
-    assert r2.properties == {"kind": "AIServices", "location": "westus", "sku": {"name": "F1"}, "properties": {}}
+    assert r2.properties == {"kind": "AIServices", "location": "westus", "sku": {"name": "F1"}, "properties": {}, "tags": {"azd-env-name": None}}
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account"]
     assert fields["aiservices_account"].resource == "Microsoft.CognitiveServices/accounts"
@@ -71,6 +71,7 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "location": "westus",
         "sku": {"name": "F1"},
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}
@@ -82,7 +83,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].defaults
 
     r3 = AIServices(sku="C3")
-    assert r3.properties == {"kind": "AIServices", "sku": {"name": "C3"}, "properties": {}}
+    assert r3.properties == {"kind": "AIServices", "sku": {"name": "C3"}, "properties": {}, "tags": {"azd-env-name": None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -90,7 +91,7 @@ def test_aiservices_properties():
     assert r4.properties == {
         "name": "foo",
         "kind": "AIServices",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": None},
         "properties": {"publicNetworkAccess": "Disabled"},
     }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
@@ -99,7 +100,7 @@ def test_aiservices_properties():
     assert fields["aiservices_account_foo"].properties == {
         "name": "foo",
         "kind": "AIServices",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "properties": {"publicNetworkAccess": "Disabled"},
     }
     assert fields["aiservices_account_foo"].outputs == _get_outputs("_foo")
@@ -120,6 +121,7 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
+        "tags": {"azd-env-name": None},
     }
     params = dict(GLOBAL_PARAMS)
     fields = {}
@@ -131,6 +133,7 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
+        "tags": {"azd-env-name": params["environmentName"]},
     }
     assert fields["aiservices_account_testa"].outputs == _get_outputs("_testa")
     assert fields["aiservices_account_testa"].extensions == {}
@@ -203,7 +206,7 @@ def test_aiservices_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params, values={})
+    add_defaults(fields, parameters=params, values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
@@ -219,7 +222,7 @@ def test_aiservices_defaults():
             "disableLocalAuth": True,
         },
         "identity": IDENTITY,
-        "tags": GLOBAL_PARAMS["azdTags"],
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
 
 
@@ -323,7 +326,7 @@ def test_aiservices_infra():
         infra = TestInfra()
     infra = TestInfra(ai=AIServices())
     assert isinstance(infra.ai, AIServices)
-    assert infra.ai.properties == {"properties": {}, "kind": "AIServices"}
+    assert infra.ai.properties == {"properties": {}, "kind": "AIServices", "tags": {"azd-env-name": None}}
 
     infra = TestInfra(ai=AIServices(name="foo"))
     assert infra.ai._settings["name"]() == "foo"

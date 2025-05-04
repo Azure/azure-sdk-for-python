@@ -319,8 +319,6 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["name"] = name
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
             if "enabled" in kwargs:
                 properties["properties"]["enabled"] = kwargs.pop("enabled")
             if "kind" in kwargs:
@@ -345,6 +343,12 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["properties"]["containerSize"] = kwargs.pop("container_size")
             if "daily_memory_time_quota" in kwargs:
                 properties["properties"]["dailyMemoryTimeQuota"] = kwargs.pop("daily_memory_time_quota")
+            if "tags" in kwargs:
+                properties["tags"] = kwargs.pop("tags")
+            elif "tags" not in properties:
+                properties["tags"] = {}
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         self._app_settings = kwargs.pop("app_settings", {})
         super().__init__(
             properties,
