@@ -317,25 +317,37 @@ class TestAgentClient(AzureRecordedTestCase):
         """test list agents"""
         # create client and ensure there are no previous agents
         with self.create_client(**kwargs) as client:
-            list_length = client.list_agents().data.__len__()
+            agents = list(client.list_agents())
+            list_length = len(agents)
 
-            # create agent and check that it appears in the list
-            agent = client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-            assert client.list_agents().data.__len__() == list_length + 1
-            assert client.list_agents().data[0].id == agent.id
+            # create agent and verify it is listed
+            agent  = client.create_agent(model="gpt-4o",
+                                        name="my-agent",
+                                        instructions="You are helpful agent")
 
-            # create second agent and check that it appears in the list
-            agent2 = client.create_agent(model="gpt-4o", name="my-agent2", instructions="You are helpful agent")
-            assert client.list_agents().data.__len__() == list_length + 2
-            assert client.list_agents().data[0].id == agent.id or client.list_agents().data[1].id == agent.id
+            agents = list(client.list_agents())
+            assert len(agents) == list_length + 1
+            assert agent.id in {a.id for a in agents}
 
-            # delete agents and check list
+            # create second agent and verify it is listed
+            agent2 = client.create_agent(model="gpt-4o",
+                                        name="my-agent2",
+                                        instructions="You are helpful agent")
+
+            agents = list(client.list_agents())
+            assert len(agents) == list_length + 2
+            assert {agent.id, agent2.id}.issubset({a.id for a in agents})
+
+            # delete first agent and verify list shrinks
             client.delete_agent(agent.id)
-            assert client.list_agents().data.__len__() == list_length + 1
-            assert client.list_agents().data[0].id == agent2.id
+            agents = list(client.list_agents())
+            assert len(agents) == list_length + 1
+            assert agent2.id in {a.id for a in agents}
 
+            # delete second agent and verify list is back to original size
             client.delete_agent(agent2.id)
-            assert client.list_agents().data.__len__() == list_length
+            assert len(list(client.list_agents())) == list_length
+
             print("Deleted agents")
 
     # **********************************************************************************
@@ -677,35 +689,31 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # check that initial message list is empty
-            messages0 = client.messages.list(thread_id=thread.id)
-            print(messages0.data)
-            assert messages0.data.__len__() == 0
+            messages0 = list(client.messages.list(thread_id=thread.id))
+            print(messages0)
+            assert len(messages0) == 0
 
             # create messages and check message list for each one
             message1 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
             assert message1.id
             print("Created message, message ID", message1.id)
-            messages1 = client.messages.list(thread_id=thread.id)
-            assert messages1.data.__len__() == 1
-            assert messages1.data[0].id == message1.id
+            messages1 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages1) == 1
+            assert messages1[0].id == message1.id
 
             message2 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me another joke")
             assert message2.id
             print("Created message, message ID", message2.id)
-            messages2 = client.messages.list(thread_id=thread.id)
-            assert messages2.data.__len__() == 2
-            assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
+            messages2 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages2) == 2
+            assert messages2[0].id == message2.id or messages2[1].id == message2.id
 
             message3 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
-            messages3 = client.messages.list(thread_id=thread.id)
-            assert messages3.data.__len__() == 3
-            assert (
-                messages3.data[0].id == message3.id
-                or messages3.data[1].id == message2.id
-                or messages3.data[2].id == message2.id
-            )
+            messages3 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages3) == 3
+            assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -1187,8 +1195,8 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # check that messages used the tool
         print("Messages: ")
-        messages = client.messages.list(thread_id=thread.id, run_id=run.id)
-        tool_message = messages["data"][0]["content"][0]["text"]["value"]
+        messages = list(client.messages.list(thread_id=thread.id, run_id=run.id))
+        tool_message = messages[0].content[0].text.value
         # if user_functions_live is used, the time will be the current time
         # since user_functions_recording is used, the time will be 12:30
         assert "12:30" in tool_message
@@ -1282,8 +1290,8 @@ class TestAgentClient(AzureRecordedTestCase):
         assert run.parallel_tool_calls == use_parallel_runs
 
         assert client.delete_agent(agent.id).deleted, "The agent was not deleted"
-        messages = client.messages.list(thread_id=run.thread_id)
-        assert len(messages.data), "The data from the agent was not received."
+        messages = list(client.messages.list(thread_id=run.thread_id))
+        assert len(messages), "The data from the agent was not received."
 
     """
     # DISABLED: rewrite to ensure run is not complete when cancel_run is called
@@ -1464,9 +1472,9 @@ class TestAgentClient(AzureRecordedTestCase):
             ]
             print("Run status:", run.status)
             if run.status != "queued":
-                steps = client.run_steps.list(thread_id=thread.id, run_id=run.id)
+                steps = list(client.run_steps.list(thread_id=thread.id, run_id=run.id))
                 print("Steps:", steps)
-                assert steps["data"].__len__() > 0
+                assert len(steps) > 0
 
         assert run.status == "completed"
         print("Run completed")
@@ -1529,9 +1537,9 @@ class TestAgentClient(AzureRecordedTestCase):
                 print("Run status:", run.status)
 
             # list steps, check that get_run_step works with first step_id
-            steps = client.run_steps.list(thread_id=thread.id, run_id=run.id)
-            assert steps["data"].__len__() > 0
-            step = steps["data"][0]
+            steps = list(client.run_steps.list(thread_id=thread.id, run_id=run.id))
+            assert len(steps) > 0
+            step = steps[0]
             get_step = client.run_steps.get(thread_id=thread.id, run_id=run.id, step_id=step.id)
             assert step == get_step
 
@@ -1777,9 +1785,9 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Stream processing completed")
 
         # check that messages used the tool
-        messages = client.messages.list(thread_id=thread.id)
-        print("Messages: ", messages)
-        tool_message = messages["data"][0]["content"][0]["text"]["value"]
+        messages=list(client.messages.list(thread_id=thread.id))
+        print("Messages:", messages)
+        tool_message=messages[0].content[0].text.value
         # TODO if testing live, uncomment these
         # hour12 = time.strftime("%H")
         # hour24 = time.strftime("%I")
@@ -2019,9 +2027,9 @@ class TestAgentClient(AzureRecordedTestCase):
         print("Run completed with status:", run.status)
 
         # check that messages used the tool
-        messages = client.messages.list(thread_id=thread.id, run_id=run.id)
-        print("Messages: ", messages)
-        tool_message = messages["data"][0]["content"][0]["text"]["value"]
+        messages=list(client.messages.list(thread_id=thread.id, run_id=run.id))
+        print("Messages:", messages)
+        tool_message=messages[0].content[0].text.value
         if expected_values:
             for value in expected_values:
                 assert value in tool_message.lower()
@@ -2329,7 +2337,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         run = ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.messages.list(thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
         ai_client.delete_agent(agent.id)
         ai_client.close()
@@ -2479,7 +2487,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         ai_client.vector_stores.delete(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.messages.list(thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
         ai_client.delete_agent(agent.id)
         self._remove_file_maybe(file_id, ai_client)
@@ -2544,7 +2552,7 @@ class TestAgentClient(AzureRecordedTestCase):
         self._remove_file_maybe(file_id, ai_client)
         ai_client.delete_agent(agent.id)
 
-        messages = ai_client.messages.list(thread_id=thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages), "No messages were created"
         ai_client.close()
 
@@ -2605,7 +2613,8 @@ class TestAgentClient(AzureRecordedTestCase):
         self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         ai_client.delete_agent(agent.id)
-        assert len(ai_client.messages.list(thread_id=thread.id)), "No messages were created"
+        messages=list(ai_client.messages.list(thread_id=thread.id))
+        assert len(messages), "No messages were created"
         ai_client.close()
 
     @agentClientPreparer()
@@ -2664,7 +2673,7 @@ class TestAgentClient(AzureRecordedTestCase):
         self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         ai_client.delete_agent(agent.id)
-        messages = ai_client.messages.list(thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
         ai_client.close()
 
@@ -2709,7 +2718,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         run = ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.messages.list(thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
         ai_client.delete_agent(agent.id)
         ai_client.close()
@@ -2767,7 +2776,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         run = ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.messages.list(thread.id)
+        messages=list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
         ai_client.delete_agent(agent.id)
         ai_client.close()
@@ -2817,8 +2826,8 @@ class TestAgentClient(AzureRecordedTestCase):
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
             # List messages to verify tool was used
-            messages = client.messages.list(thread_id=thread.id)
-            assert len(messages.data) > 0
+            messages=list(client.messages.list(thread_id=thread.id))
+            assert len(messages) > 0
 
             # Clean up
             client.delete_agent(agent.id)
@@ -2887,14 +2896,20 @@ class TestAgentClient(AzureRecordedTestCase):
                 run = ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, include=include)
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
-            steps = ai_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=include)
+            steps = list(
+                ai_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=include)
+            )
             # The 1st (not 0th) step is a tool call.
-            step_id = steps.data[1].id
-            one_step = ai_client.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step_id, include=include)
-            self._assert_file_search_valid(one_step.step_details.tool_calls[0], include_content)
-            self._assert_file_search_valid(steps.data[1].step_details.tool_calls[0], include_content)
+            step_id = steps[1].id
 
-            messages = ai_client.messages.list(thread_id=thread.id)
+            one_step = ai_client.run_steps.get(
+                thread_id=thread.id, run_id=run.id, step_id=step_id, include=include
+            )
+
+            self._assert_file_search_valid(one_step.step_details.tool_calls[0], include_content)
+            self._assert_file_search_valid(steps[1].step_details.tool_calls[0], include_content)
+
+            messages = list(ai_client.messages.list(thread_id=thread.id))
             assert len(messages)
 
             ai_client.vector_stores.delete(vector_store.id)
@@ -2972,20 +2987,19 @@ class TestAgentClient(AzureRecordedTestCase):
             del_agent = ai_client.delete_agent(agent.id)
             assert del_agent.deleted
 
-            messages = ai_client.messages.list(thread_id=thread.id)
+            messages=list(ai_client.messages.list(thread_id=thread.id))
 
-            planet_info = []
-            # The messages are following in the reverse order,
-            # we will iterate them and output only text contents.
-            for data_point in reversed(messages.data):
-                last_message_content = data_point.content[-1]
-                # We will only list agent responses here.
-                if isinstance(last_message_content, MessageTextContent) and data_point.role == MessageRole.AGENT:
+            planet_info=[]
+            # The messages are returned in reverse order; iterate and keep only agent-text contents.
+            for data_point in reversed(messages):
+                last_message_content=data_point.content[-1]
+                if isinstance(last_message_content, MessageTextContent) and data_point.role==MessageRole.AGENT:
                     planet_info.append(json.loads(last_message_content.text.value))
-            assert len(planet_info) == 1
-            assert len(planet_info[0]) == 2
-            assert planet_info[0].get("mass") == pytest.approx(6.4171e23, 1e22)
-            assert planet_info[0].get("planet") == "Mars"
+
+            assert len(planet_info)==1
+            assert len(planet_info[0])==2
+            assert planet_info[0].get("mass")==pytest.approx(6.4171e23,1e22)
+            assert planet_info[0].get("planet")=="Mars"
 
     def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
@@ -3050,19 +3064,25 @@ class TestAgentClient(AzureRecordedTestCase):
                 print("Deleted file")
 
                 # get messages
-                messages = client.messages.list(thread_id=thread.id)
+                messages = list(client.messages.list(thread_id=thread.id))
                 print(f"Messages: {messages}")
 
-                last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
+                last_msg = client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
                 if last_msg:
                     print(f"Last Message: {last_msg.text.value}")
 
-                for file_path_annotation in messages.file_path_annotations:
-                    file_id = file_path_annotation.file_path.file_id
-                    print(f"Image File ID: {file_path_annotation.file_path.file_id}")
-                    temp_file_path = os.path.join(temp_dir, "output.png")
-                    client.files.save(file_id=file_id, file_name="output.png", target_dir=temp_dir)
-                    output_file_exist = os.path.exists(temp_file_path)
+                for message in messages:
+                    for annotation in message.file_path_annotations:
+                        file_id = annotation.file_path.file_id
+                        print(f"Image File ID: {file_id}")
+
+                        temp_file_path = os.path.join(temp_dir, "output.png")
+                        client.files.save(
+                            file_id=file_id,
+                            file_name="output.png",
+                            target_dir=temp_dir,
+                        )
+                        output_file_exist = os.path.exists(temp_file_path)
 
             assert output_file_exist
 
@@ -3125,11 +3145,19 @@ class TestAgentClient(AzureRecordedTestCase):
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
-            messages = client.messages.list(thread_id=thread.id)
-            assert len(messages.text_messages) > 1, "No messages were received from agent."
+            messages = list(client.messages.list(thread_id=thread.id))
+            assert len(messages) > 1, "No messages were received from agent."
 
-            # Check that we have function response in at least one message.
-            assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
+            # Flatten all text-type message contents.
+            text_messages = [
+                content
+                for msg in messages
+                for content in msg.content
+                if isinstance(content, MessageTextContent)
+            ]
+
+            # Check that at least one text message contains “bar”.
+            assert any("bar" in t.text.value.lower() for t in text_messages)
 
             # Delete the agent once done
             result = client.delete_agent(agent.id)
@@ -3174,5 +3202,5 @@ class TestAgentClient(AzureRecordedTestCase):
             assert run.status in RunStatus.COMPLETED
 
             assert client.delete_agent(agent.id).deleted, "The agent was not deleted"
-            messages = client.messages.list(thread_id=thread.id)
-            assert len(messages.data), "The data from the agent was not received."
+            messages = list(client.messages.list(thread_id=thread.id))
+            assert messages, "No data was received from the agent."

@@ -92,9 +92,9 @@ with agents_client:
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.
-    for data_point in reversed(messages.data):
-        last_message_content = data_point.content[-1]
-        # We will only list agent responses here.
-        if isinstance(last_message_content, MessageTextContent) and data_point.role == MessageRole.AGENT:
-            planet = TypeAdapter(Planet).validate_json(last_message_content.text.value)
-            print(f"The mass of {planet.planet} is {planet.mass} kg.")
+    for msg in messages:
+        if msg.role == MessageRole.AGENT:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                planet = TypeAdapter(Planet).validate_json(last_part.text.value)
+                print(f"The mass of {planet.planet} is {planet.mass} kg.")

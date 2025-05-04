@@ -34,6 +34,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ...models._enums import FilePurpose, RunStatus
 from ._operations import FilesOperations as FilesOperationsGenerated
+from ._operations import MessagesOperations as MessagesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
@@ -2058,7 +2059,62 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         return vector_store_file
 
 
+class MessagesOperations(MessagesOperationsGenerated):
+
+    async def get_last_message_by_role(
+        self,
+        thread_id: str,
+        role: _models.MessageRole,
+        **kwargs,
+    ) -> Optional[_models.ThreadMessage]:
+        """
+        Return the most-recent message in *thread_id* authored by *role*.
+
+        The implementation streams messages (newest first, where the
+        service/SDK supports that) and stops at the first match.
+
+        :param thread_id: The ID of the thread to search.
+        :type thread_id: str
+        :param role: The role of the message author.
+        :type role: ~azure.ai.agents.models.MessageRole
+
+        :return: The most recent message authored by *role* in the thread, or None if no such message exists.
+        :rtype: Optional[~azure.ai.agents.models.ThreadMessage]
+        """
+        pageable = self.list(thread_id, **kwargs)
+
+        async for message in pageable:
+            if message.role == role:
+                return message
+        return None
+
+    async def get_last_text_message_by_role(
+        self,
+        thread_id: str,
+        role: _models.MessageRole,
+        **kwargs,
+    ) -> Optional[_models.MessageTextContent]:
+        """
+        Return the most-recent *text* message in *thread_id* authored by *role*.
+
+        :param thread_id: The ID of the thread to search.
+        :type thread_id: str
+        :param role: The role of the message author.
+        :type role: ~azure.ai.agents.models.MessageRole
+
+        :return: The most recent text message authored by *role* in the thread, or None if no such message exists.
+        :rtype: Optional[~azure.ai.agents.models.MessageTextContent]
+        """
+        msg = await self.get_last_message_by_role(thread_id, role, **kwargs)
+        if msg:
+            text_contents = msg.text_messages
+            if text_contents:
+                return text_contents[-1]
+        return None
+
+
 __all__: List[str] = [
+    "MessagesOperations",
     "RunsOperations",
     "FilesOperations",
     "VectorStoresOperations",

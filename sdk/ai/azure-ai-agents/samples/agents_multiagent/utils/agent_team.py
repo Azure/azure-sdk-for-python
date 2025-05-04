@@ -329,8 +329,7 @@ class AgentTeam:
                             thread_id=self._agent_thread.id, agent_id=agent.agent_instance.id
                         )
                         print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
-                        messages = self._agents_client.messages.list(thread_id=self._agent_thread.id)
-                        text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
+                        text_message = self._agents_client.messages.get_last_text_message_by_role(thread_id=self._agent_thread.id, role=MessageRole.AGENT)
                         if text_message and text_message.text:
                             print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
                             if self._current_task_span is not None:

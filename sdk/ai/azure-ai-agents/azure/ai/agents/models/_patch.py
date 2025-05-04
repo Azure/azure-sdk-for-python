@@ -36,7 +36,7 @@ from typing import (
     overload,
 )
 
-from ._enums import AgentStreamEvent, MessageRole, AzureAISearchQueryType
+from ._enums import AgentStreamEvent, AzureAISearchQueryType
 from ._models import (
     AISearchIndexResource,
     AzureAISearchResource,
@@ -84,7 +84,6 @@ from ._models import (
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
-from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
 from .. import _types
@@ -877,6 +876,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
     """
+
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
         Initialize Bing Custom Search with a connection_id.
@@ -889,11 +889,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(
-                connection_id=connection_id,
-                market=market,
-                set_lang=set_lang,
-                count=count,
-                freshness=freshness
+                connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
             )
         ]
 
@@ -935,12 +931,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
         :param instance_name: Config instance name used by tool.
         """
-        self.connection_ids = [
-            BingCustomSearchConfiguration(
-                connection_id=connection_id,
-                instance_name=instance_name
-            )
-        ]
+        self.connection_ids = [BingCustomSearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
 
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
@@ -951,9 +942,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         """
         return [
             BingCustomSearchToolDefinition(
-                bing_custom_search=BingCustomSearchConfigurationList(
-                    search_configurations=self.connection_ids
-                )
+                bing_custom_search=BingCustomSearchConfigurationList(search_configurations=self.connection_ids)
             )
         ]
 
@@ -1797,74 +1786,6 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
-class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerated):
-
-    @property
-    def text_messages(self) -> List[MessageTextContent]:
-        """Returns all text message contents in the messages.
-
-        :rtype: List[MessageTextContent]
-        """
-        texts = [content for msg in self.data for content in msg.text_messages]
-        return texts
-
-    @property
-    def image_contents(self) -> List[MessageImageFileContent]:
-        """Returns all image file contents from image message contents in the messages.
-
-        :rtype: List[MessageImageFileContent]
-        """
-        return [content for msg in self.data for content in msg.image_contents]
-
-    @property
-    def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
-        """Returns all file citation annotations from text message annotations in the messages.
-
-        :rtype: List[MessageTextFileCitationAnnotation]
-        """
-        annotations = [annotation for msg in self.data for annotation in msg.file_citation_annotations]
-        return annotations
-
-    @property
-    def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
-        """Returns all file path annotations from text message annotations in the messages.
-
-        :rtype: List[MessageTextFilePathAnnotation]
-        """
-        annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
-        return annotations
-
-    def get_last_message_by_role(self, role: MessageRole) -> Optional[ThreadMessage]:
-        """Returns the last message from a sender in the specified role.
-
-        :param role: The role of the sender.
-        :type role: MessageRole
-
-        :return: The last message from a sender in the specified role.
-        :rtype: ~azure.ai.agents.models.ThreadMessage
-        """
-        for msg in self.data:
-            if msg.role == role:
-                return msg
-        return None
-
-    def get_last_text_message_by_role(self, role: MessageRole) -> Optional[MessageTextContent]:
-        """Returns the last text message from a sender in the specified role.
-
-        :param role: The role of the sender.
-        :type role: MessageRole
-
-        :return: The last text message from a sender in the specified role.
-        :rtype: ~azure.ai.agents.models.MessageTextContent
-        """
-        for msg in self.data:
-            if msg.role == role:
-                for content in msg.content:
-                    if isinstance(content, MessageTextContent):
-                        return content
-        return None
-
-
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -1878,7 +1799,6 @@ __all__: List[str] = [
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "AsyncAgentEventHandler",
-    "OpenAIPageableListOfThreadMessage",
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",

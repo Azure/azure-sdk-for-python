@@ -23,7 +23,7 @@ USAGE:
 import os, time, sys
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
+from azure.ai.agents.models import FunctionTool, ListSortOrder, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 
 current_path = os.path.dirname(__file__)
 root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
@@ -101,5 +101,8 @@ with agents_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

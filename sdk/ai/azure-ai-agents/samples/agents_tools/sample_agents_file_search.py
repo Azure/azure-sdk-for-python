@@ -26,6 +26,7 @@ from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import (
     FileSearchTool,
     FilePurpose,
+    ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -92,8 +93,12 @@ with agents_client:
     # [END teardown]
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
-    # Print messages from the thread
-    for text_message in messages.text_messages:
-        print(text_message)
+    # Print last messages from the thread
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
+
+

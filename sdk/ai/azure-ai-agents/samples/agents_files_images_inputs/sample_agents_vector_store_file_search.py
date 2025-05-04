@@ -21,7 +21,7 @@ USAGE:
 
 import os
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import FileSearchTool, FilePurpose
+from azure.ai.agents.models import FileSearchTool, FilePurpose, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
@@ -71,12 +71,9 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
-    for message in reversed(messages.data):
-        # To remove characters, which are not correctly handled by print, we will encode the message
-        # and then decode it again.
-        clean_message = "\n".join(
-            text_msg.text.value.encode("ascii", "ignore").decode("utf-8") for text_msg in message.text_messages
-        )
-        print(f"Role: {message.role}  Message: {clean_message}")
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

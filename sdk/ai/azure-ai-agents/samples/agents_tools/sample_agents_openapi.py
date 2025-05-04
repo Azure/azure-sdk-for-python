@@ -90,7 +90,7 @@ with agents_client:
     run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
 
     # Loop through each step
-    for step in run_steps.data:
+    for step in run_steps:
         print(f"Step {step['id']} status: {step['status']}")
 
         # Check if there are tool calls in the step details
@@ -114,4 +114,7 @@ with agents_client:
 
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

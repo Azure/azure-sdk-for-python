@@ -24,7 +24,7 @@ from typing import Any
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
-from azure.ai.agents.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
+from azure.ai.agents.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet, ListSortOrder, MessageTextContent
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -98,8 +98,11 @@ async def main() -> None:
             await agents_client.delete_agent(agent.id)
             print("Deleted agent")
 
-            messages = await agents_client.messages.list(thread_id=thread.id)
-            print(f"Messages: {messages}")
+            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+            async for msg in messages:
+                last_part = msg.content[-1]
+                if isinstance(last_part, MessageTextContent):
+                    print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

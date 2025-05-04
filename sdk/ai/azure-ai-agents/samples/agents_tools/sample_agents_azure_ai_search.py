@@ -87,7 +87,7 @@ with agents_client:
 
     # Fetch run steps to get the details of the agent run
     run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
-    for step in run_steps.data:
+    for step in run_steps:
         print(f"Step {step['id']} status: {step['status']}")
         step_details = step.get("step_details", {})
         tool_calls = step_details.get("tool_calls", [])
@@ -111,7 +111,7 @@ with agents_client:
     # [START populate_references_agent_with_azure_ai_search_tool]
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    for message in messages.data:
+    for message in messages:
         if message.role == MessageRole.AGENT and message.url_citation_annotations:
             placeholder_annotations = {
                 annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
