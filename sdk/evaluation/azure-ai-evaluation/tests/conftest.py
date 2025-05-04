@@ -29,13 +29,12 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
 from filelock import FileLock
-from promptflow.client import PFClient
-from promptflow.executor._line_execution_process_pool import _process_wrapper
-from promptflow.executor._process_manager import create_spawned_fork_process_manager
+from azure.ai.evaluation._legacy._adapters.client import PFClient
 from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
 
@@ -85,6 +84,7 @@ def add_sanitizers(
     test_proxy,
     mock_model_config: AzureOpenAIModelConfiguration,
     mock_project_scope: Dict[str, str],
+    mock_onedp_project_scope: Dict[str, str],
     connection_file: Dict[str, Any],
 ) -> None:
     def azureopenai_connection_sanitizer():
@@ -110,6 +110,9 @@ def add_sanitizers(
         )
         add_general_regex_sanitizer(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"/projects/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
         add_general_regex_sanitizer(
             regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
@@ -342,12 +345,17 @@ def mock_project_scope() -> Dict[str, str]:
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
+        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
+@pytest.fixture(scope="session")
+def mock_onedp_project_scope() -> Dict[str, str]:
+    return "https://Sanitized.cognitiveservices.azure.com/api/projects/00000"
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
 KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
+KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
 
 
 @pytest.fixture(scope="session")
@@ -397,6 +405,10 @@ def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[s
     config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
     return config
 
+@pytest.fixture
+def project_scope_onedp(connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE) if is_live() else mock_onedp_project_scope
+    return config
 
 @pytest.fixture
 def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
@@ -455,7 +467,7 @@ def azure_ml_client(project_scope: dict, azure_cred: TokenCredential) -> LiteMLC
 
 @pytest.fixture
 def pf_client() -> PFClient:
-    """The fixture, returning PRClient"""
+    """The fixture, returning PFClient"""
     return PFClient()
 
 
@@ -464,39 +476,10 @@ def pf_client() -> PFClient:
 # in fork mode, this is automatically enabled.
 # in spawn mode, we need to declare recording in each process separately.
 
-SpawnProcess = multiprocessing.get_context("spawn").Process
-
-
-class MockSpawnProcess(SpawnProcess):
-    def __init__(self, group=None, target=None, *args, **kwargs):
-        if target == _process_wrapper:
-            target = _mock_process_wrapper
-        if target == create_spawned_fork_process_manager:
-            target = _mock_create_spawned_fork_process_manager
-        super().__init__(group, target, *args, **kwargs)
-
 
 @pytest.fixture
 def recording_injection(mocker: MockerFixture):
-    original_process_class = multiprocessing.get_context("spawn").Process
-    multiprocessing.get_context("spawn").Process = MockSpawnProcess  # type: ignore
-    if "spawn" == multiprocessing.get_start_method():
-        multiprocessing.Process = MockSpawnProcess
-
-    try:
-        yield
-    finally:
-        multiprocessing.get_context("spawn").Process = original_process_class  # type: ignore
-        if "spawn" == multiprocessing.get_start_method():
-            multiprocessing.Process = original_process_class
-
-
-def _mock_process_wrapper(*args, **kwargs):
-    return _process_wrapper(*args, **kwargs)
-
-
-def _mock_create_spawned_fork_process_manager(*args, **kwargs):
-    return create_spawned_fork_process_manager(*args, **kwargs)
+    yield
 
 
 @pytest.fixture
@@ -510,21 +493,40 @@ def azure_cred() -> TokenCredential:
 
     try:
         credential = AzureCliCredential()
-        token = credential.get_token("https://management.azure.com/.default")
+        token = credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     except Exception:
         credential = DefaultAzureCredential()
         # ensure we can get token
-        token = credential.get_token("https://management.azure.com/.default")
+        token = credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
 
     assert token is not None
     return credential
 
+@pytest.fixture
+def azure_cred_onedp() -> TokenCredential:
+    from azure.identity import AzureCliCredential, DefaultAzureCredential
+
+    """get credential for azure tests"""
+    # resolve requests
+    if not is_live():
+        return FakeTokenCredential()
+
+    try:
+        credential = AzureCliCredential()
+        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+    except Exception:
+        credential = DefaultAzureCredential()
+        # ensure we can get token
+        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        
+    assert token is not None
+    return credential
 
 @pytest.fixture
 def user_object_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
-    access_token = azure_cred.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["oid"]
 
@@ -533,7 +535,7 @@ def user_object_id(azure_cred: TokenCredential) -> str:
 def tenant_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.TENANT_ID
-    access_token = azure_cred.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT)
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["tid"]
 
@@ -583,7 +585,7 @@ def pytest_sessionfinish() -> None:
             On Windows, this causes the cleanup step to fail with a permission issue
             since the OS disallows deletion of files in use by a process.
         """
-        from promptflow._cli._pf._service import stop_service
+        from azure.ai.evaluation._legacy._adapters._service import stop_service
 
         stop_service()
 

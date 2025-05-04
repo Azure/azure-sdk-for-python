@@ -667,7 +667,7 @@ class AIAgentConverter:
         return evaluations
 
     @staticmethod
-    def run_ids_from_conversation(conversation: dict) -> List[str]:
+    def _run_ids_from_conversation(conversation: dict) -> List[str]:
         """
         Extracts a list of unique run IDs from a conversation dictionary.
 
@@ -684,7 +684,7 @@ class AIAgentConverter:
         return run_ids
 
     @staticmethod
-    def convert_from_conversation(
+    def _convert_from_conversation(
         conversation: dict, run_id: str, exclude_tool_calls_previous_runs: bool = False
     ) -> dict:
         """
@@ -765,7 +765,7 @@ class AIAgentConverter:
         return json.loads(final_result.to_json())
 
     @staticmethod
-    def convert_from_file(filename: str, run_id: str) -> dict:
+    def _convert_from_file(filename: str, run_id: str) -> dict:
         """
         Converts the agent run from a JSON file to a format suitable for the OpenAI API, the JSON file being a thread.
 
@@ -801,4 +801,4 @@ class AIAgentConverter:
         with open(filename, mode="r", encoding="utf-8") as file:
             data = json.load(file)
 
-        return AIAgentConverter.convert_from_conversation(data, run_id)
+        return AIAgentConverter._convert_from_conversation(data, run_id)

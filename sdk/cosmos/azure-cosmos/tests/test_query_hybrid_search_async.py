@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import os
 import time
 import unittest
 import uuid
@@ -39,13 +39,14 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
             id="FTS" + cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
             full_text_policy=test_config.get_full_text_policy(path="/text"))
         data = hybrid_search_data.get_full_text_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
+            item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
@@ -97,6 +98,20 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
             assert ("One of the input values is invalid" in e.message or
                     "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
+
+    async def test_hybrid_search_env_variables_async(self):
+        os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "0"
+        try:
+            query = "SELECT TOP 1 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+            results = self.test_container.query_items(query)
+            [item async for item in results]
+            pytest.fail("Config was not applied properly.")
+        except ValueError as e:
+            assert e.args[0] == ("Executing a hybrid search query with more items than the max is not allowed. "
+                                 "Please ensure you are using a limit smaller than the max, or change the max.")
+        finally:
+            os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
     async def test_hybrid_search_queries_async(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
@@ -168,7 +183,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
 
-        read_item = await self.test_container.read_item('50', '50')
+        read_item = await self.test_container.read_item('50', '1')
         item_vector = read_item['vector']
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
@@ -192,6 +207,30 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             all_fetched_res.extend([item async for item in items])
         assert count == 3
         assert len(all_fetched_res) == 13
+
+    async def test_hybrid_search_cross_partition_query_response_hook_async(self):
+        item = await self.test_container.read_item('50', '1')
+        item_vector = item['vector']
+        response_hook = test_config.ResponseHookCaller()
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, response_hook=response_hook)
+        result_list = [item async for item in results]
+        assert len(result_list) == 10
+        assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
+
+    async def test_hybrid_search_partitioned_query_response_hook_async(self):
+        item = await self.test_container.read_item('50', '1')
+        item_vector = item['vector']
+        response_hook = test_config.ResponseHookCaller()
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, partition_key='1', response_hook=response_hook)
+        result_list = [item async for item in results]
+        assert len(result_list) == 10
+        assert response_hook.count == 1
 
 
 if __name__ == "__main__":

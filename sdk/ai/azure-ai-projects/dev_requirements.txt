@@ -8,3 +8,4 @@ openai
 opentelemetry-sdk
 opentelemetry-exporter-otlp-proto-grpc
 azure-ai-ml
+prompty

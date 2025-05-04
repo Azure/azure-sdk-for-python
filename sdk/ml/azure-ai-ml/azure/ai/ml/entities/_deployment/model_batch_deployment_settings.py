@@ -2,16 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 
 
-@experimental
 class ModelBatchDeploymentSettings:
     """Model Batch Deployment Settings entity.
 
@@ -56,7 +54,7 @@ class ModelBatchDeploymentSettings:
         mini_batch_size: Optional[int],
         instance_count: Optional[int] = None,
         max_concurrency_per_instance: Optional[int] = None,
-        output_action: Optional[BatchDeploymentOutputAction] = None,
+        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
         output_file_name: Optional[str] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         environment_variables: Optional[Dict[str, str]] = None,

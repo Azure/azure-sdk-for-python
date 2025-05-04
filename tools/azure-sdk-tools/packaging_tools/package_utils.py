@@ -170,13 +170,6 @@ class CheckFile:
             self._next_version = self.calculate_next_version()
         return self._next_version
 
-    def get_private_package(self) -> List[str]:
-        return self.package_info["artifacts"]
-
-    @property
-    def get_whl_package(self) -> str:
-        return [package for package in self.get_private_package() if package.endswith(".whl")][0]
-
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
@@ -369,5 +362,8 @@ class CheckFile:
         self.check_pyproject_toml()
 
 
-def check_file(package_info: Dict[str, Any]):
-    CheckFile(package_info).run()
+def check_file(package: Dict[str, Any]):
+    client = CheckFile(package)
+    client.run()
+    if not client.has_invalid_next_version:
+        package["version"] = client.next_version

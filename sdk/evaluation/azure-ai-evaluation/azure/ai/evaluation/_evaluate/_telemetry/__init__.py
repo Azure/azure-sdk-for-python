@@ -9,11 +9,10 @@ import logging
 from typing import Callable, Dict, Literal, Optional, Union, cast
 
 import pandas as pd
-from promptflow._sdk.entities._flows import FlexFlow as flex_flow
-from promptflow._sdk.entities._flows import Prompty as prompty_sdk
-from promptflow._sdk.entities._flows.dag import Flow as dag_flow
-from promptflow.client import PFClient
-from promptflow.core import Prompty as prompty_core
+from azure.ai.evaluation._legacy._adapters._flows import FlexFlow as flex_flow
+from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty as prompty_sdk
+from azure.ai.evaluation._legacy._adapters._flows import Flow as dag_flow
+from azure.ai.evaluation._legacy._adapters.client import PFClient
 from typing_extensions import ParamSpec
 
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
@@ -66,7 +65,7 @@ def _get_evaluator_properties(evaluator, evaluator_name):
 
     try:
         # Cover flex flow and prompty based evaluator
-        if isinstance(evaluator, (prompty_sdk, prompty_core, flex_flow)):
+        if isinstance(evaluator, (prompty_sdk, flex_flow)):
             name = evaluator.name
             pf_type = evaluator.__class__.__name__
         # Cover dag flow based evaluator
@@ -94,86 +93,3 @@ def _get_evaluator_properties(evaluator, evaluator_name):
         "type": _get_evaluator_type(evaluator),
         "alias": evaluator_name if evaluator_name else "",
     }
-
-
-# cspell:ignore isna
-def log_evaluate_activity(func: Callable[P, EvaluationResult]) -> Callable[P, EvaluationResult]:
-    """Decorator to log evaluate activity
-
-    :param func: The function to be decorated
-    :type func: Callable
-    :returns: The decorated function
-    :rtype: Callable[P, EvaluationResult]
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> EvaluationResult:
-        from promptflow._sdk._telemetry import ActivityType, log_activity
-        from promptflow._sdk._telemetry.telemetry import get_telemetry_logger
-
-        evaluators = cast(Optional[Dict[str, Callable]], kwargs.get("evaluators", {})) or {}
-        azure_ai_project = cast(Optional[AzureAIProject], kwargs.get("azure_ai_project", None))
-
-        pf_client = PFClient(
-            config=(
-                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
-                if azure_ai_project
-                else None
-            ),
-            user_agent=USER_AGENT,
-        )
-
-        trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
-        track_in_cloud = bool(trace_destination) if trace_destination != "none" else False
-        evaluate_target = bool(kwargs.get("target", None))
-        evaluator_config = bool(kwargs.get("evaluator_config", None))
-        custom_dimensions: Dict[str, Union[str, bool]] = {
-            "track_in_cloud": track_in_cloud,
-            "evaluate_target": evaluate_target,
-            "evaluator_config": evaluator_config,
-        }
-
-        with log_activity(
-            get_telemetry_logger(),
-            "pf.evals.evaluate",
-            activity_type=ActivityType.PUBLICAPI,
-            user_agent=USER_AGENT,
-            custom_dimensions=custom_dimensions,
-        ):
-            result = func(*args, **kwargs)
-
-            try:
-                evaluators_info = []
-                for evaluator_name, evaluator in evaluators.items():
-                    evaluator_info = _get_evaluator_properties(evaluator, evaluator_name)
-                    try:
-                        evaluator_df = pd.DataFrame(result.get("rows", [])).filter(
-                            like=f"outputs.{evaluator_name}", axis=1
-                        )
-
-                        failed_rows = (
-                            evaluator_df.shape[0] if evaluator_df.empty else int(evaluator_df.isna().any(axis=1).sum())
-                        )
-                        total_rows = evaluator_df.shape[0]
-
-                        evaluator_info["failed_rows"] = failed_rows
-                        evaluator_info["total_rows"] = total_rows
-                    except Exception as e:  # pylint: disable=broad-exception-caught
-                        LOGGER.debug("Failed to collect evaluate failed row info for %s: %s", evaluator_name, e)
-                    evaluators_info.append(evaluator_info)
-
-                custom_dimensions = {"evaluators_info": json.dumps(evaluators_info)}
-                with log_activity(
-                    get_telemetry_logger(),
-                    "pf.evals.evaluate_usage_info",
-                    activity_type=ActivityType.PUBLICAPI,
-                    user_agent=USER_AGENT,
-                    custom_dimensions=custom_dimensions,
-                ):
-                    pass
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                LOGGER.debug("Failed to collect evaluate usage info: %s", e)
-
-            return result
-
-    return wrapper

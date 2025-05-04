@@ -7,6 +7,7 @@ from typing import Any, List, Optional, Type
 import pytest
 
 import azure.ai.evaluation as evaluators
+from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
 @pytest.fixture
@@ -26,10 +27,21 @@ def get_evaluators_from_module(namespace: Any, exceptions: Optional[List[str]] =
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
 class TestSaveEval:
     """Test saving evaluators."""
 
-    EVALUATORS = get_evaluators_from_module(evaluators, exceptions=["AIAgentConverter", "RedTeam", "RedTeamOutput"])
+    EVALUATORS = get_evaluators_from_module(
+        evaluators,
+        exceptions=[
+            "AIAgentConverter",
+            "RedTeam",
+            "RedTeamOutput",
+            "AzureOpenAIGrader",
+            "AzureOpenAILabelGrader",
+            "AzureOpenAIStringCheckGrader",
+            "AzureOpenAITextSimilarityGrader"
+        ])
 
     @pytest.mark.parametrize("evaluator", EVALUATORS)
     def test_save_evaluators(self, tmpdir, pf_client, evaluator) -> None:

@@ -35,6 +35,19 @@
           "TestSamples": "false"
         }
       }
+    },
+    {
+      "Config": {
+        "pyrit_Ubuntu2004_310": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "InjectedPackages": "pyrit==0.8.1",
+          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
+        }
+      }
     }
   ]
 }

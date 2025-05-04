@@ -29,7 +29,7 @@ from ._tracing import (
     is_tracing_enabled,
     TraceAttributes,
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import TIMEOUT_SYMBOL, GEOREPLICATION_SYMBOL
 from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
@@ -124,6 +124,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         super(EventHubProducer, self).__init__()
 
     def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
+        desired_capabilities = [GEOREPLICATION_SYMBOL]
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -134,6 +135,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,  # type: ignore
+            desired_capabilities=desired_capabilities,
             properties=create_properties(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,

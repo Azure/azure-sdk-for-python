@@ -67,7 +67,8 @@ def main(targeted_packages):
                         f"\n\n**How to fix:**"
                         f"\n**Note:** If you are a bot. Fix the issue by fixing the above pylint errors."
                     )
-                if issue.body:
+                if issue.body and "**Pylint Errors:**" not in issue.body:
+                    # If the issue body does not contain the Pylint Errors section, add it
                     first_section = issue.body.split("**How to fix:**")[0]
                     new_body = first_section + template + "\n" + issue.body.split("**How to fix:**")[1]
                     issue.edit(body=new_body)

@@ -33,6 +33,7 @@ from azure.ai.projects.models import (
     AgentEventHandler,
     AgentStreamEvent,
     AgentThread,
+    AzureAISearchTool,
     AzureFunctionStorageQueue,
     AzureFunctionTool,
     CodeInterpreterTool,
@@ -88,6 +89,8 @@ agentClientPreparer = functools.partial(
     azure_ai_projects_agents_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
     azure_ai_projects_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
     azure_ai_projects_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
+    azure_ai_projects_agents_tests_search_index_name="sample_index",
+    azure_ai_projects_agents_tests_search_connection_name="search_connection_name",
 )
 
 
@@ -2807,6 +2810,62 @@ class TestAgentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
+    @recorded_by_proxy
+    def test_azure_ai_search_tool(self, **kwargs):
+        """Test using the AzureAISearchTool with an agent."""
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # Create AzureAISearchTool
+            connection_name = kwargs.pop(
+                "azure_ai_projects_agents_tests_search_connection_name", "my-search-connection-name"
+            )
+            connection = client.connections.get(connection_name=connection_name)
+            conn_id = connection.id
+            index_name = kwargs.pop("azure_ai_projects_agents_tests_search_index_name", "my-search-index")
+
+            azure_search_tool = AzureAISearchTool(
+                index_connection_id=conn_id,
+                index_name=index_name,
+            )
+
+            # Create agent with the search tool
+            agent = client.agents.create_agent(
+                model="gpt-4o",
+                name="search-agent",
+                instructions="You are a helpful assistant that can search for information using Azure AI Search.",
+                tools=azure_search_tool.definitions,
+                tool_resources=azure_search_tool.resources,
+            )
+            assert agent.id
+            print(f"Created agent with ID: {agent.id}")
+
+            # Create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print(f"Created thread with ID: {thread.id}")
+
+            # Create message
+            message = client.agents.create_message(
+                thread_id=thread.id, role="user", content="Search for information about iPhone prices."
+            )
+            assert message.id
+            print(f"Created message with ID: {message.id}")
+
+            # Create and process run
+            run = client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+            assert run.status == RunStatus.COMPLETED, run.last_error.message
+
+            # List messages to verify tool was used
+            messages = client.agents.list_messages(thread_id=thread.id)
+            assert len(messages.data) > 0
+
+            # Clean up
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+    @agentClientPreparer()
     @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy
     def test_include_file_search_results_no_stream(self, **kwargs):
@@ -3132,7 +3191,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # [START create_agent]
             agent = client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model="gpt-4",
                 name="my-assistant",
                 instructions="You are a personal electronics tutor. Write and run code to answer questions.",
             )
@@ -3161,7 +3220,7 @@ class TestAgentClient(AzureRecordedTestCase):
                     thread_id=thread.id,
                     run_id=run.id,
                 )
-            assert run.status in RunStatus.COMPLETED
+            assert run.status == RunStatus.COMPLETED, run.last_error_message
 
             assert client.agents.delete_agent(agent.id).deleted, "The agent was not deleted"
             messages = client.agents.list_messages(thread_id=thread.id)

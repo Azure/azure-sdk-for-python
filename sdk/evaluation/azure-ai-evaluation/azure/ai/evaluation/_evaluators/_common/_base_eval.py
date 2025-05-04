@@ -6,7 +6,7 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -495,7 +495,8 @@ class AsyncEvaluatorBase:
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
         self, *, query=None, response=None, context=None, conversation=None, ground_truth=None,
-            tool_call=None, tool_definitions=None, messages=None, **kwargs
+            tool_calls=None, tool_definitions=None, messages=None, retrieval_ground_truth=None,
+            retrieved_documents=None,**kwargs
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation
@@ -509,11 +510,15 @@ class AsyncEvaluatorBase:
             kwargs["context"] = context
         if ground_truth is not None:
             kwargs["ground_truth"] = ground_truth
-        if tool_call is not None:
-            kwargs["tool_call"] = tool_call
+        if tool_calls is not None:
+            kwargs["tool_calls"] = tool_calls
         if tool_definitions is not None:
             kwargs["tool_definitions"] = tool_definitions
         if messages is not None:
             kwargs["messages"] = messages
+        if retrieval_ground_truth is not None:
+            kwargs["retrieval_ground_truth"] = retrieval_ground_truth
+        if retrieved_documents is not None:
+            kwargs["retrieved_documents"] = retrieved_documents
 
         return await self._real_call(**kwargs)

@@ -23,6 +23,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
+PYTHON_VERSION = "3.9"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run mypy against target folder. ")
 
@@ -53,13 +55,13 @@ if __name__ == "__main__":
 
     pkg_details = ParsedSetup.from_path(package_dir)
     top_level_module = pkg_details.namespace.split(".")[0]
-    python_version = "3.8"
+
     commands = [
         sys.executable,
         "-m",
         "mypy",
         "--python-version",
-        python_version,
+        PYTHON_VERSION,
         "--show-error-codes",
         "--ignore-missing-imports",
     ]

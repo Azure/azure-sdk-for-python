@@ -60,6 +60,7 @@ class Run:
         inputs: Sequence[Mapping[str, Any]],
         column_mapping: Mapping[str, str],
         created_on: Optional[datetime] = None,
+        run: Optional["Run"] = None,
     ):
         self._status: RunStatus = RunStatus.NOT_STARTED
         self._created_on = created_on or datetime.now(timezone.utc)
@@ -72,6 +73,7 @@ class Run:
         self.column_mapping = column_mapping
         self.result: Optional[BatchResult] = None
         self.metrics: Mapping[str, Any] = {}
+        self._run = run
 
         # self._use_remote_flow = False
         # self._from_flex_flow = True
@@ -104,6 +106,10 @@ class Run:
             return []
 
         return [value or {} for value in self.result.results]
+
+    @property
+    def previous_run(self) -> Optional["Run"]:
+        return self._run
 
     @staticmethod
     def _generate_run_name(name_prefix: Optional[str], creation_time: datetime) -> str:

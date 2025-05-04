@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
-from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
@@ -33,7 +33,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the groundedness evaluator. Default is 5.
+    :param threshold: The threshold for the groundedness evaluator. Default is 3.
     :type threshold: int
         
     .. admonition:: Example:

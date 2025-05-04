@@ -27,7 +27,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the relevance evaluator. Default is 5.
+    :param threshold: The threshold for the relevance evaluator. Default is 3.
     :type threshold: int
 
     .. admonition:: Example:
@@ -63,7 +63,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=3):
+    def __init__(
+        self, 
+        model_config, 
+        *,
+        threshold=3
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold

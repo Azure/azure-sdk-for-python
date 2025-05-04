@@ -7,10 +7,12 @@ import time
 import unittest
 import uuid
 
+from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers
 from azure.cosmos.cosmos_client import CosmosClient
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy,
+from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
                           http_constants, _retry_utility)
 from azure.cosmos.aio import _retry_utility_async
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
@@ -52,6 +54,7 @@ class TestConfig(object):
     read_location2 = os.getenv('READ_LOCATION2', host)
 
     THROUGHPUT_FOR_5_PARTITIONS = 30000
+    THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
@@ -263,6 +266,13 @@ def get_full_text_policy(path):
         ]
     }
 
+class ResponseHookCaller:
+    def __init__(self):
+        self.count = 0
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
+
 
 class FakeResponse:
     def __init__(self, headers):
@@ -289,7 +299,7 @@ class FakeHttpResponse:
 
 
 class MockConnectionRetryPolicy(RetryPolicy):
-    def __init__(self, resource_type, error, **kwargs):
+    def __init__(self, resource_type, error=None, **kwargs):
         self.resource_type = resource_type
         self.error = error
         self.counter = 0
@@ -310,7 +320,8 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 # raise the passed in exception for the passed in resource + operation combination
                 if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
                     self.request_endpoints.append(request.http_request.url)
-                    raise self.error
+                    if self.error:
+                        raise self.error
                 response = self.next.send(request)
                 break
             except ServiceRequestError as err:
@@ -336,8 +347,14 @@ class MockConnectionRetryPolicy(RetryPolicy):
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
-                if self._is_method_retryable(retry_settings, request.http_request):
+                retry_error = err
+                if _has_database_account_header(request.http_request.headers):
+                    raise err
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
+                    self.counter += 1
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
@@ -353,7 +370,7 @@ class MockConnectionRetryPolicy(RetryPolicy):
 
 class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
 
-    def __init__(self, resource_type, error, **kwargs):
+    def __init__(self, resource_type, error = None, **kwargs):
         self.resource_type = resource_type
         self.error = error
         self.counter = 0
@@ -387,7 +404,8 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 if request.http_request.headers.get(
                         http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
                     self.request_endpoints.append(request.http_request.url)
-                    raise self.error
+                    if self.error:
+                        raise self.error
                 _retry_utility._configure_timeout(request, absolute_timeout, per_request_timeout)
                 response = await self.next.send(request)
                 break
@@ -403,7 +421,6 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 if retry_settings['connect'] > 0:
                     self.counter += 1
                     retry_active = self.increment(retry_settings, response=request, error=err)
-                    print("Basic Retry in retry utility: ", retry_active)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
@@ -422,18 +439,19 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                             await self.sleep(retry_settings, request.context.transport)
                             continue
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
                 retry_error = err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if _has_database_account_header(request.http_request.headers):
+                    raise err
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
+                    self.counter += 1
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-            finally:
-                end_time = time.time()
-                if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response

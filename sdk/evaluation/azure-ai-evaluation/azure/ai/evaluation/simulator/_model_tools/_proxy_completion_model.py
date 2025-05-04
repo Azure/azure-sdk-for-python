@@ -6,12 +6,15 @@ import copy
 import json
 import time
 import uuid
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast, Union
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp.models import SimulationDTO
+from azure.ai.evaluation._common.constants import RAIService
 
 from .._model_tools._template_handler import TemplateParameters
 from .models import OpenAIChatCompletionsModel
@@ -40,14 +43,14 @@ class SimulationRequestDTO:
         headers: Dict[str, str],
         payload: Dict[str, Any],
         params: Dict[str, str],
-        templatekey: str,
+        template_key: str,
         template_parameters: Optional[TemplateParameters],
     ):
         self.url = url
         self.headers = headers
         self.json = json.dumps(payload)
         self.params = params
-        self.templatekey = templatekey
+        self.template_key = template_key
         self.templateParameters = template_parameters
 
     def to_dict(self) -> Dict:
@@ -111,7 +114,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     async def get_conversation_completion(
         self,
         messages: List[Dict],
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         role: str = "assistant",  # pylint: disable=unused-argument
         **request_params,
     ) -> dict:
@@ -142,7 +145,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
     async def request_api(
         self,
-        session: AsyncHttpPipeline,
+        session: Union[AsyncHttpPipeline, AIProjectClient],
         request_data: dict,
     ) -> dict:
         """
@@ -183,51 +186,72 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             headers=headers,
             payload=request_data,
             params=params,
-            templatekey=self.tkey,
+            template_key=self.tkey,
             template_parameters=self.tparam,
         )
 
         time_start = time.time()
         full_response = None
 
-        response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
-
-        if response.status_code != 202:
-            raise HttpResponseError(
-                message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+        if(isinstance(session, AIProjectClient)):
+            sim_request_dto = SimulationDTO(
+                headers=headers,
+                params=params,
+                json=json.dumps(request_data),
+                template_key=self.tkey,
+                template_parameters=self.tparam,
+            )
+            response_data = session.red_teams.submit_simulation(sim_request_dto, headers=headers, params=params)
+            operation_id = response_data["location"].split("/")[-1]
+            
+            request_count = 0
+            flag = True
+            while flag:
+                response = session.evaluations.operation_results(operation_id, headers=headers)
+                if response.status_code == 200:
+                    response_data = cast(List[Dict], response.json())
+                    flag = False
+                else:
+                    request_count += 1
+                    sleep_time = RAIService.SLEEP_TIME**request_count
+                    await asyncio.sleep(sleep_time)
+        else:
+            response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
+            # response.raise_for_status()
+            if response.status_code != 202:
+                raise HttpResponseError(
+                    message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+                )
+            response_data = response.json()
+            
+            self.result_url = cast(str, response_data["location"])
+            retry_policy = AsyncRetryPolicy(  # set up retry configuration
+                retry_on_status_codes=[202],  # on which statuses to retry
+                retry_total=7,
+                retry_backoff_factor=10.0,
+                retry_backoff_max=180,
+                retry_mode=RetryMode.Exponential,
             )
 
-        response_data = response.json()
-        self.result_url = cast(str, response_data["location"])
+            # initial 15 seconds wait before attempting to fetch result
+            # Need to wait both in this thread and in the async thread for some reason?
+            # Someone not under a crunch and with better async understandings should dig into this more.
+            await asyncio.sleep(15)
+            time.sleep(15)
 
-        retry_policy = AsyncRetryPolicy(  # set up retry configuration
-            retry_on_status_codes=[202],  # on which statuses to retry
-            retry_total=7,
-            retry_backoff_factor=10.0,
-            retry_backoff_max=180,
-            retry_mode=RetryMode.Exponential,
-        )
-
-        # initial 15 seconds wait before attempting to fetch result
-        # Need to wait both in this thread and in the async thread for some reason?
-        # Someone not under a crunch and with better async understandings should dig into this more.
-        await asyncio.sleep(15)
-        time.sleep(15)
-
-        async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
-            token = await self.token_manager.get_token_async()
-            proxy_headers = {
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-                "User-Agent": USER_AGENT,
-            }
-            response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                self.result_url, headers=proxy_headers
-            )
-
-        response.raise_for_status()
-
-        response_data = response.json()
+            async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
+                token = await self.token_manager.get_token_async()
+                proxy_headers = {
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": USER_AGENT,
+                }
+                response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                    self.result_url, headers=proxy_headers
+                )
+            response.raise_for_status()
+            response_data = response.json()
+            
         self.logger.info("Response: %s", response_data)
 
         # Copy the full response and return it to be saved in jsonl.

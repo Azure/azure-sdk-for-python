@@ -31,7 +31,7 @@ cd azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation/samples/agent_evaluat
     ```
 2. Install the required packages by running the following command:
     ```bash
-   pip install "git+https://github.com/Azure/azure-sdk-for-python.git@main#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation" azure-ai-projects ipykernel azure-ai-identity
+   pip install "git+https://github.com/Azure/azure-sdk-for-python.git@main#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation" azure-ai-projects ipykernel azure-identity
     ```
 3. To run the examples from the notebook, please install the kernel in your environment:
    ```bash

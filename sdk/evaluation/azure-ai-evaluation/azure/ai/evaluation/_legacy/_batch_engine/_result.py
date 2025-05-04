@@ -20,6 +20,12 @@ class TokenMetrics:
     total_tokens: int
     """The total number of tokens used in the run."""
 
+    def update(self, other: "TokenMetrics") -> None:
+        """Update the token metrics with another set of token metrics."""
+        self.prompt_tokens += other.prompt_tokens
+        self.completion_tokens += other.completion_tokens
+        self.total_tokens += other.total_tokens
+
 
 @dataclass
 class BatchRunError:

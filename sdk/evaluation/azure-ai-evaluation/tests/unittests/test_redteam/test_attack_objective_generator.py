@@ -14,7 +14,7 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation._red_team._attack_objective_generator import (
+    from azure.ai.evaluation.red_team._attack_objective_generator import (
         _AttackObjectiveGenerator, RiskCategory
     )
 

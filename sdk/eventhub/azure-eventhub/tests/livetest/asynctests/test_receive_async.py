@@ -21,7 +21,7 @@ from azure.eventhub._pyamqp._message_backcompat import LegacyMessage
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_end_of_stream_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_end_of_stream_async(auth_credential_senders_async, uamqp_transport, client_args):
     async def on_event(partition_context, event):
         if partition_context.partition_id == "0":
             assert event.body_as_str() == "Receiving only a single event"
@@ -46,6 +46,7 @@ async def test_receive_end_of_stream_async(auth_credential_senders_async, uamqp_
         eventhub_name=eventhub_name,
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     partitions = await producer_client.get_partition_ids()
     senders = []
@@ -58,6 +59,7 @@ async def test_receive_end_of_stream_async(auth_credential_senders_async, uamqp_
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
+        **client_args,
     )
     async with client:
         task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="@latest"))
@@ -86,7 +88,7 @@ async def test_receive_end_of_stream_async(auth_credential_senders_async, uamqp_
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_event_position_async(
-    auth_credential_senders_async, position, inclusive, expected_result, uamqp_transport
+    auth_credential_senders_async, position, inclusive, expected_result, uamqp_transport, client_args
 ):
     async def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get("sequence_number") == event.sequence_number
@@ -111,6 +113,7 @@ async def test_receive_with_event_position_async(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     async with client:
         task = asyncio.ensure_future(
@@ -131,6 +134,7 @@ async def test_receive_with_event_position_async(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     async with client2:
         task = asyncio.ensure_future(
@@ -148,7 +152,7 @@ async def test_receive_with_event_position_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_transport, client_args):
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):
@@ -165,6 +169,7 @@ async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_tr
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     client2 = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -172,6 +177,7 @@ async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_tr
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     async with client1, client2:
         task1 = asyncio.ensure_future(
@@ -195,7 +201,8 @@ async def test_receive_owner_level_async(auth_credential_senders_async, uamqp_tr
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_over_websocket_async(auth_credential_senders_async, uamqp_transport):
+@pytest.mark.no_amqpproxy # Proxy requires TransportType.Amqp
+async def test_receive_over_websocket_async(auth_credential_senders_async, uamqp_transport, client_args):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"
     message_id_base = "mess_id_sample_"
@@ -214,6 +221,7 @@ async def test_receive_over_websocket_async(auth_credential_senders_async, uamqp
         consumer_group="$default",
         transport_type=TransportType.AmqpOverWebsocket,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     event_list = []
