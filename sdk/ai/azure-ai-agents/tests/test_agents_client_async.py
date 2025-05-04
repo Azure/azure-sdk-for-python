@@ -2859,7 +2859,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, include=include)
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
-            steps   = [s async for s in ai_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=include)]
+            steps = [s async for s in ai_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=include)]
             # first (index-1) step is the tool call
             step_id = steps[1].id
             one_step = await ai_client.run_steps.get(
@@ -2958,7 +2958,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     planet_info.append(json.loads(last.text.value))
             assert len(planet_info) == 1
             assert len(planet_info[0]) == 2
-            assert planet_info[0]["mass"]   == pytest.approx(6.4171e23, 1e22)
+            assert planet_info[0]["mass"] == pytest.approx(6.4171e23, 1e22)
             assert planet_info[0]["planet"] == "Mars"
 
     async def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:

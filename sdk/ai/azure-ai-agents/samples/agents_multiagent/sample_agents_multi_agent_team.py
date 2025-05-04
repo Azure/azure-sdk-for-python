@@ -48,7 +48,7 @@ user_function_set_2: Set = {send_email_using_recipient_name}
 user_function_set_3: Set = {convert_temperature}
 
 agents_client.enable_auto_function_calls(
-    functions={
+    {
         _create_task,
         fetch_current_datetime,
         fetch_weather,

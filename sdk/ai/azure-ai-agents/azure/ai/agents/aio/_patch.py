@@ -25,6 +25,7 @@ from typing import (
     overload,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ._client import AgentsClient as AgentsClientGenerated
@@ -608,70 +609,29 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
         return await super().delete_agent(agent_id, **kwargs)
 
-    @overload  # pylint: disable=client-method-missing-kwargs
-    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]], max_retry: int = 10) -> None:
-        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
-        If this is not set, functions must be called manually.
-        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
-        function call or figure out the answer with its knowledge.
-        :keyword functions: A set of callable functions to be used as tools.
-        :type functions: Set[Callable[..., Any]]
-        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
-        :type max_retry: int
-        """
-
-    @overload  # pylint: disable=client-method-missing-kwargs
-    def enable_auto_function_calls(self, *, function_tool: _models.AsyncFunctionTool, max_retry: int = 10) -> None:
-        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
-        If this is not set, functions must be called manually.
-        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
-        function call or figure out the answer with its knowledge.
-        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
-        :type function_tool: Optional[_models.AsyncFunctionTool]
-        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
-        :type max_retry: int
-        """
-
-    @overload  # pylint: disable=client-method-missing-kwargs
-    def enable_auto_function_calls(self, *, toolset: _models.AsyncToolSet, max_retry: int = 10) -> None:
-        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
-        If this is not set, functions must be called manually.
-        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
-        function call or figure out the answer with its knowledge.
-        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
-        :type toolset: Optional[_models.AsyncToolSet]
-        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
-        :type max_retry: int
-        """
-
-    def enable_auto_function_calls(
+    @distributed_trace
+    def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
         self,
-        *,
-        functions: Optional[Set[Callable[..., Any]]] = None,
-        function_tool: Optional[_models.AsyncFunctionTool] = None,
-        toolset: Optional[_models.AsyncToolSet] = None,
+        tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet],
         max_retry: int = 10,
-    ) -> None:  # pylint: disable=client-method-missing-kwargs
+    ) -> None:
         """Enables tool calls to be executed automatically during create_and_process_run or streaming.
         If this is not set, functions must be called manually.
         If automatic function calls fail, the agents will receive error messages allowing it to retry with another
         function call or figure out the answer with its knowledge.
-        :keyword functions: A set of callable functions to be used as tools.
-        :type functions: Set[Callable[..., Any]]
-        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
-        :type function_tool: Optional[_models.AsyncFunctionTool]
-        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
-        :type toolset: Optional[_models.AsyncToolSet]
-        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+
+        :param tools: A function tool, toolset, or a set of callable functions.
+        :type tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet]
+        :param max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
         :type max_retry: int
         """
-        if functions:
-            self._function_tool = _models.AsyncFunctionTool(functions)
-        elif function_tool:
-            self._function_tool = function_tool
-        elif toolset:
-            tool = toolset.get_tool(_models.AsyncFunctionTool)
+        if isinstance(tools, _models.AsyncFunctionTool):
+            self._function_tool = tools
+        elif isinstance(tools, _models.AsyncToolSet):
+            tool = tools.get_tool(_models.AsyncFunctionTool)
             self._function_tool = tool
+        else:
+            self._function_tool = _models.AsyncFunctionTool(tools)
 
         self._function_tool_max_retry = max_retry
 

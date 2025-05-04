@@ -36,6 +36,7 @@ agents_client = AgentsClient(
 with agents_client:
 
     # [START create_agent]
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

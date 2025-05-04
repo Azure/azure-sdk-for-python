@@ -22,7 +22,13 @@ USAGE:
 import asyncio
 import os
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder, MessageTextContent
+from azure.ai.agents.models import (
+    CodeInterpreterTool,
+    FilePurpose,
+    MessageAttachment,
+    ListSortOrder,
+    MessageTextContent,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))

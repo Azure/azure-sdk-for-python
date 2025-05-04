@@ -49,7 +49,7 @@ with agents_client:
     toolset.add(code_interpreter)
 
     # To enable tool calls executed automatically
-    agents_client.enable_auto_function_calls(toolset=toolset)
+    agents_client.enable_auto_function_calls(toolset)
 
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],

@@ -241,11 +241,11 @@ class TestAgentsMock:
             function_in_toolset2 = set(toolset2.get_tool(tool_type=FunctionTool)._functions.values())
             function_tool = FunctionTool(function_in_toolset1)
             function_tool.add_functions(function_in_toolset2)
-            agents_client.enable_auto_function_calls(function_tool=function_tool, max_retry=max_retry)
+            agents_client.enable_auto_function_calls(function_tool, max_retry=max_retry)
         elif toolset1:
-            agents_client.enable_auto_function_calls(toolset=toolset1, max_retry=max_retry)
+            agents_client.enable_auto_function_calls(toolset1, max_retry=max_retry)
         elif toolset2:
-            agents_client.enable_auto_function_calls(toolset=toolset2, max_retry=max_retry)
+            agents_client.enable_auto_function_calls(toolset2, max_retry=max_retry)
 
     @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(
@@ -660,7 +660,7 @@ class TestIntegrationAgentsMock:
             credential=MagicMock(),
         )
         operation.runs = RunsOperations(MagicMock(), MagicMock(), MagicMock(), MagicMock())
-        operation.enable_auto_function_calls(toolset=toolset)
+        operation.enable_auto_function_calls(toolset)
         count = 0
 
         with operation.runs.stream(thread_id="thread_id", agent_id="asst_01") as stream:

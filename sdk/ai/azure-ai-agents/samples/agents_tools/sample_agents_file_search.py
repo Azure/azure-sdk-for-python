@@ -100,5 +100,3 @@ with agents_client:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
             print(f"{msg.role}: {last_text.text.value}")
-
-

@@ -21,7 +21,13 @@ import asyncio
 import os
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType, ListSortOrder, MessageTextContent
+from azure.ai.agents.models import (
+    FileSearchTool,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
+    ListSortOrder,
+    MessageTextContent,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 

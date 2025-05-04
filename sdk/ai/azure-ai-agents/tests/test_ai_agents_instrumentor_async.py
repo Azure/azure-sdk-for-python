@@ -431,14 +431,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         agent = await client.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = await client.threads.create()
         message = await client.messages.create(
@@ -676,7 +676,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = await client.threads.create()
         message = await client.messages.create(
@@ -883,7 +883,6 @@ class MyEventHandler(AsyncAgentEventHandler):
         self.run_id = run.id
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
-        
 
     async def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")

@@ -72,7 +72,9 @@ async def main() -> None:
 
             messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
-            last_msg = await agents_client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
+            last_msg = await agents_client.messages.get_last_text_message_by_role(
+                thread_id=thread.id, role=MessageRole.AGENT
+            )
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 

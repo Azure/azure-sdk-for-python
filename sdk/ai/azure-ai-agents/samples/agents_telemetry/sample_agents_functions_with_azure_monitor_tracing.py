@@ -29,7 +29,13 @@ import os, time, json
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.telemetry import trace_function, enable_telemetry
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput, ListSortOrder
+from azure.ai.agents.models import (
+    FunctionTool,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+    ListSortOrder,
+)
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 

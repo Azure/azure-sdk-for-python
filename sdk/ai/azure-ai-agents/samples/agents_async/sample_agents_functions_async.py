@@ -24,7 +24,14 @@ import asyncio
 import time
 import os
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import AsyncFunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput, ListSortOrder, MessageTextContent
+from azure.ai.agents.models import (
+    AsyncFunctionTool,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+    ListSortOrder,
+    MessageTextContent,
+)
 from azure.identity.aio import DefaultAzureCredential
 from utils.user_async_functions import user_async_functions
 
