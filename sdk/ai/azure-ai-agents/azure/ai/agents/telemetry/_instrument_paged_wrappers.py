@@ -3,13 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Callable, AsyncIterator, Iterator, Optional, cast
+from types import TracebackType
 
-from azure.core.tracing._abstract_span import AbstractSpan
 from opentelemetry.trace import Span, StatusCode
 
+from azure.core.tracing._abstract_span import AbstractSpan
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.paging import ItemPaged
-from types import TracebackType
 
 
 class _SpanLogger:
@@ -25,8 +25,11 @@ class _SpanLogger:
         Log value to the span if span exists.
 
         :param val: The value to be logged.
+        :type val: Any
         :param instrumentation_fun: The function to be used to log val.
+        :type instrumentation_fun: Callable[[AbstractSpan, Any], None]
         :param span: The span to be used for logging. Span must be opened before calling this method.
+        :type span: AbstractSpan
         """
         try:
             instrumentation_fun(span, val)
@@ -54,13 +57,22 @@ class _AsyncInstrumentedItemPaged(AsyncItemPaged, _SpanLogger):
         instrumentation_fun: Callable[[AbstractSpan, Any], None],
         span: Optional[AbstractSpan],
     ) -> None:
+        super().__init__()
         self._iter = async_iter
         self._inst_fun = instrumentation_fun
         self._span = span
         self._gen: Optional[AsyncIterator[Any]] = None
 
     def __getattr__(self, name: str) -> Any:
-        """Delegate every attribute we do not override to the wrapped object"""
+        """
+        Delegate every attribute we do not override to the wrapped object
+
+        :param name: The name of the attribute to get.
+        :type name: str
+
+        :return: The value of the attribute.
+        :rtype: Any
+        """
         return getattr(self._iter, name)
 
     def __aiter__(self) -> AsyncIterator[Any]:
@@ -92,13 +104,22 @@ class _InstrumentedItemPaged(ItemPaged, _SpanLogger):
         instrumentation_fun: Callable[[AbstractSpan, Any], None],
         span: Optional[AbstractSpan],
     ) -> None:
+        super().__init__()
         self._iter = iter_val
         self._inst_fun = instrumentation_fun
         self._span = span
         self._gen: Optional[Iterator[Any]] = None
 
     def __getattr__(self, name: str) -> Any:
-        """Delegate every attribute we do not override to the wrapped object"""
+        """
+        Delegate every attribute we do not override to the wrapped object
+
+        :param name: The name of the attribute to get.
+        :type name: str
+
+        :return: The value of the attribute.
+        :rtype: Any
+        """
         return getattr(self._iter, name)
 
     def __iter__(self) -> Iterator[Any]:

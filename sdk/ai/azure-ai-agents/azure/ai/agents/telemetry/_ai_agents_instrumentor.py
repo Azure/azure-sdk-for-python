@@ -42,7 +42,10 @@ from azure.ai.agents.models._patch import (
     AsyncAgentEventHandler,
     ToolSet,
 )
-from azure.ai.agents.telemetry._utils import (
+from azure.core import CaseInsensitiveEnumMeta  # type: ignore
+from azure.core.settings import settings
+from azure.core.tracing import AbstractSpan
+from ._utils import (
     AZ_AI_AGENT_SYSTEM,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
@@ -66,9 +69,7 @@ from azure.ai.agents.telemetry._utils import (
     OperationName,
     start_span,
 )
-from azure.core import CaseInsensitiveEnumMeta  # type: ignore
-from azure.core.settings import settings
-from azure.core.tracing import AbstractSpan
+from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _InstrumentedItemPaged
 
 
 _Unset: Any = object()
@@ -87,8 +88,6 @@ if TYPE_CHECKING:
 __all__ = [
     "AIAgentsInstrumentor",
 ]
-
-from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _InstrumentedItemPaged
 
 _agents_traces_enabled: bool = False
 _trace_agents_content: bool = False
@@ -790,8 +789,8 @@ class _AIAgentsInstrumentorPreview:
         :rtype: str
         """
         if hasattr(arg, "_config") and hasattr(
-            arg._config,
-            "endpoint",  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            arg._config, # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            "endpoint",
         ):
             endpoint = (
                 arg._config.endpoint  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
