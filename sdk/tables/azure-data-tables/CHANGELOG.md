@@ -1,16 +1,14 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.7.0 (2025-05-06)
 
 ### Features Added
 
 * Added support for configuring custom audiences for `TokenCredential` authentication when initializing a `TableClient` or `TableServiceClient`. ([#40487](https://github.com/Azure/azure-sdk-for-python/pull/40487))
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+
+* Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 12.6.0 (2024-11-21)
 

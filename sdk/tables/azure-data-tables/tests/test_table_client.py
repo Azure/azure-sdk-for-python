@@ -190,6 +190,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         assert ("Please check your account URL.") in str(exc.value)
         valid_tc.delete_table()
 
+    @pytest.mark.skip("Test missing recording")
     @tables_decorator
     @recorded_by_proxy
     def test_error_handling(self, tables_storage_account_name, tables_primary_storage_account_key):
