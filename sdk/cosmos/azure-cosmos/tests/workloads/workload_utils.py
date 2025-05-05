@@ -1,15 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
-import logging
 import os
 import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 from azure.monitor.opentelemetry import configure_azure_monitor
-from workload_configs import (NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY, USER_AGENT_PREFIX,
-                              APP_INSIGHTS_CONNECTION_STRING, CIRCUIT_BREAKER_ENABLED)
+from workload_configs import *
 
 _NOISY_ERRORS = set([404, 409, 412])
 _NOISY_SUB_STATUS_CODES = set([0, None])
@@ -120,7 +118,7 @@ def create_logger(file_name):
         maxBytes=1024 * 1024 * 10,  # 10 mb
         backupCount=2
     )
-    logger.setLevel(logging.INFO)
+    logger.setLevel(LOG_LEVEL)
     # create filters for the logger handler to reduce the noise
     workload_logger_filter = WorkloadLoggerFilter()
     handler.addFilter(workload_logger_filter)
