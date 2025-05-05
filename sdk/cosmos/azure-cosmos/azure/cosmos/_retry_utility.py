@@ -249,11 +249,7 @@ def _handle_service_request_retries(
         client,
         request_retry_policy,
         exception,
-        start_time,
-        global_endpoint_manager,
-        client_timeout,
-        *args,
-        **kwargs
+        *args
 ):
     # we resolve the request endpoint to the next preferred region
     # once we are out of preferred regions we stop retrying
@@ -262,8 +258,6 @@ def _handle_service_request_retries(
         if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
         raise exception
-    else:
-        check_client_timeout(args, client_timeout, global_endpoint_manager, start_time, kwargs)
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
     if request and _has_read_retryable_headers(request.headers):

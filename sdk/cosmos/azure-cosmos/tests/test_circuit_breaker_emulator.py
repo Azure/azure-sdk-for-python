@@ -3,13 +3,12 @@
 import os
 import unittest
 import uuid
-from time import sleep
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker, documents
+from azure.cosmos import _partition_health_tracker, documents
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
@@ -24,15 +23,7 @@ COLLECTION = "created_collection"
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-    client = CosmosClient(TestCircuitBreakerEmulator.host, TestCircuitBreakerEmulator.master_key)
-    created_database = client.get_database_client(TestCircuitBreakerEmulator.TEST_DATABASE_ID)
-    created_database.create_container(TestCircuitBreakerEmulator.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                            partition_key=PartitionKey("/pk"),
-                                            offer_throughput=10000)
-    # allow some time for the container to be created as this method is in different event loop
-    sleep(3)
     yield
-    created_database.delete_container(TestCircuitBreakerEmulator.TEST_CONTAINER_SINGLE_PARTITION_ID)
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
 def create_custom_transport_mm():
@@ -56,7 +47,7 @@ class TestCircuitBreakerEmulator:
     master_key = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
