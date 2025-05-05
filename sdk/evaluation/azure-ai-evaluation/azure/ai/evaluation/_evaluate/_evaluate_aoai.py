@@ -240,8 +240,12 @@ def _get_single_run_results(
         eval_id=run_info["eval_group_id"],
         run_id=run_info["eval_run_id"]
     )
-    listed_results = {}
+    listed_results = {"index": []}
+    # raw data has no order guarantees, we need to sort them by their
+    # datasource_item_id
     for row_result in raw_list_results.data:
+        # Add the datasource_item_id for later sorting
+        listed_results["index"].append(row_result.datasource_item_id)
         for single_grader_row_result in row_result.results:
             grader_name = run_info["grader_name_map"][single_grader_row_result["name"]]
             for name, value in single_grader_row_result.items():
@@ -251,14 +255,19 @@ def _get_single_run_results(
                     # create a `_result` column for each grader
                     result_column_name = f"outputs.{grader_name}.{grader_name}_result"
                     if len(result_column_name) < 50: #TODO: is this the limit? Should we keep "passed"?
-                        listed_results[result_column_name] = EVALUATION_PASS_FAIL_MAPPING[value]
+                        if (result_column_name not in listed_results):
+                            listed_results[result_column_name] = []
+                        listed_results[result_column_name].append(EVALUATION_PASS_FAIL_MAPPING[value])
 
                 formatted_column_name = f"outputs.{grader_name}.{name}"
                 if (formatted_column_name not in listed_results):
                     listed_results[formatted_column_name] = []
-                listed_results[f"outputs.{grader_name}.{name}"].append(value)
+                listed_results[formatted_column_name].append(value)
     output_df = pd.DataFrame(listed_results)
-
+    # sort by index
+    output_df = output_df.sort_values('index', ascending=[True])
+    # remove index column
+    output_df.drop(columns=["index"], inplace=True)
     return output_df, run_metrics
 
 
