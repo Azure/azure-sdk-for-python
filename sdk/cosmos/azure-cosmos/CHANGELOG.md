@@ -1,12 +1,13 @@
 ## Release History
 
-### 4.11.0b2 (Unreleased)
+### 4.11.0b2 (unreleased)
 
 #### Features Added
-
-#### Breaking Changes
+* Added ability to use weighted RRF (Reciprocal Rank Fusion) for Hybrid full text search queries. See [PR 40822](https://github.com/Azure/azure-sdk-for-python/pull/40822).
 
 #### Bugs Fixed
+
+#### Breaking Changes
 
 #### Other Changes
 

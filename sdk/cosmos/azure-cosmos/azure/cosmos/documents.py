@@ -438,7 +438,7 @@ class _QueryFeature:
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
     HybridSearch: Literal["HybridSearch"] = "HybridSearch"
     CountIf: Literal["CountIf"] = "CountIf"
-
+    WeightedRankFusion: Literal["WeightedRankFusion"] = "WeightedRankFusion"
 
 class _DistinctType:
     NoneType: Literal["None"] = "None"
