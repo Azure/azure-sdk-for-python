@@ -11,7 +11,7 @@ try:
 except ImportError:
     has_pyrit = False
 
-if has_pyrit
+if has_pyrit:
     from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
     from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
     from pyrit.models import PromptRequestResponse, PromptRequestPiece
