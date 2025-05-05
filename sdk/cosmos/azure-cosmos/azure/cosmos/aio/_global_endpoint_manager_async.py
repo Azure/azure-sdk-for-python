@@ -87,6 +87,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_write_locations(self):
         return self.location_cache.get_ordered_write_locations()
 
+    def get_ordered_read_locations(self):
+        return self.location_cache.get_ordered_read_locations()
+
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 

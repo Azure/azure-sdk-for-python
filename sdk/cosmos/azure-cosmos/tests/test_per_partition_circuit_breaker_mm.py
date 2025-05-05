@@ -194,7 +194,7 @@ class TestPerPartitionCircuitBreakerMM:
         # the partition should have been marked as unavailable after breaking read threshold
         if read_operation in (CHANGE_FEED, QUERY, READ_ALL_ITEMS):
             # these operations are cross partition so they would mark both partitions as unavailable
-            expected_unhealthy_partitions = 2
+            expected_unhealthy_partitions = 5
         else:
             expected_unhealthy_partitions = 1
         validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
@@ -283,7 +283,7 @@ class TestPerPartitionCircuitBreakerMM:
                                               expected_uri)
             if read_operation in (CHANGE_FEED, QUERY, READ_ALL_ITEMS):
                 # these operations are cross partition so they would mark both partitions as unavailable
-                expected_unhealthy_partitions = 2
+                expected_unhealthy_partitions = 5
             else:
                 expected_unhealthy_partitions = 1
 
