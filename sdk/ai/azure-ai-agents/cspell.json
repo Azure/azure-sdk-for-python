@@ -10,8 +10,11 @@
       "HORIZCHEM",
       "VELRAIL",
       "AEROJET",
-      "OCEACARGO"
+      "OCEACARGO",
+      "GENAI"
     ],
     "ignorePaths": [
+      "*.csv",
+      "*.json"
     ]
   }
