@@ -88,8 +88,18 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
 
-    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
-    def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "conv", "m_config"),
+        (
+            ("project_scope", "azure_cred", "data_file", "model_config"),
+            # ("project_scope_onedp", "azure_cred_onedp", "data_file", "model_config_onedp"),
+        )
+    )
+    def test_evaluate_singleton_inputs(self, request, proj_scope, cred, conv, m_config):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        data_file = request.getfixturevalue(conv)
+        model_config = request.getfixturevalue(m_config)
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
         evaluators = {
@@ -184,7 +194,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 62
+        assert len(metrics.keys()) == 76
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -225,7 +235,19 @@ class TestMassEvaluate:
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
 
-    def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "conv", "m_config"),
+        (
+            ("project_scope", "azure_cred", "data_convo_file", "model_config"),
+            # ("project_scope_onedp", "azure_cred_onedp", "data_convo_file", "model_config_onedp"),
+        )
+    )
+    def test_evaluate_conversation(self, request, proj_scope, cred, conv, m_config):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        data_convo_file = request.getfixturevalue(conv)
+        model_config = request.getfixturevalue(m_config)
+        
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
             "coherence": CoherenceEvaluator(model_config),
