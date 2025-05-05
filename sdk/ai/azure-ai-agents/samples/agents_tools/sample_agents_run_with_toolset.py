@@ -49,7 +49,7 @@ with agents_client:
     toolset.add(code_interpreter)
 
     # To enable tool calls executed automatically
-    agents_client.enable_auto_function_calls(toolset=toolset)
+    agents_client.enable_auto_function_calls(toolset)
 
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -87,4 +87,7 @@ with agents_client:
 
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

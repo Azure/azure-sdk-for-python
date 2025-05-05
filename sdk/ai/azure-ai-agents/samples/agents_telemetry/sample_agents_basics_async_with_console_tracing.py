@@ -36,7 +36,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import ListSortOrder
+from azure.ai.agents.models import ListSortOrder, MessageTextContent
 from azure.ai.agents.telemetry import enable_telemetry
 from azure.identity.aio import DefaultAzureCredential
 from opentelemetry import trace
@@ -91,8 +91,11 @@ async def main() -> None:
             await agent_client.delete_agent(agent.id)
             print("Deleted agent")
 
-            messages = await agent_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            print(f"Messages: {messages}")
+            messages = agent_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+            async for msg in messages:
+                last_part = msg.content[-1]
+                if isinstance(last_part, MessageTextContent):
+                    print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

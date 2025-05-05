@@ -26,6 +26,7 @@ from typing import List
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
+    ListSortOrder,
     MessageTextContent,
     MessageInputContentBlock,
     MessageImageFileParam,
@@ -80,13 +81,11 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.
-    for data_point in reversed(messages.data):
-        last_message_content = data_point.content[-1]
-        if isinstance(last_message_content, MessageTextContent):
-            print(f"{data_point.role}: {last_message_content.text.value}")
-
-    print(f"Messages: {messages}")
+    for msg in messages:
+        last_part = msg.content[-1]
+        if isinstance(last_part, MessageTextContent):
+            print(f"{msg.role}: {last_part.text.value}")

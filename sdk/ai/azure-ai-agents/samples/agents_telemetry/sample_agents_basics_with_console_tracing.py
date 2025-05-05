@@ -38,6 +38,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents import AgentsClient
+from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
@@ -83,5 +84,8 @@ with tracer.start_as_current_span(scenario):
         agents_client.delete_agent(agent.id)
         print("Deleted agent")
 
-        messages = agents_client.messages.list(thread_id=thread.id)
-        print(f"messages: {messages}")
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+        for msg in messages:
+            if msg.text_messages:
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")

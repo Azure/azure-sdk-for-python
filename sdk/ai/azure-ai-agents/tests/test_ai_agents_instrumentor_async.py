@@ -138,7 +138,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         await client.close()
 
         self.exporter.force_flush()
@@ -279,7 +280,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        message_async = client.messages.list(thread_id=thread.id)
+        messages = [m async for m in message_async]
+        assert len(messages) > 1
         await client.close()
 
         self.exporter.force_flush()
@@ -428,32 +431,48 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         agent = await client.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = await client.threads.create()
         message = await client.messages.create(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
         )
 
+        event_handler = MyEventHandler()
         async with await client.runs.stream(
-            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=event_handler
         ) as stream:
             await stream.until_done()
 
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
+        steps = [step async for step in client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id)]
+        assert len(steps) >= 1
         await client.close()
 
         self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("list_run_steps")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.operation.name", "list_run_steps"),
+            ("server.address", ""),
+            ("gen_ai.thread.id", ""),
+            ("gen_ai.thread.run.id", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
@@ -657,7 +676,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = await client.threads.create()
         message = await client.messages.create(
@@ -672,7 +691,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         await client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = await client.messages.list(thread_id=thread.id)
+        messages = [m async for m in client.messages.list(thread_id=thread.id)]
+        assert len(messages) > 1
         await client.close()
 
         self.exporter.force_flush()
@@ -860,7 +880,7 @@ class MyEventHandler(AsyncAgentEventHandler):
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
-
+        self.run_id = run.id
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 

@@ -26,6 +26,7 @@ from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.agents.models import (
     MessageDeltaChunk,
+    ListSortOrder,
     RunStep,
     ThreadMessage,
     ThreadRun,
@@ -49,7 +50,7 @@ toolset = ToolSet()
 toolset.add(functions)
 
 with agents_client:
-    agents_client.enable_auto_function_calls(toolset=toolset)
+    agents_client.enable_auto_function_calls(toolset)
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -98,5 +99,8 @@ with agents_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

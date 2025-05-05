@@ -83,23 +83,25 @@ with agents_client:
     messages = agents_client.messages.list(thread_id=thread.id)
     print(f"Messages: {messages}")
 
-    for image_content in messages.image_contents:
-        file_id = image_content.image_file.file_id
-        print(f"Image File ID: {file_id}")
-        file_name = f"{file_id}_image_file.png"
-        agents_client.files.save(file_id=file_id, file_name=file_name)
-        print(f"Saved image file to: {Path.cwd() / file_name}")
+    for msg in messages:
+        # Save every image file in the message
+        for img in msg.image_contents:
+            file_id = img.image_file.file_id
+            file_name = f"{file_id}_image_file.png"
+            agents_client.files.save(file_id=file_id, file_name=file_name)
+            print(f"Saved image file to: {Path.cwd() / file_name}")
 
-    for file_path_annotation in messages.file_path_annotations:
-        print(f"File Paths:")
-        print(f"Type: {file_path_annotation.type}")
-        print(f"Text: {file_path_annotation.text}")
-        print(f"File ID: {file_path_annotation.file_path.file_id}")
-        print(f"Start Index: {file_path_annotation.start_index}")
-        print(f"End Index: {file_path_annotation.end_index}")
+        # Print details of every file-path annotation
+        for ann in msg.file_path_annotations:
+            print("File Paths:")
+            print(f"  Type: {ann.type}")
+            print(f"  Text: {ann.text}")
+            print(f"  File ID: {ann.file_path.file_id}")
+            print(f"  Start Index: {ann.start_index}")
+            print(f"  End Index: {ann.end_index}")
     # [END get_messages_and_save_files]
 
-    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
+    last_msg = agents_client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 

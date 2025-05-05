@@ -192,7 +192,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -336,7 +337,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -490,7 +492,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")
@@ -501,7 +503,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -711,7 +714,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="Ð’Ñ€ÐµÐ¼ÐµÑ‚Ð¾ Ð² Ð¡Ð¾Ñ„Ð¸Ñ�?")
@@ -722,7 +725,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -815,14 +819,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         agent = client.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")
 
@@ -832,7 +836,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
         client.close()
 
         self.exporter.force_flush()
@@ -1041,7 +1046,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset=toolset)
+        client.enable_auto_function_calls(toolset)
 
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="What is the weather in New York?")
@@ -1053,8 +1058,10 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         # delete agent and close client
         client.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.messages.list(thread_id=thread.id)
-        client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id)
+        messages = list(client.messages.list(thread_id=thread.id))
+        assert len(messages) > 1
+        steps = list(client.run_steps.list(thread_id=thread.id, run_id=event_handler.run_id))
+        assert len(steps) >= 1
         client.close()
 
         self.exporter.force_flush()

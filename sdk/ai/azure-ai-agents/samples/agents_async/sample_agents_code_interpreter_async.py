@@ -70,29 +70,30 @@ async def main() -> None:
                 # Check if you got "Rate limit is exceeded.", then you want to get more quota
                 print(f"Run failed: {run.last_error}")
 
-            messages = await agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            print(f"Messages: {messages}")
+            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
-            last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
+            last_msg = await agents_client.messages.get_last_text_message_by_role(
+                thread_id=thread.id, role=MessageRole.AGENT
+            )
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 
-            for image_content in messages.image_contents:
-                print(f"Image File ID: {image_content.image_file.file_id}")
-                file_name = f"{image_content.image_file.file_id}_image_file.png"
-                await agents_client.files.save(file_id=image_content.image_file.file_id, file_name=file_name)
-                print(f"Saved image file to: {Path.cwd() / file_name}")
+            async for msg in messages:
+                # Save every image file in the message
+                for img in msg.image_contents:
+                    file_id = img.image_file.file_id
+                    file_name = f"{file_id}_image_file.png"
+                    await agents_client.files.save(file_id=file_id, file_name=file_name)
+                    print(f"Saved image file to: {Path.cwd() / file_name}")
 
-            for file_path_annotation in messages.file_path_annotations:
-                print(f"File Paths:")
-                print(f"Type: {file_path_annotation.type}")
-                print(f"Text: {file_path_annotation.text}")
-                print(f"File ID: {file_path_annotation.file_path.file_id}")
-                print(f"Start Index: {file_path_annotation.start_index}")
-                print(f"End Index: {file_path_annotation.end_index}")
-                file_name = Path(file_path_annotation.text).name
-                await agents_client.files.save(file_id=file_path_annotation.file_path.file_id, file_name=file_name)
-                print(f"Saved image file to: {Path.cwd() / file_name}")
+                # Print details of every file-path annotation
+                for ann in msg.file_path_annotations:
+                    print("File Paths:")
+                    print(f"  Type: {ann.type}")
+                    print(f"  Text: {ann.text}")
+                    print(f"  File ID: {ann.file_path.file_id}")
+                    print(f"  Start Index: {ann.start_index}")
+                    print(f"  End Index: {ann.end_index}")
 
             await agents_client.delete_agent(agent.id)
             print("Deleted agent")

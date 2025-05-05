@@ -19,8 +19,8 @@ USAGE:
     1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, as found in the 
-       "Connected resources" tab in your Azure AI Foundry project.
+    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, in the format of:
+       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
 import os
@@ -36,8 +36,6 @@ agents_client = AgentsClient(
 
 # [START create_agent_with_bing_grounding_tool]
 conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
-
-print(conn_id)
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -73,12 +71,31 @@ with agents_client:
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
+    # Fetch run steps to get the details of the agent run
+    run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
+    for step in run_steps:
+        print(f"Step {step['id']} status: {step['status']}")
+        step_details = step.get("step_details", {})
+        tool_calls = step_details.get("tool_calls", [])
+
+        if tool_calls:
+            print("  Tool calls:")
+            for call in tool_calls:
+                print(f"    Tool Call ID: {call.get('id')}")
+                print(f"    Type: {call.get('type')}")
+
+                bing_grounding_details = call.get("bing_grounding", {})
+                if bing_grounding_details:
+                    print(f"    Bing Grounding ID: {bing_grounding_details.get('requesturl')}")
+
+        print()  # add an extra newline between steps
+
     # Delete the agent when done
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
     # Print the Agent's response message with optional citation
-    response_message = agents_client.messages.list(thread_id=thread.id).get_last_message_by_role(MessageRole.AGENT)
+    response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
         for text_message in response_message.text_messages:
             print(f"Agent response: {text_message.text.value}")
