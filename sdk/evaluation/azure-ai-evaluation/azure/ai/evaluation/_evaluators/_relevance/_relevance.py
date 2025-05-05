@@ -59,7 +59,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
 
-    id = "azureml://registries/azureml/models/Relevance-Evaluator/versions/4"
+    id = "azureml://registries/azureml/models/Relevance-Evaluator/versions/6"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
