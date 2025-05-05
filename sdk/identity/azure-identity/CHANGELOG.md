@@ -1,8 +1,6 @@
 # Release History
 
-## 1.21.1 (Unreleased)
-
-### Features Added
+## 1.22.0 (2025-05-06)
 
 ### Breaking Changes
 
@@ -15,6 +13,7 @@
 ### Other Changes
 
 - Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 1.21.0 (2025-03-11)
 
