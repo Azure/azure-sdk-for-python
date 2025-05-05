@@ -55,10 +55,16 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 
 
 def _format_error(payload: str) -> str:
-    output = json.loads(payload)
-    ret_str = "\n\t" + "Code: " + output['code'] + "\n"
-    message = output["message"].replace("\r\n", "\n\t\t").replace(",", ",\n\t\t")
-    ret_str += "\t" + message + "\n"
+    try:
+        output = json.loads(payload)
+        ret_str = "\n\t" + "Code: " + output['code'] + "\n"
+        message = output["message"].replace("\r\n", "\n\t\t").replace(",", ",\n\t\t")
+        ret_str += "\t" + message + "\n"
+    except (json.JSONDecodeError, KeyError):
+        try:
+            ret_str = "\t" + payload.replace("\r\n", "\n\t\t").replace(",", ",\n\t\t") + "\n"
+        except AttributeError:
+            ret_str = payload
     return ret_str
 
 
