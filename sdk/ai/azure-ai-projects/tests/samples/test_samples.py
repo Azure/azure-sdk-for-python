@@ -7,6 +7,7 @@ import csv
 import os
 import pytest
 import importlib.util
+from azure.core.exceptions import HttpResponseError
 
 
 class TestSamples:
@@ -97,6 +98,11 @@ class TestSamples:
             code = f.read()
             try:
                 exec(code)
+            except HttpResponseError as exc:
+                exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
+                TestSamples._results[sample_name] = (False, exception_message)
+                print(f"=================> Error running sample {sample_path}: {exception_message}")
+                raise Exception from exc
             except Exception as exc:
                 TestSamples._results[sample_name] = (False, str(exc))
                 print(f"=================> Error running sample {sample_path}: {exc}")
@@ -135,6 +141,11 @@ class TestSamples:
         # Await the main() coroutine defined in the sample
         try:
             await module.main()
+        except HttpResponseError as exc:
+            exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
+            TestSamples._results[sample_name] = (False, exception_message)
+            print(f"=================> Error running sample {sample_path}: {exception_message}")
+            raise Exception from exc
         except Exception as exc:
             TestSamples._results[sample_name] = (False, str(exc))
             print(f"=================> Error running sample {sample_path}: {exc}")
