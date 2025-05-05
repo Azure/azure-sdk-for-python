@@ -333,7 +333,6 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :rtype: str
         """
         params_override = params_override or []
-        import pdb; pdb.set_trace()
 
         with open(request_file, "rb") as f:  # type: ignore[arg-type]
             data = json.loads(f.read())
