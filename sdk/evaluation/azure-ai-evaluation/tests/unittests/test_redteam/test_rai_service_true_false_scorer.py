@@ -2,9 +2,19 @@
 import pytest
 import unittest.mock as mock
 import logging
-from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
-from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
-from pyrit.models import PromptRequestPiece, Score, UnvalidatedScore
+
+try:
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
+
+if has_pyrit:
+    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+    from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
+    from pyrit.models import PromptRequestPiece, Score, UnvalidatedScore
+    from pyrit.common import initialize_pyrit, IN_MEMORY
+    initialize_pyrit(memory_db_type=IN_MEMORY)
 
 # Mocks
 MockGeneratedRAIClient = mock.Mock()

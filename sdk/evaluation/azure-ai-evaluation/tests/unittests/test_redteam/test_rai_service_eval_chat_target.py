@@ -3,13 +3,21 @@ import pytest
 import unittest.mock as mock
 from unittest.mock import MagicMock
 import json
-from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
-from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
-from pyrit.models import PromptRequestResponse, PromptRequestPiece
-from pyrit.common import initialize_pyrit, IN_MEMORY
 from azure.core.credentials import TokenCredential
 
-initialize_pyrit(memory_db_type=IN_MEMORY)
+try:
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
+
+if has_pyrit
+    from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
+    from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
+    from pyrit.models import PromptRequestResponse, PromptRequestPiece
+    from pyrit.common import initialize_pyrit, IN_MEMORY
+
+    initialize_pyrit(memory_db_type=IN_MEMORY)
 
 # Create mock objects for testing
 @pytest.fixture
