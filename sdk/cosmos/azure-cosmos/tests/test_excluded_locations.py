@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
+import re
 import unittest
 import uuid
 import test_config
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from azure.cosmos.http_constants import ResourceType
 
 
 class MockHandler(logging.Handler):
@@ -102,66 +102,23 @@ def read_item_test_data():
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
 
-def query_items_change_feed_test_data():
+
+def write_item_test_data():
     client_only_output_data = [
-        [L1, L1, L1, L1],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L1, L1, L1],   #2
-        [L1, L1, L1, L1]    #3
+        [L1],  # 0
+        [L2],  # 1
+        [L0],  # 2
+        [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L1, L1, L2, L2],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L1, L2, L2],   #2
-        [L2, L2, L1, L1],   #3
-        [L1, L1, L1, L1],   #4
-        [L2, L2, L1, L1],   #5
-        [L1, L1, L1, L1],   #6
-        [L1, L1, L1, L1],   #7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def replace_item_test_data():
-    client_only_output_data = [
-        [L1, L1],   #0
-        [L2, L2],   #1
-        [L1, L0],   #2
-        [L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2],   #0
-        [L2, L2],   #1
-        [L2, L2],   #2
-        [L1, L0],   #3
-        [L1, L0],   #4
-        [L1, L1],   #5
-        [L1, L1],   #6
-        [L1, L1],   #7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def patch_item_test_data():
-    client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #3
-        [L1]    #4
-    ]
-    client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L0],  # 3
+        [L0],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
     ]
     all_output_test_data = client_only_output_data + client_and_request_output_data
 
@@ -212,16 +169,23 @@ def _verify_endpoint(messages, client, expected_locations):
     # get location
     actual_locations = set()
     for req_url in req_urls:
-        if req_url.startswith(default_endpoint):
-            actual_locations.add(L0)
-        else:
-            for endpoint in location_mapping:
-                if req_url.startswith(endpoint):
-                    location = location_mapping[endpoint]
-                    actual_locations.add(location)
-                    break
+        print(req_url)
+        match = re.search(r"x\-ms\-thinclient\-proxy\-resource\-type': '([^']+)'", req_url)
+        if match:
+            resource_type = match.group(1)
+            # only check the document and partition key requests because that is where excluded locations
+            # is applicable
+            if resource_type in (ResourceType.Document, ResourceType.PartitionKey):
+                if req_url.startswith(default_endpoint):
+                    actual_locations.add(L0)
+                else:
+                    for endpoint in location_mapping:
+                        if req_url.startswith(endpoint):
+                            location = location_mapping[endpoint]
+                            actual_locations.add(location)
+                            break
 
-    assert list(actual_locations) == list(set(expected_locations))
+    assert actual_locations == set(expected_locations)
 
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
@@ -276,7 +240,7 @@ class TestExcludedLocations:
         # Verify endpoint locations
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_change_feed_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_query_items_change_feed(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -295,7 +259,7 @@ class TestExcludedLocations:
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_replace_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -314,9 +278,9 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_upsert_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -336,9 +300,9 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_create_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -355,9 +319,9 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -385,7 +349,7 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -414,7 +378,7 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_delete_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
