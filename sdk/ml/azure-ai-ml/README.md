@@ -43,9 +43,6 @@ ml_client = MLClient(
 ```
 
 ## Key concepts
-```mermaid
-  info
-```
 
 Below is a high level sequence diagram illustrating the package's workflow:
 ```mermaid
