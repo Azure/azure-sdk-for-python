@@ -36,6 +36,7 @@ USAGE:
 
 
 import os
+import sys
 from typing import Set
 
 from azure.ai.agents import AgentsClient
@@ -43,6 +44,10 @@ from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
 # Example user function
+current_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 from samples.utils.user_functions import fetch_current_datetime
 
 # Import AzureLogicAppTool and the function factory from user_logic_apps
@@ -84,6 +89,8 @@ with agents_client:
     functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()
     toolset.add(functions)
+
+    agents_client.enable_auto_function_calls(toolset)
 
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
