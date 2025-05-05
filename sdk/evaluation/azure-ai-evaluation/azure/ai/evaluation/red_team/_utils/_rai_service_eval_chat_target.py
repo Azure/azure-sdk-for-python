@@ -78,7 +78,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         # Format the response in a way that PyRIT's scorer can parse
         # Use "true"/"false" string for score_value which is required for true_false score type
         scorer_compatible_response = {
-            "score_value": "true" if boolean_result else "false",  # PyRIT requires lowercase "true" or "false" for true_false scores
+            "score_value": boolean_result,  # PyRIT requires lowercase "true" or "false" for true_false scores
             "description": f"Threshold: {threshold}, Result: {result}",
             "rationale": reason,
             "metadata": {

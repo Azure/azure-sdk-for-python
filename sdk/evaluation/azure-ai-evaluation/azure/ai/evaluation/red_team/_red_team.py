@@ -49,6 +49,7 @@ from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -60,6 +61,7 @@ from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrc
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
+from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
 
 # Retry imports
 import httpx
@@ -1134,6 +1136,141 @@ class RedTeam():
         self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
         return orchestrator
 
+    async def _crescendo_orchestrator(
+        self, 
+        chat_target: PromptChatTarget, 
+        all_prompts: List[str], 
+        converter: Union[PromptConverter, List[PromptConverter]], 
+        *,
+        strategy_name: str = "unknown", 
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+    ) -> Orchestrator:
+        """Send prompts via the CrescendoOrchestrator with optimized performance.
+        
+        Creates and configures a PyRIT CrescendoOrchestrator to send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: str
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        max_turns = 10  # Set a default max turns value
+        max_backtracks = 5
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
+        
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+
+        for prompt_idx, prompt in enumerate(all_prompts):
+            prompt_start_time = datetime.now()
+            self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")  
+            try: 
+                red_llm_scoring_target = RAIServiceEvalChatTarget(
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                azure_rai_service_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
+                    objective=prompt,
+                    logger=self.logger,
+                )
+
+                orchestrator = CrescendoOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=azure_rai_service_target,
+                    max_turns=max_turns,
+                    scoring_target=red_llm_scoring_target,
+                    max_backtracks=max_backtracks,
+                )
+            
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
+
+                # Initialize output path for memory labelling
+                base_path = str(uuid.uuid4())
+                
+                # If scan output directory exists, place the file there
+                if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                    output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+                else:
+                    output_path = f"{base_path}{DATA_EXT}"
+
+                self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+                try:  # Create retry decorator for this specific call with enhanced retry strategy
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def send_prompt_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.run_attack_async(objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                timeout=timeout  # Use provided timeouts
+                            )
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                                ConnectionError, TimeoutError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                                httpx.HTTPStatusError) as e:
+                            # Log the error with enhanced information and allow retry logic to handle it
+                            self.logger.warning(f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}")
+                            # Add a small delay before retry to allow network recovery
+                            await asyncio.sleep(1)
+                            raise
+                    
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds")
+                    
+                    # Print progress to console 
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}")
+                        
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results")
+                    self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1} after {timeout} seconds.", exc_info=True)
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    # Continue with partial results rather than failing completely
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category_name}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    # Continue with other batches even if one fails
+                    continue              
+            except Exception as e:
+                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}")
+                self.task_statuses[task_key] = TASK_STATUS["FAILED"]
+                raise
+        self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+        return orchestrator
+
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
         
@@ -1237,11 +1374,13 @@ class RedTeam():
         """
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         if isinstance(attack_strategy, list):
-            if AttackStrategy.MultiTurn in attack_strategy:
-                self.logger.error("MultiTurn strategy is not supported in composed attacks.")
-                raise ValueError("MultiTurn strategy is not supported in composed attacks.")
+            if AttackStrategy.MultiTurn in attack_strategy or AttackStrategy.Crescendo in attack_strategy:
+                self.logger.error("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+                raise ValueError("MultiTurn and Crescendo strategies are not supported in composed attacks.")
         elif AttackStrategy.MultiTurn == attack_strategy:
             return self._multi_turn_orchestrator
+        elif AttackStrategy.Crescendo == attack_strategy:
+            return self._crescendo_orchestrator
         return self._prompt_sending_orchestrator
     
     # Replace with utility function
