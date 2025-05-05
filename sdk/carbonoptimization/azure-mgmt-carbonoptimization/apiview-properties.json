@@ -37,8 +37,11 @@
         "azure.mgmt.carbonoptimization.models.EmissionScopeEnum": "Microsoft.Carbon.EmissionScopeEnum",
         "azure.mgmt.carbonoptimization.models.OrderByColumnEnum": "Microsoft.Carbon.OrderByColumnEnum",
         "azure.mgmt.carbonoptimization.models.SortDirectionEnum": "Microsoft.Carbon.SortDirectionEnum",
-        "azure.mgmt.carbonoptimization.CarbonOptimizationMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
-        "azure.mgmt.carbonoptimization.CarbonOptimizationMgmtClient.carbon_service.query_carbon_emission_reports": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReports",
-        "azure.mgmt.carbonoptimization.CarbonOptimizationMgmtClient.carbon_service.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange"
+        "azure.mgmt.carbonoptimization.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.carbonoptimization.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_reports": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReports",
+        "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_reports": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReports",
+        "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange",
+        "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange"
     }
 }

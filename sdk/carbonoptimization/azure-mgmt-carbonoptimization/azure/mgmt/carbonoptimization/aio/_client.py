@@ -17,7 +17,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CarbonOptimizationMgmtClientConfiguration
 from .operations import CarbonServiceOperations, Operations
 
@@ -36,7 +36,7 @@ class CarbonOptimizationMgmtClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-04-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
