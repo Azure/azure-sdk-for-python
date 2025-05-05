@@ -7,7 +7,7 @@ import pytest
 import requests
 from ci_tools.variables import in_ci
 from typing import Optional
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 from azure.ai.evaluation import (
     CoherenceEvaluator,
@@ -510,7 +510,7 @@ class TestEvaluate:
     @pytest.mark.parametrize("use_entra_id_auth", [False, True])
     @pytest.mark.parametrize("use_run_submitter_client", [False, True])
     @pytest.mark.parametrize("use_legacy_prompty", [False, True])
-    @pytest.mark.usefixtures("restore_env_vars")  # Reset environment variables after the test
+    @pytest.mark.usefixtures("restore_env_vars", "legacy_prompty_patched_credential")
     def test_evaluate_with_auth(
         self,
         model_config: AzureOpenAIModelConfiguration,
@@ -563,4 +563,3 @@ class TestEvaluate:
         if use_entra_id_auth and not use_legacy_prompty and prompty_patched_credential:
             # in used Entra auth, and running in playback mode, the credential should be called only once
             prompty_patched_credential.assert_awaited_once()
-
