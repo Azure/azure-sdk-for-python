@@ -25,7 +25,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
     master_key = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
