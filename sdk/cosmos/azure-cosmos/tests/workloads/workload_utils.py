@@ -14,7 +14,8 @@ _NOISY_SUB_STATUS_CODES = set([0, None])
 _REQUIRED_ATTRIBUTES = ["resource_type", "verb", "operation_type", "status_code", "sub_status_code", "duration"]
 
 def get_user_agent(client_id):
-    return USER_AGENT_PREFIX + "-" + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
+    prefix = USER_AGENT_PREFIX + "-" if USER_AGENT_PREFIX else ""
+    return prefix + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
 def get_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)

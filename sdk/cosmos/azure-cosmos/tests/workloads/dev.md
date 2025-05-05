@@ -9,7 +9,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
    - 32 GB RAM
    - Ubuntu
    - Accelerated networking
-1. Create a Azure App Insights Resource (Optional)
+1. Create an Azure App Insights Resource (Optional)
 1. Fork and clone this repository
 1. Go to azure cosmos folder
    - `cd azure-sdk-for-python/sdk/cosmos/azure-cosmos`
