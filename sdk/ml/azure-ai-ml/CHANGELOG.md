@@ -1,6 +1,6 @@
 # Release History
 
-## 1.27.0 (unreleased)
+## 1.27.0 (2025-05-06)
 
 ### Features Added
 - Added Target storage connection for capability host.
