@@ -90,5 +90,8 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
     ) -> KnowledgeAgentRetrievalResponse:
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return await self._client.knowledge_retrieval.retrieve(
-            retrieval_request, x_ms_query_source_authorization, request_options, **kwargs
+            retrieval_request=retrieval_request,
+            x_ms_query_source_authorization=x_ms_query_source_authorization,
+            request_options=request_options,
+            **kwargs
         )
