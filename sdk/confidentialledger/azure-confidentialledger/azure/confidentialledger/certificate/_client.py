@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 
 
 class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
@@ -26,7 +26,7 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
     :param endpoint: The certificate endpoint (or "Identity Service Endpoint" in the Azure portal),
      for example https://identity.confidential-ledger.core.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-08-22-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -36,6 +36,7 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = ConfidentialLedgerCertificateClientConfiguration(endpoint=endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

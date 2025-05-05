@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
         response = self.client.kubernetes_cluster_features.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "version": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,7 +89,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 feature_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +104,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 feature_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

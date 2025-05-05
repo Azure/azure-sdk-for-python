@@ -24,7 +24,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
     async def test_virtual_machine_scale_sets_list_by_location(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list_by_location(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -62,10 +62,15 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "provisioningState": "str",
                     "proximityPlacementGroup": {"id": "str"},
                     "resiliencyPolicy": {
+                        "automaticZoneRebalancingPolicy": {
+                            "enabled": bool,
+                            "rebalanceBehavior": "str",
+                            "rebalanceStrategy": "str",
+                        },
                         "resilientVMCreationPolicy": {"enabled": bool},
                         "resilientVMDeletionPolicy": {"enabled": bool},
                     },
-                    "scaleInPolicy": {"forceDeletion": bool, "rules": ["str"]},
+                    "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                     "scheduledEventsPolicy": {
                         "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
                         "userInitiatedReboot": {"automaticallyApprove": bool},
@@ -73,7 +78,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     },
                     "singlePlacementGroup": bool,
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
-                    "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str"}]},
+                    "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                     "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
                     "tags": {"str": "str"},
                     "timeCreated": "2020-02-20 00:00:00",
@@ -243,7 +248,13 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                         "securityProfile": {
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                            "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                            "proxyAgentSettings": {
+                                "enabled": bool,
+                                "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                "keyIncarnationId": 0,
+                                "mode": "str",
+                                "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            },
                             "securityType": "str",
                             "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                         },
@@ -309,7 +320,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "zoneBalance": bool,
                     "zones": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -338,13 +349,18 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "priorityMixPolicy": {"baseRegularPriorityCount": 0, "regularPriorityPercentageAboveBase": 0},
                     "proximityPlacementGroup": {"id": "str"},
                     "resiliencyPolicy": {
+                        "automaticZoneRebalancingPolicy": {
+                            "enabled": bool,
+                            "rebalanceBehavior": "str",
+                            "rebalanceStrategy": "str",
+                        },
                         "resilientVMCreationPolicy": {"enabled": bool},
                         "resilientVMDeletionPolicy": {"enabled": bool},
                     },
-                    "scaleInPolicy": {"forceDeletion": bool, "rules": ["str"]},
+                    "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                     "singlePlacementGroup": bool,
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
-                    "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str"}]},
+                    "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                     "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
                     "tags": {"str": "str"},
                     "upgradePolicy": {
@@ -488,7 +504,13 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                         "securityProfile": {
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                            "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                            "proxyAgentSettings": {
+                                "enabled": bool,
+                                "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                "keyIncarnationId": 0,
+                                "mode": "str",
+                                "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            },
                             "securityType": "str",
                             "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                         },
@@ -548,7 +570,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "zonalPlatformFaultDomainAlignMode": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -562,7 +584,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_delete(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -575,7 +597,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
         response = await self.client.virtual_machine_scale_sets.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -588,7 +610,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_deallocate(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -603,7 +625,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vm_instance_i_ds={"instanceIds": ["str"]},
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -616,7 +638,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
         response = await self.client.virtual_machine_scale_sets.get_instance_view(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -627,7 +649,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
     async def test_virtual_machine_scale_sets_list(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -637,7 +659,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_virtual_machine_scale_sets_list_all(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list_all(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -649,7 +671,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
         response = self.client.virtual_machine_scale_sets.list_skus(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -661,7 +683,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
         response = self.client.virtual_machine_scale_sets.get_os_upgrade_history(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -674,7 +696,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_power_off(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -688,7 +710,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_restart(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -702,7 +724,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_start(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -716,7 +738,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_reapply(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -730,7 +752,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_redeploy(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -744,7 +766,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_perform_maintenance(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -759,7 +781,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vm_instance_i_ds={"instanceIds": ["str"]},
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -773,7 +795,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_reimage(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -787,7 +809,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_reimage_all(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -801,7 +823,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -818,7 +840,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 platform_update_domain=0,
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         )
 
@@ -832,7 +854,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             parameters={"activePlacementGroupId": "str"},
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -846,7 +868,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 parameters={"action": "str", "serviceName": "str"},
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

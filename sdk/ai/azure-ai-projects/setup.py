@@ -100,4 +100,7 @@ setup(
         "typing-extensions>=4.12.2",
     ],
     python_requires=">=3.8",
+    extras_require={
+        "prompts": ["prompty"],
+    },
 )

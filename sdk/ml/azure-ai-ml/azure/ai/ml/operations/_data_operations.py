@@ -853,7 +853,9 @@ class DataOperations(_ScopeDependentOperations):
         data_versions_operation_ = self._operation
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub, _model_client = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

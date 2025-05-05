@@ -1,6 +1,26 @@
 # Release History
 
-## 1.33.0 (Unreleased)
+## 1.34.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.34.0 (2025-05-01)
+
+### Features Added
+
+- Added a `set_span_error_status` method to the `OpenTelemetryTracer` class. This method allows users to set the status of a span to `ERROR` after it has been created. #40703
+
+### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
+## 1.33.0 (2025-04-03)
 
 ### Features Added
 
@@ -28,6 +48,8 @@
     - "x-ms-request-id" is now "az.service_request_id"
 
 ### Bugs Fixed
+
+- Fixed an issue where the `traceparent` header was not being set correctly in the `DistributedTracingPolicy`. The `traceparent` header will now set based on the context of the HTTP client span. #40074
 
 ### Other Changes
 

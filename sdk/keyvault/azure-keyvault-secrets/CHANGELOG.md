@@ -1,12 +1,19 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 4.10.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
 
 ### Other Changes
 - Updated minimum `typing-extensions` version to 4.6.0

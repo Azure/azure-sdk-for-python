@@ -45,11 +45,7 @@ $audience = $audienceMappings[$environment]
 
 az cloud set --name $environment
 
-if ($CI) {
-    az login --service-principal -u $TestApplicationId --tenant $tenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
-} else {
-    az login
-}
+az login --service-principal -u $TestApplicationId --tenant $tenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
 az account set --subscription $SubscriptionId
 
 $bearerToken = az account get-access-token --output json --resource $audience | ConvertFrom-Json | Select-Object -ExpandProperty accessToken

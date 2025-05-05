@@ -13,8 +13,10 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
+from .._vendor import FileType
 from ._enums import (
     AuthenticationType,
+    MessageBlockType,
     OpenApiAuthType,
     RunStepType,
     VectorStoreChunkingStrategyRequestType,
@@ -27,9 +29,6 @@ if TYPE_CHECKING:
 
 class Agent(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -153,9 +152,6 @@ class Agent(_model_base.Model):
 class AgentDeletionStatus(_model_base.Model):
     """The status of an agent deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -229,10 +225,10 @@ class AgentsApiResponseFormat(_model_base.Model):
 class AgentsNamedToolChoice(_model_base.Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
-
-    :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
+    :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", "bing_custom_search", and
+     "connected_agent".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -243,7 +239,8 @@ class AgentsNamedToolChoice(_model_base.Model):
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_dataagent\", \"sharepoint_grounding\", \"azure_ai_search\", \"bing_custom_search\",
+     and \"connected_agent\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -268,9 +265,6 @@ class AgentsNamedToolChoice(_model_base.Model):
 
 class AgentThread(_model_base.Model):
     """Information about a single thread associated with an agent.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -386,9 +380,138 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AISearchIndexResource(_model_base.Model):
+    """A AI Search Index resource.
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
+     "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
+    :vartype query_type: str or ~azure.ai.projects.models.AzureAISearchQueryType
+    :ivar top_k: Number of documents to retrieve from search and present to the model.
+    :vartype top_k: int
+    :ivar filter: Odata filter string for search resource.
+    :vartype filter: str
+    """
+
+    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this agent. Required."""
+    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
+     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model."""
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
+        top_k: Optional[int] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetModelConfig(_model_base.Model):
+    """Abstract class for model configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AOAIModelConfig, MAASModelConfig
+
+    :ivar type: Type of the model configuration. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the model configuration. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AOAIModelConfig(TargetModelConfig, discriminator="AOAI"):
+    """Azure OpenAI model configuration. The API version would be selected by the service for querying
+    the model.
+
+    :ivar type: Required. Default value is "AOAI".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint targetURI for AOAI model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for AOAI model. Required.
+    :vartype api_key: str
+    :ivar azure_deployment: Deployment name for AOAI model. Required.
+    :vartype azure_deployment: str
+    """
+
+    type: Literal["AOAI"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"AOAI\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint targetURI for AOAI model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for AOAI model. Required."""
+    azure_deployment: str = rest_field(
+        name="azureDeployment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment name for AOAI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+        azure_deployment: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="AOAI", **kwargs)
+
+
 class AppInsightsProperties(_model_base.Model):
     """The properties of the Application Insights resource.
-
 
     :ivar connection_string: Authentication type of the connection target. Required.
     :vartype connection_string: str
@@ -423,7 +546,6 @@ class InputData(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ApplicationInsightsConfiguration, Dataset
 
-
     :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
     """
@@ -452,9 +574,6 @@ class InputData(_model_base.Model):
 
 class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """Data Source for Application Insights.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar type: Required. Default value is "app_insights".
     :vartype type: str
@@ -510,10 +629,10 @@ class AzureAISearchResource(_model_base.Model):
 
     :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent.
-    :vartype index_list: list[~azure.ai.projects.models.IndexResource]
+    :vartype index_list: list[~azure.ai.projects.models.AISearchIndexResource]
     """
 
-    index_list: Optional[List["_models.IndexResource"]] = rest_field(
+    index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indices attached to this agent. There can be a maximum of 1 index
@@ -523,7 +642,7 @@ class AzureAISearchResource(_model_base.Model):
     def __init__(
         self,
         *,
-        index_list: Optional[List["_models.IndexResource"]] = None,
+        index_list: Optional[List["_models.AISearchIndexResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -541,10 +660,10 @@ class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingGroundingToolDefinition,
-    CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
-    FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
-
+    AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
+    BingGroundingToolDefinition, CodeInterpreterToolDefinition, ConnectedAgentToolDefinition,
+    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
+    OpenApiToolDefinition, SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -575,7 +694,6 @@ class ToolDefinition(_model_base.Model):
 class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
      "azure_ai_search".
     :vartype type: str
@@ -603,9 +721,6 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
 class AzureFunctionBinding(_model_base.Model):
     """The structure for keeping storage queue name and URI.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
      "storage_queue".
@@ -643,7 +758,6 @@ class AzureFunctionBinding(_model_base.Model):
 
 class AzureFunctionDefinition(_model_base.Model):
     """The definition of Azure function.
-
 
     :ivar function: The definition of azure function and its parameters. Required.
     :vartype function: ~azure.ai.projects.models.FunctionDefinition
@@ -691,7 +805,6 @@ class AzureFunctionDefinition(_model_base.Model):
 class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
-
     :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
      manipulate a queue. Required.
     :vartype storage_service_endpoint: str
@@ -728,7 +841,6 @@ class AzureFunctionStorageQueue(_model_base.Model):
 class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
     """The input definition information for a azure function tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'azure_function'. Required. Default value is
      "azure_function".
     :vartype type: str
@@ -763,10 +875,46 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
         super().__init__(*args, type="azure_function", **kwargs)
 
 
+class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_search"):
+    """The input definition information for a Bing custom search tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: The list of search configurations used by the bing custom search
+     tool. Required.
+    :vartype bing_custom_search: ~azure.ai.projects.models.SearchConfigurationList
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: "_models.SearchConfigurationList" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of search configurations used by the bing custom search tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bing_custom_search: "_models.SearchConfigurationList",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
+
+
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
-
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
@@ -803,7 +951,6 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
     """The input definition information for a code interpreter tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'code_interpreter'. Required. Default value is
      "code_interpreter".
@@ -870,9 +1017,85 @@ class CodeInterpreterToolResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ConnectedAgentDetails(_model_base.Model):
+    """Information for connecting one agent to another as a tool.
+
+    :ivar id: The identifier of the child agent. Required.
+    :vartype id: str
+    :ivar name: The name of the agent to be called. Required.
+    :vartype name: str
+    :ivar description: A description of what the agent does, used by the model to choose when and
+     how to call the agent. Required.
+    :vartype description: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the child agent. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent to be called. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of what the agent does, used by the model to choose when and how to call the
+     agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectedAgentToolDefinition(ToolDefinition, discriminator="connected_agent"):
+    """The input definition information for a connected agent tool which defines a domain specific
+    sub-agent.
+
+    :ivar type: The object type, which is always 'connected_agent'. Required. Default value is
+     "connected_agent".
+    :vartype type: str
+    :ivar connected_agent: The sub-agent to connect. Required.
+    :vartype connected_agent: ~azure.ai.projects.models.ConnectedAgentDetails
+    """
+
+    type: Literal["connected_agent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'connected_agent'. Required. Default value is
+     \"connected_agent\"."""
+    connected_agent: "_models.ConnectedAgentDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sub-agent to connect. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connected_agent: "_models.ConnectedAgentDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="connected_agent", **kwargs)
+
+
 class CredentialsApiKeyAuth(_model_base.Model):
     """The credentials needed for API key authentication.
-
 
     :ivar key: The API key. Required.
     :vartype key: str
@@ -901,7 +1124,6 @@ class CredentialsApiKeyAuth(_model_base.Model):
 
 class CredentialsSASAuth(_model_base.Model):
     """The credentials needed for Shared Access Signatures (SAS) authentication.
-
 
     :ivar sas: The Shared Access Signatures (SAS) token. Required.
     :vartype sas: str
@@ -934,7 +1156,6 @@ class Trigger(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CronTrigger, RecurrenceTrigger
 
-
     :ivar type: Type of the trigger. Required. Default value is None.
     :vartype type: str
     """
@@ -963,9 +1184,6 @@ class Trigger(_model_base.Model):
 
 class CronTrigger(Trigger, discriminator="Cron"):
     """Cron Trigger Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar type: Required. Default value is "Cron".
     :vartype type: str
@@ -999,9 +1217,6 @@ class CronTrigger(Trigger, discriminator="Cron"):
 class Dataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Required. Default value is "dataset".
     :vartype type: str
     :ivar id: Evaluation input data. Required.
@@ -1034,13 +1249,12 @@ class Dataset(InputData, discriminator="dataset"):
 class Evaluation(_model_base.Model):
     """Evaluation Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
+    :ivar target: Evaluation target specifying the model config and parameters.
+    :vartype target: ~azure.ai.projects.models.EvaluationTarget
     :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
@@ -1064,6 +1278,8 @@ class Evaluation(_model_base.Model):
     """Identifier of the evaluation. Required."""
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
+    target: Optional["_models.EvaluationTarget"] = rest_field(visibility=["read", "create"])
+    """Evaluation target specifying the model config and parameters."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1090,6 +1306,7 @@ class Evaluation(_model_base.Model):
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        target: Optional["_models.EvaluationTarget"] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1109,9 +1326,6 @@ class Evaluation(_model_base.Model):
 
 class EvaluationSchedule(_model_base.Model):
     """Evaluation Schedule Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: Name of the schedule, which also serves as the unique identifier for the
      evaluation. Required.
@@ -1185,9 +1399,50 @@ class EvaluationSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class EvaluationTarget(_model_base.Model):
+    """Target for the evaluation process.
+
+    :ivar system_message: System message related to the evaluation target. Required.
+    :vartype system_message: str
+    :ivar model_config: Model configuration for the evaluation. Required.
+    :vartype model_config: ~azure.ai.projects.models.TargetModelConfig
+    :ivar model_params: A dictionary of parameters for the model.
+    :vartype model_params: dict[str, any]
+    """
+
+    system_message: str = rest_field(name="systemMessage", visibility=["read", "create", "update", "delete", "query"])
+    """System message related to the evaluation target. Required."""
+    model_config: "_models.TargetModelConfig" = rest_field(
+        name="modelConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model configuration for the evaluation. Required."""
+    model_params: Optional[Dict[str, Any]] = rest_field(
+        name="modelParams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dictionary of parameters for the model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        system_message: str,
+        model_config: "_models.TargetModelConfig",
+        model_params: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EvaluatorConfiguration(_model_base.Model):
     """Evaluator Configuration.
-
 
     :ivar id: Identifier of the evaluator. Required.
     :vartype id: str
@@ -1231,9 +1486,6 @@ class EvaluatorConfiguration(_model_base.Model):
 class FileDeletionStatus(_model_base.Model):
     """A status response from a file deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -1272,9 +1524,6 @@ class FileDeletionStatus(_model_base.Model):
 class FileListResponse(_model_base.Model):
     """The response data from a file list operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always 'list'. Required. Default value is "list".
     :vartype object: str
     :ivar data: The files returned for the request. Required.
@@ -1307,7 +1556,6 @@ class FileListResponse(_model_base.Model):
 
 class FileSearchRankingOptions(_model_base.Model):
     """Ranking options for file search.
-
 
     :ivar ranker: File search ranker. Required.
     :vartype ranker: str
@@ -1342,9 +1590,6 @@ class FileSearchRankingOptions(_model_base.Model):
 class FileSearchToolCallContent(_model_base.Model):
     """The file search result content object.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: The type of the content. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text content of the file. Required.
@@ -1377,7 +1622,6 @@ class FileSearchToolCallContent(_model_base.Model):
 
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
@@ -1500,7 +1744,6 @@ class FileSearchToolResource(_model_base.Model):
 class FunctionDefinition(_model_base.Model):
     """The input definition information for a function.
 
-
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
     :ivar description: A description of what the function does, used by the model to choose when
@@ -1542,7 +1785,6 @@ class FunctionDefinition(_model_base.Model):
 class FunctionName(_model_base.Model):
     """The function name that will be used, if using the ``function`` tool.
 
-
     :ivar name: The name of the function to call. Required.
     :vartype name: str
     """
@@ -1570,7 +1812,6 @@ class FunctionName(_model_base.Model):
 
 class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     """The input definition information for a function tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'function'. Required. Default value is "function".
     :vartype type: str
@@ -1604,7 +1845,6 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
 
 class GetAppInsightsResponse(_model_base.Model):
     """Response from getting properties of the Application Insights resource.
-
 
     :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
@@ -1646,7 +1886,6 @@ class GetAppInsightsResponse(_model_base.Model):
 class GetConnectionResponse(_model_base.Model):
     """Response from the listSecrets operation.
 
-
     :ivar id: A unique identifier for the connection. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1686,7 +1925,6 @@ class GetConnectionResponse(_model_base.Model):
 
 class GetWorkspaceResponse(_model_base.Model):
     """Response from the Workspace - Get operation.
-
 
     :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
@@ -1728,7 +1966,6 @@ class GetWorkspaceResponse(_model_base.Model):
 class IncompleteRunDetails(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
 
-
     :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
      was reached during the run. Required. Known values are: "max_completion_tokens" and
      "max_prompt_tokens".
@@ -1760,54 +1997,20 @@ class IncompleteRunDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexResource(_model_base.Model):
-    """A Index resource.
-
-
-    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
-    :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
-    :vartype index_name: str
-    """
-
-    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of an index in an IndexResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_connection_id: str,
-        index_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class InternalConnectionProperties(_model_base.Model):
     """Connection properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth,
-    InternalConnectionPropertiesNoAuth, InternalConnectionPropertiesSASAuth
-
+    InternalConnectionPropertiesCustomAuth, InternalConnectionPropertiesNoAuth,
+    InternalConnectionPropertiesSASAuth
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
-     "ApiKey", "AAD", "SAS", and "None".
+     "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
     :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1816,12 +2019,13 @@ class InternalConnectionProperties(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
-     \"SAS\", and \"None\"."""
+     \"SAS\", \"CustomKeys\", and \"None\"."""
     category: Union[str, "_models.ConnectionType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", \"AIServices\", \"CognitiveSearch\", and \"API Key\"."""
+     \"AzureBlob\", \"AIServices\", \"CognitiveSearch\", \"ApiKey\", \"CustomKeys\", and
+     \"CognitiveService\"."""
     target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection URL to be used for this service. Required."""
 
@@ -1846,12 +2050,11 @@ class InternalConnectionProperties(_model_base.Model):
 
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
-    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
-    ).
-
+    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``).
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1886,9 +2089,9 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
 class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1925,12 +2128,47 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
         super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
 
 
+class InternalConnectionPropertiesCustomAuth(InternalConnectionProperties, discriminator="CustomKeys"):
+    """Connection properties for connections with Custom authentication.
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. Custom authentication
+    :vartype auth_type: str or ~azure.ai.projects.models.CUSTOM
+    """
+
+    auth_type: Literal[AuthenticationType.CUSTOM] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Authentication type of the connection target. Required. Custom authentication"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.CUSTOM, **kwargs)
+
+
 class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discriminator="None"):
     """Connection properties for connections with no authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1963,9 +2201,9 @@ class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discrimin
 class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
     """Connection properties for connections with SAS authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -2007,7 +2245,6 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
 class ListConnectionsResponse(_model_base.Model):
     """Response from the list operation.
 
-
     :ivar value: A list of connection list secrets. Required.
     :vartype value: list[~azure.ai.projects.models._models.GetConnectionResponse]
     """
@@ -2035,9 +2272,46 @@ class ListConnectionsResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MAASModelConfig(TargetModelConfig, discriminator="MAAS"):
+    """MaaS model configuration. The API version would be selected by the service for querying the
+    model.
+
+    :ivar type: Required. Default value is "MAAS".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint targetURI for MAAS model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for MAAS model. Required.
+    :vartype api_key: str
+    """
+
+    type: Literal["MAAS"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"MAAS\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint targetURI for MAAS model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for MAAS model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="MAAS", **kwargs)
+
+
 class MessageAttachment(_model_base.Model):
     """This describes to which tools a file has been attached.
-
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
@@ -2085,7 +2359,6 @@ class MessageContent(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageImageFileContent, MessageTextContent
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -2114,7 +2387,6 @@ class MessageContent(_model_base.Model):
 
 class MessageDelta(_model_base.Model):
     """Represents the typed 'delta' payload within a streaming message delta chunk.
-
 
     :ivar role: The entity that produced the message. Required. Known values are: "user" and
      "assistant".
@@ -2151,9 +2423,6 @@ class MessageDelta(_model_base.Model):
 
 class MessageDeltaChunk(_model_base.Model):
     """Represents a message delta i.e. any changed fields on a message during streaming.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier of the message, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -2198,7 +2467,6 @@ class MessageDeltaContent(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageDeltaImageFileContent, MessageDeltaTextContent
 
-
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
     :ivar type: The type of content for this content part. Required. Default value is None.
@@ -2232,7 +2500,6 @@ class MessageDeltaContent(_model_base.Model):
 
 class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_file"):
     """Represents a streamed image file content part within a streaming message delta chunk.
-
 
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
@@ -2305,7 +2572,6 @@ class MessageDeltaTextAnnotation(_model_base.Model):
     MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation,
     MessageDeltaTextUrlCitationAnnotation
 
-
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
     :ivar type: The type of the text content annotation. Required. Default value is None.
@@ -2339,7 +2605,6 @@ class MessageDeltaTextAnnotation(_model_base.Model):
 
 class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
     """Represents a streamed text content part within a streaming message delta chunk.
-
 
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
@@ -2414,7 +2679,6 @@ class MessageDeltaTextContentObject(_model_base.Model):
 
 class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discriminator="file_citation"):
     """Represents a streamed file citation applied to a streaming text content part.
-
 
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
@@ -2503,7 +2767,6 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
 class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminator="file_path"):
     """Represents a streamed file path annotation applied to a streaming text content part.
 
-
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
     :ivar type: The type of the text content annotation, which is always "file_path.". Required.
@@ -2588,7 +2851,6 @@ class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discrimi
     """A citation within the message that points to a specific URL associated with the message.
     Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
 
-
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
     :ivar type: The object type, which is always 'url_citation'. Required. Default value is
@@ -2637,7 +2899,6 @@ class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discrimi
 class MessageDeltaTextUrlCitationDetails(_model_base.Model):
     """A representation of a URL citation, as used in text thread message content.
 
-
     :ivar url: The URL associated with this citation. Required.
     :vartype url: str
     :ivar title: The title of the URL.
@@ -2670,7 +2931,6 @@ class MessageDeltaTextUrlCitationDetails(_model_base.Model):
 
 class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
-
 
     :ivar type: The object type, which is always 'image_file'. Required. Default value is
      "image_file".
@@ -2707,7 +2967,6 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
 class MessageImageFileDetails(_model_base.Model):
     """An image reference, as represented in thread message content.
 
-
     :ivar file_id: The ID for the file associated with this image. Required.
     :vartype file_id: str
     """
@@ -2733,9 +2992,82 @@ class MessageImageFileDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageImageFileParam(_model_base.Model):
+    """Defines how an internally uploaded image file is referenced when creating an image-file block.
+
+    :ivar file_id: The ID of the previously uploaded image file. Required.
+    :vartype file_id: str
+    :ivar detail: Optional detail level for the image (auto, low, or high). Known values are:
+     "auto", "low", and "high".
+    :vartype detail: str or ~azure.ai.projects.models.ImageDetailLevel
+    """
+
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the previously uploaded image file. Required."""
+    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional detail level for the image (auto, low, or high). Known values are: \"auto\", \"low\",
+     and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_id: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageImageUrlParam(_model_base.Model):
+    """Defines how an external image URL is referenced when creating an image-URL block.
+
+    :ivar url: The publicly accessible URL of the external image. Required.
+    :vartype url: str
+    :ivar detail: Optional detail level for the image (auto, low, or high). Defaults to 'auto' if
+     not specified. Known values are: "auto", "low", and "high".
+    :vartype detail: str or ~azure.ai.projects.models.ImageDetailLevel
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The publicly accessible URL of the external image. Required."""
+    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional detail level for the image (auto, low, or high). Defaults to 'auto' if not specified.
+     Known values are: \"auto\", \"low\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MessageIncompleteDetails(_model_base.Model):
     """Information providing additional detail about a message entering an incomplete status.
-
 
     :ivar reason: The provided reason describing why the message was marked as incomplete.
      Required. Known values are: "content_filter", "max_tokens", "run_cancelled", "run_failed", and
@@ -2768,13 +3100,152 @@ class MessageIncompleteDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageInputContentBlock(_model_base.Model):
+    """Defines a single content block when creating a message. The 'type' field determines whether it
+    is text, an image file, or an external image URL, etc.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MessageInputImageFileBlock, MessageInputImageUrlBlock, MessageInputTextBlock
+
+    :ivar type: Specifies which kind of content block this is (text, image_file, image_url, etc.).
+     Required. Known values are: "text", "image_file", and "image_url".
+    :vartype type: str or ~azure.ai.projects.models.MessageBlockType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies which kind of content block this is (text, image_file, image_url, etc.). Required.
+     Known values are: \"text\", \"image_file\", and \"image_url\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageInputImageFileBlock(MessageInputContentBlock, discriminator="image_file"):
+    """An image-file block in a new message, referencing an internally uploaded image by file ID.
+
+    :ivar type: Must be 'image_file' for an internally uploaded image block. Required. Indicates a
+     block referencing an internally uploaded image file.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_FILE
+    :ivar image_file: Information about the referenced image file, including file ID and optional
+     detail level. Required.
+    :vartype image_file: ~azure.ai.projects.models.MessageImageFileParam
+    """
+
+    type: Literal[MessageBlockType.IMAGE_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'image_file' for an internally uploaded image block. Required. Indicates a block
+     referencing an internally uploaded image file."""
+    image_file: "_models.MessageImageFileParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Information about the referenced image file, including file ID and optional detail level.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_file: "_models.MessageImageFileParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.IMAGE_FILE, **kwargs)
+
+
+class MessageInputImageUrlBlock(MessageInputContentBlock, discriminator="image_url"):
+    """An image-URL block in a new message, referencing an external image by URL.
+
+    :ivar type: Must be 'image_url' for an externally hosted image block. Required. Indicates a
+     block referencing an external image URL.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_URL
+    :ivar image_url: Information about the external image URL, including the URL and optional
+     detail level. Required.
+    :vartype image_url: ~azure.ai.projects.models.MessageImageUrlParam
+    """
+
+    type: Literal[MessageBlockType.IMAGE_URL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'image_url' for an externally hosted image block. Required. Indicates a block
+     referencing an external image URL."""
+    image_url: "_models.MessageImageUrlParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Information about the external image URL, including the URL and optional detail level.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: "_models.MessageImageUrlParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.IMAGE_URL, **kwargs)
+
+
+class MessageInputTextBlock(MessageInputContentBlock, discriminator="text"):
+    """A text block in a new message, containing plain text content.
+
+    :ivar type: Must be 'text' for a text block. Required. Indicates a block containing text
+     content.
+    :vartype type: str or ~azure.ai.projects.models.TEXT
+    :ivar text: The plain text content for this block. Required.
+    :vartype text: str
+    """
+
+    type: Literal[MessageBlockType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'text' for a text block. Required. Indicates a block containing text content."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The plain text content for this block. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.TEXT, **kwargs)
+
+
 class MessageTextAnnotation(_model_base.Model):
     """An abstract representation of an annotation to text thread message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation,
     MessageTextUrlCitationAnnotation
-
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -2810,7 +3281,6 @@ class MessageTextAnnotation(_model_base.Model):
 class MessageTextContent(MessageContent, discriminator="text"):
     """A representation of a textual item of thread message content.
 
-
     :ivar type: The object type, which is always 'text'. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text and associated annotations for this thread message content item. Required.
@@ -2842,7 +3312,6 @@ class MessageTextContent(MessageContent, discriminator="text"):
 
 class MessageTextDetails(_model_base.Model):
     """The text and associated annotations for a single item of agent thread message content.
-
 
     :ivar value: The text data. Required.
     :vartype value: str
@@ -2880,7 +3349,6 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     """A citation within the message that points to a specific quote from a specific File associated
     with the agent or the message. Generated when the agent uses the 'file_search' tool to search
     files.
-
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -2934,7 +3402,6 @@ class MessageTextFileCitationDetails(_model_base.Model):
     """A representation of a file-based text citation, as used in a file-based annotation of text
     thread message content.
 
-
     :ivar file_id: The ID of the file associated with this citation. Required.
     :vartype file_id: str
     :ivar quote: The specific quote cited in the associated file. Required.
@@ -2967,7 +3434,6 @@ class MessageTextFileCitationDetails(_model_base.Model):
 
 class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_path"):
     """A citation within the message that points to a file located at a specific path.
-
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -3019,7 +3485,6 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
 class MessageTextFilePathDetails(_model_base.Model):
     """An encapsulation of an image file ID, as used by message image content.
 
-
     :ivar file_id: The ID of the specific file that the citation is from. Required.
     :vartype file_id: str
     """
@@ -3048,7 +3513,6 @@ class MessageTextFilePathDetails(_model_base.Model):
 class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url_citation"):
     """A citation within the message that points to a specific URL associated with the message.
     Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
-
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -3098,7 +3562,6 @@ class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url
 class MessageTextUrlCitationDetails(_model_base.Model):
     """A representation of a URL citation, as used in text thread message content.
 
-
     :ivar url: The URL associated with this citation. Required.
     :vartype url: str
     :ivar title: The title of the URL.
@@ -3129,21 +3592,20 @@ class MessageTextUrlCitationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataagent"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
-
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
-    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
+    :ivar fabric_dataagent: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_dataagent: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
-    fabric_aiskill: "_models.ToolConnectionList" = rest_field(
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    fabric_dataagent: "_models.ToolConnectionList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of connections used by the Microsoft Fabric tool. Required."""
@@ -3152,7 +3614,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
     def __init__(
         self,
         *,
-        fabric_aiskill: "_models.ToolConnectionList",
+        fabric_dataagent: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -3163,14 +3625,11 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always 'file'. Required. Default value is "file".
     :vartype object: str
@@ -3248,9 +3707,6 @@ class OpenAIFile(_model_base.Model):
 class OpenAIPageableListOfAgent(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3298,11 +3754,58 @@ class OpenAIPageableListOfAgent(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
-class OpenAIPageableListOfRunStep(_model_base.Model):
+class OpenAIPageableListOfAgentThread(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    :ivar object: The object type, which is always list. Required. Default value is "list".
+    :vartype object: str
+    :ivar data: The requested list of items. Required.
+    :vartype data: list[~azure.ai.projects.models.AgentThread]
+    :ivar first_id: The first ID represented in this list. Required.
+    :vartype first_id: str
+    :ivar last_id: The last ID represented in this list. Required.
+    :vartype last_id: str
+    :ivar has_more: A value indicating whether there are additional values available not captured
+     in this list. Required.
+    :vartype has_more: bool
+    """
 
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always list. Required. Default value is \"list\"."""
+    data: List["_models.AgentThread"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The requested list of items. Required."""
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first ID represented in this list. Required."""
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last ID represented in this list. Required."""
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether there are additional values available not captured in this list.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: List["_models.AgentThread"],
+        first_id: str,
+        last_id: str,
+        has_more: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["list"] = "list"
+
+
+class OpenAIPageableListOfRunStep(_model_base.Model):
+    """The response data for a requested list of items.
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -3354,9 +3857,6 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
 class OpenAIPageableListOfThreadMessage(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3406,9 +3906,6 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
 
 class OpenAIPageableListOfThreadRun(_model_base.Model):
     """The response data for a requested list of items.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -3460,9 +3957,6 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
 class OpenAIPageableListOfVectorStore(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3512,9 +4006,6 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
 
 class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     """The response data for a requested list of items.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -3569,7 +4060,6 @@ class OpenApiAuthDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OpenApiAnonymousAuthDetails, OpenApiConnectionAuthDetails, OpenApiManagedAuthDetails
 
-
     :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
      Required. Known values are: "anonymous", "connection", and "managed_identity".
     :vartype type: str or ~azure.ai.projects.models.OpenApiAuthType
@@ -3601,7 +4091,6 @@ class OpenApiAuthDetails(_model_base.Model):
 class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
     """Security details for OpenApi anonymous authentication.
 
-
     :ivar type: The object type, which is always 'anonymous'. Required.
     :vartype type: str or ~azure.ai.projects.models.ANONYMOUS
     """
@@ -3627,7 +4116,6 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
 
 class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
     """Security details for OpenApi connection authentication.
-
 
     :ivar type: The object type, which is always 'connection'. Required.
     :vartype type: str or ~azure.ai.projects.models.CONNECTION
@@ -3663,7 +4151,6 @@ class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection
 class OpenApiConnectionSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar connection_id: Connection id for Connection auth type. Required.
     :vartype connection_id: str
     """
@@ -3692,7 +4179,6 @@ class OpenApiConnectionSecurityScheme(_model_base.Model):
 class OpenApiFunctionDefinition(_model_base.Model):
     """The input definition information for an openapi function.
 
-
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
     :ivar description: A description of what the function does, used by the model to choose when
@@ -3702,6 +4188,8 @@ class OpenApiFunctionDefinition(_model_base.Model):
     :vartype spec: any
     :ivar auth: Open API authentication details. Required.
     :vartype auth: ~azure.ai.projects.models.OpenApiAuthDetails
+    :ivar default_params: List of OpenAPI spec parameters that will use user-provided defaults.
+    :vartype default_params: list[str]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3713,6 +4201,8 @@ class OpenApiFunctionDefinition(_model_base.Model):
     """The openapi function shape, described as a JSON Schema object. Required."""
     auth: "_models.OpenApiAuthDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Open API authentication details. Required."""
+    default_params: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of OpenAPI spec parameters that will use user-provided defaults."""
 
     @overload
     def __init__(
@@ -3722,6 +4212,7 @@ class OpenApiFunctionDefinition(_model_base.Model):
         spec: Any,
         auth: "_models.OpenApiAuthDetails",
         description: Optional[str] = None,
+        default_params: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -3737,7 +4228,6 @@ class OpenApiFunctionDefinition(_model_base.Model):
 
 class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
     """Security details for OpenApi managed_identity authentication.
-
 
     :ivar type: The object type, which is always 'managed_identity'. Required.
     :vartype type: str or ~azure.ai.projects.models.MANAGED_IDENTITY
@@ -3773,7 +4263,6 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
 class OpenApiManagedSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar audience: Authentication scope for managed_identity auth type. Required.
     :vartype audience: str
     """
@@ -3801,7 +4290,6 @@ class OpenApiManagedSecurityScheme(_model_base.Model):
 
 class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
     """The input definition information for an OpenAPI tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
     :vartype type: str
@@ -3836,7 +4324,6 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
 
 class RecurrenceSchedule(_model_base.Model):
     """RecurrenceSchedule Definition.
-
 
     :ivar hours: List of hours for the schedule. Required.
     :vartype hours: list[int]
@@ -3884,9 +4371,6 @@ class RecurrenceSchedule(_model_base.Model):
 
 class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     """Recurrence Trigger Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar type: Required. Default value is "Recurrence".
     :vartype type: str
@@ -3937,7 +4421,6 @@ class RequiredAction(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SubmitToolOutputsAction
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -3969,7 +4452,6 @@ class RequiredToolCall(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
-
 
     :ivar type: The object type for the required tool call. Required. Default value is None.
     :vartype type: str
@@ -4006,7 +4488,6 @@ class RequiredToolCall(_model_base.Model):
 class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     """A representation of a requested call to a function tool, needed by the model to continue
     evaluation of a run.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when submitting tool outputs.
      Required.
@@ -4051,7 +4532,6 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
     """The detailed information for a function invocation, as provided by a required action invoking a
     function tool, that includes the name of and arguments to the function.
 
-
     :ivar name: The name of the function. Required.
     :vartype name: str
     :ivar arguments: The arguments to use when invoking the named function, as provided by the
@@ -4088,7 +4568,6 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
 class ResponseFormatJsonSchema(_model_base.Model):
     """A description of what the response format is for, used by the model to determine how to respond
     in the format.
-
 
     :ivar description: A description of what the response format is for, used by the model to
      determine how to respond in the format.
@@ -4130,9 +4609,6 @@ class ResponseFormatJsonSchema(_model_base.Model):
 class ResponseFormatJsonSchemaType(_model_base.Model):
     """The type of response format being defined: ``json_schema``.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Type. Required. Default value is "json_schema".
     :vartype type: str
     :ivar json_schema: The JSON schema, describing response format. Required.
@@ -4167,8 +4643,7 @@ class ResponseFormatJsonSchemaType(_model_base.Model):
 
 class RunCompletionUsage(_model_base.Model):
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-    terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.).
-
+    terminal state (i.e. ``in_progress``, ``queued``, etc.).
 
     :ivar completion_tokens: Number of completion tokens used over the course of the run. Required.
     :vartype completion_tokens: int
@@ -4208,7 +4683,6 @@ class RunCompletionUsage(_model_base.Model):
 class RunError(_model_base.Model):
     """The details of an error as encountered by an agent thread run.
 
-
     :ivar code: The status for the error. Required.
     :vartype code: str
     :ivar message: The human-readable text associated with the error. Required.
@@ -4241,9 +4715,6 @@ class RunError(_model_base.Model):
 
 class RunStep(_model_base.Model):
     """Detailed information about a single step of an agent thread run.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -4378,10 +4849,9 @@ class RunStepToolCall(_model_base.Model):
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepBingGroundingToolCall, RunStepCodeInterpreterToolCall,
-    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
-    RunStepSharepointToolCall
-
+    RunStepAzureAISearchToolCall, RunStepCustomSearchToolCall, RunStepBingGroundingToolCall,
+    RunStepCodeInterpreterToolCall, RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall,
+    RunStepFunctionToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -4419,7 +4889,6 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
     """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Azure AI search.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4460,7 +4929,6 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     """A record of a call to a bing grounding tool, issued by the model in evaluation of a defined
     tool, that represents
     executed search with bing grounding.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4503,7 +4971,6 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepCodeInterpreterImageOutput, RunStepCodeInterpreterLogOutput
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -4533,7 +5000,6 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
 class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, discriminator="image"):
     """A representation of an image output emitted by a code interpreter tool in response to a tool
     call by the model.
-
 
     :ivar type: The object type, which is always 'image'. Required. Default value is "image".
     :vartype type: str
@@ -4569,7 +5035,6 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
 class RunStepCodeInterpreterImageReference(_model_base.Model):
     """An image reference emitted by a code interpreter tool in response to a tool call by the model.
 
-
     :ivar file_id: The ID of the file associated with this image. Required.
     :vartype file_id: str
     """
@@ -4598,7 +5063,6 @@ class RunStepCodeInterpreterImageReference(_model_base.Model):
 class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, discriminator="logs"):
     """A representation of a log output emitted by a code interpreter tool in response to a tool call
     by the model.
-
 
     :ivar type: The object type, which is always 'logs'. Required. Default value is "logs".
     :vartype type: str
@@ -4633,7 +5097,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
     """A record of a call to a code interpreter tool, issued by the model in evaluation of a defined
     tool, that
     represents inputs and outputs consumed and emitted by the code interpreter.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4675,7 +5138,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
 class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     """The detailed information about a code interpreter invocation by the model.
 
-
     :ivar input: The input provided by the model to the code interpreter tool. Required.
     :vartype input: str
     :ivar outputs: The outputs produced by the code interpreter tool back to the model in response
@@ -4713,7 +5175,6 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
 class RunStepCompletionUsage(_model_base.Model):
     """Usage statistics related to the run step.
 
-
     :ivar completion_tokens: Number of completion tokens used over the course of the run step.
      Required.
     :vartype completion_tokens: int
@@ -4750,6 +5211,46 @@ class RunStepCompletionUsage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
+    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed search with bing custom search.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: Reserved for future use. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
+
+
 class RunStepDelta(_model_base.Model):
     """Represents the delta payload in a streaming run step delta chunk.
 
@@ -4782,9 +5283,6 @@ class RunStepDelta(_model_base.Model):
 
 class RunStepDeltaChunk(_model_base.Model):
     """Represents a run step delta i.e. any changed fields on a run step during streaming.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier of the run step, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -4830,8 +5328,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     :vartype input: str
     :ivar outputs: The outputs from the Code Interpreter tool call. Code Interpreter can output one
      or more
-     items, including text (\\ ``logs``\\ ) or images (\\ ``image``\\ ). Each of these are
-     represented by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type.
     :vartype outputs: list[~azure.ai.projects.models.RunStepDeltaCodeInterpreterOutput]
     """
@@ -4842,8 +5339,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (``logs``) or images (``image``). Each of these are represented
-     by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type."""
 
     @overload
@@ -4871,7 +5367,6 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaCodeInterpreterImageOutput, RunStepDeltaCodeInterpreterLogOutput
-
 
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
@@ -4911,7 +5406,6 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
 class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, discriminator="image"):
     """Represents an image output as produced the Code interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
-
 
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
@@ -4980,7 +5474,6 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
     """Represents a log output as produced by the Code Interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
 
-
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
     :vartype index: int
@@ -5022,7 +5515,6 @@ class RunStepDeltaToolCall(_model_base.Model):
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaFileSearchToolCall,
     RunStepDeltaFunctionToolCall
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -5063,7 +5555,6 @@ class RunStepDeltaToolCall(_model_base.Model):
 
 class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="code_interpreter"):
     """Represents a Code Interpreter tool call within a streaming run step's tool call details.
-
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5111,7 +5602,6 @@ class RunStepDeltaDetail(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaMessageCreation, RunStepDeltaToolCallObject
 
-
     :ivar type: The object type for the run step detail object. Required. Default value is None.
     :vartype type: str
     """
@@ -5140,7 +5630,6 @@ class RunStepDeltaDetail(_model_base.Model):
 
 class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_search"):
     """Represents a file search tool call within a streaming run step's tool call details.
-
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5221,7 +5710,6 @@ class RunStepDeltaFunction(_model_base.Model):
 class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function"):
     """Represents a function tool call within a streaming run step's tool call details.
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -5262,7 +5750,6 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
 
 class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_creation"):
     """Represents a message creation within a streaming run step delta.
-
 
     :ivar type: The object type, which is always "message_creation.". Required. Default value is
      "message_creation".
@@ -5328,7 +5815,6 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
     """Represents an invocation of tool calls as part of a streaming run step.
 
-
     :ivar type: The object type, which is always "tool_calls.". Required. Default value is
      "tool_calls".
     :vartype type: str
@@ -5367,7 +5853,6 @@ class RunStepDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepMessageCreationDetails, RunStepToolCallDetails
 
-
     :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.projects.models.RunStepType
     """
@@ -5396,7 +5881,6 @@ class RunStepDetails(_model_base.Model):
 
 class RunStepError(_model_base.Model):
     """The error information associated with a failed run step.
-
 
     :ivar code: The error code for this error. Required. Known values are: "server_error" and
      "rate_limit_exceeded".
@@ -5437,7 +5921,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     that represents
     executed file search.
 
-
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
@@ -5476,7 +5959,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
 
 class RunStepFileSearchToolCallResult(_model_base.Model):
     """File search tool call result.
-
 
     :ivar file_id: The ID of the file that result was found in. Required.
     :vartype file_id: str
@@ -5526,7 +6008,6 @@ class RunStepFileSearchToolCallResult(_model_base.Model):
 class RunStepFileSearchToolCallResults(_model_base.Model):
     """The results of the file search.
 
-
     :ivar ranking_options: Ranking options for file search.
     :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     :ivar results: The array of a file search results. Required.
@@ -5566,7 +6047,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     that represents the inputs
     and output consumed and emitted by the specified function.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -5604,7 +6084,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
 
 class RunStepFunctionToolCallDetails(_model_base.Model):
     """The detailed information about the function called by the model.
-
 
     :ivar name: The name of the function. Required.
     :vartype name: str
@@ -5647,7 +6126,6 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
 class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):
     """The detailed information associated with a message creation run step.
 
-
     :ivar type: The object type, which is always 'message_creation'. Required. Represents a run
      step to create a message.
     :vartype type: str or ~azure.ai.projects.models.MESSAGE_CREATION
@@ -5685,7 +6163,6 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
 class RunStepMessageCreationReference(_model_base.Model):
     """The details of a message created as a part of a run step.
 
-
     :ivar message_id: The ID of the message created by this run step. Required.
     :vartype message_id: str
     """
@@ -5711,27 +6188,26 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_dataagent"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
     microsoft_fabric: Dict[str, str] = rest_field(
-        name="fabric_aiskill", visibility=["read", "create", "update", "delete", "query"]
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reserved for future use. Required."""
 
@@ -5751,14 +6227,51 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
+
+
+class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
+    """A record of a call to an OpenAPI tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed OpenAPI operations.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
+    :vartype type: str
+    :ivar open_api: Reserved for future use. Required.
+    :vartype open_api: dict[str, str]
+    """
+
+    type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'openapi'. Required. Default value is \"openapi\"."""
+    open_api: Dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        open_api: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="openapi", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5800,7 +6313,6 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     """The detailed information associated with a run step calling tools.
 
-
     :ivar type: The object type, which is always 'tool_calls'. Required. Represents a run step that
      calls tools.
     :vartype type: str or ~azure.ai.projects.models.TOOL_CALLS
@@ -5832,9 +6344,74 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
+class SearchConfiguration(_model_base.Model):
+    """A custom search configuration.
+
+    :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
+    :vartype connection_id: str
+    :ivar instance_name: Name of the custom configuration instance given to config. Required.
+    :vartype instance_name: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A connection in a ToolConnectionList attached to this tool. Required."""
+    instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the custom configuration instance given to config. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        instance_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchConfigurationList(_model_base.Model):
+    """A list of search configurations currently used by the ``bing_custom_search`` tool.
+
+    :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
+     connection
+     resource attached to the tool. Required.
+    :vartype search_configurations: list[~azure.ai.projects.models.SearchConfiguration]
+    """
+
+    search_configurations: List["_models.SearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connections attached to this tool. There can be a maximum of 1 connection
+     resource attached to the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_configurations: List["_models.SearchConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
     """The input definition information for a sharepoint tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
@@ -5871,7 +6448,6 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
     """The details for required tool calls that must be submitted for an agent thread run to continue.
-
 
     :ivar type: The object type, which is always 'submit_tool_outputs'. Required. Default value is
      "submit_tool_outputs".
@@ -5910,7 +6486,6 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
 class SubmitToolOutputsDetails(_model_base.Model):
     """The details describing tools that should be called to submit tool outputs.
 
-
     :ivar tool_calls: The list of tool calls that must be resolved for the agent thread run to
      continue. Required.
     :vartype tool_calls: list[~azure.ai.projects.models.RequiredToolCall]
@@ -5942,8 +6517,6 @@ class SubmitToolOutputsDetails(_model_base.Model):
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar created_at: The timestamp the resource was created at.
     :vartype created_at: ~datetime.datetime
     :ivar created_by: The identity that created the resource.
@@ -5968,9 +6541,6 @@ class SystemData(_model_base.Model):
 
 class ThreadDeletionStatus(_model_base.Model):
     """The status of a thread deletion operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -6011,9 +6581,6 @@ class ThreadDeletionStatus(_model_base.Model):
 
 class ThreadMessage(_model_base.Model):
     """A single, existing message within an agent thread.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -6132,24 +6699,20 @@ class ThreadMessage(_model_base.Model):
 
 
 class ThreadMessageOptions(_model_base.Model):
-    """A single message within an agent thread, as provided during that thread's creation for its
-    initial state.
-
-    All required parameters must be populated in order to send to server.
+    """A single message within an agent thread,
+    as provided during that thread's creation for its initial state.
 
     :ivar role: The role of the entity that is creating the message. Allowed values include:
-
-
-     * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: "user" and "assistant".
+     ``user``, which indicates the message is sent by an actual user (and should be
+     used in most cases to represent user-generated messages), and ``assistant``,
+     which indicates the message is generated by the agent (use this value to insert
+     messages from the agent into the conversation). Required. Known values are: "user" and
+     "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
-    :ivar content: The textual content of the initial message. Currently, robust input including
-     images and annotated text may only be provided via
-     a separate call to the create message API. Required.
-    :vartype content: str
+    :ivar content: The content of the initial message. This may be a basic string (if you only
+     need text) or an array of typed content blocks (for example, text, image_file,
+     image_url, and so on). Required. Is either a str type or a [MessageInputContentBlock] type.
+    :vartype content: str or list[~azure.ai.projects.models.MessageInputContentBlock]
     :ivar attachments: A list of files attached to the message, and the tools they should be added
      to.
     :vartype attachments: list[~azure.ai.projects.models.MessageAttachment]
@@ -6161,17 +6724,15 @@ class ThreadMessageOptions(_model_base.Model):
 
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role of the entity that is creating the message. Allowed values include:
-     
-     
-     * ``user``: Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``: Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: \"user\" and \"assistant\"."""
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The textual content of the initial message. Currently, robust input including images and
-     annotated text may only be provided via
-     a separate call to the create message API. Required."""
+     ``user``, which indicates the message is sent by an actual user (and should be
+     used in most cases to represent user-generated messages), and ``assistant``,
+     which indicates the message is generated by the agent (use this value to insert
+     messages from the agent into the conversation). Required. Known values are: \"user\" and
+     \"assistant\"."""
+    content: "_types.MessageInputContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The content of the initial message. This may be a basic string (if you only
+     need text) or an array of typed content blocks (for example, text, image_file,
+     image_url, and so on). Required. Is either a str type or a [MessageInputContentBlock] type."""
     attachments: Optional[List["_models.MessageAttachment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6186,7 +6747,7 @@ class ThreadMessageOptions(_model_base.Model):
         self,
         *,
         role: Union[str, "_models.MessageRole"],
-        content: str,
+        content: "_types.MessageInputContent",
         attachments: Optional[List["_models.MessageAttachment"]] = None,
         metadata: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -6204,9 +6765,6 @@ class ThreadMessageOptions(_model_base.Model):
 
 class ThreadRun(_model_base.Model):
     """Data representing a single evaluation run of an agent thread.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -6253,7 +6811,7 @@ class ThreadRun(_model_base.Model):
      not incomplete. Required.
     :vartype incomplete_details: ~azure.ai.projects.models.IncompleteRunDetails
     :ivar usage: Usage statistics related to the run. This value will be ``null`` if the run is not
-     in a terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required.
+     in a terminal state (i.e. ``in_progress``, ``queued``, etc.). Required.
     :vartype usage: ~azure.ai.projects.models.RunCompletionUsage
     :ivar temperature: The sampling temperature used for this run. If not set, defaults to 1.
     :vartype temperature: float
@@ -6431,7 +6989,6 @@ class ThreadRun(_model_base.Model):
 class ToolConnection(_model_base.Model):
     """A connection resource.
 
-
     :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
     :vartype connection_id: str
     """
@@ -6458,8 +7015,8 @@ class ToolConnection(_model_base.Model):
 
 
 class ToolConnectionList(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
+    """A set of connection resources currently used by either the ``bing_grounding``,
+    ``fabric_dataagent``, or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -6582,11 +7139,10 @@ class TruncationObject(_model_base.Model):
     """Controls for how a thread will be truncated prior to the run. Use this to control the initial
     context window of the run.
 
-
     :ivar type: The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``\\ , the thread will
+     ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``\\ , messages in the middle of the thread
+     ``auto``, messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: "auto" and "last_messages".
     :vartype type: str or ~azure.ai.projects.models.TruncationStrategy
@@ -6738,11 +7294,54 @@ class UpdateToolResourcesOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class UploadFileRequest(_model_base.Model):
+    """UploadFileRequest.
+
+    :ivar file: The file data, in bytes. Required.
+    :vartype file: ~azure.ai.projects._vendor.FileType
+    :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+     Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+     ``fine-tune`` for Fine-tuning. Required. Known values are: "fine-tune", "fine-tune-results",
+     "assistants", "assistants_output", "batch", "batch_output", and "vision".
+    :vartype purpose: str or ~azure.ai.projects.models.FilePurpose
+    :ivar filename: The name of the file.
+    :vartype filename: str
+    """
+
+    file: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The file data, in bytes. Required."""
+    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The intended purpose of the uploaded file. Use ``assistants`` for Agents and Message files,
+     ``vision`` for Agents image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
+     Fine-tuning. Required. Known values are: \"fine-tune\", \"fine-tune-results\", \"assistants\",
+     \"assistants_output\", \"batch\", \"batch_output\", and \"vision\"."""
+    filename: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file: FileType,
+        purpose: Union[str, "_models.FilePurpose"],
+        filename: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VectorStore(_model_base.Model):
     """A vector store is a collection of processed files can be used by the ``file_search`` tool.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -6759,9 +7358,9 @@ class VectorStore(_model_base.Model):
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
     :vartype file_counts: ~azure.ai.projects.models.VectorStoreFileCount
-    :ivar status: The status of the vector store, which can be either ``expired``\\ ,
-     ``in_progress``\\ , or ``completed``. A status of ``completed`` indicates that the vector store
-     is ready for use. Required. Known values are: "expired", "in_progress", and "completed".
+    :ivar status: The status of the vector store, which can be either ``expired``, ``in_progress``,
+     or ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
+     Required. Known values are: "expired", "in_progress", and "completed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreStatus
     :ivar expires_after: Details on when this vector store expires.
     :vartype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
@@ -6847,8 +7446,6 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyRequest, VectorStoreStaticChunkingStrategyRequest
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type. Required. Known values are: "auto" and "static".
     :vartype type: str or ~azure.ai.projects.models.VectorStoreChunkingStrategyRequestType
     """
@@ -6879,8 +7476,6 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     """The default strategy. This strategy currently uses a max_chunk_size_tokens of 800 and
     chunk_overlap_tokens of 400.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'auto'. Required.
     :vartype type: str or ~azure.ai.projects.models.AUTO
     """
@@ -6909,7 +7504,6 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyResponse, VectorStoreStaticChunkingStrategyResponse
-
 
     :ivar type: The object type. Required. Known values are: "other" and "static".
     :vartype type: str or ~azure.ai.projects.models.VectorStoreChunkingStrategyResponseType
@@ -6941,7 +7535,6 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     """This is returned when the chunking strategy is unknown. Typically, this is because the file was
     indexed before the chunking_strategy concept was introduced in the API.
 
-
     :ivar type: The object type, which is always 'other'. Required.
     :vartype type: str or ~azure.ai.projects.models.OTHER
     """
@@ -6968,7 +7561,6 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 class VectorStoreConfiguration(_model_base.Model):
     """Vector storage configuration is the list of data sources, used when multiple
     files can be used for the enterprise file search.
-
 
     :ivar data_sources: Data sources. Required.
     :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
@@ -7000,7 +7592,6 @@ class VectorStoreConfiguration(_model_base.Model):
 class VectorStoreConfigurations(_model_base.Model):
     """The structure, containing the list of vector storage configurations i.e. the list of azure
     asset IDs.
-
 
     :ivar store_name: Name. Required.
     :vartype store_name: str
@@ -7039,7 +7630,6 @@ class VectorStoreDataSource(_model_base.Model):
     source
     for the enterprise file search.
 
-
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
     :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
@@ -7074,9 +7664,6 @@ class VectorStoreDataSource(_model_base.Model):
 
 class VectorStoreDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -7118,7 +7705,6 @@ class VectorStoreDeletionStatus(_model_base.Model):
 class VectorStoreExpirationPolicy(_model_base.Model):
     """The expiration policy for a vector store.
 
-
     :ivar anchor: Anchor timestamp after which the expiration policy applies. Supported anchors:
      ``last_active_at``. Required. "last_active_at"
     :vartype anchor: str or ~azure.ai.projects.models.VectorStoreExpirationPolicyAnchor
@@ -7156,9 +7742,6 @@ class VectorStoreExpirationPolicy(_model_base.Model):
 class VectorStoreFile(_model_base.Model):
     """Description of a file attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file``. Required. Default value
@@ -7173,10 +7756,10 @@ class VectorStoreFile(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store file, which can be either ``in_progress``\\ ,
-     ``completed``\\ , ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the
-     vector store file is ready for use. Required. Known values are: "in_progress", "completed",
-     "failed", and "cancelled".
+    :ivar status: The status of the vector store file, which can be either ``in_progress``,
+     ``completed``, ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector
+     store file is ready for use. Required. Known values are: "in_progress", "completed", "failed",
+     and "cancelled".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileStatus
     :ivar last_error: The last error associated with this vector store file. Will be ``null`` if
      there are no errors. Required.
@@ -7203,8 +7786,8 @@ class VectorStoreFile(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the vector store file, which can be either ``in_progress``, ``completed``,
-     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file
-     is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
+     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file is
+     ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last error associated with this vector store file. Will be ``null`` if there are no errors.
@@ -7242,9 +7825,6 @@ class VectorStoreFile(_model_base.Model):
 class VectorStoreFileBatch(_model_base.Model):
     """A batch of files attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file_batch``. Required. Default
@@ -7255,8 +7835,8 @@ class VectorStoreFileBatch(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store files batch, which can be either ``in_progress``\\
-     , ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
+    :ivar status: The status of the vector store files batch, which can be either ``in_progress``,
+     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
      "completed", "cancelled", and "failed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileBatchStatus
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
@@ -7278,9 +7858,9 @@ class VectorStoreFileBatch(_model_base.Model):
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store files batch, which can be either ``in_progress``,
-     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
-     \"completed\", \"cancelled\", and \"failed\"."""
+    """The status of the vector store files batch, which can be either ``in_progress``, ``completed``,
+     ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\", \"completed\",
+     \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Files count grouped by status processed or being processed by this vector store. Required."""
 
@@ -7309,7 +7889,6 @@ class VectorStoreFileBatch(_model_base.Model):
 
 class VectorStoreFileCount(_model_base.Model):
     """Counts of files processed or being processed by this vector store grouped by status.
-
 
     :ivar in_progress: The number of files that are currently being processed. Required.
     :vartype in_progress: int
@@ -7359,9 +7938,6 @@ class VectorStoreFileCount(_model_base.Model):
 class VectorStoreFileDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store file relationship.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -7404,7 +7980,6 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 class VectorStoreFileError(_model_base.Model):
     """Details on the error that may have occurred while processing a file for this vector store.
 
-
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
      "server_error", "invalid_file", and "unsupported_file".
     :vartype code: str or ~azure.ai.projects.models.VectorStoreFileErrorCode
@@ -7441,7 +8016,6 @@ class VectorStoreFileError(_model_base.Model):
 
 class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     """Options to configure a vector store static chunking strategy.
-
 
     :ivar max_chunk_size_tokens: The maximum number of tokens in each chunk. The default value is
      800. The minimum value is 100 and the maximum value is 4096. Required.
@@ -7481,8 +8055,6 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
 class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="static"):
     """A statically configured chunking strategy.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
@@ -7519,7 +8091,6 @@ class VectorStoreStaticChunkingStrategyResponse(
 ):  # pylint: disable=name-too-long
     """A statically configured chunking strategy.
 
-
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
@@ -7553,7 +8124,6 @@ class VectorStoreStaticChunkingStrategyResponse(
 
 class WorkspaceProperties(_model_base.Model):
     """workspace properties.
-
 
     :ivar application_insights: Authentication type of the connection target. Required.
     :vartype application_insights: str

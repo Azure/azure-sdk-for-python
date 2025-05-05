@@ -6,9 +6,15 @@
 
 ### Breaking Changes
 
+- Previously, if a `client_id` or `identity_config` was specified in `ManagedIdentityCredential` for Service Fabric managed identity, which is not supported, the `client_id` (or `resource_id`/`object_id` specified `identity_config`) would be silently ignored. Now, an exception will be raised during a token request if a `client_id` or `identity_config` is specified for Service Fabric managed identity.
+
 ### Bugs Fixed
 
+- Fixed an issue with error handling in MSAL-based credentials when the response content is a string rather than a dictionary. ([#40281](https://github.com/Azure/azure-sdk-for-python/pull/40281))
+
 ### Other Changes
+
+- Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
 
 ## 1.21.0 (2025-03-11)
 

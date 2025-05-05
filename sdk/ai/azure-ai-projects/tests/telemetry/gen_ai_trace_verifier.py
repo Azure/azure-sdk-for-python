@@ -192,13 +192,14 @@ class GenAiTraceVerifier:
         return True
 
     def check_span_events(self, span, expected_events):
+        print("Checking span: " + span.name)
         span_events = list(span.events)  # Create a list of events from the span
 
         for expected_event in expected_events:
             for actual_event in span_events:
                 if expected_event["name"] == actual_event.name:
-                    if not self.check_event_attributes(expected_event["attributes"], actual_event.attributes):
-                        print("check_span_events: event attributes do not match")
+                    if not self.check_event_attributes(expected_event["attributes"], actual_event.attributes._dict):
+                        print("Event attributes do not match")
                         return False
                     span_events.remove(actual_event)  # Remove the matched event from the span_events
                     break

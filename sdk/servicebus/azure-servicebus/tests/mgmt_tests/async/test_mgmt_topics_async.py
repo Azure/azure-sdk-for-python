@@ -13,12 +13,12 @@ from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import TopicProperties, AccessRights, AuthorizationRule
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus.management import ApiVersion
-from tests.utilities import get_logger
+from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.sb_env_loader import ServiceBusPreparer
+from sb_env_loader import ServiceBusPreparer
 
 from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 

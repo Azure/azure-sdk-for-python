@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._net_app_resource_operations import NetAppResourceOperations  # type: ignore
+from ._net_app_resource_usages_operations import NetAppResourceUsagesOperations  # type: ignore
 from ._net_app_resource_quota_limits_operations import NetAppResourceQuotaLimitsOperations  # type: ignore
 from ._net_app_resource_region_infos_operations import NetAppResourceRegionInfosOperations  # type: ignore
 from ._accounts_operations import AccountsOperations  # type: ignore
@@ -38,6 +39,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "NetAppResourceOperations",
+    "NetAppResourceUsagesOperations",
     "NetAppResourceQuotaLimitsOperations",
     "NetAppResourceRegionInfosOperations",
     "AccountsOperations",

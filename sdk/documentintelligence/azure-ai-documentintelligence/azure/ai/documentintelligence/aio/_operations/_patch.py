@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -23,7 +24,7 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._patch import PollingReturnType_co, _parse_operation_id, DocumentModelAdministrationPolling
+from ..._operations._patch import PollingReturnType_co, _parse_operation_id
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -265,7 +266,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json()["result"])
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -280,7 +281,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 AsyncLROBasePolling(
                     lro_delay,
                     path_format_arguments=path_format_arguments,
-                    lro_algorithms=[DocumentModelAdministrationPolling()],
+                    lro_options={"final-state-via": "operation-location"},
                     **kwargs
                 ),
             )
@@ -332,7 +333,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json())
+            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -344,7 +345,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

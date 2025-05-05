@@ -21,11 +21,11 @@ class TestContainerAppsAPIContainerAppsRevisionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_revisions(self, resource_group):
+    async def test_container_apps_revisions_list_revisions(self, resource_group):
         response = self.client.container_apps_revisions.list_revisions(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIContainerAppsRevisionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_revision(self, resource_group):
+    async def test_container_apps_revisions_get_revision(self, resource_group):
         response = await self.client.container_apps_revisions.get_revision(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -46,12 +46,12 @@ class TestContainerAppsAPIContainerAppsRevisionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_activate_revision(self, resource_group):
+    async def test_container_apps_revisions_activate_revision(self, resource_group):
         response = await self.client.container_apps_revisions.activate_revision(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -59,12 +59,12 @@ class TestContainerAppsAPIContainerAppsRevisionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_deactivate_revision(self, resource_group):
+    async def test_container_apps_revisions_deactivate_revision(self, resource_group):
         response = await self.client.container_apps_revisions.deactivate_revision(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestContainerAppsAPIContainerAppsRevisionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_restart_revision(self, resource_group):
+    async def test_container_apps_revisions_restart_revision(self, resource_group):
         response = await self.client.container_apps_revisions.restart_revision(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

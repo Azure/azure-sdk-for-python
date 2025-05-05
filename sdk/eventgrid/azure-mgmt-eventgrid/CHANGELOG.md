@@ -1,5 +1,132 @@
 # Release History
 
+## 10.4.0 (2025-03-24)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added operation group `ca_certificates`
+  - Client `EventGridManagementClient` added operation group `client_groups`
+  - Client `EventGridManagementClient` added operation group `clients`
+  - Client `EventGridManagementClient` added operation group `namespace_topic_event_subscriptions`
+  - Client `EventGridManagementClient` added operation group `namespaces`
+  - Client `EventGridManagementClient` added operation group `namespace_topics`
+  - Client `EventGridManagementClient` added operation group `permission_bindings`
+  - Client `EventGridManagementClient` added operation group `topic_spaces`
+  - Model `Domain` added property `minimum_tls_version_allowed`
+  - Model `Domain` added property `event_type_info`
+  - Model `DomainUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `DomainUpdateParameters` added property `event_type_info`
+  - Enum `EndpointType` added member `MONITOR_ALERT`
+  - Enum `EndpointType` added member `NAMESPACE_TOPIC`
+  - Model `PartnerNamespace` added property `minimum_tls_version_allowed`
+  - Model `PartnerNamespaceUpdateParameters` added property `minimum_tls_version_allowed`
+  - Enum `PrivateEndpointConnectionsParentType` added member `NAMESPACES`
+  - Model `Topic` added property `event_type_info`
+  - Model `Topic` added property `minimum_tls_version_allowed`
+  - Model `TopicTypeInfo` added property `are_regional_and_global_sources_supported`
+  - Model `TopicTypeInfo` added property `additional_enforced_permissions`
+  - Model `TopicUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `TopicUpdateParameters` added property `event_type_info`
+  - Model `WebHookEventSubscriptionDestination` added property `minimum_tls_version_allowed`
+  - Added model `BoolEqualsFilter`
+  - Added model `CaCertificate`
+  - Added enum `CaCertificateProvisioningState`
+  - Added model `CaCertificatesListResult`
+  - Added client `Client`
+  - Added model `ClientCertificateAuthentication`
+  - Added enum `ClientCertificateValidationScheme`
+  - Added model `ClientGroup`
+  - Added enum `ClientGroupProvisioningState`
+  - Added model `ClientGroupsListResult`
+  - Added enum `ClientProvisioningState`
+  - Added enum `ClientState`
+  - Added model `ClientsListResult`
+  - Added model `CustomDomainConfiguration`
+  - Added model `CustomDomainIdentity`
+  - Added enum `CustomDomainIdentityType`
+  - Added model `CustomDomainOwnershipValidationResult`
+  - Added enum `CustomDomainValidationState`
+  - Added model `DeliveryConfiguration`
+  - Added enum `DeliveryMode`
+  - Added enum `DeliverySchema`
+  - Added model `DynamicRoutingEnrichment`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `EventInputSchema`
+  - Added model `Filter`
+  - Added enum `FilterOperatorType`
+  - Added model `FiltersConfiguration`
+  - Added model `IsNotNullFilter`
+  - Added model `IsNullOrUndefinedFilter`
+  - Added model `MonitorAlertEventSubscriptionDestination`
+  - Added enum `MonitorAlertSeverity`
+  - Added model `Namespace`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NamespaceRegenerateKeyRequest`
+  - Added model `NamespaceSharedAccessKeys`
+  - Added model `NamespaceSku`
+  - Added model `NamespaceTopic`
+  - Added model `NamespaceTopicEventSubscriptionDestination`
+  - Added enum `NamespaceTopicProvisioningState`
+  - Added model `NamespaceTopicUpdateParameters`
+  - Added model `NamespaceTopicsListResult`
+  - Added model `NamespaceUpdateParameters`
+  - Added model `NamespacesListResult`
+  - Added model `NumberGreaterThanFilter`
+  - Added model `NumberGreaterThanOrEqualsFilter`
+  - Added model `NumberInFilter`
+  - Added model `NumberInRangeFilter`
+  - Added model `NumberLessThanFilter`
+  - Added model `NumberLessThanOrEqualsFilter`
+  - Added model `NumberNotInFilter`
+  - Added model `NumberNotInRangeFilter`
+  - Added model `PermissionBinding`
+  - Added enum `PermissionBindingProvisioningState`
+  - Added model `PermissionBindingsListResult`
+  - Added enum `PermissionType`
+  - Added enum `PublisherType`
+  - Added model `PushInfo`
+  - Added model `QueueInfo`
+  - Added model `RoutingEnrichments`
+  - Added model `RoutingIdentityInfo`
+  - Added enum `RoutingIdentityType`
+  - Added enum `SkuName`
+  - Added model `StaticRoutingEnrichment`
+  - Added enum `StaticRoutingEnrichmentType`
+  - Added model `StaticStringRoutingEnrichment`
+  - Added model `StringBeginsWithFilter`
+  - Added model `StringContainsFilter`
+  - Added model `StringEndsWithFilter`
+  - Added model `StringInFilter`
+  - Added model `StringNotBeginsWithFilter`
+  - Added model `StringNotContainsFilter`
+  - Added model `StringNotEndsWithFilter`
+  - Added model `StringNotInFilter`
+  - Added model `Subscription`
+  - Added model `SubscriptionFullUrl`
+  - Added enum `SubscriptionProvisioningState`
+  - Added model `SubscriptionUpdateParameters`
+  - Added model `SubscriptionsListResult`
+  - Added enum `TlsVersion`
+  - Added model `TopicSpace`
+  - Added enum `TopicSpaceProvisioningState`
+  - Added model `TopicSpacesConfiguration`
+  - Added enum `TopicSpacesConfigurationState`
+  - Added model `TopicSpacesListResult`
+  - Added model `TopicTypeAdditionalEnforcedPermission`
+  - Added model `TopicsConfiguration`
+  - Added model `UpdateTopicSpacesConfigurationInfo`
+  - Added model `UpdateTopicsConfigurationInfo`
+  - Added operation group `CaCertificatesOperations`
+  - Added operation group `ClientGroupsOperations`
+  - Added operation group `ClientsOperations`
+  - Added operation group `NamespaceTopicEventSubscriptionsOperations`
+  - Added operation group `NamespaceTopicsOperations`
+  - Added operation group `NamespacesOperations`
+  - Added operation group `PermissionBindingsOperations`
+  - Added operation group `TopicSpacesOperations`
+
 ## 10.3.0b4 (2024-04-29)
 
 ### Features Added

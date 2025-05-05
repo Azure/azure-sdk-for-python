@@ -162,11 +162,11 @@ class BinaryDecoder(object):
             try:
                 return input_bytes.decode('utf-8')
             except UnicodeDecodeError as exn:
-                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)
+                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)  # pylint: disable=do-not-log-raised-errors
                 raise exn
         else:
             # PY2
-            return unicode(input_bytes, "utf-8") # pylint: disable=undefined-variable
+            return unicode(input_bytes, "utf-8")  # pylint: disable=undefined-variable
 
     def skip_null(self):
         pass

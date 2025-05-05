@@ -1,12 +1,12 @@
 {
-  "commit": "cca6912f2ae4c5b93f34702a5d2b7d412ca1e02c",
+  "commit": "4fc983fb08e5fd8a7a821eb6491f5338ce52a9cf",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.27.4",
+    "@autorest/python@6.34.1",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/containerregistry/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/containerregistry/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.34.1 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/containerregistry/resource-manager/readme.md",
   "package-2023-08-preview-only": "2023-08-29 18:41:57 -0700 3e3098d6b9302e166b611ce72b3392786d3ea0f7 Microsoft.ContainerRegistry/preview/2023-08-01-preview/containerregistry.json",
   "package-2023-07-only": "2023-08-16 14:55:49 -0700 d5631d7fbffb672434457b5f2f16cdc6691356f9 Microsoft.ContainerRegistry/stable/2023-07-01/containerregistry.json",

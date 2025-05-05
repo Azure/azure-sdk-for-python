@@ -19,7 +19,7 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel
+/sdk/ @lmazuel @lirenhe
 
 # Core
 # PRLabel: %Core.Http
@@ -81,7 +81,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @YalinLi0312
+/sdk/appconfiguration/                                               @xiangyan99
 
 # ServiceOwners: @mrm9084
 # ServiceLabel: %App Configuration Provider
@@ -178,7 +178,7 @@
 /sdk/keyvault/                                                       @mccoyp
 
 # PRLabel: %Load Test Service
-/sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
+/sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
 
 # PRLabel: %Monitor
 /sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
@@ -227,7 +227,7 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @annatisch @Azure/azure-cosmos-python-sdk
+/sdk/cosmos/                                                         @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
@@ -244,6 +244,10 @@
 # ServiceLabel: %Device Update
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
+
+# PRLabel: %Durable Task Scheduler
+# ServiceLabel: %Durable Task Scheduler %Service Attention
+/sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Grid
@@ -299,27 +303,33 @@
 
 # ServiceLabel: %Maps
 # PRLabel: %Maps
-/sdk/maps/                                                           @dubiety
+/sdk/maps/                                                           @dubiety @andykao1213
 
 # ServiceLabel: %Mixed Reality
 # PRLabel: %Mixed Reality
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
-# AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
 
 # PRLabel: %OpenAI
-/sdk/openai/                                                         @kristapratico @glecaros
+/sdk/openai/                                                         @trrwilson
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
+
+# PRLabel: %Azure Projects
+/sdk/projects/                                                      @annatisch
+
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs
+/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -842,3 +852,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence
+/sdk/**/ci.yml                                                       @msyyc @lmazuel

@@ -40,5 +40,7 @@ extends:
       safeName: azurekeyvaultkeys
     - name: azure-keyvault-secrets
       safeName: azurekeyvaultsecrets
+    - name: azure-keyvault-securitydomain
+      safeName: azurekeyvaultsecuritydomain
     - name: azure-mgmt-keyvault
       safeName: azuremgmtkeyvault

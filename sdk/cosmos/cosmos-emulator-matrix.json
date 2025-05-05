@@ -9,15 +9,6 @@
         "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
       },
       "EmulatorConfig": {
-        "Emulator Tests Python 3.8": {
-            "PythonVersion": "3.8",
-            "CoverageArg": "--disablecov",
-            "TestSamples": "false",
-            "ToxTestEnv": "'whl,sdist'",
-            "ACCOUNT_HOST": "https://localhost:8081/",
-            "ACCOUNT_KEY": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-            "Skip.Analyze": "true"
-        },
         "Emulator Tests Python 3.9": {
             "PythonVersion": "3.9",
             "CoverageArg": "--disablecov",

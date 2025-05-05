@@ -9,6 +9,7 @@ import importlib
 import json
 import logging
 import os
+from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
@@ -22,8 +23,11 @@ from azure.ai.projects.models import (
     MessageIncompleteDetails,
     RunStep,
     RunStepDeltaChunk,
+    RunStepError,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
+    RunStepCodeInterpreterToolCall,
+    RunStepBingGroundingToolCall,
     ThreadMessage,
     ThreadRun,
     ToolDefinition,
@@ -48,6 +52,10 @@ from azure.ai.projects.telemetry.agents._utils import (
     GEN_AI_THREAD_RUN_STATUS,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
+    GEN_AI_RUN_STEP_START_TIMESTAMP,
+    GEN_AI_RUN_STEP_END_TIMESTAMP,
+    GEN_AI_RUN_STEP_STATUS,
+    ERROR_MESSAGE,
     OperationName,
     start_span,
 )
@@ -252,6 +260,12 @@ class _AIAgentsInstrumentorPreview:
         thread_run_id: Optional[str] = None,
         message_id: Optional[str] = None,
         message_status: Optional[str] = None,
+        run_step_status: Optional[str] = None,
+        created_at: Optional[datetime] = None,
+        completed_at: Optional[datetime] = None,
+        cancelled_at: Optional[datetime] = None,
+        failed_at: Optional[datetime] = None,
+        run_step_last_error: Optional[RunStepError] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> Dict[str, Any]:
         attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
@@ -269,6 +283,34 @@ class _AIAgentsInstrumentorPreview:
 
         if message_status:
             attrs[GEN_AI_MESSAGE_STATUS] = self._status_to_string(message_status)
+
+        if run_step_status:
+            attrs[GEN_AI_RUN_STEP_STATUS] = self._status_to_string(run_step_status)
+
+        if created_at:
+            if isinstance(created_at, datetime):
+                attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = created_at.isoformat()
+            else:
+                # fallback in case integer or string gets passed
+                attrs[GEN_AI_RUN_STEP_START_TIMESTAMP] = str(created_at)
+
+        end_timestamp = None
+        if completed_at:
+            end_timestamp = completed_at
+        elif cancelled_at:
+            end_timestamp = cancelled_at
+        elif failed_at:
+            end_timestamp = failed_at
+
+        if isinstance(end_timestamp, datetime):
+            attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = end_timestamp.isoformat()
+        elif end_timestamp:
+            # fallback in case int or string gets passed
+            attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = str(end_timestamp)
+
+        if run_step_last_error:
+            attrs[ERROR_MESSAGE] = run_step_last_error.message
+            attrs[ERROR_TYPE] = run_step_last_error.code
 
         if usage:
             attrs[GEN_AI_USAGE_INPUT_TOKENS] = usage.prompt_tokens
@@ -303,6 +345,152 @@ class _AIAgentsInstrumentorPreview:
             incomplete_details=message.incomplete_details,
             usage=usage,
         )
+
+    def _process_tool_calls(self, step: RunStep) -> List[Dict[str, Any]]:
+        """
+        Helper method to process tool calls and return a list of tool call dictionaries.
+
+        :param step: The run step containing tool call details to be processed.
+        :type step: RunStep
+        :return: A list of dictionaries, each representing a processed tool call.
+        :rtype: List[Dict[str, Any]]
+        """
+        tool_calls = []
+        tool_call: Dict[str, Any] = {}
+        for t in cast(RunStepToolCallDetails, step.step_details).tool_calls:
+            if not _trace_agents_content:
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                }
+            elif isinstance(t, RunStepFunctionToolCall):
+                try:
+                    parsed_arguments = json.loads(t.function.arguments)
+                except json.JSONDecodeError:
+                    parsed_arguments = {}
+
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "function": {
+                        "name": t.function.name,
+                        "arguments": parsed_arguments,
+                    },
+                }
+            elif isinstance(t, RunStepCodeInterpreterToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "code_interpreter": {
+                        "input": t.code_interpreter.input,
+                        "outputs": [output.as_dict() for output in t.code_interpreter.outputs],
+                    },
+                }
+            elif isinstance(t, RunStepBingGroundingToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    t.type: t.bing_grounding,
+                }
+            else:
+                tool_details = t.as_dict()[t.type]
+
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    t.type: tool_details,
+                }
+            tool_calls.append(tool_call)
+        return tool_calls
+
+    def _add_tool_call_event(
+        self,
+        span,
+        step: RunStep,
+        event_name: str,
+        is_run_step_listing: bool = False,
+    ) -> None:
+        """
+        Adds a tool call event to a span.
+
+        This method processes tool calls from a given run step and adds them as an event
+        to the provided span. It includes relevant attributes such as the run step status,
+        timestamps, tool call details, and optionally the message status.
+
+        :param span: The span instance where the tool call event will be recorded.
+        :type span: AbstractSpan
+        :param step: The run step containing details about the tool calls to be processed.
+        :type step: RunStep
+        :param event_name: The name of the event to be added to the span (e.g., "gen_ai.run_step.tool_calls").
+        :type event_name: str
+        :param is_run_step_listing: A flag indicating whether the event is part of a run step listing.
+            If True, the run step status is included in the attributes; otherwise, the message status is included.
+        :type is_run_step_listing: bool
+        :return: None
+        """
+        tool_calls = self._process_tool_calls(step)
+
+        run_step_status = None
+        message_status = None
+        if is_run_step_listing:
+            run_step_status = step.status
+        else:
+            message_status = step.status
+
+        attributes = self._create_event_attributes(
+            thread_id=step.thread_id,
+            agent_id=step.agent_id,
+            thread_run_id=step.run_id,
+            message_status=message_status,
+            run_step_status=run_step_status,
+            created_at=step.created_at,
+            completed_at=step.completed_at,
+            cancelled_at=step.cancelled_at,
+            failed_at=step.failed_at,
+            run_step_last_error=step.last_error,
+            usage=step.usage,
+        )
+
+        if tool_calls:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
+
+        span.span_instance.add_event(name=event_name, attributes=attributes)
+
+    def add_run_step_event(self, span, step: RunStep) -> None:
+        """
+        Adds a run step event to the span.
+
+        This method determines the type of the run step and adds the appropriate event
+        to the provided span. It processes either a "message_creation" or "tool_calls"
+        run step and includes relevant attributes such as the run step status, timestamps,
+        and tool call or message details.
+
+        :param span: The span instance where the run step event will be recorded.
+        :type span: AbstractSpan
+        :param step: The run step containing details about the event to be added.
+        :type step: RunStep
+        :return: None
+        """
+        if step["type"] == "message_creation":
+            self._add_message_creation_run_step_event(span, step)
+        elif step["type"] == "tool_calls":
+            self._add_tool_call_event(span, step, "gen_ai.run_step.tool_calls", is_run_step_listing=True)
+
+    def _add_message_creation_run_step_event(self, span, step: RunStep) -> None:
+        attributes = self._create_event_attributes(
+            thread_id=step.thread_id,
+            agent_id=step.agent_id,
+            thread_run_id=step.run_id,
+            message_id=step["step_details"]["message_creation"]["message_id"],
+            run_step_status=step.status,
+            created_at=step.created_at,
+            completed_at=step.completed_at,
+            cancelled_at=step.cancelled_at,
+            failed_at=step.failed_at,
+            run_step_last_error=step.last_error,
+            usage=step.usage,
+        )
+        span.span_instance.add_event(name="gen_ai.run_step.message_creation", attributes=attributes)
 
     def _add_message_event(
         self,
@@ -390,34 +578,7 @@ class _AIAgentsInstrumentorPreview:
         return status.value if hasattr(status, "value") else status
 
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
-        # do we want a new event for it ?
-        tool_calls = [
-            {
-                "id": t.id,
-                "type": t.type,
-                "function": (
-                    {"name": t.function.name, "arguments": json.loads(t.function.arguments)}
-                    if isinstance(t, RunStepFunctionToolCall)
-                    else None
-                ),
-            }
-            for t in cast(RunStepToolCallDetails, step.step_details).tool_calls
-        ]
-
-        attributes = self._create_event_attributes(
-            thread_id=step.thread_id,
-            agent_id=step.agent_id,
-            thread_run_id=step.run_id,
-            message_status=step.status,
-            usage=step.usage,
-        )
-
-        if _trace_agents_content:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
-        else:
-            tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording}, ensure_ascii=False)
-        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+        self._add_tool_call_event(span, step, "gen_ai.assistant.message", is_run_step_listing=False)
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
         if run and span and span.span_instance.is_recording:
@@ -572,6 +733,11 @@ class _AIAgentsInstrumentorPreview:
 
     def start_list_messages_span(self, project_name: str, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
+
+    def start_list_run_steps_span(
+        self, project_name: str, run_id: Optional[str] = None, thread_id: Optional[str] = None
+    ) -> "Optional[AbstractSpan]":
+        return start_span(OperationName.LIST_RUN_STEPS, project_name, run_id=run_id, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
@@ -1213,6 +1379,74 @@ class _AIAgentsInstrumentorPreview:
 
         return result
 
+    def trace_list_run_steps(self, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        run_id = kwargs.get("run_id")
+        thread_id = kwargs.get("thread_id")
+
+        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = function(*args, **kwargs)
+                if hasattr(result, "data") and result.data is not None:
+                    for step in result.data:
+                        self.add_run_step_event(span, step)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
+    async def trace_list_run_steps_async(self, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        run_id = kwargs.get("run_id")
+        thread_id = kwargs.get("thread_id")
+
+        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = await function(*args, **kwargs)
+                if hasattr(result, "data") and result.data is not None:
+                    for step in result.data:
+                        self.add_run_step_event(span, step)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
     async def trace_list_messages_async(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
             0
@@ -1266,6 +1500,10 @@ class _AIAgentsInstrumentorPreview:
     def wrap_handler(
         self, handler: "Optional[AgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
     ) -> "Optional[AgentEventHandler]":
+        # Do not create a handler wrapper if we do not have handler in the first place.
+        if not handler:
+            return None
+
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1277,6 +1515,10 @@ class _AIAgentsInstrumentorPreview:
     def wrap_async_handler(
         self, handler: "Optional[AsyncAgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
     ) -> "Optional[AsyncAgentEventHandler]":
+        # Do not create a handler wrapper if we do not have handler in the first place.
+        if not handler:
+            return None
+
         if isinstance(handler, _AsyncAgentEventHandlerTraceWrapper):
             return handler
 
@@ -1360,6 +1602,8 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.list_messages"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_list_messages(function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+                return self.trace_list_run_steps(function, *args, **kwargs)
             if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1428,6 +1672,9 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.list_messages"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_messages_async(function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_list_run_steps_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1481,6 +1728,7 @@ class _AIAgentsInstrumentorPreview:
             ),
             ("azure.ai.projects.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
             ("azure.ai.projects.operations", "AgentsOperations", "list_messages", TraceType.AGENTS, "list_messages"),
+            ("azure.ai.projects.operations", "AgentsOperations", "list_run_steps", TraceType.AGENTS, "list_run_steps"),
             ("azure.ai.projects.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
         async_apis = (
@@ -1542,6 +1790,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "list_messages",
             ),
+            (
+                "azure.ai.projects.aio.operations",
+                "AgentsOperations",
+                "list_run_steps",
+                TraceType.AGENTS,
+                "list_run_steps",
+            ),
             ("azure.ai.projects.models", "AsyncAgentRunStream", "__aexit__", TraceType.AGENTS, "__aexit__"),
         )
         return sync_apis, async_apis
@@ -1568,7 +1823,7 @@ class _AIAgentsInstrumentorPreview:
                         str(e),
                     )
                 except Exception as e:  # pylint: disable=broad-except
-                    # Log other exceptions as a warning, as we're not sure what they might be
+                    # Log other exceptions as a warning, as we are not sure what they might be
                     logging.warning("An unexpected error occurred: '%s'", str(e))
 
     def _available_agents_apis_and_injectors(self):
@@ -1666,31 +1921,55 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def initialize(
+        self,
+        response_iterator,
+        submit_tool_outputs,
+    ) -> None:
+        self.submit_tool_outputs = submit_tool_outputs
         if self.inner_handler:
-            self.inner_handler.on_message_delta(delta)
+            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def __next__(self) -> Any:
         if self.inner_handler:
-            self.inner_handler.on_thread_message(message)
+            event_bytes = self.inner_handler.__next_impl__()
+            return self._process_event(event_bytes.decode("utf-8"))
+        return None
+
+    # pylint: disable=R1710
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            return self.inner_handler.on_message_delta(delta)  # type: ignore
+
+    def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+        retval = None
+        if self.inner_handler:
+            retval = self.inner_handler.on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+        return retval  # type: ignore
+
+    def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
+        retval = None
+
         if self.inner_handler:
-            self.inner_handler.on_thread_run(run)
+            retval = self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
-    def on_run_step(self, step: "RunStep") -> None:
+        return retval  # type: ignore
+
+    def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
+        retval = None
         if self.inner_handler:
-            self.inner_handler.on_run_step(step)
+            retval = self.inner_handler.on_run_step(step)  # type: ignore
 
-        if step.status == RunStepStatus.IN_PROGRESS:
-            return
-
-        # todo - report errors for failure statuses here and in run ?
-        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
+        if (
+            step.type == "tool_calls"
+            and isinstance(step.step_details, RunStepToolCallDetails)
+            and step.status == RunStepStatus.COMPLETED
+        ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
@@ -1698,22 +1977,26 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
-    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        if self.inner_handler:
-            self.inner_handler.on_run_step_delta(delta)
+        return retval  # type: ignore
 
-    def on_error(self, data: str) -> None:
+    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_error(data)
+            return self.inner_handler.on_run_step_delta(delta)  # type: ignore
 
-    def on_done(self) -> None:
+    def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_done()
+            return self.inner_handler.on_error(data)  # type: ignore
+
+    def on_done(self) -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            return self.inner_handler.on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_unhandled_event(event_type, event_data)
+            return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+
+    # pylint: enable=R1710
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if not self.ended:
@@ -1746,31 +2029,56 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
+    def initialize(
+        self,
+        response_iterator,
+        submit_tool_outputs,
+    ) -> None:
+        self.submit_tool_outputs = submit_tool_outputs
+        if self.inner_handler:
+            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
+
+    # cspell:disable-next-line
+    async def __anext__(self) -> Any:
+        if self.inner_handler:
+            # cspell:disable-next-line
+            event_bytes = await self.inner_handler.__anext_impl__()
+            return await self._process_event(event_bytes.decode("utf-8"))
+
+    # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_message_delta(delta)
+            return await self.inner_handler.on_message_delta(delta)  # type: ignore
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+        retval = None
         if self.inner_handler:
-            await self.inner_handler.on_thread_message(message)
+            retval = await self.inner_handler.on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
+        return retval  # type: ignore
+
     async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
+        retval = None
+
         if self.inner_handler:
-            await self.inner_handler.on_thread_run(run)
+            retval = await self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
+        return retval  # type: ignore
+
     async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
+        retval = None
         if self.inner_handler:
-            await self.inner_handler.on_run_step(step)
+            retval = await self.inner_handler.on_run_step(step)  # type: ignore
 
-        if step.status == RunStepStatus.IN_PROGRESS:
-            return
-
-        # todo - report errors for failure statuses here and in run ?
-        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
+        if (
+            step.type == "tool_calls"
+            and isinstance(step.step_details, RunStepToolCallDetails)
+            and step.status == RunStepStatus.COMPLETED
+        ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
@@ -1778,22 +2086,26 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
+        return retval  # type: ignore
+
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_run_step_delta(delta)
+            return await self.inner_handler.on_run_step_delta(delta)  # type: ignore
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_error(data)
+            return await self.inner_handler.on_error(data)  # type: ignore
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_done()
+            return await self.inner_handler.on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_unhandled_event(event_type, event_data)
+            return await self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+
+    # pylint: enable=R1710
 
     def __aexit__(self, exc_type, exc_val, exc_tb):
         if not self.ended:

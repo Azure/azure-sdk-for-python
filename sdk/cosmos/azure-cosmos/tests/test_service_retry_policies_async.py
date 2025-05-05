@@ -43,6 +43,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
+        self.connectionPolicy.ConnectionRetryConfiguration = None
         await self.client.close()
 
     async def test_service_request_retry_policy_async(self):
@@ -432,8 +433,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
-
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
+            locational_endpoint = self.host.replace("localhost", "127.0.0.1")
             write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
         multi_write = False
 

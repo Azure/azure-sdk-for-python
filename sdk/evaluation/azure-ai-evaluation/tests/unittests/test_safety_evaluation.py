@@ -46,6 +46,22 @@ def mock_target_with_context():
 
 
 @pytest.fixture
+def mock_async_target():
+    async def mock_async_target_fn(query: str) -> str:
+        return "mock async response"
+
+    return mock_async_target_fn
+
+
+@pytest.fixture
+def mock_async_target_with_context():
+    async def mock_async_target_with_context_fn(query: str) -> tuple:
+        return ("mock async response", "mock async context")
+
+    return mock_async_target_with_context_fn
+
+
+@pytest.fixture
 def mock_eval_result_dict():
     jailbreak = {
         "rows": [
@@ -71,7 +87,10 @@ def mock_eval_result_dict():
         "metrics": {},
         "studio_url": "some url",
     }
-    return {"jailbreak": jailbreak, "regular": regular}
+    return {
+        "Mock_Jailbreak": jailbreak, 
+        "Mock_Regular": regular
+    }
 
 
 @pytest.fixture
@@ -119,6 +138,16 @@ class TestSafetyEvaluation:
     def test_check_target_returns_context_true(self, safety_eval, mock_target_with_context):
         assert safety_eval._check_target_returns_context(mock_target_with_context)
 
+    def test_check_target_returns_context_async(self, safety_eval, mock_async_target, mock_async_target_with_context):
+        # Test that async function without context returns False
+        assert not safety_eval._check_target_returns_context(mock_async_target)
+        # Test that async function with context returns True
+        assert safety_eval._check_target_returns_context(mock_async_target_with_context)
+
+    def test_check_target_returns_str_async(self, safety_eval, mock_async_target):
+        # Test that async function returning string returns True
+        assert safety_eval._check_target_returns_str(mock_async_target)
+
     def test_validate_inputs_groundedness_no_source(self, safety_eval, mock_target):
         with pytest.raises(EvaluationException) as exc_info:
             safety_eval._validate_inputs(
@@ -126,7 +155,7 @@ class TestSafetyEvaluation:
                 target=mock_target,
                 source_text=None,
             )
-        assert "requires either source_text" in str(exc_info.value)
+        assert "GroundednessEvaluator requires" in str(exc_info.value)
 
     def test_validate_inputs_multi_turn_scenario(self, safety_eval, mock_target):
         with pytest.raises(EvaluationException) as exc_info:
@@ -136,7 +165,7 @@ class TestSafetyEvaluation:
                 scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
                 num_turns=3,
             )
-        assert "content safety evaluation with more than 1 turn" in str(exc_info.value)
+        assert "not supported for content safety evaluation with more than 1 turn" in str(exc_info.value)
 
     def test_validate_inputs_no_model_config(self, safety_eval_no_model_config, mock_target):
         with pytest.raises(EvaluationException) as exc_info:
@@ -163,16 +192,25 @@ class TestSafetyEvaluation:
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator._simulator.Simulator.__call__", new_callable=AsyncMock)
-    async def test_simulate_no_scenario(self, mock__call__, safety_eval, mock_target):
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_no_scenario(self, mock_open, mock__call__, safety_eval, mock_target):
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
         mock__call__.return_value = [JsonLineChatProtocol({"messages": []})]
+        
         results = await safety_eval._simulate(target=mock_target)
         assert isinstance(results, dict)
-        assert isinstance(results["regular"], str)
+        # Test that it returns simulator data paths
+        assert isinstance(next(iter(results.values())), str)
+        assert "_Data.jsonl" in next(iter(results.values()))
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__call__", new_callable=AsyncMock)
-    async def test_simulate_direct_attack(self, mock_call, mock_init, safety_eval, mock_target):
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_direct_attack(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
         mock_call.return_value = {
             "jailbreak": JsonLineList([{"messages": []}]),
             "regular": JsonLineList([{"messages": []}]),
@@ -182,40 +220,117 @@ class TestSafetyEvaluation:
             target=mock_target, direct_attack=True, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA
         )
         assert isinstance(results, dict)
-        assert isinstance(results["regular"], str)
-        assert isinstance(results["jailbreak"], str)
+        # Test that the function returns paths with expected file naming patterns
+        for path in results.values():
+            assert isinstance(path, str)
+            assert "_Data.jsonl" in path
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__call__", new_callable=AsyncMock)
-    async def test_simulate_indirect_jailbreak(self, mock_call, mock_init, safety_eval, mock_target):
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_indirect_jailbreak(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
         mock_call.return_value = JsonLineList([{"messages": []}])
 
         results = await safety_eval._simulate(
             target=mock_target, adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK
         )
         assert isinstance(results, dict)
-        assert isinstance(results["regular"], str)
+        # Test that the function returns a path to a data file
+        assert isinstance(next(iter(results.values())), str)
+        assert "_Data.jsonl" in next(iter(results.values()))
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__call__", new_callable=AsyncMock)
-    async def test_simulate_adversarial(self, mock_call, mock_init, safety_eval, mock_target):
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_adversarial(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
         mock_call.return_value = JsonLineList([{"messages": []}])
+        
         results = await safety_eval._simulate(
             target=mock_target, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA
         )
         assert isinstance(results, dict)
-        assert isinstance(results["regular"], str)
+        # Test that the function returns a path to a data file
+        assert isinstance(next(iter(results.values())), str)
+        assert "_Data.jsonl" in next(iter(results.values()))
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__call__", new_callable=AsyncMock)
     async def test_simulate_no_results(self, mock_call, mock_init, safety_eval, mock_target):
-
         mock_call.return_value = None
         with pytest.raises(EvaluationException) as exc_info:
             results = await safety_eval._simulate(
                 target=mock_target, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA
             )
         assert "outputs generated by the simulator" in str(exc_info.value)
+
+    def test_is_async_function(self, safety_eval, mock_target, mock_async_target):
+        # Test that sync function returns False
+        assert not safety_eval._is_async_function(mock_target)
+        # Test that async function returns True
+        assert safety_eval._is_async_function(mock_async_target)
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._safety_evaluation._safety_evaluation._SafetyEvaluation._simulate")
+    @patch("azure.ai.evaluation._evaluate._evaluate.evaluate")
+    async def test_call_with_async_target(self, mock_evaluate, mock_simulate, safety_eval, mock_async_target):
+        # Setup mocks
+        mock_simulate.return_value = {"MockSimulator": "MockSimulator_Data.jsonl"}
+        mock_evaluate.return_value = {
+            "metrics": {},
+            "rows": [],
+            "studio_url": "test_url"
+        }
+        
+        # Call the __call__ method with an async target
+        result = await safety_eval(target=mock_async_target)
+        
+        # Verify the results
+        assert isinstance(result, dict)
+        assert "MockSimulator" in result
+        
+        # Verify that _simulate was called with the async target
+        mock_simulate.assert_called_once()
+        assert mock_simulate.call_args[1]["target"] == mock_async_target
+
+    def test_get_scenario_code_vulnerability(self, safety_eval):
+        scenario = safety_eval._get_scenario([_SafetyEvaluator.CODE_VULNERABILITY])
+        assert scenario == AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY
+
+    def test_get_scenario_ungrounded_attributes(self, safety_eval):
+        scenario = safety_eval._get_scenario([_SafetyEvaluator.UNGROUNDED_ATTRIBUTES])
+        assert scenario == AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES
+
+    def test_get_evaluators_code_vulnerability(self, safety_eval):
+        evaluators = safety_eval._get_evaluators([_SafetyEvaluator.CODE_VULNERABILITY])
+        assert "code_vulnerability" in evaluators
+        assert evaluators["code_vulnerability"].__class__.__name__ == "CodeVulnerabilityEvaluator"
+
+    def test_get_evaluators_ungrounded_attributes(self, safety_eval):
+        evaluators = safety_eval._get_evaluators([_SafetyEvaluator.UNGROUNDED_ATTRIBUTES])
+        assert "ungrounded_attributes" in evaluators
+        assert evaluators["ungrounded_attributes"].__class__.__name__ == "UngroundedAttributesEvaluator"
+
+    def test_validate_inputs_code_vulnerability_multi_turn(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.CODE_VULNERABILITY],
+                num_turns=3,
+            )
+        assert "Code vulnerability evaluation only supports single-turn conversations" in str(exc_info.value)
+
+    def test_validate_inputs_ungrounded_attributes_multi_turn(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.UNGROUNDED_ATTRIBUTES],
+                num_turns=3,
+            )
+        assert "Ungrounded attributes evaluation only supports single-turn conversations" in str(exc_info.value)
