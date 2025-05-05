@@ -169,7 +169,6 @@ def _verify_endpoint(messages, client, expected_locations):
     # get location
     actual_locations = set()
     for req_url in req_urls:
-        print(req_url)
         match = re.search(r"x\-ms\-thinclient\-proxy\-resource\-type': '([^']+)'", req_url)
         if match:
             resource_type = match.group(1)

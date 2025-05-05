@@ -102,12 +102,15 @@ async def perform_write_operation(operation, container, fault_injection_containe
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
                    'key': 'value'}
+        await asyncio.sleep(1)
         resp = await fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
         await container.create_item(body=doc)
+        await asyncio.sleep(1)
         resp = await fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
         await container.create_item(body=doc)
+        await asyncio.sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = await fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
     elif operation == BATCH:

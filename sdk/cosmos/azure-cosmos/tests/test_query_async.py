@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import asyncio
 import os
 import unittest
 import uuid
@@ -60,6 +60,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
+        await asyncio.sleep(1)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
@@ -107,6 +108,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
+        await asyncio.sleep(1)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(

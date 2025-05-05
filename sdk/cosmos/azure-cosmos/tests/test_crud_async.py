@@ -4,6 +4,7 @@
 
 """End-to-end test.
 """
+import asyncio
 import os
 import time
 import unittest
@@ -1000,6 +1001,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
         doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
         doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})
+        await asyncio.sleep(1)
         resources = {
             'coll': collection,
             'doc1': doc1,

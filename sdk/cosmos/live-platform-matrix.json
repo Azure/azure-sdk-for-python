@@ -120,7 +120,7 @@
         "Windows2022_38": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.8",
+          "PythonVersion": "3.9",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosMultiRegion"

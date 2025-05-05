@@ -3,6 +3,7 @@
 import os
 import unittest
 import uuid
+from time import sleep
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
@@ -29,6 +30,7 @@ def perform_write_operation(operation, container, fault_injection_container, doc
         resp = fault_injection_container.upsert_item(body=doc)
     elif operation == REPLACE:
         container.create_item(body=doc)
+        sleep(1)
         new_doc = {'id': doc_id,
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
@@ -36,9 +38,11 @@ def perform_write_operation(operation, container, fault_injection_container, doc
         resp = fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
         container.create_item(body=doc)
+        sleep(1)
         resp = fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
         container.create_item(body=doc)
+        sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
     elif operation == BATCH:
