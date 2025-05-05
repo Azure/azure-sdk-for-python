@@ -786,6 +786,7 @@ class _SafetyEvaluation:
                 tasks=tasks,
                 source_text=source_text,
                 direct_attack=_SafetyEvaluator.DIRECT_ATTACK in evaluators,
+                randomization_seed=randomization_seed,
             )
         elif data_path:
             data_paths = {Path(data_path).stem: data_path}
