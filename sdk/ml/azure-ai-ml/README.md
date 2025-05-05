@@ -43,6 +43,58 @@ ml_client = MLClient(
 ```
 
 ## Key concepts
+```mermaid
+  info
+```
+
+Below is a high level sequence diagram illustrating the package's workflow:
+```mermaid
+sequenceDiagram
+    actor User
+    participant Entity as Entity
+    participant MLClient as MLClient
+    participant Operations as Operations
+    participant Schema as Schema
+    participant REST as REST Client
+    participant Telemetry as Telemetry (Internal)
+    participant Serialization as Serialization
+    participant Auth as Authentication
+    participant AzureML as Azure ML Service
+    User->>Entity: Create entity from class/yml file (e.g., Model, Job)
+    Entity->>Schema: Validate against schema (in case of yml file)
+    Schema->>User: Raises Validation error (if any)
+    User->>MLClient: Initialize with credentials
+    MLClient->>Auth: Authenticate
+    Auth-->>MLClient: Return token
+    User->>MLClient: Request operation (e.g., jobs.create)
+    
+    Note over MLClient,Operations: Internal routing
+    MLClient->>Operations: Forward to specific operations class
+    
+    Operations->>Telemetry: Record operation start (if telemetry enabled)
+    
+    Operations->>Serialization: Convert entity to REST format
+    Serialization-->>Operations: REST payload
+    
+    Operations->>REST: Create REST request
+    REST->>Auth: Add authentication headers
+    Auth-->>REST: Authenticated request
+    
+    REST->>AzureML: Send HTTP request
+    AzureML->>AzureML: Process request
+    
+    AzureML-->>REST: HTTP response
+    REST-->>Operations: Response payload
+    
+    Operations->>Serialization: Convert REST response to entity
+    Serialization-->>Operations: Entity object
+    
+    Operations->>Telemetry: Record operation end (if telemetry enabled)
+    
+    Operations-->>MLClient: Operation result
+    MLClient-->>User: Return entity object
+```
+
 
 Azure Machine Learning Python SDK v2 comes with many new features like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. The SDK v2 brings consistency and ease of use across all assets of the platform. The Python SDK v2 offers the following capabilities:
 * Run **Standalone Jobs** - run a discrete ML activity as Job. This job can be run locally or on the cloud. We currently support the following types of jobs:
