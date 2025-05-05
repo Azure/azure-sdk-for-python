@@ -13,6 +13,7 @@ from azure.core.rest import HttpRequest
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos import CosmosClient
+from azure.cosmos import documents
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError

@@ -23,7 +23,7 @@ async def request_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     configs = test_config.TestConfig
