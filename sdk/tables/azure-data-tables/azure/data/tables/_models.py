@@ -19,13 +19,13 @@ from ._generated.models import (
     RetentionPolicy as GeneratedRetentionPolicy,
     CorsRule as GeneratedCorsRule,
 )
+from ._deserialize import (
+    _convert_to_entity,
+    _return_context_and_deserialized,
+    _extract_continuation_token,
+)
 from ._error import _process_table_error
-from ._decoder import TableEntityDecoder
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
-
-
-def _return_context_and_deserialized(response, deserialized, response_headers):
-    return response.context["location_mode"], deserialized, response_headers
 
 
 class TableAccessPolicy(GenAccessPolicy):
@@ -316,21 +316,6 @@ class TablePropertiesPaged(PageIterator):
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
-def _extract_continuation_token(continuation_token):
-    """Extract list entity continuation headers from token.
-
-    :param Dict(str,str) continuation_token: The listing continuation token.
-    :returns: The next partition key and next row key in a tuple
-    :rtype: (str,str)
-    """
-    if not continuation_token:
-        return None, None
-    try:
-        return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
-    except AttributeError as exc:
-        raise ValueError("Invalid continuation token format.") from exc
-
-
 class TableEntityPropertiesPaged(PageIterator):
     """An iterable of TableEntity properties."""
 
@@ -345,14 +330,7 @@ class TableEntityPropertiesPaged(PageIterator):
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
 
-    def __init__(
-        self,
-        command: Callable,
-        table: str,
-        *,
-        decoder: TableEntityDecoder,
-        **kwargs: Any,
-    ) -> None:
+    def __init__(self, command: Callable, table: str, **kwargs: Any) -> None:
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -361,12 +339,11 @@ class TableEntityPropertiesPaged(PageIterator):
         self._command = command
         self._headers = None
         self._response = None
-        self._location_mode = None
         self.table = table
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self._decoder = decoder
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
@@ -386,7 +363,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [self._decoder(t) for t in self._response.value]
+        props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {
@@ -522,7 +499,7 @@ class TableItem:
 class TablePayloadFormat(object):
     """
     Specifies the accepted content type of the response payload. More information
-    can be found here: https://msdn.microsoft.com/library/azure/dn535600.aspx
+    can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
     """
 
     JSON_NO_METADATA = "application/json;odata=nometadata"

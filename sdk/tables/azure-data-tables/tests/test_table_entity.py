@@ -17,7 +17,6 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import (
     TableServiceClient,
-    TableClient,
     generate_table_sas,
     TableEntity,
     EntityProperty,
@@ -417,22 +416,12 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             dict32["large"] = EntityProperty(2**31, EdmType.INT32)
 
             # Assert
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict32)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
 
             dict32["large"] = EntityProperty(-(2**31 + 1), EdmType.INT32)
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict32)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
         finally:
             self._tear_down()
 
@@ -449,22 +438,12 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             dict64["large"] = EntityProperty(2**63, EdmType.INT64)
 
             # Assert
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict64)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
 
             dict64["large"] = EntityProperty(-(2**63 + 1), EdmType.INT64)
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict64)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
         finally:
             self._tear_down()
 
@@ -611,9 +590,9 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
             self.table.create_entity(entity=entity)
             resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
-            assert entity["test1"].value == resp_entity["test1"]
-            assert entity["test2"].value == resp_entity["test2"]
-            assert entity["test3"].value == resp_entity["test3"]
+            assert str(entity["test1"]) == resp_entity["test1"]
+            assert str(entity["test2"]) == resp_entity["test2"]
+            assert str(entity["test3"]) == resp_entity["test3"]
 
         finally:
             self._tear_down()
@@ -2217,25 +2196,3 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
         with pytest.raises(ClientAuthenticationError):
             for _ in client.list_tables():
                 pass
-
-    @tables_decorator
-    @recorded_by_proxy
-    def test_get_entity_with_flatten_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
-        table_name = self._get_table_reference("table")
-        url = self.account_url(tables_storage_account_name, "table")
-        entity = {"PartitionKey": "pk", "RowKey": "rk", "Value": "foobar", "Answer": 42}
-
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
-            client.create_table()
-            client.create_entity(entity)
-            received_entity1 = client.get_entity("pk", "rk")
-            assert received_entity1.metadata
-
-        with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
-        ) as client:
-            received_entity2 = client.get_entity("pk", "rk")
-            assert received_entity2.metadata == received_entity1.metadata
-            for key, value in received_entity1.metadata.items():
-                assert received_entity2[key] == value
-            client.delete_table()

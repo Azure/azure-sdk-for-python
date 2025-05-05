@@ -300,6 +300,7 @@ def test_challenge_policy_disable_any_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+
         policy = BearerTokenChallengePolicy(
             credential, ["scope1", "scope2"], discover_tenant=False, discover_scopes=False
         )

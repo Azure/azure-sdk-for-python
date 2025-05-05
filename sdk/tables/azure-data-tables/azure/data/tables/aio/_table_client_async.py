@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import AsyncIterable, Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -16,18 +16,18 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from .._base_client import parse_connection_str, AudienceType
-from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
-from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
+    _prepare_key,
+    _add_entity_properties,
     _get_match_condition,
 )
+from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from .._error import (
     _decode_error,
     _process_table_error,
@@ -57,15 +57,6 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
-    :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map:
-        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
-    :vartype decoder_map:
-        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar flatten_result_entity: Whether to flatten entity metadata in deserialization. Default is False,
-        which means the metadata would be deserialized to property metadata in TableEntity.
-    :vartype flatten_result_entity: bool
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -76,12 +67,9 @@ class TableClient(AsyncTablesBaseClient):
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         audience: Optional[AudienceType] = None,
         api_version: Optional[str] = None,
-        encoder_map: Optional[EncoderMapType] = None,
-        decoder_map: Optional[DecoderMapType] = None,
-        flatten_result_entity: bool = False,
         **kwargs: Any,
     ) -> None:
-        """Creates TableClient from a Credential.
+        """Create TableClient from a Credential.
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
@@ -99,24 +87,11 @@ class TableClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encoder_map:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encoder_map:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decoder_map:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decoder_map:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :paramtype bool flatten_result_entity:
-            Whether to flatten entity metadata in deserialization. Default is False,
-            which means the metadata would be deserialized to property metadata in TableEntity.
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encoder_map)
-        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
         super(TableClient, self).__init__(
             endpoint, credential=credential, api_version=api_version, audience=audience, **kwargs
         )
@@ -368,20 +343,19 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
-        entity = kwargs.pop("entity", None)
         try:
+            entity = kwargs.pop("entity", None)
             if not entity:
                 entity = args[0]
-            entity_json = self.encoder(entity)
-            partition_key = entity_json.get("PartitionKey")
-            row_key = entity_json.get("RowKey")
-        except (TypeError, IndexError, AttributeError):
+            partition_key = entity["PartitionKey"]
+            row_key = entity["RowKey"]
+        except (TypeError, IndexError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
-                partition_key = cast(str, args[0])
+                partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
-                row_key = cast(str, args[1])
+                row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -396,7 +370,7 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                etag=etag or "*",
+                etag=etag,
                 match_condition=match_condition,
                 **kwargs,
             )
@@ -406,8 +380,8 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace_async
-    async def create_entity(self, entity: EntityType, **kwargs) -> Dict[str, Any]:
-        """Inserts an entity in a table.
+    async def create_entity(self, entity: EntityType, **kwargs) -> Mapping[str, Any]:
+        """Inserts entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or Mapping
@@ -425,7 +399,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self.encoder(entity)
+        entity_json = _add_entity_properties(entity)
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
@@ -453,13 +427,13 @@ class TableClient(AsyncTablesBaseClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs,
-    ) -> Dict[str, Any]:
-        """Updates an already existing entity in a table.
+    ) -> Mapping[str, Any]:
+        """Updates an entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode or str
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
@@ -483,9 +457,9 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = self.encoder(entity)
-        partition_key = entity_json.get("PartitionKey")
-        row_key = entity_json.get("RowKey")
+        partition_key = entity["PartitionKey"]
+        row_key = entity["RowKey"]
+        entity_copy = _add_entity_properties(entity)
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -495,7 +469,7 @@ class TableClient(AsyncTablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=entity_copy,
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -512,7 +486,7 @@ class TableClient(AsyncTablesBaseClient):
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=entity_copy,
                         **kwargs,
                     ),
                 )
@@ -558,7 +532,6 @@ class TableClient(AsyncTablesBaseClient):
             table=self.table_name,
             results_per_page=results_per_page,
             select=select,
-            decoder=self.decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -607,7 +580,6 @@ class TableClient(AsyncTablesBaseClient):
             results_per_page=results_per_page,
             filter=query_filter,
             select=select,
-            decoder=self.decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -647,30 +619,28 @@ class TableClient(AsyncTablesBaseClient):
         elif isinstance(select, str):
             user_select = select
         try:
-            entity_json = await self._client.table.query_entity_with_partition_and_row_key(
+            entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
                 select=user_select,
                 **kwargs,
             )
+            properties = _convert_to_entity(entity)
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
-        return self.decoder(entity_json)
+        return properties
 
     @distributed_trace_async
     async def upsert_entity(
-        self,
-        entity: EntityType,
-        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
-        **kwargs,
-    ) -> Dict[str, Any]:
-        """Updates (merge or replace) or inserts an entity into a table.
+        self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs
+    ) -> Mapping[str, Any]:
+        """Updates (merge or replace) an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode or str
+        :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -684,9 +654,10 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Replacing/Merging or Inserting an entity into a table
         """
-        entity_json = self.encoder(entity)
-        partition_key = entity_json.get("PartitionKey")
-        row_key = entity_json.get("RowKey")
+
+        partition_key = entity["PartitionKey"]
+        row_key = entity["RowKey"]
+        entity_json = _add_entity_properties(entity)
 
         try:
             if mode == UpdateMode.MERGE:
@@ -723,9 +694,7 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def submit_transaction(
-        self,
-        operations: Iterable[TransactionOperationType],
-        **kwargs,
+        self, operations: Union[Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]], **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.
 
@@ -758,7 +727,6 @@ class TableClient(AsyncTablesBaseClient):
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            encoder=self.encoder,
         )
         if isinstance(operations, AsyncIterable):
             async for operation in operations:

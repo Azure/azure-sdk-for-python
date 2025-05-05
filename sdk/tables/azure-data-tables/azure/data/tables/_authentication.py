@@ -26,7 +26,7 @@ class AzureSigningError(ClientAuthenticationError):
     """
     Represents a fatal error when attempting to sign a request.
     In general, the cause of this exception is user error. For example, the given account key is not valid.
-    Please visit https://learn.microsoft.com/azure/storage/common/storage-create-storage-account for more info.
+    Please visit https://learn.microsoft.com/en-us/azure/storage/common/storage-create-storage-account for more info.
     """
 
 
@@ -160,8 +160,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
-    authentication challenges.
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on Microsoft
+    Entra authentication challenges.
 
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential

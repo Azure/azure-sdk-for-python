@@ -131,9 +131,3 @@ class AsyncTableTestCase(TableTestCase):
                 pass
 
         self.query_tables = []
-
-    async def _convert_to_list(self, items):
-        list = []
-        async for item in items:
-            list.append(item)
-        return list

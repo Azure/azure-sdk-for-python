@@ -16,7 +16,7 @@ Please note, this package is a replacement for [`azure-cosmosdb-tables`](https:/
 The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
-* Python 3.8 or later is required to use this package.
+* Python 3.9 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and either
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].
@@ -450,5 +450,3 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [query_entities]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_query_table.py#L75-L89
 [get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L67-L71
 [upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L155-L163
-
-

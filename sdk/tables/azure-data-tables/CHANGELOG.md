@@ -1,19 +1,16 @@
 # Release History
 
-## 12.7.0b1 (Unreleased)
+## 12.7.0 (Unreleased)
 
 ### Features Added
-* Added to support customized encoding and decoding in entity CRUD operations.
-* Added to support Entity property in Tuple and Enum types.
-* Added to support flatten Entity metadata in entity deserialization by passing kwarg `flatten_result_entity` when creating clients.
+
 * Added support for configuring custom audiences for `TokenCredential` authentication when initializing a `TableClient` or `TableServiceClient`. ([#40487](https://github.com/Azure/azure-sdk-for-python/pull/40487))
 
+### Breaking Changes
+
 ### Bugs Fixed
-* Fixed duplicate odata tag bug in encoder when Entity property has "@odata.type" provided.
-* Fixed a bug in encoder that int32 and int64 are mapped to int32 when no "@odata.type" provided.
 
 ### Other Changes
-* Removed value range validation for Entity property in int64.
 
 ## 12.6.0 (2024-11-21)
 
