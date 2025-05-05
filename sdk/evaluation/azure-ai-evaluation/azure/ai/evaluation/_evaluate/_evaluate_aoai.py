@@ -208,7 +208,7 @@ def _get_single_run_results(
     if run_results.status != "completed":
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
-             + " failed with status {run_results.status}.",
+             + f" failed with status {run_results.status}.",
             blame=ErrorBlame.UNKNOWN,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
