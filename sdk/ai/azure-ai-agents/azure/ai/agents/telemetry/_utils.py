@@ -107,7 +107,7 @@ def start_span(
     gen_ai_system: Optional[str] = AZ_AI_AGENT_SYSTEM,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
-    global _span_impl_type
+    global _span_impl_type  # pylint: disable=global-statement
     if _span_impl_type is None:
         # Try to reinitialize the span implementation type.
         # This is a workaround for the case when the tracing implementation is not set up yet when the agent telemetry is imported.
