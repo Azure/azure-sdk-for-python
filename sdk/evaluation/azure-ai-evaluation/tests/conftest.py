@@ -513,11 +513,11 @@ def azure_cred_onedp() -> TokenCredential:
 
     try:
         credential = AzureCliCredential()
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        token = credential.get_token("https://ai.azure.com/.default")
     except Exception:
         credential = DefaultAzureCredential()
         # ensure we can get token
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        token = credential.get_token("https://ai.azure.com/.default")
         
     assert token is not None
     return credential
