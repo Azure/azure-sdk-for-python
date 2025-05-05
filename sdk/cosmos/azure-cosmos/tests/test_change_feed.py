@@ -27,7 +27,7 @@ def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
     test_client = cosmos_client.CosmosClient(config.host, config.masterKey,
-                                             multiple_write_location=use_multiple_write_locations),
+                                             multiple_write_locations=use_multiple_write_locations),
     return {
         "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
         "is_emulator": config.is_emulator

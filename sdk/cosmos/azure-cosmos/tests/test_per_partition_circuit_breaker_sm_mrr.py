@@ -3,14 +3,12 @@
 import os
 import unittest
 import uuid
-from time import sleep
 
 import pytest
-import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker, _location_cache
+from azure.cosmos import _partition_health_tracker, _location_cache
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
@@ -20,20 +18,8 @@ from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, wr
 from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope="class", autouse=True)
-def setup_teardown():
-    client = CosmosClient(TestPerPartitionCircuitBreakerSmMrr.host, TestPerPartitionCircuitBreakerSmMrr.master_key)
-    created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrr.TEST_DATABASE_ID)
-    created_database.create_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                            partition_key=PartitionKey("/pk"),
-                                            offer_throughput=10000)
-    # allow some time for the container to be created as this method is in different event loop
-    sleep(6)
-    yield
-    created_database.delete_container(TestPerPartitionCircuitBreakerSmMrr.TEST_CONTAINER_SINGLE_PARTITION_ID)
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -64,7 +50,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    def test_write_consecutive_failure_threshold(self, setup_teardown, write_operation, error):
+    def test_write_consecutive_failure_threshold(self, write_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']
@@ -87,7 +73,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    def test_write_failure_rate_threshold(self, setup_teardown, write_operation, error):
+    def test_write_failure_rate_threshold(self, write_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
         container = setup['col']

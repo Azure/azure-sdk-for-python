@@ -7,12 +7,11 @@ import uuid
 from typing import Dict, Any
 
 import pytest
-import pytest_asyncio
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _partition_health_tracker, _location_cache
+from azure.cosmos import _partition_health_tracker, _location_cache
 from azure.cosmos._partition_health_tracker import UNHEALTHY_TENTATIVE, UNHEALTHY, HEALTH_STATUS
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -21,18 +20,6 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation,
     write_operations_and_errors, cleanup_method, perform_read_operation, operations, REGION_2, REGION_1
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope="class", autouse=True)
-async def setup_teardown():
-    client = CosmosClient(TestPerPartitionCircuitBreakerSmMrrAsync.host, TestPerPartitionCircuitBreakerSmMrrAsync.master_key)
-    created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_DATABASE_ID)
-    await created_database.create_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                 partition_key=PartitionKey("/pk"),
-                                                                 offer_throughput=10000)
-    # allow some time for the container to be created as this method is in different event loop
-    await asyncio.sleep(6)
-    yield
-    await created_database.delete_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    await client.close()
 
 def validate_unhealthy_partitions(global_endpoint_manager,
                                   expected_unhealthy_partitions):
@@ -55,13 +42,12 @@ def validate_unhealthy_partitions(global_endpoint_manager,
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
 @pytest.mark.asyncio
-@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
@@ -91,7 +77,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_write_consecutive_failure_threshold_async(self, setup_teardown, write_operation, error):
+    async def test_write_consecutive_failure_threshold_async(self, write_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
@@ -119,7 +105,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_write_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
+    async def test_write_failure_rate_threshold_async(self, write_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error

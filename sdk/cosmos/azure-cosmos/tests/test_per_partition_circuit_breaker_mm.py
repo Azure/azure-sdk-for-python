@@ -8,8 +8,7 @@ import pytest
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from time import sleep
-from azure.cosmos import PartitionKey, _location_cache, _partition_health_tracker
+from azure.cosmos import _location_cache, _partition_health_tracker
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
@@ -18,21 +17,6 @@ from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, 
     write_operations_and_errors, validate_unhealthy_partitions, read_operations_and_errors, PK_VALUE, operations, \
     create_doc
 from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
-
-
-@pytest.fixture(scope="class", autouse=True)
-def setup_teardown():
-    client = CosmosClient(TestPerPartitionCircuitBreakerMM.host,
-                          TestPerPartitionCircuitBreakerMM.master_key)
-    created_database = client.get_database_client(TestPerPartitionCircuitBreakerMM.TEST_DATABASE_ID)
-    created_database.create_container(TestPerPartitionCircuitBreakerMM.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                            partition_key=PartitionKey("/pk"),
-                                            offer_throughput=10000)
-    # allow some time for the container to be created as this method is in different event loop
-    sleep(6)
-    yield
-
-    created_database.delete_container(TestPerPartitionCircuitBreakerMM.TEST_CONTAINER_SINGLE_PARTITION_ID)
 
 def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
     doc = {'id': doc_id,
@@ -107,12 +91,11 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
             pass
 
 @pytest.mark.cosmosCircuitBreaker
-@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key,
@@ -124,7 +107,7 @@ class TestPerPartitionCircuitBreakerMM:
         return {"client": client, "db": db, "col": container}
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    def test_write_consecutive_failure_threshold(self, setup_teardown, write_operation, error):
+    def test_write_consecutive_failure_threshold(self, write_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error
@@ -180,7 +163,7 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
-    def test_read_consecutive_failure_threshold(self, setup_teardown, read_operation, error):
+    def test_read_consecutive_failure_threshold(self, read_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error
@@ -230,7 +213,7 @@ class TestPerPartitionCircuitBreakerMM:
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    def test_write_failure_rate_threshold(self, setup_teardown, write_operation, error):
+    def test_write_failure_rate_threshold(self, write_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error
@@ -273,7 +256,7 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
-    def test_read_failure_rate_threshold(self, setup_teardown, read_operation, error):
+    def test_read_failure_rate_threshold(self, read_operation, error):
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error

@@ -1,19 +1,17 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
-import logging
 import os
 import unittest
 import uuid
 from typing import Dict, Any, List
 
 import pytest
-import pytest_asyncio
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey, _location_cache, _partition_health_tracker
+from azure.cosmos import _location_cache, _partition_health_tracker
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -39,19 +37,6 @@ PK_VALUE = "pk1"
 
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope="class", autouse=True)
-async def setup_teardown():
-    client = CosmosClient(TestPerPartitionCircuitBreakerMMAsync.host,
-                          TestPerPartitionCircuitBreakerMMAsync.master_key)
-    created_database = client.get_database_client(TestPerPartitionCircuitBreakerMMAsync.TEST_DATABASE_ID)
-    await created_database.create_container(TestPerPartitionCircuitBreakerMMAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                 partition_key=PartitionKey("/pk"),
-                                                                 offer_throughput=10000)
-    # allow some time for the container to be created as this method is in different event loop
-    await asyncio.sleep(10)
-    yield
-    await created_database.delete_container(TestPerPartitionCircuitBreakerMMAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    await client.close()
 
 def create_errors():
     errors = []
@@ -196,12 +181,11 @@ async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.asyncio
-@pytest.mark.usefixtures("setup_teardown")
 class TestPerPartitionCircuitBreakerMMAsync:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = os.path.basename(__file__) + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key,
@@ -213,7 +197,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         return {"client": client, "db": db, "col": container}
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_write_consecutive_failure_threshold_async(self, setup_teardown, write_operation, error):
+    async def test_write_consecutive_failure_threshold_async(self, write_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
@@ -287,7 +271,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
     @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
-    async def test_read_consecutive_failure_threshold_async(self, setup_teardown, read_operation, error):
+    async def test_read_consecutive_failure_threshold_async(self, read_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
@@ -340,7 +324,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         await cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
-    async def test_write_failure_rate_threshold_async(self, setup_teardown, write_operation, error):
+    async def test_write_failure_rate_threshold_async(self, write_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
@@ -386,7 +370,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
     @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
-    async def test_read_failure_rate_threshold_async(self, setup_teardown, read_operation, error):
+    async def test_read_failure_rate_threshold_async(self, read_operation, error):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error

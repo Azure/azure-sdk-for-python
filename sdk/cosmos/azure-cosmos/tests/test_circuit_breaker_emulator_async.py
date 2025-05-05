@@ -17,7 +17,7 @@ from azure.cosmos.http_constants import ResourceType
 from test_per_partition_circuit_breaker_mm_async import (create_doc, PK_VALUE, create_errors,
                                                          DELETE_ALL_ITEMS_BY_PARTITION_KEY,
                                                          validate_unhealthy_partitions as validate_unhealthy_partitions_mm,
-                                                         perform_write_operation)
+                                                         perform_write_operation, cleanup_method)
 from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
@@ -120,6 +120,7 @@ class TestCircuitBreakerEmulatorAsync:
                 )
 
         validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
+        await cleanup_method([custom_setup, setup])
 
 
     @pytest.mark.parametrize("error", create_errors())
@@ -175,6 +176,7 @@ class TestCircuitBreakerEmulatorAsync:
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions_mm(global_endpoint_manager, 0)
+        await cleanup_method([custom_setup, setup])
 
 
     @pytest.mark.parametrize("error", create_errors())
@@ -217,6 +219,7 @@ class TestCircuitBreakerEmulatorAsync:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+        await cleanup_method([custom_setup, setup])
 
     @pytest.mark.parametrize("error", create_errors())
     async def test_write_failure_rate_threshold_delete_all_items_by_pk_sm_async(self, setup_teardown, error):
@@ -258,6 +261,7 @@ class TestCircuitBreakerEmulatorAsync:
             os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
+        await cleanup_method([custom_setup, setup])
 
     # test cosmos client timeout
 
