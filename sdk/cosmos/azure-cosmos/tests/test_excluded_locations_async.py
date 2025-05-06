@@ -56,6 +56,25 @@ ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
 
 def read_item_test_data():
     client_only_output_data = [
+        [L1],  # 0
+        [L2],  # 1
+        [L1],  # 2
+        [L1],  # 3
+    ]
+    client_and_request_output_data = [
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L1],  # 3
+        [L1],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
+    ]
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+
+def read_all_item_test_data():
+    client_only_output_data = [
         [L1, L1],  # 0
         [L2, L2],  # 1
         [L1, L1],  # 2
@@ -203,7 +222,7 @@ class TestExcludedLocations:
             # Verify endpoint locations
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_item_test_data())
+    @pytest.mark.parametrize('test_data', read_all_item_test_data())
     async def test_read_all_items(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
