@@ -54,7 +54,8 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             },
             sampling_configuration=AgentEvaluationSamplingConfiguration(
                 name="test",
-                sampling_percent=0.5,
+                sampling_percent=100,
+                max_request_rate=1000,
             ),
             app_insights_connection_string=project_client.telemetry.get_connection_string(),
         )
