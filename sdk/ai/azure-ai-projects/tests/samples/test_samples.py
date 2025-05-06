@@ -3,43 +3,71 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import csv
 import os
 import pytest
 import importlib.util
+from azure.core.exceptions import HttpResponseError
 
 
 class TestSamples:
+    """
+    Test class for running all samples in the `/sdk/ai/azure-ai-projects/samples` folder.
+
+    To run this test:
+    * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
+    * Define the environment variable PROJECT_ENDPOINT with the endpoint of the Azure AI Foundry project used for testing.
+    * Run:  pytest tests/samples/test_samples.py::TestSamples
+    * Load the resulting report in Excel: /tests/samples/samples_report.csv
+    """
 
     @classmethod
     def setup_class(cls):
         current_path = os.path.abspath(__file__)
-        cls._samples_folder_path = os.path.join(current_path, "..", "..", "..")
-        cls._results: dict[str, bool] = {}
-        cls._results_async: dict[str, bool] = {}
+        cls._samples_folder_path = os.path.join(current_path, os.pardir, os.pardir, os.pardir)
+        cls._results: dict[str, tuple[bool, str]] = {}
 
     @classmethod
     def teardown_class(cls):
-        print("\n***********************************************************************")
+        """
+        Class-level teardown method that generates a report file named "samples_report.csv" after all tests have run.
+
+        The report contains one line per sample run, with three columns:
+            1. PASS or FAIL indicating the sample result.
+            2. The name of the sample.
+            3. The exception string summary if the sample failed, otherwise empty.
+
+        The report is written to the same directory as this test file.
+        """
+        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples_report.csv")
+        with open(report_path, mode="w", newline="") as file:
+            writer = csv.writer(file, quotechar='"', quoting=csv.QUOTE_ALL)  # Ensures proper quoting
+            for test_name, (passed, exception_string) in cls._results.items():
+                exception_message = f'"{exception_string.splitlines()[0]}"' if exception_string else ""
+                writer.writerow([f"{'PASS' if passed else 'FAIL'}", test_name, exception_message])
+
+        """
+        report_lines = []
         if len(cls._results) > 0:
-            print("\n Samples results:")
-            for result in cls._results.items():
-                test_name, passed = result
-                print(f" {'PASS' if passed else 'FAIL'}: {test_name}")
-            print(
-                f" {len(cls._results)} samples run. {sum(cls._results.values())} passed, {len(cls._results) - sum(cls._results.values())} failed."
-            )
-        if len(cls._results_async) > 0:
-            print("\n Asynchronous samples results:")
-            for result in cls._results_async.items():
-                test_name, passed = result
-                print(f" {'PASS' if passed else 'FAIL'}: {test_name}")
-            print(
-                f" {len(cls._results_async)} samples run. {sum(cls._results_async.values())} passed, {len(cls._results_async) - sum(cls._results_async.values())} failed."
-            )
-        print("\n***********************************************************************")
+            for test_name, (passed, exception_string) in cls._results.items():
+                exception_summary = f"\"{exception_string.splitlines()[0]}\"" if exception_string else ""
+                report_lines.append(f"{'PASS' if passed else 'FAIL'}, {test_name}, {exception_summary}")
+        report_content = "\n".join(report_lines)
+        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples_report.csv")
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write(report_content)
+        """
 
     @classmethod
     def _set_env_vars(cls, sample_name: str, **kwargs):
+        """
+        Sets environment variables for a given sample run and prints them.
+
+        Args:
+            sample_name (str): The name of the sample being executed.
+            **kwargs: Arbitrary keyword arguments representing environment variable names and their values.
+        """
+
         print(f"\nRunning {sample_name} with environment variables: ", end="")
         for key, value in kwargs.items():
             if value:
@@ -49,13 +77,60 @@ class TestSamples:
         print("\n")
 
     @classmethod
-    def _run_sample(cls, sample_path: str) -> None:
+    def _run_sample(cls, sample_name: str) -> None:
+        """
+        Executes a synchronous sample file and records the result.
+
+        Args:
+            sample_name (str): The name of the sample file to execute.
+
+        Raises:
+            Exception: Re-raises any exception encountered during execution of the sample file.
+
+        Side Effects:
+            Updates the class-level _results dictionary with the execution status and error message (if any)
+            for the given sample.
+            Prints an error message to stdout if execution fails.
+        """
+
+        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
         with open(sample_path) as f:
             code = f.read()
-            exec(code)
+            try:
+                exec(code)
+            except HttpResponseError as exc:
+                exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
+                TestSamples._results[sample_name] = (False, exception_message)
+                print(f"=================> Error running sample {sample_path}: {exception_message}")
+                raise Exception from exc
+            except Exception as exc:
+                TestSamples._results[sample_name] = (False, str(exc))
+                print(f"=================> Error running sample {sample_path}: {exc}")
+                raise Exception from exc
+            TestSamples._results[sample_name] = (True, "")
 
     @classmethod
-    async def _run_sample_async(cls, sample_path: str) -> None:
+    async def _run_sample_async(cls, sample_name: str) -> None:
+        """
+        Asynchronously runs a sample Python script specified by its file name.
+
+        This method dynamically imports the sample module from the given file path,
+        executes its `main()` coroutine, and records the result. If an exception occurs
+        during execution, the error is logged and re-raised.
+
+        Args:
+            sample_name (str): The name of the sample Python file to run (relative to the samples folder).
+
+        Raises:
+            ImportError: If the sample module cannot be loaded.
+            Exception: If an error occurs during the execution of the sample's `main()` coroutine.
+
+        Side Effects:
+            Updates the `_results` dictionary with the execution status and error message (if any).
+            Prints error messages to the console if execution fails.
+        """
+
+        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
         # Dynamically import the module from the given path
         module_name = os.path.splitext(os.path.basename(sample_path))[0]
         spec = importlib.util.spec_from_file_location(module_name, sample_path)
@@ -64,7 +139,18 @@ class TestSamples:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         # Await the main() coroutine defined in the sample
-        await module.main()
+        try:
+            await module.main()
+        except HttpResponseError as exc:
+            exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
+            TestSamples._results[sample_name] = (False, exception_message)
+            print(f"=================> Error running sample {sample_path}: {exception_message}")
+            raise Exception from exc
+        except Exception as exc:
+            TestSamples._results[sample_name] = (False, str(exc))
+            print(f"=================> Error running sample {sample_path}: {exc}")
+            raise Exception from exc
+        TestSamples._results[sample_name] = (True, "")
 
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
@@ -141,7 +227,6 @@ class TestSamples:
            Azure AI Foundry project.
         """
 
-        TestSamples._results[sample_name] = False
         self._set_env_vars(
             sample_name,
             **{
@@ -150,9 +235,7 @@ class TestSamples:
                 "data_folder": data_folder,
             },
         )
-        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
-        TestSamples._run_sample(sample_path)
-        TestSamples._results[sample_name] = True
+        TestSamples._run_sample(sample_name)
 
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
@@ -203,7 +286,6 @@ class TestSamples:
            Azure AI Foundry project.
         """
 
-        TestSamples._results_async[sample_name] = False
         self._set_env_vars(
             sample_name,
             **{
@@ -212,6 +294,4 @@ class TestSamples:
                 "data_folder": data_folder,
             },
         )
-        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
-        await TestSamples._run_sample_async(sample_path)
-        TestSamples._results_async[sample_name] = True
+        await TestSamples._run_sample_async(sample_name)
