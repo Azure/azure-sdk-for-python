@@ -30,7 +30,8 @@ from azure.ai.projects.models import (
     InputDataset,
     EvaluatorIds,
     EvaluatorConfiguration,
-    AgentEvaluationSamplingConfiguration
+    AgentEvaluationRedactionConfiguration,
+    AgentEvaluationSamplingConfiguration,
 )
 from dotenv import load_dotenv
 
@@ -56,6 +57,10 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 name="test",
                 sampling_percent=100,
                 max_request_rate=1000,
+            ),
+            redaction_configuration=AgentEvaluationRedactionConfiguration(
+                # No redaction for the logs. We recoommend to leave it as default value of "True" for production
+                redact_score_properties=False,
             ),
             app_insights_connection_string=project_client.telemetry.get_connection_string(),
         )
