@@ -53,8 +53,8 @@ extends:
     # Uncommentbefore merging to main branch
     # - name: azure-ai-projects
     #  safeName: azureaiprojects
-    #- name: azure-ai-inference
-    #  safeName: azureaiinference
+    - name: azure-ai-inference
+      safeName: azureaiinference
     #######################################
     - name: azure-ai-agents
       safeName: azureaiagents

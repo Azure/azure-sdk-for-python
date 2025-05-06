@@ -68,6 +68,7 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
+        # The '{endpoint}' placeholder is used for dynamic URL.
         _endpoint = "{endpoint}"
         self._config = AgentsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
