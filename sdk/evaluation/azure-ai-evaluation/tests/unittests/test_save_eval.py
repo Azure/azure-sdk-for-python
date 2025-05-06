@@ -2,7 +2,7 @@ import inspect
 import os
 import pathlib
 from enum import Enum
-from typing import Any, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type
 
 import pytest
 
@@ -27,7 +27,6 @@ def get_evaluators_from_module(namespace: Any, exceptions: Optional[List[str]] =
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
 class TestSaveEval:
     """Test saving evaluators."""
 
@@ -51,3 +50,35 @@ class TestSaveEval:
         assert results_df is not None
         all(results_df["outputs.echo_query"] == results_df["inputs.query"])
         all(results_df["outputs.echo_response"] == results_df["inputs.response"])
+
+    def test_load_and_run_evaluators_new(self, tmpdir, data_file) -> None:
+        """Test saving and loading evaluators using the ported code"""
+        from test_evaluators.test_inputs_evaluators import EchoEval
+        from azure.ai.evaluation._legacy._persist import save_evaluator, load_evaluator, LoadedEvaluator
+        from azure.ai.evaluation import evaluate
+
+        save_evaluator(EchoEval, path=tmpdir)
+        assert os.path.isfile(os.path.join(tmpdir, "flow.flex.yaml"))
+
+        loaded_eval: LoadedEvaluator = load_evaluator(tmpdir)
+        assert isinstance(loaded_eval, LoadedEvaluator)
+
+        result = evaluate(
+            data=data_file,
+            evaluators={
+                "echo_eval": loaded_eval,
+            },
+            evaluator_config={
+                "echo_eval": {
+                    "column_mapping": {
+                        "query": "${data.query}",
+                        "response": "${data.response}",
+                    }
+                }
+            },
+            _use_run_submitter_client=True,
+        )
+        assert result
+        result_df: List[Dict] = result["rows"]
+        assert all(row["outputs.echo_eval.echo_query"] == row["inputs.query"] for row in result_df)
+        assert all(row["outputs.echo_eval.echo_response"] == row["inputs.response"] for row in result_df)

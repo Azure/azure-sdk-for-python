@@ -5,6 +5,7 @@
 from os import PathLike
 from typing import Any, Callable, Dict, Optional, Union
 from typing_extensions import TypeAlias
+from types import SimpleNamespace
 
 import pandas as pd
 
@@ -16,10 +17,12 @@ from .entities import Run
 try:
     from promptflow.client import PFClient as _PFClient
 except ImportError:
+    from azure.ai.evaluation._legacy._common._save import save_evaluator
 
     class _PFClient:
         def __init__(self, **kwargs):
             self._config = Configuration(override_config=kwargs.pop("config", None))
+            self.flows = SimpleNamespace(save=save_evaluator)
 
         def run(
             self,
