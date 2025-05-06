@@ -48,9 +48,8 @@ class AvailablePhoneNumber(_serialization.Model):
      true, the phone number cannot be acquired unless the customer provides explicit agreement to
      not resell it.
     :vartype is_agreement_to_not_resell_required: bool
-    :ivar error: Contains error details in case of failure when reserving, releasing or purchasing
-     the phone number. Note that this is ignored by the service when present in requests.
-    :vartype error: ~azure.communication.phonenumbers.models.AvailablePhoneNumberError
+    :ivar error: The error detail.
+    :vartype error: ~azure.communication.phonenumbers.models.ErrorDetail
     """
 
     _validation = {
@@ -63,7 +62,6 @@ class AvailablePhoneNumber(_serialization.Model):
         "cost": {"readonly": True},
         "status": {"readonly": True},
         "is_agreement_to_not_resell_required": {"readonly": True},
-        "error": {"readonly": True},
     }
 
     _attribute_map = {
@@ -76,7 +74,7 @@ class AvailablePhoneNumber(_serialization.Model):
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "status": {"key": "status", "type": "str"},
         "is_agreement_to_not_resell_required": {"key": "isAgreementToNotResellRequired", "type": "bool"},
-        "error": {"key": "error", "type": "AvailablePhoneNumberError"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
@@ -86,6 +84,7 @@ class AvailablePhoneNumber(_serialization.Model):
         capabilities: "_models.PhoneNumberCapabilities",
         phone_number_type: Union[str, "_models.PhoneNumberType"],
         assignment_type: Union[str, "_models.PhoneNumberAssignmentType"],
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -100,6 +99,8 @@ class AvailablePhoneNumber(_serialization.Model):
          case. Required. Known values are: "person" and "application".
         :paramtype assignment_type: str or
          ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword error: The error detail.
+        :paramtype error: ~azure.communication.phonenumbers.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
@@ -111,7 +112,7 @@ class AvailablePhoneNumber(_serialization.Model):
         self.cost: Optional["_models.PhoneNumberCost"] = None
         self.status: Optional[Union[str, "_models.PhoneNumberAvailabilityStatus"]] = None
         self.is_agreement_to_not_resell_required: Optional[bool] = None
-        self.error: Optional["_models.AvailablePhoneNumberError"] = None
+        self.error = error
 
 
 class AvailablePhoneNumberError(_serialization.Model):
@@ -215,6 +216,98 @@ class CommunicationErrorResponse(_serialization.Model):
         """
         :keyword error: The Communication Services error. Required.
         :paramtype error: ~azure.communication.phonenumbers.models.CommunicationError
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.communication.phonenumbers.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.communication.phonenumbers.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.communication.phonenumbers.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.communication.phonenumbers.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
