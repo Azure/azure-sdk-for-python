@@ -32,41 +32,110 @@ def main():
 
     response = client.organizations.begin_update(
         resource_group_name="rgneon",
-        organization_name="eRY-J_:",
+        organization_name="test-org",
         properties={
             "properties": {
                 "companyDetails": {
-                    "businessPhone": "hbeb",
-                    "companyName": "uxn",
-                    "country": "lpajqzptqchuko",
-                    "domain": "krjldeakhwiepvs",
-                    "numberOfEmployees": 23,
-                    "officeAddress": "chpkrlpmfslmawgunjxdllzcrctykq",
+                    "businessPhone": "hucxvzcvpaupqjkgb",
+                    "companyName": "xtul",
+                    "country": "ycmyjdcpyjieemfrthfyxdlvn",
+                    "domain": "snoshqumfsthyofpnrsgyjhszvgtj",
+                    "numberOfEmployees": 12,
+                    "officeAddress": "icirtoqmmozijk",
                 },
                 "partnerOrganizationProperties": {
-                    "organizationId": "njyoqflcmfwzfsqe",
-                    "organizationName": "J:.._3P",
+                    "organizationId": "fynmpcbivqkwqdfhrmsyusjd",
+                    "organizationName": "entity-name",
                     "singleSignOnProperties": {
-                        "aadDomains": ["kndszgrwzbvvlssvkej"],
-                        "enterpriseAppId": "fpibacregjfncfdsojs",
+                        "aadDomains": ["mdzbelaiphukhe"],
+                        "enterpriseAppId": "urtjzjfr",
                         "singleSignOnState": "Initial",
-                        "singleSignOnUrl": "tmojh",
+                        "singleSignOnUrl": "gcmlwvtxcsjozitm",
                     },
                 },
+                "projectProperties": {
+                    "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                    "branch": {
+                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                        "databaseName": "duhxebzhd",
+                        "databases": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "orfdwdmzvfvlnrgussvcvoek",
+                                "entityName": "entity-name",
+                                "ownerName": "odmbeg",
+                            }
+                        ],
+                        "endpoints": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "rzsyrhpfbydxtfkpaa",
+                                "endpointType": "read_only",
+                                "entityName": "entity-name",
+                                "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                            }
+                        ],
+                        "entityName": "entity-name",
+                        "parentId": "entity-id",
+                        "projectId": "oik",
+                        "roleName": "qrrairsupyosxnqotdwhbpc",
+                        "roles": [
+                            {
+                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                                "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
+                                "entityName": "entity-name",
+                                "isSuperUser": True,
+                                "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                            }
+                        ],
+                    },
+                    "databases": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "orfdwdmzvfvlnrgussvcvoek",
+                            "entityName": "entity-name",
+                            "ownerName": "odmbeg",
+                        }
+                    ],
+                    "defaultEndpointSettings": {"autoscalingLimitMaxCu": 4, "autoscalingLimitMinCu": 8},
+                    "endpoints": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "rzsyrhpfbydxtfkpaa",
+                            "endpointType": "read_only",
+                            "entityName": "entity-name",
+                            "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                        }
+                    ],
+                    "entityName": "entity-name",
+                    "historyRetention": 16,
+                    "pgVersion": 16,
+                    "regionId": "vxvmjwuttpiakirzdf",
+                    "roles": [
+                        {
+                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                            "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
+                            "entityName": "entity-name",
+                            "isSuperUser": True,
+                            "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                        }
+                    ],
+                    "storage": 23,
+                },
                 "userDetails": {
-                    "emailAddress": "3i_%@w8-y.H-p.tvj.dG",
-                    "firstName": "buwwe",
-                    "lastName": "escynjpynkoox",
-                    "phoneNumber": "dlrqoowumy",
-                    "upn": "fwedjamgwwrotcjaucuzdwycfjdqn",
+                    "emailAddress": "test@contoso.com",
+                    "firstName": "zhelh",
+                    "lastName": "zbdhouyeozylnerrc",
+                    "phoneNumber": "zmejenytglrmjnt",
+                    "upn": "mixcikvxlnhkfugetqlngz",
                 },
             },
-            "tags": {"key8990": "wuvaontoqyttxtikvvahdegcfdfkz"},
+            "tags": {"key609": "qyosjypklxtiamqebd"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-08-01-preview/Organizations_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01/Organizations_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

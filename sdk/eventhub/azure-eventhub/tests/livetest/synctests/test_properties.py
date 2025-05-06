@@ -16,7 +16,7 @@ from azure.eventhub.exceptions import (
 
 
 @pytest.mark.liveTest
-def test_get_properties(auth_credentials, uamqp_transport):
+def test_get_properties(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -24,6 +24,7 @@ def test_get_properties(auth_credentials, uamqp_transport):
         consumer_group="$default",
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         properties = client.get_eventhub_properties()
@@ -31,7 +32,7 @@ def test_get_properties(auth_credentials, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_get_properties_with_auth_error_sync(auth_credentials, live_eventhub, uamqp_transport):
+def test_get_properties_with_auth_error_sync(auth_credentials, live_eventhub, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, _ = auth_credentials
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -39,6 +40,7 @@ def test_get_properties_with_auth_error_sync(auth_credentials, live_eventhub, ua
         consumer_group="$default",
         credential=EventHubSharedKeyCredential(live_eventhub["key_name"], "AaBbCcDdEeFf="),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         with pytest.raises(AuthenticationError) as e:
@@ -50,6 +52,7 @@ def test_get_properties_with_auth_error_sync(auth_credentials, live_eventhub, ua
         consumer_group="$default",
         credential=EventHubSharedKeyCredential("invalid", live_eventhub["access_key"]),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         with pytest.raises(AuthenticationError) as e:
@@ -57,7 +60,7 @@ def test_get_properties_with_auth_error_sync(auth_credentials, live_eventhub, ua
 
 
 @pytest.mark.liveTest
-def test_get_properties_with_connect_error(auth_credentials, uamqp_transport):
+def test_get_properties_with_connect_error(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -65,6 +68,7 @@ def test_get_properties_with_connect_error(auth_credentials, uamqp_transport):
         consumer_group="$default",
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         with pytest.raises(ConnectError) as e:
@@ -76,6 +80,7 @@ def test_get_properties_with_connect_error(auth_credentials, uamqp_transport):
         consumer_group="$default",
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         with pytest.raises(ConnectError) as e:
@@ -83,7 +88,7 @@ def test_get_properties_with_connect_error(auth_credentials, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_get_partition_ids(auth_credentials, uamqp_transport):
+def test_get_partition_ids(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -91,6 +96,7 @@ def test_get_partition_ids(auth_credentials, uamqp_transport):
         consumer_group="$default",
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     with client:
         partition_ids = client.get_partition_ids()
@@ -98,7 +104,7 @@ def test_get_partition_ids(auth_credentials, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_get_partition_properties(auth_credentials, uamqp_transport):
+def test_get_partition_properties(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -106,6 +112,7 @@ def test_get_partition_properties(auth_credentials, uamqp_transport):
         consumer_group="$default",
         credential=credential(),
         uamqp_transport=uamqp_transport,
+        client_args=client_args,
     )
     with client:
         properties = client.get_partition_properties("0")

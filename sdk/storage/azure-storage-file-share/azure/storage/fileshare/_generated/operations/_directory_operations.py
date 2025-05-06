@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -594,12 +594,11 @@ class DirectoryOperations:
         file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Creates a new directory under the specified share or parent directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -734,7 +733,6 @@ class DirectoryOperations:
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self, sharesnapshot: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Returns all system properties for the specified directory, and can also be used to check the
         existence of a directory. The data returned does not include the files in the directory or any
         subdirectories.
@@ -744,7 +742,7 @@ class DirectoryOperations:
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -829,13 +827,12 @@ class DirectoryOperations:
     def delete(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -904,12 +901,11 @@ class DirectoryOperations:
         file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Sets properties on the directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_permission: If specified the permission (security descriptor) shall be set for the
@@ -1041,12 +1037,11 @@ class DirectoryOperations:
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Updates user defined metadata for the specified directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -1121,7 +1116,6 @@ class DirectoryOperations:
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
-        # pylint: disable=line-too-long
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
 
@@ -1142,7 +1136,7 @@ class DirectoryOperations:
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param include: Include this parameter to specify one or more datasets to include in the
@@ -1223,7 +1217,6 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListHandlesResponse:
-        # pylint: disable=line-too-long
         """Lists handles for directory.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -1237,7 +1230,7 @@ class DirectoryOperations:
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -1315,7 +1308,6 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Closes all handles open for given directory.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
@@ -1323,7 +1315,7 @@ class DirectoryOperations:
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -1414,7 +1406,6 @@ class DirectoryOperations:
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Renames a directory.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
@@ -1422,7 +1413,7 @@ class DirectoryOperations:
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param replace_if_exists: Optional. A boolean value for if the destination file already exists,

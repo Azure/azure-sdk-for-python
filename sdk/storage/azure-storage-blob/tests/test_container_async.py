@@ -2592,3 +2592,32 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         response = await cc.exists()
         assert response is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_and_set_access_policy_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
+        container: ContainerClient = await self._create_container(bsc)
+
+        # Act
+        await container.set_container_access_policy(signed_identifiers={})
+
+        # Assert
+        acl = await container.get_container_access_policy()
+        assert acl is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_account_information_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
+        container: ContainerClient = await self._create_container(bsc)
+
+        # Act / Assert
+        cc_info = await container.get_account_information()
+        assert cc_info is not None

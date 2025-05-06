@@ -25,7 +25,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself

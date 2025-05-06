@@ -19,7 +19,7 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel
+/sdk/ @lmazuel @lirenhe
 
 # Core
 # PRLabel: %Core.Http
@@ -76,12 +76,12 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @YalinLi0312
+/sdk/appconfiguration/                                               @xiangyan99
 
 # ServiceOwners: @mrm9084
 # ServiceLabel: %App Configuration Provider
@@ -162,8 +162,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %Face
-# PRLabel: %Face
+# ServiceLabel: %FaceAPI
+# PRLabel: %FaceAPI
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
@@ -216,10 +216,10 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @YalinLi0312
+/sdk/containerregistry/                                              @lmazuel
 
 # ServiceLabel: %Container Service
 # PRLabel: %Container Service
@@ -227,7 +227,7 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @annatisch @Azure/azure-cosmos-python-sdk
+/sdk/cosmos/                                                         @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
@@ -244,6 +244,10 @@
 # ServiceLabel: %Device Update
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
+
+# PRLabel: %Durable Task Scheduler
+# ServiceLabel: %Durable Task Scheduler %Service Attention
+/sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Grid
@@ -316,9 +320,16 @@
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
+
+# PRLabel: %Azure Projects
+/sdk/projects/                                                      @annatisch
+
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
+/sdk/purview/                                                        @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -370,12 +381,12 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @catalinaperalta
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @YalinLi0312
+/sdk/formrecognizer/                                                 @catalinaperalta
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Document Intelligence
@@ -841,3 +852,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence
+/sdk/**/ci.yml                                                       @msyyc @lmazuel

@@ -1,14 +1,26 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.6.0 (2025-05-07)
 
 ### Features Added
+- New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
+- Added support for Azure Open AI evaluation via 4 new 'grader' classes, which serve as wrappers around Azure Open AI grader configurations. These new grader objects can be supplied to the main `evaluate` method as if they were normal callable evaluators. The new classes are:
+    - AzureOpenAIGrader (general class for experienced users)
+    - AzureOpenAILabelGrader
+    - AzureOpenAIStringCheckGrader
+    - AzureOpenAITextSimilarityGrader
 
 ### Breaking Changes
+- In the experimental RedTeam's scan method, the `data_only` param has been replaced with `skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
 
 ### Bugs Fixed
+- Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
+    ```
+    "query1": "some query", "response": "some response"
+    ```
+    throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
+    Now, users may import data containing fields with numeric characters. 
 
-### Other Changes
 
 ## 1.5.0 (2025-04-04)
 

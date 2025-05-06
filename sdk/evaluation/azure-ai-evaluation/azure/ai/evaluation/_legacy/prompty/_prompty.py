@@ -4,15 +4,19 @@
 
 import asyncio
 import re
+
 from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import Any, AsyncGenerator, Awaitable, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven, OpenAIError
+from openai.lib.azure import AsyncAzureADTokenProvider
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.evaluation._exceptions import ErrorTarget
-from azure.ai.evaluation._constants import DefaultOpenEncoding
+from azure.ai.evaluation._constants import DefaultOpenEncoding, TokenScope
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
     PromptyException,
@@ -35,6 +39,7 @@ from azure.ai.evaluation._legacy.prompty._utils import (
 )
 from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 from azure.ai.evaluation._legacy._common._logging import get_logger
+from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
 
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -132,12 +137,12 @@ class AsyncPrompty:
         path: Union[str, PathLike],
         *,
         logger: Optional[Logger] = None,
+        token_credential: Optional[Union[TokenCredential, AsyncTokenCredential]] = None,
+        is_reasoning_model: bool = False,
         **kwargs: Any,
     ):
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
-
-        is_reasoning_model = kwargs.get("is_reasoning_model", False)
 
         if is_reasoning_model:
             parameters = configs.get("model", {}).get("parameters", {})
@@ -163,6 +168,8 @@ class AsyncPrompty:
         self._outputs: Dict[str, Any] = configs.get("outputs", {})
         self._name: str = configs.get("name", path.stem)
         self._logger = logger or get_logger(__name__)
+        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = \
+            token_credential or AsyncAzureTokenProvider()
 
     @property
     def path(self) -> Path:
@@ -255,7 +262,6 @@ class AsyncPrompty:
 
         return resolved_inputs
 
-    # @trace
     async def __call__(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         **kwargs: Any,
@@ -292,6 +298,9 @@ class AsyncPrompty:
                 azure_deployment=connection.azure_deployment,
                 api_version=connection.api_version,
                 max_retries=max_retries,
+                azure_ad_token_provider=(self.get_token_provider(self._token_credential)
+                    if not connection.api_key
+                    else None),
             )
         elif isinstance(connection, OpenAIConnection):
             api_client = AsyncOpenAI(
@@ -362,7 +371,6 @@ class AsyncPrompty:
 
         while should_retry:
             try:
-                retry += 1
                 if delay:
                     await asyncio.sleep(delay)
 
@@ -395,3 +403,21 @@ class AsyncPrompty:
                         str(error),
                     )
                     raise WrappedOpenAIError(error=error) from error
+
+                retry += 1
+
+    @staticmethod
+    def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> AsyncAzureADTokenProvider:
+        """Get the token provider for the prompty.
+
+        :param Union[TokenCredential, AsyncTokenCredential] cred: The Azure authentication credential.
+        :return: The token provider if a credential is provided, otherwise None.
+        :rtype: Optional[AsyncAzureADTokenProvider]
+        """
+        async def _wrapper() -> str:
+            token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
+            if isinstance(token, Awaitable):
+                token = await token
+            return token.token
+
+        return _wrapper

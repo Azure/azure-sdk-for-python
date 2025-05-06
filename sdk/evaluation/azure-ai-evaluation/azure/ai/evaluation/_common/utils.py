@@ -1,13 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import os
+import posixpath
 import re
 import math
 import threading
 from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
+from azure.storage.blob import ContainerClient
 from typing_extensions import NotRequired, Required, TypeGuard
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
@@ -124,9 +126,24 @@ def construct_prompty_model_config(
 
     return prompty_model_config
 
+def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
+    """Check if the Azure AI project is an OneDP project.
+
+    :param azure_ai_project: The scope of the Azure AI project.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :return: True if the Azure AI project is an OneDP project, False otherwise.
+    :rtype: bool
+    """
+    if isinstance(azure_ai_project, str):
+        return True
+    return False
 
 def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
+
+    # TODO : Add regex check for malformed project uri
+    if is_onedp_project(o):
+        return o
 
     if not isinstance(o, dict):
         msg = "The 'azure_ai_project' parameter must be a dictionary."
@@ -462,4 +479,65 @@ def validate_conversation(conversation):
             "Evaluators for multimodal conversations only support single turn. "
             "User and assistant role expected as the only role in each message.",
             ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+        )
+
+def upload(path: str, container_client: ContainerClient, logger=None):
+    """Upload files or directories to Azure Blob Storage using a container client.
+
+    This function uploads a file or all files in a directory (recursively) to Azure Blob Storage.
+    When uploading a directory, the relative path structure is preserved in the blob container.
+
+    :param path: The local path to a file or directory to upload
+    :type path: str
+    :param container_client: The Azure Blob Container client to use for uploading
+    :type container_client: azure.storage.blob.ContainerClient
+    :param logger: Optional logger for debug output, defaults to None
+    :type logger: logging.Logger, optional
+    :raises EvaluationException: If the path doesn't exist or errors occur during upload
+    """
+
+    if not os.path.isdir(path) and not os.path.isfile(path):
+        raise EvaluationException(
+            message=f"Path '{path}' is not a directory or a file",
+            internal_message=f"Path '{path}' is not a directory or a file",
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.SYSTEM_ERROR,
+        )
+
+    remote_paths = []
+    local_paths = []
+
+    if os.path.isdir(path):
+        for (root, _, filenames) in os.walk(path):
+            upload_path = ""
+            if root != path:
+                rel_path = os.path.relpath(root, path)
+                upload_path = posixpath.join(rel_path)
+            for f in filenames:
+                remote_file_path = posixpath.join(upload_path, f)
+                remote_paths.append(remote_file_path)
+                local_file_path = os.path.join(root, f)
+                local_paths.append(local_file_path)
+
+    if os.path.isfile(path):
+        remote_paths = [os.path.basename(path)]
+        local_paths = [path]
+
+    try:
+        # Open the file in binary read mode
+        for local, remote in zip(local_paths, remote_paths):
+            with open(local, "rb") as data:
+                # Upload the file to Azure Blob Storage
+                container_client.upload_blob(data=data, name=remote)
+            if logger:
+                logger.debug(f"File '{local}' uploaded successfully")
+
+    except Exception as e:
+        raise EvaluationException(
+            message=f"Error uploading file: {e}",
+            internal_message=f"Error uploading file: {e}",
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.UPLOAD_ERROR,
+            blame=ErrorBlame.SYSTEM_ERROR,
         )

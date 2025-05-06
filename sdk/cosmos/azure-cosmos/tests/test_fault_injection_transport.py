@@ -62,11 +62,18 @@ class TestFaultInjectionTransport:
             logger.warning("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
 
     @staticmethod
-    def setup_method_with_custom_transport(custom_transport: RequestsTransport, default_endpoint=host, **kwargs):
-        client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
-                              transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
-        db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
-        container: ContainerProxy = db.get_container_client(SINGLE_PARTITION_CONTAINER_NAME)
+    def setup_method_with_custom_transport(
+            custom_transport: RequestsTransport,
+            default_endpoint: str = host,
+            key: str = master_key,
+            database_id: str = TEST_DATABASE_ID,
+            container_id: str = SINGLE_PARTITION_CONTAINER_NAME,
+            custom_logger = logger,
+            **kwargs):
+        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+                              transport=custom_transport, logger=custom_logger, enable_diagnostics_logging=True, **kwargs)
+        db: DatabaseProxy = client.get_database_client(database_id)
+        container: ContainerProxy = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
 

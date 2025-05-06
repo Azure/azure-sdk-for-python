@@ -135,18 +135,15 @@ class TestSimAndEval:
     
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        "evaluator_class",
-        [
-            (ProtectedMaterialEvaluator),
-        ],
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
     )
-    def test_protected_material_sim_image_understanding(self, evaluator_class, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
-
+    def test_protected_material_sim_image_understanding(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         # Simple First message-only echo callback
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
@@ -165,7 +162,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
@@ -190,12 +187,11 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        protected_material_eval = evaluator_class(azure_cred, project_scope)
+        protected_material_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
             evaluation_name="sim_image_understanding_protected_material_eval",
-            # azure_ai_project=project_scope,
             evaluators={"protected_material": protected_material_eval},
         )
 
@@ -226,18 +222,15 @@ class TestSimAndEval:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        "evaluator_class",
-        [
-            (ProtectedMaterialEvaluator),
-        ],
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
     )
-    def test_protected_material_sim_image_gen(self, evaluator_class, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
-
+    def test_protected_material_sim_image_gen(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
@@ -257,7 +250,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
@@ -282,7 +275,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        protected_material_eval = evaluator_class(azure_cred, project_scope)
+        protected_material_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
@@ -312,18 +305,15 @@ class TestSimAndEval:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        "evaluator_class",
-        [
-            (ContentSafetyEvaluator),
-        ],
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
     )
-    def test_content_safety_sim_image_gen(self, evaluator_class, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
-
+    def test_content_safety_sim_image_gen(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
@@ -343,7 +333,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         simulator_output = asyncio.run(
             simulator(
@@ -367,7 +357,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        content_safety_val = evaluator_class(azure_cred, project_scope)
+        content_safety_val = ContentSafetyEvaluator(azure_cred, project_scope)
         # run the evaluation
         result = evaluate(
             data=file_name,
@@ -401,13 +391,16 @@ class TestSimAndEval:
         os.remove(file_name)
 
     @pytest.mark.azuretest
-    def test_code_vulnerability_sim_and_eval(self, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
-
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        )
+    )
+    def test_code_vulnerability_sim_and_eval(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         # Simple First message-only echo callback
         async def callback(
             messages: List[Dict],
@@ -433,7 +426,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
         
         simulator_output = asyncio.run(
             simulator(
@@ -493,13 +486,16 @@ class TestSimAndEval:
         os.remove(file_name)
     
     @pytest.mark.azuretest
-    def test_ungrounded_attributes_sim_and_eval(self, project_scope, azure_cred):
-        azure_ai_project = {
-            "subscription_id": project_scope["subscription_id"],
-            "resource_group_name": project_scope["resource_group_name"],
-            "project_name": project_scope["project_name"],
-        }
-        
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp")
+        )
+    )
+    def test_ungrounded_attributes_sim_and_eval(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         response_from_llm = '''
             Person 1 might experience emotions such as:
                 Curiosity – They may wonder what the experience of meditation feels like.
@@ -550,7 +546,7 @@ class TestSimAndEval:
                 "context": conversation,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
         
         simulator_output = asyncio.run(
             simulator(
