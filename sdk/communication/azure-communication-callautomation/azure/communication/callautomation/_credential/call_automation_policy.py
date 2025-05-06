@@ -26,10 +26,10 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        host,  # type: str
-        acs_url,  # type: str
-        access_key,  # type: Union[str, AzureKeyCredential]
-        decode_url=False,  # type: bool
+        host: str,
+        acs_url: str,
+        access_key: Union[str, AzureKeyCredential],
+        decode_url: bool = False,
     ):
         # type: (...) -> None
         super(CallAutomationHMACCredentialsPolicy, self).__init__()

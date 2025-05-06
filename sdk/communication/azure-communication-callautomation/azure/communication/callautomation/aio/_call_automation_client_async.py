@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload
 from urllib.parse import urlparse
 import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -22,7 +22,6 @@ from .._generated.models import (
     RejectCallRequest,
     StartCallRecordingRequest,
     CallIntelligenceOptions,
-    CustomCallingContext,
     ConnectRequest
 )
 from .._models import (
@@ -39,7 +38,6 @@ from .._utils import (
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
-    serialize_msft_teams_app_identifier,
     build_call_locator,
     process_repeatability_first_sent,
 )
@@ -174,7 +172,6 @@ class CallAutomationClient:
         *,
         server_call_id: str,
         cognitive_services_endpoint: Optional[str] = None,
-        backup_cognitive_services_endpoint:Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
@@ -189,9 +186,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword backup_cognitive_services_endpoint:
-         The identifier of the Backup Cognitive Service resource assigned to this call.
-        :paramtype backup_cognitive_services_endpoint: str or None
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str or None
         :keyword media_streaming: Media Streaming Options.
@@ -212,7 +206,6 @@ class CallAutomationClient:
         *,
         group_call_id: str,
         cognitive_services_endpoint: Optional[str] = None,
-        backup_cognitive_services_endpoint:Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
@@ -227,9 +220,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword backup_cognitive_services_endpoint:
-         The identifier of the Backup Cognitive Service resource assigned to this call.
-        :paramtype backup_cognitive_services_endpoint: str or None
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str or None
         :keyword media_streaming: Media Streaming Options.
@@ -250,7 +240,6 @@ class CallAutomationClient:
         *,
         room_id: str,
         cognitive_services_endpoint: Optional[str] = None,
-        backup_cognitive_services_endpoint:Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
@@ -265,9 +254,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword backup_cognitive_services_endpoint:
-         The identifier of the Backup Cognitive Service resource assigned to this call.
-        :paramtype backup_cognitive_services_endpoint: str or None
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str or None
         :keyword media_streaming: Media Streaming Options.
@@ -289,10 +275,8 @@ class CallAutomationClient:
     ) -> CallConnectionProperties:
 
         cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint", None)
-        backup_cognitive_services_endpoint=kwargs.pop("backup_cognitive_services_endpoint", None)
         call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            backup_cognitive_services_endpoint=backup_cognitive_services_endpoint
+            cognitive_services_endpoint=cognitive_services_endpoint
             ) if cognitive_services_endpoint else None
         media_streaming_options : Optional[MediaStreamingOptions] = None
         transcription_options : Optional[TranscriptionOptions] = None
@@ -331,12 +315,8 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        backup_cognitive_services_endpoint:Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
-        teams_app_source: Optional['MicrosoftTeamsAppIdentifier'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -357,23 +337,12 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword backup_cognitive_services_endpoint:
-         The identifier of the Backup Cognitive Service resource assigned to this call.
-        :paramtype backup_cognitive_services_endpoint: str or None
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :keyword media_streaming: Media Streaming Options.
         :paramtype media_streaming: ~azure.communication.callautomation.MediaStreamingOptions
          or None
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
-        :keyword teams_app_source: Overrides default client source by a MicrosoftTeamsAppIdentifier type source.
-         Required for creating call with Teams resource account ID.
-         This is per-operation setting and does not change the client's default source.
-        :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,17 +355,12 @@ class CallAutomationClient:
 
         call_intelligence_options = (
             CallIntelligenceOptions(
-                cognitive_services_endpoint=cognitive_services_endpoint,
-                backup_cognitive_services_endpoint=backup_cognitive_services_endpoint
-                if backup_cognitive_services_endpoint else None
+                cognitive_services_endpoint=cognitive_services_endpoint
             )
             if cognitive_services_endpoint
             else None
         )
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
         try:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
@@ -409,12 +373,9 @@ class CallAutomationClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
-            teams_app_source=serialize_msft_teams_app_identifier(teams_app_source),
             operation_context=operation_context,
             media_streaming_options=media_config,
             transcription_options=transcription_config,
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            CustomCallingContext=user_custom_context,
             call_intelligence_options=call_intelligence_options,
         )
         process_repeatability_first_sent(kwargs)
@@ -476,12 +437,9 @@ class CallAutomationClient:
         callback_url: str,
         *,
         cognitive_services_endpoint: Optional[str] = None,
-        backup_cognitive_services_endpoint:Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -495,9 +453,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The endpoint url of the Azure Cognitive Services resource attached.
         :paramtype cognitive_services_endpoint: str
-        :keyword backup_cognitive_services_endpoint:
-         The endpoint url of the Azure Backup Cognitive Services resource attached.
-        :paramtype backup_cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword media_streaming: Media Streaming Options.
@@ -506,25 +461,13 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
 
         call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            backup_cognitive_services_endpoint=backup_cognitive_services_endpoint
-            if backup_cognitive_services_endpoint else None
+            cognitive_services_endpoint=cognitive_services_endpoint
         ) if cognitive_services_endpoint else None
 
         answer_call_request = AnswerCallRequest(
@@ -534,11 +477,9 @@ class CallAutomationClient:
             ) if media_streaming else None,
             transcription_options=transcription.to_generated()
             if transcription else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
-            operation_context=operation_context,
-            custom_calling_context=user_custom_context
+            operation_context=operation_context
         )
 
         process_repeatability_first_sent(kwargs)
@@ -551,9 +492,6 @@ class CallAutomationClient:
         self,
         incoming_call_context: str,
         target_participant: "CommunicationIdentifier",
-        *,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs,
     ) -> None:
         """Redirect incoming call to a specific target.
@@ -563,10 +501,6 @@ class CallAutomationClient:
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -576,13 +510,9 @@ class CallAutomationClient:
         if isinstance(target_participant, CallInvite):
             target_participant = target_participant.target
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant),
-            custom_calling_context=user_custom_context,
+            target=serialize_identifier(target_participant)
         )
 
         process_repeatability_first_sent(kwargs)
@@ -767,57 +697,6 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
-    async def start_recording(
-        self,
-        *,
-        call_connection_id: str,
-        recording_state_callback_url: Optional[str] = None,
-        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
-        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
-        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
-        channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
-                                          'AzureBlobContainerRecordingStorage']] = None,
-        pause_on_start: Optional[bool] = None,
-        **kwargs
-    ) -> RecordingProperties:
-        """Start recording for a ongoing call. Locate the call with call connection id.
-
-        :keyword str call_connection_id: The call connection ID to locate ongoing call.
-        :keyword recording_state_callback_url: The url to send notifications to.
-        :paramtype recording_state_callback_url: str or None
-        :keyword recording_content_type: The content type of call recording.
-        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
-        :keyword recording_channel_type: The channel type of call recording.
-        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
-        :keyword recording_format_type: The format type of call recording.
-        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword audio_channel_participant_ordering:
-         The sequential order in which audio channels are assigned to participants in the unmixed recording.
-         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
-         the audio channel to participant mapping will be automatically assigned based on the order in
-         which participant first audio was detected.
-         Channel to participant mapping details can be found in the metadata of the recording.
-        :paramtype audio_channel_participant_ordering:
-         list[~azure.communication.callautomation.CommunicationIdentifier] or None
-        :keyword channel_affinity: The channel affinity of call recording
-         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
-         'channel' will be automatically assigned.
-         Channel-Participant mapping details can be found in the metadata of the recording.
-        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage: Defines the kind of external storage. Known values are:
-         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
-         If no storage option is provided, the default is Azure Communications recording storage.
-        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
-        :return: RecordingProperties
-        :rtype: ~azure.communication.callautomation.RecordingProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
     async def start_recording(
         self,
@@ -835,10 +714,8 @@ class CallAutomationClient:
             kwargs.pop("room_id", None)
         )
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
-        call_connection_id = kwargs.pop("call_connection_id", None)
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator if call_locator else None,
-            call_connection_id=call_connection_id if call_connection_id else None,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),

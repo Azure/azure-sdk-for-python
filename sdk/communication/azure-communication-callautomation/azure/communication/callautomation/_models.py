@@ -7,8 +7,8 @@ from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
-    MediaStreamingOptions as MediaStreamingOptionsRest,
-    TranscriptionOptions as TranscriptionOptionsRest,
+    WebSocketMediaStreamingOptions as WebSocketMediaStreamingOptionsRest,
+    WebSocketTranscriptionOptions as WebSocketTranscriptionOptionsRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -35,12 +35,11 @@ from ._utils import (
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
         MediaStreamingSubscriptionState,
-        MediaStreamingTransportType,
+        StreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
         TranscriptionSubscriptionState,
         TranscriptionResultType,
-        TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
         RecordingKind,
@@ -360,7 +359,7 @@ class MediaStreamingOptions:
     :param transport_url: Transport URL for media streaming.
     :type transport_url: str
     :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
+    :type transport_type: str or ~azure.communication.callautomation.StramingTransport
     :param content_type: Content type to stream, eg. audio, audio/video.
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
@@ -376,7 +375,7 @@ class MediaStreamingOptions:
 
     transport_url: str
     """Transport URL for media streaming."""
-    transport_type: Union[str, "MediaStreamingTransportType"]
+    transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for media streaming."""
     content_type: Union[str, "MediaStreamingContentType"]
     """Content type to stream, eg. audio, audio/video."""
@@ -393,7 +392,7 @@ class MediaStreamingOptions:
     def __init__(
         self,
         transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
+        transport_type: Union[str, 'StreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
         start_media_streaming: Optional[bool] = None,
@@ -409,7 +408,7 @@ class MediaStreamingOptions:
         self.audio_format = audio_format
 
     def to_generated(self):
-        return MediaStreamingOptionsRest(
+        return WebSocketMediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
@@ -426,7 +425,7 @@ class TranscriptionOptions:
     :type transport_url: str
     :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
      Required. "websocket"
-    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
+    :type transport_type: str or ~azure.communication.callautomation.StreamingTransportType
     :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
     :type locale: str
     :param start_transcription: Determines if the transcription should be started immediately after
@@ -440,7 +439,7 @@ class TranscriptionOptions:
 
     transport_url: str
     """Transport URL for live transcription."""
-    transport_type: Union[str, "TranscriptionTransportType"]
+    transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
@@ -454,7 +453,7 @@ class TranscriptionOptions:
     def __init__(
         self,
         transport_url: str,
-        transport_type: Union[str, "TranscriptionTransportType"],
+        transport_type: Union[str, "StreamingTransportType"],
         locale: str,
         start_transcription: bool,
         speech_recognition_model_endpoint_id: Optional[str] = None,
@@ -468,7 +467,7 @@ class TranscriptionOptions:
         self.enable_intermediate_results = enable_intermediate_results
 
     def to_generated(self):
-        return TranscriptionOptionsRest(
+        return WebSocketTranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             locale=self.locale,
@@ -581,10 +580,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_subscription_id: SubscriptionId for media streaming.
-    :paramtype media_subscription_id: str
-    :keyword data_subscription_id: SubscriptionId for transcription.
-    :paramtype data_subscription_id: str
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -617,10 +612,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
-    media_subscription_id: Optional[str]
-    """SubscriptionId for media streaming."""
-    data_subscription_id: Optional[str] = None
-    """SubscriptionId for transcription."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -648,8 +639,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         targets: Optional[List[CommunicationIdentifier]] = None,
         call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
-        data_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
@@ -664,8 +653,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
-        self.data_subscription_id = data_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
@@ -687,8 +674,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
-            data_subscription_id=call_connection_properties_generated.data_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
@@ -720,23 +705,33 @@ class RecordingProperties:
     :paramtype recording_id: str
     :keyword recording_state: state of ongoing recording.
     :paramtype recording_state: str or ~azure.communication.callautomation.RecordingState
+    :keyword recording_kind: kind of the recording.
+    :paramtype recording_kind: str or ~azure.communication.callautomation.RecordingKind
     """
 
     recording_id: Optional[str]
     """Id of this recording operation."""
     recording_state: Optional[Union[str, "RecordingState"]]
     """state of ongoing recording."""
-
+    recording_kind: Optional[Union[str, 'RecordingKind']]
+    """kind of the recording."""
     def __init__(
-        self, *, recording_id: Optional[str] = None, recording_state: Optional[Union[str, "RecordingState"]] = None
+        self,
+        *,
+        recording_id: Optional[str] = None,
+        recording_state: Optional[Union[str,'RecordingState']] = None,
+        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
     @classmethod
-    def _from_generated(cls, recording_state_result: "RecordingStateResultRest"):
+    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
-            recording_id=recording_state_result.recording_id, recording_state=recording_state_result.recording_state
+            recording_id=recording_state_result.recording_id,
+            recording_state=recording_state_result.recording_state,
+            recording_kind=recording_state_result.recording_kind,
         )
 
 
