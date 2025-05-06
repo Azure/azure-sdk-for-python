@@ -8,7 +8,7 @@ For management (control plane) packages, start with this page: https://github.co
 For client (data plane) packages, ensure that:
 - The version at `sdk/path-to-your-package/_version.py` has been updated following [these guidelines](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/package_version/package_version_rule.md).
 - The changelog has been updated following [these guidelines](https://azure.github.io/azure-sdk/policies_releases.html#change-logs).
-- Package README has been updated following [these guidelines](https://review.learn.microsoft.com/en-us/help/platform/reference-document-sdk-client-libraries?branch=main#readme).
+- Package README has been updated following [these guidelines](https://azure.github.io/azure-sdk/python_documentation.html).
 - Samples have been updated following [these guidelines](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/sample_guide.md).
 
 ## Python Package Index
