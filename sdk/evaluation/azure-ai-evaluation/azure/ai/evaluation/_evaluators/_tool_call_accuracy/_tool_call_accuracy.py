@@ -323,7 +323,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # ignore not_applicable results, where the _result_key will be "not applicable"
         score = sum([per_turn_result.get(self._result_key) == True for per_turn_result in per_turn_results])/num_evaluated
         aggregated[self._AGGREGATE_RESULT_KEY] = score
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = _PASS_RESULT if score >= self.threshold else _FAIL_RESULT
+        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = self._PASS_RESULT if score >= self.threshold else self._FAIL_RESULT
         aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
         aggregated["per_tool_call_details"] = per_turn_results
         return aggregated
