@@ -5,39 +5,35 @@
 # ------------------------------------
 
 """
-FILE: sample_list_job_documents.py
+FILE: list_job_documents.py
 
 DESCRIPTION:
     This sample demonstrates how to create a job, wait for it to finish, and then list the files associated with the job.
 
 USAGE:
-    python sample_list_job_documents.py
+    python list_job_documents.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the endpoint to your Deidentification Service resource.
-    2) AZURE_STORAGE_ACCOUNT_LOCATION - the location of the storage account where the input and output files are stored.
-        This is an Azure Storage url to a container which must be configured with Managed Identity..
-    3) INPUT_PREFIX - the prefix of the input files in the storage account.
+    1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the service URL endpoint for a de-identification service.
+    2) AZURE_STORAGE_ACCOUNT_LOCATION - an Azure Storage container endpoint, like "https://<storageaccount>.blob.core.windows.net/<container>".
+    3) INPUT_PREFIX - the prefix of the input document name(s) in the container.
+        For example, providing "folder1" would create a job that would process documents like "https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt".
 """
 
 
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
+from azure.identity import DefaultAzureCredential
+import os
 import uuid
 
 
-def sample_list_job_documents():
-    # [START sample_list_job_documents]
-    import os
-    from azure.identity import DefaultAzureCredential
-    from azure.health.deidentification import DeidentificationClient
-    from azure.health.deidentification.models import (
-        DeidentificationJob,
-        SourceStorageLocation,
-        TargetStorageLocation,
-    )
-    from azure.core.polling import LROPoller
-
+def list_job_documents():
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]
     outputPrefix = "_output"
@@ -60,10 +56,9 @@ def sample_list_job_documents():
     )
 
     print(f"Creating job with name: {jobname}")
-    poller: LROPoller = client.begin_deidentify_documents(jobname, job)
-    poller.wait(timeout=60)
+    
+    job = client.begin_deidentify_documents(jobname, job).result(timeout=60)
 
-    job = poller.result()
     print(f"Job Status: {job.status}")
 
     files = client.list_job_documents(jobname)
@@ -77,8 +72,6 @@ def sample_list_job_documents():
         if filesToLookThrough <= 0:
             break
 
-    # [END sample_list_job_documents]
-
 
 if __name__ == "__main__":
-    sample_list_job_documents()
+    list_job_documents()
