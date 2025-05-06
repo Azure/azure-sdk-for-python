@@ -36,7 +36,7 @@ def test_roles_properties():
     r = StorageAccount(
         name="foo", roles=["Storage Blob Data Contributor"], user_roles=["Storage Blob Data Contributor"]
     )
-    assert r.properties == {"name": "foo", "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r.properties == {"name": "foo", "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {
         "managed_identity_roles": ["Storage Blob Data Contributor"],
         "user_roles": ["Storage Blob Data Contributor"],
@@ -48,7 +48,7 @@ def test_roles_properties():
     symbols = r.__bicep__(fields, parameters=parameters)
 
     r = StorageAccount(name="foo", roles=["Storage Blob Data Owner"], user_roles=["Owner"])
-    assert r.properties == {"name": "foo", "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r.properties == {"name": "foo", "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {"managed_identity_roles": ["Storage Blob Data Owner"], "user_roles": ["Owner"]}
     with pytest.raises(ValueError):
         symbols = r.__bicep__(fields, parameters=parameters)
@@ -74,7 +74,7 @@ def test_roles_defaults():
     r = StorageAccount(
         name="foo", roles=["Storage Blob Data Contributor"], user_roles=["Storage Blob Data Contributor"]
     )
-    assert r.properties == {"name": "foo", "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r.properties == {"name": "foo", "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {
         "managed_identity_roles": ["Storage Blob Data Contributor"],
         "user_roles": ["Storage Blob Data Contributor"],
@@ -105,6 +105,6 @@ def test_roles_export_with_parameters(export_dir):
         storage: StorageAccount
 
     r = test(storage=StorageAccount(name="foo", roles=roles, user_roles=[user_role]))
-    assert r.storage.properties == {"name": "foo", "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r.storage.properties == {"name": "foo", "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.storage.extensions == {"managed_identity_roles": roles, "user_roles": [user_role]}
     export(r, output_dir=export_dir[0], infra_dir=export_dir[2])

@@ -4,6 +4,7 @@ import pytest
 from azure.projects._resource import FieldType
 from azure.projects.resources.managedidentity import UserAssignedIdentity
 from azure.projects.resources.resourcegroup import ResourceGroup
+from azure.projects.resources.storage import StorageAccount
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects._utils import add_defaults
 from azure.projects.resources._identifiers import ResourceIdentifiers
@@ -40,7 +41,10 @@ def test_identity_properties():
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["userassignedidentity"]
     assert fields["userassignedidentity"].resource == "Microsoft.ManagedIdentity/userAssignedIdentities"
-    assert fields["userassignedidentity"].properties == {"location": "westus", "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}}
+    assert fields["userassignedidentity"].properties == {
+        "location": "westus",
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+    }
     # assert fields['userassignedidentity'].outputs == {'client_id': Output('AZURE_CLIENT_ID', "properties.clientId", symbols[0])}
     assert fields["userassignedidentity"].extensions == {}
     assert fields["userassignedidentity"].existing == False
@@ -51,7 +55,7 @@ def test_identity_properties():
     assert fields["userassignedidentity"].defaults
 
     r3 = UserAssignedIdentity(location="eastus")
-    assert r3.properties == {"location": "eastus", 'tags': {'azd-env-name': None}}
+    assert r3.properties == {"location": "eastus", "tags": {"azd-env-name": None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -60,7 +64,10 @@ def test_identity_properties():
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["userassignedidentity", "userassignedidentity_foo"]
     assert fields["userassignedidentity_foo"].resource == "Microsoft.ManagedIdentity/userAssignedIdentities"
-    assert fields["userassignedidentity_foo"].properties == {"name": "foo", "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]}}
+    assert fields["userassignedidentity_foo"].properties == {
+        "name": "foo",
+        "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
+    }
     # assert fields['userassignedidentity_foo'].outputs == {'client_id': Output('AZURE_CLIENT_ID', "properties.clientId", symbols[0])}
     assert fields["userassignedidentity_foo"].extensions == {}
     assert fields["userassignedidentity_foo"].existing == False
@@ -79,7 +86,10 @@ def test_identity_properties():
     symbols = r5.__bicep__(fields, parameters=params)
     assert list(fields.keys()) == ["userassignedidentity_testa"]
     assert fields["userassignedidentity_testa"].resource == "Microsoft.ManagedIdentity/userAssignedIdentities"
-    assert fields["userassignedidentity_testa"].properties == {"name": param1, "tags": {"foo": param2, "azd-env-name": params["environmentName"]}}
+    assert fields["userassignedidentity_testa"].properties == {
+        "name": param1,
+        "tags": {"foo": param2, "azd-env-name": params["environmentName"]},
+    }
     # assert fields['userassignedidentity_testa'].outputs == {'client_id': Output('AZURE_CLIENT_ID', "properties.clientId", symbols[0])}
     assert fields["userassignedidentity_testa"].extensions == {}
     assert fields["userassignedidentity_testa"].existing == False
@@ -234,6 +244,20 @@ def test_identity_export_existing_with_resourcegroup_and_subscription(export_dir
     )
 
 
+def test_identity_export_no_identity(export_dir):
+    class test(AzureInfrastructure):
+        storage: StorageAccount = field(default=StorageAccount(name="foo"))
+
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
+
+
+def test_identity_export_systemassigned(export_dir):
+    class test(AzureInfrastructure):
+        storage: StorageAccount = field(default=StorageAccount(name="foo", managed_identities={"systemAssigned": True}))
+
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
+
+
 def test_identity_infra():
     class TestInfra(AzureInfrastructure):
         identity: UserAssignedIdentity = field()
@@ -244,7 +268,7 @@ def test_identity_infra():
         infra = TestInfra()
     infra = TestInfra(identity=UserAssignedIdentity())
     assert isinstance(infra.identity, UserAssignedIdentity)
-    assert infra.identity.properties == {'tags': {'azd-env-name': None}}
+    assert infra.identity.properties == {"tags": {"azd-env-name": None}}
 
     infra = TestInfra(identity=UserAssignedIdentity(name="foo"))
     assert infra.identity._settings["name"]() == "foo"

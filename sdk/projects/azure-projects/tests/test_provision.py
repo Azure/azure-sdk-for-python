@@ -18,53 +18,53 @@ def test_provision_load_resource_defaults():
     output = _get_resource_defaults(resource_file, "foo", parameters=parameters)
     output.pop("TestDeployment")
     assert parameters == {
-        'location': Parameter("location"),
-        'tagPrefix': Parameter("tagPrefix"),
-        'sasPolicy': Parameter("sasPolicy"),
-        'ENDPOINTS': Parameter("ENDPOINTS"),
-        'environmentName': Parameter("environmentName"),
+        "location": Parameter("location"),
+        "tagPrefix": Parameter("tagPrefix"),
+        "sasPolicy": Parameter("sasPolicy"),
+        "ENDPOINTS": Parameter("ENDPOINTS"),
+        "environmentName": Parameter("environmentName"),
     }
     assert output == {
-        'Microsoft.Storage/storageAccounts': {
-            'kind': 'StorageV2',
-            'location': Parameter("location"),
-            'sku': {'name': 'Standard_LRS'},
-            'properties': {
-                'accessTier': 'Premium',
-                'isHnsEnabled': True,
-                'routingPreference': {
-                    'publishInternetEndpoints': Parameter("ENDPOINTS"),
-                    'routingChoice': 'MicrosoftRouting'
+        "Microsoft.Storage/storageAccounts": {
+            "kind": "StorageV2",
+            "location": Parameter("location"),
+            "sku": {"name": "Standard_LRS"},
+            "properties": {
+                "accessTier": "Premium",
+                "isHnsEnabled": True,
+                "routingPreference": {
+                    "publishInternetEndpoints": Parameter("ENDPOINTS"),
+                    "routingChoice": "MicrosoftRouting",
                 },
-                'sasPolicy': Parameter("sasPolicy"),
+                "sasPolicy": Parameter("sasPolicy"),
             },
-            'tags': {'foo': '${tagPrefix}/one', 'bar': '${environmentName}/two'}
+            "tags": {"foo": "${tagPrefix}/one", "bar": "${environmentName}/two"},
         }
     }
     parameters = {}
     output = _get_resource_defaults(resource_file, "TestDeployment", parameters=parameters)
     output.pop("TestDeployment")
     assert parameters == {
-        'location': Parameter("location"),
-        'tagPrefix': Parameter("tagPrefix"),
-        'sasPolicy': Parameter("sasPolicy"),
-        'ENDPOINTS': Parameter("ENDPOINTS"),
-        'environmentName': Parameter("environmentName"),
+        "location": Parameter("location"),
+        "tagPrefix": Parameter("tagPrefix"),
+        "sasPolicy": Parameter("sasPolicy"),
+        "ENDPOINTS": Parameter("ENDPOINTS"),
+        "environmentName": Parameter("environmentName"),
     }
     assert output == {
-        'Microsoft.Storage/storageAccounts': {
-            'kind': 'StorageV2',
-            'location': 'westus2',
-            'sku': {'name': 'Standard_LRS'},
-            'properties': {
-                'accessTier': 'Hot',
-                'allowedCopyScope': 'AAD',
-                'isHnsEnabled': True,
-                'routingPreference': {
-                    'publishInternetEndpoints': False,
+        "Microsoft.Storage/storageAccounts": {
+            "kind": "StorageV2",
+            "location": "westus2",
+            "sku": {"name": "Standard_LRS"},
+            "properties": {
+                "accessTier": "Hot",
+                "allowedCopyScope": "AAD",
+                "isHnsEnabled": True,
+                "routingPreference": {
+                    "publishInternetEndpoints": False,
                 },
-                'sasPolicy': Parameter("sasPolicy"),
+                "sasPolicy": Parameter("sasPolicy"),
             },
-            'tags': {'foo': '${tagPrefix}/one', 'bar': '${environmentName}/two', 'baz': 'three'}
+            "tags": {"foo": "${tagPrefix}/one", "bar": "${environmentName}/two", "baz": "three"},
         }
     }

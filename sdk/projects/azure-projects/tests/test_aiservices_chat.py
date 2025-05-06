@@ -53,7 +53,7 @@ def _get_outputs(suffix="", parent="", rg=None):
 
 def test_aiservices_chat_properties():
     r = AIChat()
-    assert r.properties == {"properties": {}, 'tags': {'azd-env-name': None}}
+    assert r.properties == {"properties": {}, "tags": {"azd-env-name": None}}
     assert r.extensions == {}
     assert r._existing == False
     assert r.identifier == ResourceIdentifiers.ai_chat_deployment
@@ -79,7 +79,12 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account.chat_deployment"].defaults
 
     r2 = AIChat(model="gpt-4o", capacity=10)
-    assert r2.properties == {"name": "gpt-4o", "sku": {"capacity": 10}, "properties": {"model": {"name": "gpt-4o"}}, 'tags': {'azd-env-name': None}}
+    assert r2.properties == {
+        "name": "gpt-4o",
+        "sku": {"capacity": 10},
+        "properties": {"model": {"name": "gpt-4o"}},
+        "tags": {"azd-env-name": None},
+    }
     symbols = r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == [
         "aiservices_account",
@@ -110,14 +115,23 @@ def test_aiservices_chat_properties():
     assert fields["aiservices_account.chat_deployment_gpt4o"].defaults
 
     r3 = AIChat(model="gpt-4o", capacity=30)
-    assert r3.properties == {"name": "gpt-4o", "sku": {"capacity": 30}, "properties": {"model": {"name": "gpt-4o"}}, 'tags': {'azd-env-name': None}}
+    assert r3.properties == {
+        "name": "gpt-4o",
+        "sku": {"capacity": 30},
+        "properties": {"model": {"name": "gpt-4o"}},
+        "tags": {"azd-env-name": None},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = AIChat(
         model="secret", account=AIServices(name="foo", tags={"test": "value"}, public_network_access="Disabled")
     )
-    assert r4.properties == {"properties": {"model": {"name": "secret"}}, "name": "secret", "tags": {'azd-env-name': None}}
+    assert r4.properties == {
+        "properties": {"model": {"name": "secret"}},
+        "name": "secret",
+        "tags": {"azd-env-name": None},
+    }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == [
         "aiservices_account",
@@ -153,7 +167,7 @@ def test_aiservices_chat_properties():
         "name": "foo",
         "sku": {"name": param2, "capacity": param3},
         "properties": {"model": param1},
-        "tags": {'azd-env-name': None},
+        "tags": {"azd-env-name": None},
     }
     params = dict(GLOBAL_PARAMS)
     fields = {}
@@ -341,7 +355,11 @@ def test_aiservices_chat_infra():
     infra = TestInfra()
     assert isinstance(infra.chat_a, AIChat)
     assert infra.chat_a._settings["name"]() == "gpt-4o-mini"
-    assert infra.chat_a.properties == {"name": "gpt-4o-mini", "properties": {"model": {"name": "gpt-4o-mini"}}, "tags": {'azd-env-name': None}}
+    assert infra.chat_a.properties == {
+        "name": "gpt-4o-mini",
+        "properties": {"model": {"name": "gpt-4o-mini"}},
+        "tags": {"azd-env-name": None},
+    }
 
     infra = TestInfra(chat_b=AIChat.reference(name="foo", account="bar"))
     assert infra.chat_b._settings["name"]() == "foo"

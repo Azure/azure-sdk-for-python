@@ -140,8 +140,11 @@ def _get_component_resources(component: AzureInfrastructure) -> Dict[str, Union[
     return {k: v for k, v in component.__dict__.items() if isinstance(v, (Resource, AzureInfrastructure))}
 
 
-def _get_resource_defaults(defaults_file: str, deployment_name: str, *, parameters: Dict[str, Parameter]) -> Dict[str, Any]:
-    path_matcher = re.compile(r'.*\$\{([^}^{]+)\}.*')
+def _get_resource_defaults(
+    defaults_file: str, deployment_name: str, *, parameters: Dict[str, Parameter]
+) -> Dict[str, Any]:
+    path_matcher = re.compile(r".*\$\{([^}^{]+)\}.*")
+
     def path_constructor(loader, node):
         if node.value.startswith("${") and node.value.endswith("}"):
             param_name = node.value[2:-1]
@@ -149,9 +152,9 @@ def _get_resource_defaults(defaults_file: str, deployment_name: str, *, paramete
             if param_name not in parameters:
                 parameters[param_name] = new_param
             return new_param
-        param_name = node.value[node.value.index("{") + 1:node.value.rindex("}")]
-        prefix = node.value[0:node.value.index('$')]
-        suffix = node.value[node.value.rindex("}") + 1:]
+        param_name = node.value[node.value.index("{") + 1 : node.value.rindex("}")]
+        prefix = node.value[0 : node.value.index("$")]
+        suffix = node.value[node.value.rindex("}") + 1 :]
         new_param = Parameter(param_name)
         if param_name not in parameters:
             parameters[param_name] = new_param
@@ -160,8 +163,8 @@ def _get_resource_defaults(defaults_file: str, deployment_name: str, *, paramete
     class EnvVarLoader(yaml.SafeLoader):
         pass
 
-    EnvVarLoader.add_implicit_resolver('!path', path_matcher, None)
-    EnvVarLoader.add_constructor('!path', path_constructor)
+    EnvVarLoader.add_implicit_resolver("!path", path_matcher, None)
+    EnvVarLoader.add_constructor("!path", path_constructor)
 
     if os.path.isfile(defaults_file):
         with open(defaults_file, "r", encoding="utf-8") as resources:
@@ -268,11 +271,7 @@ def export(
     resource_defaults = _get_resource_defaults(defaults_file, deployment_name, parameters=export_parameters)
     assert not resource_defaults
     add_defaults(
-        fields,
-        export_parameters,
-        parameter_values,
-        local_access=local_access,
-        resource_defaults=resource_defaults
+        fields, export_parameters, parameter_values, local_access=local_access, resource_defaults=resource_defaults
     )
     add_roles(fields, export_parameters)
 

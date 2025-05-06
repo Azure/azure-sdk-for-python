@@ -52,7 +52,11 @@ def test_aiservices_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account"]
     assert fields["aiservices_account"].resource == "Microsoft.CognitiveServices/accounts"
-    assert fields["aiservices_account"].properties == {"kind": "AIServices", "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}, "identity": {}}
+    assert fields["aiservices_account"].properties == {
+        "kind": "AIServices",
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
+    }
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}
     assert fields["aiservices_account"].existing == False
@@ -63,7 +67,14 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].defaults
 
     r2 = AIServices(location="westus", sku="F1")
-    assert r2.properties == {"kind": "AIServices", "location": "westus", "sku": {"name": "F1"}, "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
+    assert r2.properties == {
+        "kind": "AIServices",
+        "location": "westus",
+        "sku": {"name": "F1"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account"]
     assert fields["aiservices_account"].resource == "Microsoft.CognitiveServices/accounts"
@@ -72,7 +83,7 @@ def test_aiservices_properties():
         "location": "westus",
         "sku": {"name": "F1"},
         "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
-        "identity": {}
+        "identity": {},
     }
     assert fields["aiservices_account"].outputs == _get_outputs()
     assert fields["aiservices_account"].extensions == {}
@@ -84,7 +95,13 @@ def test_aiservices_properties():
     assert fields["aiservices_account"].defaults
 
     r3 = AIServices(sku="C3")
-    assert r3.properties == {"kind": "AIServices", "sku": {"name": "C3"}, "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
+    assert r3.properties == {
+        "kind": "AIServices",
+        "sku": {"name": "C3"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -94,7 +111,7 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "tags": {"test": "value", "azd-env-name": None},
         "properties": {"publicNetworkAccess": "Disabled"},
-        "identity": {}
+        "identity": {},
     }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["aiservices_account", "aiservices_account_foo"]
@@ -104,7 +121,7 @@ def test_aiservices_properties():
         "kind": "AIServices",
         "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "properties": {"publicNetworkAccess": "Disabled"},
-        "identity": {}
+        "identity": {},
     }
     assert fields["aiservices_account_foo"].outputs == _get_outputs("_foo")
     assert fields["aiservices_account_foo"].extensions == {}
@@ -125,7 +142,7 @@ def test_aiservices_properties():
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
         "tags": {"azd-env-name": None},
-        "identity": {}
+        "identity": {},
     }
     params = dict(GLOBAL_PARAMS)
     fields = {}
@@ -138,7 +155,7 @@ def test_aiservices_properties():
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
         "tags": {"azd-env-name": params["environmentName"]},
-        "identity": {}
+        "identity": {},
     }
     assert fields["aiservices_account_testa"].outputs == _get_outputs("_testa")
     assert fields["aiservices_account_testa"].extensions == {}
@@ -331,7 +348,12 @@ def test_aiservices_infra():
         infra = TestInfra()
     infra = TestInfra(ai=AIServices())
     assert isinstance(infra.ai, AIServices)
-    assert infra.ai.properties == {"properties": {}, "kind": "AIServices", "tags": {"azd-env-name": None}, "identity": {}}
+    assert infra.ai.properties == {
+        "properties": {},
+        "kind": "AIServices",
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
 
     infra = TestInfra(ai=AIServices(name="foo"))
     assert infra.ai._settings["name"]() == "foo"

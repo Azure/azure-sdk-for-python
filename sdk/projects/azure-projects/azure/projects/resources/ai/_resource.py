@@ -237,7 +237,7 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
             if "dynamic_throttling_enabled" in kwargs:
                 properties["properties"]["dynamicThrottlingEnabled"] = kwargs.pop("dynamic_throttling_enabled")
             if "location" in kwargs:
-                properties["location"] = kwargs.pop("location")             
+                properties["location"] = kwargs.pop("location")
             if "migration_token" in kwargs:
                 properties["properties"]["migrationToken"] = kwargs.pop("migration_token")
             if "network_acls" in kwargs:

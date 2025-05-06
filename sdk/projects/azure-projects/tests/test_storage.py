@@ -25,7 +25,7 @@ def _get_outputs(suffix="", rg=None):
 
 def test_storage_properties():
     r = StorageAccount()
-    assert r.properties == {"properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -36,7 +36,10 @@ def test_storage_properties():
     assert len(symbols) == 1
     assert list(fields.keys()) == ["storageaccount"]
     assert fields["storageaccount"].resource == "Microsoft.Storage/storageAccounts"
-    assert fields["storageaccount"].properties == {"tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}, "identity": {}}
+    assert fields["storageaccount"].properties == {
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
+    }
     assert fields["storageaccount"].outputs == _get_outputs()
     assert fields["storageaccount"].extensions == {}
     assert fields["storageaccount"].existing == False
@@ -47,7 +50,13 @@ def test_storage_properties():
     assert fields["storageaccount"].defaults
 
     r2 = StorageAccount(location="westus", sku="Standard_RAGRS")
-    assert r2.properties == {"location": "westus", "sku": {"name": "Standard_RAGRS"}, "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r2.properties == {
+        "location": "westus",
+        "sku": {"name": "Standard_RAGRS"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["storageaccount"]
     assert fields["storageaccount"].resource == "Microsoft.Storage/storageAccounts"
@@ -67,12 +76,22 @@ def test_storage_properties():
     assert fields["storageaccount"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
-    assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r3.properties == {
+        "sku": {"name": "Premium_ZRS"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = StorageAccount(name="foo", tags={"test": "value"}, access_tier="Cool")
-    assert r4.properties == {"name": "foo", "tags": {"test": "value", 'azd-env-name': None}, "identity": {}, "properties": {"accessTier": "Cool"}}
+    assert r4.properties == {
+        "name": "foo",
+        "tags": {"test": "value", "azd-env-name": None},
+        "identity": {},
+        "properties": {"accessTier": "Cool"},
+    }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["storageaccount", "storageaccount_foo"]
     assert fields["storageaccount_foo"].resource == "Microsoft.Storage/storageAccounts"
@@ -95,7 +114,13 @@ def test_storage_properties():
     param2 = Parameter("testB")
     param3 = Parameter("testC")
     r5 = StorageAccount(name=param1, sku=param2, access_tier=param3)
-    assert r5.properties == {"name": param1, "sku": {"name": param2}, "properties": {"accessTier": param3}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r5.properties == {
+        "name": param1,
+        "sku": {"name": param2},
+        "properties": {"accessTier": param3},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     params = dict(GLOBAL_PARAMS)
     fields = {}
     symbols = r5.__bicep__(fields, parameters=params)
@@ -175,20 +200,20 @@ def test_storage_reference():
 def test_storage_defaults():
     access_tier = Parameter("myAccessTier", default="Premium")
     defaults = {
-        'Microsoft.Storage/storageAccounts': {
-            'kind': 'StorageV2',
-            'location': Parameter("location"),
-            'sku': {'name': 'Standard_LRS'},
-            'properties': {
-                'accessTier': 'Premium',
-                'isHnsEnabled': True,
-                'routingPreference': {
-                    'publishInternetEndpoints': Parameter("ENDPOINTS"),
-                    'routingChoice': 'MicrosoftRouting'
+        "Microsoft.Storage/storageAccounts": {
+            "kind": "StorageV2",
+            "location": Parameter("location"),
+            "sku": {"name": "Standard_LRS"},
+            "properties": {
+                "accessTier": "Premium",
+                "isHnsEnabled": True,
+                "routingPreference": {
+                    "publishInternetEndpoints": Parameter("ENDPOINTS"),
+                    "routingChoice": "MicrosoftRouting",
                 },
-                'sasPolicy': Parameter("sasPolicy"),
+                "sasPolicy": Parameter("sasPolicy"),
             },
-            'tags': {'foo': '${tagPrefix}/one', 'bar': '${environmentName}/two'}
+            "tags": {"foo": "${tagPrefix}/one", "bar": "${environmentName}/two"},
         }
     }
     r = StorageAccount(location="westus", sku="Premium_ZRS", access_tier=access_tier)
@@ -216,7 +241,7 @@ def test_storage_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params, values={'ENDPOINTS': True, 'sasPolicy': {}}, resource_defaults=defaults)
+    add_defaults(fields, parameters=params, values={"ENDPOINTS": True, "sasPolicy": {}}, resource_defaults=defaults)
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -233,7 +258,11 @@ def test_storage_defaults():
             "sasPolicy": Parameter("sasPolicy"),
         },
         "identity": IDENTITY,
-        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"], 'foo': '${tagPrefix}/one', 'bar': '${environmentName}/two'},
+        "tags": {
+            "azd-env-name": GLOBAL_PARAMS["environmentName"],
+            "foo": "${tagPrefix}/one",
+            "bar": "${environmentName}/two",
+        },
     }
 
 
@@ -329,7 +358,7 @@ def test_storage_infra():
     assert isinstance(TestInfra.data, StorageAccount)
     infra = TestInfra()
     assert isinstance(infra.data, StorageAccount)
-    assert infra.data.properties == {"properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert infra.data.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
 
     infra = TestInfra(data=StorageAccount(name="foo"))
     assert infra.data._settings["name"]() == "foo"

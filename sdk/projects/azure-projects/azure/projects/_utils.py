@@ -207,7 +207,7 @@ def add_defaults(
     values: Dict[str, Any],
     *,
     resource_defaults: Mapping[str, Any],
-    local_access: bool = False
+    local_access: bool = False,
 ) -> None:
     # TODO: loads defaults from store.
     from ._bicep.expressions import PlaceholderParameter
@@ -237,9 +237,7 @@ def add_defaults(
                 if not isinstance(parameters["managedIdentityId"], PlaceholderParameter):
                     field.properties["identity"] = {
                         "type": "UserAssigned",
-                        "userAssignedIdentities": {
-                            parameters["managedIdentityId"]: {}
-                        }
+                        "userAssignedIdentities": {parameters["managedIdentityId"]: {}},
                     }
                 else:
                     field.properties.pop("identity")

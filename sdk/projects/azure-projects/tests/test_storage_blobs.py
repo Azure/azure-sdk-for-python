@@ -73,7 +73,12 @@ def test_storage_blobs_properties():
     assert fields["storageaccount.blobservice"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
-    assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}, "tags": {'azd-env-name': None}, "identity": {}}
+    assert r3.properties == {
+        "sku": {"name": "Premium_ZRS"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 

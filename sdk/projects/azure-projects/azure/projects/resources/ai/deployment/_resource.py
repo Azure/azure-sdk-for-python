@@ -293,9 +293,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
     def _merge_resource(  # type: ignore[override]  # Parameter superset
         self, current_properties: dict[str, Any], new_properties: dict[str, Any], *, fields: FieldsType, **kwargs
     ):
-        super()._merge_resource(
-            current_properties, new_properties, merge_properties=["properties", "sku"], **kwargs
-        )
+        super()._merge_resource(current_properties, new_properties, merge_properties=["properties", "sku"], **kwargs)
         for field in find_all_resource_match(
             fields,
             parent=current_properties["parent"],

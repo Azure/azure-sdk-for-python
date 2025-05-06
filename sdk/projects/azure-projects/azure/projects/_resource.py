@@ -360,7 +360,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 if merged:
                     current_properties[key] = merged
             elif key == "tags":
-                merged = self._merge_tags(current_properties.get(key, {}), value, parameters=parameters, **kwargs)  
+                merged = self._merge_tags(current_properties.get(key, {}), value, parameters=parameters, **kwargs)
                 if merged:
                     current_properties[key] = merged
             elif key == "identity":
