@@ -558,8 +558,7 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
-     <https://blob.windows.core.net/Container/Path>`_. Required."""
+    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -741,8 +740,7 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
+    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
