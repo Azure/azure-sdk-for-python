@@ -76,7 +76,7 @@ There are two ways to interact with the de-identification service. You can send 
 to de-identify documents in Azure Storage.
 
 You can de-identify text directly using the `DeidentificationClient`:
-<!-- SNIPPET: deidentify_text.surrogate -->
+<!-- SNIPPET: deidentify_text_surrogate.surrogate -->
 
 ```python
 body = DeidentificationContent(input_text="Hello, my name is John Smith.")
@@ -140,7 +140,7 @@ See the [samples][samples] for code files illustrating common patterns, includin
 
 ### Discover PHI in unstructured text
 When you specify the `TAG` operation, the service will return information about the PHI entities it detects. You can use this information to customize your de-identification workflow:
-<!-- SNIPPET: deidentify_text.tag -->
+<!-- SNIPPET: deidentify_text_tag.tag -->
 
 ```python
 body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG)
@@ -159,7 +159,7 @@ else:
 
 ### Replace PHI in unstructured text with placeholder values
 When you specify the `REDACT` operation, the service will replace the PHI entities it detects with placeholder values. You can learn more about [redaction customization][deid_redact]. 
-<!-- SNIPPET: deidentify_text.redact -->
+<!-- SNIPPET: deidentify_text_redact.redact -->
 
 ```python
 body = DeidentificationContent(input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT)
@@ -172,7 +172,7 @@ print(f'Redacted Text:   "{result.output_text}"') # Redacted output: "It's great
 
 ### Replace PHI in unstructured text with realistic surrogate values
 The default operation is the `SURROGATE` operation. Using this operation, the service will replace the PHI entities it detects with realistic surrogate values:
-<!-- SNIPPET: deidentify_text.surrogate -->
+<!-- SNIPPET: deidentify_text_surrogate.surrogate -->
 
 ```python
 body = DeidentificationContent(input_text="Hello, my name is John Smith.")
