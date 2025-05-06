@@ -65,7 +65,7 @@ class ChangeFeedState(ABC):
             self,
             routing_provider: SmartRoutingMapProvider,
             request_headers: Dict[str, Any],
-            feed_options: Dict[str, Any] = None) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
@@ -73,7 +73,7 @@ class ChangeFeedState(ABC):
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
             request_headers: Dict[str, Any],
-            feed_options: Dict[str, Any] = None) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
@@ -152,7 +152,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             self,
             routing_provider: SmartRoutingMapProvider,
             request_headers: Dict[str, Any],
-            feed_options: Dict[str, Any] = None) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         self._change_feed_start_from.populate_request_headers(request_headers)
@@ -163,7 +163,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
             request_headers: Dict[str, Any],
-            feed_options: Dict[str, Any] = None) -> None: # pylint: disable=unused-argument
+            feed_options: Optional[Dict[str, Any]] = None) -> None: # pylint: disable=unused-argument
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
@@ -301,7 +301,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
             request_headers: Dict[str, Any],
-            feed_options: Dict[str, Any] = None) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id

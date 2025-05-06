@@ -3007,7 +3007,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 partition_key_range_id,
                 **kwargs)
 
-    def __QueryFeed(  # pylint: disable=too-many-locals, too-many-statements
+    def __QueryFeed(  # pylint: disable=too-many-locals, too-many-statements, too-many-branches
         self,
         path: str,
         resource_type: str,

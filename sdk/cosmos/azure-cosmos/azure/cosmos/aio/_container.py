@@ -99,7 +99,7 @@ class ContainerProxy:
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    async def _get_properties_with_feed_options(self, feed_options: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def _get_properties_with_feed_options(self, feed_options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
         if feed_options and "excludedLocations" in feed_options:
             kwargs['excluded_locations'] = feed_options['excludedLocations']
@@ -146,7 +146,10 @@ class ContainerProxy:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType, feed_options: Dict[str, Any] = None) -> Range:
+    async def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: PartitionKeyType,
+            feed_options: Optional[Dict[str, Any]] = None) -> Range:
         container_properties = await self._get_properties_with_feed_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])

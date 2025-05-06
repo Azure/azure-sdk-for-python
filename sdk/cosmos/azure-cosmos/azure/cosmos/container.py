@@ -62,6 +62,19 @@ __all__ = ("ContainerProxy",)
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
+def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
+    partition_key_definition = container_properties["partitionKey"]
+    return PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+
+def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
+    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
+    return partition_key_obj._is_prefix_partition_key(partition_key)
+
+def get_epk_range_for_partition_key(
+        container_properties: Dict[str, Any],
+        partition_key_value: PartitionKeyType) -> Range:
+    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
+    return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
     """An interface to interact with a specific DB Container.
@@ -97,7 +110,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    def _get_properties_with_feed_options(self, feed_options: Dict[str, Any] = None) -> Dict[str, Any]:
+    def _get_properties_with_feed_options(self, feed_options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
         if feed_options and "excludedLocations" in feed_options:
             kwargs['excluded_locations'] = feed_options['excludedLocations']
@@ -140,18 +153,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
-
-    def _get_partition_key_from_container_properties(self, container_properties: Dict[str, Any] = None) -> PartitionKey:
-        partition_key_definition = container_properties["partitionKey"]
-        return PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
-
-    def _is_prefix_partition_key(self, container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
-        partition_key_obj: PartitionKey = self._get_partition_key_from_container_properties(container_properties)
-        return partition_key_obj._is_prefix_partition_key(partition_key)
-
-    def _get_epk_range_for_partition_key(self, container_properties: Dict[str, Any], partition_key_value: PartitionKeyType) -> Range:
-        partition_key: PartitionKey = self._get_partition_key_from_container_properties(container_properties)
-        return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
     def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
         return self.client_connection._container_properties_cache
@@ -575,7 +576,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
-                self._get_epk_range_for_partition_key(container_properties, partition_key)
+                get_epk_range_for_partition_key(container_properties, partition_key)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
@@ -695,7 +696,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
             properties = self._get_properties_with_feed_options(feed_options)
-            if self._is_prefix_partition_key(properties, partition_key):
+            if is_prefix_partition_key(properties, partition_key):
                 kwargs["isPrefixPartitionQuery"] = True
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
                 kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
@@ -1586,7 +1587,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """
         container_properties = self._get_properties()
-        epk_range_for_partition_key = self._get_epk_range_for_partition_key(container_properties, partition_key)
+        epk_range_for_partition_key = get_epk_range_for_partition_key(container_properties, partition_key)
         return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
 
     def is_feed_range_subset(self, parent_feed_range: Dict[str, Any], child_feed_range: Dict[str, Any]) -> bool:
