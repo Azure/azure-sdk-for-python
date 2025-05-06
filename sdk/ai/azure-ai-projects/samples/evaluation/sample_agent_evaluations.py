@@ -30,7 +30,7 @@ from azure.ai.projects.models import (
     InputDataset,
     EvaluatorIds,
     EvaluatorConfiguration,
-    AgentEvaluationSamplingConfiguration
+    AgentEvaluationSamplingConfiguration,
 )
 from dotenv import load_dotenv
 
