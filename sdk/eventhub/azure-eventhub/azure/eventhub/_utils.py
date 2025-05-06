@@ -49,6 +49,7 @@ TZ_UTC: timezone = timezone.utc
 CE_ZERO_SECONDS: int = -62_135_596_800
 
 
+# TODO: decide whether to pass in timezone when calling property, or decode as datetime in _decode.py
 def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param float timestamp: Timestamp in seconds to be converted to datetime.
