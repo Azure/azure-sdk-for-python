@@ -60,7 +60,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         for connection in connections:
             if include_credentials:
                 connection = super()._get_with_credentials(connection.name, **kwargs)
-                return connection
-            else:
-                return connection
+            return connection
         raise ValueError(f"No default connection found for type: {connection_type}.")
