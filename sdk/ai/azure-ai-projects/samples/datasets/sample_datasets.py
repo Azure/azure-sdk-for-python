@@ -70,6 +70,16 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
         print(dataset)
 
+        """ 
+        TODO: TypeSpec needs to be fixed for this to work. "body" should be removed.
+        print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
+        asset_credential = project_client.datasets.get_credentials(
+            name=dataset_name,
+            version=dataset_version_1,
+            body=None)
+        print(asset_credential)
+        """
+
         print("List latest versions of all Datasets:")
         for dataset in project_client.datasets.list():
             print(dataset)
