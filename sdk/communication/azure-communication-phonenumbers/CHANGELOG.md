@@ -4,6 +4,11 @@
 ## 1.3.0b1 (Unreleased)
 
 ### Features Added
+- Adds support for the Browse Available Phone Numbers and Reservations APIs
+  - This adds an alternate way to search and purchase phone numbers that allows customers to select which phone numbers they want to reserve and purchase.
+- Adds support for automated purchases of phone numbers from countries requiring a Do Not Resell agreement.
+  - For more information, refer to: https://learn.microsoft.com/en-us/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
+- API version `2025-04-01` is the default.
 
 ### Breaking Changes
 
