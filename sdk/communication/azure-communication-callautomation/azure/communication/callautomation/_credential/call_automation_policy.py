@@ -19,7 +19,6 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.
 
     :param str host: The host of the endpoint URL for Azure Communication Service resource.
-    :param str acs_url: The Azure Communication Service URL.
     :param access_key: The access key used to authenticate to the service.
     :type access_key: str or AzureKeyCredential
     :param bool decode_url: `True` if there is a need to decode the URL. Default value is `False`.
@@ -64,7 +63,8 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
         if parsed_url.query:
             query_url += "?" + parsed_url.query
 
-        # Handle URL encoding for AioHttpTransport
+        # Need URL() to get a correct encoded key value, from "%3A" to ":", when transport is in type AioHttpTransport.
+        # There's a similar scenario in azure-storage-blob and azure-appconfiguration, the check logic is from there.
         try:
             from yarl import URL
             from azure.core.pipeline.transport import AioHttpTransport  # pylint:disable=non-abstract-transport-import
@@ -112,6 +112,8 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
         }
 
         request.http_request.headers.update(signature_header)
+
+        return request
 
     def on_request(self, request) -> None:
         self._sign_request(request)
