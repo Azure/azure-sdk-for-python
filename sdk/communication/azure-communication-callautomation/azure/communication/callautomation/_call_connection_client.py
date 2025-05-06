@@ -615,6 +615,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         choices: Optional[List["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs,
     ) -> None:
         """Recognize inputs from specific participant in this call.
