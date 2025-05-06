@@ -121,6 +121,7 @@ class SharedAccessSignature(object):
         ip=None,
         protocol=None,
         sts_hook=None,
+        **kwargs
     ) -> str:
         """
         Generates a shared access signature for the account.
@@ -172,6 +173,7 @@ class SharedAccessSignature(object):
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
+        sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
 
         if sts_hook is not None:
