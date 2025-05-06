@@ -480,3 +480,17 @@ class ResourceType:
             ResourceType.StoredProcedure,
             ResourceType.PartitionKey,
         )
+
+    @staticmethod
+    def IsDocumentChild(resourceType: str) -> bool:
+        return resourceType in (
+            ResourceType.Document,
+        )
+
+    @staticmethod
+    def IsMetadataChild(resourceType: str) -> bool:
+        return resourceType in (
+            ResourceType.Collection,            # Read API
+            ResourceType.PartitionKey,
+            ResourceType.PartitionKeyRange
+        )

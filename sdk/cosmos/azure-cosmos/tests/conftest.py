@@ -24,7 +24,7 @@ def pytest_sessionstart(session):
     config.create_database_if_not_exist(cosmos_sync_client)
     config.create_single_partition_container_if_not_exist(cosmos_sync_client)
     config.create_multi_partition_container_if_not_exist(cosmos_sync_client)
-
+    config.create_multi_partition_prefix_pk_container_if_not_exist(cosmos_sync_client)
 
 def pytest_sessionfinish(session, exitstatus):
     """
