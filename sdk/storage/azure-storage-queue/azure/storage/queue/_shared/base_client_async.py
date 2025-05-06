@@ -129,7 +129,7 @@ class AsyncStorageAccountHostsMixin(object):
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not transport:
             try:
-                from azure.core.pipeline.transport import ( # pylint: disable=non-abstract-transport-import
+                from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
                     AioHttpTransport,
                 )
             except ImportError as exc:
