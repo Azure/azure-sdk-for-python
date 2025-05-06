@@ -48,6 +48,7 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 
 # enable additional instrumentations
 from azure.ai.agents.telemetry import enable_telemetry
+
 enable_telemetry()
 
 scenario = os.path.basename(__file__)

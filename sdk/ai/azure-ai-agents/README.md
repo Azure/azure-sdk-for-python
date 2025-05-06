@@ -122,11 +122,12 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-agent = agents_client.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-agent",
-    instructions="You are helpful agent",
-)
+
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are helpful agent",
+    )
 ```
 
 <!-- END SNIPPET -->
@@ -145,7 +146,7 @@ toolset.add(functions)
 toolset.add(code_interpreter)
 
 # To enable tool calls executed automatically
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -293,10 +294,8 @@ Here is an example:
 ```python
 conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
-print(conn_id)
-
 # Initialize agent bing tool and add the connection id
-bing = BingGroundingTool(connection_id==conn_id)
+bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
 with agents_client:
@@ -351,7 +350,7 @@ get sensible result, the index needs to have "embedding", "token", "category" an
 ```python
 # Fetch and log all messages
 messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-for message in messages.data:
+for message in messages:
     if message.role == MessageRole.AGENT and message.url_citation_annotations:
         placeholder_annotations = {
             annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
@@ -382,7 +381,7 @@ Here is an example to use [user functions](https://github.com/Azure/azure-sdk-fo
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
 toolset.add(functions)
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -407,7 +406,7 @@ functions = AsyncFunctionTool(user_async_functions)
 
 toolset = AsyncToolSet()
 toolset.add(functions)
-agents_client.enable_auto_function_calls(toolset=toolset)
+agents_client.enable_auto_function_calls(toolset)
 
 agent = await agents_client.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -1044,13 +1043,10 @@ To retrieve messages from agents, use the following example:
 
 ```python
 messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-
-# The messages are following in the reverse order,
-# we will iterate them and output only text contents.
-for data_point in messages.data:
-    last_message_content = data_point.content[-1]
-    if isinstance(last_message_content, MessageTextContent):
-        print(f"{data_point.role}: {last_message_content.text.value}")
+for msg in messages:
+    if msg.text_messages:
+        last_text = msg.text_messages[-1]
+        print(f"{msg.role}: {last_text.text.value}")
 ```
 
 <!-- END SNIPPET -->
@@ -1069,20 +1065,22 @@ Here is an example retrieving file ids from messages and save to the local drive
 messages = agents_client.messages.list(thread_id=thread.id)
 print(f"Messages: {messages}")
 
-for image_content in messages.image_contents:
-    file_id = image_content.image_file.file_id
-    print(f"Image File ID: {file_id}")
-    file_name = f"{file_id}_image_file.png"
-    agents_client.files.save(file_id=file_id, file_name=file_name)
-    print(f"Saved image file to: {Path.cwd() / file_name}")
+for msg in messages:
+    # Save every image file in the message
+    for img in msg.image_contents:
+        file_id = img.image_file.file_id
+        file_name = f"{file_id}_image_file.png"
+        agents_client.files.save(file_id=file_id, file_name=file_name)
+        print(f"Saved image file to: {Path.cwd() / file_name}")
 
-for file_path_annotation in messages.file_path_annotations:
-    print(f"File Paths:")
-    print(f"Type: {file_path_annotation.type}")
-    print(f"Text: {file_path_annotation.text}")
-    print(f"File ID: {file_path_annotation.file_path.file_id}")
-    print(f"Start Index: {file_path_annotation.start_index}")
-    print(f"End Index: {file_path_annotation.end_index}")
+    # Print details of every file-path annotation
+    for ann in msg.file_path_annotations:
+        print("File Paths:")
+        print(f"  Type: {ann.type}")
+        print(f"  Text: {ann.text}")
+        print(f"  File ID: {ann.file_path.file_id}")
+        print(f"  Start Index: {ann.start_index}")
+        print(f"  End Index: {ann.end_index}")
 ```
 
 <!-- END SNIPPET -->
@@ -1175,6 +1173,8 @@ application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_S
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
 # enable additional instrumentations
+from azure.ai.agents.telemetry import enable_telemetry
+
 enable_telemetry()
 
 scenario = os.path.basename(__file__)
