@@ -56,20 +56,20 @@ ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
 
 def read_item_test_data():
     client_only_output_data = [
-        [L1],  # 0
-        [L2],  # 1
-        [L1],  # 2
-        [L1],  # 3
+        [L1, L1],  # 0
+        [L2, L2],  # 1
+        [L1, L1],  # 2
+        [L1, L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2],  # 0
-        [L2],  # 1
-        [L2],  # 2
-        [L1],  # 3
-        [L1],  # 4
-        [L1],  # 5
-        [L1],  # 6
-        [L1],  # 7
+        [L2, L2],  # 0
+        [L2, L2],  # 1
+        [L2, L2],  # 2
+        [L1, L1],  # 3
+        [L1, L1],  # 4
+        [L1, L1],  # 5
+        [L1, L1],  # 6
+        [L1, L1],  # 7
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
 
@@ -94,20 +94,20 @@ def query_items_test_data():
 
 def query_items_change_feed_test_data():
     client_only_output_data = [
-        [L1, L1, L1, L1],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L1, L1, L1],   #2
-        [L1, L1, L1, L1]    #3
+        [L1, L1, L1, L1, L1],   #0
+        [L2, L2, L2, L2, L2],   #1
+        [L1, L1, L1, L1, L1],   #2
+        [L1, L1, L1, L1, L1]    #3
     ]
     client_and_request_output_data = [
-        [L1, L2, L2, L2],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L2, L2, L2],   #2
-        [L2, L1, L1, L1],   #3
-        [L1, L1, L1, L1],   #4
-        [L2, L1, L1, L1],   #5
-        [L1, L1, L1, L1],   #6
-        [L1, L1, L1, L1],   #7
+        [L2, L2, L2, L2, L2],   #0
+        [L2, L2, L2, L2, L2],   #1
+        [L2, L2, L2, L2, L2],   #2
+        [L1, L1, L1, L1, L1],   #3
+        [L1, L1, L1, L1, L1],   #4
+        [L1, L1, L1, L1, L1],   #5
+        [L1, L1, L1, L1, L1],   #6
+        [L1, L1, L1, L1, L1],   #7
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
 

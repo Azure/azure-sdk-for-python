@@ -762,7 +762,7 @@ class ContainerProxy:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerProperties"] = self._get_properties()
+        feed_options["containerProperties"] = self._get_properties_with_feed_options(feed_options)
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
