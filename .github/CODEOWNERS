@@ -851,5 +851,5 @@
 /eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
-/pylintrc                                                            @l0lawrence
+/pylintrc                                                            @l0lawrence @scbedd @mccoyp
 /sdk/**/ci.yml                                                       @msyyc @lmazuel
