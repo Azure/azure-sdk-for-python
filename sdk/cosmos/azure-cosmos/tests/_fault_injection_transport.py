@@ -25,7 +25,6 @@
 import json
 import logging
 import sys
-from importlib.resources import is_resource
 from time import sleep
 from typing import Callable, Optional, Any, Dict, List, MutableMapping
 

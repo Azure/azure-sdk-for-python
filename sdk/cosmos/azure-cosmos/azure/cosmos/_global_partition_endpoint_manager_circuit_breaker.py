@@ -21,7 +21,8 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
-from typing import TYPE_CHECKING
+import logging
+from typing import TYPE_CHECKING, Optional
 
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
@@ -34,6 +35,8 @@ from azure.cosmos.http_constants import HttpHeaders
 
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+
+logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreaker")
 
 class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     """
@@ -51,28 +54,35 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         return self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request)
 
 
-    def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
-        container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
+    def create_pk_range_wrapper(self, request: RequestObject) -> Optional[PartitionKeyRangeWrapper]:
+        if HttpHeaders.IntendedCollectionRID in request.headers:
+            container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
+        else:
+            logger.warning("Illegal state: the request does not contain container information. "
+                           "Circuit breaker cannot be performed.")
+            return None
         properties = self.Client._container_properties_cache[container_rid] # pylint: disable=protected-access
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
 
-        if request.headers.get(HttpHeaders.PartitionKey):
+        if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
             partition_ranges = (self.Client._routing_map_provider # pylint: disable=protected-access
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
-        elif request.headers.get(HttpHeaders.PartitionKeyRangeID):
+        elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range =(self.Client._routing_map_provider # pylint: disable=protected-access
                     .get_range_by_partition_key_range_id(container_link, pk_range_id))
             partition_range = Range.PartitionKeyRangeToRange(epk_range)
         else:
-            raise RuntimeError("Illegal state: the request does not contain partition information.")
+            logger.warning("Illegal state: the request does not contain partition information. "
+                           "Circuit breaker cannot be performed.")
+            return None
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 
@@ -83,10 +93,11 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     ) -> None:
         if self.is_circuit_breaker_applicable(request):
             pk_range_wrapper = self.create_pk_range_wrapper(request)
-            self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
+            if pk_range_wrapper:
+                self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
-    def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper):
-        if self.is_circuit_breaker_applicable(request):
+    def resolve_service_endpoint(self, request: RequestObject, pk_range_wrapper: Optional[PartitionKeyRangeWrapper]):
+        if self.is_circuit_breaker_applicable(request) and pk_range_wrapper:
             self.global_partition_endpoint_manager_core.check_stale_partition_info(request, pk_range_wrapper)
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)
@@ -96,9 +107,10 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     def mark_partition_unavailable(
             self,
             request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
     ) -> None:
-        self.global_partition_endpoint_manager_core.mark_partition_unavailable(request, pk_range_wrapper)
+        if pk_range_wrapper:
+            self.global_partition_endpoint_manager_core.mark_partition_unavailable(request, pk_range_wrapper)
 
     def record_success(
             self,
@@ -106,4 +118,5 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     ) -> None:
         if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request):
             pk_range_wrapper = self.create_pk_range_wrapper(request)
-            self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)
+            if pk_range_wrapper:
+                self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)

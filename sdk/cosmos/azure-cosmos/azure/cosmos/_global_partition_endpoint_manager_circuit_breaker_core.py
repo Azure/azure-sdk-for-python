@@ -21,6 +21,7 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
+import logging
 import os
 
 from azure.cosmos import documents
@@ -32,13 +33,13 @@ from azure.cosmos._request_object import RequestObject
 from azure.cosmos.http_constants import ResourceType, HttpHeaders
 from azure.cosmos._constants import _Constants as Constants
 
+logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreakerCore")
 
 class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
     """
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.
     """
-
 
     def __init__(self, client, location_cache: LocationCache):
         self.partition_health_tracker = _PartitionHealthTracker()
@@ -63,8 +64,8 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             return False
 
         # this is for certain cross partition queries and read all items where we cannot discern partition information
-        if (not request.headers.get(HttpHeaders.PartitionKeyRangeID)
-                and not request.headers.get(HttpHeaders.PartitionKey)):
+        if (HttpHeaders.PartitionKeyRangeID not in request.headers
+                and HttpHeaders.PartitionKey not in request.headers):
             return False
 
         return True
@@ -95,7 +96,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             pk_range_wrapper: PartitionKeyRangeWrapper
     ) -> RequestObject:
         request.set_excluded_locations_from_circuit_breaker(
-            self.partition_health_tracker.get_excluded_locations(request, pk_range_wrapper)
+            self.partition_health_tracker.get_unhealthy_locations(request, pk_range_wrapper)
         )
         return request
 

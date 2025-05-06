@@ -26,7 +26,6 @@ import asyncio
 import json
 import logging
 import sys
-from importlib.resources import is_resource
 from typing import Callable, Optional, Any, Dict, List, Awaitable, MutableMapping
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse

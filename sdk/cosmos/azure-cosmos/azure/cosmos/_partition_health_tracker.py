@@ -191,7 +191,7 @@ class _PartitionHealthTracker(object):
             self._reset_partition_health_tracker_stats()
 
 
-    def get_excluded_locations(
+    def get_unhealthy_locations(
             self,
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper

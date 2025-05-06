@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, Optional
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
@@ -74,7 +74,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def resolve_service_endpoint(
             self,
             request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper # pylint: disable=unused-argument
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] # pylint: disable=unused-argument
     ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 

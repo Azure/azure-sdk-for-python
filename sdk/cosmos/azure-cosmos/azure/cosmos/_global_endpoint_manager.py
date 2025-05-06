@@ -24,7 +24,7 @@ database service.
 """
 
 import threading
-from typing import Tuple
+from typing import Tuple, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -71,7 +71,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def resolve_service_endpoint(
             self,
             request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper # pylint: disable=unused-argument
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] # pylint: disable=unused-argument
     ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
