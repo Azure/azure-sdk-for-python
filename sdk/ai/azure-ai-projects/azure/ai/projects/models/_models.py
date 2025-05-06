@@ -165,6 +165,8 @@ class AgentEvaluationResult(_Model):
     :ivar evaluator: Evaluator's name. This is the name of the evaluator that was used to evaluate
      the agent's completion. Required.
     :vartype evaluator: str
+    :ivar evaluator_id: Identifier of the evaluator. Required.
+    :vartype evaluator_id: str
     :ivar score: Score of the given evaluator. No restriction on range. Required.
     :vartype score: float
     :ivar status: Status of the evaluator result. Options: Running, Completed, Failed,
@@ -188,6 +190,8 @@ class AgentEvaluationResult(_Model):
     evaluator: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluator's name. This is the name of the evaluator that was used to evaluate the agent's
      completion. Required."""
+    evaluator_id: str = rest_field(name="evaluatorId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the evaluator. Required."""
     score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Score of the given evaluator. No restriction on range. Required."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -212,6 +216,7 @@ class AgentEvaluationResult(_Model):
         self,
         *,
         evaluator: str,
+        evaluator_id: str,
         score: float,
         status: str,
         run_id: str,
@@ -1370,19 +1375,18 @@ class PendingUploadResponse(_Model):
 class RedTeam(_Model):
     """Red team details.
 
-    :ivar name: Identifier of the red team. Required.
+    :ivar name: Identifier of the red team run. Required.
     :vartype name: str
-    :ivar scan_name: Name of the red-team scan.
-    :vartype scan_name: str
-    :ivar num_turns: Number of simulation rounds. Required.
+    :ivar display_name: Name of the red-team run.
+    :vartype display_name: str
+    :ivar num_turns: Number of simulation rounds.
     :vartype num_turns: int
     :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
-     Required.
     :vartype attack_strategies: list[str or ~azure.ai.projects.models.AttackStrategy]
     :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
-     scan outputs conversation not evaluation result. Required.
+     scan outputs conversation not evaluation result.
     :vartype simulation_only: bool
-    :ivar risk_categories: List of risk categories to generate attack objectives for. Required.
+    :ivar risk_categories: List of risk categories to generate attack objectives for.
     :vartype risk_categories: list[str or ~azure.ai.projects.models.RiskCategory]
     :ivar application_scenario: Application scenario for the red team operation, to generate
      scenario specific attacks.
@@ -1394,29 +1398,31 @@ class RedTeam(_Model):
     :vartype properties: dict[str, str]
     :ivar status: Status of the red-team. It is set by service and is read-only.
     :vartype status: str
-    :ivar target_config: Target configuration for the red-team run. Required.
-    :vartype target_config: ~azure.ai.projects.models.TargetConfig
+    :ivar target: Target configuration for the red-team run. Required.
+    :vartype target: ~azure.ai.projects.models.TargetConfig
     """
 
     name: str = rest_field(name="id", visibility=["read"])
-    """Identifier of the red team. Required."""
-    scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of the red-team scan."""
-    num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
-    """Number of simulation rounds. Required."""
-    attack_strategies: List[Union[str, "_models.AttackStrategy"]] = rest_field(
+    """Identifier of the red team run. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the red-team run."""
+    num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
+    """Number of simulation rounds."""
+    attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = rest_field(
         name="attackStrategies", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of attack strategies or nested lists of attack strategies. Required."""
-    simulation_only: bool = rest_field(
+    """List of attack strategies or nested lists of attack strategies."""
+    simulation_only: Optional[bool] = rest_field(
         name="simulationOnly", visibility=["read", "create", "update", "delete", "query"]
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
-     conversation not evaluation result. Required."""
-    risk_categories: List[Union[str, "_models.RiskCategory"]] = rest_field(
+     conversation not evaluation result."""
+    risk_categories: Optional[List[Union[str, "_models.RiskCategory"]]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of risk categories to generate attack objectives for. Required."""
+    """List of risk categories to generate attack objectives for."""
     application_scenario: Optional[str] = rest_field(
         name="applicationScenario", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1428,21 +1434,19 @@ class RedTeam(_Model):
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the red-team. It is set by service and is read-only."""
-    target_config: "_models.TargetConfig" = rest_field(
-        name="targetConfig", visibility=["read", "create", "update", "delete", "query"]
-    )
+    target: "_models.TargetConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target configuration for the red-team run. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        num_turns: int,
-        attack_strategies: List[Union[str, "_models.AttackStrategy"]],
-        simulation_only: bool,
-        risk_categories: List[Union[str, "_models.RiskCategory"]],
-        target_config: "_models.TargetConfig",
-        scan_name: Optional[str] = None,
+        target: "_models.TargetConfig",
+        display_name: Optional[str] = None,
+        num_turns: Optional[int] = None,
+        attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = None,
+        simulation_only: Optional[bool] = None,
+        risk_categories: Optional[List[Union[str, "_models.RiskCategory"]]] = None,
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,

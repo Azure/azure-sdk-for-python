@@ -2715,7 +2715,7 @@ class RedTeamsOperations:
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
-        :param name: Identifier of the red team. Required.
+        :param name: Identifier of the red team run. Required.
         :type name: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
@@ -2967,6 +2967,7 @@ class RedTeamsOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
+        import pdb; pdb.set_trace()
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )

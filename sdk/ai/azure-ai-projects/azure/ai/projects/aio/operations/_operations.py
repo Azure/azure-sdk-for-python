@@ -2109,7 +2109,7 @@ class RedTeamsOperations:
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
-        :param name: Identifier of the red team. Required.
+        :param name: Identifier of the red team run. Required.
         :type name: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam

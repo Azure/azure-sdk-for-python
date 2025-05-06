@@ -46,28 +46,25 @@ def sample_red_team() -> None:
 
         # [START red_team_sample]
         print("Creating a Red Team scan for direct model testing")
-        
+
         # Create target configuration for testing an Azure OpenAI model
-        target_config = AzureOpenAIModelConfiguration(
-            model_deployment_name=model_deployment_name
-        )
+        target_config = AzureOpenAIModelConfiguration(model_deployment_name=model_deployment_name)
 
         # Create the Red Team configuration
         red_team = RedTeam(
-            num_turns=1, #  Should be optional or removed, no longer exists in RedTeam class in azure-ai-evaluation
-            attack_strategies=[AttackStrategy.BASE64], #  Should be optional
-            simulation_only=False, #  Should have a default value of False
-            risk_categories=[RiskCategory.VIOLENCE], #  Should be optional
-            scan_name="Red-Team-1DP-Test", #  Should be required (for get operation)
-            target_config=target_config
+            attack_strategies=[AttackStrategy.BASE64],
+            risk_categories=[RiskCategory.VIOLENCE],
+            display_name="redteamtest1", # Use a simpler name
+            target=target_config,
         )
 
         # Create and run the Red Team scan
-        red_team_response = project_client.red_teams.create(red_team)
+        red_team_response = project_client.red_teams.create(red_team=red_team)
         print(f"Red Team scan created with scan name: {red_team_response.name}")
 
         print("Getting Red Team scan details")
-        get_red_team_response = project_client.red_teams.get(name="Red-Team-1DP-Test")
+        # Use the name returned by the create operation for the get call
+        get_red_team_response = project_client.red_teams.get(name=red_team_response.name)
         print(f"Red Team scan status: {get_red_team_response.status}")
 
         print("Listing all Red Team scans")
