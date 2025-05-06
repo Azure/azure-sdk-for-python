@@ -50,7 +50,7 @@ _GCM_TAG_LENGTH = 16
 _ERROR_OBJECT_INVALID = "{0} does not define a complete interface. Value of {1} is either missing or invalid."
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    "The require_encryption flag is set, but encryption is not supported" " for this method."
+    "The require_encryption flag is set, but encryption is not supported for this method."
 )
 
 
