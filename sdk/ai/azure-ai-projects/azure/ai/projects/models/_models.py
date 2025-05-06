@@ -559,8 +559,7 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
-     Required.
+     ``https://blob.windows.core.net/Container/Path``. Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -569,8 +568,7 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
-     <https://blob.windows.core.net/Container/Path>`_. Required."""
+    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -740,8 +738,7 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
@@ -762,8 +759,7 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
+    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -1067,8 +1063,7 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
@@ -1113,8 +1108,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
