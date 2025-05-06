@@ -31,6 +31,7 @@ from azure.ai.projects.models import (
     EvaluatorIds,
     EvaluatorConfiguration,
     AgentEvaluationSamplingConfiguration,
+    AgentEvaluationRedactionConfiguration
 )
 from dotenv import load_dotenv
 
@@ -48,13 +49,23 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             run_id="run-id",
             thread_id="thread-id",
             evaluators={
+                "fluency": EvaluatorConfiguration(
+                    id=EvaluatorIds.FLUENCY,
+                ),
+                "relevance": EvaluatorConfiguration(
+                    id=EvaluatorIds.RELEVANCE,
+                ),
                 "violence": EvaluatorConfiguration(
                     id=EvaluatorIds.VIOLENCE,
                 )
             },
             sampling_configuration=AgentEvaluationSamplingConfiguration(
-                name="test",
-                sampling_percent=0.5,
+                name="sampling-configuration",
+                sampling_percent=100, # process 100% of received requests
+                max_request_rate=1000, # fixed window max requests per hour
+            ),
+            redaction_configuration=AgentEvaluationRedactionConfiguration(
+                redact_score_properties=False, # reasoning properties will appear in results
             ),
             app_insights_connection_string=project_client.telemetry.get_connection_string(),
         )
