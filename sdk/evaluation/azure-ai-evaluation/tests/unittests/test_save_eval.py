@@ -48,6 +48,7 @@ class TestSaveEval:
         pf_client.flows.save(evaluator, path=tmpdir)
         assert os.path.isfile(os.path.join(tmpdir, "flow.flex.yaml"))
 
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="Promptflow SDK dependency and package is not installed")
     def test_load_and_run_evaluators(self, tmpdir, pf_client, data_file) -> None:
         """Test regular evaluator saving."""
         # Use a test eval because save/load feature breaks, seemingly in multiple ways, when

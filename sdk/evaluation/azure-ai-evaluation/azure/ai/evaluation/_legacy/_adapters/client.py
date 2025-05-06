@@ -17,7 +17,7 @@ from .entities import Run
 try:
     from promptflow.client import PFClient as _PFClient
 except ImportError:
-    from azure.ai.evaluation._legacy._common._save import save_evaluator
+    from azure.ai.evaluation._legacy._persist._save import save_evaluator
 
     class _PFClient:
         def __init__(self, **kwargs):

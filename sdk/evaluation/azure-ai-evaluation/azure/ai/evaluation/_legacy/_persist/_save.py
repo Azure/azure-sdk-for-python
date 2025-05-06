@@ -37,7 +37,7 @@ def _to_arg_meta(type_meta: TypeMetadata, include_default: bool = True) -> Calla
     if val_type is None:
         raise EvaluationSaveError(
             f"Unsupported type {type_meta['type']!r} for value type conversion. Supported types are: "
-            f"{ValueType.__members__.keys()}",
+            f"{[*ValueType.__members__.keys()]}",
         )
 
     meta: CallableArgMetadata = {

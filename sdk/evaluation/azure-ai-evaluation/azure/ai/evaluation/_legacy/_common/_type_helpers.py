@@ -59,24 +59,23 @@ class ValueType(Enum):
         :rtype: Optional[ValueType]
         """
 
-        if t is Parameter.empty: return ValueType.OBJECT
-        if t is None: return ValueType.OBJECT
+        if t is Parameter.empty:
+            return ValueType.OBJECT
 
         def type_or_subclass(t: Type, cls: Type) -> bool:
             return t is cls or (isclass(t) and issubclass(t, cls))
 
         t = ValueType.resolve_type(cast(Type, t))
+        if t is type(None): return ValueType.OBJECT
         if type_or_subclass(t, int): return ValueType.INT
         if type_or_subclass(t, float): return ValueType.DOUBLE
         if type_or_subclass(t, bool): return ValueType.BOOL
         if type_or_subclass(t, str): return ValueType.STRING
-        if type_or_subclass(t, EnumMeta):
+        if type_or_subclass(t, Enum) or type_or_subclass(t, EnumMeta):
             return ValueType.STRING
         if type_or_subclass(t, list) or type_or_subclass(t, Sequence):
             return ValueType.LIST
         if type_or_subclass(t, dict) or type_or_subclass(t, Mapping):
-            return ValueType.OBJECT
-        if t is Parameter.empty:
             return ValueType.OBJECT
         if t is Any:
             return ValueType.OBJECT
