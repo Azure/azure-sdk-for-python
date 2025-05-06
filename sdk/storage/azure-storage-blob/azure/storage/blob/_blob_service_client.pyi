@@ -5,39 +5,37 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 
+from datetime import datetime
 from typing import (
     Any,
     Dict,
     List,
     Optional,
     Union,
-    TYPE_CHECKING
 )
 from typing_extensions import Self
 
+from azure.core import MatchConditions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
 from ._encryption import StorageEncryptionMixin
-from ._models import ContainerProperties, CorsRule
+from ._lease import BlobLeaseClient
+from ._models import (
+    BlobAnalyticsLogging,
+    ContainerEncryptionScope,
+    ContainerProperties,
+    CorsRule,
+    FilteredBlob,
+    Metrics,
+    PublicAccess,
+    RetentionPolicy,
+    StaticWebsite,
+)
 from ._shared.base_client import StorageAccountHostsMixin
-
-if TYPE_CHECKING:
-    from azure.core import MatchConditions
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
-    from ._lease import BlobLeaseClient
-    from ._models import (
-        BlobAnalyticsLogging,
-        ContainerEncryptionScope,
-        FilteredBlob,
-        Metrics,
-        PublicAccess,
-        RetentionPolicy,
-        StaticWebsite
-    )
-    from ._shared.models import UserDelegationKey
+from ._shared.models import UserDelegationKey
 
 
 class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
@@ -45,7 +43,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -67,7 +65,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -87,12 +85,12 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     @distributed_trace
     def get_user_delegation_key(
         self,
-        key_start_time: "datetime",
-        key_expiry_time: "datetime",
+        key_start_time: datetime,
+        key_expiry_time: datetime,
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> "UserDelegationKey":
+    ) -> UserDelegationKey:
         ...
 
     @distributed_trace
@@ -107,13 +105,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     @distributed_trace
     def set_service_properties(
         self,
-        analytics_logging: Optional["BlobAnalyticsLogging"] = None,
-        hour_metrics: Optional["Metrics"] = None,
-        minute_metrics: Optional["Metrics"] = None,
+        analytics_logging: Optional[BlobAnalyticsLogging] = None,
+        hour_metrics: Optional[Metrics] = None,
+        minute_metrics: Optional[Metrics] = None,
         cors: Optional[List[CorsRule]] = None,
         target_version: Optional[str] = None,
-        delete_retention_policy: Optional["RetentionPolicy"] = None,
-        static_website: Optional["StaticWebsite"] = None,
+        delete_retention_policy: Optional[RetentionPolicy] = None,
+        static_website: Optional[StaticWebsite] = None,
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -142,7 +140,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged["FilteredBlob"]:
+    ) -> ItemPaged[FilteredBlob]:
         ...
 
     @distributed_trace
@@ -150,9 +148,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         self,
         name: str,
         metadata: Optional[Dict[str, str]] = None,
-        public_access: Optional[Union["PublicAccess", str]] = None,
+        public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[Dict, "ContainerEncryptionScope"]] = None,
+        container_encryption_scope: Optional[Union[Dict, ContainerEncryptionScope]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient:
@@ -162,12 +160,12 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
     def delete_container(
         self,
         container: Union[ContainerProperties, str],
-        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
         *,
-        if_modified_since: Optional["datetime"] = None,
-        if_unmodified_since: Optional["datetime"] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
-        match_condition: Optional["MatchConditions"] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -179,7 +177,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         name: str,
         new_name: str,
         *,
-        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient:

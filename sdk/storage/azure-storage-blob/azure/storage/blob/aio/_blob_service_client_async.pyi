@@ -5,43 +5,41 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 
+from datetime import datetime
 from typing import (
     Any,
     Dict,
     List,
     Optional,
     Union,
-    TYPE_CHECKING
 )
 from typing_extensions import Self
 
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
+from ._lease_async import BlobLeaseClient
 from .._encryption import StorageEncryptionMixin
-from .._models import ContainerProperties, CorsRule
+from .._models import (
+    BlobAnalyticsLogging,
+    ContainerEncryptionScope,
+    ContainerProperties,
+    CorsRule,
+    FilteredBlob,
+    Metrics,
+    PublicAccess,
+    RetentionPolicy,
+    StaticWebsite,
+)
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-
-if TYPE_CHECKING:
-    from azure.core import MatchConditions
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-    from azure.core.credentials_async import AsyncTokenCredential
-    from datetime import datetime
-    from ._lease_async import BlobLeaseClient
-    from .._models import (
-        BlobAnalyticsLogging,
-        ContainerEncryptionScope,
-        FilteredBlob,
-        Metrics,
-        PublicAccess,
-        RetentionPolicy,
-        StaticWebsite
-    )
-    from .._shared.models import UserDelegationKey
+from .._shared.models import UserDelegationKey
 
 
 class BlobServiceClient(  # type: ignore [misc]
@@ -53,7 +51,7 @@ class BlobServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -75,7 +73,7 @@ class BlobServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -95,12 +93,12 @@ class BlobServiceClient(  # type: ignore [misc]
     @distributed_trace_async
     async def get_user_delegation_key(
         self,
-        key_start_time: "datetime",
-        key_expiry_time: "datetime",
+        key_start_time: datetime,
+        key_expiry_time: datetime,
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> "UserDelegationKey":
+    ) -> UserDelegationKey:
         ...
 
     @distributed_trace_async
@@ -115,13 +113,13 @@ class BlobServiceClient(  # type: ignore [misc]
     @distributed_trace_async
     async def set_service_properties(
         self,
-        analytics_logging: Optional["BlobAnalyticsLogging"] = None,
-        hour_metrics: Optional["Metrics"] = None,
-        minute_metrics: Optional["Metrics"] = None,
+        analytics_logging: Optional[BlobAnalyticsLogging] = None,
+        hour_metrics: Optional[Metrics] = None,
+        minute_metrics: Optional[Metrics] = None,
         cors: Optional[List[CorsRule]] = None,
         target_version: Optional[str] = None,
-        delete_retention_policy: Optional["RetentionPolicy"] = None,
-        static_website: Optional["StaticWebsite"] = None,
+        delete_retention_policy: Optional[RetentionPolicy] = None,
+        static_website: Optional[StaticWebsite] = None,
         **kwargs: Any
     ) -> None:
         ...
@@ -148,7 +146,7 @@ class BlobServiceClient(  # type: ignore [misc]
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["FilteredBlob"]:
+    ) -> AsyncItemPaged[FilteredBlob]:
         ...
 
     @distributed_trace_async
@@ -156,9 +154,9 @@ class BlobServiceClient(  # type: ignore [misc]
         self,
         name: str,
         metadata: Optional[Dict[str, str]] = None,
-        public_access: Optional[Union["PublicAccess", str]] = None,
+        public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[dict, "ContainerEncryptionScope"]] = None,
+        container_encryption_scope: Optional[Union[dict, ContainerEncryptionScope]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient:
@@ -167,13 +165,13 @@ class BlobServiceClient(  # type: ignore [misc]
     @distributed_trace_async
     async def delete_container(
         self,
-        container: Union["ContainerProperties", str],
-        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        container: Union[ContainerProperties, str],
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
         *,
-        if_modified_since: Optional["datetime"] = None,
-        if_unmodified_since: Optional["datetime"] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
-        match_condition: Optional["MatchConditions"] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -185,7 +183,7 @@ class BlobServiceClient(  # type: ignore [misc]
         name: str,
         new_name: str,
         *,
-        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient:
