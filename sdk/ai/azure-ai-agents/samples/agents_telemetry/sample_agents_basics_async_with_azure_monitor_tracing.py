@@ -54,6 +54,7 @@ async def main() -> None:
 
         # enable additional instrumentations
         from azure.ai.agents.telemetry import enable_telemetry
+
         enable_telemetry()
 
         with tracer.start_as_current_span(scenario):
