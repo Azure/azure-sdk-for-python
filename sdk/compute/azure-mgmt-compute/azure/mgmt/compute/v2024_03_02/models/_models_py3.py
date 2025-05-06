@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
@@ -39,8 +40,8 @@ class AccessUri(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.access_sas = None
-        self.security_data_access_sas = None
+        self.access_sas: Optional[str] = None
+        self.security_data_access_sas: Optional[str] = None
 
 
 class ApiError(_serialization.Model):
@@ -311,7 +312,7 @@ class CreationData(_serialization.Model):
         self.gallery_image_reference = gallery_image_reference
         self.source_uri = source_uri
         self.source_resource_id = source_resource_id
-        self.source_unique_id = None
+        self.source_unique_id: Optional[str] = None
         self.upload_size_bytes = upload_size_bytes
         self.logical_sector_size = logical_sector_size
         self.security_data_uri = security_data_uri
@@ -321,28 +322,76 @@ class CreationData(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """The Resource model definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -350,42 +399,45 @@ class Resource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
         self.tags = tags
+        self.location = location
 
 
-class Disk(Resource):
+class Disk(TrackedResource):
     """Disk resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar managed_by: A relative URI containing the ID of the VM that has the disk attached.
     :vartype managed_by: str
     :ivar managed_by_extended: List of relative URIs containing the IDs of the VMs that have the
@@ -410,7 +462,7 @@ class Disk(Resource):
     :ivar purchase_plan: Purchase plan information for the the image from which the OS disk was
      created. E.g. - {name: 2019-Datacenter, publisher: MicrosoftWindowsServer, product:
      WindowsServer}.
-    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
     :ivar supported_capabilities: List of supported capabilities for the image from which the OS
      disk was created.
     :vartype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -507,6 +559,7 @@ class Disk(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "managed_by": {"readonly": True},
         "managed_by_extended": {"readonly": True},
@@ -525,8 +578,9 @@ class Disk(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "managed_by": {"key": "managedBy", "type": "str"},
         "managed_by_extended": {"key": "managedByExtended", "type": "[str]"},
         "sku": {"key": "sku", "type": "DiskSku"},
@@ -535,7 +589,7 @@ class Disk(Resource):
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
         "os_type": {"key": "properties.osType", "type": "str"},
         "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
-        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "DiskPurchasePlan"},
         "supported_capabilities": {"key": "properties.supportedCapabilities", "type": "SupportedCapabilities"},
         "creation_data": {"key": "properties.creationData", "type": "CreationData"},
         "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
@@ -582,7 +636,7 @@ class Disk(Resource):
         extended_location: Optional["_models.ExtendedLocation"] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
-        purchase_plan: Optional["_models.PurchasePlan"] = None,
+        purchase_plan: Optional["_models.DiskPurchasePlan"] = None,
         supported_capabilities: Optional["_models.SupportedCapabilities"] = None,
         creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
@@ -606,10 +660,10 @@ class Disk(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS,
          UltraSSD_LRS, Premium_ZRS, StandardSSD_ZRS, or PremiumV2_LRS.
         :paramtype sku: ~azure.mgmt.compute.v2024_03_02.models.DiskSku
@@ -626,7 +680,7 @@ class Disk(Resource):
         :keyword purchase_plan: Purchase plan information for the the image from which the OS disk was
          created. E.g. - {name: 2019-Datacenter, publisher: MicrosoftWindowsServer, product:
          WindowsServer}.
-        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
         :keyword supported_capabilities: List of supported capabilities for the image from which the OS
          disk was created.
         :paramtype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -698,63 +752,68 @@ class Disk(Resource):
          the virtual machine.
         :paramtype optimized_for_frequent_attach: bool
         """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.managed_by = None
-        self.managed_by_extended = None
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.managed_by: Optional[str] = None
+        self.managed_by_extended: Optional[List[str]] = None
         self.sku = sku
         self.zones = zones
         self.extended_location = extended_location
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.os_type = os_type
         self.hyper_v_generation = hyper_v_generation
         self.purchase_plan = purchase_plan
         self.supported_capabilities = supported_capabilities
         self.creation_data = creation_data
         self.disk_size_gb = disk_size_gb
-        self.disk_size_bytes = None
-        self.unique_id = None
+        self.disk_size_bytes: Optional[int] = None
+        self.unique_id: Optional[str] = None
         self.encryption_settings_collection = encryption_settings_collection
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.disk_iops_read_write = disk_iops_read_write
         self.disk_m_bps_read_write = disk_m_bps_read_write
         self.disk_iops_read_only = disk_iops_read_only
         self.disk_m_bps_read_only = disk_m_bps_read_only
-        self.disk_state = None
+        self.disk_state: Optional[Union[str, "_models.DiskState"]] = None
         self.encryption = encryption
         self.max_shares = max_shares
-        self.share_info = None
+        self.share_info: Optional[List["_models.ShareInfoElement"]] = None
         self.network_access_policy = network_access_policy
         self.disk_access_id = disk_access_id
-        self.bursting_enabled_time = None
+        self.bursting_enabled_time: Optional[datetime.datetime] = None
         self.tier = tier
         self.bursting_enabled = bursting_enabled
-        self.property_updates_in_progress = None
+        self.property_updates_in_progress: Optional["_models.PropertyUpdatesInProgress"] = None
         self.supports_hibernation = supports_hibernation
         self.security_profile = security_profile
         self.completion_percent = completion_percent
         self.public_network_access = public_network_access
         self.data_access_auth_mode = data_access_auth_mode
         self.optimized_for_frequent_attach = optimized_for_frequent_attach
-        self.last_ownership_update_time = None
+        self.last_ownership_update_time: Optional[datetime.datetime] = None
 
 
-class DiskAccess(Resource):
+class DiskAccess(TrackedResource):
     """disk access resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar extended_location: The extended location where the disk access will be created. Extended
      location cannot be changed.
     :vartype extended_location: ~azure.mgmt.compute.v2024_03_02.models.ExtendedLocation
@@ -772,6 +831,7 @@ class DiskAccess(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "private_endpoint_connections": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -782,8 +842,9 @@ class DiskAccess(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
@@ -802,19 +863,19 @@ class DiskAccess(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword extended_location: The extended location where the disk access will be created.
          Extended location cannot be changed.
         :paramtype extended_location: ~azure.mgmt.compute.v2024_03_02.models.ExtendedLocation
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
-        self.private_endpoint_connections = None
-        self.provisioning_state = None
-        self.time_created = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.provisioning_state: Optional[str] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DiskAccessList(_serialization.Model):
@@ -822,10 +883,9 @@ class DiskAccessList(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: A list of disk access resources. Required.
+    :ivar value: The DiskAccess items on this page. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskAccess]
-    :ivar next_link: The uri to fetch the next page of disk access resources. Call ListNext() with
-     this to fetch the next page of disk access resources.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -840,10 +900,9 @@ class DiskAccessList(_serialization.Model):
 
     def __init__(self, *, value: List["_models.DiskAccess"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: A list of disk access resources. Required.
+        :keyword value: The DiskAccess items on this page. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskAccess]
-        :keyword next_link: The uri to fetch the next page of disk access resources. Call ListNext()
-         with this to fetch the next page of disk access resources.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -871,23 +930,28 @@ class DiskAccessUpdate(_serialization.Model):
         self.tags = tags
 
 
-class DiskEncryptionSet(Resource):
+class DiskEncryptionSet(TrackedResource):
     """disk encryption set resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar identity: The managed identity for the disk encryption set. It should be given permission
      on the key vault before it can be used to encrypt disks.
     :vartype identity: ~azure.mgmt.compute.v2024_03_02.models.EncryptionSetIdentity
@@ -922,6 +986,7 @@ class DiskEncryptionSet(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "previous_keys": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -933,8 +998,9 @@ class DiskEncryptionSet(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "identity": {"key": "identity", "type": "EncryptionSetIdentity"},
         "encryption_type": {"key": "properties.encryptionType", "type": "str"},
         "active_key": {"key": "properties.activeKey", "type": "KeyForDiskEncryptionSet"},
@@ -962,10 +1028,10 @@ class DiskEncryptionSet(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword identity: The managed identity for the disk encryption set. It should be given
          permission on the key vault before it can be used to encrypt disks.
         :paramtype identity: ~azure.mgmt.compute.v2024_03_02.models.EncryptionSetIdentity
@@ -982,15 +1048,15 @@ class DiskEncryptionSet(Resource):
          different tenant. Setting the value to 'None' will clear the property.
         :paramtype federated_client_id: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.encryption_type = encryption_type
         self.active_key = active_key
-        self.previous_keys = None
-        self.provisioning_state = None
+        self.previous_keys: Optional[List["_models.KeyForDiskEncryptionSet"]] = None
+        self.provisioning_state: Optional[str] = None
         self.rotation_to_latest_key_version_enabled = rotation_to_latest_key_version_enabled
-        self.last_key_rotation_timestamp = None
-        self.auto_key_rotation_error = None
+        self.last_key_rotation_timestamp: Optional[datetime.datetime] = None
+        self.auto_key_rotation_error: Optional["_models.ApiError"] = None
         self.federated_client_id = federated_client_id
 
 
@@ -999,10 +1065,9 @@ class DiskEncryptionSetList(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: A list of disk encryption sets. Required.
+    :ivar value: The DiskEncryptionSet items on this page. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskEncryptionSet]
-    :ivar next_link: The uri to fetch the next page of disk encryption sets. Call ListNext() with
-     this to fetch the next page of disk encryption sets.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1019,10 +1084,9 @@ class DiskEncryptionSetList(_serialization.Model):
         self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: A list of disk encryption sets. Required.
+        :keyword value: The DiskEncryptionSet items on this page. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskEncryptionSet]
-        :keyword next_link: The uri to fetch the next page of disk encryption sets. Call ListNext()
-         with this to fetch the next page of disk encryption sets.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1110,10 +1174,9 @@ class DiskList(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: A list of disks. Required.
+    :ivar value: The Disk items on this page. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.Disk]
-    :ivar next_link: The uri to fetch the next page of disks. Call ListNext() with this to fetch
-     the next page of disks.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1128,10 +1191,9 @@ class DiskList(_serialization.Model):
 
     def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: A list of disks. Required.
+        :keyword value: The Disk items on this page. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.Disk]
-        :keyword next_link: The uri to fetch the next page of disks. Call ListNext() with this to fetch
-         the next page of disks.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1139,50 +1201,92 @@ class DiskList(_serialization.Model):
         self.next_link = next_link
 
 
-class ProxyOnlyResource(_serialization.Model):
-    """The ProxyOnly Resource model definition.
+class DiskPurchasePlan(_serialization.Model):
+    """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The plan ID. Required.
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar publisher: The publisher ID. Required.
+    :vartype publisher: str
+    :ivar product: Specifies the product of the image from the marketplace. This is the same value
+     as Offer under the imageReference element. Required.
+    :vartype product: str
+    :ivar promotion_code: The Offer Promotion Code.
+    :vartype promotion_code: str
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, name: str, publisher: str, product: str, promotion_code: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The plan ID. Required.
+        :paramtype name: str
+        :keyword publisher: The publisher ID. Required.
+        :paramtype publisher: str
+        :keyword product: Specifies the product of the image from the marketplace. This is the same
+         value as Offer under the imageReference element. Required.
+        :paramtype product: str
+        :keyword promotion_code: The Offer Promotion Code.
+        :paramtype promotion_code: str
+        """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code
 
 
-class DiskRestorePoint(ProxyOnlyResource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
+    """
+
+
+class DiskRestorePoint(ProxyResource):
     """Properties of disk restore point.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar time_created: The timestamp of restorePoint creation.
     :vartype time_created: ~datetime.datetime
     :ivar source_resource_id: arm id of source disk or source disk restore point.
@@ -1194,7 +1298,7 @@ class DiskRestorePoint(ProxyOnlyResource):
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2024_03_02.models.HyperVGeneration
     :ivar purchase_plan: Purchase plan information for the the image from which the OS disk was
      created.
-    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
     :ivar supported_capabilities: List of supported capabilities for the image from which the OS
      disk was created.
     :vartype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -1237,6 +1341,7 @@ class DiskRestorePoint(ProxyOnlyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "time_created": {"readonly": True},
         "source_resource_id": {"readonly": True},
         "os_type": {"readonly": True},
@@ -1252,11 +1357,12 @@ class DiskRestorePoint(ProxyOnlyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
         "os_type": {"key": "properties.osType", "type": "str"},
         "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
-        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "DiskPurchasePlan"},
         "supported_capabilities": {"key": "properties.supportedCapabilities", "type": "SupportedCapabilities"},
         "family_id": {"key": "properties.familyId", "type": "str"},
         "source_unique_id": {"key": "properties.sourceUniqueId", "type": "str"},
@@ -1276,7 +1382,7 @@ class DiskRestorePoint(ProxyOnlyResource):
         self,
         *,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
-        purchase_plan: Optional["_models.PurchasePlan"] = None,
+        purchase_plan: Optional["_models.DiskPurchasePlan"] = None,
         supported_capabilities: Optional["_models.SupportedCapabilities"] = None,
         supports_hibernation: Optional[bool] = None,
         network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
@@ -1292,7 +1398,7 @@ class DiskRestorePoint(ProxyOnlyResource):
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2024_03_02.models.HyperVGeneration
         :keyword purchase_plan: Purchase plan information for the the image from which the OS disk was
          created.
-        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
         :keyword supported_capabilities: List of supported capabilities for the image from which the OS
          disk was created.
         :paramtype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -1316,24 +1422,24 @@ class DiskRestorePoint(ProxyOnlyResource):
         :paramtype security_profile: ~azure.mgmt.compute.v2024_03_02.models.DiskSecurityProfile
         """
         super().__init__(**kwargs)
-        self.time_created = None
-        self.source_resource_id = None
-        self.os_type = None
+        self.time_created: Optional[datetime.datetime] = None
+        self.source_resource_id: Optional[str] = None
+        self.os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None
         self.hyper_v_generation = hyper_v_generation
         self.purchase_plan = purchase_plan
         self.supported_capabilities = supported_capabilities
-        self.family_id = None
-        self.source_unique_id = None
-        self.encryption = None
+        self.family_id: Optional[str] = None
+        self.source_unique_id: Optional[str] = None
+        self.encryption: Optional["_models.Encryption"] = None
         self.supports_hibernation = supports_hibernation
         self.network_access_policy = network_access_policy
         self.public_network_access = public_network_access
         self.disk_access_id = disk_access_id
         self.completion_percent = completion_percent
-        self.replication_state = None
-        self.source_resource_location = None
+        self.replication_state: Optional[str] = None
+        self.source_resource_location: Optional[str] = None
         self.security_profile = security_profile
-        self.logical_sector_size = None
+        self.logical_sector_size: Optional[int] = None
 
 
 class DiskRestorePointList(_serialization.Model):
@@ -1341,10 +1447,9 @@ class DiskRestorePointList(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: A list of disk restore points. Required.
+    :ivar value: The DiskRestorePoint items on this page. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskRestorePoint]
-    :ivar next_link: The uri to fetch the next page of disk restore points. Call ListNext() with
-     this to fetch the next page of disk restore points.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1361,10 +1466,9 @@ class DiskRestorePointList(_serialization.Model):
         self, *, value: List["_models.DiskRestorePoint"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: A list of disk restore points. Required.
+        :keyword value: The DiskRestorePoint items on this page. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.DiskRestorePoint]
-        :keyword next_link: The uri to fetch the next page of disk restore points. Call ListNext() with
-         this to fetch the next page of disk restore points.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1442,7 +1546,7 @@ class DiskSku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[str] = None
 
 
 class DiskUpdate(_serialization.Model):
@@ -1500,7 +1604,7 @@ class DiskUpdate(_serialization.Model):
      target of the disk. Bursting is disabled by default. Does not apply to Ultra disks.
     :vartype bursting_enabled: bool
     :ivar purchase_plan: Purchase plan information to be added on the OS disk.
-    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
     :ivar supported_capabilities: List of supported capabilities to be added on the OS disk.
     :vartype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
     :ivar property_updates_in_progress: Properties of the disk for which update is pending.
@@ -1547,7 +1651,7 @@ class DiskUpdate(_serialization.Model):
         "disk_access_id": {"key": "properties.diskAccessId", "type": "str"},
         "tier": {"key": "properties.tier", "type": "str"},
         "bursting_enabled": {"key": "properties.burstingEnabled", "type": "bool"},
-        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "DiskPurchasePlan"},
         "supported_capabilities": {"key": "properties.supportedCapabilities", "type": "SupportedCapabilities"},
         "property_updates_in_progress": {
             "key": "properties.propertyUpdatesInProgress",
@@ -1577,7 +1681,7 @@ class DiskUpdate(_serialization.Model):
         disk_access_id: Optional[str] = None,
         tier: Optional[str] = None,
         bursting_enabled: Optional[bool] = None,
-        purchase_plan: Optional["_models.PurchasePlan"] = None,
+        purchase_plan: Optional["_models.DiskPurchasePlan"] = None,
         supported_capabilities: Optional["_models.SupportedCapabilities"] = None,
         supports_hibernation: Optional[bool] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
@@ -1637,7 +1741,7 @@ class DiskUpdate(_serialization.Model):
          target of the disk. Bursting is disabled by default. Does not apply to Ultra disks.
         :paramtype bursting_enabled: bool
         :keyword purchase_plan: Purchase plan information to be added on the OS disk.
-        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
         :keyword supported_capabilities: List of supported capabilities to be added on the OS disk.
         :paramtype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
         :keyword supports_hibernation: Indicates the OS on a disk supports hibernation.
@@ -1675,7 +1779,7 @@ class DiskUpdate(_serialization.Model):
         self.bursting_enabled = bursting_enabled
         self.purchase_plan = purchase_plan
         self.supported_capabilities = supported_capabilities
-        self.property_updates_in_progress = None
+        self.property_updates_in_progress: Optional["_models.PropertyUpdatesInProgress"] = None
         self.supports_hibernation = supports_hibernation
         self.public_network_access = public_network_access
         self.data_access_auth_mode = data_access_auth_mode
@@ -1742,7 +1846,7 @@ class EncryptionSetIdentity(_serialization.Model):
     :vartype tenant_id: str
     :ivar user_assigned_identities: The list of user identities associated with the disk encryption
      set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2024_03_02.models.UserAssignedIdentitiesValue]
     """
@@ -1776,14 +1880,14 @@ class EncryptionSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the disk
          encryption set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2024_03_02.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
         self.type = type
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.user_assigned_identities = user_assigned_identities
 
 
@@ -1916,7 +2020,8 @@ class GrantAccessData(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar access: Required. Known values are: "None", "Read", and "Write".
+    :ivar access: The Access Level, accepted values include None, Read, Write. Required. Known
+     values are: "None", "Read", and "Write".
     :vartype access: str or ~azure.mgmt.compute.v2024_03_02.models.AccessLevel
     :ivar duration_in_seconds: Time duration in seconds until the SAS access expires. Required.
     :vartype duration_in_seconds: int
@@ -1950,7 +2055,8 @@ class GrantAccessData(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword access: Required. Known values are: "None", "Read", and "Write".
+        :keyword access: The Access Level, accepted values include None, Read, Write. Required. Known
+         values are: "None", "Read", and "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2024_03_02.models.AccessLevel
         :keyword duration_in_seconds: Time duration in seconds until the SAS access expires. Required.
         :paramtype duration_in_seconds: int
@@ -2175,20 +2281,25 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
-class PrivateEndpointConnection(_serialization.Model):
+class PrivateEndpointConnection(ProxyResource):
     """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: private endpoint connection Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: private endpoint connection name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: private endpoint connection type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar private_endpoint: The resource of private end point.
     :vartype private_endpoint: ~azure.mgmt.compute.v2024_03_02.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -2205,6 +2316,7 @@ class PrivateEndpointConnection(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "private_endpoint": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
@@ -2213,6 +2325,7 @@ class PrivateEndpointConnection(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
@@ -2234,23 +2347,25 @@ class PrivateEndpointConnection(_serialization.Model):
          ~azure.mgmt.compute.v2024_03_02.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.private_endpoint = None
+        self.private_endpoint: Optional["_models.PrivateEndpoint"] = None
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
     """A list of private link resources.
 
-    :ivar value: Array of private endpoint connections.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The PrivateEndpointConnection items on this page. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.PrivateEndpointConnection]
-    :ivar next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
-     fetch the next page of snapshots.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
@@ -2258,17 +2373,12 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.PrivateEndpointConnection"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: Array of private endpoint connections.
+        :keyword value: The PrivateEndpointConnection items on this page. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.PrivateEndpointConnection]
-        :keyword next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
-         fetch the next page of snapshots.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -2318,11 +2428,11 @@ class PrivateLinkResource(_serialization.Model):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.group_id = None
-        self.required_members = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -2414,54 +2524,53 @@ class PropertyUpdatesInProgress(_serialization.Model):
         self.target_tier = target_tier
 
 
-class PurchasePlan(_serialization.Model):
-    """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
+class ResourceAutoGenerated(_serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: The plan ID. Required.
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar publisher: The publisher ID. Required.
-    :vartype publisher: str
-    :ivar product: Specifies the product of the image from the marketplace. This is the same value
-     as Offer under the imageReference element. Required.
-    :vartype product: str
-    :ivar promotion_code: The Offer Promotion Code.
-    :vartype promotion_code: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        "name": {"required": True},
-        "publisher": {"required": True},
-        "product": {"required": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
+        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "publisher": {"key": "publisher", "type": "str"},
-        "product": {"key": "product", "type": "str"},
-        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self, *, name: str, publisher: str, product: str, promotion_code: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword name: The plan ID. Required.
-        :paramtype name: str
-        :keyword publisher: The publisher ID. Required.
-        :paramtype publisher: str
-        :keyword product: Specifies the product of the image from the marketplace. This is the same
-         value as Offer under the imageReference element. Required.
-        :paramtype product: str
-        :keyword promotion_code: The Offer Promotion Code.
-        :paramtype promotion_code: str
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
 
 
 class ResourceUriList(_serialization.Model):
@@ -2540,9 +2649,9 @@ class ResourceWithOptionalLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -2566,26 +2675,31 @@ class ShareInfoElement(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.vm_uri = None
+        self.vm_uri: Optional[str] = None
 
 
-class Snapshot(Resource):
+class Snapshot(TrackedResource):
     """Snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_03_02.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar managed_by: Unused. Always Null.
     :vartype managed_by: str
     :ivar sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is
@@ -2604,7 +2718,7 @@ class Snapshot(Resource):
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2024_03_02.models.HyperVGeneration
     :ivar purchase_plan: Purchase plan information for the image from which the source disk for the
      snapshot was originally created.
-    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+    :vartype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
     :ivar supported_capabilities: List of supported capabilities for the image from which the
      source disk from the snapshot was originally created.
     :vartype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -2669,6 +2783,7 @@ class Snapshot(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "managed_by": {"readonly": True},
         "time_created": {"readonly": True},
@@ -2683,15 +2798,16 @@ class Snapshot(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "managed_by": {"key": "managedBy", "type": "str"},
         "sku": {"key": "sku", "type": "SnapshotSku"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
         "os_type": {"key": "properties.osType", "type": "str"},
         "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
-        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "DiskPurchasePlan"},
         "supported_capabilities": {"key": "properties.supportedCapabilities", "type": "SupportedCapabilities"},
         "creation_data": {"key": "properties.creationData", "type": "CreationData"},
         "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
@@ -2725,7 +2841,7 @@ class Snapshot(Resource):
         extended_location: Optional["_models.ExtendedLocation"] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
-        purchase_plan: Optional["_models.PurchasePlan"] = None,
+        purchase_plan: Optional["_models.DiskPurchasePlan"] = None,
         supported_capabilities: Optional["_models.SupportedCapabilities"] = None,
         creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
@@ -2743,10 +2859,10 @@ class Snapshot(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This
          is an optional parameter for incremental snapshot and the default behavior is the SKU will be
          set to the same sku as the previous snapshot.
@@ -2761,7 +2877,7 @@ class Snapshot(Resource):
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2024_03_02.models.HyperVGeneration
         :keyword purchase_plan: Purchase plan information for the image from which the source disk for
          the snapshot was originally created.
-        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.PurchasePlan
+        :paramtype purchase_plan: ~azure.mgmt.compute.v2024_03_02.models.DiskPurchasePlan
         :keyword supported_capabilities: List of supported capabilities for the image from which the
          source disk from the snapshot was originally created.
         :paramtype supported_capabilities: ~azure.mgmt.compute.v2024_03_02.models.SupportedCapabilities
@@ -2809,24 +2925,24 @@ class Snapshot(Resource):
         :paramtype data_access_auth_mode: str or
          ~azure.mgmt.compute.v2024_03_02.models.DataAccessAuthMode
         """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.managed_by = None
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.managed_by: Optional[str] = None
         self.sku = sku
         self.extended_location = extended_location
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.os_type = os_type
         self.hyper_v_generation = hyper_v_generation
         self.purchase_plan = purchase_plan
         self.supported_capabilities = supported_capabilities
         self.creation_data = creation_data
         self.disk_size_gb = disk_size_gb
-        self.disk_size_bytes = None
-        self.disk_state = None
-        self.unique_id = None
+        self.disk_size_bytes: Optional[int] = None
+        self.disk_state: Optional[Union[str, "_models.DiskState"]] = None
+        self.unique_id: Optional[str] = None
         self.encryption_settings_collection = encryption_settings_collection
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.incremental = incremental
-        self.incremental_snapshot_family_id = None
+        self.incremental_snapshot_family_id: Optional[str] = None
         self.encryption = encryption
         self.network_access_policy = network_access_policy
         self.disk_access_id = disk_access_id
@@ -2845,8 +2961,7 @@ class SnapshotList(_serialization.Model):
 
     :ivar value: A list of snapshots. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_03_02.models.Snapshot]
-    :ivar next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
-     fetch the next page of snapshots.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -2863,8 +2978,7 @@ class SnapshotList(_serialization.Model):
         """
         :keyword value: A list of snapshots. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_03_02.models.Snapshot]
-        :keyword next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
-         fetch the next page of snapshots.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -2904,7 +3018,7 @@ class SnapshotSku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[str] = None
 
 
 class SnapshotUpdate(_serialization.Model):
@@ -3104,7 +3218,7 @@ class SubResourceReadOnly(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class SupportedCapabilities(_serialization.Model):
@@ -3153,6 +3267,70 @@ class SupportedCapabilities(_serialization.Model):
 
 
 class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.compute.v2024_03_02.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.compute.v2024_03_02.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.compute.v2024_03_02.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.compute.v2024_03_02.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class SystemDataAutoGenerated(_serialization.Model):
     """The system meta data relating to this resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3178,8 +3356,8 @@ class SystemData(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.created_at = None
-        self.last_modified_at = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.last_modified_at: Optional[datetime.datetime] = None
 
 
 class UserAssignedIdentitiesValue(_serialization.Model):
@@ -3206,5 +3384,33 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
+class UserAssignedIdentitiesValueAutoGenerated(_serialization.Model):
+    """UserAssignedIdentitiesValueAutoGenerated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
