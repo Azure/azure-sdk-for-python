@@ -77,7 +77,7 @@ class AzureOpenAIGrader():
            return AzureOpenAI(
                 azure_endpoint=self._model_config["azure_endpoint"],
                 api_key=self._model_config.get("api_key", None), # Default-style access to appease linters.
-                api_version=self._model_config.get("api_version", DEFAULT_AOAI_API_VERSION),
+                api_version=DEFAULT_AOAI_API_VERSION, # Force a known working version
                 azure_deployment=self._model_config.get("azure_deployment", ""),
             )
         from openai import OpenAI
