@@ -30,8 +30,7 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
         acs_url: str,
         access_key: Union[str, AzureKeyCredential],
         decode_url: bool = False,
-    ):
-        # type: (...) -> None
+    ) -> None:
         super(CallAutomationHMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
