@@ -154,9 +154,7 @@ def build_evaluations_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_list_request(
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -168,12 +166,6 @@ def build_evaluations_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -225,9 +217,7 @@ def build_evaluations_create_agent_evaluation_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_versions_request(
-    name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -244,10 +234,6 @@ def build_datasets_list_versions_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if continuation_token_parameter is not None:
-        _params["continuationToken"] = _SERIALIZER.query(
-            "continuation_token_parameter", continuation_token_parameter, "str"
-        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -255,7 +241,7 @@ def build_datasets_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_request(*, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_datasets_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -267,10 +253,6 @@ def build_datasets_list_request(*, continuation_token_parameter: Optional[str] =
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if continuation_token_parameter is not None:
-        _params["continuationToken"] = _SERIALIZER.query(
-            "continuation_token_parameter", continuation_token_parameter, "str"
-        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -388,7 +370,6 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -405,15 +386,12 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_versions_request(
-    name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -430,10 +408,6 @@ def build_indexes_list_versions_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if continuation_token_parameter is not None:
-        _params["continuationToken"] = _SERIALIZER.query(
-            "continuation_token_parameter", continuation_token_parameter, "str"
-        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -441,7 +415,7 @@ def build_indexes_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_request(*, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -453,10 +427,6 @@ def build_indexes_list_request(*, continuation_token_parameter: Optional[str] = 
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if continuation_token_parameter is not None:
-        _params["continuationToken"] = _SERIALIZER.query(
-            "continuation_token_parameter", continuation_token_parameter, "str"
-        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -571,9 +541,6 @@ def build_deployments_list_request(
     model_publisher: Optional[str] = None,
     model_name: Optional[str] = None,
     deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -593,12 +560,6 @@ def build_deployments_list_request(
         _params["modelName"] = _SERIALIZER.query("model_name", model_name, "str")
     if deployment_type is not None:
         _params["deploymentType"] = _SERIALIZER.query("deployment_type", deployment_type, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -630,9 +591,7 @@ def build_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_red_teams_list_request(
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_red_teams_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -644,12 +603,6 @@ def build_red_teams_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -718,7 +671,7 @@ class ConnectionsOperations:
     def _get(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, without populating connection credentials.
 
-        :param name: The name of the resource. Required.
+        :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Connection
@@ -783,7 +736,7 @@ class ConnectionsOperations:
     def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, with its connection credentials.
 
-        :param name: The name of the resource. Required.
+        :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Connection
@@ -1041,19 +994,11 @@ class EvaluationsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={
-            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
-        },
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
-    def list(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Evaluation"]:
+    def list(self, **kwargs: Any) -> Iterable["_models.Evaluation"]:
         """List evaluation runs.
 
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of Evaluation
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Evaluation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1061,7 +1006,6 @@ class EvaluationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1076,9 +1020,6 @@ class EvaluationsOperations:
             if not next_link:
 
                 _request = build_evaluations_list_request(
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1399,16 +1340,11 @@ class DatasetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(
-        self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.DatasetVersion"]:
+    def list_versions(self, name: str, **kwargs: Any) -> Iterable["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
-         None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1431,7 +1367,6 @@ class DatasetsOperations:
 
                 _request = build_datasets_list_versions_request(
                     name=name,
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1490,14 +1425,9 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(
-        self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.DatasetVersion"]:
+    def list(self, **kwargs: Any) -> Iterable["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
-        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
-         None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1519,7 +1449,6 @@ class DatasetsOperations:
             if not next_link:
 
                 _request = build_datasets_list_request(
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1698,7 +1627,7 @@ class DatasetsOperations:
         version: str,
         body: _models.DatasetVersion,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
@@ -1710,7 +1639,7 @@ class DatasetsOperations:
         :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: ~azure.ai.projects.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -1719,7 +1648,7 @@ class DatasetsOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
@@ -1730,7 +1659,7 @@ class DatasetsOperations:
         :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -1739,7 +1668,13 @@ class DatasetsOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
@@ -1750,7 +1685,7 @@ class DatasetsOperations:
         :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -1788,7 +1723,7 @@ class DatasetsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
@@ -1980,15 +1915,13 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_credentials(self, name: str, version: str, body: Any, **kwargs: Any) -> _models.AssetCredentialResponse:
+    def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.AssetCredentialResponse:
         """Get the SAS credential to access the storage account associated with a Dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: any
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2001,20 +1934,15 @@ class DatasetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
-
-        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_get_credentials_request(
             name=name,
             version=version,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2068,16 +1996,11 @@ class IndexesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(
-        self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.Index"]:
+    def list_versions(self, name: str, **kwargs: Any) -> Iterable["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
-         None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of Index
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2100,7 +2023,6 @@ class IndexesOperations:
 
                 _request = build_indexes_list_versions_request(
                     name=name,
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2159,12 +2081,9 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any) -> Iterable["_models.Index"]:
+    def list(self, **kwargs: Any) -> Iterable["_models.Index"]:
         """List the latest version of each Index.
 
-        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
-         None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of Index
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2186,7 +2105,6 @@ class IndexesOperations:
             if not next_link:
 
                 _request = build_indexes_list_request(
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2360,7 +2278,13 @@ class IndexesOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: _models.Index,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2371,7 +2295,7 @@ class IndexesOperations:
         :param body: The definition of the Index to create or update. Required.
         :type body: ~azure.ai.projects.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -2380,7 +2304,7 @@ class IndexesOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2391,7 +2315,7 @@ class IndexesOperations:
         :param body: The definition of the Index to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -2400,7 +2324,13 @@ class IndexesOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2411,7 +2341,7 @@ class IndexesOperations:
         :param body: The definition of the Index to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -2449,7 +2379,7 @@ class IndexesOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
@@ -2586,8 +2516,6 @@ class DeploymentsOperations:
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
         deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable["_models.Deployment"]:
         """List all deployed models in the project.
@@ -2600,10 +2528,6 @@ class DeploymentsOperations:
         :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
          is None.
         :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of Deployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2611,7 +2535,6 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Deployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2629,9 +2552,6 @@ class DeploymentsOperations:
                     model_publisher=model_publisher,
                     model_name=model_name,
                     deployment_type=deployment_type,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2715,7 +2635,7 @@ class RedTeamsOperations:
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
-        :param name: Identifier of the red team. Required.
+        :param name: Identifier of the red team run. Required.
         :type name: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
@@ -2779,19 +2699,11 @@ class RedTeamsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={
-            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
-        },
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
-    def list(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.RedTeam"]:
+    def list(self, **kwargs: Any) -> Iterable["_models.RedTeam"]:
         """List a redteam by name.
 
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of RedTeam
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2799,7 +2711,6 @@ class RedTeamsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.RedTeam]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2814,9 +2725,6 @@ class RedTeamsOperations:
             if not next_link:
 
                 _request = build_red_teams_list_request(
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
