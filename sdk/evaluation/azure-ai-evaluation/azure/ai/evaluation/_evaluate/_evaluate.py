@@ -501,7 +501,7 @@ def _apply_target_to_data(
     :param data: The path to input jsonl or csv file.
     :type data: Union[str, os.PathLike]
     :param batch_client: The promptflow client to be used.
-    :type batch_client: PFClient
+    :type batch_client: BatchClient
     :param initial_data: The data frame with the loaded data.
     :type initial_data: pd.DataFrame
     :param evaluation_name: The name of the evaluation.

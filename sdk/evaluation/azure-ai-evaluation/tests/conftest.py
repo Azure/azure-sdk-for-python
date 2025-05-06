@@ -13,6 +13,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
+from azure.ai.evaluation._legacy._adapters._check import HAS_LEGACY_SDK
 
 import pytest
 from ci_tools.variables import in_ci
@@ -428,7 +429,12 @@ def mock_trace_destination_to_cloud(project_scope: dict):
         f"azureml://subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/"
         f"providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"
     )
-    with patch("promptflow._sdk._configuration.Configuration.get_trace_destination", return_value=trace_destination):
+
+    patch_target: str = ("promptflow._sdk._configuration.Configuration.get_trace_destination"
+        if HAS_LEGACY_SDK
+        else "azure.ai.evaluation._legacy._adapters._configuration.Configuration.get_trace_destination")
+
+    with patch(patch_target, return_value=trace_destination):
         yield
 
 
@@ -436,7 +442,10 @@ def mock_trace_destination_to_cloud(project_scope: dict):
 def mock_validate_trace_destination():
     """Mock validate trace destination config to use in unit tests."""
 
-    with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
+    if HAS_LEGACY_SDK:
+        with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
+            yield
+    else:
         yield
 
 
@@ -565,3 +574,12 @@ def run_from_temp_dir(tmp_path):
     os.chdir(tmp_path)
     yield
     os.chdir(original_cwd)
+
+
+@pytest.fixture
+def restore_env_vars():
+    """Fixture to restore environment variables after the test."""
+    original_vars = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(original_vars)

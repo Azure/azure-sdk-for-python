@@ -90,18 +90,10 @@ def questions_answers_file():
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
 
+
 @pytest.fixture
 def questions_answers_korean_file():
     return _get_file("questions_answers_korean.jsonl")
-
-
-@pytest.fixture
-def restore_env_vars():
-    """Fixture to restore environment variables after the test."""
-    original_vars = os.environ.copy()
-    yield
-    os.environ.clear()
-    os.environ.update(original_vars)
 
 
 def _target_fn(query):
@@ -519,7 +511,8 @@ class TestEvaluate:
 
         assert "Please ensure the evaluate API is properly guarded with the '__main__' block" in exc_info.value.args[0]
 
-    def test_get_trace_destination(self, mock_validate_trace_destination, mock_project_scope):
+    @pytest.mark.usefixtures("mock_validate_trace_destination")
+    def test_get_trace_destination(self, mock_project_scope):
         pf_client = PFClient()
         trace_destination_without_override = pf_client._config.get_trace_destination()
 

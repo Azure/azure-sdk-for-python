@@ -75,16 +75,6 @@ class Run:
         self.metrics: Mapping[str, Any] = {}
         self._run = run
 
-        # self._use_remote_flow = False
-        # self._from_flex_flow = True
-        # self._from_prompty = False
-        # self.flow = path to pointless flow file
-        # self._experiment_name = name of folder containing pointless flow file
-        # self._lineage_id = basically equivalent to a hex digest of the SHA256 hash of:
-        #                    f"{uuid.getnod()}/{posix_full_path_to_pointless_folder}"
-        # self._output_path = Path("<user_folder>/.promptflow/runs/<self.name>")
-        # self._flow_name = name of pointless folder
-
     @property
     def status(self) -> RunStatus:
         return self._status

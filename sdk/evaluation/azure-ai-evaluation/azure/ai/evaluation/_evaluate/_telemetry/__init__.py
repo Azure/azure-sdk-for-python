@@ -2,23 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import functools
 import inspect
-import json
 import logging
-from typing import Callable, Dict, Literal, Optional, Union, cast
+from typing import Callable, Dict, Literal
 
-import pandas as pd
 from azure.ai.evaluation._legacy._adapters._flows import FlexFlow as flex_flow
 from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty as prompty_sdk
 from azure.ai.evaluation._legacy._adapters._flows import Flow as dag_flow
-from azure.ai.evaluation._legacy._adapters.client import PFClient
 from typing_extensions import ParamSpec
 
-from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 
-from ..._user_agent import USER_AGENT
-from .._utils import _trace_destination_from_project_scope
 
 LOGGER = logging.getLogger(__name__)
 

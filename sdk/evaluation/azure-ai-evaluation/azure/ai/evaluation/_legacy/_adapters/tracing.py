@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Callable, Dict, Final, Optional
+from typing import Callable, Final
 from typing_extensions import TypeAlias
 
 
@@ -25,4 +25,4 @@ except ImportError:
 ThreadPoolExecutorWithContext: TypeAlias = _ThreadPoolExecutorWithContext
 inject_openai_api: Final[Callable[[], None]] = _inject
 recover_openai_api: Final[Callable[[], None]] = _recover
-start_trace: Final = _start_trace
+start_trace: Final[Callable] = _start_trace

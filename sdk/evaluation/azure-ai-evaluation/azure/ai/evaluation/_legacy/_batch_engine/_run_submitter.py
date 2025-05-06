@@ -26,10 +26,6 @@ class RunSubmitter:
     THIS WILL BE REMOVED IN A FUTURE CODE UPDATE"""
 
     def __init__(self, config: BatchEngineConfig, executor: Optional[Executor] = None):
-        # self._client = PFClient instance
-        # self._config = PFClient config
-        # self.run_operations = RunOperations instance
-
         # TODO ralphe: Use proper logger here. Old code did LoggerFactory.get_logger(__name__)
         self._config = config
         self._executor = executor
