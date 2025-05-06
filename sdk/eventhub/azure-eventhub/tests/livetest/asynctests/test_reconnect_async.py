@@ -34,13 +34,14 @@ from azure.eventhub.exceptions import OperationTimeoutError
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_long_interval_async(live_eventhub, sleep, uamqp_transport, timeout_factor):
+async def test_send_with_long_interval_async(live_eventhub, sleep, uamqp_transport, timeout_factor, client_args):
     test_partition = "0"
     sender = EventHubProducerClient(
         live_eventhub["hostname"],
         live_eventhub["event_hub"],
         EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"]),
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     async with sender:
         batch = await sender.create_batch(partition_id=test_partition)
@@ -109,7 +110,7 @@ async def test_send_with_long_interval_async(live_eventhub, sleep, uamqp_transpo
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_connection_idle_timeout_and_reconnect_async(
-    auth_credential_receivers_async, uamqp_transport, timeout_factor
+    auth_credential_receivers_async, uamqp_transport, timeout_factor, client_args
 ):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers_async
     if uamqp_transport:
@@ -128,6 +129,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
         idle_timeout=10,
         retry_total=retry_total,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     async with client:
         ed = EventData("data")
@@ -175,7 +177,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_connection_idle_timeout_and_reconnect_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_connection_idle_timeout_and_reconnect_async(auth_credential_senders_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -184,6 +186,7 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(auth_credenti
         consumer_group="$default",
         idle_timeout=10,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     async def on_event_received(event):

@@ -1,14 +1,20 @@
 # Release History
 
-## 1.34.0 (Unreleased)
+## 1.34.1 (Unreleased)
 
 ### Features Added
-
-- Added a `set_span_error_status` method to the `OpenTelemetryTracer` class. This method allows users to set the status of a span to `ERROR` after it has been created. #40703
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.34.0 (2025-05-01)
+
+### Features Added
+
+- Added a `set_span_error_status` method to the `OpenTelemetryTracer` class. This method allows users to set the status of a span to `ERROR` after it has been created. #40703
 
 ### Other Changes
 
