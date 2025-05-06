@@ -37,7 +37,7 @@ def _get_outputs(suffix="", rg=None):
 
 def test_appconfig_properties():
     r = ConfigStore()
-    assert r.properties == {"properties": {}, "tags": {"azd-env-name": None}}
+    assert r.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -47,7 +47,7 @@ def test_appconfig_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["configurationstore"]
     assert fields["configurationstore"].resource == "Microsoft.AppConfiguration/configurationStores"
-    assert fields["configurationstore"].properties == {"tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}}
+    assert fields["configurationstore"].properties == {"tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}, "identity": {}}
     assert fields["configurationstore"].outputs == _get_outputs()
     assert fields["configurationstore"].extensions == {}
     assert fields["configurationstore"].existing == False
@@ -58,7 +58,7 @@ def test_appconfig_properties():
     assert fields["configurationstore"].defaults
 
     r2 = ConfigStore(location="westus", sku="Standard")
-    assert r2.properties == {"location": "westus", "sku": {"name": "Standard"}, "properties": {}, "tags": {"azd-env-name": None}}
+    assert r2.properties == {"location": "westus", "sku": {"name": "Standard"}, "properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["configurationstore"]
     assert fields["configurationstore"].resource == "Microsoft.AppConfiguration/configurationStores"
@@ -66,6 +66,7 @@ def test_appconfig_properties():
         "location": "westus",
         "sku": {"name": "Standard"},
         "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
     }
     assert fields["configurationstore"].outputs == _get_outputs()
     assert fields["configurationstore"].extensions == {}
@@ -77,7 +78,7 @@ def test_appconfig_properties():
     assert fields["configurationstore"].defaults
 
     r3 = ConfigStore(sku="Free")
-    assert r3.properties == {"properties": {}, "sku": {"name": "Free"}, "tags": {"azd-env-name": None}}
+    assert r3.properties == {"properties": {}, "sku": {"name": "Free"}, "tags": {"azd-env-name": None}, "identity": {}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -86,6 +87,7 @@ def test_appconfig_properties():
         "name": "foo",
         "tags": {"test": "value", 'azd-env-name': None},
         "properties": {"publicNetworkAccess": "Disabled"},
+        "identity": {},
     }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["configurationstore", "configurationstore_foo"]
@@ -94,6 +96,7 @@ def test_appconfig_properties():
         "name": "foo",
         "tags": {"test": "value", 'azd-env-name': GLOBAL_PARAMS["environmentName"]},
         "properties": {"publicNetworkAccess": "Disabled"},
+        "identity": {}
     }
     assert fields["configurationstore_foo"].outputs == _get_outputs("_foo")
     assert fields["configurationstore_foo"].extensions == {}
@@ -108,7 +111,7 @@ def test_appconfig_properties():
     param2 = Parameter("testB")
     param3 = Parameter("testC")
     r5 = ConfigStore(name=param1, sku=param2, public_network_access=param3)
-    assert r5.properties == {"name": param1, "sku": {"name": param2}, "properties": {"publicNetworkAccess": param3}, "tags": {"azd-env-name": None}}
+    assert r5.properties == {"name": param1, "sku": {"name": param2}, "properties": {"publicNetworkAccess": param3}, "tags": {"azd-env-name": None}, "identity": {}}
     params = dict(GLOBAL_PARAMS)
     fields = {}
     symbols = r5.__bicep__(fields, parameters=params)
@@ -119,6 +122,7 @@ def test_appconfig_properties():
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
         "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {}
     }
     assert fields["configurationstore_testa"].outputs == _get_outputs("_testa")
     assert fields["configurationstore_testa"].extensions == {}
@@ -324,7 +328,7 @@ def test_appconfig_infra():
         infra = TestInfra()
     infra = TestInfra(config=ConfigStore())
     assert isinstance(infra.config, ConfigStore)
-    assert infra.config.properties == {"properties": {}, "tags": {"azd-env-name": None}}
+    assert infra.config.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
 
     infra = TestInfra(config=ConfigStore(name="foo"))
     assert infra.config._settings["name"]() == "foo"

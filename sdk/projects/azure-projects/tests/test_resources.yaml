@@ -1,0 +1,25 @@
+Microsoft.Storage/storageAccounts:
+  location: ${location}
+  sku:
+    name: Standard_LRS
+  kind: StorageV2
+  properties:
+    accessTier: Premium
+    isHnsEnabled: true
+    routingPreference:
+      publishInternetEndpoints: ${ENDPOINTS}
+      routingChoice: MicrosoftRouting
+    sasPolicy: ${sasPolicy}
+  tags:
+    foo: ${tagPrefix}/one
+    bar: ${environmentName}/two
+TestDeployment:
+  Microsoft.Storage/storageAccounts:
+    location: westus2
+    properties:
+      accessTier: Hot
+      allowedCopyScope: AAD
+      routingPreference:
+        publishInternetEndpoints: false
+    tags:
+      baz: three

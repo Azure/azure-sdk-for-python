@@ -139,7 +139,6 @@ _DEFAULT_SEARCH_SERVICE: "SearchServiceResource" = {
         "publicNetworkAccess": "disabled",
     },
     "location": GLOBAL_PARAMS["location"],
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": [
@@ -177,10 +176,9 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "network_acls" in kwargs:
                 properties["properties"]["networkRuleSet"] = kwargs.pop("network_acls")
             if "public_network_access" in kwargs:

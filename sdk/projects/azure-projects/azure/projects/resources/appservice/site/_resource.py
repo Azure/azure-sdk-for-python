@@ -217,7 +217,6 @@ _DEFAULT_APP_SITE: "AppSiteResource" = {
             "cors": {"allowedOrigins": ["https://portal.azure.com", "https://ms.portal.azure.com"]},
         },
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_APP_SITE_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -317,14 +316,13 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
             if "enabled" in kwargs:
                 properties["properties"]["enabled"] = kwargs.pop("enabled")
             if "kind" in kwargs:
                 properties["kind"] = kwargs.pop("kind")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "https_only" in kwargs:
                 properties["properties"]["httpsOnly"] = kwargs.pop("https_only")
             if "public_network_access" in kwargs:

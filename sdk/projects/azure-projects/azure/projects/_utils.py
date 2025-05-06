@@ -215,12 +215,8 @@ def add_defaults(
     for field in fields.values():  # pylint: disable=too-many-nested-blocks
         if field.defaults:
             # field.defaults will be None if the field is an existing resource.
-            defaults = field.defaults["resource"]
-            defaults.update(resource_defaults.get(field.resource, {}))
-            for key, value in defaults.items():
-                if key == "identity" and isinstance(parameters["managedIdentityId"], PlaceholderParameter):
-                    # This indicates that no managed identity is being deployed, so skip it.
-                    continue
+            yaml_defaults = resource_defaults.get(field.resource, {})
+            for key, value in yaml_defaults.items():
                 if field.properties.get(key):
                     if key in ["tags", "properties"]:
                         updated_default = value.copy()
@@ -228,6 +224,25 @@ def add_defaults(
                         field.properties[key] = updated_default
                 else:
                     field.properties[key] = value
+            for key, value in field.defaults["resource"].items():
+                if field.properties.get(key):
+                    if key in ["tags", "properties"] and key not in yaml_defaults:
+                        updated_default = value.copy()
+                        updated_default.update(field.properties[key])
+                        field.properties[key] = updated_default
+                else:
+                    field.properties[key] = value
+
+            if "identity" in field.properties and field.properties["identity"] == {}:
+                if not isinstance(parameters["managedIdentityId"], PlaceholderParameter):
+                    field.properties["identity"] = {
+                        "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                            parameters["managedIdentityId"]: {}
+                        }
+                    }
+                else:
+                    field.properties.pop("identity")
 
             if "managed_identity_roles" not in field.extensions:
                 field.extensions["managed_identity_roles"] = field.defaults["extensions"].get(

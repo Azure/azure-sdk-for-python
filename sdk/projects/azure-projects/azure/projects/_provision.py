@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from collections import ChainMap
+import re
 from typing import (
     IO,
     Any,
@@ -139,6 +140,48 @@ def _get_component_resources(component: AzureInfrastructure) -> Dict[str, Union[
     return {k: v for k, v in component.__dict__.items() if isinstance(v, (Resource, AzureInfrastructure))}
 
 
+def _get_resource_defaults(defaults_file: str, deployment_name: str, *, parameters: Dict[str, Parameter]) -> Dict[str, Any]:
+    path_matcher = re.compile(r'.*\$\{([^}^{]+)\}.*')
+    def path_constructor(loader, node):
+        if node.value.startswith("${") and node.value.endswith("}"):
+            param_name = node.value[2:-1]
+            new_param = Parameter(param_name)
+            if param_name not in parameters:
+                parameters[param_name] = new_param
+            return new_param
+        param_name = node.value[node.value.index("{") + 1:node.value.rindex("}")]
+        prefix = node.value[0:node.value.index('$')]
+        suffix = node.value[node.value.rindex("}") + 1:]
+        new_param = Parameter(param_name)
+        if param_name not in parameters:
+            parameters[param_name] = new_param
+        return new_param.format(f"{prefix}{{}}{suffix}")
+
+    class EnvVarLoader(yaml.SafeLoader):
+        pass
+
+    EnvVarLoader.add_implicit_resolver('!path', path_matcher, None)
+    EnvVarLoader.add_constructor('!path', path_constructor)
+
+    if os.path.isfile(defaults_file):
+        with open(defaults_file, "r", encoding="utf-8") as resources:
+            resource_defaults = yaml.load(resources, Loader=EnvVarLoader)
+            if deployment_name in resource_defaults:
+                for resource, resource_definition in resource_defaults[deployment_name].items():
+                    if resource in resource_defaults:
+                        for key, value in resource_definition.items():
+                            if key in ["properties", "tags"]:
+                                if key not in resource_defaults[resource]:
+                                    resource_defaults[resource][key] = {}
+                                resource_defaults[resource][key].update(value)
+                            else:
+                                resource_defaults[resource][key] = value
+                    else:
+                        resource_defaults[resource] = resource_definition
+            return resource_defaults
+    return {}
+
+
 def deploy(deployment: AzureInfrastructure) -> None:
     returncode = _deploy_project(deployment.__class__.__name__)
     if returncode != 0:
@@ -222,13 +265,8 @@ def export(
         component_fields=fields,
     )
     defaults_file = os.path.join(working_dir, "resources.yaml")
-    if os.path.isfile(defaults_file):
-        with open(defaults_file, "r", encoding="utf-8") as resources:
-            resource_defaults = yaml.safe_load(resources)
-            if deployment_name in resource_defaults:
-                resource_defaults.update(resource_defaults[deployment_name])
-    else:
-        resource_defaults = {}
+    resource_defaults = _get_resource_defaults(defaults_file, deployment_name, parameters=export_parameters)
+    assert not resource_defaults
     add_defaults(
         fields,
         export_parameters,

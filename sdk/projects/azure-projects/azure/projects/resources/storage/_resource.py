@@ -221,7 +221,6 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
     "kind": "StorageV2",
     "sku": {"name": "Standard_GRS"},
     "properties": {"accessTier": "Hot", "allowCrossTenantReplication": False, "allowSharedKeyAccess": False},
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 
 
@@ -329,6 +328,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "access_tier" in kwargs:
                 properties["properties"]["accessTier"] = kwargs.pop("access_tier")
             if "enable_hierarchical_namespace" in kwargs:
@@ -367,8 +367,6 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
                 properties["kind"] = kwargs.pop("kind")
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "minimum_tls_version" in kwargs:
                 properties["properties"]["minimumTlsVersion"] = kwargs.pop("minimum_tls_version")
             if "network_acls" in kwargs:

@@ -21,6 +21,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -38,12 +44,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -54,6 +54,12 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -68,12 +74,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-    }
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
     }
   }
 }

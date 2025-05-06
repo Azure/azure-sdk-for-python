@@ -16,6 +16,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -33,12 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -49,6 +49,12 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -65,12 +71,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
       defaultAction: 'Allow'
     }
   }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_AI_AISERVICES_ID_AI string = aiservices_account.id
@@ -80,6 +80,12 @@ output AZURE_AI_AISERVICES_ENDPOINT_AI string = aiservices_account.properties.en
 
 
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -91,12 +97,6 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
     publicNetworkAccess: 'disabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_SEARCH_ID_SEARCH string = searchservice.id
@@ -106,6 +106,12 @@ output AZURE_SEARCH_ENDPOINT_SEARCH string = 'https://${searchservice.name}.sear
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -119,12 +125,6 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     accessTier: 'Hot'
     allowCrossTenantReplication: false
     allowSharedKeyAccess: false
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 
@@ -182,6 +182,12 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-
     storageAccount: storageaccount.id
     keyVault: vault.id
   }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -190,12 +196,6 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-
   sku: {
     name: 'Basic'
     tier: 'Basic'
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 
@@ -255,6 +255,12 @@ resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01
     }
     hubResourceId: hub_workspace.id
   }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -263,12 +269,6 @@ resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01
   sku: {
     name: 'Basic'
     tier: 'Basic'
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 

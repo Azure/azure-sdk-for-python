@@ -225,6 +225,7 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "custom_subdomain_name" in kwargs:
                 properties["properties"]["customSubDomainName"] = kwargs.pop("custom_subdomain_name")
             if "allowed_fqdn_list" in kwargs:
@@ -236,9 +237,7 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
             if "dynamic_throttling_enabled" in kwargs:
                 properties["properties"]["dynamicThrottlingEnabled"] = kwargs.pop("dynamic_throttling_enabled")
             if "location" in kwargs:
-                properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
+                properties["location"] = kwargs.pop("location")             
             if "migration_token" in kwargs:
                 properties["properties"]["migrationToken"] = kwargs.pop("migration_token")
             if "network_acls" in kwargs:
@@ -441,7 +440,6 @@ _DEFAULT_AI_SERVICES: "CognitiveServicesAccountResource" = {
         "customSubDomainName": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
         "networkAcls": {"defaultAction": "Allow"},
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_SERVICES_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": [

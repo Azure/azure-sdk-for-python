@@ -17,6 +17,12 @@ resource userassignedidentity_foo 'Microsoft.ManagedIdentity/userAssignedIdentit
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity_foo.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -34,12 +40,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity_foo.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id

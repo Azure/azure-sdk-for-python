@@ -147,7 +147,6 @@ _DEFAULT_ML_WORKSPACE: "MachineLearningWorkspaceResource" = {
     "properties": {
         "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_ML_WORKSPACE_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -184,6 +183,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "friendly_name" in kwargs:
                 properties["properties"]["friendlyName"] = kwargs.pop("friendly_name")
             if "description" in kwargs:
@@ -192,8 +192,6 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 properties["properties"]["discoveryUrl"] = kwargs.pop("discovery_url")
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
@@ -331,7 +329,6 @@ _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
         "name": "Basic",
         "tier": "Basic",
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_HUB_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -454,7 +451,6 @@ _DEFAULT_AI_PROJECT: "MachineLearningWorkspaceResource" = {
         "name": "Basic",
         "tier": "Basic",
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_PROJECT_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": ["Contributor"],

@@ -140,7 +140,6 @@ _DEFAULT_CONFIG_STORE: "ConfigurationStoreResource" = {
         "publicNetworkAccess": "Enabled",
     },
     "location": GLOBAL_PARAMS["location"],
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
     # TODO: Not sure what the best roles are here, does the managed identity need to be able to
@@ -219,6 +218,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "create_mode" in kwargs:
                 properties["properties"]["createMode"] = kwargs.pop("create_mode")
             if "disable_local_auth" in kwargs:
@@ -227,8 +227,6 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["properties"]["enablePurgeProtection"] = kwargs.pop("enable_purge_protection")
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "soft_delete_retention" in kwargs:
                 properties["properties"]["softDeleteRetentionInDays"] = kwargs.pop("soft_delete_retention")
             if "public_network_access" in kwargs:

@@ -16,6 +16,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -33,12 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -57,6 +57,12 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
       defaultAction: 'Allow'
     }
   }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -64,12 +70,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   location: location
   sku: {
     name: 'S0'
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 

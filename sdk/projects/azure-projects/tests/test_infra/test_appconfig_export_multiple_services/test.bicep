@@ -16,6 +16,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -33,12 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -62,6 +62,12 @@ resource configurationstore_foobar 'Microsoft.AppConfiguration/configurationStor
     publicNetworkAccess: 'Enabled'
   }
   name: 'foobar'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -69,12 +75,6 @@ resource configurationstore_foobar 'Microsoft.AppConfiguration/configurationStor
     name: 'Standard'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID_R2 string = configurationstore_foobar.id

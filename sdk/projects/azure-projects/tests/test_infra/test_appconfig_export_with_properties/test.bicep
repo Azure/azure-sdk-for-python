@@ -16,6 +16,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      identity: {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
     foo: 'bar'
@@ -32,12 +38,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     softDeleteRetentionInDays: 10
   }
   location: 'westus'
-  identity: {
-    type: 'SystemAssigned,UserAssigned'
-    userAssignedIdentities: {
-      identity: {}
-    }
-  }
   sku: {
     name: 'Free'
   }

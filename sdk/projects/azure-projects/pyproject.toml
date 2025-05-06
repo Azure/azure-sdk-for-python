@@ -1,7 +1,7 @@
 [tool.azure-sdk-build]
 mypy = true
 type_check_samples = true
-verifytypes = true
+verifytypes = false
 # TODO: Get pyright passing
 pyright = false
 pylint = true

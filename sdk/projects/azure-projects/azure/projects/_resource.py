@@ -46,6 +46,7 @@ from ._setting import StoredPrioritizedSetting
 from ._bicep.expressions import (
     Output,
     Parameter,
+    PlaceholderParameter,
     ResourceSymbol,
     ResourceGroup as RGSymbol,
 )
@@ -349,18 +350,30 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         new_properties: Dict[str, Any],
         *,
         merge_properties: Optional[List[str]] = None,
+        parameters: Dict[str, Parameter],
         **kwargs,
     ) -> None:
         merge_properties = merge_properties or ["properties"]
         for key, value in new_properties.items():
             if key in merge_properties:
-                merged = self._merge_properties(current_properties.get(key, {}), value, **kwargs)
+                merged = self._merge_properties(current_properties.get(key, {}), value, parameters=parameters, **kwargs)
                 if merged:
                     current_properties[key] = merged
             elif key == "tags":
-                merged = self._merge_tags(current_properties.get(key, {}), value, **kwargs)  
+                merged = self._merge_tags(current_properties.get(key, {}), value, parameters=parameters, **kwargs)  
                 if merged:
                     current_properties[key] = merged
+            elif key == "identity":
+                existing_identity = current_properties.get("identity")
+                if "identity" not in current_properties:
+                    current_properties["identity"] = value
+                elif value and existing_identity and existing_identity != value:
+                    raise ValueError(
+                        f"{repr(self)} cannot set 'identity' to '{value}', already set to: '{existing_identity}'."
+                    )
+                elif value:
+                    current_properties["identity"] = value
+
             elif key in current_properties and current_properties[key] != value:
                 raise ValueError(
                     f"{repr(self)} cannot set '{key}' to '{value}', already set to: '{current_properties[key]}'."

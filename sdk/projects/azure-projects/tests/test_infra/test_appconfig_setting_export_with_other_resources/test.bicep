@@ -17,6 +17,12 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 resource configurationstore_testconfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
   name: 'testconfig'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -33,12 +39,6 @@ resource configurationstore_testconfig 'Microsoft.AppConfiguration/configuration
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore_testconfig.id
@@ -52,6 +52,12 @@ output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_testconfig.propert
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
   tags: {
     'azd-env-name': environmentName
   }
@@ -65,12 +71,6 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     accessTier: 'Hot'
     allowCrossTenantReplication: false
     allowSharedKeyAccess: false
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 
