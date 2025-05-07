@@ -868,7 +868,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: int = 1,
+        polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """
@@ -904,8 +904,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type parallel_tool_calls: bool, optional
         :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
         :type metadata: dict[str, str], optional
-        :keyword sleep_interval: Seconds to wait between polling attempts for run status. Default is 1.
-        :type sleep_interval: int, optional
+        :keyword polling_interval: Seconds to wait between polling attempts for run status. Default is 1.
+        :type polling_interval: int, optional
         :return: The final ThreadRun object, in a terminal state (succeeded, failed, or cancelled).
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -940,7 +940,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             _models.RunStatus.IN_PROGRESS,
             _models.RunStatus.REQUIRES_ACTION,
         ):
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             run = await self.runs.get(thread_id=run.thread_id, run_id=run.id)
 
             # If the model requests tool calls, execute and submit them

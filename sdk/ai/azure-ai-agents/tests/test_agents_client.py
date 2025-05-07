@@ -2195,7 +2195,7 @@ class TestAgentClient(AzureRecordedTestCase):
         # Create vector store
         body = {"name": "test_vector_store", "metadata": {"key1": "value1", "key2": "value2"}}
         try:
-            vector_store = client.vector_stores.create_and_poll(body=body, sleep_interval=2)
+            vector_store = client.vector_stores.create_and_poll(body=body, polling_interval=2)
             # check correct creation
             assert isinstance(vector_store, VectorStore)
             assert vector_store.name == "test_vector_store"

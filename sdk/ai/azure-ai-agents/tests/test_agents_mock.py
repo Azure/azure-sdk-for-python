@@ -306,10 +306,10 @@ class TestAgentsMock:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0)
             self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id, sleep_interval=0)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent2.id, polling_interval=0)
             self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run456", toolset2)
             # Check that we cleanup tools after deleting agent.
             agents_client.delete_agent(agent1.id)
@@ -500,7 +500,7 @@ class TestAgentsMock:
 
             # Create run with new tool set, which also can be none.
             agents_client.runs.create_and_process(
-                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, sleep_interval=0
+                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2, polling_interval=0
             )
             if toolset2 is not None:
                 self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset2)
@@ -551,7 +551,7 @@ class TestAgentsMock:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0)
+            agents_client.runs.create_and_process(thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0)
             self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset)
 
     def _assert_stream_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
@@ -615,7 +615,7 @@ class TestAgentsMock:
             )
             # Create run with new tool set, which also can be none.
             run = agents_client.runs.create_and_process(
-                thread_id="some_thread_id", agent_id=agent1.id, sleep_interval=0
+                thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0
             )
             self._assert_tool_call(agents_client.submit_tool_outputs_to_run, "run123", toolset)
             agents_client._handle_submit_tool_outputs(run)
