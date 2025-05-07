@@ -23,7 +23,9 @@ import uuid
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+phone_numbers_client = PhoneNumbersClient.from_connection_string(
+    connection_str)
+
 
 def browse_and_reserve_numbers_bulk():
     # Browse for geographic phone numbers in the US using specific area codes.
@@ -47,11 +49,13 @@ def browse_and_reserve_numbers_bulk():
     )
 
     # Check if any errors occurred during reservation
-    numbers_with_error = [n for n in reservation.phone_numbers.values() if n.status == "error"]
+    numbers_with_error = [
+        n for n in reservation.phone_numbers.values() if n.status == "error"]
     if any(numbers_with_error):
         print("Errors occurred during reservation:")
         for number in numbers_with_error:
-            print(f"Phone number: {number.phone_number}, Error: {number.error.code}, Message: {number.error.message}")
+            print(
+                f"Phone number: {number.phone_number}, Error: {number.error.code}, Message: {number.error.message}")
     else:
         print("Reservation operation completed without errors.")
 
@@ -59,6 +63,7 @@ def browse_and_reserve_numbers_bulk():
     print(f"Deleting reservation with ID: {reservation_id}")
     phone_numbers_client.delete_reservation(reservation_id=reservation_id)
     print("Reservation deleted successfully.")
+
 
 if __name__ == "__main__":
     browse_and_reserve_numbers_bulk()

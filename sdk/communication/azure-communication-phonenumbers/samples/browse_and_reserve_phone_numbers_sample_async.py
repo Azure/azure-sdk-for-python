@@ -24,7 +24,9 @@ import uuid
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 
 connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+phone_numbers_client = PhoneNumbersClient.from_connection_string(
+    connection_str)
+
 
 async def browse_and_reserve_phone_numbers():
     browse_result = await phone_numbers_client.browse_available_phone_numbers(
@@ -44,11 +46,13 @@ async def browse_and_reserve_phone_numbers():
     )
 
     # Check if any errors occurred during reservation
-    numbers_with_error = [n for n in reservation.phone_numbers.values() if n.status == "error"]
+    numbers_with_error = [
+        n for n in reservation.phone_numbers.values() if n.status == "error"]
     if any(numbers_with_error):
         print("Errors occurred during reservation:")
         for number in numbers_with_error:
-            print(f"Phone number: {number.phone_number}, Error: {number.error.code}, Message: {number.error.message}")
+            print(
+                f"Phone number: {number.phone_number}, Error: {number.error.code}, Message: {number.error.message}")
     else:
         print("Reservation operation completed without errors.")
 
