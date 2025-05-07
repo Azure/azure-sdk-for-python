@@ -168,8 +168,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.last_cache_update_time_stamp = 0
         self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
         self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
-        self.account_locations_by_read_endpoints: Mapping[str, str] = {} # pylint: disable=name-too-long
-        self.account_locations_by_write_endpoints: Mapping[str, str] = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_endpoints = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_endpoints = {} # pylint: disable=name-too-long
         self.account_write_locations = []
         self.account_read_locations = []
         self.connection_policy = connection_policy
@@ -369,7 +369,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Endpoint is unavailable
         return True
 
-    def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type: str, refresh_cache: bool):
+    def mark_endpoint_unavailable(
+            self, unavailable_endpoint: str, unavailable_operation_type: str, refresh_cache: bool):
         logger.warning("Marking %s unavailable for %s ",
                        unavailable_endpoint,
                        unavailable_operation_type)

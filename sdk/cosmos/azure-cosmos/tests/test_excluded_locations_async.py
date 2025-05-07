@@ -26,7 +26,6 @@ class MockHandler(logging.Handler):
         self.messages.append(record.msg)
 
 # Test configurations
-set_test_data_type(TestDataType.ALL_TESTS)
 MOCK_HANDLER = MockHandler()
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
@@ -51,7 +50,7 @@ L3 = "East US 2"
 # L2 = "East US"
 # L3 = "West US 2"
 
-ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
+set_test_data_type(TestDataType.ALL_TESTS)
 
 def read_item_test_data():
     client_only_output_data = [
