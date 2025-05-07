@@ -22,10 +22,12 @@ class MockHandler(logging.Handler):
         self.messages.append(record.msg)
 
 # Test configurations
-CLIENT_ONLY_TESTS = 'clientOnlyTests'
-CLIENT_AND_REQUEST_TESTS = 'clientAndRequestTests'
-ALL_TESTS = 'allTests'
-TEST_DATA_TYPE = ALL_TESTS
+class TestDataType:
+    CLIENT_ONLY_TESTS = 'clientOnlyTests'
+    CLIENT_AND_REQUEST_TESTS = 'clientAndRequestTests'
+    ALL_TESTS = 'allTests'
+
+TEST_DATA_TYPE = TestDataType.ALL_TESTS
 
 MOCK_HANDLER = MockHandler()
 CONFIG = test_config.TestConfig()
@@ -83,17 +85,20 @@ CLIENT_AND_REQUEST_TEST_DATA = [
     [[L1, L2], [L1, L2], []],
 ]
 
-def get_test_data_with_expected_output(_client_only_output_data, _client_and_request_output_data, test_data_type=TEST_DATA_TYPE):
-    if test_data_type == CLIENT_ONLY_TESTS:
+def set_test_data_type(test_data_type):
+    global TEST_DATA_TYPE
+    TEST_DATA_TYPE = test_data_type
+
+def get_test_data_with_expected_output(_client_only_output_data, _client_and_request_output_data):
+    if TEST_DATA_TYPE == TestDataType.CLIENT_ONLY_TESTS:
         all_input_test_data = CLIENT_ONLY_TEST_DATA
         all_output_data = _client_only_output_data
-    elif test_data_type == CLIENT_AND_REQUEST_TESTS:
+    elif TEST_DATA_TYPE == TestDataType.CLIENT_AND_REQUEST_TESTS:
         all_input_test_data = CLIENT_AND_REQUEST_TEST_DATA
         all_output_data = _client_and_request_output_data
     else:
         all_input_test_data = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
         all_output_data = _client_only_output_data + _client_and_request_output_data
-
 
     all_test_data = [input_data + [output_data] for input_data, output_data in
                      zip(all_input_test_data, all_output_data)]

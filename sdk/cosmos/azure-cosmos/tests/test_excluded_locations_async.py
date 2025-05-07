@@ -11,7 +11,7 @@ import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
 from test_excluded_locations import (CLIENT_ONLY_TEST_DATA, CLIENT_AND_REQUEST_TEST_DATA,
-                                     CLIENT_ONLY_TESTS, CLIENT_AND_REQUEST_TESTS, ALL_TESTS,
+                                     TestDataType, set_test_data_type,
                                      get_test_data_with_expected_output, verify_endpoint)
 
 class MockHandler(logging.Handler):
@@ -26,8 +26,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record.msg)
 
 # Test configurations
-ASYNC_TEST_DATA_TYPE = ALL_TESTS
-
+set_test_data_type(TestDataType.ALL_TESTS)
 MOCK_HANDLER = MockHandler()
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
@@ -71,7 +70,7 @@ def read_item_test_data():
         [L1],  # 6
         [L1],  # 7
     ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 def read_all_item_test_data():
     client_only_output_data = [
@@ -90,7 +89,7 @@ def read_all_item_test_data():
         [L1, L1],  # 6
         [L1, L1],  # 7
     ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 def query_items_test_data():
     client_only_output_data = [
@@ -128,7 +127,7 @@ def query_items_change_feed_test_data():
         [L1, L1, L1, L1, L1],   #6
         [L1, L1, L1, L1, L1],   #7
     ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 def create_items_test_data():
     client_only_output_data = [
@@ -147,7 +146,7 @@ def create_items_test_data():
         [L1, L1],   #6
         [L1, L1],   #7
     ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 def patch_item_test_data():
     client_only_output_data = [
@@ -166,7 +165,7 @@ def patch_item_test_data():
         [L1],   #6
         [L1],   #7
     ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data, ASYNC_TEST_DATA_TYPE)
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 async def create_item_with_excluded_locations(container, body, excluded_locations):
     if excluded_locations is None:
