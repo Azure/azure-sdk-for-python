@@ -20,6 +20,7 @@ from .._internal import (
     AsyncChallengeAuthPolicy,
     AsyncSecurityDomainDownloadNoPolling,
     AsyncSecurityDomainDownloadPollingMethod,
+    AsyncSecurityDomainUploadNoPolling,
     AsyncSecurityDomainUploadPollingMethod,
     SecurityDomainDownloadPolling,
     SecurityDomainUploadPolling,
@@ -155,6 +156,7 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: SecurityDomain,
         *,
         content_type: str = "application/json",
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> AsyncLROPoller[None]: ...
 
@@ -165,6 +167,7 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: JSON,
         *,
         content_type: str = "application/json",
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> AsyncLROPoller[None]: ...
 
@@ -175,6 +178,7 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: IO[bytes],
         *,
         content_type: str = "application/json",
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> AsyncLROPoller[None]: ...
 
@@ -184,6 +188,7 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: Union[SecurityDomain, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Restore the provided Security Domain.
@@ -194,14 +199,19 @@ class SecurityDomainClient(KeyVaultClient):
          IO[bytes]
         :keyword str content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
+        :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
+         complete and calling `.result()` on the poller will return None immediately, or raise an exception in case of
+         an error. Default value is False.
 
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        polling_method = AsyncSecurityDomainUploadPollingMethod(
-            lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay
+        polling_method = (
+            AsyncSecurityDomainUploadNoPolling()
+            if skip_activation_polling is True
+            else AsyncSecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
         return await super()._begin_upload(  # type: ignore[return-value]
             security_domain,
