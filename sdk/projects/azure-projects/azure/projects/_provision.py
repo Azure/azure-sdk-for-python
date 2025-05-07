@@ -160,15 +160,12 @@ def _get_resource_defaults(
             parameters[param_name] = new_param
         return new_param.format(f"{prefix}{{}}{suffix}")
 
-    class EnvVarLoader(yaml.SafeLoader):
-        pass
-
-    EnvVarLoader.add_implicit_resolver("!path", path_matcher, None)
-    EnvVarLoader.add_constructor("!path", path_constructor)
+    yaml.SafeLoader.add_implicit_resolver("!path", path_matcher, None)
+    yaml.SafeLoader.add_constructor("!path", path_constructor)
 
     if os.path.isfile(defaults_file):
         with open(defaults_file, "r", encoding="utf-8") as resources:
-            resource_defaults = yaml.load(resources, Loader=EnvVarLoader)
+            resource_defaults = yaml.safe_load(resources)
             if deployment_name in resource_defaults:  # pylint: disable=too-many-nested-blocks
                 for resource, resource_definition in resource_defaults[deployment_name].items():
                     if resource in resource_defaults:
