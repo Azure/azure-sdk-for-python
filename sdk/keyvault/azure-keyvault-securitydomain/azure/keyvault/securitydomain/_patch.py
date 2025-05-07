@@ -179,7 +179,7 @@ class SecurityDomainClient(KeyVaultClient):
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         polling_method = (
             SecurityDomainDownloadNoPolling()
-            if skip_activation_polling is True
+            if skip_activation_polling
             else SecurityDomainDownloadPollingMethod(lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay)
         )
         return super()._begin_download(  # type: ignore[return-value]
@@ -250,7 +250,7 @@ class SecurityDomainClient(KeyVaultClient):
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         polling_method = (
             SecurityDomainUploadNoPolling()
-            if skip_activation_polling is True
+            if skip_activation_polling
             else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
         return super()._begin_upload(  # type: ignore[return-value]
