@@ -415,7 +415,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: int = 1,
+        polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread and processes the run.
@@ -494,9 +494,9 @@ class RunsOperations(RunsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
+        :keyword polling_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
-        :paramtype sleep_interval: int
+        :paramtype polling_interval: int
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.agents.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -530,7 +530,7 @@ class RunsOperations(RunsOperationsGenerated):
             RunStatus.IN_PROGRESS,
             RunStatus.REQUIRES_ACTION,
         ]:
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             run = await self.get(thread_id=thread_id, run_id=run.id)
 
             if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
@@ -548,19 +548,22 @@ class RunsOperations(RunsOperationsGenerated):
 
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logging.warning(
+                            logger.warning(
                                 "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
                             )
                             return await self.cancel(thread_id=thread_id, run_id=run.id)
                         else:
-                            logging.warning("Tool outputs contain errors - retrying")
+                            logger.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
 
-                    logging.info("Tool outputs: %s", tool_outputs)
+                    logger.debug("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        await self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        run2 = await self.submit_tool_outputs(
+                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
 
-            logging.info("Current run status: %s", run.status)
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
         return run
 
@@ -1391,15 +1394,15 @@ class FilesOperations(FilesOperationsGenerated):
 
     @overload
     async def upload_and_poll(
-        self, body: JSON, *, sleep_interval: float = 1, timeout: Optional[float] = None, **kwargs: Any
+        self, body: JSON, *, polling_interval: float = 1, timeout: Optional[float] = None, **kwargs: Any
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
         :param body: Required.
         :type body: JSON
-        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
@@ -1415,7 +1418,7 @@ class FilesOperations(FilesOperationsGenerated):
         file: FileType,
         purpose: Union[str, _models.FilePurpose],
         filename: Optional[str] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.FileInfo:
@@ -1428,9 +1431,9 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
-        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
@@ -1445,7 +1448,7 @@ class FilesOperations(FilesOperationsGenerated):
         *,
         file_path: str,
         purpose: Union[str, _models.FilePurpose],
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.FileInfo:
@@ -1456,9 +1459,9 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
-        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
@@ -1476,7 +1479,7 @@ class FilesOperations(FilesOperationsGenerated):
         file_path: Optional[str] = None,
         purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.FileInfo:
@@ -1494,9 +1497,9 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
-        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the uploaded file.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
@@ -1522,10 +1525,10 @@ class FilesOperations(FilesOperationsGenerated):
 
         while uploaded_file.status in ["uploaded", "pending", "running"]:
 
-            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+            if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             uploaded_file = await self.get(uploaded_file.id)
 
         return uploaded_file
@@ -1613,7 +1616,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         body: JSON,
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
@@ -1624,9 +1627,9 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
@@ -1646,7 +1649,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
@@ -1672,9 +1675,9 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
@@ -1689,7 +1692,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
@@ -1700,9 +1703,9 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
@@ -1723,7 +1726,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
@@ -1751,9 +1754,9 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
@@ -1788,10 +1791,10 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
         while vector_store.status == "in_progress":
 
-            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+            if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             vector_store = await super().get(vector_store.id)
 
         return vector_store
@@ -1806,7 +1809,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         body: JSON,
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -1819,9 +1822,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
@@ -1839,7 +1842,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -1857,9 +1860,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
@@ -1875,7 +1878,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -1888,9 +1891,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
@@ -1909,7 +1912,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -1928,9 +1931,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
         :keyword content_type: Body parameter content-type. Defaults to "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
@@ -1968,10 +1971,10 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
             )
 
         while vector_store_file_batch.status == "in_progress":
-            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+            if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             vector_store_file_batch = await super().get(
                 vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id
             )
@@ -1988,7 +1991,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         body: JSON,
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
@@ -2001,9 +2004,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
@@ -2021,7 +2024,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         file_id: Optional[str] = None,
         data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
@@ -2039,9 +2042,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
@@ -2057,7 +2060,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
@@ -2070,9 +2073,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
@@ -2091,7 +2094,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         file_id: Optional[str] = None,
         data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        sleep_interval: float = 1,
+        polling_interval: float = 1,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStoreFile:
@@ -2110,9 +2113,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
-        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype sleep_interval: float
+        :paramtype polling_interval: float
         :keyword timeout: Time to wait before polling for the status of the vector store.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
@@ -2151,10 +2154,10 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         while vector_store_file.status == "in_progress":
 
-            if timeout is not None and (time.monotonic() - curr_time - sleep_interval) >= timeout:
+            if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             vector_store_file = await super().get(vector_store_id=vector_store_id, file_id=vector_store_file.id)
 
         return vector_store_file

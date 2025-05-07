@@ -60,9 +60,9 @@ class TestSignatures:
             ),
         ):
 
-            agent.vector_stores.create_and_poll(file_ids=file_ids, sleep_interval=0)
-            agent.vector_stores.create_and_poll(body=body, sleep_interval=0)
-            agent.vector_stores.create_and_poll(body=dict_to_io_bytes(body), sleep_interval=0)
+            agent.vector_stores.create_and_poll(file_ids=file_ids, polling_interval=0)
+            agent.vector_stores.create_and_poll(body=body, polling_interval=0)
+            agent.vector_stores.create_and_poll(body=dict_to_io_bytes(body), polling_interval=0)
 
         with patch(
             "azure.ai.agents.aio.operations._operations.VectorStoresOperations.create",
@@ -75,9 +75,9 @@ class TestSignatures:
                 async_agent.vector_stores.get, return_val=VectorStore({"id": "store_1", "status": "completed"})
             ),
         ):
-            await async_agent.vector_stores.create_and_poll(file_ids=file_ids, sleep_interval=0)
-            await async_agent.vector_stores.create_and_poll(body=body, sleep_interval=0)
-            await async_agent.vector_stores.create_and_poll(body=dict_to_io_bytes(body), sleep_interval=0)
+            await async_agent.vector_stores.create_and_poll(file_ids=file_ids, polling_interval=0)
+            await async_agent.vector_stores.create_and_poll(body=body, polling_interval=0)
+            await async_agent.vector_stores.create_and_poll(body=dict_to_io_bytes(body), polling_interval=0)
         assertion.same_http_requests_from(operation_count=6, api_per_operation_count=2)
 
     @pytest.mark.asyncio

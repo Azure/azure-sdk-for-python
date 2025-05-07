@@ -868,7 +868,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: int = 1,
+        polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """
@@ -904,8 +904,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type parallel_tool_calls: bool, optional
         :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
         :type metadata: dict[str, str], optional
-        :keyword sleep_interval: Seconds to wait between polling attempts for run status. Default is 1.
-        :type sleep_interval: int, optional
+        :keyword polling_interval: Seconds to wait between polling attempts for run status. Default is 1.
+        :type polling_interval: int, optional
         :return: The final ThreadRun object, in a terminal state (succeeded, failed, or cancelled).
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -940,7 +940,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             _models.RunStatus.IN_PROGRESS,
             _models.RunStatus.REQUIRES_ACTION,
         ):
-            await asyncio.sleep(sleep_interval)
+            await asyncio.sleep(polling_interval)
             run = await self.runs.get(thread_id=run.thread_id, run_id=run.id)
 
             # If the model requests tool calls, execute and submit them
@@ -962,7 +962,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logging.warning(
+                            logger.warning(
                                 "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
                             )
                             return await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
@@ -970,14 +970,14 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                             logging.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
 
-                    logging.info("Tool outputs: %s", tool_outputs)
+                    logger.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
                         run2 = await self.runs.submit_tool_outputs(
                             thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
-                        logging.info("Tool outputs submitted to run: %s", run2.id)
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
 
-            logging.info("Current run status: %s", run.status)
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
         return run
 
