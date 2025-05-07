@@ -46,9 +46,7 @@ _Unset: Any = object()
 
 class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(
-        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         if not endpoint:
             raise ValueError("Please provide the 1DP endpoint.")
         # TODO: Remove this custom code when 1DP service will be available
