@@ -49,14 +49,11 @@ def list_job_documents():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location,
-            prefix=outputPrefix,
-            overwrite=True),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
     print(f"Creating job with name: {jobname}")
-    
+
     job = client.begin_deidentify_documents(jobname, job).result(timeout=60)
 
     print(f"Job Status: {job.status}")

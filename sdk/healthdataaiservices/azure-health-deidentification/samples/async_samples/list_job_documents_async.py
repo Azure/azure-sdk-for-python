@@ -50,10 +50,7 @@ async def list_job_documents_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location,
-            prefix=outputPrefix,
-            overwrite=True),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
     print(f"Creating job with name: {jobname}")

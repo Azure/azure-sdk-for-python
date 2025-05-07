@@ -33,7 +33,7 @@ import uuid
 
 
 def deidentify_documents():
-# [START sample]
+    # [START sample]
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]
@@ -50,10 +50,7 @@ def deidentify_documents():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location,
-            prefix=outputPrefix,
-            overwrite=True),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
     finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=60)
@@ -61,7 +58,8 @@ def deidentify_documents():
     print(f"Job Name:   {finished_job.job_name}")
     print(f"Job Status: {finished_job.status}")
     print(f"File Count: {finished_job.summary.total_count if finished_job.summary is not None else 0}")
-# [END sample]
+    # [END sample]
+
 
 if __name__ == "__main__":
     deidentify_documents()

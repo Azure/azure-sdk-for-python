@@ -35,11 +35,13 @@ async def deidentify_text_redact_async():
     client = DeidentificationClient(endpoint, credential)
 
     async with client:
-        body = DeidentificationContent(input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT)
+        body = DeidentificationContent(
+            input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT
+        )
         result: DeidentificationResult = await client.deidentify_text(body)
         print(f'\nOriginal Text:    "{body.input_text}"')
-        print(f'Redacted Text:    "{result.output_text}"') # Redacted output: "It's great to work at [organization]."
-        
+        print(f'Redacted Text:    "{result.output_text}"')  # Redacted output: "It's great to work at [organization]."
+
         await credential.close()
 
 

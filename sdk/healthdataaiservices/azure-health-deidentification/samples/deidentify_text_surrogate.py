@@ -33,12 +33,13 @@ def deidentify_text_surrogate():
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 
-# [START surrogate]
+    # [START surrogate]
     body = DeidentificationContent(input_text="Hello, my name is John Smith.")
     result: DeidentificationResult = client.deidentify_text(body)
     print(f'\nOriginal Text:        "{body.input_text}"')
-    print(f'Surrogated Text:   "{result.output_text}"') # Surrogated output: Hello, my name is <synthetic name>.
-# [END surrogate]
+    print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
+    # [END surrogate]
+
 
 if __name__ == "__main__":
     deidentify_text_surrogate()

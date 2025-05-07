@@ -38,8 +38,8 @@ async def deidentify_text_surrogate_async():
         body = DeidentificationContent(input_text="Hello, my name is John Smith.")
         result: DeidentificationResult = await client.deidentify_text(body)
         print(f'\nOriginal Text:    "{body.input_text}"')
-        print(f'Surrogated Text:  "{result.output_text}"') # Surrogated output: "Hello, my name is [person]."
-        
+        print(f'Surrogated Text:  "{result.output_text}"')  # Surrogated output: "Hello, my name is [person]."
+
         await credential.close()
 
 

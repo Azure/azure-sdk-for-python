@@ -33,12 +33,14 @@ def deidentify_text_redact():
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 
-# [START redact]
-    body = DeidentificationContent(input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT)
+    # [START redact]
+    body = DeidentificationContent(
+        input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT
+    )
     result: DeidentificationResult = client.deidentify_text(body)
     print(f'\nOriginal Text:        "{body.input_text}"')
-    print(f'Redacted Text:   "{result.output_text}"') # Redacted output: "It's great to work at [organization]."
-# [END redact]
+    print(f'Redacted Text:   "{result.output_text}"')  # Redacted output: "It's great to work at [organization]."
+    # [END redact]
 
 
 if __name__ == "__main__":

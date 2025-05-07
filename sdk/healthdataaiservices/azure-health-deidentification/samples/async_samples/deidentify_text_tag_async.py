@@ -34,18 +34,22 @@ async def deidentify_text_tag_async():
     client = DeidentificationClient(endpoint, credential)
 
     async with client:
-        body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG)
+        body = DeidentificationContent(
+            input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG
+        )
         result: DeidentificationResult = await client.deidentify_text(body)
 
         print(f'\nOriginal Text:    "{body.input_text}"')
-        
+
         if result.tagger_result and result.tagger_result.entities:
-            print(f'Tagged Entities:')
+            print(f"Tagged Entities:")
             for entity in result.tagger_result.entities:
-                print(f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"')
+                print(
+                    f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"'
+                )
         else:
             print("\tNo tagged entities found.")
-        
+
         await credential.close()
 
 

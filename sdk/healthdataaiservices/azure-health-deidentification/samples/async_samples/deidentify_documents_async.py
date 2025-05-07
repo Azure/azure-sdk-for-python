@@ -50,10 +50,7 @@ async def deidentify_documents_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location,
-            prefix=outputPrefix,
-            overwrite=True),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
     async with client:

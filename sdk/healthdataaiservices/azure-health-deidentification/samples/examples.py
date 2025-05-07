@@ -19,5 +19,5 @@ body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.")
 try:
     error_client.deidentify_text(body)
 except AzureError as e:
-    print('\nError: ' + e.message)
+    print("\nError: " + e.message)
 # [END handle_error]
