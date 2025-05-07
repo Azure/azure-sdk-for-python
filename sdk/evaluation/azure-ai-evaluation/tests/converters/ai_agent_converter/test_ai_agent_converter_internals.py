@@ -188,7 +188,7 @@ class TestAIAgentConverter(unittest.TestCase):
         thread_run_data = """{
   "id": "run_zs3USbTw61ZpRk8bwBPP8Ue7",
   "created_at": 1746115656,
-  "agent_id": "asst_mI8CZVyxDF0jHBFxt7xkIpgx",
+  "assistant_id": "asst_mI8CZVyxDF0jHBFxt7xkIpgx",
   "thread_id": "thread_gMETMuBx3bMDTIB6bREOHF6Y",
   "status": "completed",
   "started_at": 1746115656,

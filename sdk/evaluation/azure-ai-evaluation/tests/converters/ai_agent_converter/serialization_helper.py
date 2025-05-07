@@ -125,7 +125,7 @@ class ThreadRunDecoder(json.JSONDecoder):
             return ThreadRun(
                 id=obj["id"],
                 thread_id=obj["thread_id"],
-                assistant_id=obj["assistant_id"],
+                agent_id=obj["assistant_id"],
                 status=obj["status"],
                 required_action=obj.get("required_action"),
                 last_error=obj.get("last_error"),
