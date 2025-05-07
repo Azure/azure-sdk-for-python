@@ -21,6 +21,7 @@ def convert_search_result(result):
     ret["@search.highlights"] = result.highlights
     ret["@search.captions"] = result.captions
     ret["@search.document_debug_info"] = result.document_debug_info
+    ret["@search.reranker_boosted_score"] = result.reranker_boosted_score
     return ret
 
 
