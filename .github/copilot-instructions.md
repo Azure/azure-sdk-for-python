@@ -17,7 +17,7 @@ Initialize and validate a TypeSpec client library for Azure SDK for Python. Plea
    - Generate the SDK from the TypeSpec configuration file at [URL to tspconfig.yaml]. If the URL doesn't contain the latest commit hash, please retrieve it from GitHub API first. 
    - Ensure that node, python, and the required dependencies are installed in your environment (@azure-tools/typespec-client-generator-cli)
    - Ensure the url has the most recent commit hash of the tspconfig.yaml file instead of a branch name like `main`. If the url does not have a commit hash, use the GitHub API to get the most recent commit hash of the tspconfig.yaml file. If you are unable to do this, ask the user to provide the correct url. `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`  helpful.
-   - Use the command `npx @azure-tools/typespec-client-generator-cli init --tsp-config [URL to tspconfig.yaml]` to generate the SDK.
+   - Use the command `npx @azure-tools/typespec-client-generator-cli init --tsp-config [URL to tspconfig.yaml] --emitter-options @azure-tools/typespec-python.generate_samples=False` to generate the SDK.
 
 2. After generation is complete, validate the output by:
    - Installing the newly generated package and its dev_requirements in a .venv and installing tox.
