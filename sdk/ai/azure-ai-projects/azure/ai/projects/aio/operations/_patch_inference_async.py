@@ -242,6 +242,7 @@ class InferenceOperations:
                 connection = await connections.__aiter__().__anext__()
             except StopAsyncIteration as exc:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.") from exc
+            connection_name = connection.name
 
             # TODO: if there isn't a default openai connection, we would have to by convention
             # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the

@@ -17,8 +17,10 @@ class TestSamples:
     To run this test:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
     * Define the environment variable PROJECT_ENDPOINT with the endpoint of the Azure AI Foundry project used for testing.
+    * You may also want to make sure ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING is not define (or defined to "false") 
+      so you don't get too much console output.
     * Run:  pytest tests/samples/test_samples.py::TestSamples
-    * Load the resulting report in Excel: /tests/samples/samples_report.csv
+    * Load the resulting report in Excel: tests\samples\samples_report.csv
     """
 
     @classmethod
@@ -240,7 +242,7 @@ class TestSamples:
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
         [
-            ("samples\\agents\\sample_agents_async.py", "", "", ""),
+            ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
             ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
             ("samples\\datasets\\sample_datasets_async.py", "", "", "samples\\datasets\\data_folder"),
             ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
@@ -262,7 +264,7 @@ class TestSamples:
                 "samples\\inference\\async_samples\\sample_image_embeddings_with_azure_ai_inference_client_async.py",
                 "to-do-add-model",
                 "",
-                "",
+                "samples\\inference\\async_samples",
             ),
             (
                 "samples\\inference\\async_samples\\sample_text_embeddings_with_azure_ai_inference_client_async.py",
