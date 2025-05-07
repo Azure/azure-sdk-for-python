@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio  # pylint: disable = do-not-import-asyncio
 import io
 import logging
+import os
 
 from typing import (
     IO,
@@ -49,12 +50,12 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     def __init__(
         self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        # TODO: Remove this custom code when 1DP service will be available
         if not endpoint:
-            raise ValueError("Connection string or 1DP endpoint is required")
+            raise ValueError("Please provide the 1DP endpoint.")
+        # TODO: Remove this custom code when 1DP service will be available
         parts = endpoint.split(";")
-        # Detect legacy endpoint and build it in old way.
-        if len(parts) == 4:
+        # Detect legacy endpoint and build it in old way only in tests.
+        if os.environ.get("AZURE_AI_AGENTS_TESTS_IS_TEST_RUN") == "True" and len(parts) == 4:
             endpoint = "https://" + parts[0]
             subscription_id = parts[1]
             resource_group_name = parts[2]
@@ -66,6 +67,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             )
             # Override the credential scope with the legacy one.
             kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
+            kwargs["api_version"] = "2025_05_01"
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
 
@@ -812,17 +814,17 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        # JSON‐body overload
+        # JSON-body overload
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
             return await super().create_thread_and_run(body, content_type=content_type, **kwargs)  # JSON payload
 
-        # Binary‐body overload
+        # Binary-body overload
         if isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
             return await super().create_thread_and_run(body, content_type=content_type, **kwargs)  # binary stream
 
-        # Keyword‐only overload
+        # Keyword-only overload
         if agent_id is not _Unset:
             return await super().create_thread_and_run(
                 agent_id=agent_id,
@@ -831,7 +833,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 instructions=instructions,
                 tools=tools,
                 tool_resources=tool_resources,
-                stream_parameter=False,  # force non‐streaming
+                stream_parameter=False,  # force none-streaming
                 temperature=temperature,
                 top_p=top_p,
                 max_prompt_tokens=max_prompt_tokens,
@@ -890,15 +892,15 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type temperature: float, optional
         :keyword top_p: Nucleus sampling value (0.0-1.0), alternative to temperature.
         :type top_p: float, optional
-        :keyword max_prompt_tokens: Maximum total prompt tokens across turns; run ends “incomplete” if exceeded.
+        :keyword max_prompt_tokens: Maximum total prompt tokens across turns; run ends "incomplete" if exceeded.
         :type max_prompt_tokens: int, optional
-        :keyword max_completion_tokens: Maximum total completion tokens across turns; run ends “incomplete” if exceeded.
+        :keyword max_completion_tokens: Maximum total completion tokens across turns; run ends "incomplete" if exceeded.
         :type max_completion_tokens: int, optional
         :keyword truncation_strategy: Strategy for dropping old messages when context window overflows.
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
         :keyword tool_choice: Controls which tool (if any) the model is allowed to call.
         :type tool_choice: str or ~azure.ai.agents.models.AgentsToolChoiceOption, optional
-        :keyword response_format: Specifies the required format for the model’s output.
+        :keyword response_format: Specifies the required format for the model's output.
         :type response_format: str or ~azure.ai.agents.models.AgentsResponseFormatOption, optional
         :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
         :type parallel_tool_calls: bool, optional
@@ -934,7 +936,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         )
 
         current_retry = 0
-        # keep polling until we leave a “running” or “queued” or “requires_action” state
+        # keep polling until we leave a "running" or "queued" or "requires_action" state
         while run.status in (
             _models.RunStatus.QUEUED,
             _models.RunStatus.IN_PROGRESS,
@@ -950,7 +952,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls or []
 
                 if not tool_calls:
-                    logging.warning("No tool calls provided – cancelling run")
+                    logging.warning("No tool calls provided â€“ cancelling run")
                     run = await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                     break
                 # We need tool set only if we are executing local function. In case if
