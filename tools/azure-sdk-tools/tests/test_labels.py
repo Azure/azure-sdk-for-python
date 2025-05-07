@@ -17,7 +17,7 @@ from gh_tools.vnext_issue_creator import get_labels
         ("azure-ai-ml", "ml", ["Machine Learning"]),
         ("azure-ai-translation-document", "translation", ["Cognitive - Translator"]),
         ("azure-storage-blob", "storage", ["Storage"]),
-        ("azure-ai-projects", "ai", ["AI"]),
+        ("azure-ai-projects", "ai", ["AI Model Projects"]),
         ("azure-ai-inference", "ai", ["AI Model Inference"]),
         ("azure-mgmt-appconfiguration", "appconfiguration", ["Mgmt", "App Configuration"]),
         ("azure-mgmt-webpubsub", "webpubsub", ["Mgmt", "WebPubSub"]),
