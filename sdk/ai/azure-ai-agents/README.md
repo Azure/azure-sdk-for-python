@@ -41,7 +41,7 @@ To report an issue with the client library, or request additional features, plea
     - [File search attachment](#create-message-with-file-search-attachment)
     - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
     - [Create Message with Image Inputs](#create-message-with-image-inputs)
-  - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
+  - [Execute Run, Run_and_Process, or Stream](#execute-run-run_and_process-or-stream)
   - [Retrieve message](#retrieve-message)
   - [Retrieve file](#retrieve-file)
   - [Tear down by deleting resource](#teardown)
@@ -418,7 +418,7 @@ agent = await agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process_run` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
+Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
 [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py)
 
 ### Create Agent With Azure Function Call
@@ -908,13 +908,13 @@ message = agents_client.messages.create(
 )
 ```
 
-### Create Run, Run_and_Process, or Stream
+### Execute Run, Run_and_Process, or Stream
 
-To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
+To process your message, you can use `runs.create`, `runs.create_and_process`, or `runs.stream`.
 
 `create_run` requests the Agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
-Here is an example of `create_run` and poll until the run is completed:
+Here is an example of `runs.create` and poll until the run is completed:
 
 <!-- SNIPPET:sample_agents_basics.create_run -->
 
@@ -930,7 +930,7 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+To have the SDK poll on your behalf and call `function tools`, use the `create_and_process` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
 
 Here is an example:
 
@@ -978,7 +978,7 @@ with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream
 
 <!-- END SNIPPET -->
 
-In the code above, because an `event_handler` object is not passed to the `create_stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
+In the code above, because an `event_handler` object is not passed to the `stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
 
 <!-- SNIPPET:sample_agents_basics_stream_eventhandler.stream_event_handler -->
 

@@ -41,7 +41,7 @@ from azure.ai.agents.models import (
 )
 
 
-# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
+# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the stream
 # method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
 
