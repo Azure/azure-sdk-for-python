@@ -556,11 +556,14 @@ class RunsOperations(RunsOperationsGenerated):
                             logger.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
 
-                    logger.info("Tool outputs: %s", tool_outputs)
+                    logger.debug("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        await self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        run2 = await self.submit_tool_outputs(
+                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
 
-            logger.info("Current run ID: %s with status: %s", run.id, run.status)
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
         return run
 

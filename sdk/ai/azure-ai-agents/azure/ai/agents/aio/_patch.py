@@ -975,9 +975,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                         run2 = await self.runs.submit_tool_outputs(
                             thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
-                        logger.info("Tool outputs submitted to run: %s", run2.id)
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
 
-            logger.info("Current run ID: %s with status: %s", run.id, run.status)
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
         return run
 
