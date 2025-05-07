@@ -12,7 +12,7 @@ from azure.ai.evaluation.red_team import RedTeam, RiskCategory, AttackStrategy
 from openai import AzureOpenAI
 
 
-azure_ai_project = "https://anksingtest1rpint.cognitiveservices.azure.com/api/projects/anksingtest1rpprojectint"
+azure_ai_project = os.environ.get("AZURE_PROJECT_ENDPOINT")
 
 credential = DefaultAzureCredential()
 agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence], num_objectives=1)
@@ -51,10 +51,11 @@ async def azure_openai_callback(
     token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default")
     
     model_config = {
-        "azure_endpoint": "https://build-2025-fdp-test-account1.services.ai.azure.com",
-        "api_version": "2024-12-01-preview",
-        "azure_deployment": "gpt-4.1"
+        "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        "api_version": os.environ.get("AZURE_API_VERSION"),
+        "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
     }
+    
     azure_openai_endpoint = model_config["azure_endpoint"]
     azure_openai_api_version = model_config["api_version"]
     azure_openai_deployment = model_config["azure_deployment"]
