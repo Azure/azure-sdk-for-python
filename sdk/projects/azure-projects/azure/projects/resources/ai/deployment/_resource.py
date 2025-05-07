@@ -70,7 +70,7 @@ class DeploymentKwargs(TypedDict, total=False):
     """
     rai_policy: Union[str, Parameter]
     """The name of RAI policy."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
 
 
@@ -105,7 +105,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
     :keyword rai_policy: The name of RAI policy
     :paramtype rai_policy: Union[str, Parameter]
     :keyword tags: Resource tags
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI deployment
     :vartype DEFAULTS: DeploymentResource
@@ -176,10 +176,10 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
                 properties["sku"]["capacity"] = kwargs.pop("capacity")
             if "rai_policy" in kwargs:
                 properties["properties"]["raiPolicyName"] = kwargs.pop("rai_policy")
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         # The kwargs service_prefix and identifier can be passed by child classes.
@@ -354,7 +354,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
     :keyword rai_policy: The name of RAI policy
     :paramtype rai_policy: Union[str, Parameter]
     :keyword tags: Resource tags
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI Chat deployment
     :vartype DEFAULTS: DeploymentResource
@@ -616,7 +616,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
     :keyword rai_policy: The name of RAI policy
     :paramtype rai_policy: Union[str, Parameter]
     :keyword tags: Resource tags
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI Text Embeddings deployment
     :vartype DEFAULTS: DeploymentResource

@@ -99,7 +99,7 @@ class AppServicePlanKwargs(TypedDict, total=False):
     """The name of the SKU will Determine the tier, size, family of the App Service Plan. This defaults to P1v3 to
     leverage availability zones.
     """
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
     target_worker_count: Union[int, Parameter]
     """Scaling worker count."""
@@ -160,7 +160,7 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
     :keyword sku: Name of the SKU determining tier, size, family of App Service Plan (defaults to P1v3)
     :paramtype sku: Union[str, Parameter]
     :keyword tags: Tags of the resource
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
     :keyword target_worker_count: Scaling worker count
     :paramtype target_worker_count: Union[int, Parameter]
     :keyword target_worker_size: Instance size of hosting plan (0=small, 1=medium, 2=large)
@@ -234,10 +234,10 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
                 except TypeError as e:
                     # This would mean that 'sku' is already using a parameter
                     raise ValueError(f"Cannot set property 'capacity' to {existing_sku}.") from e
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         super().__init__(

@@ -124,7 +124,7 @@ class SearchServiceKwargs(TypedDict, total=False):
         Parameter,
     ]
     """Defines the SKU of an Azure Cognitive Search Service, which determines price tier and capacity limits."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags to help categorize the resource in the Azure portal."""
 
 
@@ -193,10 +193,10 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
                 properties["properties"]["replicaCount"] = kwargs.pop("replica_count")
             if "sku" in kwargs:
                 properties["sku"] = {"name": kwargs.pop("sku")}
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         super().__init__(

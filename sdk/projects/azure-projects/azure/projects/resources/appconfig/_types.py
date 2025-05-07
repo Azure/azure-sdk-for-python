@@ -62,7 +62,7 @@ class ConfigurationStoreResource(TypedDict, total=False):
     """The properties of a configuration store."""
     sku: Union[ConfigurationStoreSku, Parameter]
     """The sku of the configuration store."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

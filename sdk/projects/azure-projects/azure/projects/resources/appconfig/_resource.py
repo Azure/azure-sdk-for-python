@@ -122,7 +122,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Pricing tier of App Configuration."""
     soft_delete_retention: int
     """The amount of time in days that the configuration store will be retained when it is soft deleted."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Resource tags."""
 
 
@@ -190,7 +190,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
      retained when soft deleted
     :paramtype soft_delete_retention: int
     :keyword tags: Resource tags
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
     """
 
     DEFAULTS: "ConfigurationStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
@@ -233,10 +233,10 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
                 properties["sku"] = {"name": kwargs.pop("sku")}
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         super().__init__(

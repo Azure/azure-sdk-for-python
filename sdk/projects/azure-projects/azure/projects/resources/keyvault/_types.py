@@ -37,7 +37,7 @@ class KeyVaultResource(TypedDict, total=False):
     """The resource name"""
     properties: KeyVaultVaultProperties
     """Properties of the vault"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

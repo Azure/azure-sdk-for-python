@@ -134,7 +134,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
 
 
@@ -198,10 +198,10 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 sku = kwargs.pop("sku")
                 properties["sku"] = {"name": sku, "tier": sku}
                 properties["sku"] = properties.get("sku", {})
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         # The kwargs service_prefix and identifier can be passed by child classes.
@@ -360,7 +360,7 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
     :keyword user_roles: Array of Role assignments to create for user principal ID
     :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword tags: Tags of the resource
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI Hub workspace
     :vartype DEFAULTS: MachineLearningWorkspaceResource
@@ -487,7 +487,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
     :keyword user_roles: Array of Role assignments to create for user principal ID
     :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
     :keyword tags: Tags of the resource
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI Project workspace
     :vartype DEFAULTS: MachineLearningWorkspaceResource

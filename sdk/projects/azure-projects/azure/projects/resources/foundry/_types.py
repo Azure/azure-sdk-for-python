@@ -106,7 +106,7 @@ class MachineLearningWorkspaceResource(TypedDict, total=False):
     """Additional attributes of the entity."""
     sku: Union[MachineLearningWorkspaceSku, Parameter]
     """Optional. This field is required to be implemented by the RP because AML is supporting more than one tier"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

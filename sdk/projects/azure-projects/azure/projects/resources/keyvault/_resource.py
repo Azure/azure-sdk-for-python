@@ -91,7 +91,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Array of Role assignments to create for user principal ID"""
     sku: Union[Literal["premium", "standard"], Parameter]
     """Specifies the SKU for the vault."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Resource tags."""
 
 
@@ -145,7 +145,7 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
     :keyword sku: Specifies the SKU for the vault
     :paramtype sku: Union[Literal["premium", "standard"], Parameter]
     :keyword tags: Resource tags
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
     """
 
     DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT  # type: ignore[assignment]
@@ -181,10 +181,10 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
                 properties["properties"]["sku"] = {"family": "A", "name": kwargs.pop("sku")}
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         super().__init__(

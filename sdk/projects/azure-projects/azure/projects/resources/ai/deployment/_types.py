@@ -69,7 +69,7 @@ class DeploymentResource(TypedDict, total=False):
     """Properties of Cognitive Services account deployment."""
     sku: Union[DeploymentSku, Parameter]
     """The resource model definition representing SKU"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
     parent: Any
     """The Symbolic name of the resource that is the parent for this resource."""

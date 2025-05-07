@@ -185,7 +185,7 @@ class AppSiteKwargs(TypedDict, total=False):
     # When set to true, the minimum role assignment required for the App Service Managed
     # Identity to the storage account is 'Storage Blob Data Owner'.
     # """
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
     # virtualNetworkSubnetId: str
     # """Azure Resource Manager ID of the Virtual network and subnet to be joined by Regional VNET Integration."""
@@ -273,7 +273,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                          "Owner", "Reader", "Role Based Access Control Administrator",
                          "User Access Administrator"]]]]
     :keyword tags: Tags of the resource
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for app site resources
     :vartype DEFAULTS: AppSiteResource
@@ -341,10 +341,10 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["properties"]["containerSize"] = kwargs.pop("container_size")
             if "daily_memory_time_quota" in kwargs:
                 properties["properties"]["dailyMemoryTimeQuota"] = kwargs.pop("daily_memory_time_quota")
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         self._app_settings = kwargs.pop("app_settings", {})

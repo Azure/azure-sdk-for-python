@@ -48,7 +48,7 @@ class SearchServiceResource(TypedDict, total=False):
     """Properties of the search service."""
     sku: Union[SearchServiceSku, Parameter]
     """The SKU of the search service, which determines price tier and capacity limits. This property is required when creating a new search service."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

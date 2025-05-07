@@ -145,7 +145,7 @@ def _get_resource_defaults(
 ) -> Dict[str, Any]:
     path_matcher = re.compile(r".*\$\{([^}^{]+)\}.*")
 
-    def path_constructor(loader, node):
+    def path_constructor(_, node):
         if node.value.startswith("${") and node.value.endswith("}"):
             param_name = node.value[2:-1]
             new_param = Parameter(param_name)
@@ -169,7 +169,7 @@ def _get_resource_defaults(
     if os.path.isfile(defaults_file):
         with open(defaults_file, "r", encoding="utf-8") as resources:
             resource_defaults = yaml.load(resources, Loader=EnvVarLoader)
-            if deployment_name in resource_defaults:
+            if deployment_name in resource_defaults:  # pylint: disable=too-many-nested-blocks
                 for resource, resource_definition in resource_defaults[deployment_name].items():
                     if resource in resource_defaults:
                         for key, value in resource_definition.items():

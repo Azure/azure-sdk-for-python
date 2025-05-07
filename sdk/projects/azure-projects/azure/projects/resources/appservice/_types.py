@@ -84,7 +84,7 @@ class AppServicePlanResource(TypedDict, total=False):
     """AppServicePlan resource specific properties"""
     sku: Union[AppServicePlanSkuDescription, Parameter]
     """Description of a SKU for a scalable resource."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

@@ -24,5 +24,5 @@ class ResourceGroupResource(TypedDict, total=False):
     """The resource name"""
     properties: dict[str, Any]
     """The resource group properties."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""

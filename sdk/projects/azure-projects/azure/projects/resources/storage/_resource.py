@@ -208,7 +208,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """Storage Account Sku Name."""
     supports_https_traffic_only: Union[bool, Parameter]
     """Allows HTTPS traffic only to storage service if sets to true."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
 
 
@@ -290,7 +290,7 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     :keyword supports_https_traffic_only: Allow only HTTPS traffic
     :paramtype supports_https_traffic_only: bool | Parameter
     :keyword tags: Resource tags
-    :paramtype tags: dict[str, str | Parameter] | Parameter
+    :paramtype tags: Mapping[str, str | Parameter]
 
     :ivar DEFAULTS: Default storage account configuration
     :vartype DEFAULTS: StorageAccountResource
@@ -382,10 +382,10 @@ class StorageAccount(Resource, Generic[StorageAccountResourceType]):
                 properties["sku"] = {"name": kwargs.pop("sku")}
             if "supports_https_traffic_only" in kwargs:
                 properties["properties"]["supportsHttpsTrafficOnly"] = kwargs.pop("supports_https_traffic_only")
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
 

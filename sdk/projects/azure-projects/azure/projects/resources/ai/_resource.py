@@ -152,7 +152,7 @@ class CognitiveServicesKwargs(TypedDict, total=False):
     """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid
     combinations of 'kind' and 'SKU' for your Azure region.
     """
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
     # storage: List[object]
     # """The storage accounts for this resource."""
@@ -252,10 +252,10 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
                 )
             if "sku" in kwargs:
                 properties["sku"] = {"name": kwargs.pop("sku")}
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         # The kwarg identifier can be passed by child classes.
@@ -423,7 +423,7 @@ class AIServicesKwargs(TypedDict, total=False):
     """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid
     combinations of 'kind' and 'SKU' for your Azure region.
     """
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
     # storage: List[object]
     # """The storage accounts for this resource."""
@@ -497,7 +497,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
     :keyword sku: SKU of the Cognitive Services account
     :paramtype sku: Union[str, Parameter]
     :keyword tags: Resource tags
-    :paramtype tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
 
     :ivar DEFAULTS: Default configuration for AI Services account
     :vartype DEFAULTS: CognitiveServicesAccountResource

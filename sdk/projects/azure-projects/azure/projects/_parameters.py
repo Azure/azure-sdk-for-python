@@ -6,7 +6,7 @@
 
 from typing_extensions import TypedDict
 
-from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable, PlaceholderParameter
+from ._bicep.expressions import Parameter, UniqueString, Subscription, PlaceholderParameter
 
 
 LOCATION = Parameter(

@@ -24,7 +24,7 @@ class UserAssignedIdentityKwargs(TypedDict, total=False):
     # """The lock settings of the service."""
     location: Union[str, Parameter]
     """Location of the User Assigned Identity. It uses the deployment's location when not provided."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the User Assigned Identity."""
 
 
@@ -65,7 +65,7 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
     :keyword str location: Location of the User Assigned Identity. It uses the deployment's location when not provided.
     :paramtype location: Union[str, Parameter]
     :keyword dict tags: Tags of the User Assigned Identity.
-    :paramtype tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
     """
 
     DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY  # type: ignore[assignment]
@@ -88,10 +88,10 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
                 properties["name"] = name
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
-            elif "tags" not in properties:
+            if "tags" not in properties:
                 properties["tags"] = {}
+            if "tags" in kwargs:
+                properties["tags"].update(kwargs.pop("tags"))
             if "azd-env-name" not in properties["tags"]:
                 properties["tags"]["azd-env-name"] = None
         super().__init__(

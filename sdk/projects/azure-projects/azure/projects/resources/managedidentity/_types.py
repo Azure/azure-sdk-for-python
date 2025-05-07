@@ -17,5 +17,5 @@ class UserAssignedIdentityResource(TypedDict, total=False):
     """The geo-location where the resource lives"""
     name: Union[str, Parameter]
     """The resource name"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""

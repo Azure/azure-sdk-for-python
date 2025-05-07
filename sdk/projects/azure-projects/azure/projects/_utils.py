@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import collections
 from concurrent.futures import ThreadPoolExecutor
 import asyncio  # pylint: disable=do-not-import-asyncio
 import threading
 import importlib.util
 import sys
 import os
-from typing import Coroutine, Any, Dict, Generator, List, Mapping, MutableMapping, Optional, Union, TYPE_CHECKING
+from typing import Coroutine, Any, Dict, Generator, List, Mapping, Optional, Union, TYPE_CHECKING
 from typing_extensions import TypeVar
 
 from .resources import ResourceIdentifiers
@@ -20,7 +19,7 @@ from ._parameters import GLOBAL_PARAMS
 if TYPE_CHECKING:
     from ._bicep.expressions import Parameter, ResourceSymbol, Expression
     from ._component import AzureInfrastructure
-    from ._resource import FieldsType, FieldType, ExtensionResources
+    from ._resource import FieldsType, FieldType
 
 
 def import_from_path(file_path):

@@ -46,7 +46,6 @@ from ._setting import StoredPrioritizedSetting
 from ._bicep.expressions import (
     Output,
     Parameter,
-    PlaceholderParameter,
     ResourceSymbol,
     ResourceGroup as RGSymbol,
 )
@@ -334,7 +333,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         for key, value in new_tags.items():
             if key == "azd-env-name":
                 continue
-            elif key in current_tags:
+            if key in current_tags:
                 if current_tags[key] != value:
                     raise ValueError(
                         f"{repr(self)} cannot set tag '{key}' to '{value}', already set to: '{current_tags[key]}'."

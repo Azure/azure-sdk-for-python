@@ -154,7 +154,7 @@ class StorageAccountResource(TypedDict, total=False):
     """The parameters used to create the storage account."""
     sku: Union[StorageAccountSku, Parameter]
     """Required. Gets or sets the SKU name."""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 

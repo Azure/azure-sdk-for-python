@@ -295,7 +295,7 @@ class AppSiteResource(TypedDict, total=False):
     """The resource name"""
     properties: AppSiteProperties
     """Site resource specific properties"""
-    tags: Union[dict[str, Union[str, Parameter]], Parameter]
+    tags: dict[str, Union[None, str, Parameter]]
     """Resource tags"""
 
 
