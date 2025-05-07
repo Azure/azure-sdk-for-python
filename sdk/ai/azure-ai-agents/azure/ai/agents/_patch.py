@@ -616,7 +616,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         tools: Union[Set[Callable[..., Any]], _models.FunctionTool, _models.ToolSet],
         max_retry: int = 10,
     ) -> None:
-        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        """Enables tool calls to be executed automatically during runs.create_and_process or runs.stream.
         If this is not set, functions must be called manually.
         If automatic function calls fail, the agents will receive error messages allowing it to retry with another
         function call or figure out the answer with its knowledge.

@@ -8,8 +8,8 @@
 DESCRIPTION:
     This sample demonstrates how to override the base event handler and parse the events and iterate through them
     In your use case, you might not want to write the iteration code similar to sample_agents_stream_iteration_async.py.
-    If you have multiple places to call create_stream, you might find the iteration code cumbersome.
-    This example shows how to override the base event handler, parse the events, and iterate through them, which can be reused in multiple create_stream calls to help keep the code clean.
+    If you have multiple places to call stream, you might find the iteration code cumbersome.
+    This example shows how to override the base event handler, parse the events, and iterate through them, which can be reused in multiple stream calls to help keep the code clean.
 
 USAGE:
     python sample_agents_stream_with_base_override_eventhandler.py
