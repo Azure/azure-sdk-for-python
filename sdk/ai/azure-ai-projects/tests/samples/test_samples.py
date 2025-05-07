@@ -17,7 +17,7 @@ class TestSamples:
     To run this test:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
     * Define the environment variable PROJECT_ENDPOINT with the endpoint of the Azure AI Foundry project used for testing.
-    * You may also want to make sure ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING is not define (or defined to "false") 
+    * You may also want to make sure ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING is not define (or defined to "false")
       so you don't get too much console output.
     * Run:  pytest tests/samples/test_samples.py::TestSamples
     * Load the resulting report in Excel: tests\samples\samples_report.csv

@@ -31,7 +31,7 @@ from azure.ai.projects.models import (
     EvaluatorIds,
     EvaluatorConfiguration,
     AgentEvaluationSamplingConfiguration,
-    AgentEvaluationRedactionConfiguration
+    AgentEvaluationRedactionConfiguration,
 )
 from dotenv import load_dotenv
 
@@ -56,7 +56,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         thread = project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = project_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a joke"
+        )
         print(f"Created message, message ID: {message.id}")
 
         run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
@@ -67,7 +69,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             time.sleep(1)
             run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
             print(f"Run status: {run.status}")
-
 
         agent_evaluation_request = AgentEvaluationRequest(
             run_id=run.id,

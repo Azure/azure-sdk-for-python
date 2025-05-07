@@ -97,9 +97,6 @@ def build_connections_list_request(
     *,
     connection_type: Optional[Union[str, _models.ConnectionType]] = None,
     default_connection: Optional[bool] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -117,12 +114,6 @@ def build_connections_list_request(
         _params["connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
     if default_connection is not None:
         _params["defaultConnection"] = _SERIALIZER.query("default_connection", default_connection, "bool")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -803,8 +794,6 @@ class ConnectionsOperations:
         *,
         connection_type: Optional[Union[str, _models.ConnectionType]] = None,
         default_connection: Optional[bool] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable["_models.Connection"]:
         """List all connections in the project, without populating connection credentials.
@@ -816,10 +805,6 @@ class ConnectionsOperations:
         :keyword default_connection: List connections that are default connections. Default value is
          None.
         :paramtype default_connection: bool
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of Connection
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Connection]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -827,7 +812,6 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -844,9 +828,6 @@ class ConnectionsOperations:
                 _request = build_connections_list_request(
                     connection_type=connection_type,
                     default_connection=default_connection,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
