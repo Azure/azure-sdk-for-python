@@ -242,7 +242,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             http_response = response.http_response
             headers = request.http_request.headers
             sub_status_str = http_response.headers.get("x-ms-substatus")
-            sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
+            sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else 0
             url_obj = request.http_request.url  # type: ignore[attr-defined, union-attr]
             try:
                 duration: Optional[float] = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr, arg-type]  # pylint: disable=line-too-long
@@ -254,7 +254,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         "status_code": http_response.status_code, "sub_status_code": sub_status_code,
                         "verb": request.http_request.method,
                         "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
-                        "url": str(url_obj), "database_name": None, "collection_name": None,
+                        "url": str(url_obj), "database_name": "", "collection_name": "",
                         "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]  # pylint: disable=line-too-long
 
             if log_data["url"]:
@@ -324,8 +324,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         client_account_write_regions = []
 
         if self.__global_endpoint_manager:
-            if self.__global_endpoint_manager.Client and self.__global_endpoint_manager.Client.connection_policy:
-                connection_policy: ConnectionPolicy = self.__global_endpoint_manager.Client.connection_policy
+            if self.__global_endpoint_manager.client and self.__global_endpoint_manager.client.connection_policy:
+                connection_policy: ConnectionPolicy = self.__global_endpoint_manager.client.connection_policy
                 client_preferred_regions = connection_policy.PreferredLocations
                 client_excluded_regions = connection_policy.ExcludedLocations
 
@@ -334,10 +334,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 client_account_read_regions = location_cache.account_read_locations
                 client_account_write_regions = location_cache.account_write_locations
 
-        return {"Client Preferred Regions": client_preferred_regions,
-                "Client Excluded Regions": client_excluded_regions,
-                "Client Account Read Regions": client_account_read_regions,
-                "Client Account Write Regions": client_account_write_regions}
+        return {"Preferred Regions": client_preferred_regions,
+                "Excluded Regions": client_excluded_regions,
+                "Account Read Regions": client_account_read_regions,
+                "Account Write Regions": client_account_write_regions}
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
         if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, '_database_account_cache'):
