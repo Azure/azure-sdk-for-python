@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -185,7 +184,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -214,10 +213,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class TrackedResource(Resource):
@@ -229,7 +228,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -282,7 +281,7 @@ class ConfidentialLedger(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -391,7 +390,7 @@ class ConfidentialLedgerBackupResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.message = None
+        self.message: Optional[str] = None
 
 
 class ConfidentialLedgerList(_serialization.Model):
@@ -487,7 +486,7 @@ class ConfidentialLedgerRestoreResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.message = None
+        self.message: Optional[str] = None
 
 
 class DeploymentType(_serialization.Model):
@@ -546,8 +545,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -586,11 +585,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -645,6 +644,28 @@ class LedgerProperties(_serialization.Model):
     :ivar cert_based_security_principals: Array of all cert based Security Principals.
     :vartype cert_based_security_principals:
      list[~azure.mgmt.confidentialledger.models.CertBasedSecurityPrincipal]
+    :ivar host_level: CCF Property for the logging level for the untrusted host: Trace, Debug,
+     Info, Fail, Fatal.
+    :vartype host_level: str
+    :ivar max_body_size_in_mb: CCF Property for the maximum size of the http request body: 1MB,
+     5MB, 10MB.
+    :vartype max_body_size_in_mb: int
+    :ivar subject_name: CCF Property for the subject name to include in the node certificate.
+     Default: CN=CCF Node.
+    :vartype subject_name: str
+    :ivar node_count: Number of CCF nodes in the ACC Ledger.
+    :vartype node_count: int
+    :ivar write_lb_address_prefix: Prefix for the write load balancer. Example: write.
+    :vartype write_lb_address_prefix: str
+    :ivar worker_threads: Number of additional threads processing incoming client requests in the
+     enclave (modify with care!).
+    :vartype worker_threads: int
+    :ivar enclave_platform: Enclave platform of the Confidential Ledger. Known values are:
+     "IntelSgx" and "AmdSevSnp".
+    :vartype enclave_platform: str or ~azure.mgmt.confidentialledger.models.EnclavePlatform
+    :ivar application_type: Application type of the Confidential Ledger. Known values are:
+     "ConfidentialLedger" and "CodeTransparency".
+    :vartype application_type: str or ~azure.mgmt.confidentialledger.models.ApplicationType
     """
 
     _validation = {
@@ -669,6 +690,14 @@ class LedgerProperties(_serialization.Model):
             "key": "certBasedSecurityPrincipals",
             "type": "[CertBasedSecurityPrincipal]",
         },
+        "host_level": {"key": "hostLevel", "type": "str"},
+        "max_body_size_in_mb": {"key": "maxBodySizeInMb", "type": "int"},
+        "subject_name": {"key": "subjectName", "type": "str"},
+        "node_count": {"key": "nodeCount", "type": "int"},
+        "write_lb_address_prefix": {"key": "writeLBAddressPrefix", "type": "str"},
+        "worker_threads": {"key": "workerThreads", "type": "int"},
+        "enclave_platform": {"key": "enclavePlatform", "type": "str"},
+        "application_type": {"key": "applicationType", "type": "str"},
     }
 
     def __init__(
@@ -679,6 +708,14 @@ class LedgerProperties(_serialization.Model):
         ledger_sku: Optional[Union[str, "_models.LedgerSku"]] = None,
         aad_based_security_principals: Optional[List["_models.AADBasedSecurityPrincipal"]] = None,
         cert_based_security_principals: Optional[List["_models.CertBasedSecurityPrincipal"]] = None,
+        host_level: Optional[str] = None,
+        max_body_size_in_mb: Optional[int] = None,
+        subject_name: Optional[str] = None,
+        node_count: Optional[int] = None,
+        write_lb_address_prefix: Optional[str] = None,
+        worker_threads: Optional[int] = None,
+        enclave_platform: Optional[Union[str, "_models.EnclavePlatform"]] = None,
+        application_type: Optional[Union[str, "_models.ApplicationType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -697,18 +734,48 @@ class LedgerProperties(_serialization.Model):
         :keyword cert_based_security_principals: Array of all cert based Security Principals.
         :paramtype cert_based_security_principals:
          list[~azure.mgmt.confidentialledger.models.CertBasedSecurityPrincipal]
+        :keyword host_level: CCF Property for the logging level for the untrusted host: Trace, Debug,
+         Info, Fail, Fatal.
+        :paramtype host_level: str
+        :keyword max_body_size_in_mb: CCF Property for the maximum size of the http request body: 1MB,
+         5MB, 10MB.
+        :paramtype max_body_size_in_mb: int
+        :keyword subject_name: CCF Property for the subject name to include in the node certificate.
+         Default: CN=CCF Node.
+        :paramtype subject_name: str
+        :keyword node_count: Number of CCF nodes in the ACC Ledger.
+        :paramtype node_count: int
+        :keyword write_lb_address_prefix: Prefix for the write load balancer. Example: write.
+        :paramtype write_lb_address_prefix: str
+        :keyword worker_threads: Number of additional threads processing incoming client requests in
+         the enclave (modify with care!).
+        :paramtype worker_threads: int
+        :keyword enclave_platform: Enclave platform of the Confidential Ledger. Known values are:
+         "IntelSgx" and "AmdSevSnp".
+        :paramtype enclave_platform: str or ~azure.mgmt.confidentialledger.models.EnclavePlatform
+        :keyword application_type: Application type of the Confidential Ledger. Known values are:
+         "ConfidentialLedger" and "CodeTransparency".
+        :paramtype application_type: str or ~azure.mgmt.confidentialledger.models.ApplicationType
         """
         super().__init__(**kwargs)
-        self.ledger_name = None
-        self.ledger_uri = None
-        self.identity_service_uri = None
-        self.ledger_internal_namespace = None
+        self.ledger_name: Optional[str] = None
+        self.ledger_uri: Optional[str] = None
+        self.identity_service_uri: Optional[str] = None
+        self.ledger_internal_namespace: Optional[str] = None
         self.running_state = running_state
         self.ledger_type = ledger_type
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.ledger_sku = ledger_sku
         self.aad_based_security_principals = aad_based_security_principals
         self.cert_based_security_principals = cert_based_security_principals
+        self.host_level = host_level
+        self.max_body_size_in_mb = max_body_size_in_mb
+        self.subject_name = subject_name
+        self.node_count = node_count
+        self.write_lb_address_prefix = write_lb_address_prefix
+        self.worker_threads = worker_threads
+        self.enclave_platform = enclave_platform
+        self.application_type = application_type
 
 
 class ManagedCCF(TrackedResource):
@@ -719,7 +786,7 @@ class ManagedCCF(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -829,7 +896,7 @@ class ManagedCCFBackupResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.message = None
+        self.message: Optional[str] = None
 
 
 class ManagedCCFList(_serialization.Model):
@@ -885,6 +952,9 @@ class ManagedCCFProperties(_serialization.Model):
     :vartype provisioning_state: str or ~azure.mgmt.confidentialledger.models.ProvisioningState
     :ivar node_count: Number of CCF nodes in the Managed CCF.
     :vartype node_count: int
+    :ivar enclave_platform: Enclave platform of Managed CCF. Known values are: "IntelSgx" and
+     "AmdSevSnp".
+    :vartype enclave_platform: str or ~azure.mgmt.confidentialledger.models.EnclavePlatform
     """
 
     _validation = {
@@ -903,6 +973,7 @@ class ManagedCCFProperties(_serialization.Model):
         "running_state": {"key": "runningState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "node_count": {"key": "nodeCount", "type": "int"},
+        "enclave_platform": {"key": "enclavePlatform", "type": "str"},
     }
 
     def __init__(
@@ -912,6 +983,7 @@ class ManagedCCFProperties(_serialization.Model):
         deployment_type: Optional["_models.DeploymentType"] = None,
         running_state: Optional[Union[str, "_models.RunningState"]] = None,
         node_count: int = 3,
+        enclave_platform: Optional[Union[str, "_models.EnclavePlatform"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -925,16 +997,20 @@ class ManagedCCFProperties(_serialization.Model):
         :paramtype running_state: str or ~azure.mgmt.confidentialledger.models.RunningState
         :keyword node_count: Number of CCF nodes in the Managed CCF.
         :paramtype node_count: int
+        :keyword enclave_platform: Enclave platform of Managed CCF. Known values are: "IntelSgx" and
+         "AmdSevSnp".
+        :paramtype enclave_platform: str or ~azure.mgmt.confidentialledger.models.EnclavePlatform
         """
         super().__init__(**kwargs)
-        self.app_name = None
-        self.app_uri = None
-        self.identity_service_uri = None
+        self.app_name: Optional[str] = None
+        self.app_uri: Optional[str] = None
+        self.identity_service_uri: Optional[str] = None
         self.member_identity_certificates = member_identity_certificates
         self.deployment_type = deployment_type
         self.running_state = running_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.node_count = node_count
+        self.enclave_platform = enclave_platform
 
 
 class ManagedCCFRestore(_serialization.Model):
@@ -997,7 +1073,7 @@ class ManagedCCFRestoreResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.message = None
+        self.message: Optional[str] = None
 
 
 class MemberIdentityCertificate(_serialization.Model):
@@ -1149,8 +1225,8 @@ class ResourceProviderOperationList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.ResourceProviderOperationDefinition"]] = None
+        self.next_link: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
