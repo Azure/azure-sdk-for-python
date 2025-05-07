@@ -1204,6 +1204,17 @@ class RedTeam():
                     scoring_target=red_llm_scoring_target,
                     max_backtracks=max_backtracks,
                 )
+
+                orchestrator._objective_scorer = AzureRAIServiceTrueFalseScorer(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    # objective=prompt,
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
             
                 # Debug log the first few characters of the current prompt
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
