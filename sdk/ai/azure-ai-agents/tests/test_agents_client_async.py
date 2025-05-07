@@ -89,6 +89,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    azure_ai_agents_tests_is_test_run="True",
 )
 
 

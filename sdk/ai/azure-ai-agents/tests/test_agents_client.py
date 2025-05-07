@@ -92,6 +92,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    azure_ai_agents_tests_is_test_run="True",
 )
 
 
@@ -3146,7 +3147,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 content for msg in messages for content in msg.content if isinstance(content, MessageTextContent)
             ]
 
-            # Check that at least one text message contains “bar”.
+            # Check that at least one text message contains "bar".
             assert any("bar" in t.text.value.lower() for t in text_messages)
 
             # Delete the agent once done
