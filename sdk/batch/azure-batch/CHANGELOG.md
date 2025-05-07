@@ -1,5 +1,15 @@
 # Release History
 
+## 15.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 15.0.0b2 (2025-03-01)
 
 ### Features Added
