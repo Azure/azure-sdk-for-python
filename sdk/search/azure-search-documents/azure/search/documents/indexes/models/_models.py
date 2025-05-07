@@ -1061,7 +1061,7 @@ class SynonymMap(_serialization.Model):
         )
 
 
-class SearchIndexerDataSourceConnection(_serialization.Model):
+class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
