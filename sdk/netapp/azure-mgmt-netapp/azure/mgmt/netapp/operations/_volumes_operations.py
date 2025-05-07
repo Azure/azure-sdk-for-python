@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -50,7 +50,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -88,7 +88,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +129,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -173,7 +173,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -224,7 +224,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_populate_availability_zone_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -308,7 +308,7 @@ def build_revert_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -352,7 +352,7 @@ def build_reset_cifs_password_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -387,54 +387,13 @@ def build_reset_cifs_password_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_split_clone_from_parent_request(
-    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/splitCloneFromParent",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
-        ),
-        "poolName": _SERIALIZER.url(
-            "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
-        ),
-        "volumeName": _SERIALIZER.url(
-            "volume_name", volume_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_break_file_locks_request(
     resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -478,7 +437,7 @@ def build_list_get_group_id_list_for_ldap_user_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -516,54 +475,13 @@ def build_list_get_group_id_list_for_ldap_user_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_quota_report_request(
-    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/listQuotaReport",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
-        ),
-        "poolName": _SERIALIZER.url(
-            "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
-        ),
-        "volumeName": _SERIALIZER.url(
-            "volume_name", volume_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_break_replication_request(
     resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -607,7 +525,7 @@ def build_reestablish_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -651,7 +569,7 @@ def build_replication_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -692,7 +610,7 @@ def build_list_replications_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -733,7 +651,7 @@ def build_resync_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -774,7 +692,7 @@ def build_delete_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -815,7 +733,7 @@ def build_authorize_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -859,7 +777,7 @@ def build_re_initialize_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -900,7 +818,7 @@ def build_peer_external_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -944,7 +862,7 @@ def build_authorize_external_replication_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -985,7 +903,7 @@ def build_finalize_external_replication_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1026,7 +944,7 @@ def build_perform_replication_transfer_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1067,7 +985,7 @@ def build_pool_change_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1111,7 +1029,7 @@ def build_relocate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1155,7 +1073,7 @@ def build_finalize_relocation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1196,7 +1114,7 @@ def build_revert_relocation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1275,7 +1193,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VolumeList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1360,7 +1278,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.netapp.models.Volume
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1414,7 +1332,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.Volume, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1636,7 +1554,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1858,7 +1776,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1987,7 +1905,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _populate_availability_zone_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2119,7 +2037,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2331,7 +2249,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _reset_cifs_password_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2447,127 +2365,6 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _split_clone_from_parent_initial(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_split_clone_from_parent_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            pool_name=pool_name,
-            volume_name=volume_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_split_clone_from_parent(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Split clone from parent volume.
-
-        Split operation to convert clone volume to an independent volume.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account. Required.
-        :type account_name: str
-        :param pool_name: The name of the capacity pool. Required.
-        :type pool_name: str
-        :param volume_name: The name of the volume. Required.
-        :type volume_name: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._split_clone_from_parent_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                pool_name=pool_name,
-                volume_name=volume_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
     def _break_file_locks_initial(
         self,
         resource_group_name: str,
@@ -2577,7 +2374,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2804,7 +2601,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3027,133 +2824,6 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _list_quota_report_initial(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_list_quota_report_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            pool_name=pool_name,
-            volume_name=volume_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_list_quota_report(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> LROPoller[_models.ListQuotaReportResponse]:
-        """Lists Quota Report for the volume.
-
-        Returns report of quotas for the volume.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account. Required.
-        :type account_name: str
-        :param pool_name: The name of the capacity pool. Required.
-        :type pool_name: str
-        :param volume_name: The name of the volume. Required.
-        :type volume_name: str
-        :return: An instance of LROPoller that returns either ListQuotaReportResponse or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ListQuotaReportResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ListQuotaReportResponse] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._list_quota_report_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                pool_name=pool_name,
-                volume_name=volume_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ListQuotaReportResponse", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ListQuotaReportResponse].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.ListQuotaReportResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
     def _break_replication_initial(
         self,
         resource_group_name: str,
@@ -3163,7 +2833,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3384,7 +3054,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3617,7 +3287,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.netapp.models.ReplicationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3689,7 +3359,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ListReplications] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3757,7 +3427,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _resync_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3876,7 +3546,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _delete_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4001,7 +3671,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4213,7 +3883,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _re_initialize_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4337,7 +4007,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.PeerClusterForVolumeMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4560,7 +4230,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _authorize_external_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4688,7 +4358,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _finalize_external_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4810,7 +4480,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _perform_replication_transfer_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4937,7 +4607,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5155,7 +4825,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5368,7 +5038,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _finalize_relocation_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5484,7 +5154,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     def _revert_relocation_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

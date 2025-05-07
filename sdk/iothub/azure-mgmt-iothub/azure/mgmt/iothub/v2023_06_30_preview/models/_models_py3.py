@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -590,7 +589,7 @@ class EndpointHealthDataListResult(_serialization.Model):
 class EnrichmentProperties(_serialization.Model):
     """The properties of an enrichment that your IoT hub applies to messages delivered to endpoints.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: The key or name for the enrichment property. Required.
     :vartype key: str
@@ -670,7 +669,7 @@ class ErrorDetails(_serialization.Model):
 class EventHubConsumerGroupBodyDescription(_serialization.Model):
     """The EventHub consumer group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar properties: The EventHub consumer group name. Required.
     :vartype properties: ~azure.mgmt.iothub.v2023_06_30_preview.models.EventHubConsumerGroupName
@@ -741,7 +740,7 @@ class EventHubConsumerGroupInfo(_serialization.Model):
 class EventHubConsumerGroupName(_serialization.Model):
     """The EventHub consumer group name.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: EventHub consumer group name. Required.
     :vartype name: str
@@ -851,7 +850,7 @@ class EventHubProperties(_serialization.Model):
 class ExportDevicesRequest(_serialization.Model):
     """Use to provide parameters when requesting an export of all devices in the IoT hub.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar export_blob_container_uri: The export blob container URI. Required.
     :vartype export_blob_container_uri: str
@@ -937,7 +936,7 @@ class ExportDevicesRequest(_serialization.Model):
 class FailoverInput(_serialization.Model):
     """Use to provide failover region when requesting manual Failover for a hub.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failover_region: Region the hub will be failed over to. Required.
     :vartype failover_region: str
@@ -964,7 +963,7 @@ class FallbackRouteProperties(_serialization.Model):
     """The properties of the fallback route. IoT Hub uses these properties when it routes messages to
     the fallback endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the route. The name can only include alphanumeric characters, periods,
      underscores, hyphens, has a maximum length of 64 characters, and must be unique.
@@ -1094,7 +1093,7 @@ class GroupIdInformation(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -1175,7 +1174,7 @@ class GroupIdInformationProperties(_serialization.Model):
 class ImportDevicesRequest(_serialization.Model):
     """Use to provide parameters when requesting an import of all devices in the hub.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar input_blob_container_uri: The input blob container URI. Required.
     :vartype input_blob_container_uri: str
@@ -1306,7 +1305,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -1355,7 +1354,7 @@ class IotHubDescription(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -1540,7 +1539,7 @@ class IotHubNameAvailabilityInfo(_serialization.Model):
         self.message = message
 
 
-class IotHubProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class IotHubProperties(_serialization.Model):
     """The properties of an IoT hub.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1899,7 +1898,7 @@ class IotHubSkuDescription(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_type: The type of the resource.
     :vartype resource_type: str
@@ -1969,7 +1968,7 @@ class IotHubSkuInfo(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", "S3", "B1",
      "B2", and "B3".
@@ -2011,7 +2010,7 @@ class IotHubSkuInfo(_serialization.Model):
 class IpFilterRule(_serialization.Model):
     """The IP filter rules for the IoT hub.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar filter_name: The name of the IP filter rule. Required.
     :vartype filter_name: str
@@ -2297,7 +2296,7 @@ class Name(_serialization.Model):
 class NetworkRuleSetIpRule(_serialization.Model):
     """IP Rule to be applied as part of Network Rule Set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar filter_name: Name of the IP filter rule. Required.
     :vartype filter_name: str
@@ -2345,7 +2344,7 @@ class NetworkRuleSetIpRule(_serialization.Model):
 class NetworkRuleSetProperties(_serialization.Model):
     """Network Rule Set Properties of IotHub.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar default_action: Default Action for Network Rule Set. Known values are: "Deny" and
      "Allow".
@@ -2463,7 +2462,7 @@ class OperationDisplay(_serialization.Model):
 class OperationInputs(_serialization.Model):
     """Input values.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the IoT hub to check. Required.
     :vartype name: str
@@ -2543,7 +2542,7 @@ class PrivateEndpointConnection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -2586,7 +2585,7 @@ class PrivateEndpointConnection(_serialization.Model):
 class PrivateEndpointConnectionProperties(_serialization.Model):
     """The properties of a private endpoint connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar private_endpoint: The private endpoint property of a private endpoint connection.
     :vartype private_endpoint: ~azure.mgmt.iothub.v2023_06_30_preview.models.PrivateEndpoint
@@ -2651,7 +2650,7 @@ class PrivateLinkResources(_serialization.Model):
 class PrivateLinkServiceConnectionState(_serialization.Model):
     """The current state of a private endpoint connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of a private endpoint connection. Required. Known values are:
      "Pending", "Approved", "Rejected", and "Disconnected".
@@ -2865,7 +2864,7 @@ class RouteErrorRange(_serialization.Model):
 class RouteProperties(_serialization.Model):
     """The properties of a routing rule that your IoT hub uses to route messages to endpoints.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the route. The name can only include alphanumeric characters, periods,
      underscores, hyphens, has a maximum length of 64 characters, and must be unique. Required.
@@ -2939,10 +2938,10 @@ class RouteProperties(_serialization.Model):
         self.is_enabled = is_enabled
 
 
-class RoutingCosmosDBSqlApiProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RoutingCosmosDBSqlApiProperties(_serialization.Model):
     """The properties related to a cosmos DB sql container endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
      characters, periods, underscores, hyphens and has a maximum length of 64 characters. The
@@ -3159,7 +3158,7 @@ class RoutingEndpoints(_serialization.Model):
 class RoutingEventHubProperties(_serialization.Model):
     """The properties related to an event hub endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the event hub endpoint.
     :vartype id: str
@@ -3363,7 +3362,7 @@ class RoutingProperties(_serialization.Model):
 class RoutingServiceBusQueueEndpointProperties(_serialization.Model):
     """The properties related to service bus queue endpoint types.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the service bus queue endpoint.
     :vartype id: str
@@ -3462,7 +3461,7 @@ class RoutingServiceBusQueueEndpointProperties(_serialization.Model):
 class RoutingServiceBusTopicEndpointProperties(_serialization.Model):
     """The properties related to service bus topic endpoint types.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the service bus topic endpoint.
     :vartype id: str
@@ -3560,10 +3559,10 @@ class RoutingServiceBusTopicEndpointProperties(_serialization.Model):
         self.resource_group = resource_group
 
 
-class RoutingStorageContainerProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RoutingStorageContainerProperties(_serialization.Model):
     """The properties related to a storage container endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the storage container endpoint.
     :vartype id: str
@@ -3763,7 +3762,7 @@ class RoutingTwinProperties(_serialization.Model):
 class SharedAccessSignatureAuthorizationRule(_serialization.Model):
     """The properties of an IoT hub shared access policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: The name of the shared access policy. Required.
     :vartype key_name: str
@@ -3825,7 +3824,7 @@ class SharedAccessSignatureAuthorizationRule(_serialization.Model):
         self.rights = rights
 
 
-class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):
+class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The list of shared access policies with a next link.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3862,11 +3861,11 @@ class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):
 class StorageEndpointProperties(_serialization.Model):
     """The properties of the Azure Storage endpoint for file upload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
      file upload is valid. See:
-     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.  # pylint: disable=line-too-long
     :vartype sas_ttl_as_iso8601: ~datetime.timedelta
     :ivar connection_string: The connection string for the Azure Storage account to which files are
      uploaded. Required.
@@ -3908,7 +3907,7 @@ class StorageEndpointProperties(_serialization.Model):
         """
         :keyword sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
          file upload is valid. See:
-         https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.
+         https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.  # pylint: disable=line-too-long
         :paramtype sas_ttl_as_iso8601: ~datetime.timedelta
         :keyword connection_string: The connection string for the Azure Storage account to which files
          are uploaded. Required.
@@ -4084,7 +4083,7 @@ class TestAllRoutesResult(_serialization.Model):
 class TestRouteInput(_serialization.Model):
     """Input for testing route.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message: Routing message.
     :vartype message: ~azure.mgmt.iothub.v2023_06_30_preview.models.RoutingMessage

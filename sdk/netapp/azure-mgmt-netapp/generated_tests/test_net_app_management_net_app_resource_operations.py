@@ -20,13 +20,13 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_name_availability(self, resource_group):
+    def test_net_app_resource_check_name_availability(self, resource_group):
         response = self.client.net_app_resource.check_name_availability(
             location="str",
             name="str",
             type="str",
             resource_group="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_file_path_availability(self, resource_group):
+    def test_net_app_resource_check_file_path_availability(self, resource_group):
         response = self.client.net_app_resource.check_file_path_availability(
             location="str",
             name="str",
             subnet_id="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_quota_availability(self, resource_group):
+    def test_net_app_resource_check_quota_availability(self, resource_group):
         response = self.client.net_app_resource.check_quota_availability(
             location="str",
             name="str",
             type="str",
             resource_group="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -61,10 +61,10 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_region_info(self, resource_group):
+    def test_net_app_resource_query_region_info(self, resource_group):
         response = self.client.net_app_resource.query_region_info(
             location="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_network_sibling_set(self, resource_group):
+    def test_net_app_resource_query_network_sibling_set(self, resource_group):
         response = self.client.net_app_resource.query_network_sibling_set(
             location="str",
             network_sibling_set_id="str",
             subnet_id="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -85,14 +85,14 @@ class TestNetAppManagementNetAppResourceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_network_sibling_set(self, resource_group):
+    def test_net_app_resource_begin_update_network_sibling_set(self, resource_group):
         response = self.client.net_app_resource.begin_update_network_sibling_set(
             location="str",
             network_sibling_set_id="str",
             subnet_id="str",
             network_sibling_set_state_id="str",
             network_features="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

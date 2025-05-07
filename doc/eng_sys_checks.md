@@ -138,6 +138,18 @@ sphinx = false
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
 
+### Coverage Enforcement
+
+This repository supports enforcement of an absolute coverage % per package. Set:
+
+```
+[tool.azure-sdk-build]
+absolute_cov = true
+absolute_cov_percent = 75.00
+```
+
+After it is implemented, the `relative_cov` key will enable the prevention of **negative** code coverage contributions.
+
 ## Environment variables important to CI
 
 There are a few differences from a standard local invocation of `tox <env>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.

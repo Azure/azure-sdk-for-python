@@ -21,13 +21,13 @@ class TestSqlManagementTdeCertificatesOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_tde_certificates_begin_create(self, resource_group):
         response = await (
             await self.client.tde_certificates.begin_create(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 parameters={"certPassword": "str", "id": "str", "name": "str", "privateBlob": "str", "type": "str"},
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +24,7 @@ class Resource(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -38,7 +38,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -56,7 +56,7 @@ class TrackedResource(Resource):
 
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -72,7 +72,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -103,7 +103,7 @@ class Asset(TrackedResource):
 
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -123,7 +123,9 @@ class Asset(TrackedResource):
     :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
     """
 
-    properties: Optional["_models.AssetProperties"] = rest_field()
+    properties: Optional["_models.AssetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """The extended location. Required."""
@@ -156,7 +158,7 @@ class AssetEndpointProfile(TrackedResource):
 
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -176,7 +178,9 @@ class AssetEndpointProfile(TrackedResource):
     :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
     """
 
-    properties: Optional["_models.AssetEndpointProfileProperties"] = rest_field()
+    properties: Optional["_models.AssetEndpointProfileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """The extended location. Required."""
@@ -237,16 +241,22 @@ class AssetEndpointProfileProperties(_model_base.Model):
 
     uuid: Optional[str] = rest_field(visibility=["read"])
     """Globally unique, immutable, non-reusable id."""
-    target_address: str = rest_field(name="targetAddress")
+    target_address: str = rest_field(name="targetAddress", visibility=["read", "create", "update", "delete", "query"])
     """The local valid URI specifying the network address/DNS name of a southbound device. The scheme
      part of the targetAddress URI specifies the type of the device. The additionalConfiguration
      field holds further connector type specific configuration. Required."""
-    endpoint_profile_type: str = rest_field(name="endpointProfileType")
+    endpoint_profile_type: str = rest_field(
+        name="endpointProfileType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the configuration for the connector type that is being used with the endpoint profile.
      Required."""
-    authentication: Optional["_models.Authentication"] = rest_field()
+    authentication: Optional["_models.Authentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the client authentication mechanism to the server."""
-    additional_configuration: Optional[str] = rest_field(name="additionalConfiguration")
+    additional_configuration: Optional[str] = rest_field(
+        name="additionalConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connectivity type specific further configuration (e.g. OPC UA,
      Modbus, ONVIF)."""
     discovered_asset_endpoint_profile_ref: Optional[str] = rest_field(
@@ -326,9 +336,11 @@ class AssetEndpointProfileUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.deviceregistry.models.AssetEndpointProfileUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.AssetEndpointProfileUpdateProperties"] = rest_field()
+    properties: Optional["_models.AssetEndpointProfileUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -367,15 +379,23 @@ class AssetEndpointProfileUpdateProperties(_model_base.Model):
     :vartype additional_configuration: str
     """
 
-    target_address: Optional[str] = rest_field(name="targetAddress")
+    target_address: Optional[str] = rest_field(
+        name="targetAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The local valid URI specifying the network address/DNS name of a southbound device. The scheme
      part of the targetAddress URI specifies the type of the device. The additionalConfiguration
      field holds further connector type specific configuration."""
-    endpoint_profile_type: Optional[str] = rest_field(name="endpointProfileType")
+    endpoint_profile_type: Optional[str] = rest_field(
+        name="endpointProfileType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the configuration for the connector type that is being used with the endpoint profile."""
-    authentication: Optional["_models.Authentication"] = rest_field()
+    authentication: Optional["_models.Authentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the client authentication mechanism to the server."""
-    additional_configuration: Optional[str] = rest_field(name="additionalConfiguration")
+    additional_configuration: Optional[str] = rest_field(
+        name="additionalConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connectivity type specific further configuration (e.g. OPC UA,
      Modbus, ONVIF)."""
 
@@ -469,13 +489,15 @@ class AssetProperties(_model_base.Model):
 
     uuid: Optional[str] = rest_field(visibility=["read"])
     """Globally unique, immutable, non-reusable id."""
-    enabled: Optional[bool] = rest_field()
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Enabled/Disabled status of the asset."""
     external_asset_id: Optional[str] = rest_field(name="externalAssetId", visibility=["read", "create"])
     """Asset id provided by the customer."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Human-readable display name."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable description of the asset."""
     asset_endpoint_profile_ref: str = rest_field(name="assetEndpointProfileRef", visibility=["read", "create"])
     """A reference to the asset endpoint profile (connection information) used by brokers to connect
@@ -483,39 +505,57 @@ class AssetProperties(_model_base.Model):
      name. Required."""
     version: Optional[int] = rest_field(visibility=["read"])
     """An integer that is incremented each time the resource is modified."""
-    manufacturer: Optional[str] = rest_field()
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Asset manufacturer name."""
-    manufacturer_uri: Optional[str] = rest_field(name="manufacturerUri")
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset manufacturer URI."""
-    model: Optional[str] = rest_field()
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Asset model name."""
-    product_code: Optional[str] = rest_field(name="productCode")
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset product code."""
-    hardware_revision: Optional[str] = rest_field(name="hardwareRevision")
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Revision number of the hardware."""
-    software_revision: Optional[str] = rest_field(name="softwareRevision")
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Revision number of the software."""
-    documentation_uri: Optional[str] = rest_field(name="documentationUri")
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to the documentation."""
-    serial_number: Optional[str] = rest_field(name="serialNumber")
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset serial number."""
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of key-value pairs that contain custom attributes set by the customer."""
     discovered_asset_refs: Optional[List[str]] = rest_field(name="discoveredAssetRefs", visibility=["read", "create"])
     """Reference to a list of discovered assets. Populated only if the asset has been created from
      discovery flow. Discovered asset names must be provided."""
-    default_datasets_configuration: Optional[str] = rest_field(name="defaultDatasetsConfiguration")
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific default configuration for all datasets. Each
      dataset can have its own configuration that overrides the default settings here."""
-    default_events_configuration: Optional[str] = rest_field(name="defaultEventsConfiguration")
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific default configuration for all events. Each
      event can have its own configuration that overrides the default settings here."""
-    default_topic: Optional["_models.Topic"] = rest_field(name="defaultTopic")
+    default_topic: Optional["_models.Topic"] = rest_field(
+        name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.Dataset"]] = rest_field()
+    datasets: Optional[List["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of datasets that are part of the asset. Each dataset describes the data points that make
      up the set."""
-    events: Optional[List["_models.Event"]] = rest_field()
+    events: Optional[List["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of events that are part of the asset. Each event can have per-event configuration."""
     status: Optional["_models.AssetStatus"] = rest_field(visibility=["read"])
     """Read only object to reflect changes that have occurred on the Edge. Similar to Kubernetes
@@ -666,9 +706,11 @@ class AssetUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.deviceregistry.models.AssetUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.AssetUpdateProperties"] = rest_field()
+    properties: Optional["_models.AssetUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -735,42 +777,62 @@ class AssetUpdateProperties(_model_base.Model):
     :vartype events: list[~azure.mgmt.deviceregistry.models.Event]
     """
 
-    enabled: Optional[bool] = rest_field()
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Enabled/Disabled status of the asset."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Human-readable display name."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable description of the asset."""
-    manufacturer: Optional[str] = rest_field()
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Asset manufacturer name."""
-    manufacturer_uri: Optional[str] = rest_field(name="manufacturerUri")
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset manufacturer URI."""
-    model: Optional[str] = rest_field()
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Asset model name."""
-    product_code: Optional[str] = rest_field(name="productCode")
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset product code."""
-    hardware_revision: Optional[str] = rest_field(name="hardwareRevision")
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Revision number of the hardware."""
-    software_revision: Optional[str] = rest_field(name="softwareRevision")
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Revision number of the software."""
-    documentation_uri: Optional[str] = rest_field(name="documentationUri")
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to the documentation."""
-    serial_number: Optional[str] = rest_field(name="serialNumber")
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset serial number."""
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of key-value pairs that contain custom attributes set by the customer."""
-    default_datasets_configuration: Optional[str] = rest_field(name="defaultDatasetsConfiguration")
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific default configuration for all datasets. Each
      dataset can have its own configuration that overrides the default settings here."""
-    default_events_configuration: Optional[str] = rest_field(name="defaultEventsConfiguration")
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific default configuration for all events. Each
      event can have its own configuration that overrides the default settings here."""
-    default_topic: Optional["_models.Topic"] = rest_field(name="defaultTopic")
+    default_topic: Optional["_models.Topic"] = rest_field(
+        name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.Dataset"]] = rest_field()
+    datasets: Optional[List["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of datasets that are part of the asset. Each dataset describes the data points that make
      up the set."""
-    events: Optional[List["_models.Event"]] = rest_field()
+    events: Optional[List["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of events that are part of the asset. Each event can have per-event configuration."""
 
     @overload
@@ -823,15 +885,19 @@ class Authentication(_model_base.Model):
     :vartype x509_credentials: ~azure.mgmt.deviceregistry.models.X509Credentials
     """
 
-    method: Union[str, "_models.AuthenticationMethod"] = rest_field()
+    method: Union[str, "_models.AuthenticationMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the method to authenticate the user of the client at the server. Required. Known values
      are: \"Anonymous\", \"Certificate\", and \"UsernamePassword\"."""
     username_password_credentials: Optional["_models.UsernamePasswordCredentials"] = rest_field(
-        name="usernamePasswordCredentials"
+        name="usernamePasswordCredentials", visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the username and password references when UsernamePassword user authentication mode is
      selected."""
-    x509_credentials: Optional["_models.X509Credentials"] = rest_field(name="x509Credentials")
+    x509_credentials: Optional["_models.X509Credentials"] = rest_field(
+        name="x509Credentials", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the certificate reference when Certificate user authentication mode is selected."""
 
     @overload
@@ -861,7 +927,7 @@ class ProxyResource(Resource):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -881,7 +947,7 @@ class BillingContainer(ProxyResource):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -897,7 +963,9 @@ class BillingContainer(ProxyResource):
     :vartype etag: str
     """
 
-    properties: Optional["_models.BillingContainerProperties"] = rest_field()
+    properties: Optional["_models.BillingContainerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     etag: Optional[str] = rest_field(visibility=["read"])
     """Resource ETag."""
@@ -952,12 +1020,14 @@ class DataPointBase(_model_base.Model):
     :vartype data_point_configuration: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the data point. Required."""
-    data_source: str = rest_field(name="dataSource")
+    data_source: str = rest_field(name="dataSource", visibility=["read", "create", "update", "delete", "query"])
     """The address of the source of the data in the asset (e.g. URL) so that a client can access the
      data source on the asset. Required."""
-    data_point_configuration: Optional[str] = rest_field(name="dataPointConfiguration")
+    data_point_configuration: Optional[str] = rest_field(
+        name="dataPointConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific configuration for the data point. For OPC UA,
      this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
 
@@ -1001,7 +1071,7 @@ class DataPoint(DataPointBase):
     """
 
     observability_mode: Optional[Union[str, "_models.DataPointObservabilityMode"]] = rest_field(
-        name="observabilityMode"
+        name="observabilityMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """An indication of how the data point should be mapped to OpenTelemetry. Known values are:
      \"None\", \"Counter\", \"Gauge\", \"Histogram\", and \"Log\"."""
@@ -1043,14 +1113,18 @@ class Dataset(_model_base.Model):
     :vartype data_points: list[~azure.mgmt.deviceregistry.models.DataPoint]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the dataset. Required."""
-    dataset_configuration: Optional[str] = rest_field(name="datasetConfiguration")
+    dataset_configuration: Optional[str] = rest_field(
+        name="datasetConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific JSON string that describes configuration for
      the specific dataset."""
-    topic: Optional["_models.Topic"] = rest_field()
+    topic: Optional["_models.Topic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Object that describes the topic information for the specific dataset."""
-    data_points: Optional[List["_models.DataPoint"]] = rest_field(name="dataPoints")
+    data_points: Optional[List["_models.DataPoint"]] = rest_field(
+        name="dataPoints", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of data points that are part of the dataset. Each data point can have per-data point
      configuration."""
 
@@ -1062,705 +1136,6 @@ class Dataset(_model_base.Model):
         dataset_configuration: Optional[str] = None,
         topic: Optional["_models.Topic"] = None,
         data_points: Optional[List["_models.DataPoint"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAsset(TrackedResource):
-    """Discovered Asset definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.DiscoveredAssetProperties
-    :ivar extended_location: The extended location. Required.
-    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.DiscoveredAssetProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
-    """The extended location. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        extended_location: "_models.ExtendedLocation",
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.DiscoveredAssetProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetEndpointProfile(TrackedResource):
-    """Discovered Asset Endpoint Profile definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.DiscoveredAssetEndpointProfileProperties
-    :ivar extended_location: The extended location. Required.
-    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.DiscoveredAssetEndpointProfileProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
-    """The extended location. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        extended_location: "_models.ExtendedLocation",
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.DiscoveredAssetEndpointProfileProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetEndpointProfileProperties(_model_base.Model):
-    """Defines the Discovered Asset Endpoint Profile properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar target_address: The local valid URI specifying the network address/DNS name of a
-     southbound device. The scheme part of the targetAddress URI specifies the type of the device.
-     The additionalConfiguration field holds further connector type specific configuration.
-     Required.
-    :vartype target_address: str
-    :ivar additional_configuration: Stringified JSON that contains connectivity type specific
-     further configuration (e.g. OPC UA, Modbus, ONVIF).
-    :vartype additional_configuration: str
-    :ivar supported_authentication_methods: List of supported authentication methods supported by
-     the target server.
-    :vartype supported_authentication_methods: list[str or
-     ~azure.mgmt.deviceregistry.models.AuthenticationMethod]
-    :ivar endpoint_profile_type: Defines the configuration for the connector type that is being
-     used with the endpoint profile. Required.
-    :vartype endpoint_profile_type: str
-    :ivar discovery_id: Identifier used to detect changes in the asset endpoint profile. Required.
-    :vartype discovery_id: str
-    :ivar version: An integer that is incremented each time the resource is modified. Required.
-    :vartype version: int
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Accepted", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
-    """
-
-    target_address: str = rest_field(name="targetAddress")
-    """The local valid URI specifying the network address/DNS name of a southbound device. The scheme
-     part of the targetAddress URI specifies the type of the device. The additionalConfiguration
-     field holds further connector type specific configuration. Required."""
-    additional_configuration: Optional[str] = rest_field(name="additionalConfiguration")
-    """Stringified JSON that contains connectivity type specific further configuration (e.g. OPC UA,
-     Modbus, ONVIF)."""
-    supported_authentication_methods: Optional[List[Union[str, "_models.AuthenticationMethod"]]] = rest_field(
-        name="supportedAuthenticationMethods"
-    )
-    """List of supported authentication methods supported by the target server."""
-    endpoint_profile_type: str = rest_field(name="endpointProfileType")
-    """Defines the configuration for the connector type that is being used with the endpoint profile.
-     Required."""
-    discovery_id: str = rest_field(name="discoveryId")
-    """Identifier used to detect changes in the asset endpoint profile. Required."""
-    version: int = rest_field()
-    """An integer that is incremented each time the resource is modified. Required."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Accepted\", and \"Deleting\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_address: str,
-        endpoint_profile_type: str,
-        discovery_id: str,
-        version: int,
-        additional_configuration: Optional[str] = None,
-        supported_authentication_methods: Optional[List[Union[str, "_models.AuthenticationMethod"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetEndpointProfileUpdate(_model_base.Model):
-    """The type used for update operations of the DiscoveredAssetEndpointProfile.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties:
-     ~azure.mgmt.deviceregistry.models.DiscoveredAssetEndpointProfileUpdateProperties
-    """
-
-    tags: Optional[Dict[str, str]] = rest_field()
-    """Resource tags."""
-    properties: Optional["_models.DiscoveredAssetEndpointProfileUpdateProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.DiscoveredAssetEndpointProfileUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetEndpointProfileUpdateProperties(_model_base.Model):  # pylint: disable=name-too-long
-    """The updatable properties of the DiscoveredAssetEndpointProfile.
-
-    :ivar target_address: The local valid URI specifying the network address/DNS name of a
-     southbound device. The scheme part of the targetAddress URI specifies the type of the device.
-     The additionalConfiguration field holds further connector type specific configuration.
-    :vartype target_address: str
-    :ivar additional_configuration: Stringified JSON that contains connectivity type specific
-     further configuration (e.g. OPC UA, Modbus, ONVIF).
-    :vartype additional_configuration: str
-    :ivar supported_authentication_methods: List of supported authentication methods supported by
-     the target server.
-    :vartype supported_authentication_methods: list[str or
-     ~azure.mgmt.deviceregistry.models.AuthenticationMethod]
-    :ivar endpoint_profile_type: Defines the configuration for the connector type that is being
-     used with the endpoint profile.
-    :vartype endpoint_profile_type: str
-    :ivar discovery_id: Identifier used to detect changes in the asset endpoint profile.
-    :vartype discovery_id: str
-    :ivar version: An integer that is incremented each time the resource is modified.
-    :vartype version: int
-    """
-
-    target_address: Optional[str] = rest_field(name="targetAddress")
-    """The local valid URI specifying the network address/DNS name of a southbound device. The scheme
-     part of the targetAddress URI specifies the type of the device. The additionalConfiguration
-     field holds further connector type specific configuration."""
-    additional_configuration: Optional[str] = rest_field(name="additionalConfiguration")
-    """Stringified JSON that contains connectivity type specific further configuration (e.g. OPC UA,
-     Modbus, ONVIF)."""
-    supported_authentication_methods: Optional[List[Union[str, "_models.AuthenticationMethod"]]] = rest_field(
-        name="supportedAuthenticationMethods"
-    )
-    """List of supported authentication methods supported by the target server."""
-    endpoint_profile_type: Optional[str] = rest_field(name="endpointProfileType")
-    """Defines the configuration for the connector type that is being used with the endpoint profile."""
-    discovery_id: Optional[str] = rest_field(name="discoveryId")
-    """Identifier used to detect changes in the asset endpoint profile."""
-    version: Optional[int] = rest_field()
-    """An integer that is incremented each time the resource is modified."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_address: Optional[str] = None,
-        additional_configuration: Optional[str] = None,
-        supported_authentication_methods: Optional[List[Union[str, "_models.AuthenticationMethod"]]] = None,
-        endpoint_profile_type: Optional[str] = None,
-        discovery_id: Optional[str] = None,
-        version: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetProperties(_model_base.Model):
-    """Defines the discovered asset properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar asset_endpoint_profile_ref: A reference to the asset endpoint profile (connection
-     information) used by brokers to connect to an endpoint that provides data points for this
-     asset. Must provide asset endpoint profile name. Required.
-    :vartype asset_endpoint_profile_ref: str
-    :ivar discovery_id: Identifier used to detect changes in the asset. Required.
-    :vartype discovery_id: str
-    :ivar version: An integer that is incremented each time the resource is modified. Required.
-    :vartype version: int
-    :ivar manufacturer: Asset manufacturer name.
-    :vartype manufacturer: str
-    :ivar manufacturer_uri: Asset manufacturer URI.
-    :vartype manufacturer_uri: str
-    :ivar model: Asset model name.
-    :vartype model: str
-    :ivar product_code: Asset product code.
-    :vartype product_code: str
-    :ivar hardware_revision: Revision number of the hardware.
-    :vartype hardware_revision: str
-    :ivar software_revision: Revision number of the software.
-    :vartype software_revision: str
-    :ivar documentation_uri: Reference to the documentation.
-    :vartype documentation_uri: str
-    :ivar serial_number: Asset serial number.
-    :vartype serial_number: str
-    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
-     configuration for all datasets. Each dataset can have its own configuration that overrides the
-     default settings here.
-    :vartype default_datasets_configuration: str
-    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
-     configuration for all events. Each event can have its own configuration that overrides the
-     default settings here.
-    :vartype default_events_configuration: str
-    :ivar default_topic: Object that describes the default topic information for the asset.
-    :vartype default_topic: ~azure.mgmt.deviceregistry.models.Topic
-    :ivar datasets: Array of datasets that are part of the asset. Each dataset spec describes the
-     data points that make up the set.
-    :vartype datasets: list[~azure.mgmt.deviceregistry.models.DiscoveredDataset]
-    :ivar events: Array of events that are part of the asset. Each event can have per-event
-     configuration.
-    :vartype events: list[~azure.mgmt.deviceregistry.models.DiscoveredEvent]
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Accepted", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
-    """
-
-    asset_endpoint_profile_ref: str = rest_field(name="assetEndpointProfileRef", visibility=["read", "create"])
-    """A reference to the asset endpoint profile (connection information) used by brokers to connect
-     to an endpoint that provides data points for this asset. Must provide asset endpoint profile
-     name. Required."""
-    discovery_id: str = rest_field(name="discoveryId")
-    """Identifier used to detect changes in the asset. Required."""
-    version: int = rest_field()
-    """An integer that is incremented each time the resource is modified. Required."""
-    manufacturer: Optional[str] = rest_field()
-    """Asset manufacturer name."""
-    manufacturer_uri: Optional[str] = rest_field(name="manufacturerUri")
-    """Asset manufacturer URI."""
-    model: Optional[str] = rest_field()
-    """Asset model name."""
-    product_code: Optional[str] = rest_field(name="productCode")
-    """Asset product code."""
-    hardware_revision: Optional[str] = rest_field(name="hardwareRevision")
-    """Revision number of the hardware."""
-    software_revision: Optional[str] = rest_field(name="softwareRevision")
-    """Revision number of the software."""
-    documentation_uri: Optional[str] = rest_field(name="documentationUri")
-    """Reference to the documentation."""
-    serial_number: Optional[str] = rest_field(name="serialNumber")
-    """Asset serial number."""
-    default_datasets_configuration: Optional[str] = rest_field(name="defaultDatasetsConfiguration")
-    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
-     dataset can have its own configuration that overrides the default settings here."""
-    default_events_configuration: Optional[str] = rest_field(name="defaultEventsConfiguration")
-    """Stringified JSON that contains connector-specific default configuration for all events. Each
-     event can have its own configuration that overrides the default settings here."""
-    default_topic: Optional["_models.Topic"] = rest_field(name="defaultTopic")
-    """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.DiscoveredDataset"]] = rest_field()
-    """Array of datasets that are part of the asset. Each dataset spec describes the data points that
-     make up the set."""
-    events: Optional[List["_models.DiscoveredEvent"]] = rest_field()
-    """Array of events that are part of the asset. Each event can have per-event configuration."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Accepted\", and \"Deleting\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        asset_endpoint_profile_ref: str,
-        discovery_id: str,
-        version: int,
-        manufacturer: Optional[str] = None,
-        manufacturer_uri: Optional[str] = None,
-        model: Optional[str] = None,
-        product_code: Optional[str] = None,
-        hardware_revision: Optional[str] = None,
-        software_revision: Optional[str] = None,
-        documentation_uri: Optional[str] = None,
-        serial_number: Optional[str] = None,
-        default_datasets_configuration: Optional[str] = None,
-        default_events_configuration: Optional[str] = None,
-        default_topic: Optional["_models.Topic"] = None,
-        datasets: Optional[List["_models.DiscoveredDataset"]] = None,
-        events: Optional[List["_models.DiscoveredEvent"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetUpdate(_model_base.Model):
-    """The type used for update operations of the DiscoveredAsset.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.DiscoveredAssetUpdateProperties
-    """
-
-    tags: Optional[Dict[str, str]] = rest_field()
-    """Resource tags."""
-    properties: Optional["_models.DiscoveredAssetUpdateProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.DiscoveredAssetUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredAssetUpdateProperties(_model_base.Model):
-    """The updatable properties of the DiscoveredAsset.
-
-    :ivar discovery_id: Identifier used to detect changes in the asset.
-    :vartype discovery_id: str
-    :ivar version: An integer that is incremented each time the resource is modified.
-    :vartype version: int
-    :ivar manufacturer: Asset manufacturer name.
-    :vartype manufacturer: str
-    :ivar manufacturer_uri: Asset manufacturer URI.
-    :vartype manufacturer_uri: str
-    :ivar model: Asset model name.
-    :vartype model: str
-    :ivar product_code: Asset product code.
-    :vartype product_code: str
-    :ivar hardware_revision: Revision number of the hardware.
-    :vartype hardware_revision: str
-    :ivar software_revision: Revision number of the software.
-    :vartype software_revision: str
-    :ivar documentation_uri: Reference to the documentation.
-    :vartype documentation_uri: str
-    :ivar serial_number: Asset serial number.
-    :vartype serial_number: str
-    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
-     configuration for all datasets. Each dataset can have its own configuration that overrides the
-     default settings here.
-    :vartype default_datasets_configuration: str
-    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
-     configuration for all events. Each event can have its own configuration that overrides the
-     default settings here.
-    :vartype default_events_configuration: str
-    :ivar default_topic: Object that describes the default topic information for the asset.
-    :vartype default_topic: ~azure.mgmt.deviceregistry.models.Topic
-    :ivar datasets: Array of datasets that are part of the asset. Each dataset spec describes the
-     data points that make up the set.
-    :vartype datasets: list[~azure.mgmt.deviceregistry.models.DiscoveredDataset]
-    :ivar events: Array of events that are part of the asset. Each event can have per-event
-     configuration.
-    :vartype events: list[~azure.mgmt.deviceregistry.models.DiscoveredEvent]
-    """
-
-    discovery_id: Optional[str] = rest_field(name="discoveryId")
-    """Identifier used to detect changes in the asset."""
-    version: Optional[int] = rest_field()
-    """An integer that is incremented each time the resource is modified."""
-    manufacturer: Optional[str] = rest_field()
-    """Asset manufacturer name."""
-    manufacturer_uri: Optional[str] = rest_field(name="manufacturerUri")
-    """Asset manufacturer URI."""
-    model: Optional[str] = rest_field()
-    """Asset model name."""
-    product_code: Optional[str] = rest_field(name="productCode")
-    """Asset product code."""
-    hardware_revision: Optional[str] = rest_field(name="hardwareRevision")
-    """Revision number of the hardware."""
-    software_revision: Optional[str] = rest_field(name="softwareRevision")
-    """Revision number of the software."""
-    documentation_uri: Optional[str] = rest_field(name="documentationUri")
-    """Reference to the documentation."""
-    serial_number: Optional[str] = rest_field(name="serialNumber")
-    """Asset serial number."""
-    default_datasets_configuration: Optional[str] = rest_field(name="defaultDatasetsConfiguration")
-    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
-     dataset can have its own configuration that overrides the default settings here."""
-    default_events_configuration: Optional[str] = rest_field(name="defaultEventsConfiguration")
-    """Stringified JSON that contains connector-specific default configuration for all events. Each
-     event can have its own configuration that overrides the default settings here."""
-    default_topic: Optional["_models.Topic"] = rest_field(name="defaultTopic")
-    """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.DiscoveredDataset"]] = rest_field()
-    """Array of datasets that are part of the asset. Each dataset spec describes the data points that
-     make up the set."""
-    events: Optional[List["_models.DiscoveredEvent"]] = rest_field()
-    """Array of events that are part of the asset. Each event can have per-event configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        discovery_id: Optional[str] = None,
-        version: Optional[int] = None,
-        manufacturer: Optional[str] = None,
-        manufacturer_uri: Optional[str] = None,
-        model: Optional[str] = None,
-        product_code: Optional[str] = None,
-        hardware_revision: Optional[str] = None,
-        software_revision: Optional[str] = None,
-        documentation_uri: Optional[str] = None,
-        serial_number: Optional[str] = None,
-        default_datasets_configuration: Optional[str] = None,
-        default_events_configuration: Optional[str] = None,
-        default_topic: Optional["_models.Topic"] = None,
-        datasets: Optional[List["_models.DiscoveredDataset"]] = None,
-        events: Optional[List["_models.DiscoveredEvent"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredDataPoint(_model_base.Model):
-    """Defines the data point properties.
-
-
-    :ivar name: The name of the data point. Required.
-    :vartype name: str
-    :ivar data_source: The address of the source of the data in the asset (e.g. URL) so that a
-     client can access the data source on the asset. Required.
-    :vartype data_source: str
-    :ivar data_point_configuration: Stringified JSON that contains connector-specific configuration
-     for the data point. For OPC UA, this could include configuration like, publishingInterval,
-     samplingInterval, and queueSize.
-    :vartype data_point_configuration: str
-    :ivar last_updated_on: UTC timestamp indicating when the data point was added or modified.
-    :vartype last_updated_on: ~datetime.datetime
-    """
-
-    name: str = rest_field()
-    """The name of the data point. Required."""
-    data_source: str = rest_field(name="dataSource")
-    """The address of the source of the data in the asset (e.g. URL) so that a client can access the
-     data source on the asset. Required."""
-    data_point_configuration: Optional[str] = rest_field(name="dataPointConfiguration")
-    """Stringified JSON that contains connector-specific configuration for the data point. For OPC UA,
-     this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
-    last_updated_on: Optional[datetime.datetime] = rest_field(name="lastUpdatedOn", format="rfc3339")
-    """UTC timestamp indicating when the data point was added or modified."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        data_source: str,
-        data_point_configuration: Optional[str] = None,
-        last_updated_on: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredDataset(_model_base.Model):
-    """Defines the dataset properties.
-
-
-    :ivar name: Name of the dataset. Required.
-    :vartype name: str
-    :ivar dataset_configuration: Stringified JSON that contains connector-specific properties that
-     describes configuration for the specific dataset.
-    :vartype dataset_configuration: str
-    :ivar topic: Object that describes the topic information for the specific dataset.
-    :vartype topic: ~azure.mgmt.deviceregistry.models.Topic
-    :ivar data_points: Array of data points that are part of the dataset. Each data point can have
-     per-data point configuration.
-    :vartype data_points: list[~azure.mgmt.deviceregistry.models.DiscoveredDataPoint]
-    """
-
-    name: str = rest_field()
-    """Name of the dataset. Required."""
-    dataset_configuration: Optional[str] = rest_field(name="datasetConfiguration")
-    """Stringified JSON that contains connector-specific properties that describes configuration for
-     the specific dataset."""
-    topic: Optional["_models.Topic"] = rest_field()
-    """Object that describes the topic information for the specific dataset."""
-    data_points: Optional[List["_models.DiscoveredDataPoint"]] = rest_field(name="dataPoints")
-    """Array of data points that are part of the dataset. Each data point can have per-data point
-     configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        dataset_configuration: Optional[str] = None,
-        topic: Optional["_models.Topic"] = None,
-        data_points: Optional[List["_models.DiscoveredDataPoint"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DiscoveredEvent(_model_base.Model):
-    """Defines the event properties.
-
-
-    :ivar name: The name of the event. Required.
-    :vartype name: str
-    :ivar event_notifier: The address of the notifier of the event in the asset (e.g. URL) so that
-     a client can access the event on the asset. Required.
-    :vartype event_notifier: str
-    :ivar event_configuration: Stringified JSON that contains connector-specific configuration for
-     the event. For OPC UA, this could include configuration like, publishingInterval,
-     samplingInterval, and queueSize.
-    :vartype event_configuration: str
-    :ivar topic: Object that describes the topic information for the specific event.
-    :vartype topic: ~azure.mgmt.deviceregistry.models.Topic
-    :ivar last_updated_on: UTC timestamp indicating when the event was added or modified.
-    :vartype last_updated_on: ~datetime.datetime
-    """
-
-    name: str = rest_field()
-    """The name of the event. Required."""
-    event_notifier: str = rest_field(name="eventNotifier")
-    """The address of the notifier of the event in the asset (e.g. URL) so that a client can access
-     the event on the asset. Required."""
-    event_configuration: Optional[str] = rest_field(name="eventConfiguration")
-    """Stringified JSON that contains connector-specific configuration for the event. For OPC UA, this
-     could include configuration like, publishingInterval, samplingInterval, and queueSize."""
-    topic: Optional["_models.Topic"] = rest_field()
-    """Object that describes the topic information for the specific event."""
-    last_updated_on: Optional[datetime.datetime] = rest_field(name="lastUpdatedOn", format="rfc3339")
-    """UTC timestamp indicating when the event was added or modified."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        event_notifier: str,
-        event_configuration: Optional[str] = None,
-        topic: Optional["_models.Topic"] = None,
-        last_updated_on: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1830,7 +1205,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.deviceregistry.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -1868,15 +1243,17 @@ class EventBase(_model_base.Model):
     :vartype topic: ~azure.mgmt.deviceregistry.models.Topic
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the event. Required."""
-    event_notifier: str = rest_field(name="eventNotifier")
+    event_notifier: str = rest_field(name="eventNotifier", visibility=["read", "create", "update", "delete", "query"])
     """The address of the notifier of the event in the asset (e.g. URL) so that a client can access
      the event on the asset. Required."""
-    event_configuration: Optional[str] = rest_field(name="eventConfiguration")
+    event_configuration: Optional[str] = rest_field(
+        name="eventConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Stringified JSON that contains connector-specific configuration for the event. For OPC UA, this
      could include configuration like, publishingInterval, samplingInterval, and queueSize."""
-    topic: Optional["_models.Topic"] = rest_field()
+    topic: Optional["_models.Topic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Object that describes the topic information for the specific event."""
 
     @overload
@@ -1920,7 +1297,9 @@ class Event(EventBase):
     :vartype observability_mode: str or ~azure.mgmt.deviceregistry.models.EventObservabilityMode
     """
 
-    observability_mode: Optional[Union[str, "_models.EventObservabilityMode"]] = rest_field(name="observabilityMode")
+    observability_mode: Optional[Union[str, "_models.EventObservabilityMode"]] = rest_field(
+        name="observabilityMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An indication of how the event should be mapped to OpenTelemetry. Known values are: \"None\"
      and \"Log\"."""
 
@@ -1956,9 +1335,9 @@ class ExtendedLocation(_model_base.Model):
     :vartype name: str
     """
 
-    type: str = rest_field()
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The extended location type. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The extended location name. Required."""
 
     @overload
@@ -2031,13 +1410,15 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -2045,7 +1426,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -2095,6 +1476,8 @@ class OperationDisplay(_model_base.Model):
 class OperationStatusResult(_model_base.Model):
     """The current status of an async operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
@@ -2112,24 +1495,37 @@ class OperationStatusResult(_model_base.Model):
     :vartype operations: list[~azure.mgmt.deviceregistry.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.deviceregistry.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Fully qualified ID for the async operation."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the async operation."""
-    status: str = rest_field()
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Operation status. Required."""
-    percent_complete: Optional[float] = rest_field(name="percentComplete")
+    percent_complete: Optional[float] = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Percent of the operation that is complete."""
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the operation."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The end time of the operation."""
-    operations: Optional[List["_models.OperationStatusResult"]] = rest_field()
+    operations: Optional[List["_models.OperationStatusResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The operations list."""
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
 
     @overload
     def __init__(
@@ -2143,433 +1539,6 @@ class OperationStatusResult(_model_base.Model):
         end_time: Optional[datetime.datetime] = None,
         operations: Optional[List["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Schema(ProxyResource):
-    """Schema definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaProperties
-    """
-
-    properties: Optional["_models.SchemaProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.SchemaProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaProperties(_model_base.Model):
-    """Defines the schema properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar uuid: Globally unique, immutable, non-reusable id.
-    :vartype uuid: str
-    :ivar display_name: Human-readable display name.
-    :vartype display_name: str
-    :ivar description: Human-readable description of the schema.
-    :vartype description: str
-    :ivar format: Format of the schema. Required. Known values are: "JsonSchema/draft-07" and
-     "Delta/1.0".
-    :vartype format: str or ~azure.mgmt.deviceregistry.models.Format
-    :ivar schema_type: Type of the schema. Required. "MessageSchema"
-    :vartype schema_type: str or ~azure.mgmt.deviceregistry.models.SchemaType
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Accepted", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
-    :ivar tags: Schema tags.
-    :vartype tags: dict[str, str]
-    """
-
-    uuid: Optional[str] = rest_field(visibility=["read"])
-    """Globally unique, immutable, non-reusable id."""
-    display_name: Optional[str] = rest_field(name="displayName")
-    """Human-readable display name."""
-    description: Optional[str] = rest_field()
-    """Human-readable description of the schema."""
-    format: Union[str, "_models.Format"] = rest_field(visibility=["read", "create"])
-    """Format of the schema. Required. Known values are: \"JsonSchema/draft-07\" and \"Delta/1.0\"."""
-    schema_type: Union[str, "_models.SchemaType"] = rest_field(name="schemaType", visibility=["read", "create"])
-    """Type of the schema. Required. \"MessageSchema\""""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Accepted\", and \"Deleting\"."""
-    tags: Optional[Dict[str, str]] = rest_field()
-    """Schema tags."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        format: Union[str, "_models.Format"],
-        schema_type: Union[str, "_models.SchemaType"],
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaRegistry(TrackedResource):
-    """Schema registry definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaRegistryProperties
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
-    """
-
-    properties: Optional["_models.SchemaRegistryProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field()
-    """The managed service identities assigned to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.SchemaRegistryProperties"] = None,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaRegistryProperties(_model_base.Model):
-    """Defines the schema registry properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar uuid: Globally unique, immutable, non-reusable id.
-    :vartype uuid: str
-    :ivar namespace: Schema registry namespace. Uniquely identifies a schema registry within a
-     tenant. Required.
-    :vartype namespace: str
-    :ivar display_name: Human-readable display name.
-    :vartype display_name: str
-    :ivar description: Human-readable description of the schema registry.
-    :vartype description: str
-    :ivar storage_account_container_url: The Storage Account's Container URL where schemas will be
-     stored. Required.
-    :vartype storage_account_container_url: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Accepted", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
-    """
-
-    uuid: Optional[str] = rest_field(visibility=["read"])
-    """Globally unique, immutable, non-reusable id."""
-    namespace: str = rest_field(visibility=["read", "create"])
-    """Schema registry namespace. Uniquely identifies a schema registry within a tenant. Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
-    """Human-readable display name."""
-    description: Optional[str] = rest_field()
-    """Human-readable description of the schema registry."""
-    storage_account_container_url: str = rest_field(name="storageAccountContainerUrl", visibility=["read", "create"])
-    """The Storage Account's Container URL where schemas will be stored. Required."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Accepted\", and \"Deleting\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        namespace: str,
-        storage_account_container_url: str,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaRegistryUpdate(_model_base.Model):
-    """The type used for update operations of the SchemaRegistry.
-
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaRegistryUpdateProperties
-    """
-
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field()
-    """The managed service identities assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field()
-    """Resource tags."""
-    properties: Optional["_models.SchemaRegistryUpdateProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.SchemaRegistryUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaRegistryUpdateProperties(_model_base.Model):
-    """The updatable properties of the SchemaRegistry.
-
-    :ivar display_name: Human-readable display name.
-    :vartype display_name: str
-    :ivar description: Human-readable description of the schema registry.
-    :vartype description: str
-    """
-
-    display_name: Optional[str] = rest_field(name="displayName")
-    """Human-readable display name."""
-    description: Optional[str] = rest_field()
-    """Human-readable description of the schema registry."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaVersion(ProxyResource):
-    """Schema version's definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaVersionProperties
-    """
-
-    properties: Optional["_models.SchemaVersionProperties"] = rest_field()
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.SchemaVersionProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchemaVersionProperties(_model_base.Model):
-    """Defines the schema version properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar uuid: Globally unique, immutable, non-reusable id.
-    :vartype uuid: str
-    :ivar description: Human-readable description of the schema.
-    :vartype description: str
-    :ivar schema_content: Schema content. Required.
-    :vartype schema_content: str
-    :ivar hash: Hash of the schema content.
-    :vartype hash: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Accepted", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
-    """
-
-    uuid: Optional[str] = rest_field(visibility=["read"])
-    """Globally unique, immutable, non-reusable id."""
-    description: Optional[str] = rest_field()
-    """Human-readable description of the schema."""
-    schema_content: str = rest_field(name="schemaContent", visibility=["read", "create"])
-    """Schema content. Required."""
-    hash: Optional[str] = rest_field(visibility=["read"])
-    """Hash of the schema content."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Accepted\", and \"Deleting\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        schema_content: str,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SystemAssignedServiceIdentity(_model_base.Model):
-    """Managed service identity (either system assigned, or none).
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None" and "SystemAssigned".
-    :vartype type: str or ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentityType
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Union[str, "_models.SystemAssignedServiceIdentityType"] = rest_field()
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
-     and \"SystemAssigned\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.SystemAssignedServiceIdentityType"],
     ) -> None: ...
 
     @overload
@@ -2602,19 +1571,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -2651,9 +1630,11 @@ class Topic(_model_base.Model):
     :vartype retain: str or ~azure.mgmt.deviceregistry.models.TopicRetainType
     """
 
-    path: str = rest_field()
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The topic path for messages published to an MQTT broker. Required."""
-    retain: Optional[Union[str, "_models.TopicRetainType"]] = rest_field()
+    retain: Optional[Union[str, "_models.TopicRetainType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """When set to 'Keep', messages published to an MQTT broker will have the retain flag set.
      Default: 'Never'. Known values are: \"Keep\" and \"Never\"."""
 
@@ -2686,9 +1667,13 @@ class UsernamePasswordCredentials(_model_base.Model):
     :vartype password_secret_name: str
     """
 
-    username_secret_name: str = rest_field(name="usernameSecretName")
+    username_secret_name: str = rest_field(
+        name="usernameSecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the secret containing the username. Required."""
-    password_secret_name: str = rest_field(name="passwordSecretName")
+    password_secret_name: str = rest_field(
+        name="passwordSecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the secret containing the password. Required."""
 
     @overload
@@ -2719,7 +1704,9 @@ class X509Credentials(_model_base.Model):
     :vartype certificate_secret_name: str
     """
 
-    certificate_secret_name: str = rest_field(name="certificateSecretName")
+    certificate_secret_name: str = rest_field(
+        name="certificateSecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the secret containing the certificate and private key (e.g. stored as .der/.pem or
      .der/.pfx). Required."""
 

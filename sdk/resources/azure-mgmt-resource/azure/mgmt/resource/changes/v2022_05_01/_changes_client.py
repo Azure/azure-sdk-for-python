@@ -21,11 +21,10 @@ from ._configuration import ChangesClientConfiguration
 from .operations import ChangesOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ChangesClient:  # pylint: disable=client-accepts-api-version-keyword
+class ChangesClient:
     """The Resource Changes Client.
 
     :ivar changes: ChangesOperations operations

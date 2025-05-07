@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -64,12 +64,12 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class AgentPool(Resource):
@@ -163,7 +163,7 @@ class AgentPool(Resource):
         self.tier = tier
         self.os = os
         self.virtual_network_subnet_resource_id = virtual_network_subnet_resource_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class AgentPoolListResult(_serialization.Model):
@@ -664,8 +664,7 @@ class CustomRegistryCredentials(_serialization.Model):
      user-assigned identity
      this value is the Client ID. If a system-assigned identity, the value will be ``system``. In
      the case of a system-assigned identity, the Client ID will be determined by the runner. This
-     identity may be used to authenticate to key vault to retrieve credentials or it may be the
-     only
+     identity may be used to authenticate to key vault to retrieve credentials or it may be the only
      source of authentication used for accessing the registry.
     :vartype identity: str
     """
@@ -694,8 +693,7 @@ class CustomRegistryCredentials(_serialization.Model):
          user-assigned identity
          this value is the Client ID. If a system-assigned identity, the value will be ``system``. In
          the case of a system-assigned identity, the Client ID will be determined by the runner. This
-         identity may be used to authenticate to key vault to retrieve credentials or it may be the
-         only
+         identity may be used to authenticate to key vault to retrieve credentials or it may be the only
          source of authentication used for accessing the registry.
         :paramtype identity: str
         """
@@ -965,7 +963,7 @@ class TaskStepProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
-        self.base_image_dependencies = None
+        self.base_image_dependencies: Optional[List["_models.BaseImageDependency"]] = None
         self.context_path = context_path
         self.context_access_token = context_access_token
 
@@ -2187,10 +2185,10 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class Run(ProxyResource):
@@ -2401,9 +2399,9 @@ class Run(ProxyResource):
         self.agent_configuration = agent_configuration
         self.source_registry_auth = source_registry_auth
         self.custom_registries = custom_registries
-        self.run_error_message = None
+        self.run_error_message: Optional[str] = None
         self.update_trigger_token = update_trigger_token
-        self.log_artifact = None
+        self.log_artifact: Optional["_models.ImageDescriptor"] = None
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled
 
@@ -3226,8 +3224,8 @@ class Task(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
-        self.provisioning_state = None
-        self.creation_date = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.creation_date: Optional[datetime.datetime] = None
         self.status = status
         self.platform = platform
         self.agent_configuration = agent_configuration
@@ -3345,9 +3343,9 @@ class TaskRun(ProxyResource):
         super().__init__(**kwargs)
         self.identity = identity
         self.location = location
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.run_request = run_request
-        self.run_result = None
+        self.run_result: Optional["_models.Run"] = None
         self.force_update_tag = force_update_tag
 
 

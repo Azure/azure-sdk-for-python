@@ -1,5 +1,32 @@
 # Release History
 
+## 1.1.0b1 (2025-03-27)
+
+Updated the client library to use API Version 2025-05-01-preview. This adds all the capabilities that were introduced until this API version.
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
+### Features Added
+
+- This release adds models and enums for all the APIs supported by Azure Load Testing   
+- Support for AutoStop Criteria
+    - Use `auto_stop_criteria` property on the `Test` model to add autostop criteria
+- Support for Quick Load Tests with RPS (Requests Per Second) Inputs
+    - Use `requests_per_second` and `max_response_time_in_ms` in `OptionalLoadTestConfig` model to specify desired RPS for a quick load test
+- Support for URL Tests with JSON based test plans
+    - Added enum `TestKind` with value `URL` and support for `URL_TEST_CONFIG` file type in the `FileType` enum
+- Support for Locust Load Tests
+    - Added value `Locust` in the `TestKind` enum
+- Support for Multi Region Load Tests
+    - Added property `regional_load_test_config` in `LoadTestConfiguration` model to specify regional load distribution
+- Support for Disabling Public IP Deployment for Private Load Tests
+    - Added property `public_ip_disabled` to the `Test` model to disable injecting public IP
+- Support for uploading ZIP Artifacts
+    - Added value `ZIPPED_ARTIFACTS` in the `FileType` enum
+- Support for all Test Profiles & Test Profile Run Scenarios
+    - Added methods `create_or_update_test_profile`, `get_test_profile`, `delete_test_profile` and `list_test_profiles` in `LoadTestAdministrationClient` to work with Test Profiles
+    - Added methods `begin_test_profile_run`, `get_test_profile_run`, `delete_test_profile_run` and `list_test_profile_runs` in `LoadTestRunClient` to work with Test Profile Runs
+
 ## 1.0.1 (2025-01-20)
 
 ### Bugs Fixed

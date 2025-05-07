@@ -10,7 +10,7 @@ queue_settings:
   job_tier: premium
   priority: medium
 resources:
-  locations: ["westus", "eastus"]
+  locations: ["westus", "eastus"] 
   instance_count: 2
   instance_type: Singularity.NC6_v3
   properties:

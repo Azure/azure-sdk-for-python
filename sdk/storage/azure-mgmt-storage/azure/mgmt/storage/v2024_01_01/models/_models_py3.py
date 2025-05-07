@@ -3045,14 +3045,14 @@ class FileShare(AzureEntityResource):
         "provisioned_bandwidth_mibps": {"key": "properties.provisionedBandwidthMibps", "type": "int"},
         "included_burst_iops": {"key": "properties.includedBurstIops", "type": "int"},
         "max_burst_credits_for_iops": {"key": "properties.maxBurstCreditsForIops", "type": "int"},
-        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "iso-8601"},
+        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "rfc-1123"},
         "next_allowed_provisioned_iops_downgrade_time": {
             "key": "properties.nextAllowedProvisionedIopsDowngradeTime",
-            "type": "iso-8601",
+            "type": "rfc-1123",
         },
         "next_allowed_provisioned_bandwidth_downgrade_time": {
             "key": "properties.nextAllowedProvisionedBandwidthDowngradeTime",
-            "type": "iso-8601",
+            "type": "rfc-1123",
         },
         "enabled_protocols": {"key": "properties.enabledProtocols", "type": "str"},
         "root_squash": {"key": "properties.rootSquash", "type": "str"},
@@ -3281,14 +3281,14 @@ class FileShareItem(AzureEntityResource):
         "provisioned_bandwidth_mibps": {"key": "properties.provisionedBandwidthMibps", "type": "int"},
         "included_burst_iops": {"key": "properties.includedBurstIops", "type": "int"},
         "max_burst_credits_for_iops": {"key": "properties.maxBurstCreditsForIops", "type": "int"},
-        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "iso-8601"},
+        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "rfc-1123"},
         "next_allowed_provisioned_iops_downgrade_time": {
             "key": "properties.nextAllowedProvisionedIopsDowngradeTime",
-            "type": "iso-8601",
+            "type": "rfc-1123",
         },
         "next_allowed_provisioned_bandwidth_downgrade_time": {
             "key": "properties.nextAllowedProvisionedBandwidthDowngradeTime",
-            "type": "iso-8601",
+            "type": "rfc-1123",
         },
         "enabled_protocols": {"key": "properties.enabledProtocols", "type": "str"},
         "root_squash": {"key": "properties.rootSquash", "type": "str"},
@@ -5098,7 +5098,7 @@ class ManagementPolicy(Resource):
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
     :ivar policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
-     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview.
     :vartype policy: ~azure.mgmt.storage.v2024_01_01.models.ManagementPolicySchema
     """
 
@@ -5120,7 +5120,7 @@ class ManagementPolicy(Resource):
     def __init__(self, *, policy: Optional["_models.ManagementPolicySchema"] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
-         https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+         https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview.
         :paramtype policy: ~azure.mgmt.storage.v2024_01_01.models.ManagementPolicySchema
         """
         super().__init__(**kwargs)
@@ -5379,13 +5379,12 @@ class ManagementPolicyRule(_serialization.Model):
 
 class ManagementPolicySchema(_serialization.Model):
     """The Storage Account ManagementPolicies Rules. See more details in:
-    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview.
 
     All required parameters must be populated in order to send to server.
 
     :ivar rules: The Storage Account ManagementPolicies Rules. See more details in:
-     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-     Required.
+     https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview. Required.
     :vartype rules: list[~azure.mgmt.storage.v2024_01_01.models.ManagementPolicyRule]
     """
 
@@ -5400,8 +5399,7 @@ class ManagementPolicySchema(_serialization.Model):
     def __init__(self, *, rules: List["_models.ManagementPolicyRule"], **kwargs: Any) -> None:
         """
         :keyword rules: The Storage Account ManagementPolicies Rules. See more details in:
-         https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-         Required.
+         https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview. Required.
         :paramtype rules: list[~azure.mgmt.storage.v2024_01_01.models.ManagementPolicyRule]
         """
         super().__init__(**kwargs)
@@ -7598,8 +7596,8 @@ class StorageAccount(TrackedResource):
     :vartype extended_location: ~azure.mgmt.storage.v2024_01_01.models.ExtendedLocation
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Known values are: "Creating", "ResolvingDNS", "Succeeded",
-     "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Deleting", "Canceled", and
-     "Failed".
+     "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting",
+     "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2024_01_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -9127,7 +9125,7 @@ class StorageTaskAssignmentProperties(_serialization.Model):
     :vartype report: ~azure.mgmt.storage.v2024_01_01.models.StorageTaskAssignmentReport
     :ivar provisioning_state: Represents the provisioning state of the storage task assignment.
      Known values are: "Creating", "ResolvingDNS", "Succeeded", "ValidateSubscriptionQuotaBegin",
-     "ValidateSubscriptionQuotaEnd", "Deleting", "Canceled", and "Failed".
+     "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting", "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2024_01_01.models.ProvisioningState
     :ivar run_status: Run status of storage task assignment.
     :vartype run_status: ~azure.mgmt.storage.v2024_01_01.models.StorageTaskReportProperties
@@ -9319,7 +9317,7 @@ class StorageTaskAssignmentUpdateProperties(_serialization.Model):
     :vartype report: ~azure.mgmt.storage.v2024_01_01.models.StorageTaskAssignmentUpdateReport
     :ivar provisioning_state: Represents the provisioning state of the storage task assignment.
      Known values are: "Creating", "ResolvingDNS", "Succeeded", "ValidateSubscriptionQuotaBegin",
-     "ValidateSubscriptionQuotaEnd", "Deleting", "Canceled", and "Failed".
+     "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting", "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2024_01_01.models.ProvisioningState
     :ivar run_status: Run status of storage task assignment.
     :vartype run_status: ~azure.mgmt.storage.v2024_01_01.models.StorageTaskReportProperties
@@ -9446,32 +9444,32 @@ class StorageTaskReportProperties(_serialization.Model):
     :ivar start_time: Start time of the run instance. Filter options such as startTime gt
      '2023-06-26T20:51:24.4494016Z' and other comparison operators can be used as described for
      DateTime properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype start_time: str
     :ivar finish_time: End time of the run instance. Filter options such as startTime gt
      '2023-06-26T20:51:24.4494016Z' and other comparison operators can be used as described for
      DateTime properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype finish_time: str
     :ivar objects_targeted_count: Total number of objects that meet the condition as defined in the
      storage task assignment execution context. Filter options such as objectsTargetedCount gt 50
      and other comparison operators can be used as described for Numerical properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype objects_targeted_count: str
     :ivar objects_operated_on_count: Total number of objects that meet the storage tasks condition
      and were operated upon. Filter options such as objectsOperatedOnCount ge 100 and other
      comparison operators can be used as described for Numerical properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype objects_operated_on_count: str
     :ivar object_failed_count: Total number of objects where task operation failed when was
      attempted. Filter options such as objectFailedCount eq 0 and other comparison operators can be
      used as described for Numerical properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype object_failed_count: str
     :ivar objects_succeeded_count: Total number of objects where task operation succeeded when was
      attempted.Filter options such as objectsSucceededCount gt 150 and other comparison operators
      can be used as described for Numerical properties in
-     https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators.
     :vartype objects_succeeded_count: str
     :ivar run_status_error: Well known Azure Storage error code that represents the error
      encountered during execution of the run instance.

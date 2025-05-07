@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -61,7 +62,7 @@ async def main() -> None:
             print(f"Created message, message ID: {message.id}")
 
             run = await project_client.agents.create_and_process_run(
-                thread_id=thread.id, assistant_id=agent.id, sleep_interval=4
+                thread_id=thread.id, agent_id=agent.id, sleep_interval=4
             )
             print(f"Created run, run ID: {run.id}")
 

@@ -65,6 +65,7 @@ from azure.ai.ml.constants._common import (
     WorkspaceDiscoveryUrlKey,
 )
 from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
 from azure.ai.ml.entities._assets._artifacts.code import Code
@@ -105,7 +106,12 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
+from ._job_ops_helper import (
+    get_git_properties,
+    get_job_output_uris_from_dataplane,
+    has_pat_token,
+    stream_logs_until_completion,
+)
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
@@ -179,6 +185,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
+        self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -680,7 +687,18 @@ class JobOperations(_ScopeDependentOperations):
         # their job, the request will fail since the git props will be repopulated.
         # MFE does not allow existing properties to be updated, only for new props to be added
         if not any(prop_name in job.properties for prop_name in git_props):
-            job.properties = {**job.properties, **git_props}
+            repo_url = git_props.get(GitProperties.PROP_MLFLOW_GIT_REPO_URL)
+
+            if has_pat_token(repo_url):
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_REPO_URL)
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_BRANCH)
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_COMMIT)
+                git_props.pop(GitProperties.PROP_DIRTY)
+                module_logger.warning("Git properties are removed because the repository URL contains a secret.")
+
+            if git_props:
+                job.properties = {**job.properties, **git_props}
+
         rest_job_resource = to_rest_job_object(job)
 
         # Make a copy of self._kwargs instead of contaminate the original one
@@ -723,7 +741,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
@@ -737,6 +755,8 @@ class JobOperations(_ScopeDependentOperations):
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.COMMAND:
+            service_client_operation = self.service_client_01_2025_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,

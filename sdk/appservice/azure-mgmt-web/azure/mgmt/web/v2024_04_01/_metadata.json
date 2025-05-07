@@ -114,8 +114,6 @@
         "app_service_environments": "AppServiceEnvironmentsOperations",
         "app_service_plans": "AppServicePlansOperations",
         "certificates": "CertificatesOperations",
-        "container_apps": "ContainerAppsOperations",
-        "container_apps_revisions": "ContainerAppsRevisionsOperations",
         "deleted_web_apps": "DeletedWebAppsOperations",
         "diagnostics": "DiagnosticsOperations",
         "global_operations": "GlobalOperations",

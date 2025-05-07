@@ -20,7 +20,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_jit_requests_get(self, resource_group):
         response = self.client.jit_requests.get(
             resource_group_name=resource_group.name,
             jit_request_name="str",
@@ -32,7 +32,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_jit_requests_begin_create_or_update(self, resource_group):
         response = self.client.jit_requests.begin_create_or_update(
             resource_group_name=resource_group.name,
             jit_request_name="str",
@@ -63,7 +63,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_jit_requests_update(self, resource_group):
         response = self.client.jit_requests.update(
             resource_group_name=resource_group.name,
             jit_request_name="str",
@@ -76,7 +76,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_jit_requests_delete(self, resource_group):
         response = self.client.jit_requests.delete(
             resource_group_name=resource_group.name,
             jit_request_name="str",
@@ -88,7 +88,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_jit_requests_list_by_subscription(self, resource_group):
         response = self.client.jit_requests.list_by_subscription(
             api_version="2019-07-01",
         )
@@ -98,7 +98,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_jit_requests_list_by_resource_group(self, resource_group):
         response = self.client.jit_requests.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2019-07-01",

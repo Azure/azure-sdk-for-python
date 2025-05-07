@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -50,7 +50,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -76,7 +76,7 @@ class VariablesOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
-    async def delete(self, variable_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete(self, variable_name: str, **kwargs: Any) -> None:
         """Deletes a variable.
 
         This operation deletes a variable, given its name and the subscription it was created in. The
@@ -89,7 +89,7 @@ class VariablesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -188,7 +188,7 @@ class VariablesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -256,7 +256,7 @@ class VariablesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -300,9 +300,7 @@ class VariablesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
-        self, management_group_id: str, variable_name: str, **kwargs: Any
-    ) -> None:
+    async def delete_at_management_group(self, management_group_id: str, variable_name: str, **kwargs: Any) -> None:
         """Deletes a variable.
 
         This operation deletes a variable, given its name and the management group it was created in.
@@ -317,7 +315,7 @@ class VariablesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -438,7 +436,7 @@ class VariablesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -510,7 +508,7 @@ class VariablesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -572,7 +570,7 @@ class VariablesOperations:
         )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -653,7 +651,7 @@ class VariablesOperations:
         )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -735,9 +733,7 @@ class VariableValuesOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, variable_name: str, variable_value_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> None:
         """Deletes a variable value.
 
         This operation deletes a variable value, given its name, the subscription it was created in,
@@ -752,7 +748,7 @@ class VariableValuesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -875,7 +871,7 @@ class VariableValuesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -946,7 +942,7 @@ class VariableValuesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1012,7 +1008,7 @@ class VariableValuesOperations:
         )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1099,7 +1095,7 @@ class VariableValuesOperations:
         )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1161,7 +1157,7 @@ class VariableValuesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
     ) -> None:
         """Deletes a variable value.
@@ -1180,7 +1176,7 @@ class VariableValuesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1312,7 +1308,7 @@ class VariableValuesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1387,7 +1383,7 @@ class VariableValuesOperations:
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

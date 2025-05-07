@@ -20,12 +20,12 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
+    def test_restore_points_list_by_database(self, resource_group):
         response = self.client.restore_points.list_by_database(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_restore_points_begin_create(self, resource_group):
         response = self.client.restore_points.begin_create(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             parameters={"restorePointLabel": "str"},
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_points_get(self, resource_group):
         response = self.client.restore_points.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             restore_point_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,13 +61,13 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_restore_points_delete(self, resource_group):
         response = self.client.restore_points.delete(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             restore_point_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusManagementClient
+from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,7 +20,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_authorization_rules(self, resource_group):
+    def test_queues_list_authorization_rules(self, resource_group):
         response = self.client.queues.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -33,7 +33,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_authorization_rule(self, resource_group):
+    def test_queues_create_or_update_authorization_rule(self, resource_group):
         response = self.client.queues.create_or_update_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -62,7 +62,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_authorization_rule(self, resource_group):
+    def test_queues_delete_authorization_rule(self, resource_group):
         response = self.client.queues.delete_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -76,7 +76,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_authorization_rule(self, resource_group):
+    def test_queues_get_authorization_rule(self, resource_group):
         response = self.client.queues.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -90,7 +90,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_keys(self, resource_group):
+    def test_queues_list_keys(self, resource_group):
         response = self.client.queues.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -104,7 +104,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_regenerate_keys(self, resource_group):
+    def test_queues_regenerate_keys(self, resource_group):
         response = self.client.queues.regenerate_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -119,7 +119,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_namespace(self, resource_group):
+    def test_queues_list_by_namespace(self, resource_group):
         response = self.client.queues.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -131,7 +131,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_queues_create_or_update(self, resource_group):
         response = self.client.queues.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -186,7 +186,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_queues_delete(self, resource_group):
         response = self.client.queues.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -199,7 +199,7 @@ class TestServiceBusManagementQueuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_queues_get(self, resource_group):
         response = self.client.queues.get(
             resource_group_name=resource_group.name,
             namespace_name="str",

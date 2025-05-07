@@ -20,11 +20,11 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_snapshot_policies_list(self, resource_group):
         response = self.client.snapshot_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_snapshot_policies_get(self, resource_group):
         response = self.client.snapshot_policies.get(
             resource_group_name=resource_group.name,
             account_name="str",
             snapshot_policy_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_snapshot_policies_create(self, resource_group):
         response = self.client.snapshot_policies.create(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -72,7 +72,7 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "weeklySchedule": {"day": "str", "hour": 0, "minute": 0, "snapshotsToKeep": 0, "usedBytes": 0},
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_snapshot_policies_begin_update(self, resource_group):
         response = self.client.snapshot_policies.begin_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -98,7 +98,7 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "weeklySchedule": {"day": "str", "hour": 0, "minute": 0, "snapshotsToKeep": 0, "usedBytes": 0},
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,12 +106,12 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_snapshot_policies_begin_delete(self, resource_group):
         response = self.client.snapshot_policies.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             snapshot_policy_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -119,12 +119,12 @@ class TestNetAppManagementSnapshotPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_volumes(self, resource_group):
+    def test_snapshot_policies_list_volumes(self, resource_group):
         response = self.client.snapshot_policies.list_volumes(
             resource_group_name=resource_group.name,
             account_name="str",
             snapshot_policy_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

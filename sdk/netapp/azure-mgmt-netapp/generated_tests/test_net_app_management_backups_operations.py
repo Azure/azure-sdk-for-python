@@ -20,13 +20,13 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_latest_status(self, resource_group):
+    def test_backups_get_latest_status(self, resource_group):
         response = self.client.backups.get_latest_status(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_volume_latest_restore_status(self, resource_group):
+    def test_backups_get_volume_latest_restore_status(self, resource_group):
         response = self.client.backups.get_volume_latest_restore_status(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -48,12 +48,12 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_vault(self, resource_group):
+    def test_backups_list_by_vault(self, resource_group):
         response = self.client.backups.list_by_vault(
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -61,13 +61,13 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_backups_get(self, resource_group):
         response = self.client.backups.get(
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
             backup_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_backups_begin_create(self, resource_group):
         response = self.client.backups.begin_create(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -86,6 +86,7 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
                 "backupId": "str",
                 "backupPolicyResourceId": "str",
                 "backupType": "str",
+                "completionDate": "2020-02-20 00:00:00",
                 "creationDate": "2020-02-20 00:00:00",
                 "failureReason": "str",
                 "id": "str",
@@ -94,6 +95,7 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "provisioningState": "str",
                 "size": 0,
+                "snapshotCreationDate": "2020-02-20 00:00:00",
                 "snapshotName": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -106,7 +108,7 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useExistingSnapshot": False,
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -114,13 +116,13 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_backups_begin_update(self, resource_group):
         response = self.client.backups.begin_update(
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
             backup_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -128,13 +130,13 @@ class TestNetAppManagementBackupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_backups_begin_delete(self, resource_group):
         response = self.client.backups.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
             backup_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

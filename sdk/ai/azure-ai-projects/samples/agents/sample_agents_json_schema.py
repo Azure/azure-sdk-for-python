@@ -91,7 +91,7 @@ with project_client:
     print(f"Created message, message ID: {message.id}")
 
     # [START create_run]
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 
     if run.status != RunStatus.COMPLETED:
         print(f"The run did not succeed: {run.status=}.")

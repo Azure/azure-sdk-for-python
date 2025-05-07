@@ -14,7 +14,6 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -28,13 +27,13 @@ class RecoveryServicesBackupClientConfiguration:  # pylint: disable=too-many-ins
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription Id. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-04-01")
+        api_version: str = kwargs.pop("api_version", "2025-02-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

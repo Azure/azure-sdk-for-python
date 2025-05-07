@@ -297,6 +297,56 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
     cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
 
 
+def validate_jwt_ps256(request, client_id, cert_bytes, cert_password, expect_x5c=False):
+    """Validate the request meets Microsoft Entra ID's expectations for a client credential grant using a certificate, as documented
+    at https://learn.microsoft.com/entra/identity-platform/certificate-credentials
+    """
+
+    try:
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
+    except ValueError:
+        if cert_password:
+            if isinstance(cert_password, str):
+                cert_password = cert_password.encode("utf-8")
+        cert_bytes = load_pkcs12_certificate(cert_bytes, cert_password).pem_bytes
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
+
+    # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key
+    jwt = request.body["client_assertion"]
+    if isinstance(jwt, bytes):
+        jwt = jwt.decode("utf-8")
+    header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
+    signed_part = jwt[: jwt.rfind(".")]
+
+    claims = json.loads(payload.decode("utf-8"))
+    assert claims["aud"] == request.url
+    assert claims["iss"] == claims["sub"] == client_id
+
+    deserialized_header = json.loads(header.decode("utf-8"))
+    assert deserialized_header["alg"] == "PS256"
+    assert deserialized_header["typ"] == "JWT"
+    if expect_x5c:
+        # x5c should have all the certs in the file, in order, in PEM format minus headers and footers
+        pem_lines = cert_bytes.decode("utf-8").splitlines()
+        header = "-----BEGIN CERTIFICATE-----"
+        assert len(deserialized_header["x5c"]) == pem_lines.count(header)
+
+        # concatenate the PEM file's certs, removing headers and footers
+        chain_start = pem_lines.index(header)
+        pem_chain_content = "".join(line for line in pem_lines[chain_start:] if not line.startswith("-" * 5))
+        assert "".join(deserialized_header["x5c"]) == pem_chain_content, "JWT's x5c claim contains unexpected content"
+    else:
+        assert "x5c" not in deserialized_header
+    assert urlsafeb64_decode(deserialized_header["x5t#S256"]) == cert.fingerprint(hashes.SHA256())  # nosec
+
+    cert.public_key().verify(
+        signature,
+        signed_part.encode("utf-8"),
+        padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=hashes.SHA256.digest_size),
+        hashes.SHA256(),
+    )
+
+
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_token_cache_persistent(cert_path, cert_password, get_token_method):

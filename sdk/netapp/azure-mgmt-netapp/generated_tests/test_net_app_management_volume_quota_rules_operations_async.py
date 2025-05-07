@@ -21,13 +21,13 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_volume(self, resource_group):
+    async def test_volume_quota_rules_list_by_volume(self, resource_group):
         response = self.client.volume_quota_rules.list_by_volume(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,14 +35,14 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_volume_quota_rules_get(self, resource_group):
         response = await self.client.volume_quota_rules.get(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             volume_quota_rule_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_volume_quota_rules_begin_create(self, resource_group):
         response = await (
             await self.client.volume_quota_rules.begin_create(
                 resource_group_name=resource_group.name,
@@ -77,7 +77,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,7 +86,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_volume_quota_rules_begin_update(self, resource_group):
         response = await (
             await self.client.volume_quota_rules.begin_update(
                 resource_group_name=resource_group.name,
@@ -101,7 +101,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                     "quotaType": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -110,7 +110,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_volume_quota_rules_begin_delete(self, resource_group):
         response = await (
             await self.client.volume_quota_rules.begin_delete(
                 resource_group_name=resource_group.name,
@@ -118,7 +118,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                 pool_name="str",
                 volume_name="str",
                 volume_quota_rule_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

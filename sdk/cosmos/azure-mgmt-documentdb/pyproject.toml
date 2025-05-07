@@ -1,7 +1,0 @@
-[tool.azure-sdk-build]
-breaking = false
-ci_enabled = false
-mypy = false
-pyright = false
-type_check_samples = false
-verifytypes = false

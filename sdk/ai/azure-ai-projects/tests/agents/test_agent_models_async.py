@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 from typing import Any, AsyncIterator, List
 from unittest.mock import AsyncMock, patch
 import pytest
@@ -23,8 +24,13 @@ fetch_current_datetime_and_weather_stream_response = read_file("fetch_current_da
 send_email_stream_response = read_file("send_email_stream_response")
 
 
-async def convert_to_byte_iterator(main_stream_response: str) -> AsyncIterator[bytes]:
-    yield main_stream_response.encode()
+async def convert_to_byte_iterator(input: str) -> AsyncIterator[bytes]:
+    yield input.encode()
+
+
+async def async_bytes_iter(iterable: List[bytes]) -> AsyncIterator[bytes]:
+    for item in iterable:
+        yield item
 
 
 class TestBaseAsyncAgentEventHandler:
@@ -32,12 +38,12 @@ class TestBaseAsyncAgentEventHandler:
         async def _process_event(self, event_data_str: str) -> str:
             return event_data_str
 
-    async def break_main_stream_response(self, indices: List[int], main_stream_response: str):
+    async def break_main_stream_response(self, indices: List[int], response: str):
         previous_index = 0
         for index in indices:
-            yield main_stream_response[previous_index:index].encode()
+            yield response[previous_index:index].encode()
             previous_index = index
-        yield main_stream_response[previous_index:].encode()
+        yield response[previous_index:].encode()
 
     async def mock_callable(self, _: ThreadRun, __: BaseAsyncAgentEventHandler[str]) -> None:
         pass
@@ -144,6 +150,31 @@ class TestBaseAsyncAgentEventHandler:
         assert fetch_current_datetime_and_weather_stream_response.count("event:")
         assert all_event_str[-1].startswith("event: done")
 
+    @pytest.mark.asyncio
+    async def test_event_handler_with_split_chinese_char(self):
+        response_bytes_split_chinese_char: List[bytes] = [
+            b'event: thread.message.delta\ndata: data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\xe5',
+            b"\xa4",
+            b'\xa9"}}]}}\n\n',
+            b'event: thread.message.delta\ndata: data: {"id":"msg_02","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"."}}]}}}\n\nevent: done\ndata: [DONE]\n\n',
+        ]
+
+        handler = self.MyAgentEventhHandler()
+
+        handler.initialize(
+            # the numbers of the index around the new line characters, middle of the event, or at the end
+            async_bytes_iter(response_bytes_split_chinese_char),
+            self.mock_callable,
+        )
+        count = 0
+        all_event_str: List[str] = []
+        async for event_str in handler:
+            assert event_str.startswith("event:")
+            all_event_str.append(event_str)
+            count += 1
+        assert count == 3
+        assert all_event_str[-1].startswith("event: done")
+
 
 class TestAsyncAgentEventHandler:
 
@@ -157,8 +188,17 @@ class TestAsyncAgentEventHandler:
         pass
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "has_errors_in_toolcalls_output,expected_current_retry",
+        [
+            (True, 1),
+            (False, 0),
+        ],
+    )
     @patch("azure.ai.projects.models._patch._parse_event")
-    async def test_tool_calls(self, mock_parse_event: AsyncMock):
+    async def test_tool_calls(
+        self, mock_parse_event: AsyncMock, has_errors_in_toolcalls_output: bool, expected_current_retry: int
+    ):
         # Test if the event type and status are met, submit function calls.
         submit_tool_outputs = AsyncMock()
         handler = self.MyAgentEventHandler()
@@ -170,13 +210,18 @@ class TestAsyncAgentEventHandler:
         event_obj.required_action = SubmitToolOutputsAction({})
         mock_parse_event.return_value = ("", event_obj)
 
-        async for _ in handler:
-            await handler.until_done()
+        with patch(
+            "azure.ai.projects.models._patch._has_errors_in_toolcalls_output",
+            return_value=has_errors_in_toolcalls_output,
+        ):
+            async for _ in handler:
+                await handler.until_done()
 
         assert mock_parse_event.call_count == 1
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
-        assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+        assert submit_tool_outputs.call_args[0] == (event_obj, handler, True)
+        assert handler.current_retry == expected_current_retry
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.models._patch.AsyncAgentEventHandler.on_unhandled_event")

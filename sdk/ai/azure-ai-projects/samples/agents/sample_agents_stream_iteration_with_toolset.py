@@ -32,7 +32,6 @@ from azure.ai.projects.models import (
     ThreadRun,
 )
 from azure.ai.projects.models import FunctionTool, ToolSet
-from azure.ai.projects.operations._operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
@@ -45,6 +44,7 @@ toolset = ToolSet()
 toolset.add(functions)
 
 with project_client:
+    project_client.agents.enable_auto_function_calls(toolset=toolset)
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
@@ -59,7 +59,7 @@ with project_client:
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     print(f"Created message, message ID {message.id}")
 
-    with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+    with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:
 

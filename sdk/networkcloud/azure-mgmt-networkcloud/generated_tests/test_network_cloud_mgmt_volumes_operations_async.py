@@ -21,9 +21,9 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_volumes_list_by_subscription(self, resource_group):
         response = self.client.volumes.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_volumes_list_by_resource_group(self, resource_group):
         response = self.client.volumes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_volumes_get(self, resource_group):
         response = await self.client.volumes.get(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_volumes_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.volumes.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -81,7 +81,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,12 +90,12 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_volumes_begin_delete(self, resource_group):
         response = await (
             await self.client.volumes.begin_delete(
                 resource_group_name=resource_group.name,
                 volume_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,11 +104,11 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_volumes_update(self, resource_group):
         response = await self.client.volumes.update(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself

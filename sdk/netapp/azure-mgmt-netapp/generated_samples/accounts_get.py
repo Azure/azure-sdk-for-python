@@ -27,7 +27,7 @@ from azure.mgmt.netapp import NetAppManagementClient
 def main():
     client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.accounts.get(
@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Accounts_Get.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-01-01/examples/Accounts_Get.json
 if __name__ == "__main__":
     main()

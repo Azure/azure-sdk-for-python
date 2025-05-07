@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,4 +100,7 @@ setup(
         "typing-extensions>=4.12.2",
     ],
     python_requires=">=3.8",
+    extras_require={
+        "prompts": ["prompty"],
+    },
 )

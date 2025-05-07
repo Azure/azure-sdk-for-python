@@ -8,9 +8,12 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from .._serialization import Deserializer, Serializer
@@ -36,11 +39,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ApplicationInsightsManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ApplicationInsightsManagementClient:  # pylint: disable=too-many-instance-attributes
     """Composite Swagger for Application Insights Management Client.
 
     :ivar operations: Operations operations
@@ -109,47 +111,79 @@ class ApplicationInsightsManagementClient:  # pylint: disable=client-accepts-api
         self._config = ApplicationInsightsManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.annotations = AnnotationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.api_keys = APIKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2015-05-01")
+        self.annotations = AnnotationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
+        self.api_keys = APIKeysOperations(self._client, self._config, self._serialize, self._deserialize, "2015-05-01")
         self.export_configurations = ExportConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
         self.component_current_billing_features = ComponentCurrentBillingFeaturesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
         self.component_quota_status = ComponentQuotaStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
         self.component_feature_capabilities = ComponentFeatureCapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
         self.component_available_features = ComponentAvailableFeaturesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
         self.proactive_detection_configurations = ProactiveDetectionConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
-        self.components = ComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.components = ComponentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
         self.work_item_configurations = WorkItemConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
-        self.favorites = FavoritesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.favorites = FavoritesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
         self.web_test_locations = WebTestLocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
         )
-        self.web_tests = WebTestsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.analytics_items = AnalyticsItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workbooks = WorkbooksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.my_workbooks = MyWorkbooksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.web_tests = WebTestsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
+        self.analytics_items = AnalyticsItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
+        self.workbooks = WorkbooksOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
+        self.my_workbooks = MyWorkbooksOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-05-01"
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -169,12 +203,12 @@ class ApplicationInsightsManagementClient:  # pylint: disable=client-accepts-api
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "ApplicationInsightsManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

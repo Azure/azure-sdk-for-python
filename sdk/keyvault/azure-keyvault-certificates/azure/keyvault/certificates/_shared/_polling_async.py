@@ -35,13 +35,13 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            pipeline_response: PipelineResponse,
-            command: Callable,
-            final_resource: Any,
-            finished: bool,
-            interval: int = 2
-        ) -> None:
+        self,
+        pipeline_response: PipelineResponse,
+        command: Callable,
+        final_resource: Any,
+        finished: bool,
+        interval: int = 2,
+    ) -> None:
         self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource

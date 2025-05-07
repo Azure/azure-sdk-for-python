@@ -23,6 +23,18 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :param groundedness_threshold: The threshold for groundedness evaluation. Default is 3.
+    :type groundedness_threshold: int
+    :param relevance_threshold: The threshold for relevance evaluation. Default is 3.
+    :type relevance_threshold: int
+    :param coherence_threshold: The threshold for coherence evaluation. Default is 3.
+    :type coherence_threshold: int
+    :param fluency_threshold: The threshold for fluency evaluation. Default is 3.
+    :type fluency_threshold: int
+    :param similarity_threshold: The threshold for similarity evaluation. Default is 3.
+    :type similarity_threshold: int
+    :param f1_score_threshold: The threshold for F1 score evaluation. Default is 0.5.
+    :type f1_score_threshold: float
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -36,6 +48,15 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a QAEvaluator.
 
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_qa_evaluator]
+            :end-before: [END threshold_qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a QAEvaluator.
+
     .. note::
 
         To align with our support of a diverse set of models, keys without the `gpt_` prefix has been added.
@@ -46,14 +67,37 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, model_config, **kwargs):
+    def __init__(
+        self,
+        model_config,
+        *,
+        groundedness_threshold: int = 3,
+        relevance_threshold: int = 3,
+        coherence_threshold: int = 3,
+        fluency_threshold: int = 3,
+        similarity_threshold: int = 3,
+        f1_score_threshold: float = 0.5,
+        **kwargs
+    ):
+        # Type checking
+        for name, value in [
+            ("groundedness_threshold", groundedness_threshold),
+            ("relevance_threshold", relevance_threshold),
+            ("coherence_threshold", coherence_threshold),
+            ("fluency_threshold", fluency_threshold),
+            ("similarity_threshold", similarity_threshold),
+            ("f1_score_threshold", f1_score_threshold),
+        ]:
+            if not isinstance(value, (int, float)):
+                raise TypeError(f"{name} must be an int or float, got {type(value)}")
+
         evaluators = [
-            GroundednessEvaluator(model_config),
-            RelevanceEvaluator(model_config),
-            CoherenceEvaluator(model_config),
-            FluencyEvaluator(model_config),
-            SimilarityEvaluator(model_config),
-            F1ScoreEvaluator(),
+            GroundednessEvaluator(model_config, threshold=groundedness_threshold),
+            RelevanceEvaluator(model_config, threshold=relevance_threshold),
+            CoherenceEvaluator(model_config, threshold=coherence_threshold),
+            FluencyEvaluator(model_config, threshold=fluency_threshold),
+            SimilarityEvaluator(model_config, threshold=similarity_threshold),
+            F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 

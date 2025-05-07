@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -63,7 +64,7 @@ with project_client:
     )
     print(f"Created message, message ID {message.id}")
 
-    with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+    with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:
 

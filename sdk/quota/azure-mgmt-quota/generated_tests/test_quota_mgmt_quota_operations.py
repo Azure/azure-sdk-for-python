@@ -24,7 +24,7 @@ class TestQuotaMgmtQuotaOperations(AzureMgmtRecordedTestCase):
         response = self.client.quota.get(
             resource_name="str",
             scope="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestQuotaMgmtQuotaOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestQuotaMgmtQuotaOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestQuotaMgmtQuotaOperations(AzureMgmtRecordedTestCase):
     def test_quota_list(self, resource_group):
         response = self.client.quota.list(
             scope="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

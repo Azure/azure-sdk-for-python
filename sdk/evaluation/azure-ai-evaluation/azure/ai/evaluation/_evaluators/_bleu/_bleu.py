@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class BleuScoreEvaluator(EvaluatorBase):
@@ -22,6 +23,8 @@ class BleuScoreEvaluator(EvaluatorBase):
     indicator of quality.
 
     The BLEU score ranges from 0 to 1, with higher scores indicating better quality.
+    :param threshold: The threshold for the evaluation. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -31,17 +34,27 @@ class BleuScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call an BleuScoreEvaluator.
+
+    .. admonition:: Example with Threshold:
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_bleu_score_evaluator]
+            :end-before: [END threshold_bleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call an BleuScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *, threshold=0.5):
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
-        """Produce a glue score evaluation result.
+        """Produce a bleu score evaluation result.
 
         :param eval_input: The input to the evaluation function.
         :type eval_input: Dict
@@ -56,9 +69,16 @@ class BleuScoreEvaluator(EvaluatorBase):
         # NIST Smoothing
         smoothing_function = SmoothingFunction().method4
         score = sentence_bleu([reference_tokens], hypothesis_tokens, smoothing_function=smoothing_function)
+        binary_result = False
+        if self._higher_is_better:
+            binary_result = score >= self._threshold
+        else:
+            binary_result = score <= self._threshold
 
         return {
             "bleu_score": score,
+            "bleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "bleu_threshold": self._threshold,
         }
 
     @overload  # type: ignore

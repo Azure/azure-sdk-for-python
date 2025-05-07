@@ -50,13 +50,18 @@ with project_client:
     # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
+    # List all threads for the agent
+    # [START list_threads]
+    threads = project_client.agents.list_threads()
+    # [END list_threads]
+
     # [START create_message]
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
     # [START create_run]
-    run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
     # Poll the run as long as run status is queued or in progress
     while run.status in ["queued", "in_progress", "requires_action"]:
@@ -80,4 +85,3 @@ with project_client:
             print(f"{data_point.role}: {last_message_content.text.value}")
 
     # [END list_messages]
-    print(f"Messages: {messages}")

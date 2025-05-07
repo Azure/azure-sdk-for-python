@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,9 +36,9 @@ class AIProjectClient:
     :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :param endpoint: The Azure AI Foundry project endpoint, in the form
      ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``\\\\ , where
-     :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus) and
-     :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
+     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
+     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
+     the Enterprise private link. Required.
     :type endpoint: str
     :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
@@ -62,7 +63,7 @@ class AIProjectClient:
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"  # pylint: disable=line-too-long
+        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"
         self._config = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

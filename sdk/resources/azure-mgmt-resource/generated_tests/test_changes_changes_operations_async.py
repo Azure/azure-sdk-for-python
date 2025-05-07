@@ -21,7 +21,7 @@ class TestChangesChangesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_changes_list(self, resource_group):
         response = self.client.changes.list(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -35,7 +35,7 @@ class TestChangesChangesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_changes_get(self, resource_group):
         response = await self.client.changes.get(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",

@@ -357,7 +357,7 @@ def get_rest_dict_for_node_attrs(
     from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
     if target_obj is None:
-        return None
+        return None  # type:ignore
     if isinstance(target_obj, dict):
         result_dict: dict = {}
         for key, value in target_obj.items():

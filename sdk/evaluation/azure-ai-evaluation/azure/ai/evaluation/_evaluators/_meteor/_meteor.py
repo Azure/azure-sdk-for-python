@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._common.utils import nltk_tokenize, ensure_nltk_data_downloaded
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class MeteorScoreEvaluator(EvaluatorBase):
@@ -32,6 +33,8 @@ class MeteorScoreEvaluator(EvaluatorBase):
     :type beta: float
     :param gamma: The METEOR score gamma parameter. Default is 0.5.
     :type gamma: float
+    :param threshold: The threshold for the METEOR score evaluator. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -41,18 +44,30 @@ class MeteorScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
+
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_meteor_score_evaluator]
+            :end-before: [END threshold_meteor_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a MeteorScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Meteor-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
+    def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5, *, threshold: float = 0.5):
         self._alpha = alpha
         self._beta = beta
         self._gamma = gamma
         ensure_nltk_data_downloaded()
-        super().__init__()
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
+        
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
@@ -74,9 +89,17 @@ class MeteorScoreEvaluator(EvaluatorBase):
             beta=self._beta,
             gamma=self._gamma,
         )
-
+        binary_result = False
+        if self._higher_is_better:
+            if score >= self._threshold:
+                binary_result = True
+        else:
+            if score <= self._threshold:
+                binary_result = True
         return {
             "meteor_score": score,
+            "meteor_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "meteor_threshold": self._threshold,
         }
 
     @overload  # type: ignore

@@ -16,18 +16,18 @@ requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
+    - isodate
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
+    - isodate
 
 test:
   imports:

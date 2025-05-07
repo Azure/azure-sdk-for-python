@@ -78,7 +78,7 @@ async def main() -> None:
             print(f"Created message, message ID {message.id}")
 
             async with await project_client.agents.create_stream(
-                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+                thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
             ) as stream:
                 async for event_type, event_data, func_return in stream:
                     print(f"Received data.")

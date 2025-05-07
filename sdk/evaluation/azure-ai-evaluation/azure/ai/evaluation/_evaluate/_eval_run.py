@@ -13,7 +13,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
-from promptflow._sdk.entities import Run
+from azure.ai.evaluation._legacy._adapters.entities import Run
 from typing_extensions import Self
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -295,7 +295,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         return f"https://{self._url_base}" "/mlflow/v2.0" f"{self._get_scope()}" f"/api/2.0/mlflow/runs/log-metric"
 
     def _get_token(self) -> str:
-        return self._management_client.get_token()
+        return self._management_client.get_token().token
 
     def request_with_retry(
         self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None
@@ -404,7 +404,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("The run results file was not found, skipping artifacts upload.")
             return
         # First we will list the files and the appropriate remote paths for them.
-        root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
+        root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_id)
         remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.

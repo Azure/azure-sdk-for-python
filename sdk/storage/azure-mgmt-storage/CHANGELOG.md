@@ -1,5 +1,16 @@
 # Release History
 
+## 22.2.0 (2025-04-21)
+
+### Features Added
+  - Enum `ProvisioningState` added member `ACCEPTED`
+
+## 22.1.1 (2025-02-27)
+
+### Bugs Fixed
+
+  - Fix deserialization error for model `FileShare` and `FileShareItem`
+
 ## 22.1.0 (2025-02-19)
 
 ### Features Added

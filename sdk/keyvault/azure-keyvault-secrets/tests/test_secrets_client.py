@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 
 from _shared.test_case import KeyVaultTestCase
@@ -143,6 +143,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsClientPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
+        set_custom_default_matcher(ignore_query_ordering=True)
         max_secrets = list_test_size
         expected = {}
 
@@ -163,7 +164,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsClientPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
-
+        set_custom_default_matcher(ignore_query_ordering=True)
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 

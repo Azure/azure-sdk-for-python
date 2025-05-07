@@ -127,8 +127,8 @@ class TestEnvironmentEntity:
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version
-        assert env_no_inference_config.version == "00b3749100a718714b17f57de1ae61fa"
-        assert env_with_inference_config.version == "935315c7d8de8e0972f0460960727a17"
+        assert env_no_inference_config.version == "25484232c6e5bfb2c6e1dc5d38fb9fa5"
+        assert env_with_inference_config.version == "b181e0fef2ad76757e2f78317c10cb2b"
 
     def test_ipp_environment(self) -> None:
         # test through deserializing REST instead of using real IP assets

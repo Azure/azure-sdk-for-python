@@ -29,6 +29,7 @@ from .operations import (
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsOperations,
     NetAppResourceRegionInfosOperations,
+    NetAppResourceUsagesOperations,
     Operations,
     PoolsOperations,
     SnapshotPoliciesOperations,
@@ -40,17 +41,19 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.aio.operations.Operations
     :ivar net_app_resource: NetAppResourceOperations operations
     :vartype net_app_resource: azure.mgmt.netapp.aio.operations.NetAppResourceOperations
+    :ivar net_app_resource_usages: NetAppResourceUsagesOperations operations
+    :vartype net_app_resource_usages:
+     azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.aio.operations.NetAppResourceQuotaLimitsOperations
@@ -92,8 +95,8 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-07-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -135,6 +138,9 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource = NetAppResourceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_usages = NetAppResourceUsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

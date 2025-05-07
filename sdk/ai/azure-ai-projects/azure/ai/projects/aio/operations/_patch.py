@@ -7,12 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import concurrent.futures
 import io
 import logging
 import os
 import time
+import json
 from pathlib import Path
 from typing import (
     IO,
@@ -27,6 +28,8 @@ from typing import (
     TextIO,
     Union,
     cast,
+    Callable,
+    Set,
     overload,
 )
 
@@ -661,7 +664,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Dict[str, _models.AsyncToolSet] = {}
+        self._function_tool = _models.AsyncFunctionTool(set())
+        self._function_tool_max_retry = 10
 
     # pylint: disable=arguments-differ
     @overload
@@ -892,15 +896,13 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-        if toolset is not None:
-            self._toolset[new_agent.id] = toolset
         return new_agent
 
     # pylint: disable=arguments-differ
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -917,8 +919,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -969,7 +971,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -985,8 +987,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1030,12 +1032,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1048,12 +1050,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1067,7 +1069,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -1086,8 +1088,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
@@ -1146,12 +1148,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[assistant_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
         return await super().update_agent(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             model=model,
             name=name,
             description=description,
@@ -1192,7 +1193,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1215,8 +1216,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1357,7 +1358,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1381,8 +1382,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1460,11 +1461,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
                 include=include,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 model=model,
                 instructions=instructions,
                 additional_instructions=additional_instructions,
@@ -1498,7 +1499,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1521,8 +1522,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1603,7 +1604,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Create and initiate the run with additional parameters
         run = await self.create_run(
             thread_id=thread_id,
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             include=include,
             model=model,
             instructions=instructions,
@@ -1623,6 +1624,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         )
 
         # Monitor and process the run status
+        current_retry = 0
         while run.status in [
             RunStatus.QUEUED,
             RunStatus.IN_PROGRESS,
@@ -1640,11 +1642,19 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.assistant_id)
-                    if toolset:
-                        tool_outputs = await toolset.execute_tool_calls(tool_calls)
-                    else:
-                        raise ValueError("Toolset is not available in the client.")
+                    toolset = _models.AsyncToolSet()
+                    toolset.add(self._function_tool)
+                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
+
+                    if self._has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logging.warning(
+                                "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
+                            )
+                            return await self.cancel_run(thread_id=thread_id, run_id=run.id)
+                        else:
+                            logging.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
@@ -1656,12 +1666,31 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
+    def _has_errors_in_toolcalls_output(self, tool_outputs: List[Dict]) -> bool:
+        """
+        Check if any tool output contains an error.
+
+        :param List[Dict] tool_outputs: A list of tool outputs to check.
+        :return: True if any output contains an error, False otherwise.
+        :rtype: bool
+        """
+        for tool_output in tool_outputs:
+            output = tool_output.get("output")
+            if isinstance(output, str):
+                try:
+                    output_json = json.loads(output)
+                    if "error" in output_json:
+                        return True
+                except json.JSONDecodeError:
+                    continue
+        return False
+
     @overload
     async def create_stream(
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1685,8 +1714,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1770,7 +1799,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1794,8 +1823,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1950,7 +1979,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -1981,8 +2010,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -2058,10 +2087,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 include=include,
                 model=model,
                 instructions=instructions,
@@ -2093,6 +2122,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if not event_handler:
             event_handler = cast(_models.BaseAsyncAgentEventHandlerT, _models.AsyncAgentEventHandler())
+        if isinstance(event_handler, _models.AsyncAgentEventHandler):
+            event_handler.set_max_retry(self._function_tool_max_retry)
 
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
@@ -2323,29 +2354,39 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
     async def _handle_submit_tool_outputs(
-        self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler
-    ) -> None:
+        self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler, submit_with_error: bool
+    ) -> Any:
+        tool_outputs: Any = []
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
                 logger.debug("No tool calls to execute.")
-                return
+                return tool_outputs
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
-            if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.assistant_id)
-                if toolset:
-                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
-                else:
-                    logger.debug("Toolset is not available in the client.")
-                    return
+            if (
+                any(tool_call.type == "function" for tool_call in tool_calls)
+                and len(self._function_tool.definitions) > 0
+            ):
+                toolset = _models.AsyncToolSet()
+                toolset.add(self._function_tool)
+                tool_outputs = await toolset.execute_tool_calls(tool_calls)
+
+                if self._has_errors_in_toolcalls_output(tool_outputs):
+                    if submit_with_error:
+                        logging.warning("Tool outputs contain errors - retrying")
+                    else:
+                        logging.warning("Tool outputs contain errors - reaching max retry limit")
+                        await self.cancel_run(thread_id=run.thread_id, run_id=run.id)
+                        return tool_outputs
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     await self.submit_tool_outputs_to_stream(
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
                     )
+        return tool_outputs
 
     # pylint: disable=arguments-differ
     @overload
@@ -2425,15 +2466,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
+        # If a JSON body is provided directly, pass it along
         if body is not None:
-            return await super().upload_file(body=body, **kwargs)
+            return await super()._upload_file(body=body, **kwargs)
 
+        # Convert FilePurpose enum to string if necessary
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
+        # If file content is passed in directly
         if file is not None and purpose is not None:
-            return await super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+            return await super()._upload_file(body={"file": file, "purpose": purpose, "filename": filename}, **kwargs)
 
+        # If a file path is provided
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
@@ -2442,11 +2487,11 @@ class AgentsOperations(AgentsOperationsGenerated):
                 with open(file_path, "rb") as f:
                     content = f.read()
 
-                # Determine filename and create correct FileType
+                # If no explicit filename is provided, use the base name
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
 
-                return await super().upload_file(file=file_content, purpose=purpose, **kwargs)
+                return await super()._upload_file(body={"file": file_content, "purpose": purpose}, **kwargs)
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}.") from e
 
@@ -3115,18 +3160,83 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise
 
     @distributed_trace_async
-    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if assistant_id in self._toolset:
-            del self._toolset[assistant_id]
-        return await super().delete_agent(assistant_id, **kwargs)
+        return await super().delete_agent(agent_id, **kwargs)
+
+    @overload
+    def enable_auto_function_calls(self, *, functions: Set[Callable[..., Any]], max_retry: int = 10) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, function_tool: _models.AsyncFunctionTool, max_retry: int = 10) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
+        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.AsyncFunctionTool]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
+        """
+
+    @overload
+    def enable_auto_function_calls(self, *, toolset: _models.AsyncToolSet, max_retry: int = 10) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
+        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.AsyncToolSet]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
+        """
+
+    def enable_auto_function_calls(
+        self,
+        *,
+        functions: Optional[Set[Callable[..., Any]]] = None,
+        function_tool: Optional[_models.AsyncFunctionTool] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
+        max_retry: int = 10,
+    ) -> None:
+        """Enables tool calls to be executed automatically during create_and_process_run or streaming.
+        If this is not set, functions must be called manually.
+        If automatic function calls fail, the agents will receive error messages allowing it to retry with another
+        function call or figure out the answer with its knowledge.
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.AsyncFunctionTool]
+        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.AsyncToolSet]
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :type max_retry: int
+        """
+        if functions:
+            self._function_tool = _models.AsyncFunctionTool(functions)
+        elif function_tool:
+            self._function_tool = function_tool
+        elif toolset:
+            tool = toolset.get_tool(_models.AsyncFunctionTool)
+            self._function_tool = tool
+
+        self._function_tool_max_retry = max_retry
 
 
 class _SyncCredentialWrapper(TokenCredential):

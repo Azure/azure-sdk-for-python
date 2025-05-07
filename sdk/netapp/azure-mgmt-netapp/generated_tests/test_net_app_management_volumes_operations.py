@@ -20,12 +20,12 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_volumes_list(self, resource_group):
         response = self.client.volumes.list(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_volumes_get(self, resource_group):
         response = self.client.volumes.get(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_volumes_begin_create_or_update(self, resource_group):
         response = self.client.volumes.begin_create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -58,7 +58,6 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "subnetId": "str",
                 "usageThreshold": 107374182400,
-                "acceptGrowCapacityPoolForShortTermCloneSplit": "str",
                 "actualThroughputMibps": 0.0,
                 "avsDataStore": "Disabled",
                 "backupId": "str",
@@ -67,6 +66,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                 "cloneProgress": 0,
                 "coolAccess": False,
                 "coolAccessRetrievalPolicy": "str",
+                "coolAccessTieringPolicy": "str",
                 "coolnessPeriod": 0,
                 "dataProtection": {
                     "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
@@ -117,13 +117,11 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                 "fileAccessLogs": "Disabled",
                 "fileSystemId": "str",
                 "id": "str",
-                "inheritedSizeInBytes": 0,
                 "isDefaultQuotaEnabled": False,
                 "isLargeVolume": False,
                 "isRestoring": bool,
                 "kerberosEnabled": False,
                 "keyVaultPrivateEndpointResourceId": "str",
-                "language": "str",
                 "ldapEnabled": False,
                 "maximumNumberOfFiles": 0,
                 "mountTargets": [
@@ -165,7 +163,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                 "volumeType": "str",
                 "zones": ["str"],
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -173,7 +171,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_volumes_begin_update(self, resource_group):
         response = self.client.volumes.begin_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -182,6 +180,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
             body={
                 "coolAccess": bool,
                 "coolAccessRetrievalPolicy": "str",
+                "coolAccessTieringPolicy": "str",
                 "coolnessPeriod": 0,
                 "dataProtection": {
                     "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
@@ -225,7 +224,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                 "unixPermissions": "str",
                 "usageThreshold": 107374182400,
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -233,13 +232,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_volumes_begin_delete(self, resource_group):
         response = self.client.volumes.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -247,13 +246,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_populate_availability_zone(self, resource_group):
+    def test_volumes_begin_populate_availability_zone(self, resource_group):
         response = self.client.volumes.begin_populate_availability_zone(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -261,14 +260,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_revert(self, resource_group):
+    def test_volumes_begin_revert(self, resource_group):
         response = self.client.volumes.begin_revert(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"snapshotId": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -276,13 +275,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reset_cifs_password(self, resource_group):
+    def test_volumes_begin_reset_cifs_password(self, resource_group):
         response = self.client.volumes.begin_reset_cifs_password(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -290,27 +289,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_split_clone_from_parent(self, resource_group):
-        response = self.client.volumes.begin_split_clone_from_parent(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            pool_name="str",
-            volume_name="str",
-            api_version="2024-07-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_begin_break_file_locks(self, resource_group):
+    def test_volumes_begin_break_file_locks(self, resource_group):
         response = self.client.volumes.begin_break_file_locks(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -318,14 +303,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_list_get_group_id_list_for_ldap_user(self, resource_group):
+    def test_volumes_begin_list_get_group_id_list_for_ldap_user(self, resource_group):
         response = self.client.volumes.begin_list_get_group_id_list_for_ldap_user(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"username": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -333,27 +318,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_list_quota_report(self, resource_group):
-        response = self.client.volumes.begin_list_quota_report(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            pool_name="str",
-            volume_name="str",
-            api_version="2024-07-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_begin_break_replication(self, resource_group):
+    def test_volumes_begin_break_replication(self, resource_group):
         response = self.client.volumes.begin_break_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -361,14 +332,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reestablish_replication(self, resource_group):
+    def test_volumes_begin_reestablish_replication(self, resource_group):
         response = self.client.volumes.begin_reestablish_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"sourceVolumeId": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -376,13 +347,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replication_status(self, resource_group):
+    def test_volumes_replication_status(self, resource_group):
         response = self.client.volumes.replication_status(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -390,13 +361,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_replications(self, resource_group):
+    def test_volumes_list_replications(self, resource_group):
         response = self.client.volumes.list_replications(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -404,13 +375,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_resync_replication(self, resource_group):
+    def test_volumes_begin_resync_replication(self, resource_group):
         response = self.client.volumes.begin_resync_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -418,13 +389,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_replication(self, resource_group):
+    def test_volumes_begin_delete_replication(self, resource_group):
         response = self.client.volumes.begin_delete_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -432,14 +403,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_authorize_replication(self, resource_group):
+    def test_volumes_begin_authorize_replication(self, resource_group):
         response = self.client.volumes.begin_authorize_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"remoteVolumeResourceId": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -447,13 +418,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_re_initialize_replication(self, resource_group):
+    def test_volumes_begin_re_initialize_replication(self, resource_group):
         response = self.client.volumes.begin_re_initialize_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -461,14 +432,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_peer_external_cluster(self, resource_group):
+    def test_volumes_begin_peer_external_cluster(self, resource_group):
         response = self.client.volumes.begin_peer_external_cluster(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"peerIpAddresses": ["str"]},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -476,13 +447,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_authorize_external_replication(self, resource_group):
+    def test_volumes_begin_authorize_external_replication(self, resource_group):
         response = self.client.volumes.begin_authorize_external_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -490,13 +461,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_finalize_external_replication(self, resource_group):
+    def test_volumes_begin_finalize_external_replication(self, resource_group):
         response = self.client.volumes.begin_finalize_external_replication(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -504,13 +475,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_perform_replication_transfer(self, resource_group):
+    def test_volumes_begin_perform_replication_transfer(self, resource_group):
         response = self.client.volumes.begin_perform_replication_transfer(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -518,14 +489,14 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_pool_change(self, resource_group):
+    def test_volumes_begin_pool_change(self, resource_group):
         response = self.client.volumes.begin_pool_change(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"newPoolResourceId": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -533,13 +504,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_relocate(self, resource_group):
+    def test_volumes_begin_relocate(self, resource_group):
         response = self.client.volumes.begin_relocate(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -547,13 +518,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_finalize_relocation(self, resource_group):
+    def test_volumes_begin_finalize_relocation(self, resource_group):
         response = self.client.volumes.begin_finalize_relocation(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -561,13 +532,13 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_revert_relocation(self, resource_group):
+    def test_volumes_begin_revert_relocation(self, resource_group):
         response = self.client.volumes.begin_revert_relocation(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

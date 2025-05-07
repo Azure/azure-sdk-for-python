@@ -40,6 +40,7 @@ from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
                               _has_database_account_header)
+from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -213,8 +214,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise e
             else:
                 try:
+                    # pylint: disable=networking-import-outside-azure-core-transport
                     from aiohttp.client_exceptions import (
-                        ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
+                        ClientConnectionError)
                     if isinstance(e.inner_exception, ClientConnectionError):
                         _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
@@ -281,7 +283,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
-                            self.sleep(retry_settings, request.context.transport)
+                            await self.sleep(retry_settings, request.context.transport)
                             continue
                 raise err
             except ServiceResponseError as err:
@@ -290,8 +292,9 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:
+                    # pylint: disable=networking-import-outside-azure-core-transport
                     from aiohttp.client_exceptions import (
-                        ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
+                        ClientConnectionError)
                     if (isinstance(err.inner_exception, ClientConnectionError)
                             or _has_read_retryable_headers(request.http_request.headers)):
                         # This logic is based on the _retry.py file from azure-core
@@ -303,11 +306,13 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
                 retry_error = err
                 if _has_database_account_header(request.http_request.headers):
                     raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)

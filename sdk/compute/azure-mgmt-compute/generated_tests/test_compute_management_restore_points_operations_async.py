@@ -123,7 +123,13 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                         "securityProfile": {
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                            "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                            "proxyAgentSettings": {
+                                "enabled": bool,
+                                "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                "keyIncarnationId": 0,
+                                "mode": "str",
+                                "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            },
                             "securityType": "str",
                             "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                         },
@@ -186,7 +192,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -201,7 +207,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
                 restore_point_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -215,7 +221,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -130,7 +129,7 @@ class DeploymentScript(AzureResourceBase):
         self.system_data = None
 
 
-class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-attributes
+class AzureCliScript(DeploymentScript):
     """Object model for the Azure CLI script.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -493,9 +492,7 @@ class DeploymentScriptPropertiesBase(_serialization.Model):
         self.outputs = None
 
 
-class AzureCliScriptProperties(
-    DeploymentScriptPropertiesBase, ScriptConfigurationBase
-):  # pylint: disable=too-many-instance-attributes
+class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure CLI script object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -660,7 +657,7 @@ class AzureCliScriptProperties(
         self.outputs = None
 
 
-class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-instance-attributes
+class AzurePowerShellScript(DeploymentScript):
     """Object model for the Azure PowerShell script.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -858,9 +855,7 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         self.az_power_shell_version = az_power_shell_version
 
 
-class AzurePowerShellScriptProperties(
-    DeploymentScriptPropertiesBase, ScriptConfigurationBase
-):  # pylint: disable=too-many-instance-attributes
+class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure PowerShell script object.
 
     Variables are only populated by the server, and will be ignored when sending a request.

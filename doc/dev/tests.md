@@ -174,15 +174,12 @@ Live Azure resources will be necessary in order to run live tests and produce re
 resource management commands, documented in [/eng/common/TestResources][test_resources], that streamline this process.
 Both pure ARM templates (`test-resources.json`) and BICEP files (`test-resources.bicep`) are supported.
 
-User-based authentication is preferred when using test resources. To enable this:
-- Use the [`-UserAuth` command flag][user_auth_flag] when running the `New-TestResources` script.
+User-based authentication is preferred when using test resources. The `New-TestResources` script defaults to user-based authentication. To use it:
 - Choose a development tool to authenticate with by setting an `AZURE_TEST_USE_*_AUTH` environment variable to "true" (tests will authenticate as the tool's logged-in user). The following tools are supported, listed in the order that authentication will be attempted in if requested:
   1. Azure PowerShell: set `AZURE_TEST_USE_PWSH_AUTH`.
   2. Azure CLI (`az`): set `AZURE_TEST_USE_CLI_AUTH`.
-  3. Visual Studio Code: set `AZURE_TEST_USE_VSCODE_AUTH`.
   4. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
-- Ensure you're logged into the tool you choose -- if
-you used `New-TestResources.ps1` to deploy resources, you'll already have logged in with Azure PowerShell.
+- Ensure you're logged into the tool you choose -- if you used `New-TestResources` to deploy resources, you'll already have logged in with Azure PowerShell.
 
 **Important:** these environment variables will only be successfully used if test credentials are fetched with the
 [`AzureRecordedTestCase.get_credential`][get_credential] method. See [Write your tests](#write-your-tests) for details.
@@ -215,11 +212,10 @@ environment variables necessary to run live tests for the service. After storing
 -- formatted as `VARIABLE=value` on separate lines -- your credentials and test configuration variables will be set in
 our environment when running tests.
 
-If you used the [`-UserAuth` command flag][user_auth_flag] to deploy test resources, choose a development tool to
+Since `New-TestResources` defaults to user-based authentication, choose a development tool to
 authenticate with by setting an `AZURE_TEST_USE_*_AUTH` environment variable to "true". The following tools are supported, listed in the order that authentication will be attempted in if requested:
   1. Azure PowerShell: set `AZURE_TEST_USE_PWSH_AUTH`.
   2. Azure CLI (`az`): set `AZURE_TEST_USE_CLI_AUTH`.
-  3. Visual Studio Code: set `AZURE_TEST_USE_VSCODE_AUTH`.
   4. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
 
 **Important:** these environment variables will only be successfully used if test credentials are fetched with the
@@ -611,4 +607,3 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
-[user_auth_flag]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/TestResources/New-TestResources.ps1.md#-userauth

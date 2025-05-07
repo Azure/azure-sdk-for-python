@@ -5,9 +5,13 @@ import os
 import types
 from typing import Optional, Type, Union
 
-from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
-from promptflow._utils.user_agent_utils import ClientUserAgentUtil
-from promptflow.tracing._integrations._openai_injector import inject_openai_api, recover_openai_api
+from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
+from azure.ai.evaluation._legacy._adapters.utils import ClientUserAgentUtil
+from azure.ai.evaluation._legacy._adapters.tracing import inject_openai_api, recover_openai_api
+from azure.ai.evaluation._legacy._batch_engine._openai_injector import (
+    inject_openai_api as ported_inject_openai_api,
+    recover_openai_api as ported_recover_openai_api,
+)
 
 from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,
@@ -19,6 +23,8 @@ from azure.ai.evaluation._constants import (
 
 from ..._user_agent import USER_AGENT
 from .._utils import set_event_loop_policy
+from .batch_clients import BatchClient
+from ._run_submitter_client import RunSubmitterClient
 from .code_client import CodeClient
 from .proxy_client import ProxyClient
 
@@ -33,7 +39,7 @@ class EvalRunContext:
     ]
     """
 
-    def __init__(self, client: Union[CodeClient, ProxyClient]) -> None:
+    def __init__(self, client: BatchClient) -> None:
         self.client = client
         self._is_batch_timeout_set_by_system = False
         self._is_otel_timeout_set_by_system = False
@@ -64,6 +70,10 @@ class EvalRunContext:
             # For addressing the issue of asyncio event loop closed on Windows
             set_event_loop_policy()
 
+        if isinstance(self.client, RunSubmitterClient):
+            set_event_loop_policy()
+            ported_inject_openai_api()
+
     def __exit__(
         self,
         exc_type: Optional[Type[BaseException]],
@@ -87,3 +97,6 @@ class EvalRunContext:
             if self._is_otel_timeout_set_by_system:
                 os.environ.pop(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT, None)
                 self._is_otel_timeout_set_by_system = False
+
+        if isinstance(self.client, RunSubmitterClient):
+            ported_recover_openai_api()

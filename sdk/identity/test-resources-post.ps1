@@ -16,7 +16,7 @@ param (
 
 $ProvisionLiveResources = $AdditionalParameters['ProvisionLiveResources']
 Write-Host "ProvisionLiveResources: $ProvisionLiveResources"
-if ($CI -and !$ProvisionLiveResources) {
+if (!$ProvisionLiveResources) {
     Write-Host "Skipping test resource post-provisioning."
     return
 }

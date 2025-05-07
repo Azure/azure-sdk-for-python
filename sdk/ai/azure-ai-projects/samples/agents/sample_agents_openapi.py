@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -47,10 +48,17 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
+    name="get_weather",
+    spec=openapi_weather,
+    description="Retrieve weather information for a location",
+    auth=auth,
+    default_parameters=["format"],
 )
 openapi_tool.add_definition(
-    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
+    name="get_countries",
+    spec=openapi_countries,
+    description="Retrieve a list of countries",
+    auth=auth,
 )
 
 # Create agent with OpenApi tool and process assistant run
@@ -61,7 +69,6 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=openapi_tool.definitions,
     )
-
     # [END create_agent_with_openapi]
 
     print(f"Created agent, ID: {agent.id}")
@@ -79,7 +86,7 @@ with project_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
