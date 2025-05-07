@@ -949,7 +949,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             ):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
-                    logging.warning("No tool calls provided - cancelling run")
+                    logger.warning("No tool calls provided - cancelling run")
                     self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                     break
                 # We need tool set only if we are executing local function. In case if

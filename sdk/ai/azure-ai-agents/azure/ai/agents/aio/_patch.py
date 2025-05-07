@@ -952,7 +952,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls or []
 
                 if not tool_calls:
-                    logging.warning("No tool calls provided â€“ cancelling run")
+                    logger.warning("No tool calls provided â€“ cancelling run")
                     run = await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                     break
                 # We need tool set only if we are executing local function. In case if
@@ -969,7 +969,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                             )
                             return await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                         else:
-                            logging.warning("Tool outputs contain errors - retrying")
+                            logger.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
 
                     logger.info("Tool outputs: %s", tool_outputs)

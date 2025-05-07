@@ -576,7 +576,7 @@ class FunctionTool(BaseFunctionTool):
             return function(**parsed_arguments) if parsed_arguments else function()
         except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
-            logging.error(error_message)
+            logger.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self
             # correction to the function call
             return json.dumps({"error": error_message})
@@ -592,7 +592,7 @@ class AsyncFunctionTool(BaseFunctionTool):
             return function(**parsed_arguments) if parsed_arguments else function()
         except Exception as e:  # pylint: disable=broad-exception-caught
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
-            logging.error(error_message)
+            logger.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction
             # to the function call
             return json.dumps({"error": error_message})
@@ -1230,7 +1230,7 @@ class BaseToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logging.error("Error creating ToolResources: %s", e)
+            logger.error("Error creating ToolResources: %s", e)
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -1539,7 +1539,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                     event_type, event_data_obj
                 )  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logging.error("Error in event handler for event '%s': %s", event_type, e)
+            logger.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
@@ -1666,7 +1666,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logging.error("Error in event handler for event '%s': %s", event_type, e)
+            logger.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(

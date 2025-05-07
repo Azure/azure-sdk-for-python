@@ -74,6 +74,8 @@ from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _Instrument
 
 _Unset: Any = object()
 
+logger = logging.getLogger(__name__)
+
 try:
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import Span, StatusCode
@@ -1880,7 +1882,7 @@ class _AIAgentsInstrumentorPreview:
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
-                    logging.warning(
+                    logger.warning(
                         "AttributeError: The module '%s' does not have the class '%s'. %s",
                         module_name,
                         class_name,
@@ -1888,7 +1890,7 @@ class _AIAgentsInstrumentorPreview:
                     )
                 except Exception as e:  # pylint: disable=broad-except
                     # Log other exceptions as a warning, as we are not sure what they might be
-                    logging.warning("An unexpected error occurred: '%s'", str(e))
+                    logger.warning("An unexpected error occurred: '%s'", str(e))
 
     def _available_agents_apis_and_injectors(self):
         """

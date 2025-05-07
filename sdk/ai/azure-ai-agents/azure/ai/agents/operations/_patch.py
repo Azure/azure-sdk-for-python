@@ -537,7 +537,7 @@ class RunsOperations(RunsOperationsGenerated):
             ):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
-                    logging.warning("No tool calls provided - cancelling run")
+                    logger.warning("No tool calls provided - cancelling run")
                     self.cancel(thread_id=thread_id, run_id=run.id)
                     break
                 # We need tool set only if we are executing local function. In case if
@@ -1265,9 +1265,9 @@ class RunsOperations(RunsOperationsGenerated):
 
                 if _has_errors_in_toolcalls_output(tool_outputs):
                     if submit_with_error:
-                        logging.warning("Tool outputs contain errors - retrying")
+                        logger.warning("Tool outputs contain errors - retrying")
                     else:
-                        logging.warning("Tool outputs contain errors - reaching max retry limit")
+                        logger.warning("Tool outputs contain errors - reaching max retry limit")
 
                         response = self.cancel(thread_id=run.thread_id, run_id=run.id)
                         response_json = ast.literal_eval(str(response))
