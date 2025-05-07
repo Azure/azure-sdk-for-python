@@ -115,7 +115,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         if self._enable_diagnostics_logging:
 
             http_request = request.http_request
-            request.context["start_time"] = time.time()
+            if "start_time" not in request.context:
+                request.context["start_time"] = time.time()
             options = request.context.options
             # Get logger in my context first (request has been retried)
             # then read from kwargs (pop if that's the case)
@@ -123,7 +124,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             # If filtered is applied, and we are not calling on request from on response, just return to avoid logging
             # the request again
-            filter_applied = (logger.filters) or any(bool(h.filters) for h in logger.handlers)
+            filter_applied = bool(logger.filters) or any(bool(h.filters) for h in logger.handlers)
             if filter_applied and 'logger_attributes' not in request.context:
                 return
             operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
