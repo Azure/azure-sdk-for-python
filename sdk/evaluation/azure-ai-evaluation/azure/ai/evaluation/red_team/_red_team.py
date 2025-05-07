@@ -364,55 +364,55 @@ class RedTeam:
         properties = {}
 
         # If we have a scan output directory, save the results there first
-        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-            artifact_path = os.path.join(self.scan_output_dir, artifact_name)
-            self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
-            with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                if _skip_evals:
-                    # In _skip_evals mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                elif redteam_result.scan_result:
-                    # Create a copy to avoid modifying the original scan result
-                    result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
-                    
-                    # Preserve all original fields needed for scorecard generation
-                    result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
-                    result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
-                    
-                    # Add conversations field with all conversation data including user messages
-                    result_with_conversations["conversations"] = redteam_result.attack_details or []
-                    
-                    # Keep original attack_details field to preserve compatibility with existing code
-                    if "attack_details" not in result_with_conversations and redteam_result.attack_details is not None:
-                        result_with_conversations["attack_details"] = redteam_result.attack_details
-                    
-                    json.dump(result_with_conversations, f)
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                artifact_path = os.path.join(self.scan_output_dir, artifact_name)
+                self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
+                with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    if _skip_evals:
+                        # In _skip_evals mode, we write the conversations in conversation/messages format
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        # Create a copy to avoid modifying the original scan result
+                        result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
+                        
+                        # Preserve all original fields needed for scorecard generation
+                        result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
+                        result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
+                        
+                        # Add conversations field with all conversation data including user messages
+                        result_with_conversations["conversations"] = redteam_result.attack_details or []
+                        
+                        # Keep original attack_details field to preserve compatibility with existing code
+                        if "attack_details" not in result_with_conversations and redteam_result.attack_details is not None:
+                            result_with_conversations["attack_details"] = redteam_result.attack_details
+                        
+                        json.dump(result_with_conversations, f)
 
-            eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
-            self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
-            with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                # Remove evaluation_result from red_team_info before logging
-                red_team_info_logged = {}
-                for strategy, harms_dict in self.red_team_info.items():
-                    red_team_info_logged[strategy] = {}
-                    for harm, info_dict in harms_dict.items():
-                        info_dict.pop("evaluation_result", None)
-                        red_team_info_logged[strategy][harm] = info_dict
-                f.write(json.dumps(red_team_info_logged))
-            
-            # Also save a human-readable scorecard if available
-            if not _skip_evals and redteam_result.scan_result:
-                scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
-                with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    f.write(self._to_scorecard(redteam_result.scan_result))
-                self.logger.debug(f"Saved scorecard to: {scorecard_path}")
+                eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
+                self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+                with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    # Remove evaluation_result from red_team_info before logging
+                    red_team_info_logged = {}
+                    for strategy, harms_dict in self.red_team_info.items():
+                        red_team_info_logged[strategy] = {}
+                        for harm, info_dict in harms_dict.items():
+                            info_dict.pop("evaluation_result", None)
+                            red_team_info_logged[strategy][harm] = info_dict
+                    f.write(json.dumps(red_team_info_logged))
                 
-            # Create a dedicated artifacts directory with proper structure for MLFlow
-            # MLFlow requires the artifact_name file to be in the directory we're logging
-            
-            import tempfile
-            with tempfile.TemporaryDirectory() as tmpdir:
-                # First, create the main artifact file that MLFlow expects
+                # Also save a human-readable scorecard if available
+                if not _skip_evals and redteam_result.scan_result:
+                    scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
+                    with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                        f.write(self._to_scorecard(redteam_result.scan_result))
+                    self.logger.debug(f"Saved scorecard to: {scorecard_path}")
+                    
+                # Create a dedicated artifacts directory with proper structure for MLFlow
+                # MLFlow requires the artifact_name file to be in the directory we're logging
+                
+                    # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
@@ -450,10 +450,9 @@ class RedTeam:
                 # except Exception as e:
                 #     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
 
-            properties.update({"scan_output_dir": str(self.scan_output_dir)})
-        else:
-            # Use temporary directory as before if no scan output directory exists
-            with tempfile.TemporaryDirectory() as tmpdir:
+                properties.update({"scan_output_dir": str(self.scan_output_dir)})
+            else:
+                # Use temporary directory as before if no scan output directory exists
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
@@ -463,69 +462,68 @@ class RedTeam:
                 # eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
-        properties.update({
-            EvaluationRunProperties.RUN_TYPE: "eval_run",
-            "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
-            EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-            "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-        })
+            properties.update({
+                "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
+                EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+            })
+        
+            metrics = {}
+            if redteam_result.scan_result:
+                scorecard = redteam_result.scan_result["scorecard"]
+                joint_attack_summary = scorecard["joint_risk_attack_summary"]
+                
+                if joint_attack_summary:
+                    for risk_category_summary in joint_attack_summary:
+                        risk_category = risk_category_summary.get("risk_category").lower()
+                        for key, value in risk_category_summary.items():
+                            if key != "risk_category":
+                                metrics.update({
+                                    f"{risk_category}_{key}": cast(float, value)
+                                })
+                                # eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
+                                self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
 
-        metrics = {}
-        if redteam_result.scan_result:
-            scorecard = redteam_result.scan_result["scorecard"]
-            joint_attack_summary = scorecard["joint_risk_attack_summary"]
-            
-            if joint_attack_summary:
-                for risk_category_summary in joint_attack_summary:
-                    risk_category = risk_category_summary.get("risk_category").lower()
-                    for key, value in risk_category_summary.items():
-                        if key != "risk_category":
-                            metrics.update({
-                                f"{risk_category}_{key}": cast(float, value)
-                            })
-                            # eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
-                            self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
-
-        if self._one_dp_project:
-            try:
-                create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                    name=uuid.uuid4(),
-                    path=tmpdir,
-                    metrics=metrics,
-                    ResultType=ResultType.REDTEAM
-                )
-
-                update_run_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result.update_evaluation_run(
-                    name=eval_run.id,
-                    evaluation=RedTeamUpload(
-                        display_name=eval_run.display_name,
-                        status="Completed",
-                        outputs={
-                            'evaluationResultId': create_evaluation_result_response.id,
-                        },
-                        properties=properties,
+            if self._one_dp_project:
+                try:
+                    create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                        name=uuid.uuid4(),
+                        path=tmpdir,
+                        metrics=metrics,
+                        result_type=ResultType.REDTEAM
                     )
-                )
-            except Exception as e:
-                self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
 
-        else:
-            # Log the entire directory to MLFlow
-            try:
-                eval_run.log_artifact(tmpdir, artifact_name)
-                if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-                    eval_run.log_artifact(tmpdir, eval_info_name)
-                self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
-            except Exception as e:
-                self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
+                    update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
+                        name=eval_run.id,
+                        red_team=RedTeamUpload(
+                            id=eval_run.id,
+                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            status="Completed",
+                            outputs={
+                                'evaluationResultId': create_evaluation_result_response.id,
+                            },
+                            properties=properties,
+                        )
+                    )
+                    self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
+                except Exception as e:
+                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+            else:
+                # Log the entire directory to MLFlow
+                try:
+                    eval_run.log_artifact(tmpdir, artifact_name)
+                    if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                        eval_run.log_artifact(tmpdir, eval_info_name)
+                    self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
+                except Exception as e:
+                    self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
 
-            for k,v in metrics.items():
-                eval_run.log_metric(k, v)
-                self.logger.debug(f"Logged metric: {k} = {v}")
+                for k,v in metrics.items():
+                    eval_run.log_metric(k, v)
+                    self.logger.debug(f"Logged metric: {k} = {v}")
 
-            eval_run.write_properties_to_run_history(properties)
+                eval_run.write_properties_to_run_history(properties)
 
-            eval_run._end_run("FINISHED")
+                eval_run._end_run("FINISHED")
 
         self.logger.info("Successfully logged results to AI Foundry")
         return None
