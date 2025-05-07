@@ -7,35 +7,33 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CosmosDBManagementClientConfiguration
 from .operations import (
     CassandraClustersOperations,
     CassandraDataCentersOperations,
     CassandraResourcesOperations,
-    ChaosFaultOperations,
     CollectionOperations,
     CollectionPartitionOperations,
     CollectionPartitionRegionOperations,
     CollectionRegionOperations,
-    DataTransferJobsOperations,
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
-    GraphResourcesOperations,
     GremlinResourcesOperations,
     LocationsOperations,
     MongoDBResourcesOperations,
-    NetworkSecurityPerimeterConfigurationsOperations,
     NotebookWorkspacesOperations,
     Operations,
     PartitionKeyRangeIdOperations,
@@ -60,10 +58,6 @@ from .operations import (
     ServiceOperations,
     SqlResourcesOperations,
     TableResourcesOperations,
-    ThroughputPoolAccountOperations,
-    ThroughputPoolAccountsOperations,
-    ThroughputPoolOperations,
-    ThroughputPoolsOperations,
 )
 
 if TYPE_CHECKING:
@@ -71,10 +65,8 @@ if TYPE_CHECKING:
 
 
 class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
-    """Azure Cosmos DB Chaos Fault REST API.
+    """Azure Cosmos DB Database Service Resource Provider REST API.
 
-    :ivar chaos_fault: ChaosFaultOperations operations
-    :vartype chaos_fault: azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations
     :ivar database_accounts: DatabaseAccountsOperations operations
     :vartype database_accounts: azure.mgmt.cosmosdb.aio.operations.DatabaseAccountsOperations
     :ivar operations: Operations operations
@@ -106,8 +98,6 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
     :vartype partition_key_range_id_region:
      azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdRegionOperations
-    :ivar graph_resources: GraphResourcesOperations operations
-    :vartype graph_resources: azure.mgmt.cosmosdb.aio.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -120,17 +110,11 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype gremlin_resources: azure.mgmt.cosmosdb.aio.operations.GremlinResourcesOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: azure.mgmt.cosmosdb.aio.operations.LocationsOperations
-    :ivar data_transfer_jobs: DataTransferJobsOperations operations
-    :vartype data_transfer_jobs: azure.mgmt.cosmosdb.aio.operations.DataTransferJobsOperations
     :ivar cassandra_clusters: CassandraClustersOperations operations
     :vartype cassandra_clusters: azure.mgmt.cosmosdb.aio.operations.CassandraClustersOperations
     :ivar cassandra_data_centers: CassandraDataCentersOperations operations
     :vartype cassandra_data_centers:
      azure.mgmt.cosmosdb.aio.operations.CassandraDataCentersOperations
-    :ivar network_security_perimeter_configurations:
-     NetworkSecurityPerimeterConfigurationsOperations operations
-    :vartype network_security_perimeter_configurations:
-     azure.mgmt.cosmosdb.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
     :vartype notebook_workspaces: azure.mgmt.cosmosdb.aio.operations.NotebookWorkspacesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -176,39 +160,31 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.cosmosdb.aio.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.aio.operations.ServiceOperations
-    :ivar throughput_pools: ThroughputPoolsOperations operations
-    :vartype throughput_pools: azure.mgmt.cosmosdb.aio.operations.ThroughputPoolsOperations
-    :ivar throughput_pool: ThroughputPoolOperations operations
-    :vartype throughput_pool: azure.mgmt.cosmosdb.aio.operations.ThroughputPoolOperations
-    :ivar throughput_pool_accounts: ThroughputPoolAccountsOperations operations
-    :vartype throughput_pool_accounts:
-     azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountsOperations
-    :ivar throughput_pool_account: ThroughputPoolAccountOperations operations
-    :vartype throughput_pool_account:
-     azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-04-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = CosmosDBManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -227,13 +203,14 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.chaos_fault = ChaosFaultOperations(self._client, self._config, self._serialize, self._deserialize)
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -265,7 +242,6 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -278,16 +254,10 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_transfer_jobs = DataTransferJobsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.cassandra_clusters = CassandraClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.cassandra_data_centers = CassandraDataCentersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.notebook_workspaces = NotebookWorkspacesOperations(
@@ -336,16 +306,6 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.throughput_pools = ThroughputPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.throughput_pool = ThroughputPoolOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.throughput_pool_accounts = ThroughputPoolAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.throughput_pool_account = ThroughputPoolAccountOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
