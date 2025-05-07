@@ -229,7 +229,7 @@ def init_container(preferred_locations, client_excluded_locations, multiple_writ
 def verify_endpoint(messages, client, expected_locations):
     # get mapping for locations
     location_mapping = (client.client_connection._global_endpoint_manager.
-                        location_cache.account_locations_by_write_regional_routing_context)
+                        location_cache.account_locations_by_write_endpoints)
     default_endpoint = (client.client_connection._global_endpoint_manager.
                         location_cache.default_regional_routing_context.get_primary())
 

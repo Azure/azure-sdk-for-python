@@ -168,8 +168,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.last_cache_update_time_stamp = 0
         self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
         self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
-        self.account_locations_by_read_regional_routing_context = {} # pylint: disable=name-too-long
-        self.account_locations_by_write_regional_routing_context = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_endpoints: Mapping[str, str] = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_endpoints: Mapping[str, str] = {} # pylint: disable=name-too-long
         self.account_write_locations = []
         self.account_read_locations = []
         self.connection_policy = connection_policy
@@ -221,7 +221,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if excluded_locations:
             return _get_applicable_regional_routing_contexts(
                 self.get_read_regional_routing_contexts(),
-                self.account_locations_by_read_regional_routing_context,
+                self.account_locations_by_read_endpoints,
                 self.get_write_regional_routing_contexts()[0],
                 excluded_locations,
                 request.resource_type)
@@ -237,7 +237,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if excluded_locations:
             return _get_applicable_regional_routing_contexts(
                 self.get_write_regional_routing_contexts(),
-                self.account_locations_by_write_regional_routing_context,
+                self.account_locations_by_write_endpoints,
                 self.default_regional_routing_context,
                 excluded_locations,
                 request.resource_type)
@@ -353,14 +353,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
+        if (expected_available_operation == EndpointOperationType.WriteType
+                and endpoint in self.account_locations_by_write_endpoints):
+            location = self.account_locations_by_write_endpoints[endpoint]
+        elif (expected_available_operation == EndpointOperationType.ReadType
+                and endpoint in self.account_locations_by_read_endpoints):
+            location = self.account_locations_by_read_endpoints[endpoint]
+        else:
+            return True
+
         unavailability_info = (
-            self.location_unavailability_info_by_endpoint[endpoint]
-            if endpoint in self.location_unavailability_info_by_endpoint
+            self.location_unavailability_info_by_endpoint[location]
+            if location in self.location_unavailability_info_by_endpoint
             else None
         )
 
-        if (
-            expected_available_operation == EndpointOperationType.NoneType
+        if (expected_available_operation == EndpointOperationType.NoneType
             or not unavailability_info
             or expected_available_operation not in unavailability_info["operationType"]
         ):
@@ -369,7 +377,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Endpoint is unavailable
         return True
 
-    def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type, refresh_cache: bool):
+    def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type: str, refresh_cache: bool):
         logger.warning("Marking %s unavailable for %s ",
                        unavailable_endpoint,
                        unavailable_operation_type)
@@ -380,10 +388,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
         if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "operationType": set([unavailable_operation_type])
+                "operationType": {unavailable_operation_type}
             }
         else:
-            unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
+            unavailable_operations = {unavailable_operation_type}.union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
                 "operationType": unavailable_operations
             }
@@ -401,7 +409,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if self.connection_policy.EnableEndpointDiscovery:
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
-                 self.account_locations_by_read_regional_routing_context,
+                 self.account_locations_by_read_endpoints,
                  self.account_read_locations) = get_endpoints_by_location(
                     read_locations,
                     self.account_read_regional_routing_contexts_by_location,
@@ -412,7 +420,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
-                 self.account_locations_by_write_regional_routing_context,
+                 self.account_locations_by_write_endpoints,
                  self.account_write_locations) = get_endpoints_by_location(
                     write_locations,
                     self.account_write_regional_routing_contexts_by_location,
