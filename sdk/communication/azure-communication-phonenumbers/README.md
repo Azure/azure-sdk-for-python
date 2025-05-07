@@ -87,11 +87,11 @@ Phone numbers can also be released using the release API.
 
 #### Browsing and Reserving Phone Numbers
 
-The Browse and Reservations APIs provide an alternate way to acquire phone numbers via a "shopping-cart-like" experience. This is achieved by splitting the search operation, which finds and reserves numbers using a single LRO, into two separate synchronous steps: Browse and Reservation. 
+The Browse and Reservations APIs provide an alternate way to acquire phone numbers via a shopping-cart-like experience. This is achieved by splitting the search operation, which finds and reserves numbers using a single LRO, into two separate synchronous steps, Browse and Reservation. 
 
 The browse operation retrieves a random sample of phone numbers that are available for purchase for a given country, with optional filtering criteria to narrow down results. The returned phone numbers are not reserved for any customer.
 
-Reservations represent a collection of phone numbers that are “locked” by a specific customer and are awaiting purchase. They have an expiration time of 15 minutes after the last modification or 2 hours from creation time. A reservation can include numbers from different countries, in contrast with the Search operation. Customers can Create, Retrieve, Modify (add/remove numbers), Delete, and Purchase reservations. Purchasing a reservation is an LRO.
+Reservations represent a collection of phone numbers that are locked by a specific customer and are awaiting purchase. They have an expiration time of 15 minutes after the last modification or 2 hours from creation time. A reservation can include numbers from different countries, in contrast with the Search operation. Customers can Create, Retrieve, Modify (by adding and removing numbers), Delete, and Purchase reservations. Purchasing a reservation is an LRO.
 
 ### SIP routing client
 
