@@ -107,7 +107,7 @@ async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, 
     assert len(response.request_pieces) == 1
     response_piece = response.request_pieces[0]
     response_data = json.loads(response_piece.converted_value)
-    assert response_data["score_value"] == "false" # 2 <= 4
+    assert response_data["score_value"] == False # 2 <= 4
     assert response_data["metadata"]["raw_score"] == 2
 
 def test_validate_request_success(mock_prompt_request, mock_azure_ai_project):
