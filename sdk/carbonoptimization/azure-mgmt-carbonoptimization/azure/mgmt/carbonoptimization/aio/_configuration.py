@@ -27,7 +27,7 @@ class CarbonOptimizationMgmtClientConfiguration:  # pylint: disable=too-many-ins
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-04-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -35,7 +35,7 @@ class CarbonOptimizationMgmtClientConfiguration:  # pylint: disable=too-many-ins
     def __init__(
         self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-04-01")
+        api_version: str = kwargs.pop("api_version", "2025-06-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
