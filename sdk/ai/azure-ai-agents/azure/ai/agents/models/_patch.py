@@ -1344,7 +1344,8 @@ class AsyncToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Failed to execute tool call %s: %s", tool_call, e)
+                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
+                tool_outputs.append(tool_output)
 
         return tool_outputs
 
