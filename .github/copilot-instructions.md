@@ -9,19 +9,24 @@ When someone asks to run validation on their library, ask them what supported en
 
 # Generating an SDK From TypeSpec
 
+
+
 Initialize and validate a TypeSpec client library for Azure SDK for Python. Please:
 
-1. Generate the SDK from the TypeSpec configuration file at [URL to tspconfig.yaml]. If the URL doesn't contain the latest commit hash, please retrieve it from GitHub API first. 
+1. If not using the typespec mcp tool, please follow the instructions below to generate an SDK from TypeSpec.
+   - Generate the SDK from the TypeSpec configuration file at [URL to tspconfig.yaml]. If the URL doesn't contain the latest commit hash, please retrieve it from GitHub API first. 
    - Ensure that node, python, and the required dependencies are installed in your environment (@azure-tools/typespec-client-generator-cli)
    - Ensure the url has the most recent commit hash of the tspconfig.yaml file instead of a branch name like `main`. If the url does not have a commit hash, use the GitHub API to get the most recent commit hash of the tspconfig.yaml file. If you are unable to do this, ask the user to provide the correct url. `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`  helpful.
    - Use the command `npx @azure-tools/typespec-client-generator-cli init --tsp-config [URL to tspconfig.yaml]` to generate the SDK.
 
 2. After generation is complete, validate the output by:
    - Installing the newly generated package and its dev_requirements in a .venv and installing tox.
-   - Running pylint validation using tox: `tox -e pylint -c [path to tox.ini] --root .`
-   - Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`
+   - Running pylint validation using tox: `tox -e pylint -c [path to tox.ini] --root .`. Or use the tox mcp tool from the azure-sdk-validation server.
+   - Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`. Or use the tox mcp tool from the azure-sdk-validation server.
+   - Running pyright validation using tox: `tox -e pyright -c [path to tox.ini] --root .`. Or use the tox mcp tool from the azure-sdk-validation server.
+   - Running verifytypes validation using tox: `tox -e verifytypes -c [path to tox.ini] --root .`. Or use the tox mcp tool from the azure-sdk-validation server.
 
-3. If any errors or warnings are found, provide guidance on fixing them following Azure SDK best practices.
+3. If any errors or warnings are found, after running all validation checks provide guidance on fixing them following Azure SDK best practices. 
 
 Please use Python 3.9 for compatibility, and refer to the Azure SDK design guidelines (https://azure.github.io/azure-sdk/python_design.html) for any implementation decisions.
 
