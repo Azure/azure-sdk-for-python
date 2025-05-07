@@ -36,7 +36,6 @@ from .. import _types
 if TYPE_CHECKING:
 
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,7 @@ _Unset: Any = object()
 class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
-        self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
+        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any
     ) -> None:
         if not endpoint:
             raise ValueError("Please provide the 1DP endpoint.")
