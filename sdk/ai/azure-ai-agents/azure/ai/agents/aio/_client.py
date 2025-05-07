@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing import Any, Awaitable, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -56,19 +55,14 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
     :param endpoint: Project endpoint in the form of:
      https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "v1". Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
-        # The '{endpoint}' placeholder is used for dynamic URL.
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AgentsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
