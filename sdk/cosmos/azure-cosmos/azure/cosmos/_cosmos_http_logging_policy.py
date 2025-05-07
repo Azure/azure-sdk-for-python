@@ -64,7 +64,7 @@ def _format_error(payload: str) -> str:
         try:
             ret_str = "\t" + payload.replace("\r\n", "\n\t\t").replace(",", ",\n\t\t") + "\n"
         except AttributeError:
-            ret_str = payload
+            ret_str = str(payload)
     return ret_str
 
 
