@@ -353,22 +353,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
-        if (expected_available_operation == EndpointOperationType.WriteType
-                and endpoint in self.account_locations_by_write_endpoints):
-            location = self.account_locations_by_write_endpoints[endpoint]
-        elif (expected_available_operation == EndpointOperationType.ReadType
-                and endpoint in self.account_locations_by_read_endpoints):
-            location = self.account_locations_by_read_endpoints[endpoint]
-        else:
-            return True
-
         unavailability_info = (
-            self.location_unavailability_info_by_endpoint[location]
-            if location in self.location_unavailability_info_by_endpoint
+            self.location_unavailability_info_by_endpoint[endpoint]
+            if endpoint in self.location_unavailability_info_by_endpoint
             else None
         )
 
-        if (expected_available_operation == EndpointOperationType.NoneType
+        if (
+            expected_available_operation == EndpointOperationType.NoneType
             or not unavailability_info
             or expected_available_operation not in unavailability_info["operationType"]
         ):
