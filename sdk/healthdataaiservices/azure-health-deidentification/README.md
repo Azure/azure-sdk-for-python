@@ -82,7 +82,7 @@ You can de-identify text directly using the `DeidentificationClient`:
 body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:        "{body.input_text}"')
-print(f'Surrogated Text:   "{result.output_text}"') # Surrogated output: Hello, my name is <synthetic name>.
+print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
 ```
 
 <!-- END SNIPPET -->
@@ -114,10 +114,7 @@ job = DeidentificationJob(
         location=storage_location,
         prefix=inputPrefix,
     ),
-    target_location=TargetStorageLocation(
-        location=storage_location,
-        prefix=outputPrefix,
-        overwrite=True),
+    target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
 )
 
 finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=60)
@@ -143,14 +140,18 @@ When you specify the `TAG` operation, the service will return information about 
 <!-- SNIPPET: deidentify_text_tag.tag -->
 
 ```python
-body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG)
+body = DeidentificationContent(
+    input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG
+)
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:    "{body.input_text}"')
 
 if result.tagger_result and result.tagger_result.entities:
-    print(f'Tagged Entities:')
+    print(f"Tagged Entities:")
     for entity in result.tagger_result.entities:
-        print(f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"')
+        print(
+            f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"'
+        )
 else:
     print("\tNo tagged entities found.")
 ```
@@ -162,10 +163,12 @@ When you specify the `REDACT` operation, the service will replace the PHI entiti
 <!-- SNIPPET: deidentify_text_redact.redact -->
 
 ```python
-body = DeidentificationContent(input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT)
+body = DeidentificationContent(
+    input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT
+)
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:        "{body.input_text}"')
-print(f'Redacted Text:   "{result.output_text}"') # Redacted output: "It's great to work at [organization]."
+print(f'Redacted Text:   "{result.output_text}"')  # Redacted output: "It's great to work at [organization]."
 ```
 
 <!-- END SNIPPET -->
@@ -178,7 +181,7 @@ The default operation is the `SURROGATE` operation. Using this operation, the se
 body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:        "{body.input_text}"')
-print(f'Surrogated Text:   "{result.output_text}"') # Surrogated output: Hello, my name is <synthetic name>.
+print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
 ```
 
 <!-- END SNIPPET -->
@@ -196,7 +199,7 @@ body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.")
 try:
     error_client.deidentify_text(body)
 except AzureError as e:
-    print('\nError: ' + e.message)
+    print("\nError: " + e.message)
 ```
 
 <!-- END SNIPPET -->
