@@ -10,7 +10,6 @@ from azure.cosmos.aio import CosmosClient as async_client
 from test_config import TestConfig
 
 
-# @pytest.mark.skip
 @pytest.mark.cosmosEmulator
 class TestClientUserAgent(unittest.IsolatedAsyncioTestCase):
 
@@ -26,8 +25,8 @@ class TestClientUserAgent(unittest.IsolatedAsyncioTestCase):
         async with async_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testAsyncSuffix") as client_async:
             client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testSyncSuffix")
 
-            self.assertTrue(client_sync.client_connection._user_agent.endswith("/testSyncSuffix"))
-            self.assertTrue(client_async.client_connection._user_agent.endswith("/testAsyncSuffix"))
+            self.assertTrue(client_sync.client_connection._user_agent.endswith(" testSyncSuffix"))
+            self.assertTrue(client_async.client_connection._user_agent.endswith(" testAsyncSuffix"))
             self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
 
 
