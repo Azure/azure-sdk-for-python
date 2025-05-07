@@ -38,15 +38,15 @@ class TestAIProjectRedTeamsOperations(AIProjectClientTestBase):
         client = self.create_client(endpoint=aiproject_endpoint)
         response = client.red_teams.create(
             red_team={
-                "attackStrategies": ["str"],
                 "id": "str",
+                "target": "target_config",
+                "applicationScenario": "str",
+                "attackStrategies": ["str"],
+                "displayName": "str",
                 "numTurns": 0,
+                "properties": {"str": "str"},
                 "riskCategories": ["str"],
                 "simulationOnly": bool,
-                "targetConfig": "target_config",
-                "applicationScenario": "str",
-                "properties": {"str": "str"},
-                "scanName": "str",
                 "status": "str",
                 "tags": {"str": "str"},
             },

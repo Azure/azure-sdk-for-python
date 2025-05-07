@@ -98,8 +98,6 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
         response = client.datasets.get_credentials(
             name="str",
             version="str",
-            body={},
-            content_type="str",
         )
 
         # please add some check logic here by yourself
