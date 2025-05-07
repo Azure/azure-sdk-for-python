@@ -501,7 +501,7 @@ def queue_trigger(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
 
         outputQueue.set(json.dumps(response_message))
 
-        logging.info(f"Sent message to output queue with message {response_message}")
+        logger.info(f"Sent message to output queue with message {response_message}")
     except Exception as e:
         logging.error(f"Error processing message: {e}")
         return

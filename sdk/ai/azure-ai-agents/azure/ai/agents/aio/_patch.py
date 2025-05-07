@@ -962,7 +962,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logging.warning(
+                            logger.warning(
                                 "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
                             )
                             return await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
@@ -970,14 +970,14 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                             logging.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
 
-                    logging.info("Tool outputs: %s", tool_outputs)
+                    logger.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
                         run2 = await self.runs.submit_tool_outputs(
                             thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
-                        logging.info("Tool outputs submitted to run: %s", run2.id)
+                        logger.info("Tool outputs submitted to run: %s", run2.id)
 
-            logging.info("Current run status: %s", run.status)
+            logger.info("Current run ID: %s with status: %s", run.id, run.status)
 
         return run
 

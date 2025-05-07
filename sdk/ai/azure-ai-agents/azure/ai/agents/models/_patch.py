@@ -770,7 +770,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         for definition in self._definitions:
             if definition.openapi.name == name:
                 self._definitions.remove(definition)
-                logging.info("Definition '%s' removed. Total definitions: %d.", name, len(self._definitions))
+                logger.info("Definition '%s' removed. Total definitions: %d.", name, len(self._definitions))
                 return
         raise ValueError(f"Definition with the name '{name}' does not exist.")
 
@@ -1183,7 +1183,7 @@ class BaseToolSet:
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
-                logging.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
+                logger.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
