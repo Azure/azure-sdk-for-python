@@ -1113,7 +1113,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         connection_string: str,
         container: SearchIndexerDataContainer,
         identity: Optional[SearchIndexerDataIdentity] = None,
-        indexer_permission_options: Optional[List[Union[str,IndexerPermissionOption]]] = None,
+        indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = None,
         data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
         data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
         e_tag: Optional[str] = None,
