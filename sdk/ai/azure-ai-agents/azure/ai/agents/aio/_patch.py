@@ -7,7 +7,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio  # pylint: disable = do-not-import-asyncio
 import io
 import logging
 import os
@@ -942,7 +941,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             _models.RunStatus.IN_PROGRESS,
             _models.RunStatus.REQUIRES_ACTION,
         ):
-            await self._client._pipeline._transport.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
 
             run = await self.runs.get(thread_id=run.thread_id, run_id=run.id)
 

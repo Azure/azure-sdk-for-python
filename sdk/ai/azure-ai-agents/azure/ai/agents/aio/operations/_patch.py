@@ -530,7 +530,7 @@ class RunsOperations(RunsOperationsGenerated):
             RunStatus.IN_PROGRESS,
             RunStatus.REQUIRES_ACTION,
         ]:
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
             run = await self.get(thread_id=thread_id, run_id=run.id)
 
             if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
@@ -1528,7 +1528,7 @@ class FilesOperations(FilesOperationsGenerated):
             if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
             uploaded_file = await self.get(uploaded_file.id)
 
         return uploaded_file
@@ -1794,7 +1794,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
             if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
             vector_store = await super().get(vector_store.id)
 
         return vector_store
@@ -1974,7 +1974,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
             if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
             vector_store_file_batch = await super().get(
                 vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id
             )
@@ -2157,7 +2157,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
             if timeout is not None and (time.monotonic() - curr_time - polling_interval) >= timeout:
                 raise TimeoutError("Timeout reached. Stopping polling.")
 
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)  # pylint: disable=protected-access
             vector_store_file = await super().get(vector_store_id=vector_store_id, file_id=vector_store_file.id)
 
         return vector_store_file
