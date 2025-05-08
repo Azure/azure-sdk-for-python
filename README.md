@@ -77,8 +77,7 @@ try:
     # Create the BlobServiceClient object
     blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=None)
 
-    download_file_path = os.path.join(local_path, str.replace(local_file_name ,'.txt', 'DOWNLOAD.txt'))
-    container_client = blob_service_client.get_container_client(container= container_name) 
+    container_client = blob_service_client.get_container_client(container=<container_name>) 
     # TODO: do something with the container client like download blob to a file
 
 except Exception as ex:
