@@ -158,3 +158,6 @@ class AsyncSecurityDomainUploadPollingMethod(AsyncPollingTerminationMixin, Async
         :return: The built resource.
         """
         return None
+
+class AsyncSecurityDomainUploadNoPolling(AsyncSecurityDomainUploadPollingMethod, AsyncNoPollingMixin):
+    pass
