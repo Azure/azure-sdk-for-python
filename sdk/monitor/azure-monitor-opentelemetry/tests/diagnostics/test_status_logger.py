@@ -50,7 +50,7 @@ def set_up(file_path, is_diagnostics_enabled=True):
         TEST_VERSION,
     ).start()
     patch(
-        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._is_diagnostics_enabled",
         is_diagnostics_enabled,
     ).start()
     patch(
