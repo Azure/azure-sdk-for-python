@@ -22,7 +22,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from agent_team import AgentTeam
+from agent_team import AgentTeam, _create_task
 from agent_trace_configurator import AgentTraceConfigurator
 
 project_client = AIProjectClient.from_connection_string(
@@ -35,6 +35,7 @@ model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 if model_deployment_name is not None:
     AgentTraceConfigurator(project_client=project_client).setup_tracing()
     with project_client:
+        project_client.agents.enable_auto_function_calls(functions={_create_task})
         agent_team = AgentTeam("test_team", project_client=project_client)
         agent_team.add_agent(
             model=model_deployment_name,

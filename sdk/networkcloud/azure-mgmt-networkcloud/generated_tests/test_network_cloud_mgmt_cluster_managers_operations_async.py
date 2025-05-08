@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
     @recorded_by_proxy_async
     async def test_cluster_managers_list_by_subscription(self, resource_group):
         response = self.client.cluster_managers.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
     async def test_cluster_managers_list_by_resource_group(self, resource_group):
         response = self.client.cluster_managers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.cluster_managers.get(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
                     "type": "str",
                     "vmSize": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +104,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.cluster_managers.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_manager_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +117,7 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.cluster_managers.update(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself

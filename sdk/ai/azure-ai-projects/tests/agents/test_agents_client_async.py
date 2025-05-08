@@ -2821,7 +2821,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # [START create_agent]
             agent = await client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model="gpt-4",
                 name="my-assistant",
                 instructions="You are helpful assistant",
             )
@@ -2850,10 +2850,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     thread_id=thread.id,
                     run_id=run.id,
                 )
-            assert run.status in RunStatus.COMPLETED
+            assert run.status == RunStatus.COMPLETED, run.last_error.message
 
             assert (await client.agents.delete_agent(agent.id)).deleted, "The agent was not deleted"
-            messages = await client.agents.list_messages(thread_id=thread.id)
+            messages = await client.agents.list_messages(thread_id=thread.id, run_id=run.id)
             assert len(messages.data), "The data from the agent was not received."
 
     @agentClientPreparer()

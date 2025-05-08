@@ -28,8 +28,10 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: onlineexperimentation
-    #TestProxy: true
-    #VerifyAutorest: false
+    TestProxy: true
+    VerifyAutorest: false
     Artifacts:
     - name: azure-onlineexperimentation
       safeName: azureonlineexperimentation
+    - name: azure-mgmt-onlineexperimentation
+      safeName: azuremgmtonlineexperimentation

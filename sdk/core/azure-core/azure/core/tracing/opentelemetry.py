@@ -12,6 +12,7 @@ from opentelemetry.trace import (
     Span,
     SpanKind as OpenTelemetrySpanKind,
     Link as OpenTelemetryLink,
+    StatusCode,
 )
 from opentelemetry.trace.propagation import get_current_span as get_current_span_otel
 from opentelemetry.propagate import extract, inject
@@ -92,7 +93,7 @@ class OpenTelemetryTracer:
         :keyword links: Links to add to the span.
         :paramtype links: list[~azure.core.tracing.Link]
         :return: The span that was started
-        :rtype: ~azure.core.tracing.Span
+        :rtype: ~opentelemetry.trace.Span
         """
         otel_kind = _KIND_MAPPINGS.get(kind, OpenTelemetrySpanKind.INTERNAL)
         otel_links = self._parse_links(links)
@@ -160,6 +161,17 @@ class OpenTelemetryTracer:
             span, record_exception=False, end_on_exit=end_on_exit
         ) as active_span:
             yield active_span
+
+    @staticmethod
+    def set_span_error_status(span: Span, description: Optional[str] = None) -> None:
+        """Set the status of a span to ERROR with the provided description, if any.
+
+        :param span: The span to set the ERROR status on.
+        :type span: ~opentelemetry.trace.Span
+        :param description: An optional description of the error.
+        :type description: str
+        """
+        span.set_status(StatusCode.ERROR, description=description)
 
     def _parse_links(self, links: Optional[Sequence[Link]]) -> Optional[Sequence[OpenTelemetryLink]]:
         if not links:

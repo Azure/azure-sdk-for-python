@@ -9,6 +9,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
+import test
 from azure.ai.evaluation._legacy._adapters.client import PFClient
 
 from azure.ai.evaluation._common.math import list_mean
@@ -24,12 +25,17 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
 )
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, _AggregationType
+from azure.ai.evaluation._constants import (
+    DEFAULT_EVALUATION_RESULTS_FILE_NAME,
+    _AggregationType,
+    EvaluationRunProperties
+)
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
     _rename_columns_conditionally,
 )
+from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -70,6 +76,9 @@ def evaluate_test_data_jsonl_file():
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_alphanumeric():
+    return _get_file("evaluate_test_data_alphanumeric.jsonl")
 
 @pytest.fixture
 def questions_file():
@@ -414,10 +423,42 @@ class TestEvaluate:
                 },
             )
 
-        assert (
-            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-            in exc_info.value.args[0]
+            assert (
+                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+                in exc_info.value.args[0]
+            )
+
+    def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
+        # Valid column mappings that include numeric characters
+        # This test validates the fix for the regex pattern that now accepts numeric characters
+        # Previous regex was `re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")`
+        # New regex is `re.compile(r"^\$\{(target|data)\.[a-zA-Z0-9_]+\}$")`
+
+        column_mappings_with_numbers = {
+            "response": "${data.response123}",
+            "query": "${data.query456}",
+            "context": "${data.context789}"
+        } # This should not raise an exception with the updated regex for column mapping format validation
+        # The test passes if no exception about "Unexpected references" is raised
+        result = evaluate(
+            data=evaluate_test_data_alphanumeric,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            evaluator_config={
+                "g": {
+                    "column_mapping": column_mappings_with_numbers,
+                }
+            },
+            fail_on_evaluator_errors=False
         )
+        
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response123" in row_result_df.columns
+        assert "inputs.query456" in row_result_df.columns
+        assert "inputs.context789" in row_result_df.columns
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
@@ -884,3 +925,42 @@ class TestEvaluate:
         assert result["rows"][0]["inputs.query"] == data_from_file["query"]
 
         os.remove(output_path)
+
+    def test_name_map_conversion(self):
+        test_map = {
+            "name1": "property1",
+            "name2": "property2",
+            "name3": "property3",
+        }
+        map_dump = json.dumps(test_map)
+
+        # Test basic
+        result = _convert_name_map_into_property_entries(test_map)
+        assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 1
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump
+
+        # Test with splits (dump of test map is 66 characters long)
+        result = _convert_name_map_into_property_entries(test_map, segment_length=40)
+        assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 2
+        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
+                            result[f"{EvaluationRunProperties.NAME_MAP}_1"])
+        #breakpoint()
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:40]
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[40:]
+        assert combined_strings == map_dump
+
+        # Test with exact split
+        result = _convert_name_map_into_property_entries(test_map, segment_length=22)
+        assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 3
+        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
+                            result[f"{EvaluationRunProperties.NAME_MAP}_1"] + 
+                            result[f"{EvaluationRunProperties.NAME_MAP}_2"])
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:22]
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[22:44]
+        assert result[f"{EvaluationRunProperties.NAME_MAP}_2"] == map_dump[44:]
+        assert combined_strings == map_dump
+
+        # Test failure case
+        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments = 1)
+        assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
+        assert len(result) == 1

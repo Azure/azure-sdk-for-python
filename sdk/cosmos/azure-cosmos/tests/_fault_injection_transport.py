@@ -38,6 +38,8 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
+from azure.cosmos.http_constants import ResourceType, HttpHeaders
+
 class FaultInjectionTransport(RequestsTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
     logger.setLevel(logging.DEBUG)
@@ -130,21 +132,26 @@ class FaultInjectionTransport(RequestsTransport):
 
     @staticmethod
     def predicate_is_database_account_call(r: HttpRequest) -> bool:
-        is_db_account_read = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
-                              and r.headers.get('x-ms-thinclient-proxy-operation-type') == 'Read')
+        is_db_account_read = (r.headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount
+                              and r.headers.get(HttpHeaders.ThinClientProxyOperationType) == documents._OperationType.Read)
 
         return is_db_account_read
 
     @staticmethod
     def predicate_is_document_operation(r: HttpRequest) -> bool:
-        is_document_operation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs')
-
+        is_document_operation = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.Document
         return is_document_operation
+
+    @staticmethod
+    def predicate_is_operation_type(r: HttpRequest, operation_type: str) -> bool:
+        is_operation_type = r.headers.get(HttpHeaders.ThinClientProxyOperationType) == operation_type
+
+        return is_operation_type
 
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
         is_write_document_operation = documents._OperationType.IsWriteOperation(
-            str(r.headers.get('x-ms-thinclient-proxy-operation-type')))
+            str(r.headers.get(HttpHeaders.ThinClientProxyOperationType)),)
 
         return is_write_document_operation and uri_prefix in r.url
 
@@ -203,7 +210,10 @@ class FaultInjectionTransport(RequestsTransport):
     def transform_topology_mwr(
             first_region_name: str,
             second_region_name: str,
-            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
+            inner: Callable[[], RequestsTransportResponse],
+            first_region_url: str = None,
+            second_region_url: str = test_config.TestConfig.local_host
+    ) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -215,12 +225,17 @@ class FaultInjectionTransport(RequestsTransport):
             result = json.loads(data)
             readable_locations = result["readableLocations"]
             writable_locations = result["writableLocations"]
-            readable_locations[0]["name"] = first_region_name
-            writable_locations[0]["name"] = first_region_name
+
+            if first_region_url is None:
+                first_region_url = readable_locations[0]["databaseAccountEndpoint"]
+            readable_locations[0] = \
+                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
+            writable_locations[0] = \
+                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
             readable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
+                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
             writable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
+                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
             result["enableMultipleWriteLocations"] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request

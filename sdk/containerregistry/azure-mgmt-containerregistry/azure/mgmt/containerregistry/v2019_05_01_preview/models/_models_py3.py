@@ -9,7 +9,7 @@
 import datetime
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -159,10 +159,10 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ScopeMap(ProxyResource):
@@ -229,9 +229,9 @@ class ScopeMap(ProxyResource):
         """
         super().__init__(**kwargs)
         self.description = description
-        self.type_properties_type = None
-        self.creation_date = None
-        self.provisioning_state = None
+        self.type_properties_type: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.actions = actions
 
 
@@ -436,8 +436,8 @@ class Token(ProxyResource):
         :paramtype status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
         """
         super().__init__(**kwargs)
-        self.creation_date = None
-        self.provisioning_state = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.scope_map_id = scope_map_id
         self.credentials = credentials
         self.status = status
@@ -620,7 +620,7 @@ class TokenPassword(_serialization.Model):
         self.creation_time = creation_time
         self.expiry = expiry
         self.name = name
-        self.value = None
+        self.value: Optional[str] = None
 
 
 class TokenUpdateParameters(_serialization.Model):
