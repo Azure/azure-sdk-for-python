@@ -23,5 +23,5 @@ class OnlineExperimentationClientTestBase(AzureRecordedTestCase):
 OnlineExperimentationPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_onlineexperimentation",
-    azure_onlineexperimentation_endpoint="https://fake_workspaceId.fake_region.exp.azure.net",
+    azure_onlineexperimentation_endpoint="https://fake_workspaceId.eastus2.exp.azure.net",
 )
