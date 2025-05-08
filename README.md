@@ -71,11 +71,11 @@ from azure.core.pipeline.policies import UserAgentPolicy
 
 try:
     # Create your credential you want to use
-    credential = ManagedIdentityCredential()
+    mi_credential = ManagedIdentityCredential()
 
     account_url = "https://<storageaccountname>.blob.core.windows.net"
     # Create the BlobServiceClient object
-    blob_service_client = BlobServiceClient(account_url, credential=default_credential, user_agent_policy=None)
+    blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=None)
 
     download_file_path = os.path.join(local_path, str.replace(local_file_name ,'.txt', 'DOWNLOAD.txt'))
     container_client = blob_service_client.get_container_client(container= container_name) 
