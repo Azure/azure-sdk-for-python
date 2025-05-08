@@ -41,7 +41,7 @@ from azure.ai.agents.models import (
 )
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.ai.agents.telemetry import trace_function, enable_telemetry
+from azure.ai.agents.telemetry import trace_function
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -51,9 +51,6 @@ agents_client = AgentsClient(
 # Enable Azure Monitor tracing
 application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
-# enable additional instrumentations if needed
-enable_telemetry()
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

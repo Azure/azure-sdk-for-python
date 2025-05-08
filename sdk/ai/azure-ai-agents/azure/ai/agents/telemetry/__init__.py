@@ -11,4 +11,4 @@ from ._utils import enable_telemetry
 from ._trace_function import trace_function
 
 
-__all__ = ["AIAgentsInstrumentor", "enable_telemetry", "trace_function"]
+__all__ = ["AIAgentsInstrumentor", "trace_function"]
