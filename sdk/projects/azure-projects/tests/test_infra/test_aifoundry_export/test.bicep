@@ -4,17 +4,27 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -29,13 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -46,9 +49,17 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: '${defaultName}-aiservices'
   location: location
-  tags: azdTags
   sku: {
     name: 'S0'
   }
@@ -60,12 +71,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
       defaultAction: 'Allow'
     }
   }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_AI_AISERVICES_ID_AI string = aiservices_account.id
@@ -75,21 +80,23 @@ output AZURE_AI_AISERVICES_ENDPOINT_AI string = aiservices_account.properties.en
 
 
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
-  name: defaultName
-  sku: {
-    name: 'basic'
-  }
-  properties: {
-    publicNetworkAccess: 'Disabled'
-  }
-  location: location
-  tags: azdTags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
   }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  name: defaultName
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    publicNetworkAccess: 'disabled'
+  }
+  location: location
 }
 
 output AZURE_SEARCH_ID_SEARCH string = searchservice.id
@@ -98,10 +105,18 @@ output AZURE_SEARCH_RESOURCE_GROUP_SEARCH string = resourceGroup().name
 output AZURE_SEARCH_ENDPOINT_SEARCH string = 'https://${searchservice.name}.search.windows.net/'
 
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   location: location
-  tags: azdTags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_GRS'
@@ -110,12 +125,6 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     accessTier: 'Hot'
     allowCrossTenantReplication: false
     allowSharedKeyAccess: false
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
   }
 }
 
@@ -133,6 +142,9 @@ output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount.properties.primaryEn
 
 
 resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   properties: {
     sku: {
@@ -145,7 +157,6 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
     enableRbacAuthorization: true
   }
   location: location
-  tags: azdTags
 }
 
 output AZURE_KEYVAULT_ID_VAULT string = vault.id
@@ -154,7 +165,7 @@ output AZURE_KEYVAULT_RESOURCE_GROUP_VAULT string = resourceGroup().name
 output AZURE_KEYVAULT_ENDPOINT_VAULT string = vault.properties.vaultUri
 
 
-resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
+resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-preview' = {
   kind: 'Hub'
   properties: {
     primaryUserAssignedIdentity: userassignedidentity.id
@@ -171,18 +182,20 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-
     storageAccount: storageaccount.id
     keyVault: vault.id
   }
-  name: '${defaultName}-hub'
-  location: location
-  tags: azdTags
-  sku: {
-    name: 'Basic'
-    tier: 'Basic'
-  }
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  name: '${defaultName}-hub'
+  location: location
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
   }
 }
 
@@ -229,7 +242,7 @@ resource connection_hmdjuiutdbnirxnlxqbn 'Microsoft.MachineLearningServices/work
 
 
 
-resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
+resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2025-01-01-preview' = {
   kind: 'Project'
   properties: {
     primaryUserAssignedIdentity: userassignedidentity.id
@@ -242,18 +255,20 @@ resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04
     }
     hubResourceId: hub_workspace.id
   }
-  name: '${defaultName}-project'
-  location: location
-  tags: azdTags
-  sku: {
-    name: 'Basic'
-    tier: 'Basic'
-  }
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  name: '${defaultName}-project'
+  location: location
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
   }
 }
 

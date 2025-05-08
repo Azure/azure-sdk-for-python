@@ -4,9 +4,11 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -21,7 +23,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -30,7 +31,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
   name: 'storagetest'
 }
 

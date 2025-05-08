@@ -107,7 +107,7 @@
     "sdk/storage/azure-storage-extensions/**",
     "sdk/projects/azure-projects/tests/test_infra/**",
     "sdk/projects/azure-projects/samples/**/*.html",
-    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
+    "sdk/projects/azure-projects/azure/projects/resources/**/_types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",

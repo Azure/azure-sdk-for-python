@@ -9,9 +9,8 @@ from collections import defaultdict
 from urllib.parse import urlparse
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Generic,
-    List,
+    TypedDict,
     Literal,
     Mapping,
     Tuple,
@@ -22,7 +21,7 @@ from typing import (
     cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..._identifiers import ResourceIdentifiers
 from ...resourcegroup import ResourceGroup
@@ -45,7 +44,7 @@ from ...._resource import (
 from .. import AIServices
 
 if TYPE_CHECKING:
-    from .types import DeploymentResource
+    from ._types import DeploymentResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -71,7 +70,7 @@ class DeploymentKwargs(TypedDict, total=False):
     """
     rai_policy: Union[str, Parameter]
     """The name of RAI policy."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Tags of the resource."""
 
 
@@ -81,6 +80,43 @@ AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", bound=Mapping[str
 
 
 class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
+    """Azure AI Deployment resource base class.
+
+    This class represents an Azure AI deployment, which is used to deploy AI models
+    for inference.
+
+    :param properties: Optional dictionary containing the deployment properties
+    :type properties: Optional[DeploymentResource]
+    :param name: Name of the deployment
+    :type name: Optional[Union[str, Parameter]]
+    :param account: AI Services account name or instance
+    :type account: Optional[Union[str, Parameter, AIServices]]
+
+    :keyword model: Deployment model name
+    :paramtype model: Union[str, Parameter]
+    :keyword format: Deployment model format
+    :paramtype format: Union[str, Parameter]
+    :keyword version: Deployment model version
+    :paramtype version: Union[str, Parameter]
+    :keyword sku: The name of the SKU (e.g., P3)
+    :paramtype sku: Union[str, Parameter]
+    :keyword capacity: SKU capacity for scale out/in
+    :paramtype capacity: Union[int, Parameter]
+    :keyword rai_policy: The name of RAI policy
+    :paramtype rai_policy: Union[str, Parameter]
+    :keyword tags: Resource tags
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
+
+    :ivar DEFAULTS: Default configuration for AI deployment
+    :vartype DEFAULTS: DeploymentResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Resource properties
+    :vartype properties: AIDeploymentResourceType
+    :ivar parent: Parent AI Services account
+    :vartype parent: AIServices
+    """
+
     DEFAULTS: "DeploymentResource" = _DEFAULT_DEPLOYMENT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_DEPLOYMENT_EXTENSIONS
     properties: AIDeploymentResourceType
@@ -140,8 +176,12 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
                 properties["sku"]["capacity"] = kwargs.pop("capacity")
             if "rai_policy" in kwargs:
                 properties["properties"]["raiPolicyName"] = kwargs.pop("rai_policy")
+            if "tags" not in properties:
+                properties["tags"] = {}
             if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
+                properties["tags"].update(kwargs.pop("tags"))
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
             properties,
@@ -153,8 +193,6 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
             identifier=kwargs.pop("identifier", ResourceIdentifiers.ai_deployment),  # type: ignore[typeddict-item]
             **kwargs,
         )
-        self._properties_to_merge.append("sku")
-        self._properties_to_merge.append("model")
         self._settings["model_name"] = StoredPrioritizedSetting(
             name="model_name", env_vars=_build_envs(self._prefixes, ["MODEL_NAME"]), suffix=self._env_suffix
         )
@@ -195,7 +233,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -241,7 +279,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         symbol: ResourceSymbol,
         suffix: str,
         **kwargs,
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["model_name"].append(Output(f"AZURE_AI_DEPLOYMENT_MODEL_NAME{suffix}", "properties.model.name", symbol))
         outputs["model_version"].append(
@@ -253,9 +291,9 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         return outputs
 
     def _merge_resource(  # type: ignore[override]  # Parameter superset
-        self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], *, fields: FieldsType, **kwargs
+        self, current_properties: dict[str, Any], new_properties: dict[str, Any], *, fields: FieldsType, **kwargs
     ):
-        super()._merge_resource(current_properties, new_properties, **kwargs)
+        super()._merge_resource(current_properties, new_properties, merge_properties=["properties", "sku"], **kwargs)
         for field in find_all_resource_match(
             fields,
             parent=current_properties["parent"],
@@ -292,6 +330,42 @@ ChatClientType = TypeVar("ChatClientType", bound=Union[SyncClient, AsyncClient],
 
 
 class AIChat(AIDeployment[AIDeploymentResourceType]):
+    """Azure AI Chat Deployment resource.
+
+    This class represents an Azure AI Chat deployment for chat completion models.
+
+    :param properties: Optional dictionary containing the deployment properties
+    :type properties: Optional[DeploymentResource]
+    :param account: AI Services account name or instance
+    :type account: Optional[Union[str, AIServices]]
+
+    :keyword deployment_name: Name of the deployment
+    :paramtype deployment_name: Optional[Union[str, Parameter]]
+    :keyword model: Chat model name
+    :paramtype model: Union[str, Parameter]
+    :keyword format: Chat model format
+    :paramtype format: Union[str, Parameter]
+    :keyword version: Chat model version
+    :paramtype version: Union[str, Parameter]
+    :keyword sku: The name of the SKU (e.g., GlobalStandard)
+    :paramtype sku: Union[str, Parameter]
+    :keyword capacity: SKU capacity for scale out/in
+    :paramtype capacity: Union[int, Parameter]
+    :keyword rai_policy: The name of RAI policy
+    :paramtype rai_policy: Union[str, Parameter]
+    :keyword tags: Resource tags
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
+
+    :ivar DEFAULTS: Default configuration for AI Chat deployment
+    :vartype DEFAULTS: DeploymentResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Resource properties
+    :vartype properties: AIDeploymentResourceType
+    :ivar parent: Parent AI Services account
+    :vartype parent: AIServices
+    """
+
     DEFAULTS: "DeploymentResource" = _DEFAULT_AI_CHAT
 
     def __init__(
@@ -334,7 +408,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         symbol: ResourceSymbol,
         suffix: str,
         **kwargs,
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["model_name"] = [Output(f"AZURE_AI_CHAT_MODEL_NAME{suffix}", "properties.model.name", symbol)]
         outputs["model_version"] = [Output(f"AZURE_AI_CHAT_MODEL_VERSION{suffix}", "properties.model.version", symbol)]
@@ -517,6 +591,43 @@ EmbeddingsClientType = TypeVar("EmbeddingsClientType", bound=Union[SyncClient, A
 
 
 class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
+    """Azure AI Text Embeddings Deployment resource.
+
+    This class represents an Azure AI Text Embeddings deployment for generating
+    text embeddings from models.
+
+    :param properties: Optional dictionary containing the deployment properties
+    :type properties: Optional[DeploymentResource]
+    :param account: AI Services account name or instance
+    :type account: Optional[Union[str, AIServices]]
+
+    :keyword deployment_name: Name of the deployment
+    :paramtype deployment_name: Optional[Union[str, Parameter]]
+    :keyword model: Embeddings model name
+    :paramtype model: Union[str, Parameter]
+    :keyword format: Embeddings model format
+    :paramtype format: Union[str, Parameter]
+    :keyword version: Embeddings model version
+    :paramtype version: Union[str, Parameter]
+    :keyword sku: The name of the SKU (e.g., Standard)
+    :paramtype sku: Union[str, Parameter]
+    :keyword capacity: SKU capacity for scale out/in
+    :paramtype capacity: Union[int, Parameter]
+    :keyword rai_policy: The name of RAI policy
+    :paramtype rai_policy: Union[str, Parameter]
+    :keyword tags: Resource tags
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
+
+    :ivar DEFAULTS: Default configuration for AI Text Embeddings deployment
+    :vartype DEFAULTS: DeploymentResource
+    :ivar DEFAULT_EXTENSIONS: Default extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Resource properties
+    :vartype properties: AIDeploymentResourceType
+    :ivar parent: Parent AI Services account
+    :vartype parent: AIServices
+    """
+
     DEFAULTS: "DeploymentResource" = _DEFAULT_AI_TEXT_EMBEDDINGS
 
     def __init__(
@@ -560,7 +671,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         suffix: str,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, parents=parents, **kwargs)
         outputs["model_name"] = [Output(f"AZURE_AI_EMBEDDINGS_MODEL_NAME{suffix}", "properties.model.name", symbol)]
         outputs["model_version"] = [

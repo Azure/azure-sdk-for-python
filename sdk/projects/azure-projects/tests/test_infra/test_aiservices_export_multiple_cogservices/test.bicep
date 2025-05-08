@@ -4,17 +4,27 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -29,13 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -46,9 +49,17 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 resource metricsadvisor_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'MetricsAdvisor'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   location: location
-  tags: azdTags
 }
 
 output AZURE_AI_METRICSADVISOR_ID_C string = metricsadvisor_account.id
@@ -59,9 +70,17 @@ output AZURE_AI_METRICSADVISOR_ENDPOINT_C string = metricsadvisor_account.proper
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: '${defaultName}-aiservices'
   location: location
-  tags: azdTags
   sku: {
     name: 'S0'
   }
@@ -71,12 +90,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-    }
-  }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
     }
   }
 }
