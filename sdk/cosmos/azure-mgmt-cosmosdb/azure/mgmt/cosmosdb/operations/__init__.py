@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._chaos_fault_operations import ChaosFaultOperations  # type: ignore
 from ._database_accounts_operations import DatabaseAccountsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._database_operations import DatabaseOperations  # type: ignore
@@ -26,17 +25,14 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations  # type: ignore
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations  # type: ignore
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations  # type: ignore
-from ._graph_resources_operations import GraphResourcesOperations  # type: ignore
 from ._sql_resources_operations import SqlResourcesOperations  # type: ignore
 from ._mongo_db_resources_operations import MongoDBResourcesOperations  # type: ignore
 from ._table_resources_operations import TableResourcesOperations  # type: ignore
 from ._cassandra_resources_operations import CassandraResourcesOperations  # type: ignore
 from ._gremlin_resources_operations import GremlinResourcesOperations  # type: ignore
 from ._locations_operations import LocationsOperations  # type: ignore
-from ._data_transfer_jobs_operations import DataTransferJobsOperations  # type: ignore
 from ._cassandra_clusters_operations import CassandraClustersOperations  # type: ignore
 from ._cassandra_data_centers_operations import CassandraDataCentersOperations  # type: ignore
-from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
@@ -53,17 +49,12 @@ from ._restorable_gremlin_resources_operations import RestorableGremlinResources
 from ._restorable_tables_operations import RestorableTablesOperations  # type: ignore
 from ._restorable_table_resources_operations import RestorableTableResourcesOperations  # type: ignore
 from ._service_operations import ServiceOperations  # type: ignore
-from ._throughput_pools_operations import ThroughputPoolsOperations  # type: ignore
-from ._throughput_pool_operations import ThroughputPoolOperations  # type: ignore
-from ._throughput_pool_accounts_operations import ThroughputPoolAccountsOperations  # type: ignore
-from ._throughput_pool_account_operations import ThroughputPoolAccountOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ChaosFaultOperations",
     "DatabaseAccountsOperations",
     "Operations",
     "DatabaseOperations",
@@ -77,17 +68,14 @@ __all__ = [
     "CollectionPartitionOperations",
     "PartitionKeyRangeIdOperations",
     "PartitionKeyRangeIdRegionOperations",
-    "GraphResourcesOperations",
     "SqlResourcesOperations",
     "MongoDBResourcesOperations",
     "TableResourcesOperations",
     "CassandraResourcesOperations",
     "GremlinResourcesOperations",
     "LocationsOperations",
-    "DataTransferJobsOperations",
     "CassandraClustersOperations",
     "CassandraDataCentersOperations",
-    "NetworkSecurityPerimeterConfigurationsOperations",
     "NotebookWorkspacesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
@@ -104,10 +92,6 @@ __all__ = [
     "RestorableTablesOperations",
     "RestorableTableResourcesOperations",
     "ServiceOperations",
-    "ThroughputPoolsOperations",
-    "ThroughputPoolOperations",
-    "ThroughputPoolAccountsOperations",
-    "ThroughputPoolAccountOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
