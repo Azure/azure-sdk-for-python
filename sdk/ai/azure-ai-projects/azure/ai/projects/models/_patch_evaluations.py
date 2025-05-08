@@ -41,6 +41,7 @@ class EvaluatorIds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNGROUNDED_ATTRIBUTES = "azureai://built-in/evaluators/ungrounded_attributes"
     RESPONSE_COMPLETENESS = "azureai://built-in/evaluators/response_completeness"
     # AOAI Graders
-    LABEL_GRADER = "azureai://built-in/evaluators/azure-openai/label_grader"
-    STRING_CHECK_GRADER = "azureai://built-in/evaluators/azure-openai/string_check_grader"
-    TEXT_SIMILARITY_GRADER = "azureai://built-in/evaluators/azure-openai/text_similarity_grader"
+    LABEL_GRADER = "aoai://label_model"
+    STRING_CHECK_GRADER = "aoai://string_check"
+    TEXT_SIMILARITY_GRADER = "aoai://text_similarity"
+    GENERAL_GRADER = "aoai://general"
