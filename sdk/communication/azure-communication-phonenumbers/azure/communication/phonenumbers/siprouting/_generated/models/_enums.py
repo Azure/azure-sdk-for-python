@@ -17,6 +17,17 @@ class ExpandEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health state of a SIP trunk for routing calls."""
 
 
+class HealthStatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason overall status of Trunk is inactive."""
+
+    NO_RECENT_CALLS = "noRecentCalls"
+    """Indicates no recent calls."""
+    NO_RECENT_PINGS = "noRecentPings"
+    """Indicates ping status is expired."""
+    NO_RECENT_CALLS_AND_PINGS = "noRecentCallsAndPings"
+    """Indicates no recent calls and ping status is expired."""
+
+
 class IpAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IP address version."""
 
@@ -68,14 +79,3 @@ class TlsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the Trunk certificate is expiring."""
     CERT_EXPIRED = "certExpired"
     """Indicates the Trunk certificate is expired."""
-
-
-class UnhealthyStatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason overall status of Trunk is inactive."""
-
-    NO_RECENT_CALLS = "noRecentCalls"
-    """Indicates no recent calls."""
-    NO_RECENT_PINGS = "noRecentPings"
-    """Indicates ping status is expired."""
-    NO_RECENT_CALLS_AND_PINGS = "noRecentCallsAndPings"
-    """Indicates no recent calls and ping status is expired."""

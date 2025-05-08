@@ -108,11 +108,11 @@ directive:
     $["x-ms-client-name"] = "PingHealth";
 ```
 
-### Directive renaming "InactiveStatusReason" enum to "UnhealthyStatusReason"
+### Directive renaming "InactiveStatusReason" enum to "HealthStatusReason"
 ``` yaml
 directive:
   from: swagger-document
   where: "$.definitions.OverallHealth"
   transform: >
-    $.properties.reason["x-ms-enum"].name = "UnhealthyStatusReason";
+    $.properties.reason["x-ms-enum"].name = "HealthStatusReason";
 ```

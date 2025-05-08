@@ -128,6 +128,8 @@ class SipDomain(object):
 
     All required parameters must be populated in order to send to server.
 
+    :ivar fqdn: FQDN of the trunk.
+    :vartype fqdn: str
     :ivar enabled: Enabled flag. Required.
     :vartype enabled: bool
     """
@@ -138,12 +140,16 @@ class SipDomain(object):
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
+        "fqdn": {"key": "fqdn", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         """
+        :keyword fqdn: FQDN of the trunk.
+        :paramtype fqdn: str
         :keyword enabled: Enabled flag. Required.
         :paramtype enabled: bool
         """
         self.enabled = kwargs.get("enabled", None)
+        self.fqdn = kwargs.get("fqdn", None)
         

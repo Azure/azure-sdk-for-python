@@ -8,7 +8,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -121,8 +121,7 @@ class OverallHealth(_serialization.Model):
     :vartype status: str or ~azure.communication.phonenumbers.siprouting.models.OverallHealthStatus
     :ivar reason: The reason overall status of Trunk is inactive. Known values are:
      "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
-    :vartype reason: str or
-     ~azure.communication.phonenumbers.siprouting.models.UnhealthyStatusReason
+    :vartype reason: str or ~azure.communication.phonenumbers.siprouting.models.HealthStatusReason
     """
 
     _validation = {
@@ -138,7 +137,7 @@ class OverallHealth(_serialization.Model):
         self,
         *,
         status: Union[str, "_models.OverallHealthStatus"],
-        reason: Optional[Union[str, "_models.UnhealthyStatusReason"]] = None,
+        reason: Optional[Union[str, "_models.HealthStatusReason"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -149,7 +148,7 @@ class OverallHealth(_serialization.Model):
         :keyword reason: The reason overall status of Trunk is inactive. Known values are:
          "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
         :paramtype reason: str or
-         ~azure.communication.phonenumbers.siprouting.models.UnhealthyStatusReason
+         ~azure.communication.phonenumbers.siprouting.models.HealthStatusReason
         """
         super().__init__(**kwargs)
         self.status = status

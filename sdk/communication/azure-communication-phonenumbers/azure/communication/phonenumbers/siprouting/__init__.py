@@ -15,7 +15,7 @@ from ._generated.models import(
     OverallHealth,
     PingStatus,
     TlsStatus,
-    UnhealthyStatusReason,
+    HealthStatusReason,
     OverallHealthStatus
     )
 
@@ -32,6 +32,6 @@ __all__ = [
     "OverallHealth",
     "PingStatus",
     "TlsStatus",
-    "UnhealthyStatusReason",
+    "HealthStatusReason",
     "OverallHealthStatus",
     ]
