@@ -37,6 +37,45 @@ Use the returned token credential to authenticate the client:
 >>> client = OnlineExperimentationClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+### Create and authenticate the client
+
+The Azure Online Experimentation client library initialization requires two parameters:
+
+- The `endpoint` property value from the [`Microsoft.OnlineExperimentation/workspaces`](https://learn.microsoft.com/azure/templates/microsoft.onlineexperimentation/workspaces) resource.
+- Credential for authentication, the simplest approach is to use [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential).
+
+To construct a synchronous client:
+
+```python
+import os
+from azure.onlineexperimentation import OnlineExperimentationClient
+from azure.identity import DefaultAzureCredential
+
+client = OnlineExperimentationClient(
+    endpoint=os.environ["AZURE_ONLINEEXPERIMENTATION_ENDPOINT"],
+    credential=DefaultAzureCredential()
+)
+```
+
+To construct an asynchronous client, instead import `OnlineExperimentationClient` from `azure.onlineexperimentation.aio` and `DefaultAzureCredential` from `azure.identity.aio` namespaces:
+
+```python
+import os
+from azure.onlineexperimentation.aio import OnlineExperimentationClient
+from azure.identity.aio import DefaultAzureCredential
+
+client = OnlineExperimentationClient(
+    endpoint=os.environ["AZURE_ONLINEEXPERIMENTATION_ENDPOINT"],
+    credential=DefaultAzureCredential()
+)
+```
+
+## Troubleshooting
+
+Errors can occur during initial requests and will provide information about how to resolve the error.
+
 ## Examples
 
 ```python
@@ -51,6 +90,10 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Next steps
+
+Have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/onlineexperimentation/azure-onlineexperimentation/samples/) folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
 ## Contributing
 

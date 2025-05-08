@@ -95,7 +95,7 @@ def create_event_rate_metric():
 
     try:
         # Create the metric
-        response = client.create_or_update_metric("momo_pct_relevance_good", relevance_metric)
+        response = client.create_or_update_metric("pct_relevance_good", relevance_metric)
 
         print(f"Created metric: {response.id}")
     except HttpResponseError as error:
