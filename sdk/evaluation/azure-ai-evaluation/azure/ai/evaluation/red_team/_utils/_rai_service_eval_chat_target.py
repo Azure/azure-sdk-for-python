@@ -56,8 +56,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
-
-        self.logger.info(f"Evaluating the input: {thing_to_eval}")
+        
         evaluation_result = await evaluate_with_rai_service(thing_to_eval_qr,
                             metric_name=metric_name,
                             project_scope=self.azure_ai_project,
