@@ -40,6 +40,8 @@ load_dotenv()
 
 async def main() -> None:
     endpoint = os.environ["PROJECT_ENDPOINT"]
+    model_endpoint = os.environ["MODEL_ENDPOINT"]
+    model_api_key = os.environ["MODEL_API_KEY"]
     # dataset_name = os.environ["DATASET_NAME"]
 
     async with DefaultAzureCredential() as credential:
@@ -60,20 +62,36 @@ async def main() -> None:
 
             print("Create an evaluation")
             evaluation: Evaluation = Evaluation(
-                display_name="Sample Evaluation",
-                description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-                data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
+                display_name="Sample Evaluation Async",
+                description="Sample evaluation for testing",
+                data=InputDataset(id="azureai://accounts/anksing1rpeastus2/projects/anksing1rpeastus2project/data/eval-data-2025-05-07_165118_UTC/versions/1"),
                 evaluators={
                     "relevance": EvaluatorConfiguration(
-                        id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
+                        id=EvaluatorIds.RELEVANCE.value,
                         init_params={
-                            "deployment_name": "gpt-4o",
+                            "deployment_name": "gpt-4o-mini",
                         },
+                        data_mapping={
+                            "query": "${data.query}",
+                            "response": "${data.response}",
+                        },
+                    ),
+                    "violence": EvaluatorConfiguration(
+                        id=EvaluatorIds.VIOLENCE.value,
+                        init_params={
+                            "azure_ai_project": endpoint,
+                        },
+                    ),
+                    "bleu_score": EvaluatorConfiguration(
+                        id=EvaluatorIds.BLEU_SCORE.value,
                     ),
                 },
             )
 
-            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation)
+            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation, headers={
+                "model-endpoint": model_endpoint,
+                "api-key": model_api_key,
+            })
             print(evaluation_response)
 
             print("Get evaluation")

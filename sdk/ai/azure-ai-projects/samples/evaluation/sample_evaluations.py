@@ -33,12 +33,10 @@ from azure.ai.projects.models import (
     EvaluatorIds,
     # DatasetVersion,
 )
-from dotenv import load_dotenv
-
-load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-# dataset_name = os.environ["DATASET_NAME"]
+model_endpoint = os.environ["MODEL_ENDPOINT"]
+model_api_key= os.environ["MODEL_API_KEY"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -59,8 +57,8 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print("Create an evaluation")
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation",
-            description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-            data=InputDataset(id="<>"),  # TODO: update this to use the correct id
+            description="Sample evaluation for testing",
+            data=InputDataset(id="<>"),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
@@ -72,10 +70,22 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                         "response": "${data.response}",
                     },
                 ),
+                "violence": EvaluatorConfiguration(
+                    id=EvaluatorIds.VIOLENCE.value,
+                    init_params={
+                        "azure_ai_project": endpoint,
+                    },
+                ),
+                "bleu_score": EvaluatorConfiguration(
+                    id=EvaluatorIds.BLEU_SCORE.value,
+                ),
             },
         )
 
-        evaluation_response: Evaluation = project_client.evaluations.create(evaluation)
+        evaluation_response: Evaluation = project_client.evaluations.create(evaluation, headers={
+            "model-endpoint": model_endpoint,
+            "api-key": model_api_key,
+        })
         print(evaluation_response)
 
         print("Get evaluation")
