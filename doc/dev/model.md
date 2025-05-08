@@ -1,13 +1,14 @@
 # Overview
 
-This doc introduces msrest model and dpg model.
+This document provides an introduction to the msrest model and dpg model architectures.
 
-## msrest model
+## msrest Model
 
-Azure Python Mgmt SDK that is generated from swagger with tool [@autorest/python](https://www.npmjs.com/package/@autorest/python) provides msrest model for SDK users. Here is the rough structure of msrest model:
+The Azure Python Management SDK, generated from Swagger specifications using [@autorest/python](https://www.npmjs.com/package/@autorest/python), implements the msrest model pattern for SDK consumers. The following example illustrates the fundamental structure of an msrest model:
 
 ```python
-from azure.mgmt.example._utils.serialization as _serialization
+from typing import Optional
+from azure.mgmt.example._utils import serialization as _serialization
 
 class Person(_serialization.Model):
     _attribute_map = {
@@ -18,24 +19,26 @@ class Person(_serialization.Model):
     def __init__(self, *, name: Optional[str] = None, parent_name: Optional[str] = None) -> None:
         ...
 ```
-Here is the usage example:
+
+Usage example:
 
 ```python
 msrest_model = Person(name="xxx", parent_name="xxx")
 print(msrest_model.name)
 print(msrest_model.parent_name)
 
-# use model as dict
+# Access model as a dictionary
 json_model = msrest_model.as_dict()
 print(json_model["name"])
 print(json_model["parentName"])
 ```
 
-## dpg model
+## dpg Model
 
-Azure Python Mgmt SDK that is generated from [typespec](https://github.com/microsoft/typespec/) with tool [@azure-tools/typespec-python](https://www.npmjs.com/package/@azure-tools/typespec-python) provides msrest model for SDK users. Here is rough structure of dpg model:
+The Azure Python Management SDK, generated from [typespec](https://github.com/microsoft/typespec/) using [@azure-tools/typespec-python](https://www.npmjs.com/package/@azure-tools/typespec-python), implements the dpg model pattern. The following example demonstrates the fundamental structure of a dpg model:
 
 ```python
+from typing import Optional, Any, Mapping, overload
 from azure.mgmt.example._utils.model_base import Model as _Model, rest_field
 
 class Person(_Model):
@@ -58,18 +61,18 @@ class Person(_Model):
         super().__init__(*args, **kwargs)
 ```
 
-Here is usage example:
+Usage example:
 
 ```python
 dpg_model = Person(name="xxx", parent_name="xxx")
 print(dpg_model.name)
 print(dpg_model.parent_name)
 
-# use model as dict directly
+# Access model directly as a dictionary
 print(dpg_model["name"])
 print(dpg_model["parentName"])
 ```
 
 ## Summary
 
-We can see dpg model is not only compatible with msrest model, but also more convenient to use.
+The dpg model maintains full compatibility with the msrest model while offering enhanced usability features.
