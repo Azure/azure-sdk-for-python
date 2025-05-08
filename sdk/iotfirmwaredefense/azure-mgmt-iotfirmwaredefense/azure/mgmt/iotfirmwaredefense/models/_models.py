@@ -11,15 +11,14 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import SummaryType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BinaryHardeningFeatures(_model_base.Model):
+class BinaryHardeningFeatures(_Model):
     """Binary hardening features.
 
     :ivar no_execute: Flag indicating the binary's stack is set to NX (no-execute).
@@ -75,7 +74,7 @@ class BinaryHardeningFeatures(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
+class Resource(_Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -144,6 +143,17 @@ class BinaryHardeningResource(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "binary_hardening_id",
+        "security_hardening_features",
+        "executable_architecture",
+        "file_path",
+        "executable_class",
+        "runpath",
+        "rpath",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -159,10 +169,28 @@ class BinaryHardeningResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class BinaryHardeningResult(_model_base.Model):
+class BinaryHardeningResult(_Model):
     """Binary hardening of a firmware.
 
     :ivar binary_hardening_id: ID for the binary hardening result.
@@ -242,7 +270,7 @@ class BinaryHardeningResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryResourceProperties(_model_base.Model):
+class SummaryResourceProperties(_Model):
     """Properties of an analysis summary.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -257,7 +285,7 @@ class SummaryResourceProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     summary_type: str = rest_discriminator(
         name="summaryType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -365,7 +393,7 @@ class BinaryHardeningSummaryResource(SummaryResourceProperties, discriminator="B
         super().__init__(*args, summary_type=SummaryType.BINARY_HARDENING, **kwargs)
 
 
-class CryptoCertificate(_model_base.Model):
+class CryptoCertificate(_Model):
     """Crypto certificate properties.
 
     :ivar crypto_cert_id: ID for the certificate result.
@@ -532,7 +560,7 @@ class CryptoCertificate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CryptoCertificateEntity(_model_base.Model):
+class CryptoCertificateEntity(_Model):
     """Information on an entity (distinguished name) in a cryptographic certificate.
 
     :ivar common_name: Common name of the certificate entity.
@@ -607,6 +635,30 @@ class CryptoCertificateResource(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "crypto_cert_id",
+        "certificate_name",
+        "subject",
+        "issuer",
+        "issued_date",
+        "expiration_date",
+        "certificate_role",
+        "signature_algorithm",
+        "certificate_key_size",
+        "certificate_key_algorithm",
+        "encoding",
+        "serial_number",
+        "fingerprint",
+        "certificate_usage",
+        "file_paths",
+        "paired_key",
+        "is_expired",
+        "is_self_signed",
+        "is_weak_signature",
+        "is_short_key_size",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -622,7 +674,25 @@ class CryptoCertificateResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator="CryptoCertificate"):
@@ -708,7 +778,7 @@ class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator=
         super().__init__(*args, summary_type=SummaryType.CRYPTO_CERTIFICATE, **kwargs)
 
 
-class CryptoKey(_model_base.Model):
+class CryptoKey(_Model):
     """Crypto key properties.
 
     :ivar crypto_key_id: ID for the key result.
@@ -813,6 +883,18 @@ class CryptoKeyResource(ProxyResource):
     properties: Optional["_models.CryptoKey"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "crypto_key_id",
+        "key_type",
+        "crypto_key_size",
+        "key_algorithm",
+        "usage",
+        "file_paths",
+        "paired_key",
+        "is_short_key_size",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -828,7 +910,25 @@ class CryptoKeyResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoKey"):
@@ -900,7 +1000,7 @@ class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoK
         super().__init__(*args, summary_type=SummaryType.CRYPTO_KEY, **kwargs)
 
 
-class CveLink(_model_base.Model):
+class CveLink(_Model):
     """Properties of a reference link for a CVE.
 
     :ivar href: The destination of the reference link.
@@ -954,6 +1054,21 @@ class CveResource(ProxyResource):
     properties: Optional["_models.CveResult"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "cve_id",
+        "component_id",
+        "component_name",
+        "component_version",
+        "severity",
+        "cve_name",
+        "effective_cvss_score",
+        "effective_cvss_version",
+        "cvss_scores",
+        "links",
+        "description",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -969,10 +1084,28 @@ class CveResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class CveResult(_model_base.Model):
+class CveResult(_Model):
     """Details of a CVE detected in firmware.
 
     :ivar cve_id: ID of the CVE result.
@@ -1137,7 +1270,7 @@ class CveSummary(SummaryResourceProperties, discriminator="CommonVulnerabilities
         super().__init__(*args, summary_type=SummaryType.COMMON_VULNERABILITIES_AND_EXPOSURES, **kwargs)
 
 
-class CvssScore(_model_base.Model):
+class CvssScore(_Model):
     """Common Vulnerability Scoring System values.
 
     :ivar version: The version of the Common Vulnerability Scoring System (CVSS). Required.
@@ -1170,7 +1303,7 @@ class CvssScore(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -1185,7 +1318,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -1214,7 +1347,7 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
+class ErrorResponse(_Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations.
 
@@ -1266,6 +1399,18 @@ class Firmware(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "file_name",
+        "vendor",
+        "model",
+        "version",
+        "description",
+        "file_size",
+        "status",
+        "status_messages",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1281,10 +1426,28 @@ class Firmware(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class FirmwareProperties(_model_base.Model):
+class FirmwareProperties(_Model):
     """Firmware properties.
 
     :ivar file_name: File name for a firmware that user uploaded.
@@ -1440,7 +1603,7 @@ class FirmwareSummary(SummaryResourceProperties, discriminator="Firmware"):
         super().__init__(*args, summary_type=SummaryType.FIRMWARE, **kwargs)
 
 
-class FirmwareUpdateDefinition(_model_base.Model):
+class FirmwareUpdateDefinition(_Model):
     """Firmware definition.
 
     :ivar properties: The editable properties of a firmware.
@@ -1451,6 +1614,18 @@ class FirmwareUpdateDefinition(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The editable properties of a firmware."""
+
+    __flattened_items = [
+        "file_name",
+        "vendor",
+        "model",
+        "version",
+        "description",
+        "file_size",
+        "status",
+        "status_messages",
+        "provisioning_state",
+    ]
 
     @overload
     def __init__(
@@ -1467,10 +1642,28 @@ class FirmwareUpdateDefinition(_model_base.Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class GenerateUploadUrlRequest(_model_base.Model):
+class GenerateUploadUrlRequest(_Model):
     """Properties for generating an upload URL.
 
     :ivar firmware_id: A unique ID for the firmware to be uploaded.
@@ -1500,7 +1693,7 @@ class GenerateUploadUrlRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
+class Operation(_Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1557,7 +1750,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -1588,7 +1781,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class PairedKey(_model_base.Model):
+class PairedKey(_Model):
     """Details of a matching paired key or certificate.
 
     :ivar paired_key_id: ID of the paired key or certificate.
@@ -1623,7 +1816,7 @@ class PairedKey(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PasswordHash(_model_base.Model):
+class PasswordHash(_Model):
     """Password hash properties.
 
     :ivar password_hash_id: ID for password hash.
@@ -1714,6 +1907,17 @@ class PasswordHashResource(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "password_hash_id",
+        "file_path",
+        "salt",
+        "hash",
+        "context",
+        "username",
+        "algorithm",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1729,10 +1933,28 @@ class PasswordHashResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class SbomComponent(_model_base.Model):
+class SbomComponent(_Model):
     """SBOM component of a firmware.
 
     :ivar component_id: ID for the component.
@@ -1819,6 +2041,8 @@ class SbomComponentResource(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = ["component_id", "component_name", "version", "license", "file_paths", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -1834,10 +2058,28 @@ class SbomComponentResource(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class Sku(_model_base.Model):
+class Sku(_Model):
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -1897,7 +2139,7 @@ class Sku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusMessage(_model_base.Model):
+class StatusMessage(_Model):
     """Error and status message.
 
     :ivar error_code: The error code.
@@ -1971,7 +2213,7 @@ class SummaryResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2083,7 +2325,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class UrlToken(_model_base.Model):
+class UrlToken(_Model):
     """Url data for creating or accessing a blob file.
 
     :ivar url: SAS URL for creating or accessing a blob file.
@@ -2117,6 +2359,8 @@ class UsageMetric(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = ["monthly_firmware_upload_count", "total_firmware_count", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -2132,10 +2376,28 @@ class UsageMetric(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class UsageMetricProperties(_model_base.Model):
+class UsageMetricProperties(_Model):
     """Properties of a workspaces usage metrics.
 
     :ivar monthly_firmware_upload_count: The number of firmware analysis jobs that have been
@@ -2190,6 +2452,8 @@ class Workspace(TrackedResource):
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource."""
 
+    __flattened_items = ["provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -2208,10 +2472,28 @@ class Workspace(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class WorkspaceProperties(_model_base.Model):
+class WorkspaceProperties(_Model):
     """Workspace properties.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
@@ -2226,7 +2508,7 @@ class WorkspaceProperties(_model_base.Model):
      \"Pending\", \"Extracting\", and \"Analyzing\"."""
 
 
-class WorkspaceUpdate(_model_base.Model):
+class WorkspaceUpdate(_Model):
     """The type used for update operations of the Workspace.
 
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
