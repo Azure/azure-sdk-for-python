@@ -43,7 +43,7 @@ model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+    with AIProjectClient(endpoint=endpoint, credential=credential, api_version="latest") as project_client:
 
         # [START evaluations_agent_sample]
         agent = project_client.agents.create_agent(
@@ -53,21 +53,21 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         )
         print(f"Created agent, agent ID: {agent.id}")
 
-        thread = project_client.agents.create_thread()
+        thread = project_client.agents.threads.create()
         print(f"Created thread, thread ID: {thread.id}")
 
-        message = project_client.agents.create_message(
+        message = project_client.agents.messages.create(
             thread_id=thread.id, role="user", content="Hello, tell me a joke"
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
 
         # Poll the run as long as run status is queued or in progress
         while run.status in ["queued", "in_progress", "requires_action"]:
             # Wait for a second
             time.sleep(1)
-            run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
             print(f"Run status: {run.status}")
 
         agent_evaluation_request = AgentEvaluationRequest(
