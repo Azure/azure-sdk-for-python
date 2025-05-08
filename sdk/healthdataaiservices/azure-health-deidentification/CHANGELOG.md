@@ -14,12 +14,14 @@
 - Changed method names in `DeidentificationClient` to match functionality:
     - Changed the `deidentify` method name to `deidentify_text`.
     - Changed the `begin_create_job` method name to `begin_deidentify_documents`.
+- Changed the return type of `list_jobs` to `ItemPaged[DeidentificationJob]` and `AsyncItemPaged[DeidentificationJob]`.
+- Changed the return type of `list_job_documents` to `ItemPaged[DeidentificationDocumentDetails]` and `AsyncItemPaged[DeidentificationDocumentDetails]`.
 - Renamed the property `DeidentificationContent.operation` to `operation_type`.
 - Deprecated `DocumentDataType`.
 - Changed the model `DeidentificationDocumentDetails`:
     - Renamed `input` to `input_location`.
     - Renamed `output` to `output_location`.
-- Changed the model `DeidentificationJob`
+- Changed the model `DeidentificationJob`:
     - Renamed `name` to `job_name`.
     - Renamed `operation` to `operation_type`.
 - Renamed the model `OperationState` to `OperationStatus`.

@@ -6,7 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Iterable, List
+from typing import Any, List
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.health.deidentification.models import DeidentificationDocumentDetails, DeidentificationJob
 from ._client import DeidentificationClient as DeidentificationClientGenerated
@@ -19,25 +20,27 @@ __all__: List[str] = [
 class DeidentificationClient(DeidentificationClientGenerated):
 
     @distributed_trace
-    def list_jobs(self, **kwargs: Any) -> Iterable[DeidentificationJob]:
+    def list_jobs(self, **kwargs: Any) -> ItemPaged[DeidentificationJob]:
         """
         List de-identification jobs.
 
         :return: An iterator like instance of DeidentificationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super()._list_jobs_internal(continuation_token_parameter=None, **kwargs)
 
     @distributed_trace
-    def list_job_documents(self, job_name: str, **kwargs: Any) -> Iterable[DeidentificationDocumentDetails]:
+    def list_job_documents(self, job_name: str, **kwargs: Any) -> ItemPaged[DeidentificationDocumentDetails]:
         """
         List processed documents within a job.
 
         :param job_name: The name of a job. Required.
         :type job_name: str
         :return: An iterator like instance of DocumentDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super()._list_job_documents_internal(job_name=job_name, continuation_token_parameter=None, **kwargs)

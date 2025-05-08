@@ -336,7 +336,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_jobs_internal(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeidentificationJob"]:
+    ) -> AsyncItemPaged["_models.DeidentificationJob"]:
         """List de-identification jobs.
 
         Resource list operation template.
@@ -429,7 +429,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_job_documents_internal(
         self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeidentificationDocumentDetails"]:
+    ) -> AsyncItemPaged["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         Resource list operation template.
