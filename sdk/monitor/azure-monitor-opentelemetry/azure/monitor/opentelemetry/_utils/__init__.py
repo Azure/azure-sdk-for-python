@@ -14,6 +14,8 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # 
 )
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_on_app_service,
+    _is_on_aks,
+    _is_attach_enabled,
 )
 from azure.monitor.opentelemetry._constants import (
     _LOG_PATH_LINUX,
@@ -26,8 +28,10 @@ logger = logging.getLogger(__name__)
 
 # --------------------Diagnostic/status logging------------------------------
 
-# TODO: Add environment variable to enabled diagnostics off of App Service
-_IS_DIAGNOSTICS_ENABLED = _is_on_app_service()
+# TODO: Add environment variable to enable/disable diagnostics off of App Service
+def _is_diagnostics_enabled():
+    if _is_on_app_service() or _is_on_aks():
+        return _is_attach_enabled()
 _CUSTOMER_IKEY_ENV_VAR = None
 
 

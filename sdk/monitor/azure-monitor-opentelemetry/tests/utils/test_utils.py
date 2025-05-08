@@ -48,12 +48,12 @@ class TestUtils(TestCase):
     @patch.dict("os.environ", {"WEBSITE_SITE_NAME": TEST_VALUE})
     def test_diagnostics_enabled(self):
         reload(_utils)
-        self.assertTrue(_utils._IS_DIAGNOSTICS_ENABLED)
+        self.assertTrue(_utils._is_diagnostics_enabled())
 
     def test_diagnostics_disabled(self):
         clear_env_var("WEBSITE_SITE_NAME")
         reload(_utils)
-        self.assertFalse(_utils._IS_DIAGNOSTICS_ENABLED)
+        self.assertFalse(_utils._is_diagnostics_enabled())
 
     @patch(
         "azure.monitor.opentelemetry._utils.platform.system",
