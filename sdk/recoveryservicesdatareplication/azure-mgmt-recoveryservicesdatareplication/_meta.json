@@ -1,11 +1,6 @@
 {
-  "commit": "82e7e30a6d46c095e0c3211f3ff7bafe82a362f1",
+  "commit": "121c5e84647a9cdb1767d5146affdfe2af91d776",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
-  "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
-  ],
-  "autorest_command": "autorest specification/recoveryservicesdatareplication/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
-  "readme": "specification/recoveryservicesdatareplication/resource-manager/readme.md"
+  "typespec_src": "specification/recoveryservicesdatareplication/DataReplication.Management",
+  "@azure-tools/typespec-python": "0.44.1"
 }
