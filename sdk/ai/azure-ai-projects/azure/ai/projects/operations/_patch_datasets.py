@@ -122,17 +122,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                     logger.debug("[upload_file] Done uploading")
 
-                    file_dataset_version = FileDatasetVersion(
-                        # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                        # Per above doc the ".url" contains SAS token... should this be stripped away?
-                        data_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
-                    )
-                    file_dataset_version.is_reference = True  # TODO: Update TypeSpec to make this writable.
-
                     dataset_version = self.create_or_update(
                         name=name,
                         version=output_version,
-                        body=file_dataset_version,
+                        body=FileDatasetVersion(
+                            is_reference=True,
+                            # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
+                            # Per above doc the ".url" contains SAS token... should this be stripped away?
+                            data_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
+                        ),
                     )
 
         return dataset_version

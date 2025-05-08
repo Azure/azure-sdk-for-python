@@ -745,8 +745,9 @@ class DatasetVersion(_Model):
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
@@ -766,9 +767,11 @@ class DatasetVersion(_Model):
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
-    is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
-    """Indicates if dataset is reference only or managed by dataset service. If true, the underlying
-     data will be deleted when the dataset version is deleted."""
+    is_reference: Optional[bool] = rest_field(
+        name="isReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if the dataset holds a reference to the storage, or the dataset manages storage
+     itself. If true, the underlying data will not be deleted when the dataset version is deleted."""
     id: Optional[str] = rest_field(visibility=["read"])
     """Asset ID, a unique identifier for the asset."""
     name: str = rest_field(visibility=["read"])
@@ -786,6 +789,7 @@ class DatasetVersion(_Model):
         *,
         data_uri: str,
         type: str,
+        is_reference: Optional[bool] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1070,8 +1074,9 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
@@ -1095,6 +1100,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
         self,
         *,
         data_uri: str,
+        is_reference: Optional[bool] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1116,8 +1122,9 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
@@ -1141,6 +1148,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         self,
         *,
         data_uri: str,
+        is_reference: Optional[bool] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
