@@ -55,7 +55,12 @@ jobs:
       displayName: Output Staging Directory
 
     - pwsh: |
-        git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
+        $output = git clone --depth 1 ${{ parameters.SamplesRepo }} -b replace_blob_url
+        Write-Host $output
+      displayName: Check feature branch output 
+
+    - pwsh: |
+        git clone --depth 1 ${{ parameters.SamplesRepo }} -b replace_blob_url $(Agent.BuildDirectory)/ml
         Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
       displayName: Clone the ML Samples Repo, Set Variables
 
