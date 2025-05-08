@@ -887,10 +887,15 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         Initialize Bing Custom Search with a connection_id.
 
         :keyword connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :keyword market:
-        :keyword set_lang:
-        :keyword count:
-        :keyword freshness:
+        :paramtype connection_id: str
+        :keyword market: The market where the results come from.
+        :paramtype market: str
+        :keyword set_lang: The language to use for user interface strings when calling Bing API.
+        :paramtype set_lang: str
+        :keyword count: The number of search results to return in the bing api response.
+        :paramtype count: int
+        :keyword freshness: Filter search results by a specific time range. Accepted values: https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+        :paramtype freshness: str
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(

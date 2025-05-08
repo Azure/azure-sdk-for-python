@@ -651,7 +651,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :param tools: A function tool, toolset, or a set of callable functions.
         :type tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet]
         :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
-        :type max_retry: int
+        :paramtype max_retry: int
         """
         if isinstance(tools, _models.FunctionTool):
             self._function_tool = tools
