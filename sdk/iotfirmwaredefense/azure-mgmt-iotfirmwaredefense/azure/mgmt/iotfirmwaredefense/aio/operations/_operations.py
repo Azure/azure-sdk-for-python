@@ -32,8 +32,8 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ..._serialization import Deserializer, Serializer
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
     build_binary_hardening_list_by_firmware_request,
     build_crypto_certificates_list_by_firmware_request,

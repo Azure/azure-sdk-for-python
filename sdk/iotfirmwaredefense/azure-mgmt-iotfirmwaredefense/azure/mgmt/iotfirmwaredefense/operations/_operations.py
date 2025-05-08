@@ -32,8 +32,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import IoTFirmwareDefenseMgmtClientConfiguration
-from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._serialization import Deserializer, Serializer
+from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
