@@ -60,6 +60,7 @@ class TestArizeAIObservabilityEvalMgmtOrganizationsOperationsAsync(AzureMgmtReco
                             "subscriptionId": "str",
                             "subscriptionStatus": "str",
                         },
+                        "partnerProperties": {"description": "str"},
                         "user": {
                             "emailAddress": "str",
                             "firstName": "str",
@@ -67,7 +68,6 @@ class TestArizeAIObservabilityEvalMgmtOrganizationsOperationsAsync(AzureMgmtReco
                             "phoneNumber": "str",
                             "upn": "str",
                         },
-                        "partnerProperties": {"description": "str"},
                         "provisioningState": "str",
                         "singleSignOnProperties": {
                             "type": "str",
