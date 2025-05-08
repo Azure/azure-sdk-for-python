@@ -33,16 +33,12 @@ from azure.ai.projects.models import (
     EvaluatorIds,
     # DatasetVersion,
 )
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 async def main() -> None:
-    endpoint = os.environ["PROJECT_ENDPOINT"]
-    model_endpoint = os.environ["MODEL_ENDPOINT"]
+    endpoint = os.environ["PROJECT_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
     model_api_key = os.environ["MODEL_API_KEY"]
-    # dataset_name = os.environ["DATASET_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
     async with DefaultAzureCredential() as credential:
 
@@ -64,12 +60,13 @@ async def main() -> None:
             evaluation: Evaluation = Evaluation(
                 display_name="Sample Evaluation Async",
                 description="Sample evaluation for testing",
-                data=InputDataset(id="azureai://accounts/anksing1rpeastus2/projects/anksing1rpeastus2project/data/eval-data-2025-05-07_165118_UTC/versions/1"),
+                # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+                data=InputDataset(id="<>"),
                 evaluators={
                     "relevance": EvaluatorConfiguration(
                         id=EvaluatorIds.RELEVANCE.value,
                         init_params={
-                            "deployment_name": "gpt-4o-mini",
+                            "deployment_name": model_deployment_name,
                         },
                         data_mapping={
                             "query": "${data.query}",

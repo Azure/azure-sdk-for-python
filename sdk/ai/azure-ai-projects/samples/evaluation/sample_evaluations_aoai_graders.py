@@ -44,7 +44,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # [START evaluations_sample]
+        # [START evaluations_sample_aoai_graders]
         # TODO : Uncomment the following lines once dataset creation works
         # print(
         #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
@@ -82,6 +82,49 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 "bleu_score": EvaluatorConfiguration(
                     id=EvaluatorIds.BLEU_SCORE.value,
                 ),
+                "string_check": EvaluatorConfiguration(
+                    id="aoai://string_check",
+                    init_params={
+                        "input" :"{{item.query}}",
+                        "name":"starts with what is",
+                        "operation": "like",
+                        "reference": "What is",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "label_model": EvaluatorConfiguration(
+                    id="aoai://label_model",
+                    init_params={
+                        "input": [{"content": "{{item.query}}", "role": "user"}],
+                        "labels": ["too short", "just right", "too long"],
+                        "passing_labels": ["just right"],
+                        "model": "gpt-4o-mini",
+                        "name": "label",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "text_similatiry": EvaluatorConfiguration(
+                    id="aoai://text_similarity",
+                    init_params={
+                        "evaluation_metric": "fuzzy_match",
+                        "input": "{{item.query}}",
+                        "name": "similarity",
+                        "pass_threshold" :1,
+                        "reference":"{{item.query}}",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "general": EvaluatorConfiguration(
+                    id="aoai://text_similarity",
+                    init_params={
+                        "evaluation_metric": "fuzzy_match",
+                        "input": "{{item.query}}",
+                        "name": "similarity",
+                        "pass_threshold": 1,
+                        "reference": "{{item.query}}",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
             },
         )
 
@@ -100,4 +143,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         for evaluation in project_client.evaluations.list():
             print(evaluation)
 
-        # [END evaluations_sample]
+        # [END evaluations_sample_aoai_graders]
