@@ -65,7 +65,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             display_name="Sample Evaluation Test",
             description="Sample evaluation for testing",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-            data=InputDataset(id="azureai://accounts/anksing1rpeastus2/projects/anksing1rpeastus2project/data/eval-data-2025-05-07_165118_UTC/versions/1"),
+            data=InputDataset(id="<>"),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
@@ -107,7 +107,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                         "deployment_name": model_deployment_name,
                     },
                 ),
-                "text_similatiry": EvaluatorConfiguration(
+                "text_similarity": EvaluatorConfiguration(
                     id=EvaluatorIds.TEXT_SIMILARITY_GRADER.value,
                     init_params={
                         "evaluation_metric": "fuzzy_match",
