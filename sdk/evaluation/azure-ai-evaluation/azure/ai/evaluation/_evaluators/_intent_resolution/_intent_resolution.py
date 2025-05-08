@@ -40,7 +40,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END intent_resolution_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call IntentResolutionEvaluator using Azure AI Project URL in following format 
+            :caption: Initialize and call IntentResolutionEvaluator using Azure AI Project URL in the following format 
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
