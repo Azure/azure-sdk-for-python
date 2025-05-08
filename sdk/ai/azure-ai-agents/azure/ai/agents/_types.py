@@ -15,5 +15,5 @@ MessageInputContent = Union[str, List["_models.MessageInputContentBlock"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AgentsToolChoiceOption = Union[str, str, "_models.AgentsToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
 AgentsResponseFormatOption = Union[
-    str, str, "_models.AgentsResponseFormatMode", "_models.AgentsResponseFormat", "_models.ResponseFormatJsonSchemaType"
+    str, "_models.AgentsResponseFormatMode", "_models.AgentsResponseFormat", "_models.ResponseFormatJsonSchemaType"
 ]

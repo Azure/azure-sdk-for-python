@@ -880,15 +880,17 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     A tool that searches for information using Bing.
     """
 
-    def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
+    def __init__(
+        self, *, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""
+    ):
         """
         Initialize Bing Custom Search with a connection_id.
 
-        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param market:
-        :param set_lang:
-        :param count:
-        :param freshness:
+        :keyword connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :keyword market:
+        :keyword set_lang:
+        :keyword count:
+        :keyword freshness:
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(

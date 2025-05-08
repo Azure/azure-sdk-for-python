@@ -44,6 +44,32 @@ logger = logging.getLogger(__name__)
 
 
 class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+    """Custom client for the Azure AI Agents service.
+
+    This client is used to interact with the Azure AI Agents service, allowing users to create and manage agents
+    that can perform various tasks using different tools and resources.
+
+    The client is initialized with the endpoint and credential, and it provides methods to create, update, delete,
+    and manage agents. It also allows enabling automatic function calls for agents.
+
+    :param endpoint: The endpoint URL for the Azure AI Agents service.
+    :type endpoint: str
+    :param credential: The credential used to authenticate with the Azure AI Agents service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for requests. Default value is "2025-05-01".
+    :paramtype api_version: str
+    :keyword logging_enable: Whether to enable logging for the client. Default value is False.
+    :paramtype logging_enable: bool
+    :keyword logging_policy: The logging policy to use for the client. Default value is None.
+    :paramtype logging_policy: ~azure.core.pipeline.policies.HttpLoggingPolicy
+    :keyword headers: Additional headers to include in requests. Default value is None.
+    :paramtype headers: dict[str, str]
+    :keyword connection_timeout: The timeout for establishing a connection. Default value is None.
+    :paramtype connection_timeout: float
+
+    Args:
+        AgentsClientGenerated (_type_): _description_
+    """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not endpoint:
@@ -276,7 +302,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword content_type: Content type of the body.
         :paramtype content_type: str
         :return: An Agent object.
-        :rtype: _models.Agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises: HttpResponseError for HTTP errors.
         """
 
@@ -614,6 +640,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
         self,
         tools: Union[Set[Callable[..., Any]], _models.FunctionTool, _models.ToolSet],
+        *,
         max_retry: int = 10,
     ) -> None:
         """Enables tool calls to be executed automatically during runs.create_and_process or runs.stream.
@@ -623,7 +650,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         :param tools: A function tool, toolset, or a set of callable functions.
         :type tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet]
-        :param max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
         :type max_retry: int
         """
         if isinstance(tools, _models.FunctionTool):

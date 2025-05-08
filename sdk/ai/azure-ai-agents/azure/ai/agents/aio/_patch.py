@@ -126,17 +126,17 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.agentsApiResponseFormat
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode
+         or ~azure.ai.agents.models.AgentsResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -187,15 +187,15 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          agentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.agentsApiResponseFormatMode
-         or ~azure.ai.agents.models.agentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentResponseFormatMode
+         or ~azure.ai.agents.models.AgentResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -209,7 +209,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Default value is "application/json".
         :paramtype content_type: str
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -225,7 +225,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Default value is "application/json".
         :paramtype content_type: str
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -279,9 +279,11 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword content_type: Content type of the body.
         :paramtype content_type: str
         :return: An agent object.
-        :rtype: _models.Agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises: HttpResponseError for HTTP errors.
         """
+        self._validate_tools_and_tool_resources(tools, tool_resources)
+
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return await super().create_agent(body=body, content_type=content_type, **kwargs)
@@ -362,17 +364,17 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         agentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.agentsApiResponseFormatMode
-         or ~azure.ai.agents.models.agentsApiResponseFormat
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         agentsResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.agentsResponseFormatMode
+         or ~azure.ai.agents.models.agentsResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -427,15 +429,15 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          agentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.agentsApiResponseFormatMode
-         or ~azure.ai.agents.models.agentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentResponseFormatMode
+         or ~azure.ai.agents.models.AgentResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -453,7 +455,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Default value is "application/json".
         :paramtype content_type: str
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -471,7 +473,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Default value is "application/json".
         :paramtype content_type: str
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -535,8 +537,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          agentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.agentsApiResponseFormatMode
-         or ~azure.ai.agents.models.agentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentResponseFormatMode
+         or ~azure.ai.agents.models.AgentResponseFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -546,7 +548,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          None.
         :paramtype metadata: dict[str, str]
         :return: agent. The agent is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.agent
+        :rtype: ~azure.ai.agents.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_tools_and_tool_resources(tools, tool_resources)
@@ -612,6 +614,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
         self,
         tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet],
+        *,
         max_retry: int = 10,
     ) -> None:
         """Enables tool calls to be executed automatically during runs.create_and_process or runs.stream.
@@ -621,7 +624,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         :param tools: A function tool, toolset, or a set of callable functions.
         :type tools: Union[Set[Callable[..., Any]], _models.AsyncFunctionTool, _models.AsyncToolSet]
-        :param max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
+        :keyword max_retry: Maximum number of errors allowed and retry per run or stream. Default value is 10.
         :type max_retry: int
         """
         if isinstance(tools, _models.AsyncFunctionTool):
@@ -939,7 +942,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             _models.RunStatus.IN_PROGRESS,
             _models.RunStatus.REQUIRES_ACTION,
         ):
-            await asyncio.sleep(polling_interval)
+            await self._client._pipeline._transport.sleep(polling_interval)
+
             run = await self.runs.get(thread_id=run.thread_id, run_id=run.id)
 
             # If the model requests tool calls, execute and submit them
@@ -949,7 +953,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls or []
 
                 if not tool_calls:
-                    logger.warning("No tool calls provided â€“ cancelling run")
+                    logger.warning("No tool calls provided - cancelling run")
                     run = await self.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                     break
                 # We need tool set only if we are executing local function. In case if

@@ -855,7 +855,7 @@ class RunsOperations(RunsOperationsGenerated):
         """
 
     @distributed_trace_async
-    async def stream(  # pyright: ignore[reportInconsistentOverload]
+    async def stream(
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1403,7 +1403,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :keyword timeout: Maximum time to wait for file upload to complete.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1434,7 +1434,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :keyword timeout: Maximum time to wait for file upload to complete.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1462,7 +1462,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :keyword timeout: Maximum time to wait for file upload to complete.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1500,7 +1500,7 @@ class FilesOperations(FilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the uploaded file.
+        :keyword timeout: Maximum time to wait for file upload to complete.
         :paramtype timeout: float
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: _models.FileInfo
@@ -1630,7 +1630,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
@@ -1678,7 +1678,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
@@ -1706,7 +1706,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
@@ -1757,7 +1757,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStore
@@ -1825,7 +1825,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
@@ -1863,7 +1863,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
@@ -1894,7 +1894,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
@@ -1934,7 +1934,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
@@ -2007,7 +2007,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
@@ -2045,7 +2045,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
@@ -2076,7 +2076,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
@@ -2116,7 +2116,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :keyword polling_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype polling_interval: float
-        :keyword timeout: Time to wait before polling for the status of the vector store.
+        :keyword timeout: Maximum time to wait for the vector store to complete.
         :paramtype timeout: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.VectorStoreFile
@@ -2165,6 +2165,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
 class MessagesOperations(MessagesOperationsGenerated):
 
+    @distributed_trace_async
     async def get_last_message_by_role(
         self,
         thread_id: str,
@@ -2192,6 +2193,7 @@ class MessagesOperations(MessagesOperationsGenerated):
                 return message
         return None
 
+    @distributed_trace_async
     async def get_last_text_message_by_role(
         self,
         thread_id: str,
