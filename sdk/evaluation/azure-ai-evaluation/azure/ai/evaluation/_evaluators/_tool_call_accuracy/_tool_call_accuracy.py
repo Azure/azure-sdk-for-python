@@ -45,6 +45,16 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a ToolCallAccuracyEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START tool_call_accuracy_evaluator]
+            :end-before: [END tool_call_accuracy_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call ToolCallAccuracyEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.

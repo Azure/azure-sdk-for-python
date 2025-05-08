@@ -515,9 +515,9 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
-    print("Loading samples in evaluation_samples_evaluate.py")
+    print("Loading samples in evaluation_samples_evaluate_fdp.py")
     sample = EvaluationEvaluateSamples()
     print("Samples loaded successfully!")
-    print("Running samples in evaluation_samples_evaluate.py")
+    print("Running samples in evaluation_samples_evaluate_fdp.py")
     sample.evaluation_evaluate_classes_methods()
     print("Samples ran successfully!")
