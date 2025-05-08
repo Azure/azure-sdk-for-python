@@ -80,7 +80,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
     response_piece = response.request_pieces[0]
     assert response_piece.role == "assistant"
 
-    expected_response_data = {"score_value": "true", "description": "Threshold: 3, Result: High Severity", "rationale": "Detected hateful content.", "metadata": {"raw_score": 5, "threshold": 3, "result": "High Severity", "risk_category": "hate_unfairness"}}
+    expected_response_data = {"score_value": True, "description": "Threshold: 3, Result: High Severity", "rationale": "Detected hateful content.", "metadata": {"raw_score": 5, "threshold": 3, "result": "High Severity", "risk_category": "hate_unfairness"}}
     assert json.loads(response_piece.converted_value) == expected_response_data
     MockLogger.info.assert_called() # Check if logger was called
 

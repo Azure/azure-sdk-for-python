@@ -2302,7 +2302,11 @@ class RedTeam():
         self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
         self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
 
-        
+        if len(flattened_attack_strategies) > 2 and (AttackStrategy.MultiTurn in flattened_attack_strategies or AttackStrategy.Crescendo in flattened_attack_strategies):
+            self.logger.warning("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+            print("⚠️ Warning: MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+            raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+
         # Calculate total tasks: #risk_categories * #converters
         self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) 
         # Show task count for user awareness

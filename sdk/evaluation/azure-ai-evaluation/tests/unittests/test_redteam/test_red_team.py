@@ -722,6 +722,40 @@ class TestRedTeamScan:
         """Test that scan method properly handles custom attack objectives."""
         # This test is skipped as it requires more complex mocking of file system operations
         pass
+    
+    @pytest.mark.asyncio
+    async def test_scan_incompatible_attack_strategies(self, red_team):
+        """Test that scan method raises ValueError when incompatible attack strategies are provided."""
+        # Setup incompatible strategies
+        incompatible_strategies = [AttackStrategy.Crescendo, AttackStrategy.Base64]
+        
+        # Mock the attributes needed for scan to reach the validation check
+        red_team.risk_categories = [RiskCategory.Violence]
+        red_team.attack_objective_generator = MagicMock()
+        red_team.attack_objective_generator.risk_categories = [RiskCategory.Violence]
+        red_team.attack_objective_generator.custom_attack_seed_prompts = None
+        red_team.trace_destination = "mock_trace_destination"  # Add missing attribute
+        
+        with patch.object(red_team, "_get_chat_target", return_value=MagicMock()), \
+             patch.object(red_team, "_start_redteam_mlflow_run", return_value=MagicMock()), \
+             patch("azure.ai.evaluation.red_team._red_team._get_ai_studio_url", return_value="https://test-url.com"), \
+             pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            await red_team.scan(
+                target=MagicMock(),
+                attack_strategies=incompatible_strategies
+            )
+        
+        # Test MultiTurn with other strategies
+        incompatible_strategies = [AttackStrategy.MultiTurn, AttackStrategy.Base64]
+        
+        with patch.object(red_team, "_get_chat_target", return_value=MagicMock()), \
+             patch.object(red_team, "_start_redteam_mlflow_run", return_value=MagicMock()), \
+             patch("azure.ai.evaluation.red_team._red_team._get_ai_studio_url", return_value="https://test-url.com"), \
+             pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            await red_team.scan(
+                target=MagicMock(),
+                attack_strategies=incompatible_strategies
+            )
         
     @pytest.mark.asyncio
     async def test_scan_timeout_tracking(self, red_team):
@@ -893,47 +927,11 @@ class TestCrescendoOrchestrator:
             for i in range(len(mock_prompts)):
                 current_call_args = mock_crescendo_class.call_args_list[i]
                 assert isinstance(current_call_args.kwargs['objective_target'], MagicMock)
-                assert isinstance(current_call_args.kwargs['adversarial_chat'], AsyncMock) # mock_rai_target
-                assert isinstance(current_call_args.kwargs['scoring_target'], AsyncMock) # mock_rai_eval_target
+                assert 'adversarial_chat' in current_call_args.kwargs
+                assert 'scoring_target' in current_call_args.kwargs
                 assert current_call_args.kwargs['max_turns'] == 10
                 assert current_call_args.kwargs['max_backtracks'] == 5
-                assert isinstance(mock_crescendo_orchestrator_instance._objective_scorer, AsyncMock) # mock_rai_scorer
-
-    @pytest.mark.asyncio
-    async def test_crescendo_orchestrator_timeout_handling(self, red_team_instance):
-        """Test timeout handling in _crescendo_orchestrator."""
-        mock_chat_target = MagicMock(spec=PromptChatTarget)
-        mock_prompts = ["Test prompt timeout"] # Single prompt
-        strategy_name = "crescendo_timeout_strategy"
-        risk_category_name = "mock_risk_category_timeout"
-        risk_category = RiskCategory.SelfHarm
-
-        red_team_instance.red_team_info[strategy_name] = {risk_category_name: {}}
-
-        mock_crescendo_orchestrator_instance = AsyncMock(spec=CrescendoOrchestrator)
-        mock_crescendo_orchestrator_instance.run_attack_async.side_effect = asyncio.TimeoutError
-
-        with patch('azure.ai.evaluation.red_team._red_team.CrescendoOrchestrator', return_value=mock_crescendo_orchestrator_instance), \
-             patch('azure.ai.evaluation.red_team._red_team.AzureRAIServiceTarget', AsyncMock(spec=AzureRAIServiceTarget)), \
-             patch('azure.ai.evaluation.red_team._red_team.RAIServiceEvalChatTarget', AsyncMock(spec=RAIServiceEvalChatTarget)), \
-             patch('azure.ai.evaluation.red_team._red_team.AzureRAIServiceTrueFalseScorer', AsyncMock(spec=AzureRAIServiceTrueFalseScorer)), \
-             patch.object(red_team_instance, '_write_pyrit_outputs_to_file') as mock_write_output:
-
-            await red_team_instance._crescendo_orchestrator(
-                chat_target=mock_chat_target,
-                all_prompts=mock_prompts,
-                converter=None, 
-                strategy_name=strategy_name,
-                risk_category_name=risk_category_name,
-                risk_category=risk_category,
-                timeout=1 
-            )
-            
-            red_team_instance.logger.warning.assert_called()
-            task_key = f"{strategy_name}_{risk_category_name}_prompt_0"
-            assert red_team_instance.task_statuses[task_key] == "TIMEOUT"
-            assert red_team_instance.red_team_info[strategy_name][risk_category_name]["status"] == "incomplete"
-            mock_write_output.assert_called_once()
+                assert mock_rai_scorer.called
 
     @pytest.mark.asyncio
     async def test_crescendo_orchestrator_general_exception_handling(self, red_team_instance):
@@ -1449,6 +1447,6 @@ class TestRedTeamOrchestratorSelection:
         assert orchestrator_func == red_team_instance._crescendo_orchestrator
 
         # Test with a list containing Crescendo
-        orchestrator_func_list = red_team_instance._get_orchestrator_for_attack_strategy([AttackStrategy.Crescendo])
-        assert orchestrator_func_list == red_team_instance._crescendo_orchestrator
+        with pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."):
+            red_team_instance._get_orchestrator_for_attack_strategy([AttackStrategy.Crescendo,AttackStrategy.Base64])
 

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
+import time
 import uuid
 import os
 import json
@@ -11,9 +12,13 @@ import asyncio
 import re
 from typing import Dict, Optional, Any
 
+from tenacity import RetryCallState, retry, retry_if_exception_type, stop_after_attempt, wait_random_exponential
+
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from pyrit.models import PromptRequestResponse, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
+    
+logger = logging.getLogger(__name__)
 
 class AzureRAIServiceTarget(PromptChatTarget):
     """Target for Azure RAI service."""
@@ -423,7 +428,26 @@ class AzureRAIServiceTarget(PromptChatTarget):
             
         # Return empty dict if nothing could be extracted
         return {}
+    
+    def log_exception(retry_state: RetryCallState):
+        # Log each retry attempt with exception details at ERROR level
+        elapsed_time = time.monotonic() - retry_state.start_time
+        call_count = retry_state.attempt_number
 
+        if retry_state.outcome.failed:
+            exception = retry_state.outcome.exception()
+            logger.error(
+                f"Retry attempt {call_count} for {retry_state.fn.__name__} failed with exception: {exception}. "
+                f"Elapsed time: {elapsed_time} seconds. Total calls: {call_count}"
+            )
+
+    @retry(
+        reraise=True,
+        retry=retry_if_exception_type(ValueError),
+        wait=wait_random_exponential(min=10, max=220),
+        after=log_exception,
+        stop=stop_after_attempt(5),
+    )
     async def send_prompt_async(self, *, prompt_request: PromptRequestResponse, objective: str = "") -> PromptRequestResponse:
         """Send a prompt to the Azure RAI service.
         
