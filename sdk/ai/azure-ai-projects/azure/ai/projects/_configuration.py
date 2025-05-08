@@ -22,55 +22,34 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The Azure AI Foundry project endpoint, in the form
-     ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
-     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
-     the Enterprise private link. Required.
+    :param endpoint: Project endpoint. In the form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
+     form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     if you want to explicitly
+     specify the Foundry Project name. Required.
     :type endpoint: str
-    :param subscription_id: The Azure subscription ID. Required.
-    :type subscription_id: str
-    :param resource_group_name: The name of the Azure Resource Group. Required.
-    :type resource_group_name: str
-    :param project_name: The Azure AI Foundry project name. Required.
-    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-01-preview". Note that overriding this default value may result in unsupported
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        subscription_id: str,
-        resource_group_name: str,
-        project_name: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-07-01-preview")
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        api_version: str = kwargs.pop("api_version", "2025-05-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
-        if project_name is None:
-            raise ValueError("Parameter 'project_name' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
-        self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.project_name = project_name
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-projects/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

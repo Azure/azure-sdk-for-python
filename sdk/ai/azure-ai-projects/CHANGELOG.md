@@ -1,5 +1,32 @@
 # Release History
 
+## 1.0.0b11 (Unreleased)
+
+Major changes happened in this version as the client library switched to using the new AI Foundry data-plane REST APIs.
+(TODO: Add link). Please see updated samples.
+
+### Breaking changes
+
+* Endpoint URL is now needed to construct the `AIProjectClient`, instead of using the factory method
+`.from_connection_string`. Find this endpoint URL in your AI Foundry project page.
+* Agent operations that were previously part of the `azure.ai.projects` package have moved out to a separate new package
+`azure-ai-assistants` with a client named `AssistantClient`. See INSERT URL HERE for more information. You can get the `AssistantClient` by calling `.assistant.get_client()` method on your `AIProjectClient`.
+* Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
+* Several changes to `.connections` operations. Please see new connection samples.
+* TODO: `.evaluations` methods ..
+
+### Features added
+
+* `.deployment` methods to enumerate the deployed AI models in your AI Foundry project.
+* `.datasets` method to upload documents and reference them. These documents will be used to augment the capability
+of your selected LLM (RAG pattern).
+* `.indexes` methods to handle your AI search indexes and search queries, as part of RAG pattern.
+* TODO: `.red_team` methods ...
+
+### Sample updates
+
+### Bugs Fixed
+
 ## 1.0.0b10 (2025-04-23)
 
 ### Features added
@@ -7,7 +34,7 @@
 * Added `ConnectedAgentTool` class for better connected Agent support.
 * Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
 * Added tracing for listing Agent run steps.
-* Add a `max_retry` argument to the `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
+* Add a `max_retry` argument to the Agent's `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
 
 ### Sample updates
 
@@ -15,7 +42,7 @@
 
 ### Bugs Fixed
 
-* Fix for filtering of messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
+* Fix for filtering of Agent messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
 
 ## 1.0.0b9 (2025-04-16)
 
@@ -34,9 +61,7 @@
 
 ### Breaking Changes
 
-* Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
-* Because of the function calls redesign, when errors occur in `FunctionTool.execute` and `AsyncFunctionTool.execute`, they return a JSON string in the format of `{error: [message]}` instead of throwing errors.
-* Because of the function calls redesign, when errors occur in `ToolSet.execute_tool_calls` and `AsyncToolSet.execute_tool_calls`, the returned array now includes an entry with output: {error: [message]} instead of not inserting the entry into the array.
+Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
 
 ## 1.0.0b8 (2025-03-28)
 
@@ -56,7 +81,8 @@
 * Fix for a bug in Agent tracing causing tool calls not to be recorded in traces.
 * Fix for a bug in Agent tracing causing function tool calls to not work properly when tracing is enabled.
 * Fix for a bug in Agent streaming, where `agent_id` was not included in the response. This caused the SDK not to make function calls when the thread run status is `requires_action`.
-* Fix for a bug in Agent `create_and_process_run` addresses an issue where it would get into an infinite loop when automatic function calls fail.
+
+## 1.0.0b7 (2025-03-06)
 
 ### Features added
 
