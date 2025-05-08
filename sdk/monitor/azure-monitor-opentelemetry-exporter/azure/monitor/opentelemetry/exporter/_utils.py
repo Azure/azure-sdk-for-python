@@ -11,7 +11,6 @@ import time
 import warnings
 from typing import Callable, Dict, Any
 
-from opentelemetry.semconv.attributes.service_attributes import SERVICE_NAME
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -230,22 +229,12 @@ def _create_telemetry_item(timestamp: int) -> TelemetryItem:
 def _populate_part_a_fields(resource: Resource):
     tags = {}
     if resource and resource.attributes:
-        service_name = resource.attributes.get(SERVICE_NAME)
-        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
-        service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
         device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
         device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
         app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
-        if service_name:
-            if service_namespace:
-                tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + "." + str(service_name)
-            else:
-                tags[ContextTagKeys.AI_CLOUD_ROLE] = service_name  # type: ignore
-        if service_instance_id:
-            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = service_instance_id  # type: ignore
-        else:
-            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
+        tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(resource)
+        tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = _get_cloud_role_instance(resource)
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
         if device_id:
             tags[ContextTagKeys.AI_DEVICE_ID] = device_id  # type: ignore
@@ -258,6 +247,44 @@ def _populate_part_a_fields(resource: Resource):
 
     return tags
 
+
+def _get_cloud_role(resource: Resource) -> str:
+    service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
+    if service_name:
+        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
+        if service_namespace:
+            return str(service_namespace) + "." + str(service_name)
+        return service_name  # type: ignore
+    k8s_dep_name = resource.attributes.get(ResourceAttributes.K8S_DEPLOYMENT_NAME)
+    if k8s_dep_name:
+        return k8s_dep_name  # type: ignore
+    k8s_rep_set_name = resource.attributes.get(ResourceAttributes.K8S_REPLICASET_NAME)
+    if k8s_rep_set_name:
+        return k8s_rep_set_name  # type: ignore
+    k8s_stateful_set_name = resource.attributes.get(ResourceAttributes.K8S_STATEFULSET_NAME)
+    if k8s_stateful_set_name:
+        return k8s_stateful_set_name  # type: ignore
+    k8s_job_name = resource.attributes.get(ResourceAttributes.K8S_JOB_NAME)
+    if k8s_job_name:
+        return k8s_job_name  # type: ignore
+    k8s_cronjob_name = resource.attributes.get(ResourceAttributes.K8S_CRONJOB_NAME)
+    if k8s_cronjob_name:
+        return k8s_cronjob_name  # type: ignore
+    k8s_daemonset_name = resource.attributes.get(ResourceAttributes.K8S_DAEMONSET_NAME)
+    if k8s_daemonset_name:
+        return k8s_daemonset_name  # type: ignore
+    return ""
+
+
+def _get_cloud_role_instance(resource: Resource) -> str:
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
+    k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
+    if k8s_pod_name:
+        return k8s_pod_name
+    return platform.node()  # hostname default
+          
 
 def _is_synthetic_source(properties: Attributes) -> bool:
     # TODO: Use semconv symbol when released in upstream
