@@ -5,7 +5,7 @@
 
 ### Bugs Fixed
 
-## 1.27.0 (2025-05-06)
+## 1.27.0 (2025-05-07)
 
 ### Features Added
 - Added Target storage connection for capability host.
