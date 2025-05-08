@@ -128,8 +128,10 @@ class SessionContainer(object):
                 if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
-                        vector_session_token = token_dict.get(partition_key_range_id)
-                        session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token.session_token)
+                        container_routing_map = routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                        current_range = container_routing_map._rangeById.get(partition_key_range_id)
+                        if current_range is not None:
+                            session_token = self._format_session_token(current_range, token_dict)
                     else:
                         collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
@@ -137,17 +139,7 @@ class SessionContainer(object):
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = await routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
-                        session_token_list = []
-                        parents = pk_range[0].get('parents').copy()
-                        parents.append(pk_range[0]['id'])
-                        for parent in parents:
-                            vector_session_token = token_dict.get(parent)
-                            session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
-                            session_token_list.append(session_token)
-                            # if vector_session_token is not None:
-                            #     session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
-                            #     session_token_list.append(session_token)
-                        session_token = ",".join(session_token_list)
+                        session_token = self._format_session_token(pk_range, token_dict)
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except
@@ -168,9 +160,12 @@ class SessionContainer(object):
         # x-ms-alt-content-path which is the string representation of the resource
 
         with self.session_lock:
-
             try:
-                self_link = response_result["_self"]
+                self_link = response_result.get("_self")
+                # query results don't directly have a self_link - need to fetch it directly from one of the items
+                if self_link is None:
+                    if 'Documents' in response_result and len(response_result['Documents']) > 0:
+                        self_link = response_result['Documents'][0].get('_self')
 
                 # extract alternate content path from the response_headers
                 # (only document level resource updates will have this),
@@ -182,11 +177,17 @@ class SessionContainer(object):
                 response_result_id = None
                 if alt_content_path_key in response_headers:
                     alt_content_path = response_headers[http_constants.HttpHeaders.AlternateContentPath]
-                    response_result_id = response_result[response_result_id_key]
+                    if response_result_id_key in response_result:
+                        response_result_id = response_result[response_result_id_key]
                 else:
                     return
-                collection_rid, collection_name = _base.GetItemContainerInfo(self_link, alt_content_path,
-                                                                             response_result_id)
+                if self_link is not None:
+                    collection_rid, collection_name = _base.GetItemContainerInfo(self_link, alt_content_path,
+                                                                                response_result_id)
+                else:
+                    # if for whatever reason we don't have a _self link at this point, we use the container name
+                    collection_name = alt_content_path
+                    collection_rid = self.collection_name_to_rid.get(collection_name)
                 # if the response came in with a new partition key range id after a split, refresh the pk range cache
                 partition_key_range_id = response_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)
                 collection_ranges = None
@@ -228,10 +229,9 @@ class SessionContainer(object):
                         self.rid_to_session_token[collection_rid][id_] = parsed_tokens[id_]
                     else:
                         self.rid_to_session_token[collection_rid][id_] = parsed_tokens[id_].merge(old_session_token)
-                    self.collection_name_to_rid[collection_name] = collection_rid
             else:
                 self.rid_to_session_token[collection_rid] = parsed_tokens
-                self.collection_name_to_rid[collection_name] = collection_rid
+            self.collection_name_to_rid[collection_name] = collection_rid
 
     def clear_session_token(self, response_headers):
         with self.session_lock:
@@ -276,6 +276,18 @@ class SessionContainer(object):
                         )
                     id_to_sessionlsn[id_] = sessionToken
         return id_to_sessionlsn
+
+    def _format_session_token(self, pk_range, token_dict):
+        session_token_list = []
+        parents = pk_range[0].get('parents').copy()
+        parents.append(pk_range[0]['id'])
+        for parent in parents:
+            vector_session_token = token_dict.get(parent)
+            if vector_session_token is not None:
+                session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
+                session_token_list.append(session_token)
+        session_token = ",".join(session_token_list)
+        return session_token
 
 
 class Session(object):

@@ -2797,6 +2797,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = RequestObject(resource_type, documents._OperationType.Read)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
+
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
@@ -3381,7 +3384,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if documents.ConsistencyLevel.Session == request_headers[http_constants.HttpHeaders.ConsistencyLevel]:
                 is_session_consistency = True
 
-        if is_session_consistency and self.session:
+        if (is_session_consistency and self.session and
+                not base.IsMasterResource(request_headers[http_constants.HttpHeaders.ThinClientProxyResourceType])):
             # update session
             self.session.update_session(self, response_result, response_headers)
 
