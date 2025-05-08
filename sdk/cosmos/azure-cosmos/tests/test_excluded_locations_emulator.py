@@ -15,6 +15,7 @@ from test_excluded_locations import (L1, L2,
                                      get_test_data_with_expected_output)
 from test_fault_injection_transport import TestFaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos.http_constants import ResourceType
 
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
@@ -170,7 +171,7 @@ class TestExcludedLocationsEmulator:
             # Inject rule to simulate request timeout in target region
             is_request_to_target_region: Callable[[HttpRequest], bool] = lambda \
                     r: (FaultInjectionTransport.predicate_targets_region(r, target_url) and
-                        FaultInjectionTransport.predicate_is_collection_operation(r) and
+                        FaultInjectionTransport.predicate_is_resource_type(r, ResourceType.Collection) and
                         not FaultInjectionTransport.predicate_is_write_operation(r, target_url))
             fault_factory = lambda r: custom_transport.error_with_counter(
                 CosmosHttpResponseError(
