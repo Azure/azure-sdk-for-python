@@ -44,6 +44,34 @@ _Unset: Any = object()
 
 
 class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+    """AgentsClient.
+
+    :ivar threads: ThreadsOperations operations
+    :vartype threads: azure.ai.agents.aio.operations.ThreadsOperations
+    :ivar messages: MessagesOperations operations
+    :vartype messages: azure.ai.agents.aio.operations.MessagesOperations
+    :ivar runs: RunsOperations operations
+    :vartype runs: azure.ai.agents.aio.operations.RunsOperations
+    :ivar run_steps: RunStepsOperations operations
+    :vartype run_steps: azure.ai.agents.aio.operations.RunStepsOperations
+    :ivar files: FilesOperations operations
+    :vartype files: azure.ai.agents.aio.operations.FilesOperations
+    :ivar vector_stores: VectorStoresOperations operations
+    :vartype vector_stores: azure.ai.agents.aio.operations.VectorStoresOperations
+    :ivar vector_store_files: VectorStoreFilesOperations operations
+    :vartype vector_store_files: azure.ai.agents.aio.operations.VectorStoreFilesOperations
+    :ivar vector_store_file_batches: VectorStoreFileBatchesOperations operations
+    :vartype vector_store_file_batches:
+     azure.ai.agents.aio.operations.VectorStoreFileBatchesOperations
+    :param endpoint: Project endpoint in the form of:
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
+     that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         if not endpoint:

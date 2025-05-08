@@ -593,86 +593,86 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AgentRunStream[_models.AgentEventHandler]:
         """Creates a new stream for an agent thread.
 
-         :param thread_id: Required.
-         :type thread_id: str
-         :keyword include: A list of additional fields to include in the response.
-          Currently the only supported value is
-          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-          content. Default value is None.
-         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-         :keyword agent_id: The ID of the agent that should run the thread. Required.
-         :paramtype agent_id: str
-         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-          Default value is "application/json".
-         :paramtype content_type: str
-         :keyword model: The overridden model name that the agent should use to run the thread. Default
-          value is None.
-         :paramtype model: str
-         :keyword instructions: The overridden system instructions that the agent should use to run the
-          thread. Default value is None.
-         :paramtype instructions: str
-         :keyword additional_instructions: Additional instructions to append at the end of the
-          instructions for the run. This is useful for modifying the behavior
-          on a per-run basis without overriding other instructions. Default value is None.
-         :paramtype additional_instructions: str
-         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-          Default value is None.
+        :param thread_id: Required.
+        :type thread_id: str
+        :keyword include: A list of additional fields to include in the response.
+        Currently the only supported value is
+        ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+        content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+        value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+        thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+        instructions for the run. This is useful for modifying the behavior
+        on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+        Default value is None.
         :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
-         :keyword tools: The overridden list of enabled tools that the agent should use to run the
-          thread. Default value is None.
-         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
-         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-          will make the output
-          more random, while lower values like 0.2 will make it more focused and deterministic. Default
-          value is None.
-         :paramtype temperature: float
-         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-          model
-          considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-          comprising the top 10% probability mass are considered.
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+        thread. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+        will make the output
+        more random, while lower values like 0.2 will make it more focused and deterministic. Default
+        value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+        model
+        considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+        comprising the top 10% probability mass are considered.
 
-          We generally recommend altering this or temperature but not both. Default value is None.
-         :paramtype top_p: float
-         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-          course of the run. The run will make a best effort to use only
-          the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-          the number of prompt tokens specified,
-          the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-          value is None.
-         :paramtype max_prompt_tokens: int
-         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-          the course of the run. The run will make a best effort
-          to use only the number of completion tokens specified, across multiple turns of the run. If
-          the run exceeds the number of
-          completion tokens specified, the run will end with status ``incomplete``. See
-          ``incomplete_details`` for more info. Default value is None.
-         :paramtype max_completion_tokens: int
-         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-          moves forward. Default value is None.
-         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
-         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-          AgentsNamedToolChoice Default value is None.
-         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
-          ~azure.ai.agents.models.AgentsNamedToolChoice
-         :keyword response_format: Specifies the format that the model must output. Is one of the
-          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-          AgentsApiResponseFormat Default value is None.
-         :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-          or ~azure.ai.agents.models.AgentsApiResponseFormat
-         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-          Default value is None.
-         :paramtype parallel_tool_calls: bool
-         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-          for storing additional information about that object in a structured format. Keys may be up to
-          64 characters in length and values may be up to 512 characters in length. Default value is
-          None.
-         :paramtype metadata: dict[str, str]
-         :keyword event_handler: None
-         :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
-         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-         :rtype: ~azure.ai.agents.models.AgentRunStream
-         :raises ~azure.core.exceptions.HttpResponseError:
+        We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+        course of the run. The run will make a best effort to use only
+        the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+        the number of prompt tokens specified,
+        the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+        value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+        the course of the run. The run will make a best effort
+        to use only the number of completion tokens specified, across multiple turns of the run. If
+        the run exceeds the number of
+        completion tokens specified, the run will end with status ``incomplete``. See
+        ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+        moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+        the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+        AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+        ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+        following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+        AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+        or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+        Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+        for storing additional information about that object in a structured format. Keys may be up to
+        64 characters in length and values may be up to 512 characters in length. Default value is
+        None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.agents.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -702,87 +702,87 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
-         :param thread_id: Required.
-         :type thread_id: str
-         :keyword agent_id: The ID of the agent that should run the thread. Required.
-         :paramtype agent_id: str
-         :keyword include: A list of additional fields to include in the response.
-          Currently the only supported value is
-          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-          content. Default value is None.
-         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-          Default value is "application/json".
-         :paramtype content_type: str
-         :keyword model: The overridden model name that the agent should use to run the thread. Default
-          value is None.
-         :paramtype model: str
-         :keyword instructions: The overridden system instructions that the agent should use to run the
-          thread. Default value is None.
-         :paramtype instructions: str
-         :keyword additional_instructions: Additional instructions to append at the end of the
-          instructions for the run. This is useful for modifying the behavior
-          on a per-run basis without overriding other instructions. Default value is None.
-         :paramtype additional_instructions: str
-         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-          Default value is None.
+        :param thread_id: Required.
+        :type thread_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
+        :keyword include: A list of additional fields to include in the response.
+        Currently the only supported value is
+        ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+        content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+        value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+        thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+        instructions for the run. This is useful for modifying the behavior
+        on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+        Default value is None.
         :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
-         :keyword tools: The overridden list of enabled tools that the agent should use to run the
-          thread. Default value is None.
-         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
-         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-          will make the output
-          more random, while lower values like 0.2 will make it more focused and deterministic. Default
-          value is None.
-         :paramtype temperature: float
-         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-          model
-          considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-          comprising the top 10% probability mass are considered.
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+        thread. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+        will make the output
+        more random, while lower values like 0.2 will make it more focused and deterministic. Default
+        value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+        model
+        considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+        comprising the top 10% probability mass are considered.
 
-          We generally recommend altering this or temperature but not both. Default value is None.
-         :paramtype top_p: float
-         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-          course of the run. The run will make a best effort to use only
-          the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-          the number of prompt tokens specified,
-          the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-          value is None.
-         :paramtype max_prompt_tokens: int
-         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-          the course of the run. The run will make a best effort
-          to use only the number of completion tokens specified, across multiple turns of the run. If
-          the run exceeds the number of
-          completion tokens specified, the run will end with status ``incomplete``. See
-          ``incomplete_details`` for more info. Default value is None.
-         :paramtype max_completion_tokens: int
-         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-          moves forward. Default value is None.
-         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
-         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-          AgentsNamedToolChoice Default value is None.
-         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
-          ~azure.ai.agents.models.AgentsNamedToolChoice
-         :keyword response_format: Specifies the format that the model must output. Is one of the
-          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-          AgentsApiResponseFormat Default value is None.
-         :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-          or ~azure.ai.agents.models.AgentsApiResponseFormat
-         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-          Default value is None.
-         :paramtype parallel_tool_calls: bool
-         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-          for storing additional information about that object in a structured format. Keys may be up to
-          64 characters in length and values may be up to 512 characters in length. Default value is
-          None.
-         :paramtype metadata: dict[str, str]
-         :keyword event_handler: The event handler to use for processing events during the run. Default
-             value is None.
-         :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
-         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-         :rtype: ~azure.ai.agents.models.AgentRunStream
-         :raises ~azure.core.exceptions.HttpResponseError:
+        We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+        course of the run. The run will make a best effort to use only
+        the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+        the number of prompt tokens specified,
+        the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+        value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+        the course of the run. The run will make a best effort
+        to use only the number of completion tokens specified, across multiple turns of the run. If
+        the run exceeds the number of
+        completion tokens specified, the run will end with status ``incomplete``. See
+        ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+        moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+        the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+        AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+        ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+        following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+        AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+        or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+        Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+        for storing additional information about that object in a structured format. Keys may be up to
+        64 characters in length and values may be up to 512 characters in length. Default value is
+        None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.agents.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -881,88 +881,88 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
-         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-         :param thread_id: Required.
-         :type thread_id: str
-         :param body: Is either a JSON type or a IO[bytes] type. Required.
-         :type body: JSON or IO[bytes]
-         :keyword include: A list of additional fields to include in the response.
-          Currently the only supported value is
-          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-          content. Default value is None.
-         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-         :keyword agent_id: The ID of the agent that should run the thread. Required.
-         :paramtype agent_id: str
-         :keyword model: The overridden model name that the agent should use to run the thread. Default
-          value is None.
-         :paramtype model: str
-         :keyword instructions: The overridden system instructions that the agent should use to run the
-          thread. Default value is None.
-         :paramtype instructions: str
-         :keyword additional_instructions: Additional instructions to append at the end of the
-          instructions for the run. This is useful for modifying the behavior
-          on a per-run basis without overriding other instructions. Default value is None.
-         :paramtype additional_instructions: str
-         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-          Default value is None.
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+        Currently the only supported value is
+        ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+        content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+        value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+        thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+        instructions for the run. This is useful for modifying the behavior
+        on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+        Default value is None.
         :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
-         :keyword tools: The overridden list of enabled tools that the agent should use to run the
-          thread. Default value is None.
-         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
-         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-          will make the output
-          more random, while lower values like 0.2 will make it more focused and deterministic. Default
-          value is None.
-         :paramtype temperature: float
-         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-          model
-          considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-          comprising the top 10% probability mass are considered.
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+        thread. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+        will make the output
+        more random, while lower values like 0.2 will make it more focused and deterministic. Default
+        value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+        model
+        considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+        comprising the top 10% probability mass are considered.
 
-          We generally recommend altering this or temperature but not both. Default value is None.
-         :paramtype top_p: float
-         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-          course of the run. The run will make a best effort to use only
-          the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-          the number of prompt tokens specified,
-          the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-          value is None.
-         :paramtype max_prompt_tokens: int
-         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-          the course of the run. The run will make a best effort
-          to use only the number of completion tokens specified, across multiple turns of the run. If
-          the run exceeds the number of
-          completion tokens specified, the run will end with status ``incomplete``. See
-          ``incomplete_details`` for more info. Default value is None.
-         :paramtype max_completion_tokens: int
-         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-          moves forward. Default value is None.
-         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
-         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-          AgentsNamedToolChoice Default value is None.
-         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
-          ~azure.ai.agents.models.AgentsNamedToolChoice
-         :keyword response_format: Specifies the format that the model must output. Is one of the
-          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-          AgentsApiResponseFormat Default value is None.
-         :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-          or ~azure.ai.agents.models.AgentsApiResponseFormat
-         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-          Default value is None.
-         :paramtype parallel_tool_calls: bool
-         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-          for storing additional information about that object in a structured format. Keys may be up to
-          64 characters in length and values may be up to 512 characters in length. Default value is
-          None.
-         :paramtype metadata: dict[str, str]
-         :keyword event_handler: The event handler to use for processing events during the run. Default
-             value is None.
-         :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
-         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-         :rtype: ~azure.ai.agents.models.AgentRunStream
-         :raises ~azure.core.exceptions.HttpResponseError:
+        We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+        course of the run. The run will make a best effort to use only
+        the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+        the number of prompt tokens specified,
+        the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+        value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+        the course of the run. The run will make a best effort
+        to use only the number of completion tokens specified, across multiple turns of the run. If
+        the run exceeds the number of
+        completion tokens specified, the run will end with status ``incomplete``. See
+        ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+        moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+        the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+        AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+        ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+        following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+        AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
+        or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+        Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+        for storing additional information about that object in a structured format. Keys may be up to
+        64 characters in length and values may be up to 512 characters in length. Default value is
+        None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.agents.models.AgentEventHandler
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.agents.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if isinstance(body, dict):  # Handle overload with JSON body.
