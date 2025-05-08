@@ -36,6 +36,10 @@ async def main():
     endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
+    # Construct the path to the image file used in this sample
+    data_folder = os.environ.get("DATA_FOLDER", os.path.dirname(os.path.abspath(__file__)))
+    image_file = os.path.join(data_folder, "sample1.png")
+
     async with DefaultAzureCredential() as credential:
 
         async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
@@ -44,7 +48,7 @@ async def main():
 
                 response = await client.embed(
                     model=model_deployment_name,
-                    input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")],
+                    input=[ImageEmbeddingInput.load(image_file=image_file, image_format="png")],
                 )
 
                 for item in response.data:

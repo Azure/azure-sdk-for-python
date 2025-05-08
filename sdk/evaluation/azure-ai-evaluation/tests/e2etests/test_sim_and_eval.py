@@ -138,7 +138,7 @@ class TestSimAndEval:
         ("proj_scope", "cred"),
         (
             ("project_scope", "azure_cred"),
-            # ("project_scope_onedp", "azure_cred_onedp"),
+            ("project_scope_onedp", "azure_cred_onedp"),
         )
     )
     def test_protected_material_sim_image_understanding(self, request, proj_scope, cred):
@@ -192,7 +192,6 @@ class TestSimAndEval:
         eval_output = evaluate(
             data=file_name,
             evaluation_name="sim_image_understanding_protected_material_eval",
-            # azure_ai_project=project_scope,
             evaluators={"protected_material": protected_material_eval},
         )
 

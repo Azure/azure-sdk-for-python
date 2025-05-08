@@ -45,7 +45,7 @@ USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
 ML_WORKSPACE  = "https://management.azure.com/.default"
-COG_SRV_WORKSPACE = "https://cognitiveservices.azure.com/.default"
+COG_SRV_WORKSPACE = "https://ai.azure.com/.default"
 
 INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
 

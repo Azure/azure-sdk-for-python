@@ -7,11 +7,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ...models._models import Connection
+from ...models._enums import ConnectionType
 
 
 class ConnectionsOperations(ConnectionsOperationsGenerated):
@@ -41,3 +42,25 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return await super()._get_with_credentials(name, **kwargs)
 
         return await super()._get(name, **kwargs)
+
+    @distributed_trace_async
+    async def get_default(
+        self, connection_type: Union[str, ConnectionType], *, include_credentials: Optional[bool] = False, **kwargs: Any
+    ) -> Connection:
+        """Get the default connection for a given connection type.
+
+        :param connection_type: The type of the connection. Required.
+        :type connection_type: str or ~azure.ai.projects.models.ConnectionType
+        :keyword include_credentials: Whether to include credentials in the response. Default is False.
+        :paramtype include_credentials: bool
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Connection
+        :raises ValueError: If no default connection is found for the given type.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        connections = super().list(connection_type=connection_type, default_connection=True, **kwargs)
+        async for connection in connections:
+            if include_credentials:
+                connection = await super()._get_with_credentials(connection.name, **kwargs)
+            return connection
+        raise ValueError(f"No default connection found for type: {connection_type}.")

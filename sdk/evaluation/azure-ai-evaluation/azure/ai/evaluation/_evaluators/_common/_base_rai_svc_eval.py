@@ -59,7 +59,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     ):
         super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
         self._eval_metric = eval_metric
-        self._azure_ai_project = azure_ai_project if is_onedp_project(azure_ai_project) else validate_azure_ai_project(azure_ai_project)
+        self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
         self._higher_is_better = _higher_is_better

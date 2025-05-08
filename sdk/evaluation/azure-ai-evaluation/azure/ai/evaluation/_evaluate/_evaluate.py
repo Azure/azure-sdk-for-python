@@ -14,7 +14,7 @@ from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -695,7 +695,7 @@ def evaluate(
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
-    azure_ai_project: Optional[AzureAIProject] = None,
+    azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
     **kwargs,
@@ -816,7 +816,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     target: Optional[Callable] = None,
     data: Union[str, os.PathLike],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
-    azure_ai_project: Optional[AzureAIProject] = None,
+    azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
     **kwargs,
@@ -915,7 +915,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     # Done with all evaluations, message outputs into final forms, and log results if needed.
     name_map = _map_names_to_builtins(evaluators, graders)
-    if isinstance(azure_ai_project, str):
+    if is_onedp_project(azure_ai_project):
         studio_url = _log_metrics_and_instance_results_onedp(
             metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
         )
@@ -943,7 +943,7 @@ def _preprocess_data(
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     target: Optional[Callable] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
-    azure_ai_project: Optional[AzureAIProject] = None,
+    azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     evaluation_name: Optional[str] = None,
     **kwargs,
     ) -> __ValidatedData:

@@ -208,28 +208,31 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_connections.connections_sample-->
 
 ```python
-print("List the properties of all connections:")
+print("List all connections:")
 for connection in project_client.connections.list():
     print(connection)
 
-print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
+print("List all connections of a particular type:")
 for connection in project_client.connections.list(
     connection_type=ConnectionType.AZURE_OPEN_AI,
 ):
     print(connection)
 
-print("To list the default connection of a particular type  (in this case, Azure Store Account):")
-for connection in project_client.connections.list(
-    connection_type=ConnectionType.AZURE_STORAGE_ACCOUNT,
-    default_connection=True,
-):
-    print(connection)
+print("Get the default connection of a particular type, without its credentials:")
+connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+print(connection)
 
-print(f"Get the properties of a connection named `{connection_name}`, without its credentials:")
+print("Get the default connection of a particular type, with its credentials:")
+connection = project_client.connections.get_default(
+    connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True
+)
+print(connection)
+
+print(f"Get the connection named `{connection_name}`, without its credentials:")
 connection = project_client.connections.get(connection_name)
 print(connection)
 
-print(f"Get the properties of a connection named `{connection_name}`, with its credentials:")
+print(f"Get the connection named `{connection_name}`, with its credentials:")
 connection = project_client.connections.get(connection_name, include_credentials=True)
 print(connection)
 ```
@@ -267,6 +270,16 @@ print(dataset)
 print(f"Get an existing Dataset version `{dataset_version_1}`:")
 dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
 print(dataset)
+
+""" 
+TODO: TypeSpec needs to be fixed for this to work. "body" should be removed.
+print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
+asset_credential = project_client.datasets.get_credentials(
+    name=dataset_name,
+    version=dataset_version_1,
+    body=None)
+print(asset_credential)
+"""
 
 print("List latest versions of all Datasets:")
 for dataset in project_client.datasets.list():

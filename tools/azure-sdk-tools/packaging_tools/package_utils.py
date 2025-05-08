@@ -311,15 +311,15 @@ class CheckFile:
 
         def edit_changelog_proc(content: List[str]):
             next_version = self.next_version
+            if next_version == "1.0.0b1":
+                content.clear()
+                content.append("# Release History\n")
             content[1:1] = [
                 "\n",
                 f"## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n",
                 self.get_changelog(),
                 "\n",
             ]
-            if next_version == "1.0.0b1":
-                for _ in range(4):
-                    content.pop()
 
         modify_file(str(Path(self.sdk_code_path()) / "CHANGELOG.md"), edit_changelog_proc)
 

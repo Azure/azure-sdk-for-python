@@ -23,6 +23,7 @@
         "azure.ai.projects.models.EntraIDCredentials": "Azure.AI.Projects.EntraIDCredentials",
         "azure.ai.projects.models.Evaluation": "Azure.AI.Projects.Evaluation",
         "azure.ai.projects.models.EvaluatorConfiguration": "Azure.AI.Projects.EvaluatorConfiguration",
+        "azure.ai.projects.models.FieldMapping": "Azure.AI.Projects.FieldMapping",
         "azure.ai.projects.models.FileDatasetVersion": "Azure.AI.Projects.FileDatasetVersion",
         "azure.ai.projects.models.FolderDatasetVersion": "Azure.AI.Projects.FolderDatasetVersion",
         "azure.ai.projects.models.InputData": "Azure.AI.Projects.InputData",

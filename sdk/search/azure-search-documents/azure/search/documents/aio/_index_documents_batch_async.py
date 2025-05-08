@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import List, Union, Dict, Tuple, Any, cast
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 
 from .._generated.models import IndexAction
 
