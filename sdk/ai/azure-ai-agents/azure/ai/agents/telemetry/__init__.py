@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._ai_agents_instrumentor import AIAgentsInstrumentor
-from ._utils import enable_telemetry
 from ._trace_function import trace_function
 
 
