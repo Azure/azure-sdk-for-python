@@ -60,6 +60,7 @@ class TestWeightsAndBiasesMgmtInstancesOperationsAsync(AzureMgmtRecordedTestCase
                             "subscriptionId": "str",
                             "subscriptionStatus": "str",
                         },
+                        "partnerProperties": {"region": "str", "subdomain": "str"},
                         "user": {
                             "emailAddress": "str",
                             "firstName": "str",
@@ -67,7 +68,6 @@ class TestWeightsAndBiasesMgmtInstancesOperationsAsync(AzureMgmtRecordedTestCase
                             "phoneNumber": "str",
                             "upn": "str",
                         },
-                        "partnerProperties": {"region": "str", "subdomain": "str"},
                         "provisioningState": "str",
                         "singleSignOnProperties": {
                             "type": "str",
