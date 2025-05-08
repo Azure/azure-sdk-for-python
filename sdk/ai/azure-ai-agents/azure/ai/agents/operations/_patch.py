@@ -713,7 +713,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
-         :paramtype content_type: str
+        :paramtype content_type: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
