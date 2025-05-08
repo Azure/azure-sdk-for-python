@@ -42,5 +42,4 @@ python sample_initialize_client.py
 
 ## Next Steps
 
-- Visit the [Azure Online Experimentation documentation](https://docs.microsoft.com/azure/online-experimentation) for more information
 - Explore the [Azure SDK for Python](https://github.com/Azure/azure-sdk-for-python) on GitHub
