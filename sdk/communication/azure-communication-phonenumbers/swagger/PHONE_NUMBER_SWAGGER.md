@@ -12,8 +12,6 @@ autorest ./PHONE_NUMBER_SWAGGER.md
 ``` yaml
 tag: package-phonenumber-2025-04-01
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/de9cb12d2840ca0915849ce6a3bf8c956a32c022/specification/communication/data-plane/PhoneNumbers/readme.md
-input-file: 
-  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/common-types/data-plane/v1/types.json
 output-folder: ../azure/communication/phonenumbers/_generated
 namespace: azure.communication.phonenumbers
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -57,12 +55,12 @@ directive:
     $["name"] = "PhoneNumberAvailabilityStatus";
 ```
 
-### Replace type from AvailablePhoneNumberError to ResponseError
+### Replace type from AvailablePhoneNumberError to CommunicationError
 ```yaml
 directive:
   - from: swagger-document
     where: $.definitions.AvailablePhoneNumber.properties.error
     transform: >
       $.type = "object";
-      $.$ref = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/common-types/data-plane/v1/types.json#/definitions/ErrorDetail";
+      $.$ref = "../../../Common/stable/2021-03-07/common.json#/definitions/CommunicationError";
 ```
