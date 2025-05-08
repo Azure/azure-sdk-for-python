@@ -1,0 +1,4 @@
+directory: specification/confidentialledger/Microsoft.CodeTransparency
+commit: 1572cb274d79e71d57d07ff9e324808b2083b19b
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
