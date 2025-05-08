@@ -21,6 +21,9 @@ USAGE:
     4) AZURE_AI_PROJECT_URL
     
 DESCRIPTION:
+    AZURE_OPENAI_ENDPOINT follows the following format:
+    https://<account_name>.services.ai.azure.com
+    
     AZURE_AI_PROJECT_URL follows the following format:
     https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
