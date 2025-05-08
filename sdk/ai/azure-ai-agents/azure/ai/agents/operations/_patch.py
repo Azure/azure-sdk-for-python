@@ -934,7 +934,7 @@ class RunsOperations(RunsOperationsGenerated):
          to use only the number of completion tokens specified, across multiple turns of the run. If
          the run exceeds the number of
          completion tokens specified, the run will end with status ``incomplete``. See
-        ``incomplete_details`` for more info. Default value is None.
+         ``incomplete_details`` for more info. Default value is None.
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
