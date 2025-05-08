@@ -93,7 +93,7 @@ def set_up(
     ).start()
     patch(
         "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._is_diagnostics_enabled",
-        is_diagnostics_enabled,
+        return_value=is_diagnostics_enabled,
     ).start()
 
 
