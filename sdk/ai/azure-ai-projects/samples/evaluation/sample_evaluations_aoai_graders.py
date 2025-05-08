@@ -35,6 +35,10 @@ from azure.ai.projects.models import (
     # DatasetVersion,
 )
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 endpoint = os.environ["PROJECT_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 model_endpoint = os.environ["MODEL_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com
 model_api_key= os.environ["MODEL_API_KEY"]
@@ -61,7 +65,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             display_name="Sample Evaluation Test",
             description="Sample evaluation for testing",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-            data=InputDataset(id="<>"),
+            data=InputDataset(id="azureai://accounts/anksing1rpeastus2/projects/anksing1rpeastus2project/data/eval-data-2025-05-07_165118_UTC/versions/1"),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
@@ -83,7 +87,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     id=EvaluatorIds.BLEU_SCORE.value,
                 ),
                 "string_check": EvaluatorConfiguration(
-                    id="aoai://string_check",
+                    id=EvaluatorIds.STRING_CHECK_GRADER.value,
                     init_params={
                         "input" :"{{item.query}}",
                         "name":"starts with what is",
@@ -93,18 +97,18 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     },
                 ),
                 "label_model": EvaluatorConfiguration(
-                    id="aoai://label_model",
+                    id=EvaluatorIds.LABEL_GRADER.value,
                     init_params={
                         "input": [{"content": "{{item.query}}", "role": "user"}],
                         "labels": ["too short", "just right", "too long"],
                         "passing_labels": ["just right"],
-                        "model": "gpt-4o-mini",
+                        "model": model_deployment_name,
                         "name": "label",
                         "deployment_name": model_deployment_name,
                     },
                 ),
                 "text_similatiry": EvaluatorConfiguration(
-                    id="aoai://text_similarity",
+                    id=EvaluatorIds.TEXT_SIMILARITY_GRADER.value,
                     init_params={
                         "evaluation_metric": "fuzzy_match",
                         "input": "{{item.query}}",
@@ -115,14 +119,16 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     },
                 ),
                 "general": EvaluatorConfiguration(
-                    id="aoai://text_similarity",
+                    id=EvaluatorIds.GENERAL_GRADER.value,
                     init_params={
-                        "evaluation_metric": "fuzzy_match",
-                        "input": "{{item.query}}",
-                        "name": "similarity",
-                        "pass_threshold": 1,
-                        "reference": "{{item.query}}",
                         "deployment_name": model_deployment_name,
+                        "grader_config": {
+                            "input": "{{item.query}}",
+                            "name": "contains hello",
+                            "operation": "like",
+                            "reference": "hello",
+                            "type": "string_check",
+                        },
                     },
                 ),
             },
