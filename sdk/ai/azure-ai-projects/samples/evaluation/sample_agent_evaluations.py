@@ -75,9 +75,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             run_id=run.id,
             thread_id=thread.id,
             evaluators={
-                "violence": EvaluatorConfiguration(
-                    id=EvaluatorIds.VIOLENCE,
-                )
+            "Relevance": {"Id": EvaluatorIds.Relevance.value},
+            "Fluency": {"Id": EvaluatorIds.Fluency.value},
+            "Coherence": {"Id": EvaluatorIds.Coherence.value},
             },
             sampling_configuration=AgentEvaluationSamplingConfiguration(
                 name="test",
