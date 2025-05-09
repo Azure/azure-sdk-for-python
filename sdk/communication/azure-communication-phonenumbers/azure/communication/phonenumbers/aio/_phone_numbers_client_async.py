@@ -466,14 +466,13 @@ class PhoneNumbersClient:
         """Creates or updates a reservation by its ID.
 
         Updates the reservation with the given ID if it exists; or creates a new one otherwise. 
-        If no ID is provided, a new reservation will be created with a new random ID. 
-        Note that to update an existing reservation, a valid existing ID is required. The response will be the
-        updated state of the reservation. Updating a reservation will extend the expiration time of 
-        the reservation to 15 minutes after the last change, up to a maximum of 2 hours from creation time. 
+        The response will be the updated state of the reservation. 
+        Updating a reservation will extend the expiration time of the reservation to 15 minutes 
+        after the last change, up to a maximum of 2 hours from creation time. 
         Partial success is possible, in which case the result will contain phone numbers with error status.
 
         
-        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservatioin, 
+        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation, 
          with that ID exists it will be updated; ortherwise a new reservation will be created.
         :keyword numbers_to_add: List of phone numbers to add to the reservation.
         :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
@@ -535,6 +534,10 @@ class PhoneNumbersClient:
         Purchase can only be started for active reservations that at least one phone number. If any of
         the phone numbers in the reservation is from a country where reselling is not permitted, do not
         resell agreement is required. 
+        
+        The agreement to not resell is a legal requirement in some countries in order to purchase phone numbers.
+        For more information on which countries require this agreement, please refer to this documentation:
+        https://learn.microsoft.com/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
