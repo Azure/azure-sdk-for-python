@@ -5,6 +5,8 @@ variables:
     value: azsdk-pool
   - name: WINDOWSPOOL
     value: azsdk-pool
+  - name: WINDOWSARMPOOL
+    value: azsdk-pool-arm64
   - name: MACPOOL
     value: Azure Pipelines
 
@@ -14,6 +16,8 @@ variables:
     value: ubuntu-22.04
   - name: WINDOWSVMIMAGE
     value: windows-2022
+  - name: WINDOWSARMVMIMAGE
+    value: windows-2022-arm64-1espt
   - name: MACVMIMAGE
     value: macos-latest
 
