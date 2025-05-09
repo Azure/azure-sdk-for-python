@@ -20,6 +20,7 @@ def add_sanitizers(test_proxy):
     tenant_id = os.getenv("AZURE_TENANT_ID", "sanitized")
     connection_str = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING", fake_connection_str)
     dynamic_connection_str = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING", fake_connection_str)
+    azure_test_domain = os.getenv("AZURE_TEST_DOMAIN", "sanitized.com")
     endpoint, *_, access_key = parse_connection_str(connection_str)
     dynamic_endpoint, *_, dynamic_access_key = parse_connection_str(dynamic_connection_str)
 
@@ -33,6 +34,7 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=dynamic_connection_str, value=fake_connection_str)
     add_general_string_sanitizer(target=dynamic_endpoint, value="sanitized.communication.azure.com")
     add_general_string_sanitizer(target=dynamic_access_key, value="fake==")
+    add_general_string_sanitizer(target=azure_test_domain, value="sanitized.com")
 
     add_body_key_sanitizer(json_path="id", value="sanitized")
     add_body_key_sanitizer(json_path="phoneNumber", value="sanitized")

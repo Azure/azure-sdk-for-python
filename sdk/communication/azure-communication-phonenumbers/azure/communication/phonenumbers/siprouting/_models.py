@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
 class SipTrunk(object):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
@@ -68,7 +67,6 @@ class SipTrunk(object):
         self.direct_transfer = kwargs.get("direct_transfer", None)
         self.privacy_header = kwargs.get("privacy_header", None)
         self.ip_address_version = kwargs.get("ip_address_version", None)
-
 
 class SipTrunkRoute(object):
     """Represents a trunk route for routing calls.
@@ -134,13 +132,9 @@ class SipDomain(object):
     :vartype enabled: bool
     """
 
-    _validation = {
-        "enabled": {"required": True},
-    }
-
     _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
         "fqdn": {"key": "fqdn", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
     def __init__(self, **kwargs):
@@ -150,6 +144,6 @@ class SipDomain(object):
         :keyword enabled: Enabled flag. Required.
         :paramtype enabled: bool
         """
-        self.enabled = kwargs.get("enabled", None)
         self.fqdn = kwargs.get("fqdn", None)
+        self.enabled = kwargs.get("enabled", None)
         

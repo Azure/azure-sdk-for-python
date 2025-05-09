@@ -7,14 +7,21 @@
 from typing import TYPE_CHECKING, Any, List
 from urllib.parse import urlparse
 
-from azure.communication.phonenumbers.siprouting._generated.models._models import SipDomainInternal
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._models import SipDomain, SipTrunk, SipTrunkRoute
-from .._generated.models import ExpandEnum, SipConfiguration, SipTrunkInternal, SipTrunkRouteInternal
+from .._mappers import (
+    sip_trunk_from_generated,
+    sip_trunk_to_generated,
+    sip_trunk_route_from_generated,
+    sip_trunk_route_to_generated,
+    sip_domain_from_generated,
+    sip_domain_to_generated
+)
+from .._generated.models import ExpandEnum, SipConfiguration
 from .._generated.aio._client import SIPRoutingService
 from ..._shared.auth_policy_utils import get_authentication_policy
 from ..._shared.utils import parse_connection_str
@@ -97,12 +104,11 @@ class SipRoutingClient(object):
         """
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
-        expand = ExpandEnum.TRUNKS_HEALTH
 
-        config = await self._rest_service.sip_routing.get(expand = expand, **kwargs)
+        config = await self._rest_service.sip_routing.get(expand = ExpandEnum.TRUNKS_HEALTH, **kwargs)
 
         trunk = config.trunks[trunk_fqdn]
-        return SipTrunk(fqdn=trunk_fqdn, sip_signaling_port=trunk.sip_signaling_port)
+        return sip_trunk_from_generated(trunk_fqdn,trunk)
 
     @distributed_trace_async
     async def set_trunk(
@@ -155,14 +161,12 @@ class SipRoutingClient(object):
         """
 
         async def extract_data(config):
-            list_of_elem = [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in config.trunks.items()]
+            list_of_elem = [sip_trunk_from_generated(k,v) for k, v in config.trunks.items()]
             return None, AsyncList(list_of_elem)
-
-        expand = ExpandEnum.TRUNKS_HEALTH
 
         # pylint: disable=unused-argument
         async def get_next(nextLink=None):
-            return await self._rest_service.sip_routing.get(expand=expand, **kwargs)
+            return await self._rest_service.sip_routing.get(expand=ExpandEnum.TRUNKS_HEALTH, **kwargs)
 
         return AsyncItemPaged(get_next, extract_data)
 
@@ -178,9 +182,7 @@ class SipRoutingClient(object):
         """
 
         async def extract_data(config):
-            list_of_elem = [
-                SipTrunkRoute(description=x.description, name=x.name, number_pattern=x.number_pattern,
-                              trunks=x.trunks, caller_id_override=x.caller_id_override)
+            list_of_elem = [sip_trunk_route_from_generated(x)
                 for x in config.routes
             ]
             return None, AsyncList(list_of_elem)
@@ -208,7 +210,7 @@ class SipRoutingClient(object):
         if trunks is None:
             raise ValueError("Parameter 'trunks' must not be None.")
 
-        trunks_dictionary = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
+        trunks_dictionary = {x.fqdn: sip_trunk_to_generated(x) for x in trunks}
         config = SipConfiguration(trunks=trunks_dictionary)
 
         old_trunks = await self._list_trunks_(**kwargs)
@@ -237,10 +239,7 @@ class SipRoutingClient(object):
         if routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
-        routes_internal = [
-            SipTrunkRouteInternal(
-                description=x.description, name=x.name, number_pattern=x.number_pattern, trunks=x.trunks
-            )
+        routes_internal = [sip_trunk_route_to_generated(x)
             for x in routes
         ]
         await self._rest_service.sip_routing.update(body=SipConfiguration(routes=routes_internal), **kwargs)
@@ -268,19 +267,16 @@ class SipRoutingClient(object):
         if test_routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
-        routes_internal = [
-            SipTrunkRouteInternal(
-                description=x.description, name=x.name, number_pattern=x.number_pattern, trunks=x.trunks
-            )
-            for x in test_routes
-        ]
+        routes_internal = [sip_trunk_route_to_generated(x) for x in test_routes]
         sip_configuration = SipConfiguration(routes=routes_internal)
-        return await self._rest_service.sip_routing.test_routes_with_number(sip_configuration=sip_configuration,
+        response = await self._rest_service.sip_routing.test_routes_with_number(sip_configuration=sip_configuration,
                                                                             target_phone_number=target_phone_number,
                                                                             **kwargs)
+        routes_mapped = [sip_trunk_route_from_generated(x) for x in response.matching_routes]
+        return routes_mapped
 
-    @distributed_trace
-    def get_domain(
+    @distributed_trace_async
+    async def get_domain(
         self,
         domain_name: str,
         **kwargs: Any
@@ -295,13 +291,13 @@ class SipRoutingClient(object):
         """
         if domain_name is None:
             raise ValueError("Parameter 'domain_name' must not be None.")
-        config = self._rest_service.sip_routing.get( **kwargs)
+        config = await self._rest_service.sip_routing.get( **kwargs)
 
         domain = config.domains[domain_name]
-        return SipDomain(enabled=domain.enabled)
+        return sip_domain_from_generated(domain_name,domain)
 
-    @distributed_trace
-    def set_domain(
+    @distributed_trace_async
+    async def set_domain(
         self,
         domain: SipDomain,
         **kwargs: Any
@@ -317,10 +313,10 @@ class SipRoutingClient(object):
         if domain is None:
             raise ValueError("Parameter 'domain' must not be None.")
 
-        self._update_domains_([domain], **kwargs)
+        await self._update_domains_([domain], **kwargs)
 
-    @distributed_trace
-    def delete_domain(
+    @distributed_trace_async
+    async def delete_domain(
         self,
         domain_name: str,
         **kwargs: Any
@@ -336,7 +332,7 @@ class SipRoutingClient(object):
         if domain_name is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        self._rest_service.sip_routing.update(body=SipConfiguration(domains={domain_name: None}), **kwargs)
+        await self._rest_service.sip_routing.update(body=SipConfiguration(domains={domain_name: None}), **kwargs)
 
     @distributed_trace
     def list_domains(
@@ -350,13 +346,13 @@ class SipRoutingClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        def extract_data(config):
-            list_of_elem = [SipDomain(enabled=v.enabled) for k, v in config.domains.items()]
-            return None, list_of_elem
+        async def extract_data(config):
+            list_of_elem = [sip_domain_from_generated(k,v) for k, v in config.domains.items()]
+            return None, AsyncList(list_of_elem)
 
         # pylint: disable=unused-argument
-        def get_next(nextLink=None):
-            return self._rest_service.sip_routing.get(**kwargs)
+        async def get_next(nextLink=None):
+            return await self._rest_service.sip_routing.get(**kwargs)
 
         return AsyncItemPaged(get_next, extract_data)
 
@@ -377,47 +373,47 @@ class SipRoutingClient(object):
         if domains is None:
             raise ValueError("Parameter 'domains' must not be None.")
 
-        domains_dictionary = {x.enabled: SipDomainInternal(enabled=x.enabled) for x in domains}
+        domains_dictionary = {x.fqdn: sip_domain_to_generated(x) for x in domains}
         config = SipConfiguration(domains=domains_dictionary)
 
         old_domains = await self._list_domains_(**kwargs)
 
         for x in old_domains:
-            if x.enabled not in [o.enabled for o in domains]:
-                config.domains[x.enabled] = None
+            if x.fqdn not in [o.fqdn for o in domains]:
+                config.domains[x.fqdn] = None
 
         if len(config.domains) > 0:
             await self._rest_service.sip_routing.update(body=config, **kwargs)
 
     async def _list_trunks_(self, **kwargs):
         config = await self._rest_service.sip_routing.get(**kwargs)
-        return [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in config.trunks.items()]
+        return [sip_trunk_from_generated(k, v) for k, v in config.trunks.items()]
 
     async def _list_domains_(self, **kwargs):
         config = await self._rest_service.sip_routing.get(**kwargs)
-        return [SipDomain(enabled=k) for k in config.domains.items()]
+        return [sip_domain_from_generated(k, v) for k, v in config.domains.items()]
 
     async def _update_trunks_(
         self,
         trunks: List[SipTrunk],
         **kwargs: Any
     )-> SipTrunk:
-        trunks_internal = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
+        trunks_internal = {x.fqdn: sip_trunk_to_generated(x) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
         new_config = await self._rest_service.sip_routing.update(body=modified_config, **kwargs)
-        return [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in new_config.trunks.items()]
+        return [sip_trunk_from_generated(k,v) for k, v in new_config.trunks.items()]
 
-    def _update_domains_(
+    async def _update_domains_(
         self,
         domains: List[SipDomain],
         **kwargs: Any
     )-> SipDomain:
-        domains_internal = {x.fqdn: SipDomainInternal(enabled=x.enabled) for x in domains}
+        domains_internal = {x.fqdn: sip_domain_to_generated(x) for x in domains}
         modified_config = SipConfiguration(domains=domains_internal)
 
-        new_config = self._rest_service.sip_routing.update(body=modified_config, **kwargs)
-        return [SipDomain(enabled=v.enabled) for k, v in new_config.domains.items()]
+        new_config = await self._rest_service.sip_routing.update(body=modified_config, **kwargs)
+        return [sip_domain_from_generated(k,v) for k, v in new_config.domains.items()]
 
     async def close(self) -> None:
         await self._rest_service.close()
