@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-postgresqlflexibleservers
 # USAGE
-    python server_update_with_aad_auth_enabled.py
+    python tuning_configuration_list_sessions.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,27 +31,15 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.servers.begin_update(
-        resource_group_name="TestGroup",
-        server_name="pgtestsvc4",
-        parameters={
-            "properties": {
-                "administratorLoginPassword": "newpassword",
-                "authConfig": {
-                    "activeDirectoryAuth": "Enabled",
-                    "passwordAuth": "Enabled",
-                    "tenantId": "tttttt-tttt-tttt-tttt-tttttttttttt",
-                },
-                "backup": {"backupRetentionDays": 20},
-                "createMode": "Update",
-                "storage": {"autoGrow": "Disabled", "storageSizeGB": 1024, "tier": "P30"},
-            },
-            "sku": {"name": "Standard_D8s_v3", "tier": "GeneralPurpose"},
-        },
-    ).result()
-    print(response)
+    response = client.tuning_configuration.list_sessions(
+        resource_group_name="testrg",
+        server_name="testserver",
+        tuning_option="configuration",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerUpdateWithAadAuthEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/TuningConfiguration_ListSessions.json
 if __name__ == "__main__":
     main()
