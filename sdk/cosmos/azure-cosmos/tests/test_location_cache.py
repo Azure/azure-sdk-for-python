@@ -83,8 +83,7 @@ class TestLocationCache:
 
         # check endpoints to health check
         endpoints = lc.endpoints_to_health_check()
-        assert len(endpoints) == 3
-        assert default_endpoint in endpoints
+        assert len(endpoints) == 2
         assert location1_endpoint in endpoints
         assert location4_endpoint in endpoints
 

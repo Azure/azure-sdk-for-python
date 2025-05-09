@@ -469,7 +469,7 @@ class TestFaultInjectionTransport:
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
-            mulitple_write_locations=True
+            multiple_write_locations=True
         )
         container: ContainerProxy = initialized_objects["col"]
         with pytest.raises(ServiceRequestError):
