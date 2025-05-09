@@ -22,6 +22,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
+from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
@@ -330,7 +331,9 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
 
@@ -383,6 +386,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
+            multiple_write_locations=True,
             preferred_locations=["First Region", "Second Region"])
         try:
             container: ContainerProxy = initialized_objects["col"]
@@ -455,7 +459,8 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"]
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
             await container.upsert_item(body=document_definition)
@@ -508,7 +513,9 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
             with pytest.raises(ServiceRequestError):

@@ -33,15 +33,6 @@ def setup():
         COLLECTION: created_collection
     }
 
-def health_check():
-    # preferred_location, use_write_global_endpoint, use_read_global_endpoint
-    return [
-        (REGIONS, True, True),
-        (REGIONS, False, True),
-        (REGIONS, True, False),
-        (REGIONS, False, False)
-    ]
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
@@ -54,17 +45,16 @@ class TestHealthCheck:
     # health check in all these tests should check the endpoints for the first two write regions and the first two read regions
     # without checking the same endpoint twice
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    def test_health_check_success(self, setup):
         # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS))
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
             client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
@@ -74,23 +64,20 @@ class TestHealthCheck:
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-
         assert mock_get_database_account_check.counter == 2
-        endpoint = self.host if use_read_global_endpoint else locational_endpoint
-        expected_regional_routing_contexts.append(RegionalRoutingContext(endpoint, endpoint))
+        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
+        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
         read_regional_routing_contexts = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
         assert read_regional_routing_contexts == expected_regional_routing_contexts
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    def test_health_check_failure(self, setup):
         # checks at startup that the health check will mark endpoints as unavailable if it gets an error
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS))
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
             client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
@@ -113,7 +100,7 @@ class TestHealthCheck:
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck(setup[COLLECTION].client_connection, True)
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, False, False))
+            self.MockGetDatabaseAccount(REGIONS))
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         setup[COLLECTION].client_connection._global_endpoint_manager.refreshed_needed = True
         # mark endpoint as unavailable for read
@@ -147,27 +134,21 @@ class TestHealthCheck:
         def __init__(
                 self,
                 regions: List[str],
-                use_write_global_endpoint=False,
-                use_read_global_endpoint=False,
         ):
             self.regions = regions
-            self.use_write_global_endpoint= use_write_global_endpoint
-            self.use_read_global_endpoint = use_read_global_endpoint
 
         def __call__(self, endpoint):
             read_regions = self.regions
             read_locations = []
-            counter = 0
             for loc in read_regions:
                 locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
-                account_endpoint = TestHealthCheck.host if self.use_read_global_endpoint and counter == 0 else locational_endpoint
+                account_endpoint =  locational_endpoint
                 read_locations.append({'databaseAccountEndpoint': account_endpoint, 'name': loc})
-                counter += 1
             write_regions = [self.regions[0]]
             write_locations = []
             for loc in write_regions:
                 locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
-                account_endpoint = TestHealthCheck.host if self.use_write_global_endpoint else locational_endpoint
+                account_endpoint = locational_endpoint
                 write_locations.append({'databaseAccountEndpoint': account_endpoint, 'name': loc})
             multi_write = False
 
