@@ -76,7 +76,10 @@ class SessionContainer(object):
                 if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
-                        session_token = token_dict.get(partition_key_range_id)
+                        container_routing_map = routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                        current_range = container_routing_map._rangeById.get(partition_key_range_id)
+                        if current_range is not None:
+                            session_token = self._format_session_token(current_range, token_dict)
                     else:
                         collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
@@ -84,8 +87,7 @@ class SessionContainer(object):
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
-                        vector_session_token = token_dict.get(pk_range[0]['id'])
-                        session_token = "{0}:{1}".format(pk_range[0]['id'], vector_session_token.session_token)
+                        session_token = self._format_session_token(pk_range, token_dict)
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except

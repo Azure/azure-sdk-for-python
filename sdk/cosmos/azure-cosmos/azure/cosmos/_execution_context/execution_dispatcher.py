@@ -77,7 +77,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function, response_hook):
+    def __init__(self, client, resource_link, query, options, fetch_function, response_hook, raw_response_hook):
         """
         Constructor
         """
@@ -88,6 +88,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._query = query
         self._fetch_function = fetch_function
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
+
+    def _create_execution_context_with_query_plan(self):
+        query_to_use = self._query if self._query is not None else "Select * from root r"
+        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+        (query_to_use, self._resource_link))
+        self._execution_context = self._create_pipelined_execution_context(query_execution_info)
 
     def __next__(self):
         """Returns the next query result.
@@ -119,19 +126,15 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        # TODO: NEED to change this - make every query retrieve a query plan
-        # also, we can't have this logic being returned to so often - there should be no need for this
-        # need to split up query plan logic and actual query iterating logic
-        try:
-            return self._execution_context.fetch_next_block()
-        except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                      (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
-            else:
-                raise e
+
+        if "enableCrossPartitionQuery" not in self._options:
+            try:
+                return self._execution_context.fetch_next_block()
+            except CosmosHttpResponseError as e:
+                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                    self._create_execution_context_with_query_plan()
+        else:
+            self._create_execution_context_with_query_plan()
 
         return self._execution_context.fetch_next_block()
 
@@ -162,7 +165,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._query,
                                                                                         self._options,
                                                                                         query_execution_info,
-                                                                                        self._response_hook)
+                                                                                        self._response_hook,
+                                                                                        self._raw_response_hook)
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
             _verify_valid_hybrid_search_query(hybrid_search_query_info)
@@ -172,7 +176,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._options,
                                                                         query_execution_info,
                                                                         hybrid_search_query_info,
-                                                                        self._response_hook)
+                                                                        self._response_hook,
+                                                                        self._raw_response_hook)
             execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = \
@@ -181,7 +186,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                             self._query,
                                                                             self._options,
                                                                             query_execution_info,
-                                                                            self._response_hook)
+                                                                            self._response_hook,
+                                                                            self._raw_response_hook)
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
