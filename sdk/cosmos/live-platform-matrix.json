@@ -6,62 +6,6 @@
   },
   "include": [
     {
-      "SplitTestConfig": {
-        "Ubuntu2004_39_split": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
-        },
-        "Ubuntu2004_313_split": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
-        }
-      }
-    },
-    {
-      "MacTestConfig": {
-        "macos311_search_query": {
-          "OSVmImage": "env:MACVMIMAGE",
-          "Pool": "env:MACPOOL",
-          "PythonVersion": "3.11",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSearchQuery"
-        }
-      }
-    },
-    {
-      "PyPyConfig": {
-        "ubuntu2004_pypy39_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
-        }
-      }
-    },
-    {
-      "CoverageConfig": {
-        "ubuntu2004_39_coverage_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
-          "CoverageArg": "",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
-        }
-      }
-    },
-    {
       "WindowsConfig": {
         "Windows2022_310_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -71,46 +15,13 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosLong"
         },
-        "Windows2022_312_long": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
-        }
-      }
-    },
-    {
-      "WindowsConfig": {
-        "Windows2022_38": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.8",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        },
-        "Windows2022_310": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
+        "Windows2022_ARM64_long": {
+          "OSVmImage": "windows-2022-arm64-1espt",
+          "Pool": "azsdk-pool-arm64",
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        },
-        "Windows2022_312": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        }
-      },
-      "ArmConfig": {
-        "MultiMaster_MultiRegion": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+          "TestMarkArgument": "cosmosLong"
         }
       }
     }
