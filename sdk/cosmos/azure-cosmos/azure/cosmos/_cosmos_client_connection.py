@@ -2829,7 +2829,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Deletes an Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -3115,9 +3115,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
-        if not is_query_plan:
-            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
-
         if (self._query_compatibility_mode in (CosmosClientConnection._QueryCompatibilityMode.Default,
                                                CosmosClientConnection._QueryCompatibilityMode.Query)):
             initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
@@ -3141,6 +3138,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_range_id
         )
         if not is_query_plan:
+            req_headers[http_constants.HttpHeaders.IsQuery] = "true"
             base.set_session_token_header(self, req_headers, path, resource_type, documents._OperationType.SqlQuery,
                                             options)
 

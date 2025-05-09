@@ -77,7 +77,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook
+                        self._response_hook,
+                        self._raw_response_hook
                     )
                 )
 

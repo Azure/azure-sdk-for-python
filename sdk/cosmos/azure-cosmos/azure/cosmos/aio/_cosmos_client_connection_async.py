@@ -1195,7 +1195,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Reads an Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -1565,7 +1565,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param dict resource:
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -1890,7 +1890,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Deletes an Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2673,7 +2673,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return (
                 await self.__QueryFeed(
-                    path, resource_type, collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options, **kwargs
+                    path, resource_type, collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options,
+                    **kwargs
                 ),
                 self.last_response_headers,
             )

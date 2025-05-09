@@ -25,14 +25,17 @@
 import sys
 import traceback
 import threading
+from typing import Any, Dict, Optional
 
 from . import _base
 from . import http_constants
+from ._routing.routing_map_provider import SmartRoutingMapProvider
+from ._routing.aio.routing_map_provider import SmartRoutingMapProvider as SmartRoutingMapProviderAsync
 from ._vector_session_token import VectorSessionToken
 from .exceptions import CosmosHttpResponseError
 from .partition_key import PartitionKey
-from typing import Any, Dict, Optional
 
+# pylint: disable=protected-access
 
 class SessionContainer(object):
     def __init__(self):
@@ -45,12 +48,13 @@ class SessionContainer(object):
             resource_path: str,
             pk_value: str,
             container_properties_cache: Dict[str, Dict[str, Any]],
-            routing_map_provider: Any,
+            routing_map_provider: SmartRoutingMapProvider,
             partition_key_range_id: Optional[int]) -> str:
-        """Get Session Token for collection_link and operation_type.
+        """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
-        :param str operation_type: Operation type (e.g. 'Create', 'Read', 'Upsert', 'Replace')
+        :param ~azure.cosmos.SmartRoutingMapProvider routing_map_provider: routing map containing relevant session
+            information, such as partition key ranges for a given collection
         :param str pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
         :type container_properties_cache: Dict[str, Dict[str, Any]]
@@ -60,7 +64,7 @@ class SessionContainer(object):
         :rtype: str
         """
 
-        with self.session_lock:
+        with (self.session_lock):
             is_name_based = _base.IsNameBased(resource_path)
             collection_rid = ""
             session_token = ""
@@ -76,12 +80,12 @@ class SessionContainer(object):
                 if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
-                        container_routing_map = routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                        container_routing_map = routing_map_provider._collection_routing_map_by_item[collection_name]
                         current_range = container_routing_map._rangeById.get(partition_key_range_id)
                         if current_range is not None:
                             session_token = self._format_session_token(current_range, token_dict)
                     else:
-                        collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
+                        collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
@@ -98,12 +102,13 @@ class SessionContainer(object):
             resource_path: str,
             pk_value: str,
             container_properties_cache: Dict[str, Dict[str, Any]],
-            routing_map_provider: Any,
+            routing_map_provider: SmartRoutingMapProviderAsync,
             partition_key_range_id: Optional[str]) -> str:
-        """Get Session Token for collection_link and operation_type.
+        """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
-        :param str operation_type: Operation type (e.g. 'Create', 'Read', 'Upsert', 'Replace')
+        :param ~azure.cosmos.SmartRoutingMapProviderAsync routing_map_provider: routing map containing relevant session
+            information, such as partition key ranges for a given collection
         :param str pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
         :type container_properties_cache: Dict[str, Dict[str, Any]]
@@ -130,12 +135,12 @@ class SessionContainer(object):
                 if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
-                        container_routing_map = routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                        container_routing_map = routing_map_provider._collection_routing_map_by_item[collection_name]
                         current_range = container_routing_map._rangeById.get(partition_key_range_id)
                         if current_range is not None:
                             session_token = self._format_session_token(current_range, token_dict)
                     else:
-                        collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
+                        collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
@@ -152,6 +157,7 @@ class SessionContainer(object):
         successfully mutate resource on the server side (write, replace, delete etc).
 
         :param client_connection: Client connection used to refresh the partition key range cache if needed
+        :type client_connection: Union[azure.cosmos.CosmosClientConnection, azure.cosmos.aio.CosmosClientConnection]
         :param dict response_result:
         :param dict response_headers:
         :return: None
@@ -161,7 +167,7 @@ class SessionContainer(object):
         # self link which has the rid representation of the resource, and
         # x-ms-alt-content-path which is the string representation of the resource
 
-        with self.session_lock:
+        with (self.session_lock):
             try:
                 self_link = response_result.get("_self")
                 # query results don't directly have a self_link - need to fetch it directly from one of the items
@@ -194,7 +200,8 @@ class SessionContainer(object):
                 partition_key_range_id = response_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)
                 collection_ranges = None
                 if client_connection:
-                    collection_ranges = client_connection._routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                    collection_ranges = \
+                        client_connection._routing_map_provider._collection_routing_map_by_item.get(collection_name)
                 if collection_ranges and not collection_ranges._rangeById.get(partition_key_range_id):
                     client_connection.refresh_routing_map_provider()
             except ValueError:
@@ -311,10 +318,12 @@ class Session(object):
     def update_session(self, client_connection, response_result, response_headers):
         self.session_container.set_session_token(client_connection, response_result, response_headers)
 
-    def get_session_token(self, resource_path, pk_value, container_properties_cache, routing_map_provider, partition_key_range_id):
+    def get_session_token(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
+                          partition_key_range_id):
         return self.session_container.get_session_token(resource_path, pk_value, container_properties_cache,
                                                         routing_map_provider, partition_key_range_id)
 
-    async def get_session_token_async(self, resource_path, pk_value, container_properties_cache, routing_map_provider, partition_key_range_id):
+    async def get_session_token_async(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
+                                      partition_key_range_id):
         return await self.session_container.get_session_token_async(resource_path, pk_value, container_properties_cache,
                                                                     routing_map_provider, partition_key_range_id)

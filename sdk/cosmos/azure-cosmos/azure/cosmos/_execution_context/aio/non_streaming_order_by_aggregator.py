@@ -32,10 +32,10 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._resource_link = resource_link
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
-        self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
         self._doc_producers = []
-        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
+        self._document_producer_comparator = (
+            document_producer._NonStreamingOrderByComparator(partitioned_query_ex_info.get_order_by()))
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
 
@@ -141,11 +141,12 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
 
         pq_size = self._partitioned_query_ex_info.get_top() or\
                   self._partitioned_query_ex_info.get_limit() + self._partitioned_query_ex_info.get_offset()
+        sort_orders = self._partitioned_query_ex_info.get_order_by()
         for doc_producer in self._doc_producers:
             while True:
                 try:
                     result = await doc_producer.peek()
-                    item_result = document_producer._NonStreamingItemResultProducer(result, self._sort_orders)
+                    item_result = document_producer._NonStreamingItemResultProducer(result, sort_orders)
                     await self._orderByPQ.push_async(item_result, self._document_producer_comparator)
                     await doc_producer.__anext__()
                 except StopAsyncIteration:

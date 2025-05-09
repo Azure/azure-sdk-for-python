@@ -45,6 +45,7 @@ if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
 
+# pylint: disable=protected-access
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -319,7 +320,7 @@ def _is_session_token_request(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
         resource_type: str,
-        operation_type: str) -> None:
+        operation_type: str) -> bool:
     consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
     # Figure out if consistency level for this request is session
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
@@ -350,11 +351,12 @@ def set_session_token_header(
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
-                session_token = cosmos_client_connection.session.get_session_token(path,
-                                                                                   options.get('partitionKey'),
-                                                                                   cosmos_client_connection._container_properties_cache,
-                                                                                   cosmos_client_connection._routing_map_provider,
-                                                                                   partition_key_range_id)
+                session_token = (
+                    cosmos_client_connection.session.get_session_token(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id))
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -377,11 +379,12 @@ async def set_session_token_header_async(
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
-                session_token = await cosmos_client_connection.session.get_session_token_async(path,
-                                                                                   options.get('partitionKey'),
-                                                                                   cosmos_client_connection._container_properties_cache,
-                                                                                   cosmos_client_connection._routing_map_provider,
-                                                                                   partition_key_range_id)
+                session_token = \
+                    await cosmos_client_connection.session.get_session_token_async(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id)
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
