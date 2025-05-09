@@ -14,6 +14,8 @@
 - In the experimental RedTeam's scan method, the `data_only` param has been replaced with `skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
 
 ### Bugs Fixed
+- Better handled edge case in `ToolCallAccuracyEvaluator` when there are no tool calls present in agent input. Previously evaluator throwed exception, which defaulted to a 'fail'. Now, a 'nan' score is assigned and a 'pass' assumed.
+
 - Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
     ```
     "query1": "some query", "response": "some response"
