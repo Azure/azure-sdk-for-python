@@ -75,12 +75,12 @@ class AsyncStorageAccountHostsMixin(object):
         sas_token: Optional[str],
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]
-        ],  # pylint: disable=line-too-long
+        ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
         str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]
-    ]:  # pylint: disable=line-too-long
+    ]:
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -101,7 +101,7 @@ class AsyncStorageAccountHostsMixin(object):
         self,
         credential: Optional[
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
@@ -214,7 +214,7 @@ def parse_connection_str(
     str,
     Optional[str],
     Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
-]:  # pylint: disable=line-too-long
+]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):

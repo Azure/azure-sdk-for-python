@@ -85,7 +85,7 @@ class StorageAccountHostsMixin(object):
                 "AsyncTokenCredential",
                 TokenCredential,
             ]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
@@ -225,12 +225,12 @@ class StorageAccountHostsMixin(object):
         sas_token: Optional[str],
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]
-        ],  # pylint: disable=line-too-long
+        ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
         str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]
-    ]:  # pylint: disable=line-too-long
+    ]:
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -252,7 +252,7 @@ class StorageAccountHostsMixin(object):
         self,
         credential: Optional[
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
@@ -384,7 +384,7 @@ def _format_shared_key_credential(
     account_name: Optional[str],
     credential: Optional[
         Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]
-    ] = None,  # pylint: disable=line-too-long
+    ] = None,
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
@@ -409,7 +409,7 @@ def parse_connection_str(
     str,
     Optional[str],
     Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
-]:  # pylint: disable=line-too-long
+]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):
