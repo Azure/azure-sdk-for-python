@@ -41,6 +41,16 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :dedent: 8
             :caption: Initialize and call a UngroundedAttributesEvaluator with a query, response and context.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START ungrounded_attributes_evaluator]
+            :end-before: [END ungrounded_attributes_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call UngroundedAttributesEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the metric

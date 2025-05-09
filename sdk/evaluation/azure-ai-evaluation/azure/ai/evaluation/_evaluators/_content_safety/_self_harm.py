@@ -52,16 +52,17 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :end-before: [END self_harm_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a SelfHarmEvaluator.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_threshold.py
-            :start-after: [START threshold_self_harm_evaluator]
-            :end-before: [END threshold_self_harm_evaluator]
+            :caption: Initialize and call SelfHarmEvaluator using azure.ai.evaluation.AzureAIProject.
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START self_harm_evaluator]
+            :end-before: [END self_harm_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and call a SelfHarmEvaluator.    
+            :caption: Initialize and call SelfHarmEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.   
     """
 
     id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"
