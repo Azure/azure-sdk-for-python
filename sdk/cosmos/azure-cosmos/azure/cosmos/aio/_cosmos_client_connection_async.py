@@ -208,7 +208,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.aad_credentials:
             scope = base.create_scope_from_url(self.url_connection)
             credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
-
+        self._enable_diagnostics_logging = kwargs.get("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
