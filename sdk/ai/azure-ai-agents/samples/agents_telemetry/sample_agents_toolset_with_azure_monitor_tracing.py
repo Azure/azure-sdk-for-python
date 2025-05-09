@@ -34,9 +34,6 @@ from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput,
     ToolSet,
     ListSortOrder,
 )
