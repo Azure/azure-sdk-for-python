@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Added Client Generated Activity IDs to all Requests. Cosmos Diagnostics Logs will more clearly show the Activity ID for each request and response. [PR #####]()
 
 ### 4.11.0b1 (2025-04-30)
 
