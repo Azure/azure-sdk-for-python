@@ -402,7 +402,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # add read endpoints from gateway and in preferred locations
         health_check_endpoints = _get_health_check_endpoints(self.read_regional_routing_contexts)
         # add first write endpoint in case that the write region is not in preferred locations
-        health_check_endpoints =health_check_endpoints.union(_get_health_check_endpoints(self.write_regional_routing_contexts[:1]
+        health_check_endpoints =health_check_endpoints.union(
+            _get_health_check_endpoints(self.write_regional_routing_contexts[:1]
         ))
 
         return health_check_endpoints
