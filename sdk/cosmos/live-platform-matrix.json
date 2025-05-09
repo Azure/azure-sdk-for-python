@@ -6,21 +6,23 @@
   },
   "include": [
     {
-      "Windows2022_310_long": {
-        "OSVmImage": "env:WINDOWSVMIMAGE",
-        "Pool": "env:WINDOWSPOOL",
-        "PythonVersion": "3.10",
-        "CoverageArg": "--disablecov",
-        "TestSamples": "false",
-        "TestMarkArgument": "cosmosLong"
-      },
-      "Windows2022_ARM64_long": {
-        "OSVmImage": "windows-2022-arm64-1espt",
-        "Pool": "azsdk-pool-arm64",
-        "PythonVersion": "3.10",
-        "CoverageArg": "--disablecov",
-        "TestSamples": "false",
-        "TestMarkArgument": "cosmosLong"
+      "WindowsConfig": {
+        "Windows2022_310_long": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosLong"
+        },
+        "Windows2022_ARM64_long": {
+          "OSVmImage": "env:WINDOWSARMVMIMAGE",
+          "Pool": "env:WINDOWSARMPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosLong"
+        }
       }
     }
   ]
