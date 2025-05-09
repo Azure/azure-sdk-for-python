@@ -10,18 +10,7 @@ import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from test_excluded_locations import _verify_endpoint
-
-class MockHandler(logging.Handler):
-    def __init__(self):
-        super(MockHandler, self).__init__()
-        self.messages = []
-
-    def reset(self):
-        self.messages = []
-
-    def emit(self, record):
-        self.messages.append(record.msg)
+from test_excluded_locations import _verify_endpoint, MockHandler, read_item_test_data, write_item_test_data, L1
 
 MOCK_HANDLER = MockHandler()
 CONFIG = test_config.TestConfig()
@@ -33,160 +22,6 @@ PARTITION_KEY = CONFIG.TEST_CONTAINER_PARTITION_KEY
 ITEM_ID = 'doc1'
 ITEM_PK_VALUE = 'pk'
 TEST_ITEM = {'id': ITEM_ID, PARTITION_KEY: ITEM_PK_VALUE}
-
-L0 = "Default"
-L1 = "West US 3"
-L2 = "West US"
-L3 = "East US 2"
-
-# L0 = "Default"
-# L1 = "East US 2"
-# L2 = "East US"
-# L3 = "West US 2"
-
-CLIENT_ONLY_TEST_DATA = [
-    # preferred_locations, client_excluded_locations, excluded_locations_request
-    # 0. No excluded location
-    [[L1, L2], [], None],
-    # 1. Single excluded location
-    [[L1, L2], [L1], None],
-    # 2. Exclude all locations
-    [[L1, L2], [L1, L2], None],
-    # 3. Exclude a location not in preferred locations
-    [[L1, L2], [L3], None],
-]
-
-CLIENT_AND_REQUEST_TEST_DATA = [
-    # preferred_locations, client_excluded_locations, excluded_locations_request
-    # 0. No client excluded locations + a request excluded location
-    [[L1, L2], [], [L1]],
-    # 1. The same client and request excluded location
-    [[L1, L2], [L1], [L1]],
-    # 2. Less request excluded locations
-    [[L1, L2], [L1, L2], [L1]],
-    # 3. More request excluded locations
-    [[L1, L2], [L1], [L1, L2]],
-    # 4. All locations were excluded
-    [[L1, L2], [L1, L2], [L1, L2]],
-    # 5. No common excluded locations
-    [[L1, L2], [L1], [L2, L3]],
-    # 6. Request excluded location not in preferred locations
-    [[L1, L2], [L1, L2], [L3]],
-    # 7. Empty excluded locations, remove all client excluded locations
-    [[L1, L2], [L1, L2], []],
-]
-
-ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
-
-def read_item_test_data():
-    client_only_output_data = [
-        [L1],  # 0
-        [L2],  # 1
-        [L1],  # 2
-        [L1],  # 3
-    ]
-    client_and_request_output_data = [
-        [L2],  # 0
-        [L2],  # 1
-        [L2],  # 2
-        [L1],  # 3
-        [L1],  # 4
-        [L1],  # 5
-        [L1],  # 6
-        [L1],  # 7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def read_all_item_test_data():
-    client_only_output_data = [
-        [L1, L1],  # 0
-        [L2, L2],  # 1
-        [L1, L1],  # 2
-        [L1, L1],  # 3
-    ]
-    client_and_request_output_data = [
-        [L2, L2],  # 0
-        [L2, L2],  # 1
-        [L2, L2],  # 2
-        [L1, L1],  # 3
-        [L1, L1],  # 4
-        [L1, L1],  # 5
-        [L1, L1],  # 6
-        [L1, L1],  # 7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def query_items_change_feed_test_data():
-    client_only_output_data = [
-        [L1, L1, L1, L1],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L1, L1, L1],   #2
-        [L1, L1, L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L1, L2, L2, L2],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L2, L2, L2],   #2
-        [L2, L1, L1, L1],   #3
-        [L1, L1, L1, L1],   #4
-        [L2, L1, L1, L1],   #5
-        [L1, L1, L1, L1],   #6
-        [L1, L1, L1, L1],   #7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def replace_item_test_data():
-    client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #2
-        [L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
-
-def patch_item_test_data():
-    client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #2
-        [L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
-    ]
-    all_output_test_data = client_only_output_data + client_and_request_output_data
-
-    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
-    return all_test_data
 
 async def _create_item_with_excluded_locations(container, body, excluded_locations):
     if excluded_locations is None:
@@ -222,9 +57,9 @@ async def _init_container(preferred_locations, client_excluded_locations, multip
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown")
-class TestExcludedLocations:
+class TestExcludedLocationsAsync:
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_read_item(self, test_data):
+    async def test_read_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -240,8 +75,8 @@ class TestExcludedLocations:
         # Verify endpoint locations
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_all_item_test_data())
-    async def test_read_all_items(self, test_data):
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    async def test_read_all_items_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -257,8 +92,8 @@ class TestExcludedLocations:
         # Verify endpoint locations
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_all_item_test_data())
-    async def test_query_items(self, test_data):
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    async def test_query_items_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -274,8 +109,8 @@ class TestExcludedLocations:
         # Verify endpoint locations
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_change_feed_test_data())
-    async def test_query_items_change_feed(self, test_data):
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    async def test_query_items_change_feed_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -293,8 +128,8 @@ class TestExcludedLocations:
         _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
-    async def test_replace_item(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_replace_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -314,8 +149,8 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
-    async def test_upsert_item(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_upsert_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -336,8 +171,8 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', replace_item_test_data())
-    async def test_create_item(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_create_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -355,8 +190,8 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
-    async def test_patch_item(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_patch_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -383,8 +218,8 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
-    async def test_execute_item_batch(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_execute_item_batch_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -412,8 +247,8 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
-    async def test_delete_item(self, test_data):
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    async def test_delete_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 

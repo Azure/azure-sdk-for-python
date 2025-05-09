@@ -4,6 +4,8 @@
 
 """End-to-end test.
 """
+import asyncio
+import os
 import time
 import unittest
 import urllib.parse as urllib
@@ -42,7 +44,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         response = AsyncioRequestsTransportResponse(None, output)
         return response
 
-
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
@@ -78,7 +80,10 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
+        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
@@ -996,6 +1001,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
         doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
         doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})
+        await asyncio.sleep(1)
         resources = {
             'coll': collection,
             'doc1': doc1,

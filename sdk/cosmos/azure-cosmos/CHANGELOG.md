@@ -3,10 +3,12 @@
 ### 4.11.0b2 (Unreleased)
 
 #### Features Added
+* Per partition circuit breaker support. It can be enabled through the environment variable `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed how resource tokens are parsed for metadata calls in the lifecycle of a document operation. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 
 #### Other Changes
 
@@ -27,7 +29,6 @@
 #### Other Changes
 * Optimized Diagnostics Logging by reducing time spent on logging. Logged Errors are more readable and formatted. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897).
 * Health checks are now done concurrently and for all regions for async apis. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
-
 
 ### 4.10.0b4 (2025-04-01)
 
