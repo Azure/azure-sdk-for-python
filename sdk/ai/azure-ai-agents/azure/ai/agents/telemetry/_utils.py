@@ -3,12 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, TextIO, Union, cast
-
-import io
+from typing import Optional
 import logging
-import sys
-
 from enum import Enum
 
 from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore

@@ -52,11 +52,6 @@ async def main() -> None:
         application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        # enable additional instrumentations
-        from azure.ai.agents.telemetry import enable_telemetry
-
-        enable_telemetry()
-
         with tracer.start_as_current_span(scenario):
             async with agents_client:
                 agent = await agents_client.create_agent(
