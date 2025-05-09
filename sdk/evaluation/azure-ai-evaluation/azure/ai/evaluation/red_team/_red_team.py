@@ -1177,6 +1177,17 @@ class RedTeam():
         
         log_strategy_start(self.logger, strategy_name, risk_category_name)
 
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+        
+        # If scan output directory exists, place the file there
+        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")  
@@ -1195,7 +1206,7 @@ class RedTeam():
                     prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
                     objective=prompt,
                     logger=self.logger,
-                    requires_json=True
+                    crescendo_format=True
                 )
 
                 orchestrator = CrescendoOrchestrator(
@@ -1220,23 +1231,12 @@ class RedTeam():
                 # Debug log the first few characters of the current prompt
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
-                # Initialize output path for memory labelling
-                base_path = str(uuid.uuid4())
-                
-                # If scan output directory exists, place the file there
-                if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-                    output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-                else:
-                    output_path = f"{base_path}{DATA_EXT}"
-
-                self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
-
                 try:  # Create retry decorator for this specific call with enhanced retry strategy
                     @retry(**self._create_retry_config()["network_retry"])
                     async def send_prompt_with_retry():
                         try:
                             return await asyncio.wait_for(
-                                orchestrator.run_attack_async(objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                orchestrator.run_attack_async(objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": prompt_idx+1}),
                                 timeout=timeout  # Use provided timeouts
                             )
                         except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
@@ -1252,6 +1252,8 @@ class RedTeam():
                     await send_prompt_with_retry()
                     prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds")
+
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
                     
                     # Print progress to console 
                     if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
@@ -1265,14 +1267,14 @@ class RedTeam():
                     batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
                     # Continue with partial results rather than failing completely
                     continue
                 except Exception as e:
                     log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category_name}")
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}: {str(e)}")
                     self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
                     # Continue with other batches even if one fails
                     continue              
             except Exception as e:
