@@ -44,7 +44,7 @@ Use the returned token credential to authenticate the client:
 The Azure Online Experimentation client library initialization requires two parameters:
 
 - The `endpoint` property value from the [`Microsoft.OnlineExperimentation/workspaces`](https://learn.microsoft.com/azure/templates/microsoft.onlineexperimentation/workspaces) resource.
-- Credential for authentication, the simplest approach is to use [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential).
+- Credential for authentication, the simplest approach is to use [`DefaultAzureCredential`](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential).
 
 To construct a synchronous client:
 
