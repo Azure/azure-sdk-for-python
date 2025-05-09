@@ -2878,7 +2878,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
-                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers)
+                feed_options = {}
+                if 'excludedLocations' in options:
+                    feed_options['excludedLocations'] = options['excludedLocations']
+                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers,
+                                                                       feed_options)
 
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2908,24 +2912,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # check if query has prefix partition key
         cont_prop = kwargs.pop("containerProperties", None)
-        partition_key = options.get("partitionKey", None)
-        isPrefixPartitionQuery = False
-        partition_key_definition = None
+        partition_key_value = options.get("partitionKey", None)
+        is_prefix_partition_query = False
+        partition_key_obj = None
         if cont_prop:
-            cont_prop = await cont_prop()
-            pk_properties = cont_prop["partitionKey"]
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-            if partition_key_definition.kind == "MultiHash" and \
-                    (isinstance(partition_key, List) and \
-                     len(partition_key_definition['paths']) != len(partition_key)):
-                isPrefixPartitionQuery = True
+            properties = await cont_prop(options)   # get properties with feed options
+            partition_key_definition = properties["partitionKey"]
+            partition_key_obj = PartitionKey(path=partition_key_definition["paths"],
+                                             kind=partition_key_definition["kind"])
+            is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
 
-        if isPrefixPartitionQuery and partition_key_definition:
+        if is_prefix_partition_query and partition_key_obj:
             # here get the overlapping ranges
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
-                partition_key)  # cspell:disable-line
-            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
+            feedrangeEPK = partition_key_obj._get_epk_range_for_prefix_partition_key(
+                partition_key_value)  # cspell:disable-line
+            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK], options)
             results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
@@ -3126,8 +3128,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     # Adds the partition key to options
     async def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
+        partitionKeyDefinition = await self._get_partition_key_definition(collection_link, options)
         new_options = dict(options)
-        partitionKeyDefinition = await self._get_partition_key_definition(collection_link)
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
             # If the user has passed in the partitionKey in options use that else extract it from the document
@@ -3280,7 +3282,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, None)
 
-    async def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
+    async def _get_partition_key_definition(
+            self,
+            collection_link: str,
+            options: Mapping[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         partition_key_definition: Optional[Dict[str, Any]]
         # If the document collection link is present in the cache, then use the cached partitionkey definition
         if collection_link in self.__container_properties_cache:
@@ -3288,7 +3294,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            container = await self.ReadContainer(collection_link)
+            container = await self.ReadContainer(collection_link, options)
             partition_key_definition = container.get("partitionKey")
             self.__container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition
