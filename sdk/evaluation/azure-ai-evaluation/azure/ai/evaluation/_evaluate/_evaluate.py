@@ -978,17 +978,6 @@ def _preprocess_data(
     # Split normal evaluators and OAI graders
     evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
 
-    input_data_df = _validate_and_load_data(
-        target,
-        data,
-        evaluators_and_graders,
-        output_path,
-        azure_ai_project,
-        evaluation_name
-    )
-    if target is not None:
-        _validate_columns_for_target(input_data_df, target)
-
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
