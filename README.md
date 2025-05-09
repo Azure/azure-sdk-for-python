@@ -68,14 +68,21 @@ import os
 from azure.identity import ManagedIdentityCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline.policies import UserAgentPolicy
 
 try:
     # Create your credential you want to use
     mi_credential = ManagedIdentityCredential()
 
     account_url = "https://<storageaccountname>.blob.core.windows.net"
+
+    # Setup user-agent override
+    class NoUserAgentPolicy(UserAgentPolicy):
+    def on_request(self, request):
+        pass
+
     # Create the BlobServiceClient object
-    blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=None)
+    blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=NoUserAgentPolicy())
 
     container_client = blob_service_client.get_container_client(container=<container_name>) 
     # TODO: do something with the container client like download blob to a file
