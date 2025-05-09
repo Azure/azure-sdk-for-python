@@ -716,7 +716,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             options.dtmf_options = dtmf_options
         elif input_type == RecognizeInputType.SPEECH:
             speech_options = SpeechOptions(
-                end_silence_timeout_in_ms=end_silence_timeout * 1000 if end_silence_timeout is not None else None
+                end_silence_timeout_in_ms=end_silence_timeout
             )
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.SPEECH_OR_DTMF:
@@ -726,7 +726,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
                 stop_tones=dtmf_stop_tones,
             )
             speech_options = SpeechOptions(
-                end_silence_timeout_in_ms=end_silence_timeout * 1000 if end_silence_timeout is not None else None
+                end_silence_timeout_in_ms=end_silence_timeout
             )
             options.dtmf_options = dtmf_options
             options.speech_options = speech_options
