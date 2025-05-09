@@ -61,6 +61,7 @@ class OperationName(Enum):
     CREATE_THREAD = "create_thread"
     CREATE_MESSAGE = "create_message"
     START_THREAD_RUN = "start_thread_run"
+    GET_THREAD_RUN = "get_thread_run"
     EXECUTE_TOOL = "execute_tool"
     LIST_MESSAGES = "list_messages"
     LIST_RUN_STEPS = "list_run_steps"
