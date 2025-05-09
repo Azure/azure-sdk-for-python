@@ -323,10 +323,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         client_excluded_regions = []
         client_account_read_regions = []
         client_account_write_regions = []
-
-        if self.__global_endpoint_manager:
-            if self.__global_endpoint_manager.client and self.__global_endpoint_manager.client.connection_policy:
-                connection_policy: ConnectionPolicy = self.__global_endpoint_manager.client.connection_policy
+        if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, 'client'):
+            gem_client = self.__global_endpoint_manager.client
+            if gem_client and gem_client.connection_policy:
+                connection_policy = gem_client.connection_policy
                 client_preferred_regions = connection_policy.PreferredLocations
                 client_excluded_regions = connection_policy.ExcludedLocations
 
