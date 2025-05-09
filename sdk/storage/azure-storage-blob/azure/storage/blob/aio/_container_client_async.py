@@ -873,7 +873,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
         **kwargs: Any
-    ) -> AsyncItemPaged[BlobProperties]:
+    ) -> AsyncItemPaged[Union[BlobProperties, BlobPrefix]]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -899,7 +899,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.BlobProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.BlobProperties or
+            ~azure.storage.blob.aio.BlobPrefix]
         """
         if kwargs.pop('prefix', None):
             raise ValueError("Passing 'prefix' has no effect on filtering, " +
