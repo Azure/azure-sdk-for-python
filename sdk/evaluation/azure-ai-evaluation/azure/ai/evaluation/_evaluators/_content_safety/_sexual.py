@@ -56,6 +56,16 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a SexualEvaluator.
     
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START sexual_evaluator]
+            :end-before: [END sexual_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call SexualEvaluator using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+    
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

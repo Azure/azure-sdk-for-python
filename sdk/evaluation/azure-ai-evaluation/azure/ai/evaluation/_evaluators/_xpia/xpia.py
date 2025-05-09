@@ -54,6 +54,17 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call an IndirectAttackEvaluator.
+    
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START indirect_attack_evaluator]
+            :end-before: [END indirect_attack_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call IndirectAttackEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     """
 
     id = "azureml://registries/azureml/models/Indirect-Attack-Evaluator/versions/3"

@@ -739,7 +739,17 @@ def evaluate(
             :end-before: [END evaluate_method]
             :language: python
             :dedent: 8
-            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
+            :caption: Run an evaluation on local data with one or more evaluators using azure.ai.evaluation.AzureAIProject
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START evaluate_method]
+            :end-before: [END evaluate_method]
+            :language: python
+            :dedent: 8
+            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
         return _evaluate(
