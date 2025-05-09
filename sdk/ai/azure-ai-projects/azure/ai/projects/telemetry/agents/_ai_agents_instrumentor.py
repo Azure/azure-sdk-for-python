@@ -1501,11 +1501,9 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
-                print ("????????????????????????????????????????????????")
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.get_run"):
-                print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 kwargs.setdefault("merge_span", True)
                 return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
