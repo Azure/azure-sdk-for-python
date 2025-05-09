@@ -5,35 +5,33 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_sip_trunks_sample.py
+FILE: get_sip_domains_sample_async.py
 DESCRIPTION:
-    This sample shows the usage of SIP routing client for retrieving the collection of
-    currently configured SIP trunks.
+    This sample shows the usage of asynchronous SIP routing client for retrieving the collection of
+    currently configured SIP domains.
 
 USAGE:
-    python get_sip_trunks_sample.py
+    python get_sip_domains_sample_async.py
         Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
 """
 
 import os
-from azure.communication.phonenumbers.siprouting import SipRoutingClient
+import asyncio
+from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 
 
-def get_sip_trunks_sample():
-    sip_trunks = client.list_trunks()
+async def get_sip_domains_sample():
+    async with client:
+        sip_domains = client.list_domains()
 
-    for trunk in sip_trunks:
-        print(trunk.fqdn)
-        print(trunk.sip_signaling_port)
-        print(trunk.enabled)
-        print(trunk.direct_transfer)
-        print(trunk.privacy_header)
-        print(trunk.ip_address_version)
+        async for domain in sip_domains:
+            print(domain.fqdn)
+            print(domain.enabled)
 
 
 if __name__ == "__main__":
-    get_sip_trunks_sample()
+    asyncio.run(get_sip_domains_sample())
