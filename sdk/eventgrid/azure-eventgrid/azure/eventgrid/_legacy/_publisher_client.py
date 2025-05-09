@@ -116,8 +116,10 @@ class EventGridPublisherClient(object):
         self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
 
     @staticmethod
-    def _policies(credential, **kwargs):
-        # type: (Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> List[Any]
+    def _policies(
+        credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
+        **kwargs: Any
+    ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
@@ -234,16 +236,13 @@ class EventGridPublisherClient(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session."""
-        return self._client.close()
+    def close(self) -> None:
+        """Closes the EventGridPublisherClient session."""
+        self._client.close()
 
-    def __enter__(self):
-        # type: () -> EventGridPublisherClient
+    def __enter__(self) -> "EventGridPublisherClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)

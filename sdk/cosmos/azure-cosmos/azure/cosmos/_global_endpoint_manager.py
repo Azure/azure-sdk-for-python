@@ -50,10 +50,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
-            self.PreferredLocations,
             self.DefaultEndpoint,
-            self.EnableEndpointDiscovery,
-            client.connection_policy.UseMultipleWriteLocations
+            client.connection_policy
         )
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
@@ -143,8 +141,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
-            # when atm is available, L: 145, 146 should be removed as the global endpoint shouldn't be used
-            # for dataplane operations anymore
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
@@ -162,15 +158,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        endpoints_attempted = set()
         database_account, attempted_endpoint = self._GetDatabaseAccount(**kwargs)
-        endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the regional routing contexts to check
         endpoints = self.location_cache.endpoints_to_health_check()
+        success_count = 0
         for endpoint in endpoints:
-            if endpoint not in endpoints_attempted:
-                endpoints_attempted.add(endpoint)
+            if endpoint != attempted_endpoint:
+                if success_count >= 4:
+                    break
                 # save current dba timeouts
                 previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
                 previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
@@ -186,6 +182,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                         self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     else:
                         self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                    success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(endpoint, False)

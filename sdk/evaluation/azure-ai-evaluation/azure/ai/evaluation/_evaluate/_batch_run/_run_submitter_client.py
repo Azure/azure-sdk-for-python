@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import logging
 import pandas as pd
 import sys
 from collections import defaultdict
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future
 from os import PathLike
 from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Union, cast
 
@@ -14,6 +15,8 @@ from .batch_clients import BatchClientRun, HasAsyncCallable
 from ..._legacy._batch_engine._run_submitter import RunSubmitter
 from ..._legacy._batch_engine._config import BatchEngineConfig
 from ..._legacy._batch_engine._run import Run
+from ..._legacy._adapters._constants import LINE_NUMBER
+from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 
 
 LOGGER = logging.getLogger(__name__)
@@ -22,7 +25,9 @@ LOGGER = logging.getLogger(__name__)
 class RunSubmitterClient:
     def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
         self._config = config or BatchEngineConfig(LOGGER, use_async=True)
-        self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
+        self._thread_pool = ThreadPoolExecutorWithContext(
+            thread_name_prefix="evaluators_thread",
+            max_workers=self._config.max_concurrency)
 
     def run(
         self,
@@ -33,30 +38,36 @@ class RunSubmitterClient:
         **kwargs: Any,
     ) -> BatchClientRun:
         if not isinstance(data, pd.DataFrame):
-            # Should never get here
             raise ValueError("Data must be a pandas DataFrame")
-        if not column_mapping:
-            raise ValueError("Column mapping must be provided")
 
-        # The column mappings are index by data to indicate they come from the data
+        # The column mappings are indexed by data to indicate they come from the data
         # input. Update the inputs so that each entry is a dictionary with a data key
         # that contains the original input data.
         inputs = [{"data": input_data} for input_data in data.to_dict(orient="records")]
 
-        # always uses async behind the scenes
+        # Pass the correct previous run to the evaluator
+        run: Optional[BatchClientRun] = kwargs.pop("run", None)
+        if run:
+            kwargs["run"] = self._get_run(run)
+
+        # Try to get async function to use
         if isinstance(flow, HasAsyncCallable):
             flow = flow._to_async()  # pylint: disable=protected-access
 
-        run_submitter = RunSubmitter(self._config)
+        # Start an event loop for async execution on a thread pool thread to separate it
+        # from the caller's thread.
+        run_submitter = RunSubmitter(self._config, self._thread_pool)
         run_future = self._thread_pool.submit(
-            run_submitter.submit,
-            dynamic_callable=flow,
-            inputs=inputs,
-            column_mapping=column_mapping,
-            name_prefix=evaluator_name,
-            created_on=kwargs.pop("created_on", None),
-            storage_creator=kwargs.pop("storage_creator", None),
-            **kwargs,
+            asyncio.run,
+            run_submitter.submit(
+                dynamic_callable=flow,
+                inputs=inputs,
+                column_mapping=column_mapping,
+                name_prefix=evaluator_name,
+                created_on=kwargs.pop("created_on", None),
+                storage_creator=kwargs.pop("storage_creator", None),
+                **kwargs,
+            )
         )
 
         return run_future
@@ -75,7 +86,10 @@ class RunSubmitterClient:
                     key = f"{prefix}.{k}"
                     data[key].append(value)
 
+        # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
+        # (i.e. a column view of the data)
         _update("inputs", run.inputs)
+        _update("inputs", [{ LINE_NUMBER: i } for i in range(len(run.inputs)) ])
         _update("outputs", run.outputs)
 
         df = pd.DataFrame(data).reindex(columns=[k for k in data.keys()])

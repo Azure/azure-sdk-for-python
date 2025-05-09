@@ -6,9 +6,10 @@ from enum import Enum
 import os
 import inspect
 import logging
+import asyncio
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Union, cast, Coroutine, TypeVar, Awaitable
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
 from azure.ai.evaluation._evaluators import (
@@ -20,6 +21,8 @@ from azure.ai.evaluation._evaluators import (
     _fluency,
     _xpia,
     _coherence,
+    _code_vulnerability,
+    _ungrounded_attributes,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._evaluate import _evaluate
@@ -31,7 +34,7 @@ from azure.ai.evaluation.simulator import (
     AdversarialScenario,
     AdversarialScenarioJailbreak,
     IndirectAttackSimulator,
-    DirectAttackSimulator ,
+    DirectAttackSimulator,
 )
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.ai.evaluation.simulator._utils import JsonLineList
@@ -71,6 +74,7 @@ class _SafetyEvaluator(Enum):
     """
 
     CONTENT_SAFETY = "content_safety"
+    CODE_VULNERABILITY = "code_vulnerability"
     GROUNDEDNESS = "groundedness"
     PROTECTED_MATERIAL = "protected_material"
     RELEVANCE = "relevance"
@@ -80,21 +84,22 @@ class _SafetyEvaluator(Enum):
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
     ECI = "eci"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 @experimental
 class _SafetyEvaluation:
     def __init__(
         self,
-        azure_ai_project: dict,
+        azure_ai_project: Union[str, dict],
         credential: TokenCredential,
         model_config: Optional[Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]] = None,
     ):
         """
         Initializes a SafetyEvaluation object.
 
-        :param azure_ai_project: A dictionary defining the Azure AI project. Required keys are 'subscription_id', 'resource_group_name', and 'project_name'.
-        :type azure_ai_project: Dict[str, str]
+        :param azure_ai_project: A string or dictionary defining the Azure AI project. Required keys are 'subscription_id', 'resource_group_name', and 'project_name'.
+        :type azure_ai_project: Union[str, Dict[str, str]]
         :param credential: The credential for connecting to Azure AI project.
         :type credential: ~azure.core.credentials.TokenCredential
         :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
@@ -106,8 +111,7 @@ class _SafetyEvaluation:
             self.model_config = model_config
         else:
             self.model_config = None
-        validate_azure_ai_project(azure_ai_project)
-        self.azure_ai_project = AzureAIProject(**azure_ai_project)
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.logger = _setup_logger()
 
@@ -192,10 +196,17 @@ class _SafetyEvaluation:
             context = latest_message.get("context", None)
             latest_context = None
             try:
+                is_async = self._is_async_function(target)
                 if self._check_target_returns_context(target):
-                    response, latest_context = target(query=application_input)
+                    if is_async:
+                        response, latest_context = await target(query=application_input)
+                    else:
+                        response, latest_context = target(query=application_input)
                 else:
-                    response = target(query=application_input)
+                    if is_async:
+                        response = await target(query=application_input)
+                    else:
+                        response = target(query=application_input)
             except Exception as e:
                 response = f"Something went wrong {e!s}"
 
@@ -372,6 +383,10 @@ class _SafetyEvaluation:
                 )
             if evaluator == _SafetyEvaluator.ECI:
                 return _UnstableAdversarialScenario.ECI
+            if evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                return AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY
+            if evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                return AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES
             if evaluator in [
                 _SafetyEvaluator.GROUNDEDNESS,
                 _SafetyEvaluator.RELEVANCE,
@@ -453,6 +468,14 @@ class _SafetyEvaluation:
                 evaluators_dict["eci"] = ECIEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
                 )
+            elif evaluator == _SafetyEvaluator.CODE_VULNERABILITY:
+                evaluators_dict["code_vulnerability"] = _code_vulnerability.CodeVulnerabilityEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.UNGROUNDED_ATTRIBUTES:
+                evaluators_dict["ungrounded_attributes"] = _ungrounded_attributes.UngroundedAttributesEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
             else:
                 msg = (
                     f"Invalid evaluator: {evaluator}. Supported evaluators are: {_SafetyEvaluator.__members__.values()}"
@@ -465,7 +488,7 @@ class _SafetyEvaluation:
                     blame=ErrorBlame.USER_ERROR,
                 )
         return evaluators_dict
-
+    
     @staticmethod
     def _check_target_returns_context(target: Callable) -> bool:
         """
@@ -478,6 +501,15 @@ class _SafetyEvaluation:
         ret_type = sig.return_annotation
         if ret_type == inspect.Signature.empty:
             return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+        
         if ret_type is tuple:
             return True
         return False
@@ -494,13 +526,33 @@ class _SafetyEvaluation:
         ret_type = sig.return_annotation
         if ret_type == inspect.Signature.empty:
             return False
+        
+        # Check for Coroutine/Awaitable return types for async functions
+        origin = getattr(ret_type, "__origin__", None)
+        if origin is not None and (origin is Coroutine or origin is Awaitable):
+            args = getattr(ret_type, "__args__", None)
+            if args and len(args) > 0:
+                # For async functions, check the actual return type inside the Coroutine
+                ret_type = args[-1]
+                
         if ret_type is str:
             return True
         return False
     
-     
     @staticmethod
-    def _check_target_is_callback(target:Callable) -> bool:
+    def _is_async_function(target: Callable) -> bool:
+        """
+        Checks if the target function is an async function.
+        
+        :param target: The target function to check.
+        :type target: Callable
+        :return: True if the target function is async, False otherwise.
+        :rtype: bool
+        """
+        return asyncio.iscoroutinefunction(target)
+    
+    @staticmethod
+    def _check_target_is_callback(target: Callable) -> bool:
         sig = inspect.signature(target)
         param_names = list(sig.parameters.keys())
         return 'messages' in param_names and 'stream' in param_names and 'session_state' in param_names and 'context' in param_names
@@ -560,7 +612,28 @@ class _SafetyEvaluation:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
-    
+        
+        if _SafetyEvaluator.CODE_VULNERABILITY in evaluators and num_turns > 1:
+            self.logger.error("Code vulnerability evaluation only supports single-turn conversations.")
+            msg = "Code vulnerability evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if _SafetyEvaluator.UNGROUNDED_ATTRIBUTES in evaluators and num_turns > 1:
+            self.logger.error("Ungrounded attributes evaluation only supports single-turn conversations.")
+            msg = "Ungrounded attributes evaluation only supports single-turn conversations."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
         if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1 and scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
             self.logger.error(f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn.")
             msg = f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
@@ -630,7 +703,7 @@ class _SafetyEvaluation:
     
     async def __call__(
             self,
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+            target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
@@ -644,12 +717,12 @@ class _SafetyEvaluation:
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None,
             data_paths: Optional[Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]] = None
-        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
+        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:        
         '''
         Evaluates the target function based on the provided parameters.
 
-        :param target: The target function to call during the evaluation.
-        :type target: Callable
+        :param target: The target function to call during the evaluation. This can be a synchronous or asynchronous function.
+        :type target: Union[Callable, Awaitable[Any], AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
         :param evaluators: A list of SafetyEvaluator.
         :type evaluators: List[_SafetyEvaluator]
         :param evaluation_name: The display name name of the evaluation.

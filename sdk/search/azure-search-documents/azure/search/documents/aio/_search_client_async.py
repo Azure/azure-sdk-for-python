@@ -51,7 +51,7 @@ class SearchClient(HeadersMixin):
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
 
@@ -184,6 +184,7 @@ class SearchClient(HeadersMixin):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         hybrid_search: Optional[HybridSearch] = None,
+        x_ms_query_source_authorization: Optional[str] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -308,10 +309,14 @@ class SearchClient(HeadersMixin):
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
-             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+            vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword x_ms_query_source_authorization: Token identifying the user for which the query is being
+            executed. This token is used to enforce security restrictions on documents. Default value is
+            None.
+        :paramtype x_ms_query_source_authorization: str
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
@@ -395,6 +400,7 @@ class SearchClient(HeadersMixin):
         if isinstance(order_by, list):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["x_ms_query_source_authorization"] = x_ms_query_source_authorization
         kwargs["api_version"] = self._api_version
         return AsyncSearchItemPaged(self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator)
 
@@ -703,16 +709,12 @@ class SearchClient(HeadersMixin):
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
-            batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos], **kwargs
-            )
+            batch_response_first_half = await self._index_documents_actions(actions=actions[:pos], **kwargs)
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
-            batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:], **kwargs
-            )
+            batch_response_second_half = await self._index_documents_actions(actions=actions[pos:], **kwargs)
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
             else:

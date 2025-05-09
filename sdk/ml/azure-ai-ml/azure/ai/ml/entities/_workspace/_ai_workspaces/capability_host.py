@@ -4,35 +4,20 @@
 
 import os
 from os import PathLike
-from typing import (
-    List,
-    Optional,
-    Union,
-    IO,
-    Any,
-    AnyStr,
-    Dict,
-)
 from pathlib import Path
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.constants._workspace import CapabilityHostKind
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import (
-    CapabilityHostSchema,
-)
-from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import (
-    CapabilityHost as RestCapabilityHost,
-)
-from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import (
     CapabilityHostProperties as RestCapabilityHostProperties,
 )
+from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import CapabilityHostSchema
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._workspace import CapabilityHostKind
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -51,6 +36,8 @@ class CapabilityHost(Resource):
     :param storage_connections: A list of storage connections. Default storage connection value is
         projectname/workspaceblobstore for project workspace.
     :type storage_connections: Optional[List[str]]
+    :param thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
+    :type thread_storage_connections: Optional[List[str]]
     :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
     :type capability_host_kind: Union[str, CapabilityHostKind]
@@ -75,6 +62,7 @@ class CapabilityHost(Resource):
         vector_store_connections: Optional[List[str]] = None,
         ai_services_connections: Optional[List[str]] = None,
         storage_connections: Optional[List[str]] = None,
+        thread_storage_connections: Optional[List[str]] = None,
         capability_host_kind: Union[str, CapabilityHostKind] = CapabilityHostKind.AGENTS,
         **kwargs: Any,
     ):
@@ -83,6 +71,7 @@ class CapabilityHost(Resource):
         self.ai_services_connections = ai_services_connections
         self.storage_connections = storage_connections
         self.vector_store_connections = vector_store_connections
+        self.thread_storage_connections = thread_storage_connections
 
     def dump(
         self,
@@ -160,6 +149,9 @@ class CapabilityHost(Resource):
             ai_services_connections=(rest_obj.properties.ai_services_connections if rest_obj.properties else None),
             storage_connections=(rest_obj.properties.storage_connections if rest_obj.properties else None),
             vector_store_connections=(rest_obj.properties.vector_store_connections if rest_obj.properties else None),
+            thread_storage_connections=(
+                rest_obj.properties.thread_storage_connections if rest_obj.properties else None
+            ),
             capability_host_kind=(
                 rest_obj.properties.capability_host_kind if rest_obj.properties else CapabilityHostKind.AGENTS
             ),
@@ -178,6 +170,7 @@ class CapabilityHost(Resource):
             ai_services_connections=self.ai_services_connections,
             storage_connections=self.storage_connections,
             vector_store_connections=self.vector_store_connections,
+            thread_storage_connections=self.thread_storage_connections,
             description=self.description,
             capability_host_kind=self.capability_host_kind,
         )

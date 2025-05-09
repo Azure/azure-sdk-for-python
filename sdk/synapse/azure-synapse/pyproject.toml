@@ -1,4 +1,0 @@
-[tool.azure-sdk-build]
-pylint = false
-sphinx = false
-ci_enabled = false

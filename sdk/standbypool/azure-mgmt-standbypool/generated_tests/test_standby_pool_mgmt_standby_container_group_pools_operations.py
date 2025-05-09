@@ -46,6 +46,7 @@ class TestStandbyPoolMgmtStandbyContainerGroupPoolsOperations(AzureMgmtRecordedT
                     },
                     "elasticityProfile": {"maxReadyCapacity": 0, "refillPolicy": "str"},
                     "provisioningState": "str",
+                    "zones": ["str"],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -87,6 +88,7 @@ class TestStandbyPoolMgmtStandbyContainerGroupPoolsOperations(AzureMgmtRecordedT
                         "subnetIds": [{"id": "str"}],
                     },
                     "elasticityProfile": {"maxReadyCapacity": 0, "refillPolicy": "str"},
+                    "zones": ["str"],
                 },
                 "tags": {"str": "str"},
             },

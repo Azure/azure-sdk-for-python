@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1337,14 +1337,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
 
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
         :type file_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -1518,12 +1517,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        # pylint: disable=line-too-long
         """Reads or downloads a file from the system, including its metadata and properties.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Return file data only from the specified byte range. Default value is None.
@@ -1666,7 +1664,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Returns all user-defined metadata, standard HTTP properties, and system properties for the
         file. It does not return the content of the file.
 
@@ -1675,7 +1672,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1790,12 +1787,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """removes the file from the storage account.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1873,12 +1869,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Sets HTTP headers on the file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_content_length: Resizes a file to the specified size. If the specified byte value
@@ -2046,12 +2041,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Updates user-defined metadata for the specified file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -2128,13 +2122,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
@@ -2214,7 +2207,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     def release_lease(  # pylint: disable=inconsistent-return-statements
         self, lease_id: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -2222,7 +2214,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2297,7 +2289,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -2305,7 +2296,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
@@ -2385,13 +2376,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2479,7 +2469,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Upload a range of bytes to a file.
 
         :param range: Specifies the range of bytes to be written. Both the start and end of the range
@@ -2494,7 +2483,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_range_write: Specify one of the following options: - Update: Writes the bytes
@@ -2616,7 +2605,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Upload a range of bytes to a file where the contents are read from a URL.
 
         :param range: Writes data to the specified byte range in the file. Required.
@@ -2635,7 +2623,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param source_range: Bytes of source data in the specified range. Default value is None.
@@ -2747,7 +2735,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
-        # pylint: disable=line-too-long
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -2758,7 +2745,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
@@ -2857,7 +2844,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Copies a blob or file to a destination file within the storage account.
 
         :param copy_source: Specifies the URL of the source file or blob, up to 2 KB in length. To copy
@@ -2870,7 +2856,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -3015,7 +3001,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
         metadata.
 
@@ -3024,7 +3009,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -3098,7 +3083,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         sharesnapshot: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListHandlesResponse:
-        # pylint: disable=line-too-long
         """Lists handles for file.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -3112,7 +3096,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -3185,7 +3169,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         sharesnapshot: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Closes all handles open for given file.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
@@ -3193,7 +3176,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -3281,7 +3264,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Renames a file.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
@@ -3289,7 +3271,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
@@ -3454,7 +3436,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Creates a symbolic link.
 
         :param link_text: NFS only. Required. The path to the original file, the symbolic link is
@@ -3464,7 +3445,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type link_text: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -3576,12 +3557,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """get_symbolic_link.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -3657,7 +3637,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Creates a hard link.
 
         :param target_file: NFS only. Required. Specifies the path of the target file to which the link
@@ -3666,7 +3645,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type target_file: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character

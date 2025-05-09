@@ -344,6 +344,7 @@ class TestEvalRun:
                 instance_results=None,
                 trace_destination=None,
                 run=None,
+                name_map={},
                 evaluation_name=None,
             )
         assert len(caplog.records) == 1

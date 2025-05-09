@@ -65,6 +65,8 @@ def update_correlation_context_header(
     uses_key_vault,
     uses_load_balancing,
     is_failover_request,
+    uses_ai_configuration,
+    uses_aicc_configuration,
 ) -> Dict[str, str]:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
@@ -106,8 +108,19 @@ def update_correlation_context_header(
     if is_failover_request:
         correlation_context += ",Failover"
 
+    features = ""
+
     if uses_load_balancing:
-        correlation_context += ",Features=LB"
+        features += "LB+"
+
+    if uses_ai_configuration:
+        features += "AI+"
+
+    if uses_aicc_configuration:
+        features += "AICC+"
+
+    if features:
+        correlation_context += ",Features=" + features[:-1]
 
     headers["Correlation-Context"] = correlation_context
     return headers
@@ -274,6 +287,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._feature_filter_usage: Mapping[str, bool] = {}
         self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
+        self._uses_ai_configuration = False
+        self._uses_aicc_configuration = False  # AI Chat Completion
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 

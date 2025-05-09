@@ -1,8 +1,20 @@
 # Release History
 
-## 12.21.0b1 (Unreleased)
+## 12.21.0 (Unreleased)
 
 ### Features Added
+
+## 12.21.0b1 (2025-05-06)
+
+### Features Added
+- Added support for service version 2025-07-05.
+- Added support for OAuth authentication in `FileSystemClient`'s `get_file_system_access_policy` 
+and `set_file_system_access_policy` APIs.
+- Added support for progress tracking to `DataLakeFileClient`'s `upload_data` and `download_file`
+APIs via a new optional callback, `progress_hook`.
+
+### Bugs Fixed
+- Fixed an issue where URL safe encoding is inconsistent between Blob and Datalake paths.
 
 ## 12.20.0 (2025-03-27)
 

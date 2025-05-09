@@ -34,6 +34,7 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 host = test_config.TestConfig.host
 master_key = test_config.TestConfig.masterKey
 TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+SINGLE_PARTITION_CONTAINER_NAME = os.path.basename(__file__) + str(uuid.uuid4())
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -51,7 +52,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.database_id = TEST_DATABASE_ID
-        cls.single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
+        cls.single_partition_container_name = SINGLE_PARTITION_CONTAINER_NAME
 
         cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
@@ -77,18 +78,18 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             except Exception as closeError:    
                 logger.warning("Exception trying to close client {}. {}".format(created_database.id, closeError))
 
-    async def setup_method_with_custom_transport(self,
-                                                 custom_transport: AioHttpTransport,
-                                                 default_endpoint=host,
-                                                 use_multiple_write_locations=False,
-                                                 **kwargs):
-
-        connection_policy = ConnectionPolicy()
-        connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
-        client = CosmosClient(default_endpoint, master_key, connection_policy=connection_policy, consistency_level="Session",
+    @staticmethod
+    async def setup_method_with_custom_transport(
+            custom_transport: AioHttpTransport,
+            default_endpoint: str = host,
+            key: str = master_key,
+            database_id: str = TEST_DATABASE_ID,
+            container_id: str = SINGLE_PARTITION_CONTAINER_NAME,
+            **kwargs):
+        client = CosmosClient(default_endpoint, key, consistency_level="Session",
                               transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
-        db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
-        container: ContainerProxy = db.get_container_client(self.single_partition_container_name)
+        db: DatabaseProxy = client.get_database_client(database_id)
+        container: ContainerProxy = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
     @staticmethod
@@ -114,7 +115,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                 status_code=502,
                 message="Some random reverse proxy error."))))
 
-        initialized_objects = await self.setup_method_with_custom_transport(custom_transport)
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(custom_transport)
         start: float = time.perf_counter()
         try:
             container: ContainerProxy = initialized_objects["col"]
@@ -159,7 +160,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["Read Region", "Write Region"])
         try:
@@ -218,7 +219,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             default_endpoint=expected_write_region_uri,
             preferred_locations=["Read Region", "Write Region"])
@@ -283,7 +284,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             default_endpoint=expected_write_region_uri,
             preferred_locations=["Read Region", "Write Region"])
@@ -328,7 +329,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -381,7 +382,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             use_multiple_write_locations=True,
             preferred_locations=["First Region", "Second Region"])
@@ -454,7 +455,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -507,7 +508,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await self.setup_method_with_custom_transport(
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:

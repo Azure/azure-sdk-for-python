@@ -2,9 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import inspect
 import os
 import re
-from typing import Any, Mapping, Sequence, Tuple
+from typing import Any, Final, Mapping, Sequence, Tuple
+
+
+DEFAULTS_KEY: Final[str] = "$defaults$"
 
 
 def normalize_identifier_name(name: str) -> str:
@@ -80,3 +84,17 @@ def get_value_from_path(path: str, data: Mapping[str, Any]) -> Tuple[bool, Any]:
     if len(parts) == 0:
         return False, None
     return _get_value(data, parts)
+
+
+def is_async_callable(obj: Any) -> bool:
+    """Check if the object is an async callable. This will be true if the object is a coroutine function,
+    or if the object has
+
+    :param Any obj: The object to check.
+    :return: True if the object is an async callable.
+    :rtype: bool
+    """
+    return (
+        inspect.iscoroutinefunction(obj)
+        or inspect.iscoroutinefunction(getattr(obj, "__call__", None))
+    )

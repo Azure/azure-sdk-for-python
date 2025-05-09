@@ -9,7 +9,7 @@ pip install setuptools==78.1.0 > /dev/null
 
 # install tsp-client globally (local install may interfere with tooling)
 echo Install tsp-client
-sudo npm install -g @azure-tools/typespec-client-generator-cli > /dev/null
+npm install -g @azure-tools/typespec-client-generator-cli > /dev/null
 
 echo "{}" >> $2
 echo "[Generate] init success!!!"
