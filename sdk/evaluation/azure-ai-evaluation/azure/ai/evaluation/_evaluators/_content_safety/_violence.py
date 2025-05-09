@@ -56,6 +56,16 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a ViolenceEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START violence_evaluator]
+            :end-before: [END violence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call ViolenceEvaluator using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+    
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

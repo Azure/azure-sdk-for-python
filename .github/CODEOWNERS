@@ -262,6 +262,15 @@
 # ServiceLabel: %AI Model Inference %Service Attention
 /sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
 
+# PRLabel: %AI Agents
+# ServiceLabel: %AI Agents %Service Attention
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin
+
+# PRLabel: %AI Projects
+# ServiceLabel: %AI Projects %Service Attention
+/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin
+
+
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
 

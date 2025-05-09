@@ -54,6 +54,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-eventhub": "pypy",
     "azure-servicebus": "pypy",
     "azure-ai-projects": "pypy",
+    "azure-ai-agents": "pypy",
 }
 
 omit_regression = (
