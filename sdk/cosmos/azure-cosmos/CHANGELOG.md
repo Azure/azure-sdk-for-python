@@ -8,6 +8,7 @@
 
 #### Bugs Fixed
 * Fixed Diagnostics Error Log Formatting from not accommodating error messages from none Cosmos Http Response Exceptions. See [PR 40889](https://github.com/Azure/azure-sdk-for-python/pull/40889/files)
+* Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
 
 #### Other Changes
 
