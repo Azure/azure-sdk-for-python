@@ -1,0 +1,21 @@
+{
+  "reportTypeCommentUsage": true,
+  "reportMissingImports": false,
+  "pythonVersion": "3.11",
+  "exclude": [
+  "**/downloaded",
+  "**/sample_agents_vector_store_batch_enterprise_file_search_async.py",
+  "**/sample_agents_with_file_search_attachment.py",
+  "**/sample_agents_with_code_interpreter_file_attachment.py",
+  "**/sample_agents_code_interpreter_attachment_enterprise_search.py",
+  "**/sample_agents_with_file_search_attachment_async.py",
+  "**/sample_agents_code_interpreter_attachment_enterprise_search_async.py",
+  "**/sample_agents_code_interpreter_attachment_enterprise_search_async.py",
+  "**/sample_agents_code_interpreter_attachment_async.py"
+  ],
+  "extraPaths": [        
+    "./../../core/azure-core",
+    "./../../identity/azure-identity",
+    "./../../monitor/azure-monitor-opentelemetry"
+  ]
+}

@@ -11,6 +11,7 @@
 - Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
 - Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
 - Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
+- Added property `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`.
 
 - Added new models:
     - `azure.search.documents.models.QueryResultDocumentInnerHit`
