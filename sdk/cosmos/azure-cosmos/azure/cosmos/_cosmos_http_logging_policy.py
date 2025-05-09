@@ -37,7 +37,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._location_cache import LocationCache
 from .http_constants import HttpHeaders
 from ._global_endpoint_manager import _GlobalEndpointManager
-from .documents import DatabaseAccount, ConnectionPolicy
+from .documents import DatabaseAccount
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
