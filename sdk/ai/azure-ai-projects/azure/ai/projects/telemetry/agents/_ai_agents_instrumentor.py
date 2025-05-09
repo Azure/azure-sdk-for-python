@@ -584,9 +584,16 @@ class _AIAgentsInstrumentorPreview:
         if run and span and span.span_instance.is_recording:
             span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(run.status))
             span.add_attribute(GEN_AI_RESPONSE_MODEL, run.model)
-            if run and run.usage:
+            if run.usage:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
+
+            if run.last_error:
+                span.span_instance.set_status(
+                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                    run.last_error.message,
+                )
+                span.add_attribute(ERROR_TYPE, run.last_error.code)
 
     @staticmethod
     def agent_api_response_to_str(response_format: Any) -> Optional[str]:
@@ -776,16 +783,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -827,16 +825,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -857,16 +846,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -887,16 +867,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -922,16 +893,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -957,16 +919,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1011,18 +964,13 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = function(*args, **kwargs)
+
+                if result:
+                    span.add_attribute(GEN_AI_THREAD_RUN_ID, result.get("id"))
+
                 self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1067,24 +1015,72 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = await function(*args, **kwargs)
-                if span.span_instance.is_recording:
-                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(result.status))
-                    span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
-                    if result.usage:
-                        span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
-                        span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, result.usage.completion_tokens)
-                        span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
+
+                if result:
+                    span.add_attribute(GEN_AI_THREAD_RUN_ID, result.get("id"))
+
+                self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
+                raise
+
+        return result
+
+    def trace_get_run(self, operation_name, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        thread_id = kwargs.get("thread_id")
+        run_id = kwargs.get("run_id")
+
+        span = start_span(
+            operation_name,
+            server_address=project_name,
+            thread_id=thread_id,
+            run_id=run_id
+        )
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = function(*args, **kwargs)
+                if result:
+                    span.add_attribute(GEN_AI_AGENT_ID, result.agent_id)
+
+                self.set_end_run(span, result)
+            except Exception as exc:
+                self.record_error(span, exc)
+                raise
+
+        return result
+
+    async def trace_get_run_async(self, operation_name, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        thread_id = kwargs.get("thread_id")
+        run_id = kwargs.get("run_id")
+
+        span = start_span(
+            operation_name,
+            server_address=project_name,
+            thread_id=thread_id,
+            run_id=run_id
+        )
+
+        if span is None:
+            return await function(*args, **kwargs)
+
+        with span:
+            try:
+                result = await function(*args, **kwargs)
+                if result:
+                    span.add_attribute(GEN_AI_AGENT_ID, result.agent_id)
+                self.set_end_run(span, result)
+            except Exception as exc:
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1118,16 +1114,7 @@ class _AIAgentsInstrumentorPreview:
                 if not isinstance(result, AgentRunStream):
                     self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1161,16 +1148,7 @@ class _AIAgentsInstrumentorPreview:
                 if not isinstance(result, AsyncAgentRunStream):
                     self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1188,16 +1166,7 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1215,16 +1184,7 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = await function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1273,16 +1233,7 @@ class _AIAgentsInstrumentorPreview:
                 kwargs["event_handler"] = self.wrap_handler(event_handler, span)
                 result = function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1333,16 +1284,7 @@ class _AIAgentsInstrumentorPreview:
                 kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
                 result = await function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1365,16 +1307,7 @@ class _AIAgentsInstrumentorPreview:
                     self.add_thread_message_event(span, message)
 
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1399,19 +1332,22 @@ class _AIAgentsInstrumentorPreview:
                         self.add_run_step_event(span, step)
 
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
+
+    def record_error(self, span, exc):
+        # Set the span status to error
+        if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+            span.span_instance.set_status(
+                StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                description=str(exc),
+            )
+        module = getattr(exc, "__module__", "")
+        module = module if module != "builtins" else ""
+        error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+        self._set_attributes(span, ("error.type", error_type))
 
     async def trace_list_run_steps_async(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
@@ -1433,16 +1369,7 @@ class _AIAgentsInstrumentorPreview:
                         self.add_run_step_event(span, step)
 
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1465,16 +1392,7 @@ class _AIAgentsInstrumentorPreview:
                     self.add_thread_message_event(span, message)
 
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1583,8 +1501,13 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
+                print ("????????????????????????????????????????????????")
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.get_run"):
+                print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                kwargs.setdefault("merge_span", True)
+                return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
@@ -1658,6 +1581,9 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.get_run"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_submit_tool_outputs_async(False, function, *args, **kwargs)
@@ -1698,6 +1624,7 @@ class _AIAgentsInstrumentorPreview:
             ("azure.ai.projects.operations", "AgentsOperations", "create_thread", TraceType.AGENTS, "thread_create"),
             ("azure.ai.projects.operations", "AgentsOperations", "create_message", TraceType.AGENTS, "message_create"),
             ("azure.ai.projects.operations", "AgentsOperations", "create_run", TraceType.AGENTS, "create_run"),
+            ("azure.ai.projects.operations", "AgentsOperations", "get_run", TraceType.AGENTS, "get_run"),
             (
                 "azure.ai.projects.operations",
                 "AgentsOperations",
@@ -1748,6 +1675,7 @@ class _AIAgentsInstrumentorPreview:
                 "agents_thread_message",
             ),
             ("azure.ai.projects.aio.operations", "AgentsOperations", "create_run", TraceType.AGENTS, "create_run"),
+            ("azure.ai.projects.aio.operations", "AgentsOperations", "get_run", TraceType.AGENTS, "get_run"),
             (
                 "azure.ai.projects.aio.operations",
                 "AgentsOperations",
@@ -2003,13 +1931,6 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.ended = True
             self.instrumentor.set_end_run(self.span, self.last_run)
 
-            if self.last_run and self.last_run.last_error:
-                self.span.span_instance.set_status(
-                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                    self.last_run.last_error.message,
-                )
-                self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
-
             self.span.__exit__(exc_type, exc_val, exc_tb)
             self.span.finish()
 
@@ -2111,13 +2032,6 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         if not self.ended:
             self.ended = True
             self.instrumentor.set_end_run(self.span, self.last_run)
-
-            if self.last_run and self.last_run.last_error:
-                self.span.set_status(
-                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                    self.last_run.last_error.message,
-                )
-                self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
             self.span.__exit__(exc_type, exc_val, exc_tb)
             self.span.finish()

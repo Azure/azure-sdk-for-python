@@ -214,8 +214,27 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
             ("gen_ai.agent.id", ""),
+            ("gen_ai.thread.run.id", ""),
             ("gen_ai.thread.run.status", "queued"),
             ("gen_ai.response.model", "gpt-4o"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        spans = self.exporter.get_spans_by_name("get_thread_run")
+        assert len(spans) >= 1
+        span = spans[-1]
+        expected_attributes = [
+            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.operation.name", "get_thread_run"),
+            ("server.address", ""),
+            ("gen_ai.thread.id", ""),
+            ("gen_ai.thread.run.id", ""),
+            ("gen_ai.agent.id", ""),
+            ("gen_ai.thread.run.status", "completed"),
+            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
@@ -231,7 +250,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -355,6 +373,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
             ("gen_ai.agent.id", ""),
+            ("gen_ai.thread.run.id", ""),
             ("gen_ai.thread.run.status", "queued"),
             ("gen_ai.response.model", "gpt-4o"),
         ]
@@ -538,6 +557,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.operation.name", "process_thread_run"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
+            ("gen_ai.thread.run.id", ""),
             ("gen_ai.agent.id", ""),
             ("gen_ai.thread.run.status", "completed"),
             ("gen_ai.response.model", "gpt-4o"),
