@@ -52,8 +52,14 @@ _patch_all = []
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
-    from ._converters._ai_services import AIAgentConverter
+    from ._converters._ai_agent_converter import AIAgentConverter
+    from ._converters._legacy_converter import LegacyAgentConverter
+    from ._converters._fdp_converter import FDPAgentConverter
+    from ._converters._ai_converter_factory import AIAgentConverterFactory
     _patch_all.append("AIAgentConverter")
+    _patch_all.append("LegacyAgentConverter")
+    _patch_all.append("FDPAgentConverter")
+    _patch_all.append("AIAgentConverterFactory")
 except ImportError:
     print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
 

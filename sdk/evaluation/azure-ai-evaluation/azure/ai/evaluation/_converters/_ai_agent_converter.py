@@ -1,14 +1,8 @@
 import json
+from abc import abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    ThreadRun,
-    RunStep,
-    RunStepToolCallDetails,
-    FunctionDefinition,
-    ListSortOrder,
-)
 
 from typing import List, Union
 
@@ -26,20 +20,21 @@ from ._models import ToolDefinition, EvaluatorData
 # Utilities.
 from ._models import break_tool_call_into_messages, convert_message
 
-# Maximum items to fetch in a single AI Services API call (imposed by the service).
-_AI_SERVICES_API_MAX_LIMIT = 100
-
-# Maximum number of workers allowed to make API calls at the same time.
-_MAX_WORKERS = 10
-
 @experimental
 class AIAgentConverter:
     """
-    A converter for AI agent data.
+    A converter for AI agent data.  Subclasses handle data retrieval depending on
+    agent version.  Use AIAgentConverterFactory to instantiate a converter.
 
     :param project_client: The AI project client used for API interactions.
     :type project_client: AIProjectClient
     """
+
+    # Maximum items to fetch in a single AI Services API call (imposed by the service).
+    _AI_SERVICES_API_MAX_LIMIT = 100
+
+    # Maximum number of workers allowed to make API calls at the same time.
+    _MAX_WORKERS = 10
 
     def __init__(self, project_client: AIProjectClient):
         """
@@ -50,29 +45,21 @@ class AIAgentConverter:
         """
         self.project_client = project_client
 
+    @abstractmethod
+    def _get_run(self, thread_id: str, run_id: str):
+        pass
+
+    @abstractmethod
     def _list_messages_chronological(self, thread_id: str):
-        """
-        Lists messages in chronological order for a given thread.
+        pass
 
-        :param thread_id: The ID of the thread.
-        :type thread_id: str
-        :return: A list of messages in chronological order.
-        """
-        to_return = []
+    @abstractmethod
+    def _list_run_steps_chronological(self, thread_id: str, run_id: str):
+        pass
 
-        has_more = True
-        after = None
-        while has_more:
-            messages = self.project_client.agents.list_messages(
-                thread_id=thread_id, limit=_AI_SERVICES_API_MAX_LIMIT, order=ListSortOrder.ASCENDING, after=after
-            )
-            has_more = messages.has_more
-            after = messages.last_id
-            if messages.data:
-                # We need to add the messages to the accumulator.
-                to_return.extend(messages.data)
-
-        return to_return
+    @abstractmethod
+    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
+        pass
 
     def _list_tool_calls_chronological(self, thread_id: str, run_id: str) -> List[ToolCall]:
         """
@@ -87,29 +74,14 @@ class AIAgentConverter:
         """
         # This is the other API request that we need to make to AI service, such that we can get the details about
         # the tool calls and results. Since the list is given in reverse chronological order, we need to reverse it.
-        run_steps_chronological: List[RunStep] = []
-        has_more = True
-        after = None
-        while has_more:
-            run_steps = self.project_client.agents.list_run_steps(
-                thread_id=thread_id,
-                run_id=run_id,
-                limit=_AI_SERVICES_API_MAX_LIMIT,
-                order=ListSortOrder.ASCENDING,
-                after=after,
-            )
-            has_more = run_steps.has_more
-            after = run_steps.last_id
-            if run_steps.data:
-                # We need to add the run steps to the accumulator.
-                run_steps_chronological.extend(run_steps.data)
+        run_steps_chronological = self._list_run_steps_chronological(thread_id=thread_id, run_id=run_id)
 
         # Let's accumulate the function calls in chronological order. Function calls
         tool_calls_chronological: List[ToolCall] = []
         for run_step_chronological in run_steps_chronological:
             if run_step_chronological.type != _TOOL_CALLS:
                 continue
-            step_details: RunStepToolCallDetails = run_step_chronological.step_details
+            step_details: object = run_step_chronological.step_details
             if step_details.type != _TOOL_CALLS:
                 continue
             if len(step_details.tool_calls) < 1:
@@ -126,26 +98,13 @@ class AIAgentConverter:
 
         return tool_calls_chronological
 
-    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
-        """
-        Lists run IDs in chronological order for a given thread.
-
-        :param thread_id: The ID of the thread.
-        :type thread_id: str
-        :return: A list of run IDs in chronological order.
-        :rtype: List[str]
-        """
-        runs = self.project_client.agents.list_runs(thread_id=thread_id, order=ListSortOrder.ASCENDING)
-        run_ids = [run["id"] for run in runs["data"]]
-        return run_ids
-
     @staticmethod
-    def _extract_function_tool_definitions(thread_run: ThreadRun) -> List[ToolDefinition]:
+    def _extract_function_tool_definitions(thread_run: object) -> List[ToolDefinition]:
         """
         Extracts tool definitions from a thread run.
 
         :param thread_run: The thread run containing tool definitions.
-        :type thread_run: ThreadRun
+        :type thread_run: object
         :return: A list of tool definitions extracted from the thread run.
         :rtype: List[ToolDefinition]
         """
@@ -373,7 +332,7 @@ class AIAgentConverter:
 
             # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
             # up the process by parallelizing the AI Services API requests.
-            with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+            with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
                 futures = {
                     executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id
                     for run_id in run_ids_up_to_run_id
@@ -399,7 +358,7 @@ class AIAgentConverter:
         """
         to_return: List[Message] = []
 
-        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             futures = {executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id for run_id in run_ids}
             for future in as_completed(futures):
                 to_return.extend(future.result())
@@ -460,7 +419,7 @@ class AIAgentConverter:
         :rtype: dict
         """
         # Make the API call once and reuse the result.
-        thread_run: ThreadRun = self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
+        thread_run: object = self._project_get_run(thread_id=thread_id, run_id=run_id)
 
         # Walk through the "user-facing" conversation history and start adding messages.
         chronological_conversation = self._list_messages_chronological(thread_id)
@@ -536,7 +495,7 @@ class AIAgentConverter:
         all_sorted_tool_calls = AIAgentConverter._sort_messages(self._retrieve_all_tool_calls(thread_id, run_ids))
 
         # The last run should have all the tool definitions.
-        thread_run = self.project_client.agents.get_run(thread_id=thread_id, run_id=run_ids[-1])
+        thread_run = self._project_get_run(thread_id=thread_id, run_id=run_ids[-1])
         instructions = thread_run.instructions
 
         # So then we can get the tool definitions.
@@ -609,7 +568,7 @@ class AIAgentConverter:
             return self._prepare_single_thread_evaluation_data(thread_id=thread_ids, filename=filename)
 
         evaluations = []
-        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
             # We override the filename, because we don't want to write the file for each thread, having to handle
             # threading issues and file being opened from multiple threads, instead, we just want to write it once
             # at the end.
