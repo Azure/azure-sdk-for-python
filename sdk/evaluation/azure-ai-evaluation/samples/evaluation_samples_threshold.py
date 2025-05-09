@@ -418,9 +418,9 @@ class EvaluationThresholdSamples(object):
 
 
 if __name__ == "__main__":
-    print("Loading samples in evaluation_samples_evaluate.py")
+    print("Loading samples in evaluation_samples_threshold.py")
     sample = EvaluationThresholdSamples()
     print("Samples loaded successfully!")
-    print("Running samples in evaluation_samples_evaluate.py")
+    print("Running samples in evaluation_samples_threshold.py")
     sample.evaluation_classes_methods_with_thresholds()
     print("Samples ran successfully!")
