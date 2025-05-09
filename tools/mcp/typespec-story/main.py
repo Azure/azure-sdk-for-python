@@ -41,6 +41,7 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
             
         # Parse the URL to extract the path within the repository
         repo_parts = tspurl.split("/")
+        logger.info(f"Extracted repo parts: {repo_parts}")
         repo_name = f"{repo_parts[3]}/{repo_parts[4]}"
         
         parts = tspurl.split("azure-rest-api-specs/blob/")[1].split("/")
@@ -76,8 +77,8 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
 # Helper function to run CLI commands
 def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optional[str] = None) -> Dict[str, Any]:
     """Run a TypeSpec client generator CLI command and return the result."""
-    cli_args = ["npx", "@azure-tools/typespec-client-generator-cli", command]
-    
+    cli_args = ["cmd", "/k", "npx", "@azure-tools/typespec-client-generator-cli", command]
+
     # Convert args dict to CLI arguments
     for key, value in args.items():
         cli_args.append(f"--{key}")
@@ -86,12 +87,13 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     logger.info(f"Running command: {' '.join(cli_args)}")
     
     try:
+        # TODO: maybe if we return and dont wait for output this will work
         # Run the command and capture the output
         result = subprocess.run(
             cli_args,
             check=True,
-            capture_output=True,
-            text=True,
+            # capture_output=True,
+            # text=True,
             cwd=root_dir,
         )
         logger.info(f"Command output: {result.stdout}")
