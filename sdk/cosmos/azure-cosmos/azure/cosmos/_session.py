@@ -64,7 +64,7 @@ class SessionContainer(object):
         :rtype: str
         """
 
-        with (self.session_lock):
+        with self.session_lock:
             is_name_based = _base.IsNameBased(resource_path)
             collection_rid = ""
             session_token = ""
@@ -167,7 +167,7 @@ class SessionContainer(object):
         # self link which has the rid representation of the resource, and
         # x-ms-alt-content-path which is the string representation of the resource
 
-        with (self.session_lock):
+        with self.session_lock:
             try:
                 self_link = response_result.get("_self")
                 # query results don't directly have a self_link - need to fetch it directly from one of the items
