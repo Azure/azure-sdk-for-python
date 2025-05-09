@@ -15,7 +15,6 @@ from azure.cosmos import PartitionKey
 from azure.cosmos import CosmosClient
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
-from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceRequestError
@@ -298,6 +297,7 @@ class TestFaultInjectionTransport:
 
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
+            multiple_write_locations=True,
             preferred_locations=["First Region", "Second Region"])
         container: ContainerProxy = initialized_objects["col"]
 
@@ -348,7 +348,7 @@ class TestFaultInjectionTransport:
 
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
-            use_multiple_write_locations=True,
+            multiple_write_locations=True,
             preferred_locations=["First Region", "Second Region"])
         container: ContainerProxy = initialized_objects["col"]
 
@@ -468,7 +468,9 @@ class TestFaultInjectionTransport:
 
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            mulitple_write_locations=True
+        )
         container: ContainerProxy = initialized_objects["col"]
         with pytest.raises(ServiceRequestError):
             container.upsert_item(body=document_definition)
