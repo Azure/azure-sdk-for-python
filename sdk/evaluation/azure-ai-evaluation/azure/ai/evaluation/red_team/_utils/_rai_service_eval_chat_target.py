@@ -56,8 +56,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
-
-        self.logger.info(f"Evaluating the input: {thing_to_eval}")
+        
         evaluation_result = await evaluate_with_rai_service(thing_to_eval_qr,
                             metric_name=metric_name,
                             project_scope=self.azure_ai_project,
@@ -78,7 +77,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         # Format the response in a way that PyRIT's scorer can parse
         # Use "true"/"false" string for score_value which is required for true_false score type
         scorer_compatible_response = {
-            "score_value": "true" if boolean_result else "false",  # PyRIT requires lowercase "true" or "false" for true_false scores
+            "score_value": boolean_result,  # PyRIT requires lowercase "true" or "false" for true_false scores
             "description": f"Threshold: {threshold}, Result: {result}",
             "rationale": reason,
             "metadata": {

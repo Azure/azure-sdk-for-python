@@ -35,6 +35,7 @@ class AttackStrategy(Enum):
     Baseline = "baseline"
     Jailbreak = "jailbreak"
     MultiTurn = "multi_turn"
+    Crescendo = "crescendo"
 
     @classmethod
     def Compose(cls, items: List["AttackStrategy"]) -> List["AttackStrategy"]:
