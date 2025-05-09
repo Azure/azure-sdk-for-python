@@ -60,8 +60,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._fetch_function = fetch_function
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
+        self._fetched_query_plan = False
 
     async def _create_execution_context_with_query_plan(self):
+        self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
         query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
         (query_to_use, self._resource_link))
@@ -97,7 +99,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        if "enableCrossPartitionQuery" not in self._options:
+        if self._fetched_query_plan or "enableCrossPartitionQuery" not in self._options:
             try:
                 return await self._execution_context.fetch_next_block()
             except CosmosHttpResponseError as e:
