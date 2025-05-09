@@ -174,6 +174,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     logger.info(db_settings, extra=cosmos_logger_attributes)
                     logger.info("Request URL: %r", redacted_url, extra=cosmos_logger_attributes)
                     logger.info("Request method: %r", http_request.method, extra=cosmos_logger_attributes)
+                    logger.info("Request Activity ID: %r", http_request.headers.get(HttpHeaders.ActivityId),
+                                extra=cosmos_logger_attributes)
                     logger.info("Request headers:", extra=cosmos_logger_attributes)
                     for header, value in http_request.headers.items():
                         value = self._redact_header(header, value)
@@ -197,6 +199,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 log_string += db_settings
                 log_string += "\nRequest URL: '{}'".format(redacted_url)
                 log_string += "\nRequest method: '{}'".format(http_request.method)
+                log_string += "\nRequest Activity ID: {}".format(http_request.headers.get(HttpHeaders.ActivityId))
                 log_string += "\nRequest headers:"
                 for header, value in http_request.headers.items():
                     value = self._redact_header(header, value)
