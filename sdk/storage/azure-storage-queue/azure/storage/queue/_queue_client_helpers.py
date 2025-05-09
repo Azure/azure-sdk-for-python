@@ -26,7 +26,7 @@ def _parse_url(
             "AsyncTokenCredential",
             "TokenCredential",
         ]
-    ],  # pylint: disable=line-too-long
+    ],
 ) -> Tuple["ParseResult", Any]:
     """Performs initial input validation and returns the parsed URL and SAS token.
 

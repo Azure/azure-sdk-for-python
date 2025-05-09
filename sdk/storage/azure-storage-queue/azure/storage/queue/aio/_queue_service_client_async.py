@@ -92,7 +92,7 @@ class QueueServiceClient(  # type: ignore [misc]
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
@@ -132,7 +132,7 @@ class QueueServiceClient(  # type: ignore [misc]
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,

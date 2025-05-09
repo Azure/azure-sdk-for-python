@@ -95,7 +95,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
@@ -132,7 +132,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
