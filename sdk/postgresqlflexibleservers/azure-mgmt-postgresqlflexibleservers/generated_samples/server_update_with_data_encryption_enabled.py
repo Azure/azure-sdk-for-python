@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,9 +47,9 @@ def main():
                 "backup": {"backupRetentionDays": 20},
                 "createMode": "Update",
                 "dataEncryption": {
-                    "geoBackupKeyURI": "https://test-geo-kv.vault.azure.net/keys/test-key1/66f57315bab34b0189daa113fbc78787",
+                    "geoBackupKeyURI": "https://test-geo-kv.vault.azure.net/keys/test-key1/yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
                     "geoBackupUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-geo-usermanagedidentity",
-                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/77f57315bab34b0189daa113fbc78787",
+                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-usermanagedidentity",
                     "type": "AzureKeyVault",
                 },
@@ -59,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerUpdateWithDataEncryptionEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ServerUpdateWithDataEncryptionEnabled.json
 if __name__ == "__main__":
     main()

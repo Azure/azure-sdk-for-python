@@ -1,5 +1,69 @@
 # Release History
 
+## 2.0.0b1 (2025-05-19)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added operation group `quota_usages`
+  - Client `PostgreSQLManagementClient` added operation group `tuning_options`
+  - Client `PostgreSQLManagementClient` added operation group `tuning_index`
+  - Client `PostgreSQLManagementClient` added operation group `tuning_configuration`
+  - Model `FlexibleServerCapability` added property `supported_features`
+  - Model `Server` added property `cluster`
+  - Model `ServerForUpdate` added property `cluster`
+  - Model `ServerSkuCapability` added property `supported_features`
+  - Model `ServerSkuCapability` added property `security_profile`
+  - Enum `ServerState` added member `INACCESSIBLE`
+  - Enum `ServerState` added member `PROVISIONING`
+  - Enum `ServerState` added member `RESTARTING`
+  - Enum `ServerVersion` added member `SEVENTEEN`
+  - Model `ServerVersionCapability` added property `supported_features`
+  - Enum `SourceType` added member `APSARA_DB_RDS`
+  - Enum `SourceType` added member `CRUNCHY_POSTGRE_SQL`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_DROPLETS`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_POSTGRE_SQL`
+  - Enum `SourceType` added member `EDB_ORACLE_SERVER`
+  - Enum `SourceType` added member `EDB_POSTGRE_SQL`
+  - Enum `SourceType` added member `HEROKU_POSTGRE_SQL`
+  - Enum `SourceType` added member `HUAWEI_COMPUTE`
+  - Enum `SourceType` added member `HUAWEI_RDS`
+  - Enum `SourceType` added member `POSTGRE_SQL_COSMOS_DB`
+  - Enum `SourceType` added member `POSTGRE_SQL_FLEXIBLE_SERVER`
+  - Enum `SourceType` added member `SUPABASE_POSTGRE_SQL`
+  - Enum `StorageType` added member `ULTRA_SSD_LRS`
+  - Added model `Cluster`
+  - Added model `ConfigTuningRequestParameter`
+  - Added model `ImpactRecord`
+  - Added model `IndexRecommendationDetails`
+  - Added model `IndexRecommendationListResult`
+  - Added model `IndexRecommendationResource`
+  - Added model `IndexRecommendationResourcePropertiesAnalyzedWorkload`
+  - Added model `IndexRecommendationResourcePropertiesImplementationDetails`
+  - Added model `NameProperty`
+  - Added model `QuotaUsage`
+  - Added model `QuotaUsagesListResult`
+  - Added enum `RecommendationType`
+  - Added enum `RecommendationTypeEnum`
+  - Added model `SessionDetailsListResult`
+  - Added model `SessionDetailsResource`
+  - Added model `SessionResource`
+  - Added model `SessionsListResult`
+  - Added model `SupportedFeature`
+  - Added enum `SupportedFeatureStatusEnum`
+  - Added enum `TuningOptionEnum`
+  - Added model `TuningOptionsListResult`
+  - Added model `TuningOptionsResource`
+  - Added model `QuotaUsagesOperations`
+  - Added model `TuningConfigurationOperations`
+  - Added model `TuningIndexOperations`
+  - Added model `TuningOptionsOperations`
+  - Method `TuningConfigurationOperations.begin_start_session` has a new overload `def begin_start_session(self: None, resource_group_name: str, server_name: str, tuning_option: Union[str, TuningOptionEnum], config_tuning_request: ConfigTuningRequestParameter, content_type: str)`
+  - Method `TuningConfigurationOperations.begin_start_session` has a new overload `def begin_start_session(self: None, resource_group_name: str, server_name: str, tuning_option: Union[str, TuningOptionEnum], config_tuning_request: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Method `Operations.list` changed from `asynchronous` to `synchronous`
+
 ## 1.1.0 (2025-03-24)
 
 ### Features Added
