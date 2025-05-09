@@ -44,7 +44,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword callable on_remove: If it is set, the client will call corresponding methods when there
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
     """

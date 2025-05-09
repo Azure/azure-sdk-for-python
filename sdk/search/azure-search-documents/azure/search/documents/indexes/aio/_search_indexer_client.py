@@ -15,6 +15,7 @@ from .._generated.models import (
     SkillNames,
     SearchIndexerStatus,
     DocumentKeysOrIds,
+    IndexerResyncOption,
 )
 from ..models import SearchIndexer, SearchIndexerSkillset, SearchIndexerDataSourceConnection
 from .._utils import (
@@ -35,7 +36,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
     """
@@ -306,6 +307,32 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = indexer
         await self._client.indexers.reset_docs(name, overwrite=overwrite, **kwargs)
+        return
+
+    @distributed_trace_async
+    async def resync(
+        self,
+        indexer: Union[str, SearchIndexer],
+        indexer_resync_options: List[Union[str, IndexerResyncOption]],
+        **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.
+
+        :param indexer: The indexer to resync for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer_resync_options: Required.
+        :type indexer_resync_options: list[str or
+         ~azure.search.documents.indexes.models.IndexerResyncOption]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = indexer.name  # type: ignore
+        except AttributeError:
+            name = indexer
+        await self._client.indexers.resync(name, indexer_resync_options, **kwargs)
         return
 
     @distributed_trace_async

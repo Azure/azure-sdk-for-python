@@ -44,7 +44,17 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :end-before: [END content_safety_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ContentSafetyEvaluator.
+            :caption: Initialize and call ContentSafetyEvaluator using azure.ai.evaluation.AzureAIProject.
+    
+    .. admonition:: Example using Azure AI Project URL:
+    
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START content_safety_evaluator]
+            :end-before: [END content_safety_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call ContentSafetyEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
     
     .. admonition:: Example with Threshold:
     
@@ -53,7 +63,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :end-before: [END threshold_content_safety_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and call a ContentSafetyEvaluator.
+            :caption: Initialize with threshold and call a ContentSafetyEvaluator with a query and response.
     """
 
     id = "content_safety"

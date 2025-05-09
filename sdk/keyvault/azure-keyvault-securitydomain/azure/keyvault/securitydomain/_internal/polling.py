@@ -198,3 +198,6 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
         :return: The built resource.
         """
         return None
+
+class SecurityDomainUploadNoPolling(SecurityDomainUploadPollingMethod, NoPollingMixin):
+    pass

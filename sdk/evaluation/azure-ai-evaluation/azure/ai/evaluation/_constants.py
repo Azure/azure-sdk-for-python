@@ -85,7 +85,7 @@ class TokenScope(str, enum.Enum):
     """Defines the scope of the token used to access Azure resources."""
 
     DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
-    COGNITIVE_SERVICES_MANAGEMENT = "https://cognitiveservices.azure.com/.default"
+    COGNITIVE_SERVICES_MANAGEMENT = "https://ai.azure.com/.default"
     AZURE_ML = "https://ml.azure.com/.default"
 
 

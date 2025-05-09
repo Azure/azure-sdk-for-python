@@ -5,7 +5,7 @@ from typing import Any, Dict, Union
 from typing_extensions import Literal
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.eval_text_similarity_grader import EvalTextSimilarityGrader
+from openai.types.graders import TextSimilarityGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
@@ -68,7 +68,6 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             "rouge_3",
             "rouge_4",
             "rouge_5",
-            "rouge_l",
             "cosine",
         ],
         input: str,
@@ -77,7 +76,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
         name: str,
         **kwargs: Any
     ):
-        grader = EvalTextSimilarityGrader(
+        grader = TextSimilarityGrader(
             evaluation_metric=evaluation_metric,
             input=input,
             pass_threshold=pass_threshold,
