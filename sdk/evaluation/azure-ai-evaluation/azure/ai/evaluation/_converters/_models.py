@@ -3,9 +3,17 @@ import json
 
 from pydantic import BaseModel
 
-from azure.ai.projects.models import RunStepFunctionToolCall
-
 from typing import List, Optional, Union
+
+# Models moved in a later version of agents SDK, so try a few different locations
+try:
+    from azure.ai.projects.models import RunStepFunctionToolCall
+except ImportError:
+    pass
+try:
+    from azure.ai.agents.models import RunStepFunctionToolCall
+except ImportError:
+    pass
 
 # Message roles constants.
 _SYSTEM = "system"

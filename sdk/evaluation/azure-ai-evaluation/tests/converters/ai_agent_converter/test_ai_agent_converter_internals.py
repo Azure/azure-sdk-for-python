@@ -2,7 +2,7 @@ import json
 import unittest
 from datetime import datetime
 
-from azure.ai.evaluation._converters._ai_services import AIAgentConverter
+from azure.ai.evaluation._converters._ai_agent_converter import AIAgentConverter
 from azure.ai.evaluation._converters._models import (
     Message,
     AssistantMessage,
@@ -10,13 +10,28 @@ from azure.ai.evaluation._converters._models import (
     ToolCall,
     break_tool_call_into_messages,
 )
-from azure.ai.projects.models import (
-    RunStepCodeInterpreterToolCall,
-    RunStepCodeInterpreterToolCallDetails,
-    RunStepFileSearchToolCall,
-    RunStepFileSearchToolCallResults,
-    RunStepFileSearchToolCallResult,
-)
+# Breaking changes introduced in newer version of the agents SDK
+# Models have been moved, so try a few different locations
+try:
+    from azure.ai.projects.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+    )
+except ImportError:
+    pass
+try:
+    from azure.ai.agents.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+    )
+except ImportError:
+    pass
 
 from serialization_helper import ToolDecoder, ThreadRunDecoder
 

@@ -2,11 +2,13 @@ import json
 from abc import abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+import azure.ai.projects as aap
 from azure.ai.projects import AIProjectClient
 
 from typing import List, Union
 
 from azure.ai.evaluation._common._experimental import experimental
+from packaging.version import Version
 
 # Constants.
 from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION, _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS
@@ -19,6 +21,21 @@ from ._models import ToolDefinition, EvaluatorData
 
 # Utilities.
 from ._models import break_tool_call_into_messages, convert_message
+
+@experimental
+class AIAgentConverterFactory:
+
+    """Factory class to create the appropriate agent converter based on the version of the AI service."""
+
+    @staticmethod
+    def get_converter(project_client: AIProjectClient):
+        if project_client is None:
+            return None
+        if Version(aap.__version__) > Version("1.0.0b10") or aap.__version__.startswith("1.0.0a"):
+            return FDPAgentConverter(project_client=project_client)
+        else:
+            return LegacyAgentConverter(project_client=project_client)
+
 
 @experimental
 class AIAgentConverter:
@@ -723,3 +740,102 @@ class AIAgentConverter:
             data = json.load(file)
 
         return AIAgentConverter._convert_from_conversation(data, run_id)
+
+@experimental
+class LegacyAgentConverter(AIAgentConverter):
+
+    def __init__(self, **kwargs):
+        super(LegacyAgentConverter, self).__init__(**kwargs)
+
+    def _list_messages_chronological(self, thread_id: str):
+        """
+        Lists messages in chronological order for a given thread.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :return: A list of messages in chronological order.
+        """
+        to_return = []
+
+        has_more = True
+        after = None
+        while has_more:
+            messages = self.project_client.agents.list_messages(
+            thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc", after=after)
+            has_more = messages.has_more
+            after = messages.last_id
+            if messages.data:
+                # We need to add the messages to the accumulator.
+                to_return.extend(messages.data)
+
+        return to_return
+
+    def _list_run_steps_chronological(self, thread_id: str, run_id: str):
+        run_steps_chronological: List[object] = []
+        has_more = True
+        after = None
+        while has_more:
+            run_steps = self.project_client.agents.list_run_steps(
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=self._AI_SERVICES_API_MAX_LIMIT,
+                order="asc",
+                after=after,
+            )
+            has_more = run_steps.has_more
+            after = run_steps.last_id
+            if run_steps.data:
+                # We need to add the run steps to the accumulator.
+                run_steps_chronological.extend(run_steps.data)
+        return run_steps_chronological
+
+    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
+        """
+        Lists run IDs in chronological order for a given thread.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :return: A list of run IDs in chronological order.
+        :rtype: List[str]
+        """
+        runs = self.project_client.agents.list_runs(thread_id=thread_id, order="asc")
+        run_ids = [run["id"] for run in runs["data"]]
+        return run_ids
+
+    def _get_run(self, thread_id: str, run_id: str):
+        return self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
+
+@experimental
+class FDPAgentConverter(AIAgentConverter):
+
+    def __init__(self, **kwargs):
+        super(FDPAgentConverter, self).__init__(**kwargs)
+
+    def _list_messages_chronological(self, thread_id: str):
+        """
+        Lists messages in chronological order for a given thread.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :return: A list of messages in chronological order.
+        """
+        message_iter = self.project_client.agents.messages.list(
+            thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc"
+        )
+        return [message for message in message_iter]
+
+    def _list_run_steps_chronological(self, thread_id: str, run_id: str):
+
+        return  self.project_client.agents.run_steps.list(
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=self._AI_SERVICES_API_MAX_LIMIT,
+                order="asc"
+            )
+
+    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
+        runs = self.project_client.agents.runs.list(thread_id=thread_id, order="asc")
+        return [run.id for run in runs]
+
+    def _get_run(self, thread_id: str, run_id: str):
+        return self.project_client.agents.runs.get(thread_id=thread_id, run_id=run_id)
