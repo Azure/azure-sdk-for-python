@@ -29,6 +29,7 @@ import abc
 import json
 import logging
 import re
+
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -37,43 +38,47 @@ logger = logging.getLogger(__name__)
 # Log level more verbose than DEBUG=10, INFO=20, etc.
 DEBUG_VERBOSE = 5
 
-NULL = 'null'
-BOOLEAN = 'boolean'
-STRING = 'string'
-BYTES = 'bytes'
-INT = 'int'
-LONG = 'long'
-FLOAT = 'float'
-DOUBLE = 'double'
-FIXED = 'fixed'
-ENUM = 'enum'
-RECORD = 'record'
-ERROR = 'error'
-ARRAY = 'array'
-MAP = 'map'
-UNION = 'union'
+NULL = "null"
+BOOLEAN = "boolean"
+STRING = "string"
+BYTES = "bytes"
+INT = "int"
+LONG = "long"
+FLOAT = "float"
+DOUBLE = "double"
+FIXED = "fixed"
+ENUM = "enum"
+RECORD = "record"
+ERROR = "error"
+ARRAY = "array"
+MAP = "map"
+UNION = "union"
 
 # Request and error unions are part of Avro protocols:
-REQUEST = 'request'
-ERROR_UNION = 'error_union'
+REQUEST = "request"
+ERROR_UNION = "error_union"
 
-PRIMITIVE_TYPES = frozenset([
-    NULL,
-    BOOLEAN,
-    STRING,
-    BYTES,
-    INT,
-    LONG,
-    FLOAT,
-    DOUBLE,
-])
+PRIMITIVE_TYPES = frozenset(
+    [
+        NULL,
+        BOOLEAN,
+        STRING,
+        BYTES,
+        INT,
+        LONG,
+        FLOAT,
+        DOUBLE,
+    ]
+)
 
-NAMED_TYPES = frozenset([
-    FIXED,
-    ENUM,
-    RECORD,
-    ERROR,
-])
+NAMED_TYPES = frozenset(
+    [
+        FIXED,
+        ENUM,
+        RECORD,
+        ERROR,
+    ]
+)
 
 VALID_TYPES = frozenset.union(
     PRIMITIVE_TYPES,
@@ -87,31 +92,37 @@ VALID_TYPES = frozenset.union(
     ],
 )
 
-SCHEMA_RESERVED_PROPS = frozenset([
-    'type',
-    'name',
-    'namespace',
-    'fields',  # Record
-    'items',  # Array
-    'size',  # Fixed
-    'symbols',  # Enum
-    'values',  # Map
-    'doc',
-])
+SCHEMA_RESERVED_PROPS = frozenset(
+    [
+        "type",
+        "name",
+        "namespace",
+        "fields",  # Record
+        "items",  # Array
+        "size",  # Fixed
+        "symbols",  # Enum
+        "values",  # Map
+        "doc",
+    ]
+)
 
-FIELD_RESERVED_PROPS = frozenset([
-    'default',
-    'name',
-    'doc',
-    'order',
-    'type',
-])
+FIELD_RESERVED_PROPS = frozenset(
+    [
+        "default",
+        "name",
+        "doc",
+        "order",
+        "type",
+    ]
+)
 
-VALID_FIELD_SORT_ORDERS = frozenset([
-    'ascending',
-    'descending',
-    'ignore',
-])
+VALID_FIELD_SORT_ORDERS = frozenset(
+    [
+        "ascending",
+        "descending",
+        "ignore",
+    ]
+)
 
 
 # ------------------------------------------------------------------------------
@@ -141,12 +152,12 @@ class Schema(metaclass=abc.ABCMeta):
           other_props: Optional dictionary of additional properties.
         """
         if data_type not in VALID_TYPES:
-            raise SchemaParseException(f'{data_type!r} is not a valid Avro type.')
+            raise SchemaParseException(f"{data_type!r} is not a valid Avro type.")
 
         # All properties of this schema, as a map: property name -> property value
         self._props = {}
 
-        self._props['type'] = data_type
+        self._props["type"] = data_type
         self._type = data_type
 
         if other_props:
@@ -155,7 +166,7 @@ class Schema(metaclass=abc.ABCMeta):
     @property
     def namespace(self):
         """Returns: the namespace this schema belongs to, if any, or None."""
-        return self._props.get('namespace', None)
+        return self._props.get("namespace", None)
 
     @property
     def type(self):
@@ -165,7 +176,7 @@ class Schema(metaclass=abc.ABCMeta):
     @property
     def doc(self):
         """Returns: the documentation associated to this schema, if any, or None."""
-        return self._props.get('doc', None)
+        return self._props.get("doc", None)
 
     @property
     def props(self):
@@ -193,20 +204,19 @@ class Schema(metaclass=abc.ABCMeta):
     # Schema types that have names (records, enums, and fixed) must be aware of not
     # re-defining schemas that are already listed in the parameter names.
     @abc.abstractmethod
-    def to_json(self, names):
-        ...
+    def to_json(self, names): ...
 
 
 # ------------------------------------------------------------------------------
 
 
-_RE_NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+_RE_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
 _RE_FULL_NAME = re.compile(
-    r'^'
-    r'[.]?(?:[A-Za-z_][A-Za-z0-9_]*[.])*'  # optional namespace
-    r'([A-Za-z_][A-Za-z0-9_]*)'  # name
-    r'$'
+    r"^"
+    r"[.]?(?:[A-Za-z_][A-Za-z0-9_]*[.])*"  # optional namespace
+    r"([A-Za-z_][A-Za-z0-9_]*)"  # name
+    r"$"
 )
 
 
@@ -222,32 +232,31 @@ class Name(object):
         """
         # Normalize: namespace is always defined as a string, possibly empty.
         if namespace is None:
-            namespace = ''
+            namespace = ""
 
-        if '.' in name:
+        if "." in name:
             # name is absolute, namespace is ignored:
             self._fullname = name
 
             match = _RE_FULL_NAME.match(self._fullname)
             if match is None:
-                raise SchemaParseException(
-                    f'Invalid absolute schema name: {self._fullname!r}.')
+                raise SchemaParseException(f"Invalid absolute schema name: {self._fullname!r}.")
 
             self._name = match.group(1)
-            self._namespace = self._fullname[:-(len(self._name) + 1)]
+            self._namespace = self._fullname[: -(len(self._name) + 1)]
 
         else:
             # name is relative, combine with explicit namespace:
             self._name = name
             self._namespace = namespace
-            self._fullname = (self._name
-                              if (not self._namespace) else
-                              f'{self._namespace}.{self._name}')
+            self._fullname = self._name if (not self._namespace) else f"{self._namespace}.{self._name}"
 
             # Validate the fullname:
             if _RE_FULL_NAME.match(self._fullname) is None:
-                raise SchemaParseException(f"Invalid schema name {self._fullname!r} inferred from "
-                                           f"name {self._name!r} and namespace {self._namespace!r}.")
+                raise SchemaParseException(
+                    f"Invalid schema name {self._fullname!r} inferred from "
+                    f"name {self._name!r} and namespace {self._namespace!r}."
+                )
 
     def __eq__(self, other):
         if not isinstance(other, Name):
@@ -335,15 +344,15 @@ class Names(object):
         if self.default_namespace is None:
             # I have no default -- no change
             return properties
-        if 'namespace' not in properties:
+        if "namespace" not in properties:
             # he has no namespace - no change
             return properties
-        if properties['namespace'] != self.default_namespace:
+        if properties["namespace"] != self.default_namespace:
             # we're different - leave his stuff alone
             return properties
         # we each have a namespace and it's redundant. delete his.
         prunable = properties.copy()
-        del prunable['namespace']
+        del prunable["namespace"]
         return prunable
 
     def register(self, schema):
@@ -352,13 +361,11 @@ class Names(object):
         :param Any schema: Named Avro schema to register in this tracker.
         """
         if schema.fullname in VALID_TYPES:
-            raise SchemaParseException(
-                f'{schema.fullname} is a reserved type name.')
+            raise SchemaParseException(f"{schema.fullname} is a reserved type name.")
         if schema.fullname in self.names:
-            raise SchemaParseException(
-                f'Avro name {schema.fullname!r} already exists.')
+            raise SchemaParseException(f"Avro name {schema.fullname!r} already exists.")
 
-        logger.log(DEBUG_VERBOSE, 'Register new name for %r', schema.fullname)
+        logger.log(DEBUG_VERBOSE, "Register new name for %r", schema.fullname)
         self._names[schema.fullname] = schema
 
 
@@ -372,12 +379,12 @@ class NamedSchema(Schema):
     """
 
     def __init__(
-            self,
-            data_type,
-            name=None,
-            namespace=None,
-            names=None,
-            other_props=None,
+        self,
+        data_type,
+        name=None,
+        namespace=None,
+        names=None,
+        other_props=None,
     ):
         """Initializes a new named schema object.
 
@@ -388,16 +395,16 @@ class NamedSchema(Schema):
           names: Tracker to resolve and register Avro names.
           other_props: Optional map of additional properties of the schema.
         """
-        assert (data_type in NAMED_TYPES), (f'Invalid named type: {data_type!r}')
+        assert data_type in NAMED_TYPES, f"Invalid named type: {data_type!r}"
         self._avro_name = names.get_name(name=name, namespace=namespace)
 
         super(NamedSchema, self).__init__(data_type, other_props)
 
         names.register(self)
 
-        self._props['name'] = self.name
+        self._props["name"] = self.name
         if self.namespace:
-            self._props['namespace'] = self.namespace
+            self._props["namespace"] = self.namespace
 
     @property
     def avro_name(self):
@@ -432,8 +439,8 @@ class NamedSchema(Schema):
     # Schema types that have names (records, enums, and fixed) must be aware
     # of not re-defining schemas that are already listed in the parameter names.
     @abc.abstractmethod
-    def to_json(self, names):
-        ...
+    def to_json(self, names): ...
+
 
 # ------------------------------------------------------------------------------
 
@@ -445,15 +452,7 @@ class Field(object):
     """Representation of the schema of a field in a record."""
 
     def __init__(
-            self,
-            data_type,
-            name,
-            index,
-            has_default,
-            default=_NO_DEFAULT,
-            order=None,
-            doc=None,
-            other_props=None
+        self, data_type, name, index, has_default, default=_NO_DEFAULT, order=None, doc=None, other_props=None
     ):
         """Initializes a new Field object.
 
@@ -468,9 +467,9 @@ class Field(object):
           other_props:
         """
         if (not isinstance(name, str)) or (not name):
-            raise SchemaParseException(f'Invalid record field name: {name!r}.')
+            raise SchemaParseException(f"Invalid record field name: {name!r}.")
         if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
-            raise SchemaParseException(f'Invalid record field order: {order!r}.')
+            raise SchemaParseException(f"Invalid record field order: {order!r}.")
 
         # All properties of this record field:
         self._props = {}
@@ -480,17 +479,17 @@ class Field(object):
             self._props.update(other_props)
 
         self._index = index
-        self._type = self._props['type'] = data_type
-        self._name = self._props['name'] = name
+        self._type = self._props["type"] = data_type
+        self._name = self._props["name"] = name
 
         if has_default:
-            self._props['default'] = default
+            self._props["default"] = default
 
         if order is not None:
-            self._props['order'] = order
+            self._props["order"] = order
 
         if doc is not None:
-            self._props['doc'] = doc
+            self._props["doc"] = doc
 
     @property
     def type(self):
@@ -509,7 +508,7 @@ class Field(object):
 
     @property
     def default(self):
-        return self._props['default']
+        return self._props["default"]
 
     @property
     def has_default(self):
@@ -517,11 +516,11 @@ class Field(object):
 
     @property
     def order(self):
-        return self._props.get('order', None)
+        return self._props.get("order", None)
 
     @property
     def doc(self):
-        return self._props.get('doc', None)
+        return self._props.get("doc", None)
 
     @property
     def props(self):
@@ -538,7 +537,7 @@ class Field(object):
         if names is None:
             names = Names()
         to_dump = self.props.copy()
-        to_dump['type'] = self.type.to_json(names)
+        to_dump["type"] = self.type.to_json(names)
         return to_dump
 
     def __eq__(self, that):
@@ -563,7 +562,7 @@ class PrimitiveSchema(Schema):
           data_type: Type of the schema to construct. Must be primitive.
         """
         if data_type not in PRIMITIVE_TYPES:
-            raise AvroException(f'{data_type!r} is not a valid primitive type.')
+            raise AvroException(f"{data_type!r} is not a valid primitive type.")
         super(PrimitiveSchema, self).__init__(data_type, other_props=other_props)
 
     @property
@@ -593,16 +592,16 @@ class PrimitiveSchema(Schema):
 
 class FixedSchema(NamedSchema):
     def __init__(
-            self,
-            name,
-            namespace,
-            size,
-            names=None,
-            other_props=None,
+        self,
+        name,
+        namespace,
+        size,
+        names=None,
+        other_props=None,
     ):
         # Ensure valid ctor args
         if not isinstance(size, int):
-            fail_msg = 'Fixed Schema requires a valid integer for size property.'
+            fail_msg = "Fixed Schema requires a valid integer for size property."
             raise AvroException(fail_msg)
 
         super(FixedSchema, self).__init__(
@@ -612,12 +611,12 @@ class FixedSchema(NamedSchema):
             names=names,
             other_props=other_props,
         )
-        self._props['size'] = size
+        self._props["size"] = size
 
     @property
     def size(self):
         """Returns: the size of this fixed schema, in bytes."""
-        return self._props['size']
+        return self._props["size"]
 
     def to_json(self, names=None):
         if names is None:
@@ -636,13 +635,13 @@ class FixedSchema(NamedSchema):
 
 class EnumSchema(NamedSchema):
     def __init__(
-            self,
-            name,
-            namespace,
-            symbols,
-            names=None,
-            doc=None,
-            other_props=None,
+        self,
+        name,
+        namespace,
+        symbols,
+        names=None,
+        doc=None,
+        other_props=None,
     ):
         """Initializes a new enumeration schema object.
 
@@ -656,10 +655,8 @@ class EnumSchema(NamedSchema):
         """
         symbols = tuple(symbols)
         symbol_set = frozenset(symbols)
-        if (len(symbol_set) != len(symbols)
-                or not all(map(lambda symbol: isinstance(symbol, str), symbols))):
-            raise AvroException(
-                f'Invalid symbols for enum schema: {symbols!r}.')
+        if len(symbol_set) != len(symbols) or not all(map(lambda symbol: isinstance(symbol, str), symbols)):
+            raise AvroException(f"Invalid symbols for enum schema: {symbols!r}.")
 
         super(EnumSchema, self).__init__(
             data_type=ENUM,
@@ -669,14 +666,14 @@ class EnumSchema(NamedSchema):
             other_props=other_props,
         )
 
-        self._props['symbols'] = symbols
+        self._props["symbols"] = symbols
         if doc is not None:
-            self._props['doc'] = doc
+            self._props["doc"] = doc
 
     @property
     def symbols(self):
         """Returns: the symbols defined in this enum."""
-        return self._props['symbols']
+        return self._props["symbols"]
 
     def to_json(self, names=None):
         if names is None:
@@ -709,7 +706,7 @@ class ArraySchema(Schema):
             other_props=other_props,
         )
         self._items_schema = items
-        self._props['items'] = items
+        self._props["items"] = items
 
     @property
     def items(self):
@@ -721,7 +718,7 @@ class ArraySchema(Schema):
             names = Names()
         to_dump = self.props.copy()
         item_schema = self.items
-        to_dump['items'] = item_schema.to_json(names)
+        to_dump["items"] = item_schema.to_json(names)
         return to_dump
 
     def __eq__(self, that):
@@ -747,7 +744,7 @@ class MapSchema(Schema):
             other_props=other_props,
         )
         self._values_schema = values
-        self._props['values'] = values
+        self._props["values"] = values
 
     @property
     def values(self):
@@ -758,7 +755,7 @@ class MapSchema(Schema):
         if names is None:
             names = Names()
         to_dump = self.props.copy()
-        to_dump['values'] = self.values.to_json(names)
+        to_dump["values"] = self.values.to_json(names)
         return to_dump
 
     def __eq__(self, that):
@@ -784,23 +781,21 @@ class UnionSchema(Schema):
         # Validate the schema branches:
 
         # All named schema names are unique:
-        named_branches = tuple(
-            filter(lambda schema: schema.type in NAMED_TYPES, self._schemas))
+        named_branches = tuple(filter(lambda schema: schema.type in NAMED_TYPES, self._schemas))
         unique_names = frozenset(map(lambda schema: schema.fullname, named_branches))
         if len(unique_names) != len(named_branches):
-            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
-            raise AvroException(f'Invalid union branches with duplicate schema name:{schemas}')
+            schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
+            raise AvroException(f"Invalid union branches with duplicate schema name:{schemas}")
 
         # Types are unique within unnamed schemas, and union is not allowed:
-        unnamed_branches = tuple(
-            filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas))
+        unnamed_branches = tuple(filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas))
         unique_types = frozenset(map(lambda schema: schema.type, unnamed_branches))
         if UNION in unique_types:
-            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
-            raise AvroException(f'Invalid union branches contain other unions:{schemas}')
+            schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
+            raise AvroException(f"Invalid union branches contain other unions:{schemas}")
         if len(unique_types) != len(unnamed_branches):
-            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
-            raise AvroException(f'Invalid union branches with duplicate type:{schemas}')
+            schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
+            raise AvroException(f"Invalid union branches with duplicate type:{schemas}")
 
     @property
     def schemas(self):
@@ -865,19 +860,18 @@ class RecordSchema(NamedSchema):
         :rtype: Field
         """
         field_schema = schema_from_json_data(
-            json_data=field_desc['type'],
+            json_data=field_desc["type"],
             names=names,
         )
-        other_props = (
-            dict(filter_keys_out(items=field_desc, keys=FIELD_RESERVED_PROPS)))
+        other_props = dict(filter_keys_out(items=field_desc, keys=FIELD_RESERVED_PROPS))
         return Field(
             data_type=field_schema,
-            name=field_desc['name'],
+            name=field_desc["name"],
             index=index,
-            has_default=('default' in field_desc),
-            default=field_desc.get('default', _NO_DEFAULT),
-            order=field_desc.get('order', None),
-            doc=field_desc.get('doc', None),
+            has_default=("default" in field_desc),
+            default=field_desc.get("default", _NO_DEFAULT),
+            order=field_desc.get("order", None),
+            doc=field_desc.get("doc", None),
             other_props=other_props,
         )
 
@@ -906,21 +900,12 @@ class RecordSchema(NamedSchema):
         field_map = {}
         for field in fields:
             if field.name in field_map:
-                raise SchemaParseException(
-                    f'Duplicate record field name {field.name!r}.')
+                raise SchemaParseException(f"Duplicate record field name {field.name!r}.")
             field_map[field.name] = field
         return field_map
 
     def __init__(
-            self,
-            name,
-            namespace,
-            fields=None,
-            make_fields=None,
-            names=None,
-            record_type=RECORD,
-            doc=None,
-            other_props=None
+        self, name, namespace, fields=None, make_fields=None, names=None, record_type=RECORD, doc=None, other_props=None
     ):
         """Initializes a new record schema object.
 
@@ -954,8 +939,7 @@ class RecordSchema(NamedSchema):
                 other_props=other_props,
             )
         else:
-            raise SchemaParseException(
-                f'Invalid record type: {record_type!r}.')
+            raise SchemaParseException(f"Invalid record type: {record_type!r}.")
 
         nested_names = []
         if record_type in [RECORD, ERROR]:
@@ -973,9 +957,9 @@ class RecordSchema(NamedSchema):
 
         self._field_map = RecordSchema._make_field_map(self._fields)
 
-        self._props['fields'] = fields
+        self._props["fields"] = fields
         if doc is not None:
-            self._props['doc'] = doc
+            self._props["doc"] = doc
 
     @property
     def fields(self):
@@ -999,7 +983,7 @@ class RecordSchema(NamedSchema):
         names.names[self.fullname] = self
 
         to_dump = names.prune_namespace(self.props.copy())
-        to_dump['fields'] = [f.to_json(names) for f in self.fields]
+        to_dump["fields"] = [f.to_json(names) for f in self.fields]
         return to_dump
 
     def __eq__(self, that):
@@ -1048,31 +1032,29 @@ def _schema_from_json_array(json_array, names):
 
 
 def _schema_from_json_object(json_object, names):
-    data_type = json_object.get('type')
+    data_type = json_object.get("type")
     if data_type is None:
-        raise SchemaParseException(
-            f'Avro schema JSON descriptor has no "type" property: {json_object!r}')
+        raise SchemaParseException(f'Avro schema JSON descriptor has no "type" property: {json_object!r}')
 
-    other_props = dict(
-        filter_keys_out(items=json_object, keys=SCHEMA_RESERVED_PROPS))
+    other_props = dict(filter_keys_out(items=json_object, keys=SCHEMA_RESERVED_PROPS))
 
     if data_type in PRIMITIVE_TYPES:
         # FIXME should not ignore other properties
         result = PrimitiveSchema(data_type, other_props=other_props)
 
     elif data_type in NAMED_TYPES:
-        name = json_object.get('name')
-        namespace = json_object.get('namespace', names.default_namespace)
+        name = json_object.get("name")
+        namespace = json_object.get("namespace", names.default_namespace)
         if data_type == FIXED:
-            size = json_object.get('size')
+            size = json_object.get("size")
             result = FixedSchema(name, namespace, size, names, other_props)
         elif data_type == ENUM:
-            symbols = json_object.get('symbols')
-            doc = json_object.get('doc')
+            symbols = json_object.get("symbols")
+            doc = json_object.get("doc")
             result = EnumSchema(name, namespace, symbols, names, doc, other_props)
 
         elif data_type in [RECORD, ERROR]:
-            field_desc_list = json_object.get('fields', ())
+            field_desc_list = json_object.get("fields", ())
 
             def MakeFields(names):
                 return tuple(RecordSchema.make_field_list(field_desc_list, names))
@@ -1083,17 +1065,17 @@ def _schema_from_json_object(json_object, names):
                 make_fields=MakeFields,
                 names=names,
                 record_type=data_type,
-                doc=json_object.get('doc'),
+                doc=json_object.get("doc"),
                 other_props=other_props,
             )
         else:
-            raise ValueError(f'Internal error: unknown type {data_type!r}.')
+            raise ValueError(f"Internal error: unknown type {data_type!r}.")
 
     elif data_type in VALID_TYPES:
         # Unnamed, non-primitive Avro type:
 
         if data_type == ARRAY:
-            items_desc = json_object.get('items')
+            items_desc = json_object.get("items")
             if items_desc is None:
                 raise SchemaParseException(f'Invalid array schema descriptor with no "items" : {json_object!r}.')
             result = ArraySchema(
@@ -1102,7 +1084,7 @@ def _schema_from_json_object(json_object, names):
             )
 
         elif data_type == MAP:
-            values_desc = json_object.get('values')
+            values_desc = json_object.get("values")
             if values_desc is None:
                 raise SchemaParseException(f'Invalid map schema descriptor with no "values" : {json_object!r}.')
             result = MapSchema(
@@ -1111,17 +1093,15 @@ def _schema_from_json_object(json_object, names):
             )
 
         elif data_type == ERROR_UNION:
-            error_desc_list = json_object.get('declared_errors')
+            error_desc_list = json_object.get("declared_errors")
             assert error_desc_list is not None
-            error_schemas = map(
-                lambda desc: schema_from_json_data(desc, names=names),
-                error_desc_list)
+            error_schemas = map(lambda desc: schema_from_json_data(desc, names=names), error_desc_list)
             result = ErrorUnionSchema(schemas=error_schemas)
 
         else:
-            raise ValueError(f'Internal error: unknown type {data_type!r}.')
+            raise ValueError(f"Internal error: unknown type {data_type!r}.")
     else:
-        raise SchemaParseException(f'Invalid JSON descriptor for an Avro schema: {json_object!r}')
+        raise SchemaParseException(f"Invalid JSON descriptor for an Avro schema: {json_object!r}")
     return result
 
 
@@ -1148,8 +1128,7 @@ def schema_from_json_data(json_data, names=None):
     # Select the appropriate parser based on the JSON data type:
     parser = _JSONDataParserTypeMap.get(type(json_data))
     if parser is None:
-        raise SchemaParseException(
-            f'Invalid JSON descriptor for an Avro schema: {json_data!r}.')
+        raise SchemaParseException(f"Invalid JSON descriptor for an Avro schema: {json_data!r}.")
     return parser(json_data, names=names)
 
 
@@ -1168,8 +1147,8 @@ def parse(json_string):
         json_data = json.loads(json_string)
     except Exception as exn:
         raise SchemaParseException(
-            f'Error parsing schema from JSON: {json_string!r}. '
-            f'Error message: {exn!r}.') from exn
+            f"Error parsing schema from JSON: {json_string!r}. " f"Error message: {exn!r}."
+        ) from exn
 
     # Initialize the names object
     names = Names()

@@ -42,8 +42,8 @@ logger = logging.getLogger(__name__)
 # ------------------------------------------------------------------------------
 # Constants
 
-STRUCT_FLOAT = struct.Struct('<f')  # little-endian float
-STRUCT_DOUBLE = struct.Struct('<d')  # little-endian double
+STRUCT_FLOAT = struct.Struct("<f")  # little-endian float
+STRUCT_DOUBLE = struct.Struct("<d")  # little-endian double
 
 # ------------------------------------------------------------------------------
 # Exceptions
@@ -55,6 +55,7 @@ class SchemaResolutionException(schema.AvroException):
         if writer_schema:
             fail_msg += f"\nWriter's Schema: {pretty_writers}"
         schema.AvroException.__init__(self, fail_msg)
+
 
 # ------------------------------------------------------------------------------
 # Decoder
@@ -81,11 +82,11 @@ class BinaryDecoder(object):
         :returns: The next n bytes from the input.
         :rtype: bytes
         """
-        assert (n >= 0), n
+        assert n >= 0, n
         input_bytes = self.reader.read(n)
         if n > 0 and not input_bytes:
             raise StopIteration
-        assert (len(input_bytes) == n), input_bytes
+        assert len(input_bytes) == n, input_bytes
         return input_bytes
 
     @staticmethod
@@ -149,7 +150,7 @@ class BinaryDecoder(object):
         Bytes are encoded as a long followed by that many bytes of data.
         """
         nbytes = self.read_long()
-        assert (nbytes >= 0), nbytes
+        assert nbytes >= 0, nbytes
         return self.read(nbytes)
 
     def read_utf8(self):
@@ -160,9 +161,9 @@ class BinaryDecoder(object):
         input_bytes = self.read_bytes()
         if PY3:
             try:
-                return input_bytes.decode('utf-8')
+                return input_bytes.decode("utf-8")
             except UnicodeDecodeError as exn:
-                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)  # pylint: disable=do-not-log-raised-errors
+                logger.error("Invalid UTF-8 input bytes: %r", input_bytes)  # pylint: disable=do-not-log-raised-errors
                 raise exn
         else:
             # PY2
@@ -216,41 +217,40 @@ class DatumReader(object):
     def set_writer_schema(self, writer_schema):
         self._writer_schema = writer_schema
 
-    writer_schema = property(lambda self: self._writer_schema,
-                             set_writer_schema)
+    writer_schema = property(lambda self: self._writer_schema, set_writer_schema)
 
     def read(self, decoder):
         return self.read_data(self.writer_schema, decoder)
 
     def read_data(self, writer_schema, decoder):
         # function dispatch for reading data based on type of writer's schema
-        if writer_schema.type == 'null':
+        if writer_schema.type == "null":
             result = decoder.read_null()
-        elif writer_schema.type == 'boolean':
+        elif writer_schema.type == "boolean":
             result = decoder.read_boolean()
-        elif writer_schema.type == 'string':
+        elif writer_schema.type == "string":
             result = decoder.read_utf8()
-        elif writer_schema.type == 'int':
+        elif writer_schema.type == "int":
             result = decoder.read_int()
-        elif writer_schema.type == 'long':
+        elif writer_schema.type == "long":
             result = decoder.read_long()
-        elif writer_schema.type == 'float':
+        elif writer_schema.type == "float":
             result = decoder.read_float()
-        elif writer_schema.type == 'double':
+        elif writer_schema.type == "double":
             result = decoder.read_double()
-        elif writer_schema.type == 'bytes':
+        elif writer_schema.type == "bytes":
             result = decoder.read_bytes()
-        elif writer_schema.type == 'fixed':
+        elif writer_schema.type == "fixed":
             result = self.read_fixed(writer_schema, decoder)
-        elif writer_schema.type == 'enum':
+        elif writer_schema.type == "enum":
             result = self.read_enum(writer_schema, decoder)
-        elif writer_schema.type == 'array':
+        elif writer_schema.type == "array":
             result = self.read_array(writer_schema, decoder)
-        elif writer_schema.type == 'map':
+        elif writer_schema.type == "map":
             result = self.read_map(writer_schema, decoder)
-        elif writer_schema.type in ['union', 'error_union']:
+        elif writer_schema.type in ["union", "error_union"]:
             result = self.read_union(writer_schema, decoder)
-        elif writer_schema.type in ['record', 'error', 'request']:
+        elif writer_schema.type in ["record", "error", "request"]:
             result = self.read_record(writer_schema, decoder)
         else:
             fail_msg = f"Cannot read unknown schema type: {writer_schema.type}"
@@ -258,35 +258,35 @@ class DatumReader(object):
         return result
 
     def skip_data(self, writer_schema, decoder):
-        if writer_schema.type == 'null':
+        if writer_schema.type == "null":
             result = decoder.skip_null()
-        elif writer_schema.type == 'boolean':
+        elif writer_schema.type == "boolean":
             result = decoder.skip_boolean()
-        elif writer_schema.type == 'string':
+        elif writer_schema.type == "string":
             result = decoder.skip_utf8()
-        elif writer_schema.type == 'int':
+        elif writer_schema.type == "int":
             result = decoder.skip_int()
-        elif writer_schema.type == 'long':
+        elif writer_schema.type == "long":
             result = decoder.skip_long()
-        elif writer_schema.type == 'float':
+        elif writer_schema.type == "float":
             result = decoder.skip_float()
-        elif writer_schema.type == 'double':
+        elif writer_schema.type == "double":
             result = decoder.skip_double()
-        elif writer_schema.type == 'bytes':
+        elif writer_schema.type == "bytes":
             result = decoder.skip_bytes()
-        elif writer_schema.type == 'fixed':
+        elif writer_schema.type == "fixed":
             result = self.skip_fixed(writer_schema, decoder)
-        elif writer_schema.type == 'enum':
+        elif writer_schema.type == "enum":
             result = self.skip_enum(decoder)
-        elif writer_schema.type == 'array':
+        elif writer_schema.type == "array":
             self.skip_array(writer_schema, decoder)
             result = None
-        elif writer_schema.type == 'map':
+        elif writer_schema.type == "map":
             self.skip_map(writer_schema, decoder)
             result = None
-        elif writer_schema.type in ['union', 'error_union']:
+        elif writer_schema.type in ["union", "error_union"]:
             result = self.skip_union(writer_schema, decoder)
-        elif writer_schema.type in ['record', 'error', 'request']:
+        elif writer_schema.type in ["record", "error", "request"]:
             self.skip_record(writer_schema, decoder)
             result = None
         else:
@@ -389,8 +389,9 @@ class DatumReader(object):
         # schema resolution
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = (f"Can't access branch index {index_of_schema} "
-                        f"for union with {len(writer_schema.schemas)} branches")
+            fail_msg = (
+                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+            )
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
@@ -400,8 +401,9 @@ class DatumReader(object):
     def skip_union(self, writer_schema, decoder):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = (f"Can't access branch index {index_of_schema} "
-                        f"for union with {len(writer_schema.schemas)} branches")
+            fail_msg = (
+                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+            )
             raise SchemaResolutionException(fail_msg, writer_schema)
         return self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 
