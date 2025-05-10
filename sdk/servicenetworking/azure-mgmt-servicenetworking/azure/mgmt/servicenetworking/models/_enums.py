@@ -39,6 +39,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class IpAccessRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action of Ip Access Rule."""
+
+    ALLOW = "allow"
+    """Allow Source Ip Prefixes"""
+    DENY = "deny"
+    """Deny Source Ip Prefixes"""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -57,6 +66,8 @@ class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WAF = "waf"
     """Policy of Type WAF"""
+    IP_ACCESS_RULES = "ipAccessRules"
+    """Policy of Type IpAccessRules"""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
