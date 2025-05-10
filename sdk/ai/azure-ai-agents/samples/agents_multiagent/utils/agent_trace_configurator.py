@@ -18,10 +18,10 @@ class AgentTraceConfigurator:
         self.agents_client = agents_client
 
     def enable_azure_monitor_tracing(self):
-        application_insights_connection_string = os.environ.get("AI_APPINSIGHTS_CONNECTION_STRING")
+        application_insights_connection_string = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
         if not application_insights_connection_string:
-            print("AI_APPINSIGHTS_CONNECTION_STRING environment variable was not set.")
-            print("Please create AI_APPINSIGHTS_CONNECTION_STRING with the Application Insights,")
+            print("APPLICATIONINSIGHTS_CONNECTION_STRING environment variable was not set.")
+            print("Please create APPLICATIONINSIGHTS_CONNECTION_STRING with the Application Insights,")
             print("connection string. It should be enabled for this project.")
             print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
             exit()
