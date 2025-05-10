@@ -7,7 +7,7 @@ from azure.ai.evaluation._constants import EvaluationMetrics
 # Mapping of risk categories to their corresponding evaluation metrics
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
-    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_UNFAIRNESS,
+    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM
 }
@@ -20,4 +20,4 @@ def get_metric_from_risk_category(risk_category: RiskCategory) -> str:
     :return: The corresponding evaluation metric
     :rtype: str
     """
-    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_UNFAIRNESS)
+    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_FAIRNESS)
