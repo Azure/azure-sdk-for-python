@@ -68,6 +68,7 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
                 "name": "str",
                 "type": "uri_file",
                 "version": "str",
+                "connectionName": "str",
                 "description": "str",
                 "id": "str",
                 "isReference": bool,

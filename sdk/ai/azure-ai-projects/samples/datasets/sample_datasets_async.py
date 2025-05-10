@@ -29,6 +29,7 @@ USAGE:
 
 import asyncio
 import os
+import re
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion
@@ -62,31 +63,39 @@ async def main() -> None:
             )
             print(dataset)
 
-            # print(
-            #     f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
-            # )
-            # dataset = await project_client.datasets.upload_folder(
-            #     name=dataset_name,
-            #     version=dataset_version_2,
-            #     folder=data_folder,
-            # )
-            # print(dataset)
+            print(
+                f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+            )
+            dataset = await project_client.datasets.upload_folder(
+                name=dataset_name,
+                version=dataset_version_2,
+                folder=data_folder,
+                connection_name=connection_name,
+                file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
+            )
+            print(dataset)
 
-            # print(f"Get an existing Dataset version `{dataset_version_1}`:")
-            # dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
-            # print(dataset)
+            print(f"Get an existing Dataset version `{dataset_version_1}`:")
+            dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
+            print(dataset)
 
-            # print("List latest versions of all Datasets:")
-            # async for dataset in project_client.datasets.list():
-            #     print(dataset)
+            print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
+            asset_credential = await project_client.datasets.get_credentials(
+                name=dataset_name, version=dataset_version_1
+            )
+            print(asset_credential)
 
-            # print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-            # async for dataset in project_client.datasets.list_versions(name=dataset_name):
-            #     print(dataset)
+            print("List latest versions of all Datasets:")
+            async for dataset in project_client.datasets.list():
+                print(dataset)
 
-            # print("Delete all Dataset versions created above:")
-            # await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
-            # await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
+            print(f"Listing all versions of the Dataset named `{dataset_name}`:")
+            async for dataset in project_client.datasets.list_versions(name=dataset_name):
+                print(dataset)
+
+            print("Delete all Dataset versions created above:")
+            await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+            await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 
 if __name__ == "__main__":
