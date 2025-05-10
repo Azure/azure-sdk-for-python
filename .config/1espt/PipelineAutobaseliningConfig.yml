@@ -127,3 +127,12 @@ pipelines:
           lastModifiedDate: 2025-02-03
         armory:
           lastModifiedDate: 2025-02-03
+  5947:
+    retail:
+      binary:
+        credscan:
+          lastModifiedDate: 2025-05-10
+        binskim:
+          lastModifiedDate: 2025-05-10
+        spotbugs:
+          lastModifiedDate: 2025-05-10
