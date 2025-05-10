@@ -141,7 +141,6 @@ def _aggregate_content_safety_metrics(
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("azure.ai.evaluation.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):
@@ -739,7 +738,17 @@ def evaluate(
             :end-before: [END evaluate_method]
             :language: python
             :dedent: 8
-            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
+            :caption: Run an evaluation on local data with one or more evaluators using azure.ai.evaluation.AzureAIProject
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START evaluate_method]
+            :end-before: [END evaluate_method]
+            :language: python
+            :dedent: 8
+            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
         return _evaluate(
@@ -977,17 +986,6 @@ def _preprocess_data(
 
     # Split normal evaluators and OAI graders
     evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
-
-    input_data_df = _validate_and_load_data(
-        target,
-        data,
-        evaluators_and_graders,
-        output_path,
-        azure_ai_project,
-        evaluation_name
-    )
-    if target is not None:
-        _validate_columns_for_target(input_data_df, target)
 
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()

@@ -30,8 +30,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             :end-before: [END document_retrieval_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a Document RetrievalEvaluator
+            :caption: Initialize and call a DocumentRetrievalEvaluator
 
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START document_retrieval_evaluator]
+            :end-before: [END document_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call DocumentRetrievalEvaluator using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+    
     .. admonition:: Example with Threshold:
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_document_retrieval_evaluator]
