@@ -63,6 +63,7 @@ class EvaluationRunProperties:
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
     NAME_MAP = "_azureml.evaluation_name_map"
+    NAME_MAP_LENGTH = "_azureml.evaluation_name_map_length"
 
 
 @experimental
@@ -79,6 +80,13 @@ class _AggregationType(enum.Enum):
     MIN = "min"
     SUM = "sum"
     CUSTOM = "custom"
+
+class TokenScope(str, enum.Enum):
+    """Defines the scope of the token used to access Azure resources."""
+
+    DEFAULT_AZURE_MANAGEMENT = "https://management.azure.com/.default"
+    COGNITIVE_SERVICES_MANAGEMENT = "https://ai.azure.com/.default"
+    AZURE_ML = "https://ml.azure.com/.default"
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"

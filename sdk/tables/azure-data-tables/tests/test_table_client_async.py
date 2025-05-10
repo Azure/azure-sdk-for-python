@@ -11,6 +11,7 @@ import time
 from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
+from unittest.mock import patch
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
@@ -669,6 +670,25 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
             assert service.url.startswith(f"https://{self.tables_storage_account_name}.table.core.windows.net")
             assert service.credential == token_credential
             assert not hasattr(service.credential, "account_key")
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("client_class", SERVICES)
+    def test_create_service_client_with_custom_audience(self, client_class):
+        url = self.account_url(self.tables_storage_account_name, "table")
+        token_credential = self.get_token_credential()
+        custom_audience = "https://foo.bar"
+        expected_scope = custom_audience + "/.default"
+
+        # Test with patching to verify AsyncBearerTokenChallengePolicy is created with the proper scope.
+        with patch("azure.data.tables.aio._authentication_async.AsyncBearerTokenChallengePolicy") as mock_policy:
+            client_class(
+                url,
+                credential=token_credential,
+                table_name="foo",
+                audience=custom_audience,
+            )
+
+            mock_policy.assert_called_with(token_credential, expected_scope)
 
     @pytest.mark.skip("HTTP prefix does not raise an error")
     @pytest.mark.asyncio

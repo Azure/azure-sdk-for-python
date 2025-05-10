@@ -12,7 +12,7 @@ from azure.ai.evaluation._common.constants import (
     _InternalAnnotationTasks,
 )
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_multimodal
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._constants import _AggregationType
@@ -50,7 +50,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     def __init__(
         self,
         eval_metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
-        azure_ai_project: dict,
+        azure_ai_project: Union[dict, str],
         credential: TokenCredential,
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,

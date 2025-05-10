@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Union, Any
+from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import AIProjectClient as RestEvaluationServiceClient
 from azure.ai.evaluation._common.onedp.models import (PendingUploadRequest, PendingUploadType, EvaluationResult,
-                                                      ResultType, AssetCredentialRequest, EvaluationUpload, InputDataset)
+                                                      ResultType, AssetCredentialRequest, EvaluationUpload, InputDataset, RedTeamUpload)
 from azure.storage.blob import ContainerClient
 from .utils import upload
 
@@ -22,7 +22,8 @@ class EvaluationServiceOneDPClient:
             **kwargs,
         )
 
-    def create_evaluation_result(self, *, name: str, path: str, version=1, **kwargs) -> None:
+    def create_evaluation_result(
+            self, *, name: str, path: str, version=1, metrics: Dict[str, int]=None, result_type: ResultType=ResultType.EVALUATION, **kwargs) -> EvaluationResult:
         """Create and upload evaluation results to Azure evaluation service.
 
         This method uploads evaluation results from a local path to Azure Blob Storage
@@ -38,13 +39,17 @@ class EvaluationServiceOneDPClient:
         :type path: str
         :param version: The version number for the evaluation results, defaults to 1
         :type version: int, optional
+        :param metrics: Metrics to be added to evaluation result
+        :type metrics: Dict[str, int], optional
+        :param result_type: Evaluation Result Type to create
+        :type result_type: ResultType, optional
         :param kwargs: Additional keyword arguments to pass to the underlying API calls
         :return: The response from creating the evaluation result version
         :rtype: EvaluationResult
         :raises: Various exceptions from the underlying API calls or upload process
         """
 
-        LOGGER.debug(f"Creating evaluation result for {name} with version {version} from path {path}")
+        LOGGER.debug(f"Creating evaluation result for {name} with version {version} type {result_type} from path {path}")
         start_pending_upload_response = self.rest_client.evaluation_results.start_pending_upload(
             name=name,
             version=version,
@@ -58,12 +63,13 @@ class EvaluationServiceOneDPClient:
             upload(path=path, container_client=container_client, logger=LOGGER)
 
         LOGGER.debug(f"Creating evaluation result version for {name} with version {version}")
-        create_version_response = self.rest_client.evaluation_results.create_version(
+        create_version_response = self.rest_client.evaluation_results.create_or_update_version(
             body=EvaluationResult(
                 blob_uri=start_pending_upload_response.blob_reference_for_consumption.blob_uri,
-                result_type=ResultType.EVALUATION,
+                result_type=result_type,
                 name=name,
-                version=version
+                version=version,
+                metrics=metrics,
             ),
             name=name,
             version=version,
@@ -109,6 +115,48 @@ class EvaluationServiceOneDPClient:
         update_run_response = self.rest_client.evaluations.upload_update_run(
             name=name,
             evaluation=evaluation,
+            **kwargs
+        )
+
+        return update_run_response
+
+    def start_red_team_run(self, *, red_team: RedTeamUpload, **kwargs):
+        """Start a new red team run in the Azure evaluation service.
+
+        This method creates a new red team run with the provided configuration details.
+
+        :param red_team: The red team configuration to upload
+        :type red_team: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
+        :param kwargs: Additional keyword arguments to pass to the underlying API calls
+        :return: The created red team run object
+        :rtype: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
+        :raises: Various exceptions from the underlying API calls
+        """
+        upload_run_response = self.rest_client.red_teams.upload_run(
+            redteam=red_team,
+            **kwargs
+        )
+
+        return upload_run_response
+
+    def update_red_team_run(self, *, name: str, red_team: RedTeamUpload, **kwargs):
+        """Update an existing red team run in the Azure evaluation service.
+
+        This method updates a red team run with new information such as status changes,
+        result references, or other metadata.
+
+        :param name: The identifier of the red team run to update
+        :type name: str
+        :param red_team: The updated red team configuration
+        :type red_team: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
+        :param kwargs: Additional keyword arguments to pass to the underlying API calls
+        :return: The updated red team run object
+        :rtype: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
+        :raises: Various exceptions from the underlying API calls
+        """
+        update_run_response = self.rest_client.red_teams.upload_update_run(
+            name=name,
+            redteam=red_team,
             **kwargs
         )
 

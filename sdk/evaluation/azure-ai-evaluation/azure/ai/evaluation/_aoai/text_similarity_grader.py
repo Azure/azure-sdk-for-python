@@ -5,7 +5,7 @@ from typing import Any, Dict, Union
 from typing_extensions import Literal
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.eval_text_similarity_grader import EvalTextSimilarityGrader
+from openai.types.graders import TextSimilarityGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
@@ -47,7 +47,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     :param name: The name of the grader.
     :type name: str
     :param kwargs: Additional keyword arguments to pass to the grader.
-    :type kwargs: Dict[str, Any]
+    :type kwargs: Any
 
 
     """
@@ -56,6 +56,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
 
     def __init__(
         self,
+        *,
         model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         evaluation_metric: Literal[
             "fuzzy_match",
@@ -67,16 +68,15 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             "rouge_3",
             "rouge_4",
             "rouge_5",
-            "rouge_l",
             "cosine",
         ],
         input: str,
         pass_threshold: float,
         reference: str,
         name: str,
-        **kwargs: Dict[str, Any]
+        **kwargs: Any
     ):
-        grader = EvalTextSimilarityGrader(
+        grader = TextSimilarityGrader(
             evaluation_metric=evaluation_metric,
             input=input,
             pass_threshold=pass_threshold,
@@ -84,4 +84,4 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             reference=reference,
             type="text_similarity",
         )
-        super().__init__(model_config, grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
