@@ -99,9 +99,9 @@ class QueueAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -140,9 +140,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -547,8 +547,8 @@ class QueuePropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [
-            QueueProperties._from_generated(q) for q in self._response.queue_items
-        ]  # pylint: disable=protected-access
+            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, props_list
 
 
@@ -575,9 +575,9 @@ def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
     :rtype: Dict[str, Any]
     """
     return {
-        "analytics_logging": QueueAnalyticsLogging._from_generated(
+        "analytics_logging": QueueAnalyticsLogging._from_generated(  # pylint: disable=protected-access
             generated.logging
-        ),  # pylint: disable=protected-access
+        ),
         "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         "cors": [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access

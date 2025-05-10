@@ -674,8 +674,8 @@ class QueueClient(  # type: ignore [misc]
                 **kwargs
             )
             wrapped_message = (
-                QueueMessage._from_generated(message[0]) if message != [] else None
-            )  # pylint: disable=protected-access
+                QueueMessage._from_generated(message[0]) if message != [] else None  # pylint: disable=protected-access
+            )
             return wrapped_message
         except HttpResponseError as error:
             process_storage_error(error)

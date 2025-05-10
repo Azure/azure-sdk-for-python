@@ -20,10 +20,10 @@ from urllib.parse import parse_qs, quote
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import (
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
     HttpTransport,
     RequestsTransport,
-)  # pylint: disable=non-abstract-transport-import, no-name-in-module
+)
 from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     ContentDecodePolicy,
