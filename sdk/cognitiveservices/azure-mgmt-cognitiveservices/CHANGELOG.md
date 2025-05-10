@@ -1,5 +1,83 @@
 # Release History
 
+## 13.7.0b1 (2025-05-19)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `projects`
+  - Client `CognitiveServicesManagementClient` added operation group `account_connection`
+  - Client `CognitiveServicesManagementClient` added operation group `project_connection`
+  - Client `CognitiveServicesManagementClient` added operation group `account_capability_hosts`
+  - Client `CognitiveServicesManagementClient` added operation group `project_capability_hosts`
+  - Model `AccountProperties` added property `network_injections`
+  - Model `AccountProperties` added property `allow_project_management`
+  - Model `AccountProperties` added property `default_project`
+  - Model `AccountProperties` added property `associated_projects`
+  - Model `DeploymentProperties` added property `spillover_deployment_name`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Added model `AADAuthTypeConnectionProperties`
+  - Added model `AccessKeyAuthTypeConnectionProperties`
+  - Added model `AccountKeyAuthTypeConnectionProperties`
+  - Added model `ApiKeyAuthConnectionProperties`
+  - Added model `CapabilityHost`
+  - Added enum `CapabilityHostKind`
+  - Added model `CapabilityHostProperties`
+  - Added enum `CapabilityHostProvisioningState`
+  - Added model `ConnectionAccessKey`
+  - Added model `ConnectionAccountKey`
+  - Added model `ConnectionApiKey`
+  - Added enum `ConnectionAuthType`
+  - Added enum `ConnectionCategory`
+  - Added enum `ConnectionGroup`
+  - Added model `ConnectionManagedIdentity`
+  - Added model `ConnectionOAuth2`
+  - Added model `ConnectionPersonalAccessToken`
+  - Added model `ConnectionPropertiesV2`
+  - Added model `ConnectionPropertiesV2BasicResource`
+  - Added model `ConnectionPropertiesV2BasicResourceArmPaginatedResult`
+  - Added model `ConnectionServicePrincipal`
+  - Added model `ConnectionSharedAccessSignature`
+  - Added model `ConnectionUpdateContent`
+  - Added model `ConnectionUsernamePassword`
+  - Added model `CustomKeys`
+  - Added model `CustomKeysConnectionProperties`
+  - Added model `ManagedIdentityAuthTypeConnectionProperties`
+  - Added enum `ManagedPERequirement`
+  - Added enum `ManagedPEStatus`
+  - Added model `NetworkInjections`
+  - Added model `NoneAuthTypeConnectionProperties`
+  - Added model `OAuth2AuthTypeConnectionProperties`
+  - Added model `PATAuthTypeConnectionProperties`
+  - Added model `Project`
+  - Added model `ProjectListResult`
+  - Added model `ProjectProperties`
+  - Added model `ResourceBase`
+  - Added model `SASAuthTypeConnectionProperties`
+  - Added enum `ScenarioType`
+  - Added model `ServicePrincipalAuthTypeConnectionProperties`
+  - Added model `UsernamePasswordAuthTypeConnectionProperties`
+  - Added model `AccountCapabilityHostsOperations`
+  - Added model `AccountConnectionOperations`
+  - Added model `ProjectCapabilityHostsOperations`
+  - Added model `ProjectConnectionOperations`
+  - Added model `ProjectsOperations`
+  - Method `AccountCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, capability_host_name: str, body: CapabilityHost, content_type: str)`
+  - Method `AccountCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, capability_host_name: str, body: IO[bytes], content_type: str)`
+  - Method `AccountConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[ConnectionPropertiesV2BasicResource], content_type: str)`
+  - Method `AccountConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `AccountConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[ConnectionUpdateContent], content_type: str)`
+  - Method `AccountConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, project_name: str, capability_host_name: str, body: CapabilityHost, content_type: str)`
+  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, project_name: str, capability_host_name: str, body: IO[bytes], content_type: str)`
+  - Method `ProjectConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[ConnectionPropertiesV2BasicResource], content_type: str)`
+  - Method `ProjectConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `ProjectConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[ConnectionUpdateContent], content_type: str)`
+  - Method `ProjectConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `ProjectsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, account_name: str, project_name: str, project: Project, content_type: str)`
+  - Method `ProjectsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, account_name: str, project_name: str, project: IO[bytes], content_type: str)`
+  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, project_name: str, project: Project, content_type: str)`
+  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, project_name: str, project: IO[bytes], content_type: str)`
+
 ## 13.6.0 (2024-12-19)
 
 ### Features Added
