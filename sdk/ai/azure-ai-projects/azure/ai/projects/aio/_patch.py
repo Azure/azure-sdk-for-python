@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import os
 from typing import List, Any, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core.credentials_async import AsyncTokenCredential
@@ -16,6 +17,21 @@ from .operations import InferenceOperations, TelemetryOperations
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.ai.agents.aio import AgentsClient
+
+_console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
+    "true",
+    "1",
+    "yes",
+)
+if _console_logging_enabled:
+    import sys
+    import logging
+
+    azure_logger = logging.getLogger("azure")
+    azure_logger.setLevel(logging.DEBUG)
+    azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+    identity_logger = logging.getLogger("azure.identity")
+    identity_logger.setLevel(logging.ERROR)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -54,6 +70,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+
+        kwargs.setdefault("logging_enable", _console_logging_enabled)
 
         self._kwargs = kwargs.copy()
         self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
