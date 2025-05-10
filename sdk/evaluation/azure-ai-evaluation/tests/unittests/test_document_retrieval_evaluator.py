@@ -116,28 +116,27 @@ def test_incorrect_groundtruth_max():
         exc_info._excinfo[1]
     )
 
-def test_threshold(doc_retrieval_eval_data):
+def test_thresholds(doc_retrieval_eval_data):
     _, records = doc_retrieval_eval_data
     record = records[-1]
     custom_threshold_subset = {
-        "ndcg@3": 0.7,
-        "xdcg@3": 0.7,
-        "fidelity": 0.7,
+        "ndcg_threshold": 0.7,
+        "xdcg_threshold": 0.7,
+        "fidelity_threshold": 0.7,
     }
 
     custom_threshold_superset = {
-        "ndcg@3": 0.7,
-        "xdcg@3": 0.7,
-        "fidelity": 0.7,
-        "top1_relevance": 70,
-        "top3_max_relevance": 70,
-        "total_retrieved_documents": 10,
-        "total_ground_truth_documents": 10,
-        "unknown_metric": 50
+        "ndcg_threshold": 0.7,
+        "xdcg_threshold": 0.7,
+        "fidelity_threshold": 0.7,
+        "top1_relevance_threshold": 70,
+        "top3_max_relevance_threshold": 70,
+        "total_retrieved_documents_threshold": 10,
+        "total_ground_truth_documents_threshold": 10
     }
 
     for threshold in [custom_threshold_subset, custom_threshold_superset]:
-        evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2, threshold=threshold)
+        evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2, **threshold)
         results = evaluator(**record)
 
         expected_keys = [
