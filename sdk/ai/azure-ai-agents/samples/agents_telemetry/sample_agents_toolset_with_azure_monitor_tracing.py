@@ -5,12 +5,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use basic agent operations with function tools from
+    This sample demonstrates how to use agent operations with toolset from
     the Azure Agents service using a synchronous client with Azure Monitor tracing.
     View the results in the "Tracing" tab in your Azure AI Foundry project page.
 
 USAGE:
-    python sample_agents_functions_with_azure_monitor_tracing.py
+    python sample_agents_toolset_with_azure_monitor_tracing.py
 
     Before running the sample:
 

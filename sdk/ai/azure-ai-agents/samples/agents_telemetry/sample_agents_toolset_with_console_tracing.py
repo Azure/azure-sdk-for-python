@@ -5,11 +5,11 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use basic agent operations with function tools from
+    This sample demonstrates how to use agent operations with toolset from
     the Azure Agents service using a synchronous client with tracing to console.
 
 USAGE:
-    python sample_agents_functions_with_console_tracing.py
+    python sample_agents_toolset_with_console_tracing.py
 
     Before running the sample:
 
