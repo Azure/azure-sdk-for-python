@@ -25,7 +25,7 @@ USAGE:
        messages, which may contain personal data. False by default.
 """
 
-import os
+import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
@@ -68,8 +68,15 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
-        print(f"Run status: {run.status}")
+        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+
+        # Poll the run as long as run status is queued or in progress
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            # Wait for a second
+            time.sleep(1)
+            run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+            print(f"Run status: {run.status}")
 
         project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
