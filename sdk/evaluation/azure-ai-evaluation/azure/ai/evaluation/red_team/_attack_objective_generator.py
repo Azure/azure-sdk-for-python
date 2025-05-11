@@ -17,6 +17,9 @@ class RiskCategory(str, Enum):
     Violence = "violence"
     Sexual = "sexual"
     SelfHarm = "self_harm"
+    ProtectedMaterial = "protected_material"
+    ECI = "eci"
+    CodeVulnerability = "code_vulnerability"
 
 class _AttackObjectiveGenerator:
     """Generator for creating attack objectives.

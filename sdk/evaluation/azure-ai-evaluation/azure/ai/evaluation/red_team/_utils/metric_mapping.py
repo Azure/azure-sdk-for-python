@@ -2,14 +2,17 @@
 Mapping utilities for metrics and risk categories in Red Team Agent.
 """
 from .._attack_objective_generator import RiskCategory
-from azure.ai.evaluation._constants import EvaluationMetrics
+from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluationMetrics
 
 # Mapping of risk categories to their corresponding evaluation metrics
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
     RiskCategory.HateUnfairness: EvaluationMetrics.HATE_UNFAIRNESS,
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
-    RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM
+    RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
+    RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
+    RiskCategory.ECI: _InternalEvaluationMetrics.ECI,
+    RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
 }
 
 def get_metric_from_risk_category(risk_category: RiskCategory) -> str:
