@@ -277,7 +277,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
     if hasattr(tool_call.details, _FUNCTION):
-        output = safe_loads(tool_call.details.function.output)
+        output = safe_loads(tool_call.details.function["output"])
     else:
         try:
             # Some built-ins may have output, others may not

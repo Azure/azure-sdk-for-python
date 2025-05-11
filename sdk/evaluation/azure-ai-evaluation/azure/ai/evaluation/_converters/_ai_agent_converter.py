@@ -436,7 +436,7 @@ class AIAgentConverter:
         :rtype: dict
         """
         # Make the API call once and reuse the result.
-        thread_run: object = self._project_get_run(thread_id=thread_id, run_id=run_id)
+        thread_run: object = self._get_run(thread_id=thread_id, run_id=run_id)
 
         # Walk through the "user-facing" conversation history and start adding messages.
         chronological_conversation = self._list_messages_chronological(thread_id)
@@ -512,7 +512,7 @@ class AIAgentConverter:
         all_sorted_tool_calls = AIAgentConverter._sort_messages(self._retrieve_all_tool_calls(thread_id, run_ids))
 
         # The last run should have all the tool definitions.
-        thread_run = self._project_get_run(thread_id=thread_id, run_id=run_ids[-1])
+        thread_run = self._get_run(thread_id=thread_id, run_id=run_ids[-1])
         instructions = thread_run.instructions
 
         # So then we can get the tool definitions.
