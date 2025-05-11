@@ -2,7 +2,7 @@ import json
 from abc import abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import azure.ai.projects as aap
+from azure.ai.projects import __version__ as projects_version
 from azure.ai.projects import AIProjectClient
 
 from typing import List, Union
@@ -31,7 +31,7 @@ class AIAgentConverterFactory:
     def get_converter(project_client: AIProjectClient):
         if project_client is None:
             return None
-        if Version(aap.__version__) > Version("1.0.0b10") or aap.__version__.startswith("1.0.0a"):
+        if Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a"):
             return FDPAgentConverter(project_client=project_client)
         else:
             return LegacyAgentConverter(project_client=project_client)
