@@ -52,10 +52,7 @@ _patch_all = []
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
-    from ._converters._ai_agent_converter import AIAgentConverter
-    from ._converters._legacy_converter import LegacyAgentConverter
-    from ._converters._fdp_converter import FDPAgentConverter
-    from ._converters._ai_converter_factory import AIAgentConverterFactory
+    from ._converters._ai_agent_converter import AIAgentConverterFactory, AIAgentConverter, LegacyAgentConverter, FDPAgentConverter
     _patch_all.append("AIAgentConverter")
     _patch_all.append("LegacyAgentConverter")
     _patch_all.append("FDPAgentConverter")

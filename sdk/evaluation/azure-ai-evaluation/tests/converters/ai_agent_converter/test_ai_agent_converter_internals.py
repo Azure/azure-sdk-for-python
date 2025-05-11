@@ -2,7 +2,7 @@ import json
 import unittest
 from datetime import datetime
 
-from azure.ai.evaluation._converters._ai_agent_converter import AIAgentConverter
+from azure.ai.evaluation import AIAgentConverter
 from azure.ai.evaluation._converters._models import (
     Message,
     AssistantMessage,
