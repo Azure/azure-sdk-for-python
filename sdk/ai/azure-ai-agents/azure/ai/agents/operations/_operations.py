@@ -153,7 +153,7 @@ def build_threads_update_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_threads_delete_request(thread_id: str, **kwargs: Any) -> HttpRequest:
+def build_threads_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -599,7 +599,7 @@ def build_files_upload_file_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_files_delete_request(file_id: str, **kwargs: Any) -> HttpRequest:
+def build_files_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -778,7 +778,9 @@ def build_vector_stores_modify_request(vector_store_id: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_vector_stores_delete_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
+def build_vector_stores_delete_vector_store_request(  # pylint: disable=name-too-long
+    vector_store_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -897,7 +899,9 @@ def build_vector_store_files_get_request(vector_store_id: str, file_id: str, **k
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_vector_store_files_delete_request(vector_store_id: str, file_id: str, **kwargs: Any) -> HttpRequest:
+def build_vector_store_files_delete_vector_store_file_request(  # pylint: disable=name-too-long
+    vector_store_id: str, file_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1211,7 +1215,7 @@ class ThreadsOperations:
         :attr:`threads` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -1678,13 +1682,13 @@ class ThreadsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, thread_id: str, **kwargs: Any) -> _models.ThreadDeletionStatus:
+    def _delete_thread(self, thread_id: str, **kwargs: Any) -> _models._models.ThreadDeletionStatus:
         """Deletes an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.ThreadDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.ThreadDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1698,9 +1702,9 @@ class ThreadsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ThreadDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_threads_delete_request(
+        _request = build_threads_delete_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1730,7 +1734,9 @@ class ThreadsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.ThreadDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1748,7 +1754,7 @@ class MessagesOperations:
         :attr:`messages` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -2264,7 +2270,7 @@ class RunsOperations:
         :attr:`runs` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -3181,7 +3187,7 @@ class RunStepsOperations:
         :attr:`run_steps` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -3374,7 +3380,7 @@ class FilesOperations:
         :attr:`files` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -3517,13 +3523,13 @@ class FilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, file_id: str, **kwargs: Any) -> _models.FileDeletionStatus:
+    def _delete_file(self, file_id: str, **kwargs: Any) -> _models._models.FileDeletionStatus:
         """Delete a previously uploaded file.
 
         :param file_id: The ID of the file to delete. Required.
         :type file_id: str
         :return: FileDeletionStatus. The FileDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.FileDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.FileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3537,9 +3543,9 @@ class FilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.FileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_files_delete_request(
+        _request = build_files_delete_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3569,7 +3575,9 @@ class FilesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FileDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.FileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3704,7 +3712,7 @@ class VectorStoresOperations:
         :attr:`vector_stores` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -4190,14 +4198,14 @@ class VectorStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
+    def _delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models._models.VectorStoreDeletionStatus:
         """Deletes the vector store object matching the specified ID.
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.agents.models.VectorStoreDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.VectorStoreDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4211,9 +4219,9 @@ class VectorStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_vector_stores_delete_request(
+        _request = build_vector_stores_delete_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4243,7 +4251,9 @@ class VectorStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VectorStoreDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.VectorStoreDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4261,7 +4271,7 @@ class VectorStoreFilesOperations:
         :attr:`vector_store_files` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -4578,7 +4588,9 @@ class VectorStoreFilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFileDeletionStatus:
+    def _delete_vector_store_file(
+        self, vector_store_id: str, file_id: str, **kwargs: Any
+    ) -> _models._models.VectorStoreFileDeletionStatus:
         """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
         itself).
 
@@ -4588,7 +4600,7 @@ class VectorStoreFilesOperations:
         :type file_id: str
         :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.agents.models.VectorStoreFileDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.VectorStoreFileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4602,9 +4614,9 @@ class VectorStoreFilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_vector_store_files_delete_request(
+        _request = build_vector_store_files_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -4635,7 +4647,9 @@ class VectorStoreFilesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VectorStoreFileDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.VectorStoreFileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4653,7 +4667,7 @@ class VectorStoreFileBatchesOperations:
         :attr:`vector_store_file_batches` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -5037,7 +5051,7 @@ class VectorStoreFileBatchesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient, AgentsClientConfiguration]):
+class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]):
 
     @overload
     def create_agent(
@@ -5655,13 +5669,13 @@ class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient, AgentsClientCon
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    def _delete_agent(self, agent_id: str, **kwargs: Any) -> _models._models.AgentDeletionStatus:
         """Deletes an agent.
 
         :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.AgentDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5675,7 +5689,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient, AgentsClientCon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_agent_request(
             agent_id=agent_id,
@@ -5707,7 +5721,9 @@ class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient, AgentsClientCon
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.AgentDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
