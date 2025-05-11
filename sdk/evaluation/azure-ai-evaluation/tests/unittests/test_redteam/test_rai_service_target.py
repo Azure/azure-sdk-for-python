@@ -1,4 +1,3 @@
-\
 import pytest
 import unittest.mock as mock
 import json
@@ -160,14 +159,12 @@ async def test_poll_operation_result_timeout(mock_sleep, rai_target):
     # Use a non-async function that returns the dict directly
     def always_running(operation_id=None):
         return {"status": "running"}
-    
-    # Replace the actual get_operation_result function with our mock
+      # Replace the actual get_operation_result function with our mock
     rai_target._client._client.rai_svc.get_operation_result = always_running
 
     result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
 
-    # Check for the fallback response
-    assert "generated_question" in result 
+    assert result is None
     MockLogger.error.assert_called_with(f"Failed to get operation result after {max_retries} attempts. Last error: None")
 
 @pytest.mark.asyncio
@@ -185,15 +182,15 @@ async def test_poll_operation_result_not_found_fallback(mock_sleep, rai_target):
         call_count += 1
         # Real exception with the text that the implementation will check for
         raise Exception("operation id 'not-found-op-id' not found")
-    
-    # Replace the client's get_operation_result with our function
+      # Replace the client's get_operation_result with our function
     rai_target._client._client.rai_svc.get_operation_result = operation_not_found
 
     result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
 
     # The implementation should recognize the error pattern after 3 calls and return fallback
     assert call_count == 3
-    assert "generated_question" in result # Check if it's the fallback response
+
+    assert result is None
     MockLogger.error.assert_called_with("Consistently getting 'operation ID not found' errors. Extracted ID 'not-found-op-id' may be incorrect.")
 
 @pytest.mark.asyncio
@@ -263,30 +260,54 @@ async def test_send_prompt_async_success_flow(mock_process, mock_poll, mock_extr
     assert json.loads(response_piece.converted_value) == {"processed": "final_content"}
 
 @pytest.mark.asyncio
-async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_request):
+async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_request, monkeypatch):
     """Tests fallback response generation on exception during send_prompt_async."""
-    # Reset the mock to clear any previous calls
-    MockLogger.reset_mock()
+    # Import the module to patch
+    from azure.ai.evaluation.red_team._utils import _rai_service_target
+    import logging
+    import time
+    from unittest.mock import patch
     
-    # Simulate failure during submission with async exception
-    async def async_exception(*args, **kwargs):
-        raise Exception("Submission failed")
+    # Setup a logger that we can check
+    test_logger = mock.Mock()
+    test_logger.error = mock.Mock()
+    test_logger.debug = mock.Mock()
+    test_logger.warning = mock.Mock()
+    test_logger.info = mock.Mock()
+    rai_target.logger = test_logger
     
-    MockRAISvc.submit_simulation.side_effect = async_exception
-
-    response = await rai_target.send_prompt_async(prompt_request=mock_prompt_request)
-
-    # Don't assert on the exact error message as it may change with implementation
-    # Instead just verify that the logger.error was called at least once
-    assert MockLogger.error.called
+    # Make sure the logger is available at the module level for the retry decorator
+    monkeypatch.setattr(_rai_service_target, "logger", test_logger)
     
-    assert len(response.request_pieces) == 1
-    response_piece = response.request_pieces[0]
-    assert response_piece.role == "assistant"
-    # Check if the response is the fallback JSON
-    fallback_content = json.loads(response_piece.converted_value)
-    assert "generated_question" in fallback_content
-    assert "rationale_behind_jailbreak" in fallback_content
+    # Create a counter to track how many times the exception is triggered
+    call_count = 0
+    
+    # Create an exception-raising function that will trigger the retry mechanism
+    # We use a counter to make sure it fails enough times to trigger the fallback
+    # This is important - we need to replace the _extract_operation_id method since 
+    # that's where the exception is most appropriate to trigger retries
+    async def mock_extract_operation_id(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        # Raise ValueError since that's what the retry decorator is configured to catch
+        raise ValueError(f"Simulated failure #{call_count}")
+      # Patch the method directly on the instance to ensure we're affecting the retry mechanism
+    with patch.object(rai_target, '_extract_operation_id', side_effect=mock_extract_operation_id):
+        
+        # Call the function, which should trigger retries and eventually use fallback
+        response = await rai_target.send_prompt_async(prompt_request=mock_prompt_request)
+        
+        # Verify that our exception was triggered multiple times (showing retry happened)
+        assert call_count >= 5, f"Expected at least 5 retries but got {call_count}"
+        
+        # Verify we got a valid response with the expected structure
+        assert len(response.request_pieces) == 1
+        response_piece = response.request_pieces[0]
+        assert response_piece.role == "assistant"
+          # Check if the response is the fallback JSON with expected fields
+        fallback_content = json.loads(response_piece.converted_value)
+        assert "generated_question" in fallback_content
+        assert "rationale_behind_jailbreak" in fallback_content
 
 def test_validate_request_success(rai_target, mock_prompt_request):
     """Tests successful validation."""

@@ -9,36 +9,29 @@ import numpy as np
 from unittest.mock import AsyncMock, MagicMock, patch, call, mock_open
 from datetime import datetime
 
-try:
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
+from azure.ai.evaluation.red_team._red_team import (
+    RedTeam, RiskCategory, AttackStrategy
+)
+from azure.ai.evaluation.red_team._red_team_result import (
+    ScanResult, RedTeamResult
+)
+from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.core.credentials import TokenCredential
 
-if has_pyrit:
-    from azure.ai.evaluation.red_team._red_team import (
-        RedTeam, RiskCategory, AttackStrategy
-    )
-    from azure.ai.evaluation.red_team._red_team_result import (
-        ScanResult, RedTeamResult
-    )
-    from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
-    from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-    from azure.core.credentials import TokenCredential
+# PyRIT related imports to mock
+from pyrit.prompt_converter import PromptConverter
+from pyrit.orchestrator import PromptSendingOrchestrator
+from pyrit.common import DUCK_DB
+from pyrit.exceptions import PyritException
+from pyrit.models import ChatMessage
 
-    # PyRIT related imports to mock
-    from pyrit.prompt_converter import PromptConverter
-    from pyrit.orchestrator import PromptSendingOrchestrator
-    from pyrit.common import DUCK_DB
-    from pyrit.exceptions import PyritException
-    from pyrit.models import ChatMessage
-
-    # Imports for Crescendo tests
-    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
-    from pyrit.prompt_target import PromptChatTarget
-    from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
-    from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
-    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+# Imports for Crescendo tests
+from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+from pyrit.prompt_target import PromptChatTarget
+from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
+from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 
 
 @pytest.fixture
@@ -153,7 +146,6 @@ def red_team_instance(mock_azure_ai_project, mock_credential):
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamInitialization:
     """Test the initialization of RedTeam."""
 
@@ -186,7 +178,6 @@ class TestRedTeamInitialization:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamMlflowIntegration:
     """Test MLflow integration in RedTeam."""
 
@@ -414,7 +405,6 @@ class TestRedTeamMlflowIntegration:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamAttackObjectives:
     """Test attack objective handling in RedTeam."""
 
@@ -693,7 +683,6 @@ class TestRedTeamAttackObjectives:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamScan:
     """Test scan method in RedTeam."""
     
@@ -734,23 +723,36 @@ class TestRedTeamScan:
         red_team.attack_objective_generator.risk_categories = [RiskCategory.Violence]
         red_team.attack_objective_generator.custom_attack_seed_prompts = None
         red_team.trace_destination = "mock_trace_destination"  # Add missing attribute
+        # Create a mock OneDp project response for the _start_redteam_mlflow_run method
+        mock_response = MagicMock()
+        mock_response.properties = {"AiStudioEvaluationUri": "https://test-studio-url.com"}
         
         with patch.object(red_team, "_get_chat_target", return_value=MagicMock()), \
-             patch.object(red_team, "_start_redteam_mlflow_run", return_value=MagicMock()), \
-             patch("azure.ai.evaluation.red_team._red_team._get_ai_studio_url", return_value="https://test-url.com"), \
-             pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            patch.object(red_team, "_one_dp_project", True), \
+            patch.object(red_team.generated_rai_client, "_evaluation_onedp_client") as mock_onedp_client, \
+            pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            
+            # Mock the OneDp client response
+            mock_onedp_client.start_red_team_run.return_value = mock_response
+            
+            # Call scan with incompatible strategies
             await red_team.scan(
                 target=MagicMock(),
                 attack_strategies=incompatible_strategies
-            )
-        
+        )
+    
         # Test MultiTurn with other strategies
         incompatible_strategies = [AttackStrategy.MultiTurn, AttackStrategy.Base64]
         
         with patch.object(red_team, "_get_chat_target", return_value=MagicMock()), \
-             patch.object(red_team, "_start_redteam_mlflow_run", return_value=MagicMock()), \
-             patch("azure.ai.evaluation.red_team._red_team._get_ai_studio_url", return_value="https://test-url.com"), \
-             pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            patch.object(red_team, "_one_dp_project", True), \
+            patch.object(red_team.generated_rai_client, "_evaluation_onedp_client") as mock_onedp_client, \
+            pytest.raises(ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."):
+            
+            # Mock the OneDp client response
+            mock_onedp_client.start_red_team_run.return_value = mock_response
+        
+            # Call scan with incompatible strategies
             await red_team.scan(
                 target=MagicMock(),
                 attack_strategies=incompatible_strategies
@@ -786,7 +788,6 @@ class TestRedTeamScan:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamOrchestrator:
     """Test orchestrator functionality in RedTeam."""
 
@@ -884,7 +885,6 @@ class TestRedTeamOrchestrator:
 
 ### Tests for Crescendo Orchestrator ###
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCrescendoOrchestrator:
     """Test Crescendo orchestrator functionality in RedTeam."""
 
@@ -904,7 +904,9 @@ class TestCrescendoOrchestrator:
         mock_crescendo_orchestrator_instance = AsyncMock(spec=CrescendoOrchestrator)
         mock_crescendo_orchestrator_instance.run_attack_async = AsyncMock()
 
-        with patch('azure.ai.evaluation.red_team._red_team.CrescendoOrchestrator', return_value=mock_crescendo_orchestrator_instance) as mock_crescendo_class, \
+        # Mock _write_pyrit_outputs_to_file to prevent file writing and FileNotFoundError
+        with patch.object(red_team_instance, '_write_pyrit_outputs_to_file', return_value='mocked_file_path') as mock_write_pyrit, \
+             patch('azure.ai.evaluation.red_team._red_team.CrescendoOrchestrator', return_value=mock_crescendo_orchestrator_instance) as mock_crescendo_class, \
              patch('azure.ai.evaluation.red_team._red_team.AzureRAIServiceTarget', AsyncMock(spec=AzureRAIServiceTarget)) as mock_rai_target, \
              patch('azure.ai.evaluation.red_team._red_team.RAIServiceEvalChatTarget', AsyncMock(spec=RAIServiceEvalChatTarget)) as mock_rai_eval_target, \
              patch('azure.ai.evaluation.red_team._red_team.AzureRAIServiceTrueFalseScorer', AsyncMock(spec=AzureRAIServiceTrueFalseScorer)) as mock_rai_scorer:
@@ -922,6 +924,14 @@ class TestCrescendoOrchestrator:
             assert orchestrator_result is mock_crescendo_orchestrator_instance
             assert mock_crescendo_class.call_count == len(mock_prompts)
             assert mock_crescendo_orchestrator_instance.run_attack_async.call_count == len(mock_prompts)
+            
+            # Verify _write_pyrit_outputs_to_file was called with the expected arguments
+            assert mock_write_pyrit.call_count == len(mock_prompts)
+            for i, call_args in enumerate(mock_write_pyrit.call_args_list):
+                assert call_args.kwargs['orchestrator'] is mock_crescendo_orchestrator_instance
+                assert call_args.kwargs['strategy_name'] == strategy_name
+                assert call_args.kwargs['risk_category'] == risk_category_name
+                assert call_args.kwargs['batch_idx'] == i+1
             
             for i in range(len(mock_prompts)):
                 current_call_args = mock_crescendo_class.call_args_list[i]
@@ -969,7 +979,6 @@ class TestCrescendoOrchestrator:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamProcessing:
     """Test processing functionality in RedTeam."""
 
@@ -1209,7 +1218,6 @@ class TestRedTeamProcessing:
         mock_evaluate.assert_not_called()
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResultCreation:
     """Test ScanResult and RedTeamResult creation."""
 
@@ -1315,7 +1323,6 @@ class TestRedTeamResultCreation:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResult:
     """Test RedTeamResult functionality."""
 
@@ -1413,7 +1420,6 @@ class TestRedTeamResult:
         assert "Severity Level: high" in simulation_text
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamOrchestratorSelection:
     """Test orchestrator selection in RedTeam."""
 
