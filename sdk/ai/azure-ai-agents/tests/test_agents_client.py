@@ -569,10 +569,7 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # delete thread
-            deletion_status = client.threads.delete(thread.id)
-            assert deletion_status.id == thread.id
-            assert deletion_status.deleted == True
-            print("Deleted thread, thread ID", deletion_status.id)
+            client.threads._delete_thread(thread.id)
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -2482,7 +2479,7 @@ class TestAgentClient(AzureRecordedTestCase):
         else:
             run = ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
-        ai_client.vector_stores.delete(vector_store.id)
+        ai_client.vector_stores.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = list(ai_client.messages.list(thread_id=thread.id))
         assert len(messages)
@@ -2906,7 +2903,7 @@ class TestAgentClient(AzureRecordedTestCase):
             messages = list(ai_client.messages.list(thread_id=thread.id))
             assert len(messages)
 
-            ai_client.vector_stores.delete(vector_store.id)
+            ai_client.vector_stores.delete_vector_store(vector_store.id)
             # delete agent and close client
             ai_client.delete_agent(agent.id)
             print("Deleted agent")
@@ -3006,7 +3003,7 @@ class TestAgentClient(AzureRecordedTestCase):
     def _remove_file_maybe(self, file_id: str, ai_client: AgentsClient) -> None:
         """Remove file if we have file ID."""
         if file_id:
-            ai_client.files.delete(file_id)
+            ai_client.files.delete_file(file_id)
 
     @agentClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
@@ -3054,7 +3051,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 print(f"Run finished with status: {run.status}")
 
                 # delete file
-                client.files.delete(file.id)
+                client.files.delete_file(file.id)
                 print("Deleted file")
 
                 # get messages

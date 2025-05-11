@@ -94,7 +94,7 @@ with agents_client:
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, run ID: {run.id}")
 
-    agents_client.vector_stores.delete(vector_store.id)
+    agents_client.vector_stores.delete_vector_store(vector_store.id)
     print("Deleted vector store")
 
     agents_client.delete_agent(agent.id)

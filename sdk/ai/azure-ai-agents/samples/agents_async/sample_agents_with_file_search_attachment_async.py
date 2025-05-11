@@ -69,7 +69,7 @@ async def main() -> None:
 
             print(f"Run completed with status: {run.status}")
 
-            await agents_client.files.delete(file.id)
+            await agents_client.files.delete_file(file.id)
             print("Deleted file")
 
             await agents_client.delete_agent(agent.id)

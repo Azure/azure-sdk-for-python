@@ -69,7 +69,7 @@ async def main():
                 # Check if you got "Rate limit is exceeded.", then you want to get more quota
                 print(f"Run failed: {run.last_error}")
 
-            await agents_client.files.delete(file.id)
+            await agents_client.files.delete_file(file.id)
             print("Deleted file")
 
             await agents_client.delete_agent(agent.id)

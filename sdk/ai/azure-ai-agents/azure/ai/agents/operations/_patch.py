@@ -34,6 +34,8 @@ from .. import models as _models
 from ..models._enums import FilePurpose, RunStatus
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
+from ._operations import ThreadsOperations as ThreadsOperationsGenerated
+from ._operations import AgentsClientOperationsMixin as AgentsClientOperationsMixinGenerated
 from ._operations import MessagesOperations as MessagesOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
@@ -73,6 +75,32 @@ def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
             except json.JSONDecodeError:
                 continue
     return False
+
+
+class AgentsClientOperationsMixin(AgentsClientOperationsMixinGenerated):
+    @distributed_trace
+    def delete_agent(self, agent_id: str, **kwargs: Any) -> None:
+        """Deletes an agent.
+
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_agent(agent_id=agent_id, **kwargs)
+        return None
+
+
+class ThreadsOperations(ThreadsOperationsGenerated):
+    @distributed_trace
+    def delete_thread(self, thread_id: str, **kwargs: Any) -> None:
+        """Deletes an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_thread(thread_id=thread_id, **kwargs)
+        return None
 
 
 class RunsOperations(RunsOperationsGenerated):
@@ -1607,6 +1635,17 @@ class FilesOperations(FilesOperationsGenerated):
             logger.error("An error occurred in save_file: %s", e)
             raise
 
+    @distributed_trace
+    def delete_file(self, file_id: str, **kwargs: Any) -> None:
+        """Delete a previously uploaded file.
+
+        :param file_id: The ID of the file to delete. Required.
+        :type file_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_file(file_id, **kwargs)
+        return None
+
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
 
@@ -1798,6 +1837,17 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
             vector_store = super().get(vector_store.id)
 
         return vector_store
+
+    @distributed_trace
+    def delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> None:
+        """Deletes the vector store object matching the specified ID.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_vector_store(vector_store_id=vector_store_id, **kwargs)
+        return None
 
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
@@ -2160,6 +2210,20 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         return vector_store_file
 
+    @distributed_trace
+    def delete_vector_store_file(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
+        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        itself).
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param file_id: Identifier of the file. Required.
+        :type file_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_vector_store_file(vector_store_id=vector_store_id, file_id=file_id, **kwargs)
+        return None
+
 
 class MessagesOperations(MessagesOperationsGenerated):
 
@@ -2216,6 +2280,8 @@ class MessagesOperations(MessagesOperationsGenerated):
 
 
 __all__: List[str] = [
+    "AgentsClientOperationsMixin",
+    "ThreadsOperations",
     "MessagesOperations",
     "RunsOperations",
     "FilesOperations",
