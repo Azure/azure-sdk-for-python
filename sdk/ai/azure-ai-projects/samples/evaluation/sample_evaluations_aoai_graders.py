@@ -35,6 +35,10 @@ from azure.ai.projects.models import (
     # DatasetVersion,
 )
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 endpoint = os.environ["PROJECT_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 model_endpoint = os.environ["MODEL_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com
 model_api_key= os.environ["MODEL_API_KEY"]
@@ -44,7 +48,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # [START evaluations_sample]
+        # [START evaluations_sample_aoai_graders]
         # TODO : Uncomment the following lines once dataset creation works
         # print(
         #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
@@ -82,6 +86,51 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 "bleu_score": EvaluatorConfiguration(
                     id=EvaluatorIds.BLEU_SCORE.value,
                 ),
+                "string_check": EvaluatorConfiguration(
+                    id=EvaluatorIds.STRING_CHECK_GRADER.value,
+                    init_params={
+                        "input" :"{{item.query}}",
+                        "name":"starts with what is",
+                        "operation": "like",
+                        "reference": "What is",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "label_model": EvaluatorConfiguration(
+                    id=EvaluatorIds.LABEL_GRADER.value,
+                    init_params={
+                        "input": [{"content": "{{item.query}}", "role": "user"}],
+                        "labels": ["too short", "just right", "too long"],
+                        "passing_labels": ["just right"],
+                        "model": model_deployment_name,
+                        "name": "label",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "text_similarity": EvaluatorConfiguration(
+                    id=EvaluatorIds.TEXT_SIMILARITY_GRADER.value,
+                    init_params={
+                        "evaluation_metric": "fuzzy_match",
+                        "input": "{{item.query}}",
+                        "name": "similarity",
+                        "pass_threshold" :1,
+                        "reference":"{{item.query}}",
+                        "deployment_name": model_deployment_name,
+                    },
+                ),
+                "general": EvaluatorConfiguration(
+                    id=EvaluatorIds.GENERAL_GRADER.value,
+                    init_params={
+                        "deployment_name": model_deployment_name,
+                        "grader_config": {
+                            "input": "{{item.query}}",
+                            "name": "contains hello",
+                            "operation": "like",
+                            "reference": "hello",
+                            "type": "string_check",
+                        },
+                    },
+                ),
             },
         )
 
@@ -100,4 +149,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         for evaluation in project_client.evaluations.list():
             print(evaluation)
 
-        # [END evaluations_sample]
+        # [END evaluations_sample_aoai_graders]

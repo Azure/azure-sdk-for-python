@@ -559,8 +559,7 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
-     Required.
+     ``https://blob.windows.core.net/Container/Path``. Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -569,8 +568,7 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
-     <https://blob.windows.core.net/Container/Path>`_. Required."""
+    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -740,14 +738,17 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
+    :ivar connection_name: The Azure Storage Account connection name. Required if
+     startPendingUploadVersion was not called before creating the Dataset.
+    :vartype connection_name: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -762,13 +763,15 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
+    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
-    """Indicates if dataset is reference only or managed by dataset service. If true, the underlying
-     data will be deleted when the dataset version is deleted."""
+    """Indicates if the dataset holds a reference to the storage, or the dataset manages storage
+     itself. If true, the underlying data will not be deleted when the dataset version is deleted."""
+    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read", "create"])
+    """The Azure Storage Account connection name. Required if startPendingUploadVersion was not called
+     before creating the Dataset."""
     id: Optional[str] = rest_field(visibility=["read"])
     """Asset ID, a unique identifier for the asset."""
     name: str = rest_field(visibility=["read"])
@@ -786,6 +789,7 @@ class DatasetVersion(_Model):
         *,
         data_uri: str,
         type: str,
+        connection_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1067,12 +1071,15 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
+    :ivar connection_name: The Azure Storage Account connection name. Required if
+     startPendingUploadVersion was not called before creating the Dataset.
+    :vartype connection_name: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1095,6 +1102,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
         self,
         *,
         data_uri: str,
+        connection_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1113,12 +1121,15 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
-     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
-    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
-     true, the underlying data will be deleted when the dataset version is deleted.
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+     manages storage itself. If true, the underlying data will not be deleted when the dataset
+     version is deleted.
     :vartype is_reference: bool
+    :ivar connection_name: The Azure Storage Account connection name. Required if
+     startPendingUploadVersion was not called before creating the Dataset.
+    :vartype connection_name: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1141,6 +1152,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         self,
         *,
         data_uri: str,
+        connection_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
@@ -1347,7 +1359,7 @@ class PendingUploadRequest(_Model):
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
     :vartype pending_upload_id: str
-    :ivar connection_name: Name of Azure blob storage connection to use for generating temporary
+    :ivar connection_name: Azure Storage Account connection name to use for generating temporary
      SAS token.
     :vartype connection_name: str
     :ivar pending_upload_type: BlobReference is the only supported type. Required. Blob Reference
@@ -1362,7 +1374,7 @@ class PendingUploadRequest(_Model):
     connection_name: Optional[str] = rest_field(
         name="connectionName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of Azure blob storage connection to use for generating temporary SAS token."""
+    """Azure Storage Account connection name to use for generating temporary SAS token."""
     pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )

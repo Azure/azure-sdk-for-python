@@ -254,16 +254,19 @@ dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
     version=dataset_version_1,
     file_path=data_file,
+    connection_name=connection_name,
 )
 print(dataset)
 
 print(
-    f"Upload all files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+    f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
 )
 dataset = project_client.datasets.upload_folder(
     name=dataset_name,
     version=dataset_version_2,
     folder=data_folder,
+    connection_name=connection_name,
+    file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
 )
 print(dataset)
 
@@ -271,15 +274,9 @@ print(f"Get an existing Dataset version `{dataset_version_1}`:")
 dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
 print(dataset)
 
-""" 
-TODO: TypeSpec needs to be fixed for this to work. "body" should be removed.
 print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
-asset_credential = project_client.datasets.get_credentials(
-    name=dataset_name,
-    version=dataset_version_1,
-    body=None)
+asset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
 print(asset_credential)
-"""
 
 print("List latest versions of all Datasets:")
 for dataset in project_client.datasets.list():

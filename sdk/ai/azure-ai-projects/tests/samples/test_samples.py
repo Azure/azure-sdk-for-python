@@ -16,9 +16,8 @@ class TestSamples:
 
     To run this test:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
-    * Define the environment variable PROJECT_ENDPOINT with the endpoint of the Azure AI Foundry project used for testing.
-    * You may also want to make sure ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING is not define (or defined to "false")
-      so you don't get too much console output.
+    * set PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
+    * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
     * Run:  pytest tests/samples/test_samples.py::TestSamples
     * Load the resulting report in Excel: tests\samples\samples_report.csv
     """
@@ -47,18 +46,6 @@ class TestSamples:
             for test_name, (passed, exception_string) in cls._results.items():
                 exception_message = f'"{exception_string.splitlines()[0]}"' if exception_string else ""
                 writer.writerow([f"{'PASS' if passed else 'FAIL'}", test_name, exception_message])
-
-        """
-        report_lines = []
-        if len(cls._results) > 0:
-            for test_name, (passed, exception_string) in cls._results.items():
-                exception_summary = f"\"{exception_string.splitlines()[0]}\"" if exception_string else ""
-                report_lines.append(f"{'PASS' if passed else 'FAIL'}, {test_name}, {exception_summary}")
-        report_content = "\n".join(report_lines)
-        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples_report.csv")
-        with open(report_path, "w", encoding="utf-8") as f:
-            f.write(report_content)
-        """
 
     @classmethod
     def _set_env_vars(cls, sample_name: str, **kwargs):

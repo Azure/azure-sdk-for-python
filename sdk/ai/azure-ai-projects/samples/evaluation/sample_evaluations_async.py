@@ -33,14 +33,12 @@ from azure.ai.projects.models import (
     EvaluatorIds,
     # DatasetVersion,
 )
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 async def main() -> None:
-    endpoint = os.environ["PROJECT_ENDPOINT"]
-    # dataset_name = os.environ["DATASET_NAME"]
+    endpoint = os.environ["PROJECT_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
+    model_api_key = os.environ["MODEL_API_KEY"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
     async with DefaultAzureCredential() as credential:
 
@@ -60,20 +58,37 @@ async def main() -> None:
 
             print("Create an evaluation")
             evaluation: Evaluation = Evaluation(
-                display_name="Sample Evaluation",
-                description="Sample evaluation for testing",  # TODO: Can we optional once bug 4115256 is fixed
-                data=InputDataset(id="<dataset_id>"),  # TODO: update this to use the correct id
+                display_name="Sample Evaluation Async",
+                description="Sample evaluation for testing",
+                # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+                data=InputDataset(id="<>"),
                 evaluators={
                     "relevance": EvaluatorConfiguration(
-                        id=EvaluatorIds.RELEVANCE.value,  # TODO: update this to use the correct id
+                        id=EvaluatorIds.RELEVANCE.value,
                         init_params={
-                            "deployment_name": "gpt-4o",
+                            "deployment_name": model_deployment_name,
                         },
+                        data_mapping={
+                            "query": "${data.query}",
+                            "response": "${data.response}",
+                        },
+                    ),
+                    "violence": EvaluatorConfiguration(
+                        id=EvaluatorIds.VIOLENCE.value,
+                        init_params={
+                            "azure_ai_project": endpoint,
+                        },
+                    ),
+                    "bleu_score": EvaluatorConfiguration(
+                        id=EvaluatorIds.BLEU_SCORE.value,
                     ),
                 },
             )
 
-            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation)
+            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation, headers={
+                "model-endpoint": model_endpoint,
+                "api-key": model_api_key,
+            })
             print(evaluation_response)
 
             print("Get evaluation")
