@@ -48,6 +48,8 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+    account_name: str
+    container_name: str
     def __init__(
         self,
         account_url: str,
@@ -312,7 +314,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> StorageStreamDownloader[bytes]: ...
-    @distributed_trace
+    @distributed_trace  # type: ignore[misc]
     def download_blob(
         self,
         blob: str,
