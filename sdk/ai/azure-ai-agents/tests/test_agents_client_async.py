@@ -57,7 +57,7 @@
 # # TODO clean this up / get rid of anything not in use
 
 # """
-# issues I've noticed with the code: 
+# issues I've noticed with the code:
 #     delete_thread(thread.id) fails
 #     cancel_thread(thread.id) expires/times out occasionally
 #     added time.sleep() to the beginning of my last few tests to avoid limits
@@ -159,7 +159,7 @@
 #         for agent in agents:
 #             await client.delete_agent(agent.id)
 #         assert client.list_agents().data.__len__() == 0
-       
+
 #         # close client
 #         await client.close()
 #     """
@@ -334,20 +334,20 @@
 #                 model="gpt-4o", name="my-agent", instructions="You are helpful agent"
 #             )
 #         assert client.list_agents().data.__len__() == list_length + 1
-#         assert client.list_agents().data[0].id == agent.id 
+#         assert client.list_agents().data[0].id == agent.id
 
 #         # create second agent and check that it appears in the list
 #         agent2 = await client.create_agent(model="gpt-4o", name="my-agent2", instructions="You are helpful agent")
 #         assert client.list_agents().data.__len__() == list_length + 2
-#         assert client.list_agents().data[0].id == agent.id or client.list_agents().data[1].id == agent.id 
+#         assert client.list_agents().data[0].id == agent.id or client.list_agents().data[1].id == agent.id
 
-#         # delete agents and check list 
+#         # delete agents and check list
 #         await client.delete_agent(agent.id)
 #         assert client.list_agents().data.__len__() == list_length + 1
-#         assert client.list_agents().data[0].id == agent2.id 
+#         assert client.list_agents().data[0].id == agent2.id
 
 #         client.delete_agent(agent2.id)
-#         assert client.list_agents().data.__len__() == list_length 
+#         assert client.list_agents().data.__len__() == list_length
 #         print("Deleted agents")
 
 #         # close client
@@ -1122,7 +1122,7 @@
 
 #     """
 #     # TODO another, but check that the number of runs decreases after cancelling runs
-#     # TODO can each thread only support one run? 
+#     # TODO can each thread only support one run?
 #     # test listing runs
 #     @agentClientPreparer()
 #     @recorded_by_proxy_async
@@ -2053,7 +2053,7 @@
 #                 steps = await client.run_steps.list(
 #                     thread_id=thread.id, run_id=run.id
 #                 )
-#             assert steps["data"].__len__() > 0 
+#             assert steps["data"].__len__() > 0
 
 #             assert run.status == "completed"
 #             print("Run completed")
@@ -2998,7 +2998,7 @@
 #             credential=credential,
 #             connection=bad_connection_string,
 #         )
-        
+
 #         # attempt to create agent with bad client
 #         exception_caught = False
 #         try:
@@ -3013,7 +3013,7 @@
 #                 assert "failed to resolve 'foo.bar.some-domain.ms'" in e.message.lower()
 #             else:
 #                 assert "No such host is known" and "foo.bar.some-domain.ms" in str(e)
-        
+
 #         # close client and confirm an exception was caught
 #         await client.close()
 #         assert exception_caught
