@@ -57,7 +57,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         container_name: str,
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        credential: Optional[
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
@@ -76,7 +78,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def from_blob_url(
         cls,
         blob_url: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        credential: Optional[
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+        ] = None,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         *,
         api_version: Optional[str] = None,
@@ -99,7 +103,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         container_name: str,
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        credential: Optional[
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+        ] = None,
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
@@ -169,7 +175,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
-        encoding: str = 'UTF-8',
+        encoding: str = "UTF-8",
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -257,7 +263,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobQueryReader: ...
-
     @distributed_trace
     def delete_blob(
         self,
@@ -277,7 +282,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def undelete_blob(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
     @distributed_trace
     def exists(self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
-
     @distributed_trace
     def get_blob_properties(
         self,
@@ -293,7 +297,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobProperties: ...
-
     @distributed_trace
     def set_http_headers(
         self,
@@ -308,7 +311,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-
     @distributed_trace
     def set_blob_metadata(
         self,
@@ -342,7 +344,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def set_legal_hold(
         self, legal_hold: bool, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Union[str, datetime, bool]]: ...
-
     @distributed_trace
     def create_page_blob(
         self,
@@ -384,7 +385,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
-
     @distributed_trace
     def create_snapshot(
         self,
@@ -448,7 +448,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobLeaseClient: ...
-
     @distributed_trace
     def set_standard_blob_tier(
         self,
@@ -461,7 +460,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-
     @distributed_trace
     def stage_block(
         self,
@@ -477,7 +475,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-
     @distributed_trace
     def stage_block_from_url(
         self,
@@ -494,7 +491,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-
     @distributed_trace
     def get_block_list(
         self,
@@ -505,7 +501,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[BlobBlock], List[BlobBlock]]: ...
-
     @distributed_trace
     def commit_block_list(
         self,
