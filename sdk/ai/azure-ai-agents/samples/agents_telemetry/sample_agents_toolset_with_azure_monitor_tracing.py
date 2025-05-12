@@ -39,7 +39,7 @@ from azure.ai.agents.models import (
 )
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.ai.agents.telemetry import trace_function, enable_telemetry
+from azure.ai.agents.telemetry import trace_function
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -50,8 +50,13 @@ agents_client = AgentsClient(
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
-# enable additional instrumentations if needed
-enable_telemetry()
+try:
+    from azure.ai.agents.telemetry import AIAgentsInstrumentor
+    agents_instrumentor = AIAgentsInstrumentor()
+    if not agents_instrumentor.is_instrumented():
+        agents_instrumentor.instrument()
+except Exception as exc:  # pylint: disable=broad-exception-caught
+    print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

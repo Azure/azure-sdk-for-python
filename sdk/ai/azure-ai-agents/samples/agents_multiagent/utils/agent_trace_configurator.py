@@ -9,7 +9,6 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.telemetry import enable_telemetry
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 
@@ -26,7 +25,13 @@ class AgentTraceConfigurator:
             print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
             exit()
         configure_azure_monitor(connection_string=application_insights_connection_string)
-        enable_telemetry()
+        try:
+            from azure.ai.agents.telemetry import AIAgentsInstrumentor
+            agents_instrumentor = AIAgentsInstrumentor()
+            if not agents_instrumentor.is_instrumented():
+                agents_instrumentor.instrument()
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
     def enable_console_tracing_without_genai(self):
         exporter = ConsoleSpanExporter()
@@ -37,7 +42,18 @@ class AgentTraceConfigurator:
         print("Console tracing enabled without agent traces.")
 
     def enable_console_tracing_with_agent(self):
-        enable_telemetry(destination=sys.stdout)
+        span_exporter = ConsoleSpanExporter()
+        tracer_provider = TracerProvider()
+        tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+        trace.set_tracer_provider(tracer_provider)
+        tracer = trace.get_tracer(__name__)
+        try:
+            from azure.ai.agents.telemetry import AIAgentsInstrumentor
+            agents_instrumentor = AIAgentsInstrumentor()
+            if not agents_instrumentor.is_instrumented():
+                agents_instrumentor.instrument()
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")        
         print("Console tracing enabled with agent traces.")
 
     def display_menu(self):
