@@ -16,7 +16,7 @@ from ._container_client_async import ContainerClient
 class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self,
-        client: Union["BlobClient", "ContainerClient"],
+        client: Union[BlobClient, ContainerClient],
         lease_id: Optional[str] = None
     ) -> None: ...
     @distributed_trace_async
