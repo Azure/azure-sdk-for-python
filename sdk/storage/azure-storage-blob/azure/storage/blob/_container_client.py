@@ -883,7 +883,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
         **kwargs: Any
-    ) -> ItemPaged[BlobProperties]:
+    ) -> ItemPaged[Union[BlobProperties, BlobPrefix]]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -908,8 +908,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        :returns: An iterable (auto-paging) response of BlobProperties or BlobPrefix.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties or ~azure.storage.blob.BlobPrefix]
         """
         if kwargs.pop('prefix', None):
             raise ValueError("Passing 'prefix' has no effect on filtering, " +
