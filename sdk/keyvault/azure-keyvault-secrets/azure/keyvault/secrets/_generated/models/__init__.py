@@ -25,6 +25,7 @@ from ._models import (  # type: ignore
     SecretRestoreParameters,
     SecretSetParameters,
     SecretUpdateParameters,
+    RollSecretParametersObject,
 )
 
 from ._enums import (  # type: ignore
@@ -47,6 +48,7 @@ __all__ = [
     "SecretSetParameters",
     "SecretUpdateParameters",
     "DeletionRecoveryLevel",
+    "RollSecretParametersObject",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

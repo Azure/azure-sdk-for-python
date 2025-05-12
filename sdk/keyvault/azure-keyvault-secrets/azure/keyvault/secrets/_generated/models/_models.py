@@ -508,3 +508,25 @@ class SecretUpdateParameters(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RollSecretParametersObject(object):
+    """Parameters for rolling a secret (creating a new version with a generated value).
+
+    :param tags: Application specific metadata in the form of key-value pairs.
+    :type tags: dict[str, str] or None
+    :param content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
+    :type content_type: str or None
+    :param secret_attributes: The attributes of the secret (enabled, not_before, expires).
+    :type secret_attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes or None
+    """
+
+    def __init__(
+        self,
+        tags: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+        secret_attributes: Optional[str] = None,
+    ) -> None:
+        self.tags = tags
+        self.content_type = content_type
+        self.secret_attributes = secret_attributes

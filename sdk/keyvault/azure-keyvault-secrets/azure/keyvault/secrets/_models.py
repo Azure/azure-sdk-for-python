@@ -386,7 +386,6 @@ class DeletedSecret(object):
         """
         return self._scheduled_purge_date
 
-
 class RollSecretParametersObject(object):
     """Parameters for rolling a secret (creating a new version with a generated value).
 
