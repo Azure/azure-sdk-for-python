@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._models import DeletedSecret, KeyVaultSecret, KeyVaultSecretIdentifier, SecretProperties
+from ._models import DeletedSecret, KeyVaultSecret, KeyVaultSecretIdentifier, SecretProperties, RollSecretParametersObject
 from ._shared.client_base import ApiVersion
 from ._client import SecretClient
 
@@ -12,7 +12,8 @@ __all__ = [
     "KeyVaultSecret",
     "KeyVaultSecretIdentifier",
     "SecretProperties",
-    "DeletedSecret"
+    "DeletedSecret",
+    "RollSecretParametersObject"
 ]
 
 from ._version import VERSION
