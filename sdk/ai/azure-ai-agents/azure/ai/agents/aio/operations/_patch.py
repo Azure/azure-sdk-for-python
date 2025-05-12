@@ -87,7 +87,6 @@ class ThreadsOperations(ThreadsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         await super()._delete_thread(thread_id=thread_id, **kwargs)
-        return None
 
 
 class RunsOperations(RunsOperationsGenerated):
@@ -1630,7 +1629,6 @@ class FilesOperations(FilesOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         await super()._delete_file(file_id, **kwargs)
-        return None
 
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
@@ -1834,7 +1832,6 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
          MutableMapping
         """
         await super()._delete_vector_store(vector_store_id, **kwargs)
-        return None
 
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
@@ -2211,7 +2208,6 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         await super()._delete_vector_store_file(vector_store_id, file_id, **kwargs)
-        return None
 
 
 class MessagesOperations(MessagesOperationsGenerated):

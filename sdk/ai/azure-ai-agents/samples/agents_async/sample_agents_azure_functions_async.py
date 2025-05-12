@@ -97,7 +97,7 @@ async def main():
                 print(f"Last Message: {last_msg.text.value}")
 
             # Delete the agent once done
-            result = await agents_client.delete_agent(agent.id)
+            await agents_client.delete_agent(agent.id)
 
 
 if __name__ == "__main__":
