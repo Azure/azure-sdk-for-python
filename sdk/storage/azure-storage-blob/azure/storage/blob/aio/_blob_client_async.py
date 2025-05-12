@@ -10,7 +10,7 @@ from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, Callable, cast, Dict, IO,
-    Iterable, List, Optional, overload, Tuple, Union,
+    Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self

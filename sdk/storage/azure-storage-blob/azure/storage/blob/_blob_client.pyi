@@ -51,7 +51,7 @@ from ._models import (
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
-class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods
     def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
@@ -152,7 +152,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace
-    def upload_blob(
+    def upload_blob(  # pylint: disable=too-many-locals
         self,
         data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
@@ -404,7 +404,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace
-    def start_copy_from_url(
+    def start_copy_from_url(  # pylint: disable=too-many-locals
         self,
         source_url: str,
         metadata: Optional[Dict[str, str]] = None,
