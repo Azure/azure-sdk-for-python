@@ -51,7 +51,7 @@ def build_threads_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +79,7 @@ def build_threads_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +106,7 @@ def build_threads_get_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_threads_update_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,7 +157,7 @@ def build_threads_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -182,7 +182,7 @@ def build_messages_create_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -217,7 +217,7 @@ def build_messages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -251,7 +251,7 @@ def build_messages_get_request(thread_id: str, message_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +277,7 @@ def build_messages_update_request(thread_id: str, message_id: str, **kwargs: Any
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -307,7 +307,7 @@ def build_runs_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -343,7 +343,7 @@ def build_runs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -375,7 +375,7 @@ def build_runs_get_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,7 +401,7 @@ def build_runs_update_request(thread_id: str, run_id: str, **kwargs: Any) -> Htt
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -429,7 +429,7 @@ def build_runs_submit_tool_outputs_request(thread_id: str, run_id: str, **kwargs
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -456,7 +456,7 @@ def build_runs_cancel_request(thread_id: str, run_id: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -488,7 +488,7 @@ def build_run_steps_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -526,7 +526,7 @@ def build_run_steps_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -563,7 +563,7 @@ def build_files_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -584,7 +584,7 @@ def build_files_upload_file_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -603,7 +603,7 @@ def build_files_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -627,7 +627,7 @@ def build_files_get_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -651,7 +651,7 @@ def build_files_get_file_content_request(file_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -682,7 +682,7 @@ def build_vector_stores_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -710,7 +710,7 @@ def build_vector_stores_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -731,7 +731,7 @@ def build_vector_stores_get_request(vector_store_id: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -756,7 +756,7 @@ def build_vector_stores_modify_request(vector_store_id: str, **kwargs: Any) -> H
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -784,7 +784,7 @@ def build_vector_stores_delete_vector_store_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,7 +817,7 @@ def build_vector_store_files_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -852,7 +852,7 @@ def build_vector_store_files_create_request(vector_store_id: str, **kwargs: Any)
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -878,7 +878,7 @@ def build_vector_store_files_get_request(vector_store_id: str, file_id: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -905,7 +905,7 @@ def build_vector_store_files_delete_vector_store_file_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -933,7 +933,7 @@ def build_vector_store_file_batches_create_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -961,7 +961,7 @@ def build_vector_store_file_batches_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -988,7 +988,7 @@ def build_vector_store_file_batches_cancel_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1057,7 +1057,7 @@ def build_agents_create_agent_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1085,7 +1085,7 @@ def build_agents_list_agents_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1112,7 +1112,7 @@ def build_agents_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1137,7 +1137,7 @@ def build_agents_update_agent_request(agent_id: str, **kwargs: Any) -> HttpReque
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1163,7 +1163,7 @@ def build_agents_delete_agent_request(agent_id: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1188,7 +1188,7 @@ def build_agents_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

@@ -597,9 +597,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             )
 
     @distributed_trace
-    def delete_agent(  # pylint: disable=delete-operation-wrong-return-type
-        self, agent_id: str, **kwargs: Any
-    ) -> None:
+    def delete_agent(self, agent_id: str, **kwargs: Any) -> None:  # pylint: disable=delete-operation-wrong-return-type
         """Deletes an agent.
 
         :param agent_id: Identifier of the agent. Required.
