@@ -6,7 +6,7 @@
 # pylint: disable=unused-argument
 
 from datetime import datetime
-from typing import Any, Optional, Union, TYPE_CHECKING
+from typing import Any, Optional, Union
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
