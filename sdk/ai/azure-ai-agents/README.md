@@ -1172,10 +1172,13 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
-# enable additional instrumentations
-from azure.ai.agents.telemetry import enable_telemetry
-
-enable_telemetry()
+try:
+    from azure.ai.agents.telemetry import AIAgentsInstrumentor
+    agents_instrumentor = AIAgentsInstrumentor()
+    if not agents_instrumentor.is_instrumented():
+        agents_instrumentor.instrument()
+except Exception as exc:  # pylint: disable=broad-exception-caught
+    print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
