@@ -14,7 +14,7 @@ def sip_trunk_from_generated(fqdn, generated):
         fqdn=fqdn,
         sip_signaling_port=generated.sip_signaling_port,
         enabled=generated.enabled,
-        trunk_health=generated.health,
+        health=generated.health,
         direct_transfer=generated.direct_transfer,
         privacy_header=generated.privacy_header,
         ip_address_version=generated.ip_address_version,

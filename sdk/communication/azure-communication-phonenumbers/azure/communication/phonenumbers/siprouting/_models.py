@@ -13,8 +13,8 @@ class SipTrunk(object):
     :vartype sip_signaling_port: int
     :ivar enabled: Enabled flag.
     :vartype enabled: bool
-    :ivar trunk_health: Represents health state of a SIP trunk for routing calls.
-    :vartype trunk_health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
+    :ivar health: Represents health state of a SIP trunk for routing calls.
+    :vartype health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
     :ivar direct_transfer: When enabled, removes Azure Communication Services from the signaling
      path on call transfer and sets the SIP Refer-To header to the trunk's FQDN. By default false.
     :vartype direct_transfer: bool
@@ -32,7 +32,7 @@ class SipTrunk(object):
         "fqdn": {"key": "fqdn", "type": "str"},
         "sip_signaling_port": {"key": "sipSignalingPort", "type": "int"},
         "enabled": {"key": "enabled", "type": "bool"},
-        "trunk_health": {"key": "trunk_health", "type": "TrunkHealth"},
+        "health": {"key": "health", "type": "TrunkHealth"},
         "direct_transfer": {"key": "directTransfer", "type": "bool"},
         "privacy_header": {"key": "privacyHeader", "type": "str"},
         "ip_address_version": {"key": "ipAddressVersion", "type": "str"},
@@ -46,8 +46,8 @@ class SipTrunk(object):
         :paramtype sip_signaling_port: int
         :keyword enabled: Enabled flag.
         :paramtype enabled: bool
-        :keyword trunk_health: Represents health state of a SIP trunk for routing calls.
-        :paramtype trunk_health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
+        :keyword health: Represents health state of a SIP trunk for routing calls.
+        :paramtype health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
         :keyword direct_transfer: When enabled, removes Azure Communication Services from the signaling
          path on call transfer and sets the SIP Refer-To header to the trunk's FQDN. By default false.
         :paramtype direct_transfer: bool
@@ -63,7 +63,7 @@ class SipTrunk(object):
         self.fqdn = kwargs.get("fqdn", None)
         self.sip_signaling_port = kwargs.get("sip_signaling_port", None)
         self.enabled = kwargs.get("enabled", None)
-        self.trunk_health = kwargs.get("trunk_health", None)
+        self.health = kwargs.get("health", None)
         self.direct_transfer = kwargs.get("direct_transfer", None)
         self.privacy_header = kwargs.get("privacy_header", None)
         self.ip_address_version = kwargs.get("ip_address_version", None)
