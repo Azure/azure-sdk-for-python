@@ -41,15 +41,14 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     This will be `None` if no lease has yet been acquired or modified."""
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["BlobClient", "ContainerClient"],
-        lease_id: Optional[str] = None
+        self, client: Union["BlobClient", "ContainerClient"], lease_id: Optional[str] = None
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
-        if hasattr(client, 'blob_name'):
+        if hasattr(client, "blob_name"):
             self._client = client._client.blob
-        elif hasattr(client, 'container_name'):
+        elif hasattr(client, "container_name"):
             self._client = client._client.container
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
@@ -112,17 +111,18 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         mod_conditions = get_modify_conditions(kwargs)
         try:
             response: Any = await self._client.acquire_lease(
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
-        self.etag = response.get('etag')
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
+        self.etag = response.get("etag")
 
     @distributed_trace_async
     async def renew(self, **kwargs: Any) -> None:
@@ -169,15 +169,16 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             response: Any = await self._client.renew_lease(
                 lease_id=self.id,
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def release(self, **kwargs: Any) -> None:
@@ -222,15 +223,16 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             response: Any = await self._client.release_lease(
                 lease_id=self.id,
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
@@ -275,15 +277,16 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             response: Any = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
@@ -336,11 +339,12 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         mod_conditions = get_modify_conditions(kwargs)
         try:
             response: Any = await self._client.break_lease(
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time') # type: ignore
+        return response.get("lease_time")  # type: ignore
