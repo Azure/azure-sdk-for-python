@@ -330,7 +330,7 @@ def _is_session_token_request(
     return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
             and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
                  or request_object.operation_type == "Batch"
-                 or cosmos_client_connection._global_endpoint_manager.get_use_multiple_write_locations()))
+                 or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
 
 
 def set_session_token_header(
