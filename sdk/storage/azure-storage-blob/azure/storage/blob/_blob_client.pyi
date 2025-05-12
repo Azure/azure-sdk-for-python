@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-argument
 
 from datetime import datetime
 from typing import (
@@ -50,8 +51,8 @@ from ._models import (
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
-class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
-    def __init__(
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         container_name: str,

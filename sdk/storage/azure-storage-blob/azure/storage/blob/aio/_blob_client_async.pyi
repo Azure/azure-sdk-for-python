@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-argument
 
 from datetime import datetime
 from typing import (
@@ -49,8 +50,8 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore[misc]
-    def __init__(
+class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword # type: ignore[misc]
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         container_name: str,
@@ -73,7 +74,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    def _format_url(self, hostname: str) -> str: ...
     @classmethod
     def from_blob_url(
         cls,
