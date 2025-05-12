@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-import
+# pylint: disable=unused-argument
 
 from datetime import datetime
 from typing import Any, Optional, Union, TYPE_CHECKING
@@ -14,7 +14,11 @@ from ._blob_client import BlobClient
 from ._container_client import ContainerClient
 
 class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
-    def __init__(self, client: Union[BlobClient, ContainerClient], lease_id: Optional[str] = None) -> None: ...
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self,
+        client: Union[BlobClient, ContainerClient],
+        lease_id: Optional[str] = None
+    ) -> None: ...
     @distributed_trace
     def acquire(
         self,
