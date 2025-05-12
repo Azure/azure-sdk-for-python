@@ -50,7 +50,11 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword # type: ignore[misc]
+class BlobClient(  # pylint: disable=client-accepts-api-version-keyword, too-many-methods # type: ignore[misc]
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
@@ -151,7 +155,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
-    async def upload_blob(
+    async def upload_blob(  # pylint: disable=too-many-locals
         self,
         data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
@@ -384,7 +388,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace_async
-    async def start_copy_from_url(
+    async def start_copy_from_url(  # pylint: disable=too-many-locals
         self,
         source_url: str,
         metadata: Optional[Dict[str, str]] = None,
