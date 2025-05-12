@@ -44,13 +44,13 @@ class AIAgentConverter:
         :type project_client: AIProjectClient
         """
         self.project_client = project_client
-        self._data_retriever = AIAgentConverter.get_data_retriever(project_client=project_client)
+        self._data_retriever = AIAgentConverter._get_data_retriever(project_client=project_client)
 
     @staticmethod
-    def get_data_retriever(project_client: AIProjectClient):
+    def _get_data_retriever(project_client: AIProjectClient):
         if project_client is None:
             return None
-        if Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a"):
+        if Version(projects_version) > Version("1.0.0b10"):
             return FDPAgentDataRetriever(project_client=project_client)
         else:
             return LegacyAgentDataRetriever(project_client=project_client)
