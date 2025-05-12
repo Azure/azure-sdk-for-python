@@ -10,13 +10,10 @@ import os
 from typing import List, Any, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.ai.agents.aio import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .._patch import _patch_user_agent
 from .operations import InferenceOperations, TelemetryOperations
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.ai.agents.aio import AgentsClient
 
 _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
     "true",
@@ -91,13 +88,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :rtype: azure.ai.agents.aio.AgentsClient
         """
         if self._agents is None:
-            # Lazy import of AgentsClient only when this property is accessed
-            try:
-                from azure.ai.agents.aio import AgentsClient
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    "Failed to import AgentsClient. Please run 'pip install azure.ai.agents'"
-                ) from e
             self._agents = AgentsClient(
                 endpoint=self._config.endpoint,
                 credential=self._config.credential,
