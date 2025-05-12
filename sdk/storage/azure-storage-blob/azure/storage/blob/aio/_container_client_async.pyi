@@ -5,8 +5,54 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 
+from datetime import datetime
+from typing import (
+    Any,
+    AnyStr,
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    IO,
+    Iterable,
+    Optional,
+    overload,
+    Union,
+)
+from typing_extensions import Self
+
+from azure.core import MatchConditions
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+from ._blob_client_async import BlobClient
+from ._blob_service_client_async import BlobServiceClient
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
+from ._list_blobs_helper import BlobPrefix
+from .._encryption import StorageEncryptionMixin
+from .._generated.models import RehydratePriority
+from .._models import (
+    AccessPolicy,
+    BlobType,
+    BlobProperties,
+    ContainerEncryptionScope,
+    ContainerProperties,
+    ContentSettings,
+    CustomerProvidedEncryptionKey,
+    FilteredBlob,
+    PremiumPageBlobTier,
+    PublicAccess,
+    StandardBlobTier,
+)
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
     account_name: str
@@ -131,9 +177,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
-        if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
@@ -230,7 +273,51 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace_async
+    @overload
+    async def download_blob(
+        self,
+        blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        max_concurrency: Optional[int] = None,
+        encoding: str,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[str]: ...
+    @overload
+    async def download_blob(
+        self,
+        blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        max_concurrency: Optional[int] = None,
+        encoding: None = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]: ...
+    @distributed_trace_async  # type: ignore[misc]
     async def download_blob(
         self,
         blob: str,
@@ -253,4 +340,37 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
     @distributed_trace_async
-    async def delete_blobs(self, *args, **kwargs) -> None: ...
+    async def delete_blobs(
+        self,
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        delete_snapshots: Optional[str] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[AsyncHttpResponse]: ...
+    @distributed_trace_async
+    async def set_standard_blob_tier_blobs(
+        self,
+        standard_blob_tier: Union[str, StandardBlobTier],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        rehydrate_priority: Optional[RehydratePriority] = None,
+        if_tags_match_condition: Optional[str] = None,
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[AsyncHttpResponse]: ...
+    @distributed_trace_async
+    async def set_premium_page_blob_tier_blobs(
+        self,
+        premium_page_blob_tier: Union[str, PremiumPageBlobTier],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        raise_on_any_failure: bool = True,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[AsyncHttpResponse]: ...
+    def get_blob_client(
+        self, blob: str, snapshot: Optional[str] = None, *, version_id: Optional[str] = None
+    ) -> BlobClient: ...
