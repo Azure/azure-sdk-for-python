@@ -51,13 +51,15 @@ def generate_name(seed: Union[str, "Parameter"], max_length: int = 20) -> str:
 def serialize(value: Any, indent: str = "") -> str:
     bicep = ""
     if isinstance(value, dict):
-        bicep += "{\n"
-        bicep += serialize_dict(value, indent + "  ")
-        bicep += indent + "}\n"
+        if value:
+            bicep += "{\n"
+            bicep += serialize_dict(value, indent + "  ")
+            bicep += indent + "}\n"
     elif isinstance(value, list):
-        bicep += "[\n"
-        bicep += serialize_list(value, indent + "  ")
-        bicep += indent + "]\n"
+        if value:
+            bicep += "[\n"
+            bicep += serialize_list(value, indent + "  ")
+            bicep += indent + "]\n"
     else:
         bicep += resolve_value(value)
     return bicep
@@ -74,6 +76,8 @@ def serialize_list(list_val: List[Any], indent: str) -> str:
             bicep += f"{indent}[\n"
             bicep += serialize_list(item, indent + "  ")
             bicep += f"{indent}]\n"
+        elif item is None:
+            continue
         else:
             bicep += f"{indent}{resolve_value(item)}\n"
     return bicep
@@ -90,6 +94,8 @@ def serialize_dict(dict_val: Dict[str, Any], indent: str) -> str:
             bicep += f"{indent}{key}: [\n"
             bicep += serialize_list(value, indent + "  ")
             bicep += f"{indent}]\n"
+        elif value is None:
+            continue
         else:
             bicep += f"{indent}{resolve_key(key)}: {resolve_value(value)}\n"
     return bicep
