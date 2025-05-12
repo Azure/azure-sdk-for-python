@@ -44,6 +44,7 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -319,29 +320,28 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 def _is_session_token_request(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
-        resource_type: str,
-        operation_type: str) -> bool:
+        request_object) -> bool:
     consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
     # Figure out if consistency level for this request is session
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
     # configured to use multiple write regions
-    return (is_session_consistency is True and not IsMasterResource(resource_type)
-            and (documents._OperationType.IsReadOnlyOperation(operation_type) or operation_type == "Batch"
-             or cosmos_client_connection._global_endpoint_manager.get_use_multiple_write_locations()))
+    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
+            and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
+                 or request_object.operation_type == "Batch"
+                 or cosmos_client_connection._global_endpoint_manager.get_use_multiple_write_locations()))
 
 
 def set_session_token_header(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
         path: str,
-        resource_type: str,
-        operation_type: str,
+        request_object: "RequestObject",
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None) -> None:
     # set session token if required
-    if _is_session_token_request(cosmos_client_connection, headers, resource_type, operation_type):
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
@@ -364,12 +364,11 @@ async def set_session_token_header_async(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
         path: str,
-        resource_type: str,
-        operation_type: str,
+        request_object,
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None) -> None:
     # set session token if required
-    if _is_session_token_request(cosmos_client_connection, headers, resource_type, operation_type):
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
