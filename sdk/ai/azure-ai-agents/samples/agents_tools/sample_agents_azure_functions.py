@@ -95,8 +95,4 @@ with agents_client:
         print(f"Last Message: {last_msg.text.value}")
 
     # Delete the agent once done
-    result = agents_client.delete_agent(agent.id)
-    if result.deleted:
-        print(f"Deleted agent {result.id}")
-    else:
-        print(f"Failed to delete agent {result.id}")
+    agents_client.delete_agent(agent.id)

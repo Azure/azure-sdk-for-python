@@ -98,10 +98,6 @@ async def main():
 
             # Delete the agent once done
             result = await agents_client.delete_agent(agent.id)
-            if result.deleted:
-                print(f"Deleted agent {result.id}")
-            else:
-                print(f"Failed to delete agent {result.id}")
 
 
 if __name__ == "__main__":
