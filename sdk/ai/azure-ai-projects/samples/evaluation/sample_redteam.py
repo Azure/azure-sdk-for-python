@@ -36,8 +36,8 @@ from azure.ai.projects.models import (
 def sample_red_team() -> None:
     """Demonstrates how to perform Red Team operations using the AIProjectClient."""
 
-    endpoint = "https://anksingtest1rp.services.ai.azure.com/api/projects/anksingtest1rpproject"
-    model_deployment_name = "aoai_connection/gpt-4o-mini"
+    endpoint = ""
+    model_deployment_name = ""
 
     with AIProjectClient(
         endpoint=endpoint,
