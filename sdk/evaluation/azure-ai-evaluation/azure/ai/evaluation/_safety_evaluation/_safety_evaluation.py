@@ -249,7 +249,7 @@ class _SafetyEvaluation:
                 text=source_text,
                 target=callback,
                 randomization_seed=randomization_seed,
-                concurrent_async_tasks=concurrent_async_tasks
+                concurrent_async_task=concurrent_async_tasks
             )
 
         # if DirectAttack, run DirectAttackSimulator
@@ -299,7 +299,7 @@ class _SafetyEvaluation:
                 target=callback,
                 text=source_text,
                 randomization_seed=randomization_seed,
-                concurrent_async_tasks=concurrent_async_tasks
+                concurrent_async_task=concurrent_async_tasks
             )
 
         ## If no outputs are generated, raise an exception
