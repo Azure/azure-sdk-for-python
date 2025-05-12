@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-import
 
 from datetime import datetime
 from typing import (
@@ -47,10 +48,13 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, super-init-not-called
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     account_name: str
     container_name: str
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         container_name: str,
@@ -129,7 +133,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
-    ) -> ContainerClient: ...
+    ) -> Self: ...
     @distributed_trace
     def delete_container(
         self,
@@ -337,7 +341,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         **kwargs: Any,
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
     @distributed_trace
-    def delete_blobs(
+    def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
         self,
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         delete_snapshots: Optional[str] = None,

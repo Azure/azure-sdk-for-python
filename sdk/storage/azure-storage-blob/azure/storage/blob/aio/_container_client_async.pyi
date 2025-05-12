@@ -54,10 +54,14 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore[misc]
+class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods, line-too-long # type: ignore[misc]
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     account_name: str
     container_name: str
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         container_name: str,
@@ -136,7 +140,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient: ...
+    ) -> Self: ...
     @distributed_trace_async
     async def delete_container(
         self,
