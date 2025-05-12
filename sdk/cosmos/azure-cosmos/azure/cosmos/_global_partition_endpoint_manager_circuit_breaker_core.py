@@ -21,6 +21,7 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
+import logging
 import os
 
 from azure.cosmos import documents
@@ -32,6 +33,8 @@ from azure.cosmos._request_object import RequestObject
 from azure.cosmos.http_constants import ResourceType, HttpHeaders
 from azure.cosmos._constants import _Constants as Constants
 
+logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreakerCore")
+WARN_LEVEL_LOGGING_THRESHOLD = 10
 
 class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
     """
@@ -43,6 +46,14 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         self.partition_health_tracker = _PartitionHealthTracker()
         self.location_cache = location_cache
         self.client = client
+        self.log_count = 0
+
+    def log_warn_or_debug(self, message: str) -> None:
+        self.log_count += 1
+        if self.log_count >= WARN_LEVEL_LOGGING_THRESHOLD:
+            logger.debug(message)
+        else:
+            logger.warning(message)
 
     def is_circuit_breaker_applicable(self, request: RequestObject) -> bool:
         if not request:

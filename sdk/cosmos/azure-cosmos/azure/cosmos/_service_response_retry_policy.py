@@ -21,8 +21,8 @@ class ServiceResponseRetryPolicy(object):
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         if self.request:
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request,
-                                                                                           pk_range_wrapper)
+            self.location_endpoint = (self.global_endpoint_manager
+                                      .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
         self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
@@ -59,4 +59,4 @@ class ServiceResponseRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request, self.pk_range_wrapper)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)

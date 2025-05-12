@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
@@ -34,7 +34,6 @@ from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache, current_time_millis
 from .._request_object import RequestObject
-from .._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
 
@@ -71,10 +70,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def resolve_service_endpoint(
+    def _resolve_service_endpoint(
             self,
-            request: RequestObject,
-            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] # pylint: disable=unused-argument
+            request: RequestObject
     ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 

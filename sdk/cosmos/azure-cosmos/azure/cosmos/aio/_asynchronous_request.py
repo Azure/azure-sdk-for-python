@@ -79,7 +79,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
             # Circuit breaker is applicable, so we need to use the endpoint from the request
             pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
-        base_url = global_endpoint_manager.resolve_service_endpoint(request_params, pk_range_wrapper)
+        base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 

@@ -100,7 +100,7 @@ class ServiceRequestRetryPolicy(object):
         # resolve the next service endpoint in the same region
         # since we maintain 2 endpoints per region for write operations
         self.request.route_to_location_with_preferred_location_flag(0, True)
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request, self.pk_range_wrapper)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
 
     # This function prepares the request to go to the next region
     def resolve_next_region_service_endpoint(self):
@@ -114,7 +114,7 @@ class ServiceRequestRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(0, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request, self.pk_range_wrapper)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
 
     def mark_endpoint_unavailable(self, unavailable_endpoint, refresh_cache: bool):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):

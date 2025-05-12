@@ -58,8 +58,8 @@ class _SessionRetryPolicy(object):
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request,
-                                                                                           self.pk_range_wrapper)
+            self.location_endpoint = (self.global_endpoint_manager
+                                      .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
             self.request.route_to_location(self.location_endpoint)
 
     def ShouldRetry(self, _exception):
@@ -100,8 +100,8 @@ class _SessionRetryPolicy(object):
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request,
-                                                                                           self.pk_range_wrapper)
+            self.location_endpoint = (self.global_endpoint_manager
+                                      .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
             self.request.route_to_location(self.location_endpoint)
             return True
 
@@ -116,7 +116,7 @@ class _SessionRetryPolicy(object):
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request,
-                                                                                       self.pk_range_wrapper)
+        self.location_endpoint = (self.global_endpoint_manager
+                                  .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
         self.request.route_to_location(self.location_endpoint)
         return True

@@ -22,12 +22,11 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from ... import _base
 from ..collection_routing_map import CollectionRoutingMap
 from .. import routing_range
-
 
 # pylint: disable=protected-access
 
@@ -71,10 +70,10 @@ class PartitionKeyRangeCache(object):
             collection_id: str,
             **kwargs: Dict[str, Any]
     ):
-        client = self._documentClient
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
-            collection_pk_ranges = [pk async for pk in client._ReadPartitionKeyRanges(collection_link, **kwargs)]
+            collection_pk_ranges = [pk async for pk in
+                                    self._documentClient._ReadPartitionKeyRanges(collection_link, **kwargs)]
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
@@ -89,7 +88,7 @@ class PartitionKeyRangeCache(object):
             collection_link: str,
             partition_key_range_id: int,
             **kwargs: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         await self.init_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
 

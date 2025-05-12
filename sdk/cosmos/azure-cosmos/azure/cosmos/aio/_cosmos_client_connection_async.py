@@ -2875,10 +2875,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return []
 
         initial_headers = self.default_headers.copy()
-        cont_prop = kwargs.pop("containerProperties", None)
-        if cont_prop:
-            cont_prop = await cont_prop()
-
+        cont_prop_func = kwargs.pop("containerProperties", None)
+        cont_prop = None
+        if cont_prop_func:
+            cont_prop = await cont_prop_func()
 
         # Copy to make sure that default_headers won't be changed.
         if query is None:

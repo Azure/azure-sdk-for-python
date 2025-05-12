@@ -55,4 +55,4 @@ class _TimeoutFailoverRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(self.retry_count, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request, self.pk_range_wrapper)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)

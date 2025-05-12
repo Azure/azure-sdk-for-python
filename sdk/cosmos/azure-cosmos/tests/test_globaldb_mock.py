@@ -75,7 +75,7 @@ class MockGlobalEndpointManager(_GlobalPartitionEndpointManagerForCircuitBreaker
     def get_read_endpoint(self):
         return self._ReadEndpoint
 
-    def resolve_service_endpoint(self, request, pk_range_wrapper):
+    def resolve_service_endpoint_for_partition(self, request, pk_range_wrapper):
         return
 
     def refresh_endpoint_list(self, database_account, **kwargs):
