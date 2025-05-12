@@ -1,17 +1,11 @@
 # Release History
 
-## 1.6.9 (Unreleased)
+## 1.6.9 (2025-05-12)
 
 ### Features Added
 
 - Enable Azure AI Agents instrumentation for azure-ai-agents
     ([#40866](https://github.com/Azure/azure-sdk-for-python/pull/40866))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.6.8 (2025-04-17)
 
