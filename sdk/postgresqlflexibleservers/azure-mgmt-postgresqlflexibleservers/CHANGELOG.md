@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2025-05-19)
+## 1.2.0b1 (2025-05-19)
 
 ### Features Added
 
@@ -53,16 +53,10 @@
   - Added enum `TuningOptionEnum`
   - Added model `TuningOptionsListResult`
   - Added model `TuningOptionsResource`
-  - Added model `QuotaUsagesOperations`
-  - Added model `TuningConfigurationOperations`
-  - Added model `TuningIndexOperations`
-  - Added model `TuningOptionsOperations`
-  - Method `TuningConfigurationOperations.begin_start_session` has a new overload `def begin_start_session(self: None, resource_group_name: str, server_name: str, tuning_option: Union[str, TuningOptionEnum], config_tuning_request: ConfigTuningRequestParameter, content_type: str)`
-  - Method `TuningConfigurationOperations.begin_start_session` has a new overload `def begin_start_session(self: None, resource_group_name: str, server_name: str, tuning_option: Union[str, TuningOptionEnum], config_tuning_request: IO[bytes], content_type: str)`
-
-### Breaking Changes
-
-  - Method `Operations.list` changed from `asynchronous` to `synchronous`
+  - Added operation group `QuotaUsagesOperations`
+  - Added operation group `TuningConfigurationOperations`
+  - Added operation group `TuningIndexOperations`
+  - Added operation group `TuningOptionsOperations`
 
 ## 1.1.0 (2025-03-24)
 
