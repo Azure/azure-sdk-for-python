@@ -37,7 +37,6 @@ from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import MessagesOperations as MessagesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
 from ._operations import ThreadsOperations as ThreadsOperationsGenerated
-from ._operations import AgentsClientOperationsMixin as AgentsClientOperationsMixinGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
