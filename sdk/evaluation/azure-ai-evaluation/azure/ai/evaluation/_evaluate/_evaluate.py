@@ -141,7 +141,6 @@ def _aggregate_content_safety_metrics(
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("azure.ai.evaluation.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):
