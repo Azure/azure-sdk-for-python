@@ -3057,7 +3057,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 messages = list(client.messages.list(thread_id=thread.id))
                 print(f"Messages: {messages}")
 
-                last_msg = client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
+                last_msg = client.messages.get_last_message_text_by_role(thread_id=thread.id, role=MessageRole.AGENT)
                 if last_msg:
                     print(f"Last Message: {last_msg.text.value}")
 

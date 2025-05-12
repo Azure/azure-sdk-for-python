@@ -2241,7 +2241,7 @@ class MessagesOperations(MessagesOperationsGenerated):
                 return message
         return None
 
-    async def get_last_text_message_by_role(
+    async def get_last_message_text_by_role(
         self,
         thread_id: str,
         role: _models.MessageRole,

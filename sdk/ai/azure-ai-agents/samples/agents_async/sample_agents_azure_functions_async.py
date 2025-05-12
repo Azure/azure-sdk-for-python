@@ -90,7 +90,7 @@ async def main():
                 print(f"Run failed: {run.last_error}")
 
             # Get the last message from the sender
-            last_msg = await agents_client.messages.get_last_text_message_by_role(
+            last_msg = await agents_client.messages.get_last_message_text_by_role(
                 thread_id=thread.id, role=MessageRole.AGENT
             )
             if last_msg:
