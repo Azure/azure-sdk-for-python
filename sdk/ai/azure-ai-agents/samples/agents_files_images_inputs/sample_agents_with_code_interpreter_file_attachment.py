@@ -79,7 +79,7 @@ with agents_client:
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
         print(f"Run failed: {run.last_error}")
 
-    agents_client.files.delete_file(file.id)
+    agents_client.files.delete(file.id)
     print("Deleted file")
 
     messages = agents_client.messages.list(thread_id=thread.id)

@@ -599,16 +599,14 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     @distributed_trace
     def delete_agent(  # pylint: disable=delete-operation-wrong-return-type
         self, agent_id: str, **kwargs: Any
-    ) -> _models.AgentDeletionStatus:
+    ) -> None:
         """Deletes an agent.
 
         :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
-        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super().delete_agent(agent_id, **kwargs)
+        super()._delete_agent(agent_id, **kwargs)
 
     @distributed_trace
     def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs

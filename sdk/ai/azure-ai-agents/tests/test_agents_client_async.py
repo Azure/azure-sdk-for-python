@@ -602,7 +602,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # delete thread
-            await client.threads.delete_thread(thread.id)
+            await client.threads.delete(thread.id)
 
             # delete agent and close client
             await client.delete_agent(agent.id)
@@ -1780,7 +1780,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert run.status == RunStatus.COMPLETED, run.last_error.message
         assert run.parallel_tool_calls == use_parallel_runs
 
-        assert (await client.delete_agent(agent.id)).deleted, "The agent was not deleted"
+        await client.delete_agent(agent.id)
         messages = [m async for m in client.messages.list(thread_id=run.thread_id)]
         assert messages, "The data from the agent was not received."
 
@@ -2321,7 +2321,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert run is not None
         else:
             run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-        await ai_client.vector_stores.delete_vector_store(vector_store.id)
+        await ai_client.vector_stores.delete(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
         assert messages
@@ -2744,8 +2744,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             ), '"bar" not found in any agent text message'
 
             # Delete the agent once done
-            result = await client.delete_agent(agent.id)
-            assert result.deleted, "The agent was not deleted."
+            await client.delete_agent(agent.id)
 
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -2786,7 +2785,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 )
             assert run.status in RunStatus.COMPLETED, run.last_error
 
-            assert (await client.delete_agent(agent.id)).deleted, "The agent was not deleted"
+            await client.delete_agent(agent.id)
             messages = [m async for m in client.messages.list(thread_id=thread.id)]
             assert messages, "The data from the agent was not received."
 
@@ -2869,7 +2868,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
             assert len(messages), "No messages were returned."
 
-            await ai_client.vector_stores.delete_vector_store(vector_store.id)
+            await ai_client.vector_stores.delete(vector_store.id)
             # delete agent and close client
             await ai_client.delete_agent(agent.id)
             print("Deleted agent")
@@ -2941,8 +2940,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
-            del_agent = await ai_client.delete_agent(agent.id)
-            assert del_agent.deleted
+            await ai_client.delete_agent(agent.id)
 
             messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
 
@@ -2970,7 +2968,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     async def _remove_file_maybe(self, file_id: str, ai_client: AgentsClient) -> None:
         """Remove file if we have file ID."""
         if file_id:
-            await ai_client.files.delete_file(file_id)
+            await ai_client.files.delete(file_id)
 
     # # **********************************************************************************
     # #

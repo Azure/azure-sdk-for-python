@@ -103,7 +103,7 @@ async def main():
             run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
             print(f"Created run, run ID: {run.id}")
 
-            await agents_client.vector_stores.delete_vector_store(vector_store.id)
+            await agents_client.vector_stores.delete(vector_store.id)
             print("Deleted vector store")
 
             await agents_client.delete_agent(agent.id)

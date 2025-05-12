@@ -63,7 +63,7 @@ with agents_client:
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, run ID: {run.id}")
 
-    agents_client.files.delete_file(file.id)
+    agents_client.files.delete(file.id)
     print("Deleted file")
 
     agents_client.delete_agent(agent.id)
