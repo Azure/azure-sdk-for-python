@@ -62,10 +62,10 @@ from azure.ai.ml.constants._common import (
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    GitProperties,
     WorkspaceDiscoveryUrlKey,
 )
 from azure.ai.ml.constants._compute import ComputeType
-from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
 from azure.ai.ml.entities._assets._artifacts.code import Code
@@ -690,10 +690,10 @@ class JobOperations(_ScopeDependentOperations):
             repo_url = git_props.get(GitProperties.PROP_MLFLOW_GIT_REPO_URL)
 
             if has_pat_token(repo_url):
-                git_props.pop(GitProperties.PROP_MLFLOW_GIT_REPO_URL)
-                git_props.pop(GitProperties.PROP_MLFLOW_GIT_BRANCH)
-                git_props.pop(GitProperties.PROP_MLFLOW_GIT_COMMIT)
-                git_props.pop(GitProperties.PROP_DIRTY)
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_REPO_URL, None)
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_BRANCH, None)
+                git_props.pop(GitProperties.PROP_MLFLOW_GIT_COMMIT, None)
+                git_props.pop(GitProperties.PROP_DIRTY, None)
                 module_logger.warning("Git properties are removed because the repository URL contains a secret.")
 
             if git_props:
