@@ -147,6 +147,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace
@@ -428,6 +429,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         seal_destination_blob: Optional[bool] = None,
         requires_sync: Optional[bool] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         encryption_scope: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -488,6 +490,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -682,6 +685,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -748,6 +752,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]: ...

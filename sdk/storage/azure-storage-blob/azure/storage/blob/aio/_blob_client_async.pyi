@@ -147,6 +147,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
@@ -409,6 +410,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         seal_destination_blob: Optional[bool] = None,
         requires_sync: Optional[bool] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         encryption_scope: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -469,6 +471,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -663,6 +666,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -729,6 +733,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
+        source_token_intent: Optional[Literal["backup"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]: ...
