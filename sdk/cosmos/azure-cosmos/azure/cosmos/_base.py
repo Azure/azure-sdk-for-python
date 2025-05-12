@@ -364,7 +364,7 @@ async def set_session_token_header_async(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
         path: str,
-        request_object,
+        request_object: "RequestObject",
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None) -> None:
     # set session token if required
