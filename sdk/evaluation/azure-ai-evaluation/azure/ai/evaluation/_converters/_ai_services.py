@@ -22,33 +22,16 @@ from ._models import ToolDefinition, EvaluatorData
 # Utilities.
 from ._models import break_tool_call_into_messages, convert_message
 
-@experimental
-class AIAgentConverterFactory:
-
-    """Factory class to create the appropriate agent converter based on the version of the AI service."""
-
-    @staticmethod
-    def get_converter(project_client: AIProjectClient):
-        if project_client is None:
-            return None
-        if Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a"):
-            return FDPAgentConverter(project_client=project_client)
-        else:
-            return LegacyAgentConverter(project_client=project_client)
-
 
 @experimental
 class AIAgentConverter:
     """
-    A converter for AI agent data.  Subclasses handle data retrieval depending on
-    agent version.  Use AIAgentConverterFactory to instantiate a converter.
+    A converter for AI agent data.  Data retrieval classes handle getting agent data depending on
+    agent version.
 
     :param project_client: The AI project client used for API interactions.
     :type project_client: AIProjectClient
     """
-
-    # Maximum items to fetch in a single AI Services API call (imposed by the service).
-    _AI_SERVICES_API_MAX_LIMIT = 100
 
     # Maximum number of workers allowed to make API calls at the same time.
     _MAX_WORKERS = 10
@@ -61,22 +44,16 @@ class AIAgentConverter:
         :type project_client: AIProjectClient
         """
         self.project_client = project_client
+        self._data_retriever = AIAgentConverter.get_data_retriever(project_client=project_client)
 
-    @abstractmethod
-    def _get_run(self, thread_id: str, run_id: str):
-        pass
-
-    @abstractmethod
-    def _list_messages_chronological(self, thread_id: str):
-        pass
-
-    @abstractmethod
-    def _list_run_steps_chronological(self, thread_id: str, run_id: str):
-        pass
-
-    @abstractmethod
-    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
-        pass
+    @staticmethod
+    def get_data_retriever(project_client: AIProjectClient):
+        if project_client is None:
+            return None
+        if Version(projects_version) > Version("1.0.0b10") or projects_version.startswith("1.0.0a"):
+            return FDPAgentDataRetriever(project_client=project_client)
+        else:
+            return LegacyAgentDataRetriever(project_client=project_client)
 
     def _list_tool_calls_chronological(self, thread_id: str, run_id: str) -> List[ToolCall]:
         """
@@ -91,7 +68,7 @@ class AIAgentConverter:
         """
         # This is the other API request that we need to make to AI service, such that we can get the details about
         # the tool calls and results. Since the list is given in reverse chronological order, we need to reverse it.
-        run_steps_chronological = self._list_run_steps_chronological(thread_id=thread_id, run_id=run_id)
+        run_steps_chronological = self._data_retriever._list_run_steps_chronological(thread_id=thread_id, run_id=run_id)
 
         # Let's accumulate the function calls in chronological order. Function calls
         tool_calls_chronological: List[ToolCall] = []
@@ -344,7 +321,7 @@ class AIAgentConverter:
             # We set the include_run_id to False, since we don't want to include the current run's tool calls, which
             # are already included in the previous step.
             run_ids_up_to_run_id = AIAgentConverter._filter_run_ids_up_to_run_id(
-                self._list_run_ids_chronological(thread_id), run_id, include_run_id=False
+                self._data_retriever._list_run_ids_chronological(thread_id), run_id, include_run_id=False
             )
 
             # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
@@ -436,10 +413,10 @@ class AIAgentConverter:
         :rtype: dict
         """
         # Make the API call once and reuse the result.
-        thread_run: object = self._get_run(thread_id=thread_id, run_id=run_id)
+        thread_run: object = self._data_retriever._get_run(thread_id=thread_id, run_id=run_id)
 
         # Walk through the "user-facing" conversation history and start adding messages.
-        chronological_conversation = self._list_messages_chronological(thread_id)
+        chronological_conversation = self._data_retriever._list_messages_chronological(thread_id)
 
         # Since this is Xth run of out possibly N runs, we are only interested is messages that are before the run X.
         chrono_until_run_id = AIAgentConverter._filter_messages_up_to_run_id(chronological_conversation, run_id)
@@ -495,14 +472,14 @@ class AIAgentConverter:
         list_of_run_evaluations: List[dict] = []
 
         # These are all the run IDs.
-        run_ids = self._list_run_ids_chronological(thread_id)
+        run_ids = self._data_retriever._list_run_ids_chronological(thread_id)
 
         # If there were no messages in the thread, we can return an empty list.
         if len(run_ids) < 1:
             return list_of_run_evaluations
 
         # These are all the messages.
-        chronological_conversation = self._list_messages_chronological(thread_id)
+        chronological_conversation = self._data_retriever._list_messages_chronological(thread_id)
 
         # If there are no messages in the thread, we can return an empty list.
         if len(chronological_conversation) < 1:
@@ -512,7 +489,7 @@ class AIAgentConverter:
         all_sorted_tool_calls = AIAgentConverter._sort_messages(self._retrieve_all_tool_calls(thread_id, run_ids))
 
         # The last run should have all the tool definitions.
-        thread_run = self._get_run(thread_id=thread_id, run_id=run_ids[-1])
+        thread_run = self._data_retriever._get_run(thread_id=thread_id, run_id=run_ids[-1])
         instructions = thread_run.instructions
 
         # So then we can get the tool definitions.
@@ -742,10 +719,40 @@ class AIAgentConverter:
         return AIAgentConverter._convert_from_conversation(data, run_id)
 
 @experimental
-class LegacyAgentConverter(AIAgentConverter):
+class AIAgentDataRetriever:
+    # Maximum items to fetch in a single AI Services API call (imposed by the service).
+    _AI_SERVICES_API_MAX_LIMIT = 100
+
+    def __init__(self, project_client: AIProjectClient):
+        """
+        Initializes the AIAgentDataRetriever with the given AI project client.
+
+        :param project_client: The AI project client used for API interactions.
+        :type project_client: AIProjectClient
+        """
+        self.project_client = project_client
+
+    @abstractmethod
+    def _get_run(self, thread_id: str, run_id: str):
+        pass
+
+    @abstractmethod
+    def _list_messages_chronological(self, thread_id: str):
+        pass
+
+    @abstractmethod
+    def _list_run_steps_chronological(self, thread_id: str, run_id: str):
+        pass
+
+    @abstractmethod
+    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
+        pass
+
+@experimental
+class LegacyAgentDataRetriever(AIAgentDataRetriever):
 
     def __init__(self, **kwargs):
-        super(LegacyAgentConverter, self).__init__(**kwargs)
+        super(LegacyAgentDataRetriever, self).__init__(**kwargs)
 
     def _list_messages_chronological(self, thread_id: str):
         """
@@ -806,10 +813,10 @@ class LegacyAgentConverter(AIAgentConverter):
         return self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
 
 @experimental
-class FDPAgentConverter(AIAgentConverter):
+class FDPAgentDataRetriever(AIAgentDataRetriever):
 
     def __init__(self, **kwargs):
-        super(FDPAgentConverter, self).__init__(**kwargs)
+        super(FDPAgentDataRetriever, self).__init__(**kwargs)
 
     def _list_messages_chronological(self, thread_id: str):
         """
