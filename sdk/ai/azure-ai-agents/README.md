@@ -1124,10 +1124,10 @@ To remove resources after completing tasks, use the following functions:
 
 ```python
 # Delete the file when done
-agents_client.vector_stores.delete_vector_store(vector_store.id)
+agents_client.vector_stores.delete(vector_store.id)
 print("Deleted vector store")
 
-agents_client.files.delete_file(file_id=file.id)
+agents_client.files.delete(file_id=file.id)
 print("Deleted file")
 
 # Delete the agent when done
