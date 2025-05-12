@@ -93,7 +93,7 @@ class OpenTelemetryTracer:
         :keyword links: Links to add to the span.
         :paramtype links: list[~azure.core.tracing.Link]
         :return: The span that was started
-        :rtype: ~azure.core.tracing.Span
+        :rtype: ~opentelemetry.trace.Span
         """
         otel_kind = _KIND_MAPPINGS.get(kind, OpenTelemetrySpanKind.INTERNAL)
         otel_links = self._parse_links(links)

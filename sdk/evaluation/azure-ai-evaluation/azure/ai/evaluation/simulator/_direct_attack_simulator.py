@@ -7,6 +7,7 @@ import logging
 from random import randint
 from typing import Callable, Optional, cast, Union
 
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -16,7 +17,7 @@ from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +28,9 @@ class DirectAttackSimulator:
     Initialize a UPIA (user prompt injected attack) jailbreak adversarial simulator with a project scope.
     This simulator converses with your AI system using prompts designed to interrupt normal functionality.
 
-    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
-        name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, AzureAIProject]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 

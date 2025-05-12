@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
 from typing_extensions import Self
-from .._generated import _serialization
+from .._generated._utils import serialization as _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -25,6 +25,8 @@ from .._generated.models import (
     SimilarityAlgorithm,
     SemanticSearch,
     VectorSearch,
+    SearchIndexPermissionFilterOption,
+    PermissionFilter,
 )
 from ._models import (
     pack_analyzer,
@@ -99,6 +101,9 @@ class SearchField(_serialization.Model):
         Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
         fields.
     :vartype facetable: bool
+    :ivar permission_filter: A value indicating whether the field should be used as a permission
+        filter. Known values are: "userIds", "groupIds", and "rbacScope".
+    :vartype permission_filter: str or ~azure.search.documents.indexes.models.PermissionFilter
     :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used only
         with searchable fields and it can't be set together with either searchAnalyzer or
         indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
@@ -201,6 +206,7 @@ class SearchField(_serialization.Model):
         filterable: Optional[bool] = None,
         sortable: Optional[bool] = None,
         facetable: Optional[bool] = None,
+        permission_filter: Optional[Union[str, PermissionFilter]] = None,
         analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
@@ -222,6 +228,7 @@ class SearchField(_serialization.Model):
         self.filterable = filterable
         self.sortable = sortable
         self.facetable = facetable
+        self.permission_filter = permission_filter
         self.analyzer_name = analyzer_name
         self.search_analyzer_name = search_analyzer_name
         self.index_analyzer_name = index_analyzer_name
@@ -245,6 +252,7 @@ class SearchField(_serialization.Model):
             filterable=self.filterable,
             sortable=self.sortable,
             facetable=self.facetable,
+            permission_filter=self.permission_filter,
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
@@ -281,6 +289,7 @@ class SearchField(_serialization.Model):
             filterable=search_field.filterable,
             sortable=search_field.sortable,
             facetable=search_field.facetable,
+            permission_filter=search_field.permission_filter,
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
@@ -652,6 +661,10 @@ class SearchIndex(_serialization.Model):
     :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
     :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
+    :ivar permission_filter_option: A value indicating whether permission filtering is enabled for
+        the index. Known values are: "enabled" and "disabled".
+    :vartype permission_filter_option: str or
+        ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -674,6 +687,7 @@ class SearchIndex(_serialization.Model):
         similarity: Optional[SimilarityAlgorithm] = None,
         semantic_search: Optional[SemanticSearch] = None,
         vector_search: Optional[VectorSearch] = None,
+        permission_filter_option: Optional[Union[str, SearchIndexPermissionFilterOption]] = None,
         e_tag: Optional[str] = None,
         **kwargs
     ):
@@ -693,6 +707,7 @@ class SearchIndex(_serialization.Model):
         self.similarity = similarity
         self.semantic_search = semantic_search
         self.vector_search = vector_search
+        self.permission_filter_option = permission_filter_option
         self.e_tag = e_tag
 
     def _to_generated(self) -> _SearchIndex:
@@ -729,6 +744,7 @@ class SearchIndex(_serialization.Model):
             semantic_search=self.semantic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
+            permission_filter_option=self.permission_filter_option,
         )
 
     @classmethod
@@ -777,6 +793,7 @@ class SearchIndex(_serialization.Model):
             semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
+            permission_filter_option=search_index.permission_filter_option,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:

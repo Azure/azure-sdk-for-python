@@ -1,5 +1,16 @@
 ## Release History
 
+### 4.11.0b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+* Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
+
+#### Other Changes
+
 ### 4.11.0b1 (2025-04-30)
 
 #### Features Added
