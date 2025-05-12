@@ -30,7 +30,6 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_page_blob
 )
-from .._blob_client import StorageAccountHostsMixin
 from .._blob_client_helpers import (
     _abort_copy_options,
     _append_block_from_url_options,
@@ -74,6 +73,7 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers

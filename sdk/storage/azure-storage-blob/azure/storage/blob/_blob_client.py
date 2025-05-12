@@ -617,26 +617,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             return upload_page_blob(**options)
         return upload_append_blob(**options)
 
-    @overload
-    def download_blob(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        *,
-        encoding: str,
-        **kwargs: Any
-    ) -> StorageStreamDownloader[str]:
-        ...
-
-    @overload
-    def download_blob(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        *,
-        encoding: None = None,
-        **kwargs: Any
-    ) -> StorageStreamDownloader[bytes]:
-        ...
-
     @distributed_trace
     def download_blob(
         self, offset: Optional[int] = None,
