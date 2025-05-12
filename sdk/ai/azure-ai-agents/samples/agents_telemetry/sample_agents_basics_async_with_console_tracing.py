@@ -76,16 +76,7 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await agent_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-
-            # Poll the run as long as run status is queued or in progress
-            while run.status in ["queued", "in_progress", "requires_action"]:
-                # Wait for a second
-                time.sleep(1)
-                run = await agent_client.runs.get(thread_id=thread.id, run_id=run.id)
-
-                print(f"Run status: {run.status}")
-
+            run = await agent_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
             print(f"Run completed with status: {run.status}")
 
             await agent_client.delete_agent(agent.id)

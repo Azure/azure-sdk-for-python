@@ -58,7 +58,7 @@ class ServiceRequestRetryPolicy(object):
 
             self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
             if (_OperationType.IsReadOnlyOperation(self.request.operation_type)
-                    or self.global_endpoint_manager.get_use_multiple_write_locations()):
+                    or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
                 self.update_location_cache()
                 # We just directly got to the next location in case of read requests
                 # We don't retry again on the same region for regional endpoint
