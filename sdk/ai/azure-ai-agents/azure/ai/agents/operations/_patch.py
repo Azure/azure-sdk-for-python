@@ -83,6 +83,7 @@ class ThreadsOperations(ThreadsOperationsGenerated):
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         super()._delete_thread(thread_id=thread_id, **kwargs)
@@ -1626,6 +1627,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :param file_id: The ID of the file to delete. Required.
         :type file_id: str
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         super()._delete_file(file_id, **kwargs)
@@ -1828,6 +1830,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         super()._delete_vector_store(vector_store_id=vector_store_id, **kwargs)
@@ -2202,6 +2205,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         :type vector_store_id: str
         :param file_id: Identifier of the file. Required.
         :type file_id: str
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         super()._delete_vector_store_file(vector_store_id=vector_store_id, file_id=file_id, **kwargs)

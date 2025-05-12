@@ -602,6 +602,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         await super()._delete_agent(agent_id, **kwargs)
