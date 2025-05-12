@@ -69,7 +69,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 # Local imports - constants and utilities
 from ._utils.constants import (
     BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
-    ATTACK_STRATEGY_COMPLEXITY_MAP, RISK_CATEGORY_EVALUATOR_MAP,
+    ATTACK_STRATEGY_COMPLEXITY_MAP,
     INTERNAL_TASK_TIMEOUT, TASK_STATUS
 )
 from ._utils.logging_utils import (
