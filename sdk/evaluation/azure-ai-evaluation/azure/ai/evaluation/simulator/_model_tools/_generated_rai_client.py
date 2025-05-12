@@ -9,8 +9,10 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._common.onedp import AIProjectClient
+from azure.ai.evaluation._common import EvaluationServiceOneDPClient
 import jwt
 import time
 import ast
@@ -45,6 +47,7 @@ class GeneratedRAIClient:
             ).rai_svc
         else:
             self._client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).red_teams
+            self._evaluation_onedp_client = EvaluationServiceOneDPClient(endpoint=azure_ai_project, credential=token_manager)
         
     def _get_service_discovery_url(self):
         """Get the service discovery URL.
@@ -147,4 +150,4 @@ class GeneratedRAIClient:
                 if (exp_time - current_time) >= 300:
                     return token
 
-        return credential.get_token("https://management.azure.com/.default").token
+        return credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT).token

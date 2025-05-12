@@ -19,6 +19,7 @@ from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
@@ -36,7 +37,6 @@ from ._model_tools import (
     ManagedIdentityAPITokenManager,
     ProxyChatCompletionsModel,
     RAIClient,
-    TokenScope,
 )
 from ._model_tools._template_handler import AdversarialTemplate, TemplateParameters
 from ._utils import JsonLineList
@@ -49,9 +49,9 @@ class AdversarialSimulator:
     """
     Initializes the adversarial simulator with a project scope.
 
-    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
-        name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, AzureAIProject]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 

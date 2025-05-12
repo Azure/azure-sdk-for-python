@@ -45,7 +45,7 @@ USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
 ML_WORKSPACE  = "https://management.azure.com/.default"
-COG_SRV_WORKSPACE = "https://cognitiveservices.azure.com/.default"
+COG_SRV_WORKSPACE = "https://ai.azure.com/.default"
 
 INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
 
@@ -629,8 +629,9 @@ async def evaluate_with_rai_service(
     :type data: dict
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
-    :param project_scope: The Azure AI project scope details.
-    :type project_scope: Dict
+    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type project_scope: Union[str, AzureAIProject]
     :param credential: The Azure authentication credential.
     :type credential: ~azure.core.credentials.TokenCredential
     :param annotation_task: The annotation task to use.
@@ -777,11 +778,11 @@ async def evaluate_with_rai_service_multimodal(
        :type messages: str
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
-       :param project_scope: The Azure AI project scope details.
-       :type project_scope: Dict
+       :param project_scope: The Azure AI project, which can either be a string representing the project endpoint 
+            or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+       :type project_scope: Union[str, AzureAIProject]
        :param credential: The Azure authentication credential.
-       :type credential:
-    ~azure.core.credentials.TokenCredential
+       :type credential: ~azure.core.credentials.TokenCredential
        :return: The parsed annotation result.
        :rtype: List[List[Dict]]
     """

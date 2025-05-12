@@ -76,7 +76,7 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
@@ -162,8 +162,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %Face
-# PRLabel: %Face
+# ServiceLabel: %FaceAPI
+# PRLabel: %FaceAPI
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
@@ -202,11 +202,11 @@
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
-/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
 
 # ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @hectorhdzg @jeremydvoss
+/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
 
 # ServiceLabel: %Consumption
 # PRLabel: %Consumption
@@ -216,10 +216,10 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @YalinLi0312
+/sdk/containerregistry/                                              @lmazuel
 
 # ServiceLabel: %Container Service
 # PRLabel: %Container Service
@@ -261,6 +261,15 @@
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
 /sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
+
+# PRLabel: %AI Agents
+# ServiceLabel: %AI Agents %Service Attention
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin
+
+# PRLabel: %AI Projects
+# ServiceLabel: %AI Projects %Service Attention
+/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin
+
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -329,7 +338,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
+/sdk/purview/                                                        @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -381,12 +390,12 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @catalinaperalta
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @YalinLi0312
+/sdk/formrecognizer/                                                 @catalinaperalta
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Document Intelligence
