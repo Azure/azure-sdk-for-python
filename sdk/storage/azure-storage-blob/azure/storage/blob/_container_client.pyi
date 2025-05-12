@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-import
+# pylint: disable=unused-argument
 
 from datetime import datetime
 from typing import (
@@ -48,7 +48,7 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, super-init-not-called
+class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, super-init-not-called, too-many-public-methods
     StorageAccountHostsMixin,
     StorageEncryptionMixin
 ):

@@ -54,7 +54,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods, line-too-long # type: ignore[misc]
+class ContainerClient(   # type: ignore[misc] # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
