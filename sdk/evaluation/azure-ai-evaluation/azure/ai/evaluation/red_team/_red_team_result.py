@@ -217,6 +217,8 @@ class AttackDetails(TypedDict):
     :type attack_complexity: str
     :param risk_category: The risk category targeted by the attack
     :type risk_category: str
+    :param prompt_id: The unique identifier of the prompt/objective used in the conversation
+    :type prompt_id: str
     :param conversation: List of messages exchanged in the conversation
     :type conversation: List[Dict[str, str]]
     :param risk_assessment: Dictionary containing content safety assessment for the conversation
@@ -226,6 +228,7 @@ class AttackDetails(TypedDict):
     attack_technique: str
     attack_complexity: str
     risk_category: str
+    prompt_id: str
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
 
