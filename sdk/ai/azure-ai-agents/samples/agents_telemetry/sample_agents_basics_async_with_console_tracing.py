@@ -37,7 +37,6 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import ListSortOrder, MessageTextContent
-from azure.ai.agents.telemetry import enable_telemetry
 from azure.identity.aio import DefaultAzureCredential
 from opentelemetry import trace
 import os
