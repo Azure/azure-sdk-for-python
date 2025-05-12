@@ -1,3 +1,52 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+from datetime import datetime
+from typing import (
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    overload,
+    Tuple,
+    Union,
+)
+from typing_extensions import Self
+
+from azure.core import MatchConditions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
+from ._download import StorageStreamDownloader
+from ._generated.models import RehydratePriority
+from ._lease import BlobLeaseClient
+from ._models import (
+    ArrowDialect,
+    BlobBlock,
+    BlobProperties,
+    BlobQueryError,
+    BlobType,
+    ContentSettings,
+    CustomerProvidedEncryptionKey,
+    DelimitedTextDialect,
+    DelimitedJsonDialect,
+    ImmutabilityPolicy,
+    PageRange,
+    PremiumPageBlobTier,
+    QuickQueryDialect,
+    SequenceNumberAction,
+    StandardBlobTier,
+)
+from ._quick_query_helper import BlobQueryReader
+
 class BlobClient:
     def __init__(
         self,
@@ -20,6 +69,7 @@ class BlobClient:
         use_byte_buffer: Optional[bool],
         **kwargs: Any
     ) -> None: ...
+    @classmethod
     def from_blob_url(
         cls,
         blob_url: str,
@@ -39,6 +89,7 @@ class BlobClient:
         use_byte_buffer: Optional[bool],
         **kwargs: Any
     ) -> Self: ...
+    @classmethod
     def from_connection_string(
         cls,
         conn_str: str,
@@ -60,7 +111,9 @@ class BlobClient:
         use_byte_buffer: Optional[bool],
         **kwargs: Any
     ) -> Self: ...
+    @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
+    @distributed_trace
     def upload_blob_from_url(
         self,
         source_url: str,
@@ -87,6 +140,7 @@ class BlobClient:
         source_authorization: Optional[str],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def upload_blob(
         self,
         data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
@@ -117,6 +171,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @overload
     def download_blob(
         self,
         offset: Optional[int],
@@ -137,6 +192,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
+    @overload
     def download_blob(
         self,
         offset: Optional[int],
@@ -157,6 +213,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
+    @distributed_trace
     def download_blob(
         self,
         offset: Optional[int],
@@ -177,6 +234,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
+    @distributed_trace
     def query_blob(
         self,
         query_expression: str,
@@ -196,6 +254,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> BlobQueryReader: ...
+    @distributed_trace
     def delete_blob(
         self,
         delete_snapshots: Optional[str],
@@ -210,8 +269,11 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> None: ...
+    @distributed_trace
     def undelete_blob(self, *, timeout: Optional[int], **kwargs: Any) -> None: ...
+    @distributed_trace
     def exists(self, *, version_id: Optional[str], timeout: Optional[int], **kwargs: Any) -> bool: ...
+    @distributed_trace
     def get_blob_properties(
         self,
         *,
@@ -226,6 +288,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> BlobProperties: ...
+    @distributed_trace
     def set_http_headers(
         self,
         content_settings: Optional[ContentSettings],
@@ -239,6 +302,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def set_blob_metadata(
         self,
         metadata: Optional[Dict[str, str]],
@@ -254,6 +318,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def set_immutability_policy(
         self,
         immutability_policy: ImmutabilityPolicy,
@@ -262,12 +327,15 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, str]: ...
+    @distributed_trace
     def delete_immutability_policy(
         self, *, version_id: Optional[str], timeout: Optional[int], **kwargs: Any
     ) -> None: ...
+    @distributed_trace
     def set_legal_hold(
         self, legal_hold: bool, *, version_id: Optional[str], timeout: Optional[int], **kwargs: Any
     ) -> Dict[str, Union[str, datetime, bool]]: ...
+    @distributed_trace
     def create_page_blob(
         self,
         size: int,
@@ -289,6 +357,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def create_append_blob(
         self,
         content_settings: Optional[ContentSettings],
@@ -307,6 +376,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def create_snapshot(
         self,
         metadata: Optional[Dict[str, str]],
@@ -322,13 +392,14 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def start_copy_from_url(
         self,
         source_url: str,
         metadata: Optional[Dict[str, str]],
         incremental_copy: bool,
         *,
-        tags: Optional[Union[Dict[str, str], Literal[COPY]]],
+        tags: Optional[Union[Dict[str, str], Literal["COPY"]]],
         immutability_policy: Optional[ImmutabilityPolicy],
         legal_hold: Optional[bool],
         source_if_modified_since: Optional[datetime],
@@ -352,7 +423,9 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def abort_copy(self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> None: ...
+    @distributed_trace
     def acquire_lease(
         self,
         lease_duration: int,
@@ -366,6 +439,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> BlobLeaseClient: ...
+    @distributed_trace
     def set_standard_blob_tier(
         self,
         standard_blob_tier: Union[str, StandardBlobTier],
@@ -377,6 +451,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> None: ...
+    @distributed_trace
     def stage_block(
         self,
         block_id: str,
@@ -391,6 +466,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def stage_block_from_url(
         self,
         block_id: str,
@@ -406,6 +482,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def get_block_list(
         self,
         block_list_type: str,
@@ -415,6 +492,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Tuple[List[BlobBlock], List[BlobBlock]]: ...
+    @distributed_trace
     def commit_block_list(
         self,
         block_list: List[BlobBlock],
@@ -437,6 +515,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def set_premium_page_blob_tier(
         self,
         premium_page_blob_tier: PremiumPageBlobTier,
@@ -446,6 +525,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> None: ...
+    @distributed_trace
     def set_blob_tags(
         self,
         tags: Optional[Dict[str, str]],
@@ -457,6 +537,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def get_blob_tags(
         self,
         *,
@@ -466,6 +547,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, str]: ...
+    @distributed_trace
     def get_page_ranges(
         self,
         offset: Optional[int],
@@ -481,6 +563,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
     def list_page_ranges(
         self,
         *,
@@ -497,6 +580,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> ItemPaged[PageRange]: ...
+    @distributed_trace
     def get_page_range_diff_for_managed_disk(
         self,
         previous_snapshot_url: str,
@@ -511,6 +595,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
     def set_sequence_number(
         self,
         sequence_number_action: Union[str, SequenceNumberAction],
@@ -525,6 +610,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def resize_blob(
         self,
         size: int,
@@ -539,6 +625,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def upload_page(
         self,
         page: bytes,
@@ -561,6 +648,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def upload_pages_from_url(
         self,
         source_url: str,
@@ -588,6 +676,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Any]: ...
+    @distributed_trace
     def clear_page(
         self,
         offset: int,
@@ -606,6 +695,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
+    @distributed_trace
     def append_block(
         self,
         data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
@@ -626,6 +716,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]: ...
+    @distributed_trace
     def append_block_from_url(
         self,
         copy_source_url: str,
@@ -651,6 +742,7 @@ class BlobClient:
         timeout: Optional[int],
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]: ...
+    @distributed_trace
     def seal_append_blob(
         self,
         *,
