@@ -146,4 +146,3 @@ class SipDomain(object):
         """
         self.fqdn = kwargs.get("fqdn", None)
         self.enabled = kwargs.get("enabled", None)
-        

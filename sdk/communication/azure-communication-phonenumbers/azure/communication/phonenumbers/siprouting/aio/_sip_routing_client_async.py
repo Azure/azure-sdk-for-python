@@ -281,7 +281,7 @@ class SipRoutingClient(object):
         domain_name: str,
         **kwargs: Any
     )-> SipDomain:
-        """Retrieve a single SIP trunk.
+        """Retrieve a single SIP domain.
 
         :param domain_name: domain_name of the desired SIP Domain.
         :type domain_name: str
@@ -330,7 +330,7 @@ class SipRoutingClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         if domain_name is None:
-            raise ValueError("Parameter 'trunk_fqdn' must not be None.")
+            raise ValueError("Parameter 'domain_name' must not be None.")
 
         await self._rest_service.sip_routing.update(body=SipConfiguration(domains={domain_name: None}), **kwargs)
 
