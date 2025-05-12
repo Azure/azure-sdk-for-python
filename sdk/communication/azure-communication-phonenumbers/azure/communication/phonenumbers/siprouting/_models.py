@@ -53,7 +53,7 @@ class SipTrunk(object):
         :paramtype direct_transfer: bool
         :keyword privacy_header: SIP Privacy header. Default value is id. Known values are: "id" and
          "none".
-        :keyword privacy_header: str or
+        :paramtype privacy_header: str or
          ~azure.communication.phonenumbers.siprouting.models.PrivacyHeader
         :keyword ip_address_version: IP address version used by the trunk. Default value is ipv4. Known
          values are: "ipv4" and "ipv6".
