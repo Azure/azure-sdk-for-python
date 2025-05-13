@@ -75,7 +75,7 @@ mi_credential = ManagedIdentityCredential()
 
 account_url = "https://<storageaccountname>.blob.core.windows.net"
 
-# Setup user-agent override
+# Set up user-agent override
 class NoUserAgentPolicy(UserAgentPolicy):
     def on_request(self, request):
         pass
