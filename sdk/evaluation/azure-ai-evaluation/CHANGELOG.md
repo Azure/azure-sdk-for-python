@@ -1,5 +1,10 @@
 # Release History
 
+## 1.7.0 (2025-05-12)
+
+### Bugs Fixed
+- azure-ai-evaluation failed with module not found [#40992](https://github.com/Azure/azure-sdk-for-python/issues/40992)
+
 ## 1.6.0 (2025-05-07)
 
 ### Features Added
