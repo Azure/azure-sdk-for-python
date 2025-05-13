@@ -39,11 +39,11 @@ Some Swagger SDK models support flattening, which allows users to access nested 
 
 ```python
 # swagger SDK model
-model1 = Model(...)
-print(model1.properties_name) # A
-print(model1.properties.name) # equivalent to A
-print(model1.properties_properties_name) # B
-print(model1.properties.properties.name) # equivalent to B
+model = Model(...)
+print(model.properties_name) # A
+print(model.properties.name) # equivalent to A
+print(model.properties_properties_name) # B
+print(model.properties.properties.name) # equivalent to B
 
 # Typespec SDK model
 model_after_migration = Model(...)
