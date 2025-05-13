@@ -113,13 +113,5 @@ def test_token_credentials_env_invalid():
     """Invalid AZURE_TOKEN_CREDENTIALS value should use default behavior"""
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "invalid"}, clear=False):
-        credential = DefaultAzureCredential()
-
-        # Compare with default credential chain
-        default_credential = DefaultAzureCredential()
-
-        # Classes should be the same
-        actual_classes = {c.__class__ for c in credential.credentials}
-        default_classes = {c.__class__ for c in default_credential.credentials}
-
-        assert actual_classes == default_classes
+        with pytest.raises(ValueError):
+            credential = DefaultAzureCredential()
