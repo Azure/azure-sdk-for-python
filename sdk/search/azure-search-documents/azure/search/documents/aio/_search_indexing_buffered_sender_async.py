@@ -299,7 +299,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos], **kwargs
+                actions=actions[:pos], timeout=remaining, **kwargs
             )
             if len(batch_response_first_half) > 0:
                 result_first_half = batch_response_first_half
@@ -310,7 +310,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:], **kwargs
+                actions=actions[pos:], timeout=remaining, **kwargs
             )
             if len(batch_response_second_half) > 0:
                 result_second_half = batch_response_second_half

@@ -702,7 +702,7 @@ class SearchClient(HeadersMixin):
 
     def _index_documents_actions(self, actions: List[IndexAction], **kwargs: Any) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
-        
+
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
