@@ -68,7 +68,6 @@ import os
 from azure.identity import ManagedIdentityCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies import UserAgentPolicy
 
 try:
     # Create your credential you want to use
