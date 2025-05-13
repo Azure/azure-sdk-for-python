@@ -66,7 +66,7 @@ The example below uses the `azure-storage-blob` package. In your code, you can r
 ```python
 import os
 from azure.identity import ManagedIdentityCredential
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
 from azure.core.pipeline.policies import UserAgentPolicy
 
 
