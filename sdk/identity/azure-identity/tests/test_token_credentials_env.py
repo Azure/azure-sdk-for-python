@@ -23,12 +23,6 @@ from azure.identity._constants import EnvironmentVariables
 def test_token_credentials_env_dev():
     """With AZURE_TOKEN_CREDENTIALS=dev, DefaultAzureCredential should use only developer credentials"""
 
-    dev_credentials = {
-        SharedTokenCacheCredential,
-        AzureCliCredential,
-        AzureDeveloperCliCredential,
-        AzurePowerShellCredential,
-    }
 
     prod_credentials = {EnvironmentCredential, WorkloadIdentityCredential, ManagedIdentityCredential}
 
