@@ -52,6 +52,7 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 
 try:
     from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
     agents_instrumentor = AIAgentsInstrumentor()
     if not agents_instrumentor.is_instrumented():
         agents_instrumentor.instrument()
@@ -106,7 +107,7 @@ with tracer.start_as_current_span(scenario):
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
             instructions="You are a helpful agent",
-            toolset=toolset
+            toolset=toolset,
         )
         print(f"Created agent, ID: {agent.id}")
 
