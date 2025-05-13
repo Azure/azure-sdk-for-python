@@ -7,17 +7,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import os
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import List, Any, Optional
 from typing_extensions import Self
 from azure.core.credentials import TokenCredential
+from azure.ai.agents import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations, InferenceOperations
 from ._patch_prompts import PromptTemplate
 from ._patch_telemetry import enable_telemetry
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.ai.agents import AgentsClient
 
 _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
     "true",
@@ -97,10 +94,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self.inference = InferenceOperations(self)  # type: ignore
-        self._agents = None
+        self._agents: Optional[AgentsClient] = None
 
     @property
-    def agents(self) -> "AgentsClient":  # type: ignore[name-defined]
+    def agents(self) -> AgentsClient:  # type: ignore[name-defined]
         """Get the AgentsClient associated with this AIProjectClient.
         The package azure.ai.agents must be installed to use this property.
 
@@ -108,13 +105,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :rtype: azure.ai.agents.AgentsClient
         """
         if self._agents is None:
-            # Lazy import of AgentsClient only when this property is accessed
-            try:
-                from azure.ai.agents import AgentsClient
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    "Failed to import AgentsClient. Please run 'pip install azure.ai.agents'"
-                ) from e
             self._agents = AgentsClient(
                 endpoint=self._config.endpoint,
                 credential=self._config.credential,

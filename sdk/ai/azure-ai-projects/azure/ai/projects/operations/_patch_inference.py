@@ -42,7 +42,7 @@ class InferenceOperations:
         Converts an input URL in the format:
         https://<host-name>/<some-path>
         to:
-        https://<host-name>/api/models
+        https://<host-name>/models
 
         :param input_url: The input endpoint URL used to construct AIProjectClient.
         :type input_url: str
@@ -53,7 +53,7 @@ class InferenceOperations:
         parsed = urlparse(input_url)
         if parsed.scheme != "https" or not parsed.netloc:
             raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
-        new_url = f"https://{parsed.netloc}/api/models"
+        new_url = f"https://{parsed.netloc}/models"
         return new_url
 
     @distributed_trace
