@@ -4,7 +4,7 @@
 from typing import Any, Dict, Union, List
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.eval_create_params import TestingCriterionLabelModel
+from openai.types.graders import LabelModelGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
@@ -37,7 +37,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     :param passing_labels: The labels that indicate a passing result. Must be a subset of labels.
     :type passing_labels: List[str]
     :param kwargs: Additional keyword arguments to pass to the grader.
-    :type kwargs: Dict[str, Any]
+    :type kwargs: Any
 
 
     """
@@ -46,15 +46,16 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
 
     def __init__(
         self,
+        *,
         model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: List[Dict[str, str]],
         labels: List[str],
         model: str,
         name: str,
         passing_labels: List[str],
-        **kwargs: Dict[str, Any]
+        **kwargs: Any
     ):
-        grader = TestingCriterionLabelModel(
+        grader = LabelModelGrader(
             input=input,
             labels=labels,
             model=model,
@@ -62,4 +63,4 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
             passing_labels=passing_labels,
             type="label_model",
         )
-        super().__init__(model_config, grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, **kwargs)

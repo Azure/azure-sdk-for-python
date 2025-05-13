@@ -12,7 +12,7 @@ OUTPUT_FILE = "openai_api_response.jsonl"
 
 # Azure endpoint constants
 AZUREML_TOKEN_SCOPE = "https://ml.azure.com"
-COGNITIVE_SERVICES_TOKEN_SCOPE = "https://cognitiveservices.azure.com/"
+COGNITIVE_SERVICES_TOKEN_SCOPE = "https://ai.azure.com/"
 AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
 AZURE_ENDPOINT_DOMAIN_VALID_PATTERN_RE = (
     r"^(?=.{1,255}$)(?!-)[a-zA-Z0-9-]{1,63}(?<!-)"

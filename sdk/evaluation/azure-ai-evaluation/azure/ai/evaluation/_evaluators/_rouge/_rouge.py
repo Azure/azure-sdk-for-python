@@ -70,6 +70,16 @@ class RougeScoreEvaluator(EvaluatorBase):
             :dedent: 8
             :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START rouge_score_evaluator]
+            :end-before: [END rouge_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call RougeScoreEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. admonition:: Example with threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

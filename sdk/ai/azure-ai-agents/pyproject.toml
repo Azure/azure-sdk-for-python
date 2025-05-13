@@ -1,0 +1,24 @@
+[tool.mypy]
+python_version = "3.10"
+exclude = [
+]
+warn_unused_configs = true
+ignore_missing_imports = true
+follow_imports_for_stubs = false
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["azure"]
+filter_files=true
+extend_skip_glob = [
+  "*/_vendor/*",
+  "*/_generated/*",
+  "*/_restclient/*",
+  "*/doc/*",
+  "*/.tox/*",
+]
+
+[tool.azure-sdk-build]
+whl_no_aio= false
+
