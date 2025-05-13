@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable Azure AI Agents instrumentation for azure-ai-agents
+    ([#40866](https://github.com/Azure/azure-sdk-for-python/pull/40866))
+
 ### Breaking Changes
 
 ### Bugs Fixed
