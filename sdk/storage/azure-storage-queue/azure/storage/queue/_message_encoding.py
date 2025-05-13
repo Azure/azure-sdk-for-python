@@ -40,10 +40,11 @@ class MessageEncodePolicy(object):
         return content
 
     def configure(
-        self, require_encryption: bool,
+        self,
+        require_encryption: bool,
         key_encryption_key: Optional[KeyEncryptionKey],
         resolver: Optional[Callable[[str], KeyEncryptionKey]],
-        encryption_version: str = _ENCRYPTION_PROTOCOL_V1
+        encryption_version: str = _ENCRYPTION_PROTOCOL_V1,
     ) -> None:
         self.require_encryption = require_encryption
         self.encryption_version = encryption_version
@@ -77,17 +78,16 @@ class MessageDecodePolicy(object):
             content = message.message_text
             if (self.key_encryption_key is not None) or (self.resolver is not None):
                 content = decrypt_queue_message(
-                    content, response,
-                    self.require_encryption,
-                    self.key_encryption_key,
-                    self.resolver)
+                    content, response, self.require_encryption, self.key_encryption_key, self.resolver
+                )
             message.message_text = self.decode(content, response)
         return obj
 
     def configure(
-        self, require_encryption: bool,
+        self,
+        require_encryption: bool,
         key_encryption_key: Optional[KeyEncryptionKey],
-        resolver: Optional[Callable[[str], KeyEncryptionKey]]
+        resolver: Optional[Callable[[str], KeyEncryptionKey]],
     ) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
@@ -107,7 +107,7 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
     def encode(self, content: str) -> str:
         if not isinstance(content, str):
             raise TypeError("Message content must be text for base 64 encoding.")
-        return b64encode(content.encode('utf-8')).decode('utf-8')
+        return b64encode(content.encode("utf-8")).decode("utf-8")
 
 
 class TextBase64DecodePolicy(MessageDecodePolicy):
@@ -120,13 +120,12 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
 
     def decode(self, content: str, response: "PipelineResponse") -> str:
         try:
-            return b64decode(content.encode('utf-8')).decode('utf-8')
+            return b64decode(content.encode("utf-8")).decode("utf-8")
         except (ValueError, TypeError) as error:
             # ValueError for Python 3, TypeError for Python 2
             raise DecodeError(
-                message="Message content is not valid base 64.",
-                response=response, #type: ignore
-                error=error) from error
+                message="Message content is not valid base 64.", response=response, error=error  # type: ignore
+            ) from error
 
 
 class BinaryBase64EncodePolicy(MessageEncodePolicy):
@@ -139,7 +138,7 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
     def encode(self, content: bytes) -> str:
         if not isinstance(content, bytes):
             raise TypeError("Message content must be bytes for base 64 encoding.")
-        return b64encode(content).decode('utf-8')
+        return b64encode(content).decode("utf-8")
 
 
 class BinaryBase64DecodePolicy(MessageDecodePolicy):
@@ -152,13 +151,12 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
     def decode(self, content: str, response: "PipelineResponse") -> bytes:
         response = response.http_response
         try:
-            return b64decode(content.encode('utf-8'))
+            return b64decode(content.encode("utf-8"))
         except (ValueError, TypeError) as error:
             # ValueError for Python 3, TypeError for Python 2
             raise DecodeError(
-                message="Message content is not valid base 64.",
-                response=response, #type: ignore
-                error=error) from error
+                message="Message content is not valid base 64.", response=response, error=error  # type: ignore
+            ) from error
 
 
 class NoEncodePolicy(MessageEncodePolicy):

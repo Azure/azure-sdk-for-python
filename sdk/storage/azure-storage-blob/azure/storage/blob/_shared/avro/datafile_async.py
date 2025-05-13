@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Constants
 
 # Codecs supported by container files:
-VALID_CODECS = frozenset(['null'])
+VALID_CODECS = frozenset(["null"])
 
 
 class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attributes
@@ -39,9 +39,10 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         """
         self._reader = reader
         self._raw_decoder = avro_io_async.AsyncBinaryDecoder(reader)
-        self._header_reader = kwargs.pop('header_reader', None)
-        self._header_decoder = None if self._header_reader is None else \
-            avro_io_async.AsyncBinaryDecoder(self._header_reader)
+        self._header_reader = kwargs.pop("header_reader", None)
+        self._header_decoder = (
+            None if self._header_reader is None else avro_io_async.AsyncBinaryDecoder(self._header_reader)
+        )
         self._datum_decoder = None  # Maybe reset at every block.
         self._datum_reader = datum_reader
         self.codec = "null"
@@ -59,11 +60,11 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         await self._read_header()
 
         # ensure codec is valid
-        avro_codec_raw = self.get_meta('avro.codec')
+        avro_codec_raw = self.get_meta("avro.codec")
         if avro_codec_raw is None:
             self.codec = "null"
         else:
-            self.codec = avro_codec_raw.decode('utf-8')
+            self.codec = avro_codec_raw.decode("utf-8")
         if self.codec not in VALID_CODECS:
             raise DataFileException(f"Unknown codec: {self.codec}.")
 
@@ -72,7 +73,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
 
         # object_position is to support reading from current position in the future read,
         # no need to downloading from the beginning of avro.
-        if hasattr(self._reader, 'object_position'):
+        if hasattr(self._reader, "object_position"):
             self.reader.track_object_position()
 
         # header_reader indicates reader only has partial content. The reader doesn't have block header,
@@ -80,8 +81,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         # Also ChangeFeed only has codec==null, so use _raw_decoder is good.
         if self._header_reader is not None:
             self._datum_decoder = self._raw_decoder
-        self.datum_reader.writer_schema = (
-            schema.parse(self.get_meta(SCHEMA_KEY).decode('utf-8')))
+        self.datum_reader.writer_schema = schema.parse(self.get_meta(SCHEMA_KEY).decode("utf-8"))
         return self
 
     async def __aenter__(self):
@@ -145,15 +145,15 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         header = await self.datum_reader.read_data(META_SCHEMA, header_decoder)
 
         # check magic number
-        if header.get('magic') != MAGIC:
+        if header.get("magic") != MAGIC:
             fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC!r}."
             raise schema.AvroException(fail_msg)
 
         # set metadata
-        self._meta = header['meta']
+        self._meta = header["meta"]
 
         # set sync marker
-        self._sync_marker = header['sync']
+        self._sync_marker = header["sync"]
 
     async def _read_block_header(self):
         self._block_count = await self.raw_decoder.read_long()
@@ -182,7 +182,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
 
             # object_position is to support reading from current position in the future read,
             # no need to downloading from the beginning of avro file with this attr.
-            if hasattr(self._reader, 'object_position'):
+            if hasattr(self._reader, "object_position"):
                 await self.reader.track_object_position()
             self._cur_object_index = 0
 
@@ -195,7 +195,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         # object_position is to support reading from current position in the future read,
         # This will track the index of the next item to be read.
         # This will also track the offset before the next sync marker.
-        if hasattr(self._reader, 'object_position'):
+        if hasattr(self._reader, "object_position"):
             if self.block_count == 0:
                 # the next event to be read is at index 0 in the new chunk of blocks,
                 await self.reader.track_object_position()
