@@ -28,7 +28,7 @@ USAGE:
        can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
 
-import os, time
+import os
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
