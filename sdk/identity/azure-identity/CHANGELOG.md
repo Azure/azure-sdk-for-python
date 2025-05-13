@@ -1,8 +1,10 @@
 # Release History
 
-## 1.22.1 (Unreleased)
+## 1.23.0 (Unreleased)
 
 ### Features Added
+
+- Added `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential` to allow for choosing groups of credentials.
 
 ### Breaking Changes
 
