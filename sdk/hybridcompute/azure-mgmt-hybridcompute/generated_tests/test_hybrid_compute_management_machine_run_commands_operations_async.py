@@ -21,7 +21,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_machine_run_commands_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.machine_run_commands.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -77,7 +77,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
                     "timeoutInSeconds": 0,
                     "type": "str",
                 },
-                api_version="2024-07-31-preview",
+                api_version="2024-11-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,13 +86,13 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_machine_run_commands_begin_delete(self, resource_group):
         response = await (
             await self.client.machine_run_commands.begin_delete(
                 resource_group_name=resource_group.name,
                 machine_name="str",
                 run_command_name="str",
-                api_version="2024-07-31-preview",
+                api_version="2024-11-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,12 +101,12 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_machine_run_commands_get(self, resource_group):
         response = await self.client.machine_run_commands.get(
             resource_group_name=resource_group.name,
             machine_name="str",
             run_command_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -114,11 +114,11 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_machine_run_commands_list(self, resource_group):
         response = self.client.machine_run_commands.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

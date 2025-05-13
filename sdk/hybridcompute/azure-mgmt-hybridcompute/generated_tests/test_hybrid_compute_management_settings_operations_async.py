@@ -21,14 +21,14 @@ class TestHybridComputeManagementSettingsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_settings_get(self, resource_group):
         response = await self.client.settings.get(
             resource_group_name=resource_group.name,
             base_provider="str",
             base_resource_type="str",
             base_resource_name="str",
             settings_resource_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestHybridComputeManagementSettingsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_settings_update(self, resource_group):
         response = await self.client.settings.update(
             resource_group_name=resource_group.name,
             base_provider="str",
@@ -58,7 +58,7 @@ class TestHybridComputeManagementSettingsOperationsAsync(AzureMgmtRecordedTestCa
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestHybridComputeManagementSettingsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_patch(self, resource_group):
+    async def test_settings_patch(self, resource_group):
         response = await self.client.settings.patch(
             resource_group_name=resource_group.name,
             base_provider="str",
@@ -88,7 +88,7 @@ class TestHybridComputeManagementSettingsOperationsAsync(AzureMgmtRecordedTestCa
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself

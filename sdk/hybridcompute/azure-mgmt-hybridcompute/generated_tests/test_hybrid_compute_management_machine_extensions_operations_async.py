@@ -21,7 +21,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_machine_extensions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.machine_extensions.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,7 +65,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-31-preview",
+                api_version="2024-11-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,7 +74,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_machine_extensions_begin_update(self, resource_group):
         response = await (
             await self.client.machine_extensions.begin_update(
                 resource_group_name=resource_group.name,
@@ -91,7 +91,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-31-preview",
+                api_version="2024-11-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,13 +100,13 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_machine_extensions_begin_delete(self, resource_group):
         response = await (
             await self.client.machine_extensions.begin_delete(
                 resource_group_name=resource_group.name,
                 machine_name="str",
                 extension_name="str",
-                api_version="2024-07-31-preview",
+                api_version="2024-11-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,12 +115,12 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_machine_extensions_get(self, resource_group):
         response = await self.client.machine_extensions.get(
             resource_group_name=resource_group.name,
             machine_name="str",
             extension_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -128,11 +128,11 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_machine_extensions_list(self, resource_group):
         response = self.client.machine_extensions.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
