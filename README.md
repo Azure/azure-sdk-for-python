@@ -59,7 +59,7 @@ The software may collect information about you and your use of the software and 
 ### Telemetry Configuration
 Telemetry collection is on by default.
 
-To opt out, you can disable telemetry at client construction. Define a `NoUserAgentPolicy` class that is a subclass of `UserAgentPolicy` with an `on_request` method that does nothing. Then pass this as kwargs `user_agent_policy=NoUserAgentPolicy` during client creation. This will disable telemetry for all methods in the client. Do this for every new client.
+To opt out, you can disable telemetry at client construction. Define a `NoUserAgentPolicy` class that is a subclass of `UserAgentPolicy` with an `on_request` method that does nothing. Then pass instance of this class as kwargs `user_agent_policy=NoUserAgentPolicy()` during client creation. This will disable telemetry for all methods in the client. Do this for every new client.
 
 The example below uses the `azure-storage-blob` package. In your code, you can replace `azure-storage-blob` with the package you are using.
 
