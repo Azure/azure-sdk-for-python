@@ -1174,6 +1174,7 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 
 try:
     from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
     agents_instrumentor = AIAgentsInstrumentor()
     if not agents_instrumentor.is_instrumented():
         agents_instrumentor.instrument()

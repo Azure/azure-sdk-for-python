@@ -64,7 +64,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             )
             # Override the credential scope with the legacy one.
             kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
-            kwargs["api_version"] = "2025_05_01"
+            kwargs["api_version"] = "2025-05-15-preview"
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
 
@@ -597,16 +597,15 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             )
 
     @distributed_trace_async
-    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> None:
         """Deletes an agent.
 
         :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
-        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.AgentDeletionStatus
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await super().delete_agent(agent_id, **kwargs)
+        await super()._delete_agent(agent_id, **kwargs)
 
     @distributed_trace
     def enable_auto_function_calls(  # pylint: disable=client-method-missing-kwargs
