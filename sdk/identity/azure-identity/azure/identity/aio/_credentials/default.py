@@ -147,6 +147,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
             exclude_cli_credential = True
             exclude_developer_cli_credential = True
             exclude_powershell_credential = True
+        elif token_credentials_env != "":
+            # If the environment variable is set to something other than dev or prod, raise an error
+            raise ValueError(
+                f"Invalid value for {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS}: {token_credentials_env}. "
+                "Valid values are 'dev' or 'prod'."
+            )
 
         credentials: List[AsyncSupportsTokenInfo] = []
         within_dac.set(True)
@@ -160,7 +166,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                         client_id=cast(str, client_id),
                         tenant_id=workload_identity_tenant_id,
                         token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                        **kwargs
+                        **kwargs,
                     )
                 )
         if not exclude_managed_identity_credential:
@@ -168,7 +174,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
-                    **kwargs
+                    **kwargs,
                 )
             )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
