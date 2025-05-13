@@ -131,7 +131,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     if location_ip:
         envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
+        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
