@@ -11,6 +11,9 @@ warn_unused_configs = true
 ignore_missing_imports = true
 follow_imports_for_stubs = false
 
+[tool.azure-sdk-build]
+verifytypes = false
+
 [tool.isort]
 profile = "black"
 line_length = 120
