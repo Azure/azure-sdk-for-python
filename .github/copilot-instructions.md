@@ -13,15 +13,16 @@ When someone asks to run validation on their library, ask them what supported en
 
 Initialize and validate a TypeSpec client library for Azure SDK for Python. Please:
 
-1. If not using the typespec mcp tool, please follow the instructions below to generate an SDK from TypeSpec.
+1. If the typespec mcp tool is available use that for generating or initializing. Otherwise please follow the instructions below to generate an SDK from TypeSpec.
    - Ensure that node, python, and the required dependencies are installed in your environment (@azure-tools/typespec-client-generator-cli)
    - If provided a url to a tspconfig.yaml ensure it has the most recent commit hash of the tspconfig.yaml file instead of a branch name like `main`. If the url does not have a commit hash, use the GitHub API to get the most recent commit hash of the tspconfig.yaml file. If you are unable to do this, ask the user to provide the correct url. `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`  helpful.
-   - If prompted to initialize the SDK use the command `npx @azure-tools/typespec-client-generator-cli init --tsp-config [URL or local path to tspconfig.yaml]`. The tsp-client init command runs sync and generate under the hood, so generation is complete after the init concludes. If the tspconfig.yaml value is a path to a local file, you can mention that the user will have to populate the values in tsp-location.yaml themselves.
+   - If prompted to initialize the SDK from a url or a local repo use the command `npx @azure-tools/typespec-client-generator-cli init --tsp-config [URL or local azure-rest-api-specs path to tspconfig.yaml]`. The tsp-client init command runs sync and generate under the hood, so generation is complete after the init concludes. If the tspconfig.yaml value is a path to a local file, you can mention that the user will have to populate the values in tsp-location.yaml themselves.
    - If prompted to update the SDK use the command `npx @azure-tools/typespec-client-generator-cli update`.
    - If prompted to generate the SDK use the command `npx @azure-tools/typespec-client-generator-cli generate`.
    - If prompted to sync the SDK use the command `npx @azure-tools/typespec-client-generator-cli sync`.
    - If prompted to sync with local code use the command `npx @azure-tools/typespec-client-generator-cli sync --local-spec-repo [path to local azure-rest-api-specs repo]`. 
-   - If syncing from a local repo, do not grab a commit hash.
+   - If syncing from a local repo, do not grab a commit hash and do not manually create directories. The command will create the directories for you.
+   - If asked to sync or generate `package-name` we need to find the path to the package's tsp-location.yaml in the azure-sdk-for-python repo and run the command in the same directory.
 
 2. After generation is complete, validate the output by:
    - Installing the newly generated package and its dev_requirements in a .venv and installing tox.

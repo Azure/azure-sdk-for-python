@@ -77,7 +77,11 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
 # Helper function to run CLI commands
 def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optional[str] = None) -> Dict[str, Any]:
     """Run a TypeSpec client generator CLI command and return the result."""
-    cli_args = ["cmd", "/k", "npx", "@azure-tools/typespec-client-generator-cli", command]
+    # Determine if we're running on Windows and adjust command accordingly
+    if os.name == "nt":  # Windows
+        cli_args = ["cmd.exe", "/C", "npx", "@azure-tools/typespec-client-generator-cli", command]
+    else:  # Unix/Linux/MacOS
+        cli_args = ["npx", "@azure-tools/typespec-client-generator-cli", command]
 
     # Convert args dict to CLI arguments
     for key, value in args.items():
@@ -91,9 +95,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
         # Run the command and capture the output
         result = subprocess.run(
             cli_args,
-            check=True,
-            # capture_output=True,
-            # text=True,
+            capture_output=True,
+            text=True,
             cwd=root_dir,
         )
         logger.info(f"Command output: {result.stdout}")
@@ -108,6 +111,12 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
         logger.error(f"Command failed with error: {str(e)}")
         logger.error(e)
         # raise
+        return {
+            "success": False,
+            "stdout": "",
+            "stderr": str(e),
+            "code": 1
+        }
 
 
 # Register tools for each TypeSpec client generator CLI command

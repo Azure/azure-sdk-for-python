@@ -10,6 +10,7 @@ authors = [
 ]
 dependencies = [
     "mcp[cli]>=1.6.0",
+    "pip>=25.1.1",
     "pygithub>=2.6.1",
 ]
 
