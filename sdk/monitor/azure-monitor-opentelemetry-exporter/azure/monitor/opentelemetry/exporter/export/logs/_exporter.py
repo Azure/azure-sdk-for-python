@@ -69,7 +69,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
