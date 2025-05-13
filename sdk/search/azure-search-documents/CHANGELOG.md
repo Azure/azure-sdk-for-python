@@ -38,6 +38,10 @@
     - `azure.search.documents.indexes.models.RankingOrder`
     - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
 
+### Bugs Fixed
+
+- Fixed the issue batching in upload_documents() did not work.    #40157
+
 ### Other Changes
 
 - Updated the API version to "2025-05-01-preview"
