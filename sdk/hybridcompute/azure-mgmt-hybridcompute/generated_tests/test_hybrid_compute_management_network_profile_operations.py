@@ -20,11 +20,11 @@ class TestHybridComputeManagementNetworkProfileOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_network_profile_get(self, resource_group):
         response = self.client.network_profile.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself

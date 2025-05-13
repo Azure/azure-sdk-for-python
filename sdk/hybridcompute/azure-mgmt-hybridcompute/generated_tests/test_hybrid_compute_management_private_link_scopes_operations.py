@@ -20,9 +20,9 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_link_scopes_list(self, resource_group):
         response = self.client.private_link_scopes.list(
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_private_link_scopes_list_by_resource_group(self, resource_group):
         response = self.client.private_link_scopes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_link_scopes_begin_delete(self, resource_group):
         response = self.client.private_link_scopes.begin_delete(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -53,11 +53,11 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_scopes_get(self, resource_group):
         response = self.client.private_link_scopes.get(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_private_link_scopes_create_or_update(self, resource_group):
         response = self.client.private_link_scopes.create_or_update(
             resource_group_name=resource_group.name,
             scope_name="str",
@@ -106,7 +106,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -114,12 +114,12 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_private_link_scopes_update_tags(self, resource_group):
         response = self.client.private_link_scopes.update_tags(
             resource_group_name=resource_group.name,
             scope_name="str",
             private_link_scope_tags={"tags": {"str": "str"}},
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -127,11 +127,11 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_validation_details(self, resource_group):
+    def test_private_link_scopes_get_validation_details(self, resource_group):
         response = self.client.private_link_scopes.get_validation_details(
             location="str",
             private_link_scope_id="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -139,11 +139,11 @@ class TestHybridComputeManagementPrivateLinkScopesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_validation_details_for_machine(self, resource_group):
+    def test_private_link_scopes_get_validation_details_for_machine(self, resource_group):
         response = self.client.private_link_scopes.get_validation_details_for_machine(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself

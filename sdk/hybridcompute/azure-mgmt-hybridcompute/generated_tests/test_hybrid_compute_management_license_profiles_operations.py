@@ -20,7 +20,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_license_profiles_begin_create_or_update(self, resource_group):
         response = self.client.license_profiles.begin_create_or_update(
             resource_group_name=resource_group.name,
             machine_name="str",
@@ -77,7 +77,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,7 +86,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_license_profiles_begin_update(self, resource_group):
         response = self.client.license_profiles.begin_update(
             resource_group_name=resource_group.name,
             machine_name="str",
@@ -98,7 +98,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
                 "subscriptionStatus": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -107,11 +107,11 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_license_profiles_get(self, resource_group):
         response = self.client.license_profiles.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
             license_profile_name="default",
         )
 
@@ -120,11 +120,11 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_license_profiles_begin_delete(self, resource_group):
         response = self.client.license_profiles.begin_delete(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -133,11 +133,11 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_license_profiles_list(self, resource_group):
         response = self.client.license_profiles.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

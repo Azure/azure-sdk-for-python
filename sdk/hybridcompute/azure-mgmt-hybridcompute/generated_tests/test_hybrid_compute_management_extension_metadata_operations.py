@@ -20,13 +20,13 @@ class TestHybridComputeManagementExtensionMetadataOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_extension_metadata_get(self, resource_group):
         response = self.client.extension_metadata.get(
             location="str",
             publisher="str",
             extension_type="str",
             version="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestHybridComputeManagementExtensionMetadataOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_extension_metadata_list(self, resource_group):
         response = self.client.extension_metadata.list(
             location="str",
             publisher="str",
             extension_type="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

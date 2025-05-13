@@ -20,7 +20,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_gateways_begin_create_or_update(self, resource_group):
         response = self.client.gateways.begin_create_or_update(
             resource_group_name=resource_group.name,
             gateway_name="str",
@@ -44,7 +44,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -52,12 +52,12 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_gateways_update(self, resource_group):
         response = self.client.gateways.update(
             resource_group_name=resource_group.name,
             gateway_name="str",
             parameters={"allowedFeatures": ["str"], "tags": {"str": "str"}},
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,11 +65,11 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_gateways_get(self, resource_group):
         response = self.client.gateways.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,11 +77,11 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_gateways_begin_delete(self, resource_group):
         response = self.client.gateways.begin_delete(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,10 +89,10 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_gateways_list_by_resource_group(self, resource_group):
         response = self.client.gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -100,9 +100,9 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_gateways_list_by_subscription(self, resource_group):
         response = self.client.gateways.list_by_subscription(
-            api_version="2024-07-31-preview",
+            api_version="2024-11-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
