@@ -649,7 +649,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -678,7 +678,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword tools: Override the list of enabled tools for this run.
         :type tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run.
-        :type tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :type tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
         :type temperature: float
         :keyword top_p: Nucleus sampling parameter between 0 and 1.
@@ -749,7 +749,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -780,7 +780,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword tools: Override the list of enabled tools for this run.
         :type tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run.
-        :type tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :type tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
         :type temperature: float
         :keyword top_p: Nucleus sampling parameter between 0 and 1.
