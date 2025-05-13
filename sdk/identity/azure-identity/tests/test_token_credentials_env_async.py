@@ -110,7 +110,7 @@ def test_token_credentials_env_case_insensitive():
 
 
 def test_token_credentials_env_invalid():
-    """Invalid AZURE_TOKEN_CREDENTIALS value should use default behavior"""
+    """Invalid AZURE_TOKEN_CREDENTIALS value should raise an error"""
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "invalid"}, clear=False):
         with pytest.raises(ValueError):
