@@ -1,23 +1,24 @@
 # Azure AI Projects client library for Python
 
-Use the AI Projects client library (in preview) to:
+The AI Projects client library (in preview) provides easy access to resources in your Azure AI Foundry project.
+Use it to:
 
-* **Enumerate AI Models** deployed to your Azure AI Foundry project.
-* **Enumerate connected Azure resources** and get their properties.
-* **Upload documents and create Datasets** to reference them.
-* **Create and enumerate search Indexes**.
-* **Get an authenticated Agents client**.
-* **Get an authenticated Inference client** (Azure OpenAI or Azure AI Inference) for chat completions, text or image embeddings.
-* **Read a Prompty file or string** and render messages for inference clients.
-* **Run Evaluations** to assess the performance of generative AI applications.
-* **Enable OpenTelemetry tracing**.
+* **Create and run Agents** using the `.agents` property on the client.
+* **Get an AzureOpenAI client** using the `.inference.get_azure_openai_client` method.
+* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
+* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
+* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
+* **Create and enumerate Search Indexes** using the `.indexes` operations.
+* **Get an Azure AI Inference client** for chat completions, text or image embeddings using the `.inference` operations.
+* **Read a Prompty file or string** and render messages for inference clients, using the `PromptTemplate` class.
+* **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
+* **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
 
 ## Reporting issues
 
@@ -30,7 +31,7 @@ To report an issue with the client library, or request additional features, plea
 - Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project endpoint URL, of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
+- The project endpoint URL of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
 - An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -82,10 +83,11 @@ project_client = AIProjectClient.from_connection_string(
 
 ## Examples
 
-### Getting an authenticated Agents client
+### Performing Agent operations
 
-Below is a code example of how to get an authenticated `AgentsClient` from the `azure-ai-agents` package.
-Full samples can be found under the `agents` folder in the [package samples][samples].
+The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an agent and delete it. To see what you can do with the `agent` you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) associated with the `azure-ai-agents` package.
+
+The code below assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
 
 <!-- SNIPPET:sample_agents.agents_sample -->
 
@@ -106,35 +108,6 @@ print("Deleted agent")
 
 <!-- END SNIPPET -->
 
-### Get an authenticated ChatCompletionsClient
-
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
-
-First, install the package:
-
-```bash
-pip install azure-ai-inference
-```
-
-Then run the code below. Here we assume `model_deployment_name` holds the model deployment name.
-
-<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.inference_sample-->
-
-```python
-with project_client.inference.get_chat_completions_client() as client:
-
-    response = client.complete(
-        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-    )
-
-    print(response.choices[0].message.content)
-```
-
-<!-- END SNIPPET -->
-
-See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
-
-
 ### Get an authenticated AzureOpenAI client
 
 Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
@@ -145,11 +118,11 @@ First, install the package:
 pip install openai
 ```
 
-Then run the code below. Here we assume `model_deployment_name` holds the model deployment name. Update the `api_version`
-value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
-You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which
-the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials.
-If not present the default Azure OpenAI connection will be used.
+Then run the code below. Here we assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
+
+Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
+
+You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials. If not present the default Azure OpenAI connection will be used.
 
 <!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
@@ -173,10 +146,37 @@ with project_client.inference.get_azure_openai_client(api_version="2024-10-21") 
 
 See the "inference" folder in the [package samples][samples] for additional samples.
 
+### Get an authenticated ChatCompletionsClient
+
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+
+First, install the package:
+
+```bash
+pip install azure-ai-inference
+```
+
+Then run the code below. Here we assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
+
+<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.inference_sample-->
+
+```python
+with project_client.inference.get_chat_completions_client() as client:
+
+    response = client.complete(
+        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+    )
+
+    print(response.choices[0].message.content)
+```
+
+<!-- END SNIPPET -->
+
+See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
+
 ### Deployments operations
 
-The code below shows some Deployments operations. Full samples can be found under the "deployment"
-folder in the [package samples][samples].
+The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your AI Foundry Projects. These models can be seen in the "Models + endpoints" tab in your AI Foundry Project. Full samples can be found under the "deployment" folder in the [package samples][samples].
 
 <!-- SNIPPET:sample_deployments.deployments_sample-->
 
@@ -202,8 +202,7 @@ print(deployment)
 
 ### Connections operations
 
-The code below shows some Connection operations. Full samples can be found under the "connetions"
-folder in the [package samples][samples].
+The code below shows some Connection operations, which allow you to enumerate the Azure Resources connected to your AI Foundry Projects. These connections can be seen in the "Management Center", in the "Connected resources" tab in your AI Foundry Project. Full samples can be found under the "connections" folder in the [package samples][samples].
 
 <!-- SNIPPET:sample_connections.connections_sample-->
 
@@ -345,9 +344,9 @@ More details on built-in and custom evaluators can be found [here][evaluators].
 
 To run evaluation in the cloud the following are needed:
 
-- Evaluators
-- Data to be evaluated
-- [Optional] Azure Open AI model.
+* Evaluators
+* Data to be evaluated
+* [Optional] Azure Open AI model.
 
 ##### Evaluators
 
@@ -389,9 +388,9 @@ from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfair
 
 
 # Create project client
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 
 # Upload data for evaluation and get dataset id
@@ -493,12 +492,12 @@ logger.addHandler(handler)
 #handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable = True` to the client constructor:
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     logging_enable = True
 )
 ```
@@ -516,8 +515,6 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
-
-Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Foundry hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
 
 ## Contributing
 
@@ -539,11 +536,6 @@ additional questions or comments.
 <!-- LINKS -->
 [samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
 [azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme
