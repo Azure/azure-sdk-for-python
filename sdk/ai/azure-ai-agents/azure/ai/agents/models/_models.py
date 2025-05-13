@@ -3006,6 +3006,8 @@ class OpenApiFunctionDefinition(_Model):
     :vartype auth: ~azure.ai.agents.models.OpenApiAuthDetails
     :ivar default_params: List of OpenAPI spec parameters that will use user-provided defaults.
     :vartype default_params: list[str]
+    :ivar functions: List of function definitions used by OpenApi tool.
+    :vartype functions: list[~azure.ai.agents.models.FunctionDefinition]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3019,6 +3021,8 @@ class OpenApiFunctionDefinition(_Model):
     """Open API authentication details. Required."""
     default_params: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of OpenAPI spec parameters that will use user-provided defaults."""
+    functions: Optional[List["_models.FunctionDefinition"]] = rest_field(visibility=["read"])
+    """List of function definitions used by OpenApi tool."""
 
     @overload
     def __init__(

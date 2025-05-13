@@ -24,7 +24,7 @@ USAGE:
 import os, time
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import ListSortOrder, MessageTextContent
+from azure.ai.agents.models import ListSortOrder
 
 # [START create_agents_client]
 agents_client = AgentsClient(
