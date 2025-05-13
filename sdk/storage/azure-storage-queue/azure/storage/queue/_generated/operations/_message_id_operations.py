@@ -126,7 +126,7 @@ class MessageIdOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureQueueStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -159,7 +159,7 @@ class MessageIdOperations:
          later than the expiry time. Required.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -239,7 +239,7 @@ class MessageIdOperations:
          call to the Get Messages or Update Message operation. Required.
         :type pop_receipt: str
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
