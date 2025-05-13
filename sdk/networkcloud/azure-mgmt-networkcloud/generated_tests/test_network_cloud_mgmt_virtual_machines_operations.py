@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_machines_list_by_subscription(self, resource_group):
         response = self.client.virtual_machines.list_by_subscription(
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_virtual_machines_list_by_resource_group(self, resource_group):
         response = self.client.virtual_machines.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.get(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -84,6 +84,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 "consoleExtendedLocation": {"name": "str", "type": "str"},
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "id": "str",
                 "isolateEmulatorThread": "True",
                 "name": "str",
@@ -121,7 +122,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 "vmImageRepositoryCredentials": {"password": "str", "registryUrl": "str", "username": "str"},
                 "volumes": ["str"],
             },
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +134,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_delete(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -145,7 +146,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_update(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -157,7 +158,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_power_off(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -169,7 +170,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_reimage(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -181,7 +182,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_restart(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -193,7 +194,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_start(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
