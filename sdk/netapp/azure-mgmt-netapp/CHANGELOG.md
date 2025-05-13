@@ -1,5 +1,63 @@
 # Release History
 
+## 14.0.0b1 (2025-05-19)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `net_app_resource_quota_limits_account`
+  - Client `NetAppManagementClient` added operation group `buckets`
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Model `NetAppAccount` added property `ldap_configuration`
+  - Model `NetAppAccountPatch` added property `ldap_configuration`
+  - Model `ReplicationObject` added property `external_replication_setup_status`
+  - Model `ReplicationObject` added property `external_replication_setup_info`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `ldap_server_type`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `Volume` added property `language`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `ldap_server_type`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `language`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Added model `Bucket`
+  - Added model `BucketCredentialsExpiry`
+  - Added model `BucketGenerateCredentials`
+  - Added model `BucketList`
+  - Added model `BucketPatch`
+  - Added model `BucketServerPatchProperties`
+  - Added model `BucketServerProperties`
+  - Added model `CifsUser`
+  - Added enum `CredentialsStatus`
+  - Added enum `ExternalReplicationSetupStatus`
+  - Added model `FileSystemUser`
+  - Added model `LdapConfiguration`
+  - Added enum `LdapServerType`
+  - Added model `ListQuotaReportResponse`
+  - Added enum `NetappProvisioningState`
+  - Added model `NfsUser`
+  - Added model `QuotaItem`
+  - Added model `QuotaItemList`
+  - Added model `QuotaReport`
+  - Added enum `VolumeLanguage`
+  - Model `VolumesOperations` added method `begin_list_quota_report`
+  - Model `VolumesOperations` added method `begin_split_clone_from_parent`
+  - Added model `BucketsOperations`
+  - Added model `NetAppResourceQuotaLimitsAccountOperations`
+  - Method `BucketsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Bucket, content_type: str)`
+  - Method `BucketsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: IO[bytes], content_type: str)`
+  - Method `BucketsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Optional[BucketPatch], content_type: str)`
+  - Method `BucketsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `BucketsOperations.generate_credentials` has a new overload `def generate_credentials(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: BucketCredentialsExpiry, content_type: str)`
+  - Method `BucketsOperations.generate_credentials` has a new overload `def generate_credentials(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Deleted or renamed model `SubscriptionQuotaItem`
+  - Deleted or renamed model `SubscriptionQuotaItemList`
+
 ## 13.5.0 (2025-04-21)
 
 ### Features Added
