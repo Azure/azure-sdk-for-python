@@ -63,7 +63,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
             )
             # Override the credential scope with the legacy one.
             kwargs["credential_scopes"] = ["https://management.azure.com/.default"]
-            kwargs["api_version"] = "2025_05_01"
+            kwargs["api_version"] = "2025-05-15-preview"
         # End of legacy endpoints handling.
         super().__init__(endpoint, credential, **kwargs)
 
