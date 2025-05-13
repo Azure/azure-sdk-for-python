@@ -277,6 +277,12 @@ Not all credentials require this configuration. Credentials that authenticate th
 [DefaultAzureCredential][default_cred_ref] and [EnvironmentCredential][environment_cred_ref] can be configured with environment variables. Each type of authentication requires values for specific
 variables:
 
+### DefaultAzureCredential
+
+|Variable name|Value
+|-|-
+|`AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST`|Specifies a semicolon-separated list of credential names that will be utilized by DefaultAzureCredential. Valid credential names are `DEVELOPER_CLI`, `WORKLOAD_IDENTITY`, `CLI`, `ENVIRONMENT`, `MANAGED_IDENTITY`, `POWERSHELL` and `SHARED_CACHE`.
+
 ### Service principal with secret
 
 |Variable name|Value
