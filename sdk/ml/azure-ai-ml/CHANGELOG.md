@@ -1,9 +1,8 @@
 # Release History
-## 1.28.0 (unreleased)
-
-### Features Added
+## 1.27.1 (2025-05-13)
 
 ### Bugs Fixed
+ - Handled key error for missing props in PAT url case.
 
 ## 1.27.1 (2025-05-13)
 
