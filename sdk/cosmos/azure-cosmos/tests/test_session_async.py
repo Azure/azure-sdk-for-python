@@ -13,7 +13,6 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos import DatabaseProxy, PartitionKey
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
-from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from typing import Awaitable, Callable
@@ -84,7 +83,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         assert batch_response_token != response_session_token
 
         # Verify no session tokens are sent for delete requests either - but verify session token is updated
-        await self.created_container.delete_item(created_document['id'], created_document['pk'], raw_response_hook=test_config.no_token_response_hook)
+        await self.created_container.delete_item(replaced_item['id'], replaced_item['pk'], raw_response_hook=test_config.no_token_response_hook)
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
@@ -119,8 +118,11 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         await db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
 
         # Session token should be sent for all document requests since we have mwr configuration
+        # First write request won't have since tokens need to be populated on the client first
+        await container.upsert_item(body={'id': '0' + str(uuid.uuid4()), 'pk': 'mypk'},
+                                    raw_response_hook=test_config.no_token_response_hook)
         up_item = await container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                           raw_response_hook=test_config.token_response_hook)
+                                              raw_response_hook=test_config.token_response_hook)
         replaced_item = await container.replace_item(item=up_item['id'],
                                                                   body={'id': up_item['id'], 'song': 'song',
                                                                         'pk': 'mypk'},
@@ -150,13 +152,10 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         assert batch_response_token != response_session_token
 
         # Should get sent now that we have mwr configuration
-        await container.delete_item(created_document['id'], created_document['pk'],
+        await container.delete_item(replaced_item['id'], replaced_item['pk'],
                                                  raw_response_hook=test_config.token_response_hook)
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
-
-        # Clean up
-        await client.delete_database(db.id)
 
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):

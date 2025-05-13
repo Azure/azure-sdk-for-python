@@ -57,10 +57,10 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
 
-    TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
 
