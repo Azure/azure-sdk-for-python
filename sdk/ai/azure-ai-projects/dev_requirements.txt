@@ -2,8 +2,6 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
-azure.storage.blob
 azure.ai.inference
-azure.ai.agents
 openai
 prompty
