@@ -1,10 +1,4 @@
 # Release History
-## 1.28.0 (unreleased)
-
-### Features Added
-
-### Bugs Fixed
-
 ## 1.27.1 (2025-05-13)
 
 ### Bugs Fixed
