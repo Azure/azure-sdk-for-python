@@ -156,6 +156,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                                                  raw_response_hook=test_config.token_response_hook)
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
+        await client.close()
 
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
