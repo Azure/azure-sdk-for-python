@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import decimal
+import datetime
 from typing import (
     Callable,
     List,
@@ -23,6 +24,8 @@ from typing_extensions import Literal
 
 
 from .message import Message, Header, Properties
+from .._utils import utc_from_timestamp
+from .constants import DATETIME_OFFSET_SYMBOL, TICKS_MASK, KIND_SHIFT
 
 if TYPE_CHECKING:
     from .message import MessageDict
@@ -211,6 +214,63 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     with decimal.localcontext(decimal_ctx) as ctx:
         return buffer[16:], ctx.create_decimal((sign, digits, exponent))
 
+
+def _decode_ms_datetime_offset(value: memoryview) -> Tuple[memoryview, datetime.datetime]:
+    """
+    Decode a Microsoft DateTimeOffset value.
+
+    The format:
+    - Bits 01-62: ticks (100-nanosecond intervals since 0001-01-01)
+    - Bits 63-64: A four-state DateTimeKind value
+      0: Unspecified
+      1: UTC
+      2: Local
+
+    :param value: The value representing a .NET DateTimeOffset
+    :type value: Union[memoryview, float, int]
+    :return: The float timestamp value with timezone information
+    :rtype: Union[Tuple[memoryview, datetime.datetime], datetime.datetime]
+    """
+    # Extract the entire 64-bit value
+    raw_value = c_signed_long_long.unpack(value[:8])[0]
+
+    # Extract ticks (bits 01-62) and kind (bits 63-64)
+    # Using bitwise operations to extract the values
+    ticks = raw_value & TICKS_MASK # Clear the top 2 bits (kind)
+    kind = (raw_value >> KIND_SHIFT) & 0x3  # Extract the kind value (bits 63-64)
+
+    # If we have additional bytes for timezone offset (in older format)
+    offset_minutes = 0
+    remaining_buffer = value[8:]
+
+    # Convert ticks to datetime
+    dt = utc_from_timestamp(ticks)
+    print(dt)
+
+    # Apply timezone based on kind and offset
+    if kind == 1:  # UTC
+        # Already in UTC, no adjustment needed
+        pass
+    elif offset_minutes != 0:
+        try:
+            # Create a timezone with the specified offset
+            # offset_minutes * 60 converts minutes to seconds
+            tz = datetime.timezone(datetime.timedelta(minutes=offset_minutes))
+            dt = dt.astimezone(tz)
+        except ValueError:
+            # If the offset is invalid (outside the range of -24 to 24 hours),
+            # just keep the datetime in UTC and log a warning
+            _LOGGER.warning(
+                "Invalid timezone offset value %s minutes encountered in DateTimeOffset. "
+                "Using UTC instead.", offset_minutes
+            )
+    elif kind == 2 or kind == 3:  # Local time
+        # For local time without explicit offset, we'll keep it as UTC
+        # since we don't know the original timezone
+        pass
+
+    return remaining_buffer, dt
+
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
     buffer = buffer[2:]
@@ -280,6 +340,11 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
     buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
+
+    if descriptor == DATETIME_OFFSET_SYMBOL:
+        buffer, datetime_value = _decode_ms_datetime_offset(memoryview(buffer[1:]))
+        return buffer, datetime_value
+
     buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
     try:
         composite_type = cast(int, _COMPOSITES[descriptor])
