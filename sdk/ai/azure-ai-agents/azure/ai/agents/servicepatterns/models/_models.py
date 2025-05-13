@@ -9,7 +9,7 @@
 
 from typing import Any, Mapping, Optional, TYPE_CHECKING, overload
 
-from ...agents._utils.model_base import Model as _Model, rest_field
+from ..._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -19,7 +19,7 @@ class AgentV1Error(_Model):
     """Error payload returned by the agents API.
 
     :ivar error: Represents the error. Required.
-    :vartype error: ~azure.ai.servicepatterns.models.AgentV1ErrorError
+    :vartype error: ~azure.ai.agents.servicepatterns.models.AgentV1ErrorError
     """
 
     error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])

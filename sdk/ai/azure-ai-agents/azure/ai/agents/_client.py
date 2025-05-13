@@ -27,6 +27,7 @@ from .operations import (
     VectorStoreFilesOperations,
     VectorStoresOperations,
 )
+from .servicepatterns.operations import ServicePatternsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -35,6 +36,8 @@ if TYPE_CHECKING:
 class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """AgentsClient.
 
+    :ivar service_patterns: ServicePatternsOperations operations
+    :vartype service_patterns: azure.ai.agents.operations.ServicePatternsOperations
     :ivar threads: ThreadsOperations operations
     :vartype threads: azure.ai.agents.operations.ThreadsOperations
     :ivar messages: MessagesOperations operations
@@ -87,6 +90,9 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.service_patterns = ServicePatternsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.threads = ThreadsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)
