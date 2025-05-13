@@ -215,7 +215,7 @@ class _QuickpulseManager(metaclass=Singleton):
                             # Process docs for quickpulse filtering for exception
                             _apply_document_filters_from_telemetry_data(exc_data)
             except Exception:  # pylint: disable=broad-except
-                _logger.exception("Exception occurred while recording span.")
+                _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
 
     def _record_log_record(self, log_data: LogData) -> None:
         # Only record if in post state
@@ -237,7 +237,7 @@ class _QuickpulseManager(metaclass=Singleton):
                     # Process docs for quickpulse filtering
                     _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
             except Exception:  # pylint: disable=broad-except
-                _logger.exception("Exception occurred while recording log record.")
+                _logger.exception("Exception occurred while recording log record.")  # pylint: disable=C4769
 
 
 # Filtering

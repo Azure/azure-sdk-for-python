@@ -1296,23 +1296,23 @@ class StaticWebsite(GenStaticWebsite):
 
     enabled: bool
     """Indicates whether this account is hosting a static website. The default value is `False`."""
-    index_document: str
+    index_document: Optional[str]
     """The default name of the index page under each directory."""
-    error_document404_path: str
+    error_document404_path: Optional[str]
     """The absolute path of the custom 404 page."""
-    default_index_document_path: str
+    default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
-            self.index_document = kwargs.get('index_document')  # type: ignore [assignment]
-            self.error_document404_path = kwargs.get('error_document404_path')  # type: ignore [assignment]
-            self.default_index_document_path = kwargs.get('default_index_document_path')  # type: ignore [assignment]
+            self.index_document = kwargs.get('index_document')
+            self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
-            self.index_document = None  # type: ignore [assignment]
-            self.error_document404_path = None  # type: ignore [assignment]
-            self.default_index_document_path = None  # type: ignore [assignment]
+            self.index_document = None
+            self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):

@@ -5,8 +5,15 @@ import os
 import types
 from typing import Optional, Type
 
-from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP
+from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClient
+from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
+from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP
+from azure.ai.evaluation._legacy._batch_engine._openai_injector import (
+    inject_openai_api as ported_inject_openai_api,
+    recover_openai_api as ported_recover_openai_api,
+)
 from azure.ai.evaluation._constants import PF_DISABLE_TRACING
+from azure.ai.evaluation._evaluate._utils import set_event_loop_policy
 
 
 class TargetRunContext:
@@ -16,7 +23,8 @@ class TargetRunContext:
     :type upload_snapshot: bool
     """
 
-    def __init__(self, upload_snapshot: bool = False) -> None:
+    def __init__(self, client: BatchClient, upload_snapshot: bool = False) -> None:
+        self._client = client
         self._upload_snapshot = upload_snapshot
         self._original_cwd = os.getcwd()
 
@@ -32,6 +40,11 @@ class TargetRunContext:
 
         os.environ[PF_DISABLE_TRACING] = "true"
 
+        if isinstance(self._client, RunSubmitterClient):
+            ported_inject_openai_api()
+            # For addressing the issue of asyncio event loop closed on Windows
+            set_event_loop_policy()
+
     def __exit__(
         self,
         exc_type: Optional[Type[BaseException]],
@@ -44,3 +57,6 @@ class TargetRunContext:
             os.environ.pop(PF_FLOW_ENTRY_IN_TMP, None)
 
         os.environ.pop(PF_DISABLE_TRACING, None)
+
+        if isinstance(self._client, RunSubmitterClient):
+            ported_recover_openai_api()

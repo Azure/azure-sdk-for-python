@@ -196,7 +196,7 @@ class DataType:
 
 
 class IndexingDirective:
-    """Specifies whether or not the resource is to be indexed."""
+    """Specifies whether the resource is to be indexed."""
     Default: int = 0
     """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
@@ -224,7 +224,7 @@ class PermissionMode:
 
 
 class TriggerType:
-    """Specifies the type of a trigger."""
+    """Specifies the type of trigger."""
     Pre: Literal["pre"] = "pre"
     """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
@@ -308,6 +308,13 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         locations in this list are specified as the names of the azure Cosmos
         locations like, 'West US', 'East US', 'Central India' and so on.
     :vartype PreferredLocations: List[str]
+    :ivar ExcludedLocations:
+        Gets or sets the excluded locations for geo-replicated database
+        accounts. When ExcludedLocations is non-empty, the client will skip this
+        set of locations from the final location evaluation. The locations in
+        this list are specified as the names of the azure Cosmos locations like,
+        'West US', 'East US', 'Central India' and so on.
+    :vartype ExcludedLocations: List[str]
     :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
@@ -347,6 +354,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
+        self.ExcludedLocations: List[str] = []
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False

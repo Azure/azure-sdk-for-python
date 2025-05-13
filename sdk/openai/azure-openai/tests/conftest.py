@@ -21,7 +21,7 @@ from devtools_testutils import get_credential
 
 # for pytest.parametrize
 GA = "2024-10-21"
-PREVIEW = "2025-02-01-preview"
+PREVIEW = "2025-03-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
@@ -49,7 +49,8 @@ ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 ENV_AZURE_OPENAI_AUDIO_NAME = "whisper"
 ENV_AZURE_OPENAI_DALLE_NAME = "dall-e-3"
-ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME = "gpt-4o"
+ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME = "gpt-4o-mini"
+ENV_AZURE_OPENAI_REALTIME_NAME = "gpt-4o-mini-realtime-preview-1217"
 ENV_AZURE_OPENAI_TTS_NAME = "tts"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
@@ -58,7 +59,8 @@ ENV_OPENAI_CHAT_COMPLETIONS_MODEL = "gpt-3.5-turbo"
 ENV_OPENAI_EMBEDDINGS_MODEL = "text-embedding-ada-002"
 ENV_OPENAI_AUDIO_MODEL = "whisper-1"
 ENV_OPENAI_DALLE_MODEL = "dall-e-3"
-ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4o-2024-08-06"
+ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4o-mini-2024-07-18"
+ENV_OPENAI_REALTIME_NAME = "gpt-4o-mini-realtime-preview-2024-10-01"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
@@ -149,8 +151,10 @@ def build_kwargs(args, api_type):
             return {"model": ENV_OPENAI_TTS_MODEL}
         elif api_type in ["tts_azure"]:
             return {"model": ENV_AZURE_OPENAI_TTS_NAME}
-    if test_feature.startswith("test_chat_completions") \
-        or test_feature.startswith(("test_client", "test_models")):
+    if test_feature.startswith(
+        ("test_client", "test_models", "test_chat_completions",
+         "test_assistants", "test_responses", "test_vector_stores")
+    ):
         if api_type in ["azure", "azure_key", "asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
@@ -174,16 +178,11 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
-    if test_feature.startswith("test_assistants") or test_feature.startswith("test_vector_stores"):
-        if api_type in ["asst_azure"]:
-            return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
-        elif api_type == "gpt_4_openai":
-            return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
     if test_feature.startswith("test_realtime"):
         if api_type in ["gpt_4_azure"]:
-            return {"model": "gpt-4o-realtime-preview-1001"}
+            return {"model": ENV_AZURE_OPENAI_REALTIME_NAME}
         elif api_type == "gpt_4_openai":
-            return {"model": "gpt-4o-realtime-preview-2024-10-01"}
+            return {"model": ENV_OPENAI_REALTIME_NAME}
     if test_feature.startswith(("test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")

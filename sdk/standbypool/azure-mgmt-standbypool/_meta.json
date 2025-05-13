@@ -1,6 +1,6 @@
 {
-  "commit": "e695076ad458a3eac3d6943f9e923544ff52b1e4",
+  "commit": "525c8c6cebc5837606cb14cfcb0afdb4f2f17fa9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/standbypool/StandbyPool.Management",
-  "@azure-tools/typespec-python": "0.31.1"
+  "@azure-tools/typespec-python": "0.42.3"
 }

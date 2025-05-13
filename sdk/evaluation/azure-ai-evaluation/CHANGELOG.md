@@ -1,10 +1,50 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.7.0 (2025-05-12)
+
+### Bugs Fixed
+- azure-ai-evaluation failed with module not found [#40992](https://github.com/Azure/azure-sdk-for-python/issues/40992)
+
+## 1.6.0 (2025-05-07)
 
 ### Features Added
+- New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
+- Added support for Azure Open AI evaluation via 4 new 'grader' classes, which serve as wrappers around Azure Open AI grader configurations. These new grader objects can be supplied to the main `evaluate` method as if they were normal callable evaluators. The new classes are:
+    - AzureOpenAIGrader (general class for experienced users)
+    - AzureOpenAILabelGrader
+    - AzureOpenAIStringCheckGrader
+    - AzureOpenAITextSimilarityGrader
+
+### Breaking Changes
+- In the experimental RedTeam's scan method, the `data_only` param has been replaced with `skip_evals` and if you do not want data to be uploaded, use the `skip_upload` flag.
+
+### Bugs Fixed
+- Fixed error in `evaluate` where data fields could not contain numeric characters. Previously, a data file with schema:
+    ```
+    "query1": "some query", "response": "some response"
+    ```
+    throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
+    Now, users may import data containing fields with numeric characters. 
+
+
+## 1.5.0 (2025-04-04)
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
+## 1.4.0 (2025-03-27)
+
+### Features Added
+- Enhanced binary evaluation results with customizable thresholds
+  - Added threshold support for QA and ContentSafety evaluators
+  - Evaluation results now include both the score and threshold values
+  - Configurable threshold parameter allows custom binary classification boundaries
+  - Default thresholds provided for backward compatibility
+  - Quality evaluators use "higher is better" scoring (score ≥ threshold is positive)
+  - Content safety evaluators use "lower is better" scoring (score ≤ threshold is positive)
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
-  - It provides a capabilities to identify the following code vulnerabilities.
+  - It provides capabilities to identify the following code vulnerabilities.
     - path-injection
     - sql-injection
     - code-injection
@@ -38,13 +78,15 @@
     - emotional_state
     - protected_class
     - groundedness
-
-### Breaking Changes
+- New Built-in evaluators for Agent Evaluation (Preview)
+  - IntentResolutionEvaluator - Evaluates the intent resolution of an agent's response to a user query.
+  - ResponseCompletenessEvaluator - Evaluates the response completeness of an agent's response to a user query.
+  - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
+  - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
 
 ### Bugs Fixed
 - Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
-
-### Other Changes
+- Uploading local evaluation results from `evaluate` with the same run name will no longer result in each online run sharing (and bashing) result files.
 
 ## 1.3.0 (2025-02-28)
 

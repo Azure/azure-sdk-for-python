@@ -44,7 +44,7 @@ def random_pkey_generation(partitions):
 
 
 @pytest.mark.liveTest()
-def test_producer_client_constructor(auth_credentials, uamqp_transport):
+def test_producer_client_constructor(auth_credentials, uamqp_transport, client_args):
     def on_success(events, pid):
         pass
 
@@ -59,6 +59,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
             credential=credential(),
             buffered_mode=True,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
     with pytest.raises(TypeError):
         EventHubProducerClient(
@@ -68,6 +69,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
             buffered_mode=True,
             on_success=on_success,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
     with pytest.raises(TypeError):
         EventHubProducerClient(
@@ -77,6 +79,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
             buffered_mode=True,
             on_error=on_error,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
     with pytest.raises(ValueError):
         EventHubProducerClient(
@@ -88,6 +91,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
             on_error=on_error,
             max_wait_time=0,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
     with pytest.raises(ValueError):
         EventHubProducerClient(
@@ -99,6 +103,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
             on_error=on_error,
             max_buffer_length=0,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
 
     def on_success_missing_params(events):
@@ -116,6 +121,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
         on_success=on_success_missing_params,
         on_error=on_error_missing_params,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     on_success_missing_params.events = None
@@ -136,7 +142,7 @@ def test_producer_client_constructor(auth_credentials, uamqp_transport):
 )
 @pytest.mark.liveTest
 def test_basic_send_single_events_round_robin(
-    auth_credentials, flush_after_sending, close_after_sending, uamqp_transport
+    auth_credentials, flush_after_sending, close_after_sending, uamqp_transport, client_args
 ):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
@@ -150,6 +156,7 @@ def test_basic_send_single_events_round_robin(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -177,6 +184,7 @@ def test_basic_send_single_events_round_robin(
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:
@@ -251,7 +259,7 @@ def test_basic_send_single_events_round_robin(
     [(False, False), (True, False), (False, True)],
 )
 def test_basic_send_batch_events_round_robin(
-    auth_credentials, flush_after_sending, close_after_sending, uamqp_transport
+    auth_credentials, flush_after_sending, close_after_sending, uamqp_transport, client_args
 ):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
@@ -265,6 +273,7 @@ def test_basic_send_batch_events_round_robin(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -288,6 +297,7 @@ def test_basic_send_batch_events_round_robin(
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:
@@ -370,7 +380,7 @@ def test_basic_send_batch_events_round_robin(
 
 
 @pytest.mark.liveTest
-def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport):
+def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
 
@@ -383,6 +393,7 @@ def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -406,6 +417,7 @@ def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:
@@ -470,7 +482,7 @@ def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport
     receive_thread.join()
 
 
-def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
+def test_send_with_timing_configuration(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
 
@@ -483,6 +495,7 @@ def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -509,6 +522,7 @@ def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:
@@ -532,6 +546,7 @@ def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     sent_events.clear()
@@ -562,7 +577,7 @@ def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_long_sleep(auth_credentials, uamqp_transport):
+def test_long_sleep(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
 
@@ -575,6 +590,7 @@ def test_long_sleep(auth_credentials, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -598,6 +614,7 @@ def test_long_sleep(auth_credentials, uamqp_transport):
         on_success=on_success,
         on_error=on_error,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:
@@ -616,7 +633,7 @@ def test_long_sleep(auth_credentials, uamqp_transport):
 
 @pytest.mark.skip("not testing correctly + flaky, fix during MQ")
 @pytest.mark.liveTest
-def test_long_wait_small_buffer(auth_credentials, uamqp_transport):
+def test_long_wait_small_buffer(auth_credentials, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
     received_events = defaultdict(list)
 
@@ -629,6 +646,7 @@ def test_long_wait_small_buffer(auth_credentials, uamqp_transport):
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -658,6 +676,7 @@ def test_long_wait_small_buffer(auth_credentials, uamqp_transport):
         max_wait_time=10,
         max_buffer_length=100,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer:

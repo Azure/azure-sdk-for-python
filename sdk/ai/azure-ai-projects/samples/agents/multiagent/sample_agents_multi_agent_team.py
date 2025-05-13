@@ -42,6 +42,12 @@ user_function_set_3: Set = {convert_temperature}
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 
+project_client.agents.enable_auto_function_calls(
+    function_tool=FunctionTool(
+        {fetch_current_datetime, fetch_weather, send_email_using_recipient_name, convert_temperature}
+    )
+)
+
 if model_deployment_name is not None:
     AgentTraceConfigurator(project_client=project_client).setup_tracing()
     with project_client:

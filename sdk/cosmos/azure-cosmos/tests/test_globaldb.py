@@ -47,14 +47,14 @@ def _mock_pipeline_run_function_error(pipeline_client,
 def _mock_get_database_account(url_connection=None, **kwargs):
     database_account = documents.DatabaseAccount()
     database_account._ReadableLocations = \
-        [{'databaseAccountEndpoint': contoso_west2, 'name': 'West US 2'}]
+        [{'databaseAccountEndpoint': TestGlobalDB.host, 'name': 'West US 2'}]
     database_account._WritableLocations = \
-        [{'databaseAccountEndpoint': contoso_west, 'name': 'West US'}]
+        [{'databaseAccountEndpoint': TestGlobalDB.host.replace("localhost", "127.0.0.1"), 'name': 'West US'}]
     return database_account
 
 
 def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
-    assert contoso_west in request.url
+    assert "localhost" in request.url
     return test_config.FakePipelineResponse()
 
 @pytest.mark.cosmosEmulator

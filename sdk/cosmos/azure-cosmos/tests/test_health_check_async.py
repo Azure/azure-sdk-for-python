@@ -56,8 +56,6 @@ class TestHealthCheckAsync:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
-    # health check in all these tests should check the endpoints for the first two write regions and the first two read regions
-    # without checking the same endpoint twice
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
@@ -79,10 +77,7 @@ class TestHealthCheckAsync:
         expected_regional_routing_context = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        if use_read_global_endpoint:
-            assert mock_get_database_account_check.counter == 1
-        else:
-            assert mock_get_database_account_check.counter == 2
+        assert mock_get_database_account_check.counter == 2
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_regional_routing_context.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -107,12 +102,8 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
 
-        if not use_read_global_endpoint:
-            for region in REGIONS:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
-                expected_endpoints.append(locational_endpoint)
-        else:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        for region in REGIONS:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
             expected_endpoints.append(locational_endpoint)
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
@@ -149,12 +140,12 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.original_health_check
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_success_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
         # checks the background health check works as expected when all endpoints healthy
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
-        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
@@ -168,7 +159,7 @@ class TestHealthCheckAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+            setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
@@ -183,14 +174,14 @@ class TestHealthCheckAsync:
 
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_failure_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
         # checks the background health check works as expected when all endpoints unhealthy - it should mark the endpoints unavailable
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
-        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
@@ -198,16 +189,12 @@ class TestHealthCheckAsync:
             for i in range(2):
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
                 # wait for background task to finish
-                await asyncio.sleep(1)
+                await asyncio.sleep(2)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+            setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
 
-        if not use_write_global_endpoint:
-            num_unavailable_endpoints = len(REGIONS)
-        else:
-            num_unavailable_endpoints = 1
-
+        num_unavailable_endpoints = len(REGIONS)
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == num_unavailable_endpoints
 

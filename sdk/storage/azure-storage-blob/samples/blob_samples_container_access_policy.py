@@ -12,12 +12,12 @@ FILE: blob_samples_container_access_policy.py
 DESCRIPTION:
     This example shows how to set the container access policy when creating the container
     and also how to get the access policy of a container after the container has been
-    created. This sample expects that the `AZURE_STORAGE_CONNECTION_STRING` environment
+    created. This sample expects that the `STORAGE_CONNECTION_STRING` environment
     variable is set. It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python blob_samples_container_access_policy.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 
@@ -36,14 +36,14 @@ from datetime import datetime, timedelta
 from azure.storage.blob import AccessPolicy, BlobServiceClient, ContainerSasPermissions, PublicAccess
 
 try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
 def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    container_client = service_client.get_container_client("mynewconwertainer")
+    container_client = service_client.get_container_client("mynewcontaineraccess")
 
     print("\n..Creating container")
     container_client.create_container()
@@ -52,7 +52,6 @@ def get_and_set_container_access_policy():
     access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
                                     expiry=datetime.utcnow() + timedelta(hours=1),
                                     start=datetime.utcnow() - timedelta(minutes=1))
-
     identifiers = {'read': access_policy}
 
     # Specifies full public read access for container and blob data.

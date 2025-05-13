@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -43,7 +42,7 @@ from ...operations._volume_groups_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,7 +68,11 @@ class VolumeGroupsOperations:
 
     @distributed_trace
     def list_by_elastic_san(
-        self, resource_group_name: str, elastic_san_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        x_ms_access_soft_deleted_resources: Optional[Union[str, _models.XMsAccessSoftDeletedResources]] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.VolumeGroup"]:
         """List VolumeGroups.
 
@@ -78,6 +81,11 @@ class VolumeGroupsOperations:
         :type resource_group_name: str
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
+        :param x_ms_access_soft_deleted_resources: Optional, returns only soft deleted volume groups if
+         set to true. If set to false or if not specified, returns only active volume groups. Known
+         values are: "true" and "false". Default value is None.
+        :type x_ms_access_soft_deleted_resources: str or
+         ~azure.mgmt.elasticsan.models.XMsAccessSoftDeletedResources
         :return: An iterator like instance of either VolumeGroup or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.elasticsan.models.VolumeGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88,7 +96,7 @@ class VolumeGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VolumeGroupList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -103,6 +111,7 @@ class VolumeGroupsOperations:
                     resource_group_name=resource_group_name,
                     elastic_san_name=elastic_san_name,
                     subscription_id=self._config.subscription_id,
+                    x_ms_access_soft_deleted_resources=x_ms_access_soft_deleted_resources,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -159,7 +168,7 @@ class VolumeGroupsOperations:
         parameters: Union[_models.VolumeGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -366,7 +375,7 @@ class VolumeGroupsOperations:
         parameters: Union[_models.VolumeGroupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -572,7 +581,7 @@ class VolumeGroupsOperations:
     async def _delete_initial(
         self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -702,7 +711,7 @@ class VolumeGroupsOperations:
         :rtype: ~azure.mgmt.elasticsan.models.VolumeGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -60,7 +60,7 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         elif hasattr(client, '_container_client'):
             _client = client._container_client
         else:
-            raise TypeError("Lease must use any of FileSystemClient DataLakeDirectoryClient, or DataLakeFileClient.")
+            raise TypeError("Lease must use any of FileSystemClient, DataLakeDirectoryClient, or DataLakeFileClient.")
 
         self._blob_lease_client = BlobLeaseClient(_client, lease_id=lease_id)
 

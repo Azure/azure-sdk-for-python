@@ -20,51 +20,11 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
-        response = self.client.firewall_rules.get(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            firewall_rule_name="str",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
-        response = self.client.firewall_rules.create_or_update(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            firewall_rule_name="str",
-            parameters={"endIpAddress": "str", "id": "str", "name": "str", "startIpAddress": "str", "type": "str"},
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_delete(self, resource_group):
-        response = self.client.firewall_rules.delete(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            firewall_rule_name="str",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_server(self, resource_group):
+    def test_firewall_rules_list_by_server(self, resource_group):
         response = self.client.firewall_rules.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -72,14 +32,54 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replace(self, resource_group):
+    def test_firewall_rules_replace(self, resource_group):
         response = self.client.firewall_rules.replace(
             resource_group_name=resource_group.name,
             server_name="str",
             parameters={
                 "values": [{"endIpAddress": "str", "id": "str", "name": "str", "startIpAddress": "str", "type": "str"}]
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_firewall_rules_get(self, resource_group):
+        response = self.client.firewall_rules.get(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            firewall_rule_name="str",
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_firewall_rules_create_or_update(self, resource_group):
+        response = self.client.firewall_rules.create_or_update(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            firewall_rule_name="str",
+            parameters={"endIpAddress": "str", "id": "str", "name": "str", "startIpAddress": "str", "type": "str"},
+            api_version="2024-05-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_firewall_rules_delete(self, resource_group):
+        response = self.client.firewall_rules.delete(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            firewall_rule_name="str",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -128,11 +128,11 @@
             "apiVersion": "[variables('storageApiVersion')]",
             "name": "[concat(variables('primaryAccountName'), '/default')]",
             "properties": {
-            "containerDeleteRetentionPolicy": {
+              "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
               }
-        },
+            },
         "dependsOn": [
           "[variables('primaryAccountName')]"
         ]
@@ -438,6 +438,7 @@
           "name": "[concat(variables('dataLakeSoftDeleteAccountName'), '/default')]",
           "properties": {
             "deleteRetentionPolicy": {
+              "allowPermanentDelete": false,
               "enabled": true,
               "days": 1
             },
@@ -558,6 +559,30 @@
         "STORAGE_ACCOUNT_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value]"
+        }, 
+        "STORAGE_CONNECTION_STRING": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
+        },
+        "STORAGE_CONNECTION_STRING_SOFT": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('softDeleteAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('softDeleteAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
+        },
+        "OAUTH_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "STORAGE_ACCOUNT_BLOB_URL": {
+          "type": "string",
+          "value": "[format('https://{0}.blob.core.windows.net', variables('primaryAccountName'))]"
+        },
+        "STORAGE_ACCOUNT_QUEUE_URL": {
+          "type": "string",
+           "value": "[format('https://{0}.queue.core.windows.net', variables('primaryAccountName'))]"
+        },
+        "STORAGE_ACCOUNT_FILE_SHARE_URL": {
+          "type": "string",
+           "value": "[format('https://{0}.file.core.windows.net', variables('primaryAccountName'))]"
         },
         "SECONDARY_STORAGE_ACCOUNT_NAME": {
             "type": "string",
@@ -614,6 +639,10 @@
         "DATALAKE_STORAGE_ACCOUNT_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName')), variables('storageApiVersion')).keys[0].value]"
+        },
+        "DATALAKE_STORAGE_CONNECTION_STRING": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('dataLakeAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
         },
         "STORAGE_DATA_LAKE_SOFT_DELETE_ACCOUNT_NAME": {
           "type": "string",

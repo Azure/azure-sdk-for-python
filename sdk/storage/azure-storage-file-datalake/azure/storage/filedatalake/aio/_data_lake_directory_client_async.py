@@ -248,7 +248,7 @@ class DataLakeDirectoryClient(PathClient):
         return await self._exists(**kwargs)
 
     @distributed_trace_async
-    async def delete_directory(self, **kwargs: Any) -> Dict[str, Any]:
+    async def delete_directory(self, **kwargs: Any) -> None:
         """
         Marks the specified directory for deletion.
 
@@ -291,7 +291,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        return await self._delete(recursive=True, **kwargs)
+        return await self._delete(recursive=True, **kwargs)  # type: ignore [return-value]
 
     @distributed_trace_async
     async def get_directory_properties(self, **kwargs: Any) -> DirectoryProperties:
