@@ -90,7 +90,7 @@ from ...operations._operations import (
     build_vector_stores_list_request,
     build_vector_stores_modify_request,
 )
-from ...servicepatterns import models as _servicepatterns_models1
+from ..._servicepatterns import models as _servicepatterns_models1
 from .._configuration import AgentsClientConfiguration
 
 if TYPE_CHECKING:

@@ -19,7 +19,7 @@ class AgentV1Error(_Model):
     """Error payload returned by the agents API.
 
     :ivar error: Represents the error. Required.
-    :vartype error: ~azure.ai.agents.servicepatterns.models.AgentV1ErrorError
+    :vartype error: ~azure.ai.agents._servicepatterns.models.AgentV1ErrorError
     """
 
     error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])

@@ -27,7 +27,7 @@ from .operations import (
     VectorStoreFilesOperations,
     VectorStoresOperations,
 )
-from .servicepatterns.operations import ServicePatternsOperations
+from ._servicepatterns.operations import ServicePatternsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
