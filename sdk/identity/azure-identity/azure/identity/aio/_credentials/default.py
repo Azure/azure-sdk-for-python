@@ -125,7 +125,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
 
-        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").lower()
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
         exclude_developer_cli_credential = kwargs.pop("exclude_developer_cli_credential", False)
