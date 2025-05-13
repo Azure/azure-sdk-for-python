@@ -293,7 +293,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 if (not _has_database_account_header(request.http_request.headers)
                         and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
-                        await global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
                             await self.sleep(retry_settings, request.context.transport)
@@ -313,6 +312,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             or _has_read_retryable_headers(request.http_request.headers)):
                         # This logic is based on the _retry.py file from azure-core
                         if retry_settings['read'] > 0:
+                            # record the failure for circuit breaker tracking for retrys in connection retry policy
+                            # retries in the execute function will mark those failures
                             await global_endpoint_manager.record_failure(request_params)
                             retry_active = self.increment(retry_settings, response=request, error=err)
                             if retry_active:

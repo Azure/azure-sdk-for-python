@@ -327,9 +327,9 @@ class TestPerPartitionCircuitBreakerMM:
                                      expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
         # there shouldn't be region marked as unavailable
-        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
         # recover partition
         # remove faults and reduce initial recover time and perform a write
@@ -341,7 +341,7 @@ class TestPerPartitionCircuitBreakerMM:
                                           fault_injection_container,
                                           doc['id'],
                                           PK_VALUE,
-                                          uri_down)
+                                          expected_uri)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
@@ -357,9 +357,9 @@ class TestPerPartitionCircuitBreakerMM:
                                       expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
         # there shouldn't be region marked as unavailable
-        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
     # test cosmos client timeout
 

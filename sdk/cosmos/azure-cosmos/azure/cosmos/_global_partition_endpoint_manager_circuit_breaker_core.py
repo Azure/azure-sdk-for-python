@@ -109,10 +109,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         )
         return request
 
-    def mark_partition_unavailable(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
-        location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
-        self.partition_health_tracker.mark_partition_unavailable(pk_range_wrapper, location)
-
     def record_success(
             self,
             request: RequestObject,

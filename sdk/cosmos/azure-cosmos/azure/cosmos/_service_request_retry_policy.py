@@ -45,12 +45,9 @@ class ServiceRequestRetryPolicy(object):
             if self.request.resource_type == ResourceType.DatabaseAccount:
                 return False
 
-            if self.global_endpoint_manager.is_circuit_breaker_applicable(self.request):
-                self.global_endpoint_manager.mark_partition_unavailable(self.request, self.pk_range_wrapper)
-            else:
-                refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
-                # This logic is for the last retry and mark the region unavailable
-                self.mark_endpoint_unavailable(self.request.location_endpoint_to_route, refresh_cache)
+            refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
+            # This logic is for the last retry and mark the region unavailable
+            self.mark_endpoint_unavailable(self.request.location_endpoint_to_route, refresh_cache)
 
             # Check if it is safe to do another retry
             if self.in_region_retry_count >= self.total_in_region_retries:

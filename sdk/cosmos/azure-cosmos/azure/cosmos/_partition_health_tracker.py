@@ -30,7 +30,6 @@ from azure.cosmos._location_cache import current_time_millis, EndpointOperationT
 from azure.cosmos._request_object import RequestObject
 from ._constants import _Constants as Constants
 
-
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 MAX_UNAVAILABLE_TIME = 1200 * 1000 # milliseconds
 REFRESH_INTERVAL = 60 * 1000 # milliseconds
@@ -57,7 +56,6 @@ class _PartitionHealthInfo(object):
         self.read_consecutive_failure_count: int = 0
         self.write_consecutive_failure_count: int = 0
         self.unavailability_info: Dict[str, Any] = {}
-
 
     def reset_health_stats(self) -> None:
         self.write_failure_count = 0
@@ -118,16 +116,11 @@ class _PartitionHealthTracker(object):
     This internal class implements the logic for tracking health thresholds for a partition.
     """
 
-
     def __init__(self) -> None:
         # partition -> regions -> health info
         self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
         self.stale_partition_lock = threading.Lock()
-
-    def mark_partition_unavailable(self, pk_range_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
-        # mark the partition key range as unavailable
-        self._transition_health_status_on_failure(pk_range_wrapper, location)
 
     def _transition_health_status_on_failure(
             self,
@@ -155,8 +148,6 @@ class _PartitionHealthTracker(object):
                 partition_health_info = _PartitionHealthInfo()
                 partition_health_info.transition_health_status(UNHEALTHY_TENTATIVE, current_time)
                 self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = partition_health_info
-
-
 
     def _transition_health_status_on_success(
             self,
@@ -205,7 +196,6 @@ class _PartitionHealthTracker(object):
                     if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY) :
                         excluded_locations.append(location)
         return excluded_locations
-
 
     def add_failure(
             self,
@@ -295,7 +285,6 @@ class _PartitionHealthTracker(object):
             health_info.read_success_count += 1
             health_info.read_consecutive_failure_count = 0
         self._transition_health_status_on_success(pk_range_wrapper, location)
-
 
     def _reset_partition_health_tracker_stats(self) -> None:
         for locations in self.pk_range_wrapper_to_health_info.values():

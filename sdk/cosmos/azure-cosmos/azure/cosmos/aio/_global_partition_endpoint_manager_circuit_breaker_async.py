@@ -110,14 +110,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
                                                                                                     pk_range_wrapper)
         return self._resolve_service_endpoint(request)
 
-    def mark_partition_unavailable(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
-    ) -> None:
-        if pk_range_wrapper:
-            self.global_partition_endpoint_manager_core.mark_partition_unavailable(request, pk_range_wrapper)
-
     async def record_success(
             self,
             request: RequestObject

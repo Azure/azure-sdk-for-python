@@ -191,7 +191,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
-        os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
         client = CosmosClient(default_endpoint, self.master_key,
                               preferred_locations=[REGION_1, REGION_2],
                               multiple_write_locations=True,
@@ -430,12 +429,11 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                      expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
-        # there shouldn't be region marked as unavailable
-        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
         # recover partition
-        # remove faults and reduce initial recover time and perform a write
+        # remove faults and reduce initial recover time and perform a read
         original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
         _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
         custom_transport.faults = []
@@ -444,10 +442,12 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           fault_injection_container,
                                           doc['id'],
                                           PK_VALUE,
-                                          uri_down)
+                                          expected_uri)
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
+        # ppcb should not regress connection timeouts marking the region as unavailable
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
         custom_transport.add_fault(predicate,
                                    lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
@@ -460,9 +460,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                       expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        validate_unhealthy_partitions(global_endpoint_manager, 1)
-        # there shouldn't be region marked as unavailable
-        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 0
+        validate_unhealthy_partitions(global_endpoint_manager, 0)
+        assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
 
         await cleanup_method([custom_setup, setup])
@@ -506,7 +505,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             assert number_of_errors == 1
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
-            await cleanup_method([custom_setup])
+            await cleanup_method([custom_setup, setup])
 
     # test cosmos client timeout
 

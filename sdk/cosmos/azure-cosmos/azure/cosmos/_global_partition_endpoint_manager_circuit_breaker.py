@@ -41,7 +41,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     geo-replicated database accounts.
     """
 
-
     def __init__(self, client: "CosmosClientConnection"):
         super(_GlobalPartitionEndpointManagerForCircuitBreaker, self).__init__(client)
         self.global_partition_endpoint_manager_core = (
@@ -90,7 +89,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 
-
     def record_failure(
             self,
             request: RequestObject
@@ -110,14 +108,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             request = self.global_partition_endpoint_manager_core.add_excluded_locations_to_request(request,
                                                                                                     pk_range_wrapper)
         return self._resolve_service_endpoint(request)
-
-    def mark_partition_unavailable(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
-    ) -> None:
-        if pk_range_wrapper:
-            self.global_partition_endpoint_manager_core.mark_partition_unavailable(request, pk_range_wrapper)
 
     def record_success(
             self,
