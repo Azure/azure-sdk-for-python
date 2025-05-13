@@ -9,24 +9,29 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 from typing_extensions import Self
 
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
-from ._directory_client import ShareDirectoryClient
-from ._file_client import ShareFileClient
-from ._generated.models import ShareAccessTier
-from ._lease import ShareLeaseClient
-from ._models import (
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ._directory_client_async import ShareDirectoryClient
+from ._file_client_async import ShareFileClient
+from ._lease_async import ShareLeaseClient
+from .._generated.models import (
+    ShareAccessTier,
+    ShareRootSquash,
+)
+from .._models import (
     AccessPolicy,
     DirectoryProperties,
     FileProperties,
     ShareProperties,
     ShareProtocols,
-    ShareRootSquash,
 )
-from ._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     snapshot: Optional[str]
     def __init__(
         self,
@@ -34,7 +39,7 @@ class ShareClient(StorageAccountHostsMixin):
         share_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
@@ -51,7 +56,7 @@ class ShareClient(StorageAccountHostsMixin):
         share_url: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
@@ -69,7 +74,7 @@ class ShareClient(StorageAccountHostsMixin):
         share_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
@@ -82,8 +87,8 @@ class ShareClient(StorageAccountHostsMixin):
     ) -> Self: ...
     def get_directory_client(self, directory_path: Optional[str] = None) -> ShareDirectoryClient: ...
     def get_file_client(self, file_path: str) -> ShareFileClient: ...
-    @distributed_trace
-    def acquire_lease(
+    @distributed_trace_async
+    async def acquire_lease(
         self,
         *,
         lease_duration: Optional[int] = None,
@@ -91,8 +96,8 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ShareLeaseClient: ...
-    @distributed_trace
-    def create_share(
+    @distributed_trace_async
+    async def create_share(
         self,
         *,
         metadata: Optional[Dict[str, str]] = None,
@@ -108,34 +113,34 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def create_snapshot(
+    @distributed_trace_async
+    async def create_snapshot(
         self, *, metadata: Optional[Dict[str, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def delete_share(
+    @distributed_trace_async
+    async def delete_share(
         self,
         delete_snapshots: Optional[Union[bool, Literal["include", "include-leased"]]] = False,
         *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        lease: Optional[Union[str, ShareLeaseClient]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def get_share_properties(
-        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+    @distributed_trace_async
+    async def get_share_properties(
+        self, *, lease: Optional[Union[str, ShareLeaseClient]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> ShareProperties: ...
-    @distributed_trace
-    def set_share_quota(
+    @distributed_trace_async
+    async def set_share_quota(
         self,
         quota: int,
         *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        lease: Optional[Union[str, ShareLeaseClient]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def set_share_properties(
+    @distributed_trace_async
+    async def set_share_properties(
         self,
         *,
         access_tier: Optional[Union[str, ShareAccessTier]] = None,
@@ -150,8 +155,8 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def set_share_metadata(
+    @distributed_trace_async
+    async def set_share_metadata(
         self,
         metadata: Dict[str, str],
         *,
@@ -159,22 +164,22 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def get_share_access_policy(
-        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+    @distributed_trace_async
+    async def get_share_access_policy(
+        self, *, lease: Optional[Union[str, ShareLeaseClient]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def set_share_access_policy(
+    @distributed_trace_async
+    async def set_share_access_policy(
         self,
-        signed_identifiers: Dict[str, AccessPolicy],
+        signed_identifiers: Dict[str, "AccessPolicy"],
         *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        lease: Optional[Union[str, ShareLeaseClient]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    @distributed_trace
-    def get_share_stats(
-        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+    @distributed_trace_async
+    async def get_share_stats(
+        self, *, lease: Optional[Union[str, ShareLeaseClient]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> int: ...
     @distributed_trace
     def list_directories_and_files(
@@ -187,9 +192,9 @@ class ShareClient(StorageAccountHostsMixin):
         include_extended_info: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[Union[DirectoryProperties, FileProperties]]: ...
-    @distributed_trace
-    def create_permission_for_share(
+    ) -> AsyncItemPaged[Union[DirectoryProperties, FileProperties]]: ...
+    @distributed_trace_async
+    async def create_permission_for_share(
         self,
         file_permission: str,
         *,
@@ -197,8 +202,8 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Optional[str]: ...
-    @distributed_trace
-    def get_permission_for_share(
+    @distributed_trace_async
+    async def get_permission_for_share(
         self,
         permission_key: str,
         *,
@@ -206,8 +211,8 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> str: ...
-    @distributed_trace
-    def create_directory(
+    @distributed_trace_async
+    async def create_directory(
         self,
         directory_name: str,
         *,
@@ -218,5 +223,5 @@ class ShareClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ShareDirectoryClient: ...
-    @distributed_trace
-    def delete_directory(self, directory_name: str, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    @distributed_trace_async
+    async def delete_directory(self, directory_name: str, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
