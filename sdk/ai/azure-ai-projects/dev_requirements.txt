@@ -4,5 +4,6 @@
 aiohttp
 azure.storage.blob
 azure.ai.inference
+azure.ai.agents
 openai
 prompty
