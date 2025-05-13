@@ -82,15 +82,11 @@ class InferenceOperations:
             ) from e
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-        # TODO: Remove this before //build?
-        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=credential_scopes,
+            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access
             user_agent=kwargs.pop(
                 "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
             ),
@@ -125,14 +121,11 @@ class InferenceOperations:
             ) from e
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = EmbeddingsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=credential_scopes,
+            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access,
             user_agent=kwargs.pop(
                 "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
             ),
@@ -167,14 +160,11 @@ class InferenceOperations:
             ) from e
 
         endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
-        # is only relevant of course if EntraID auth is used.
-        credential_scopes = ["https://ai.azure.com/.default"]
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=credential_scopes,
+            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access,
             user_agent=kwargs.pop(
                 "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
             ),

@@ -18,8 +18,9 @@ class TestSamples:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
     * set PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
     * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
+    * Uncomment the two lines that start with "@pytest.mark.skip" below.
     * Run:  pytest tests/samples/test_samples.py::TestSamples
-    * Load the resulting report in Excel: tests\samples\samples_report.csv
+    * Load the resulting report in Excel: tests/samples/samples_report.csv
     """
 
     @classmethod
@@ -190,7 +191,7 @@ class TestSamples:
             ),
             (
                 "samples\\inference\\sample_image_embeddings_with_azure_ai_inference_client.py",
-                "to-do-add-model",
+                "Cohere-embed-v3-english",
                 "",
                 "samples\\inference",
             ),
@@ -249,7 +250,7 @@ class TestSamples:
             ),
             (
                 "samples\\inference\\async_samples\\sample_image_embeddings_with_azure_ai_inference_client_async.py",
-                "to-do-add-model",
+                "Cohere-embed-v3-english",
                 "",
                 "samples\\inference\\async_samples",
             ),
