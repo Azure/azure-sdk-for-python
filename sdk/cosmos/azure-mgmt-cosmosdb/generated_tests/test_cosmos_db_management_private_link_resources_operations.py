@@ -24,7 +24,7 @@ class TestCosmosDBManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTest
         response = self.client.private_link_resources.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCosmosDBManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             group_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself

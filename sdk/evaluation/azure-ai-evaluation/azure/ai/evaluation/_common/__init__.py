@@ -9,7 +9,7 @@ from . import constants
 from .rai_service import evaluate_with_rai_service
 from .utils import get_harm_severity_level
 from .evaluation_onedp_client import EvaluationServiceOneDPClient
-from .onedp.models import EvaluationUpload, EvaluationResult
+from .onedp.models import EvaluationUpload, EvaluationResult, RedTeamUpload, ResultType
 
 __all__ = [
     "get_harm_severity_level",
@@ -18,4 +18,6 @@ __all__ = [
     "EvaluationServiceOneDPClient",
     "EvaluationResult",
     "EvaluationUpload",
+    "RedTeamUpload",
+    "ResultType",
 ]

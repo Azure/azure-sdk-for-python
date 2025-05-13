@@ -7,7 +7,10 @@ import re
 import os
 from typing import Dict, TypeVar, Union
 
-from azure.ai.evaluation._legacy.prompty import AsyncPrompty
+if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
+    from promptflow.core._flow import AsyncPrompty
+else:
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
