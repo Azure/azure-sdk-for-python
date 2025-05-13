@@ -81,6 +81,7 @@ setup(
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
         "Jinja2>=3.1.6",
+        "aiohttp"
     ],
     extras_require={
         "redteam": [
