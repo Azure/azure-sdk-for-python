@@ -59,7 +59,7 @@ The software may collect information about you and your use of the software and 
 ### Telemetry Configuration
 Telemetry collection is on by default.
 
-To opt out, you can disable telemetry at client construction. Set `user_agent_policy` to `None` during creation. This will disable telemetry for all methods in the client. Do this for every new client.
+To opt out, you can disable telemetry at client construction. Define a `NoUserAgentPolicy` class that is a subclass of `UserAgentPolicy` with an `on_request` method that does nothing. Then pass this as kwargs `user_agent_policy=NoUserAgentPolicy` during client creation. This will disable telemetry for all methods in the client. Do this for every new client.
 
 The example below uses the `azure-storage-blob` package. In your code, you can replace `azure-storage-blob` with the package you are using.
 
@@ -69,26 +69,22 @@ from azure.identity import ManagedIdentityCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from azure.core.pipeline.policies import UserAgentPolicy
 
-try:
-    # Create your credential you want to use
-    mi_credential = ManagedIdentityCredential()
 
-    account_url = "https://<storageaccountname>.blob.core.windows.net"
+# Create your credential you want to use
+mi_credential = ManagedIdentityCredential()
 
-    # Setup user-agent override
-    class NoUserAgentPolicy(UserAgentPolicy):
-        def on_request(self, request):
-            pass
+account_url = "https://<storageaccountname>.blob.core.windows.net"
 
-    # Create the BlobServiceClient object
-    blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=NoUserAgentPolicy())
+# Setup user-agent override
+class NoUserAgentPolicy(UserAgentPolicy):
+    def on_request(self, request):
+        pass
 
-    container_client = blob_service_client.get_container_client(container=<container_name>) 
-    # TODO: do something with the container client like download blob to a file
+# Create the BlobServiceClient object
+blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=NoUserAgentPolicy())
 
-except Exception as ex:
-    print('Exception:')
-    print(ex)
+container_client = blob_service_client.get_container_client(container=<container_name>) 
+# TODO: do something with the container client like download blob to a file
 ```
 
 ### Reporting security issues and security bugs
