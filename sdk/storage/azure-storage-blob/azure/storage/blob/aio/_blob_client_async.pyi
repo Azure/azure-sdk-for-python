@@ -50,7 +50,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class BlobClient(  # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods # type: ignore[misc]
+class BlobClient(  # type: ignore[misc] # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
