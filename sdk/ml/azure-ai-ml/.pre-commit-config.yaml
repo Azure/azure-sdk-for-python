@@ -35,7 +35,7 @@ repos:
         dependencies = [
             (
                 "azure-pylint-guidelines-checker",
-                "0.5.1",
+                "0.5.6",
                 [
                     "--index-url",
                     "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",

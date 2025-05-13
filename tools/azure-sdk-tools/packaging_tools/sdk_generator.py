@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import List, Dict, Any
 import argparse
 import json
@@ -220,9 +221,11 @@ def main(generate_input, generate_output):
     python_tag = data.get("python_tag")
     package_total = set()
     readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
+    run_in_pipeline = data.get("runMode") is not None
     for readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
+            code_generation_start_time = time.time()
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
@@ -243,7 +246,8 @@ def main(generate_input, generate_output):
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
                 del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
+                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"], run_in_pipeline)
+            _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [

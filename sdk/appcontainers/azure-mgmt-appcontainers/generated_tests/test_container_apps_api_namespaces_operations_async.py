@@ -21,12 +21,12 @@ class TestContainerAppsAPINamespacesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_name_availability(self, resource_group):
+    async def test_namespaces_check_name_availability(self, resource_group):
         response = await self.client.namespaces.check_name_availability(
             resource_group_name=resource_group.name,
             environment_name="str",
             check_name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

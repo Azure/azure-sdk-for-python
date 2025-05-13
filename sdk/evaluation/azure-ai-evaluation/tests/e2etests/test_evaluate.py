@@ -14,6 +14,7 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._azure._clients import LiteMLClient
+from azure.ai.evaluation._constants import TokenScope
 
 
 @pytest.fixture
@@ -54,7 +55,7 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
-    token = "Bearer " + DefaultAzureCredential().get_token("https://management.azure.com/.default").token
+    token = "Bearer " + DefaultAzureCredential().get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT).token
     headers = {
         "Authorization": token,
         "Content-Type": "application/json",

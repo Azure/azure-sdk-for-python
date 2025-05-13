@@ -27,7 +27,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the relevance evaluator. Default is 5.
+    :param threshold: The threshold for the relevance evaluator. Default is 3.
     :type threshold: int
 
     .. admonition:: Example:
@@ -38,6 +38,16 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
+
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START relevance_evaluator]
+            :end-before: [END relevance_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call RelevanceEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
 

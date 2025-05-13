@@ -23,7 +23,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: The threshold for the fluency evaluator. Default is 5.
+    :param threshold: The threshold for the fluency evaluator. Default is 3.
     :type threshold: int
 
     .. admonition:: Example:
@@ -43,6 +43,16 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize with threshold and call a FluencyEvaluator.
+
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START fluency_evaluator]
+            :end-before: [END fluency_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call FluencyEvaluator using Azure AI Project URL in the following format
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
 

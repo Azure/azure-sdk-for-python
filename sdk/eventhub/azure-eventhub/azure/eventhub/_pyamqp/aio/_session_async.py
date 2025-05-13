@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 import logging
 import time
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 from typing import Optional, Union
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
@@ -105,8 +105,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
                 await self._set_state(SessionState.DISCARDING)
 
-    def _get_next_output_handle(self):
-        # type: () -> int
+    def _get_next_output_handle(self) -> int:
         """Get the next available outgoing handle number within the max handle limit.
 
         :raises ValueError: If maximum handle has been reached.

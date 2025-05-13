@@ -40,6 +40,7 @@ async def main() -> None:
 
             toolset = AsyncToolSet()
             toolset.add(functions)
+            project_client.agents.enable_auto_function_calls(toolset=toolset)
 
             agent = await project_client.agents.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],

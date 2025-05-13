@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, IO, Coroutine, List, Optional, Union, cast
 
 from azure.core.exceptions import ResourceNotFoundError

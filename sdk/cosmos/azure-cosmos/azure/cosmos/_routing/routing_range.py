@@ -50,8 +50,8 @@ class Range(object):
         if range_max is None:
             raise ValueError("max is missing")
 
-        self.min = range_min
-        self.max = range_max
+        self.min = range_min.upper()
+        self.max = range_max.upper()
         self.isMinInclusive = isMinInclusive
         self.isMaxInclusive = isMaxInclusive
 
@@ -67,8 +67,8 @@ class Range(object):
     @classmethod
     def PartitionKeyRangeToRange(cls, partition_key_range):
         self = cls(
-            partition_key_range[PartitionKeyRange.MinInclusive],
-            partition_key_range[PartitionKeyRange.MaxExclusive],
+            partition_key_range[PartitionKeyRange.MinInclusive].upper(),
+            partition_key_range[PartitionKeyRange.MaxExclusive].upper(),
             True,
             False,
         )
@@ -77,8 +77,8 @@ class Range(object):
     @classmethod
     def ParseFromDict(cls, range_as_dict):
         self = cls(
-            range_as_dict[Range.MinPath],
-            range_as_dict[Range.MaxPath],
+            range_as_dict[Range.MinPath].upper(),
+            range_as_dict[Range.MaxPath].upper(),
             range_as_dict[Range.IsMinInclusivePath],
             range_as_dict[Range.IsMaxInclusivePath],
         )
@@ -125,7 +125,7 @@ class Range(object):
                     break
                 byte_array[i] = 255
 
-        return binascii.hexlify(byte_array).decode()
+        return binascii.hexlify(byte_array).decode().upper()
 
     def hex_binary_to_byte_array(self, hex_binary_string: str):
         if hex_binary_string is None:
@@ -180,7 +180,7 @@ class Range(object):
         )
 
     @staticmethod
-    def _compare_helper(a, b):
+    def _compare_helper(a: str, b: str):
         # python 3 compatible
         return (a > b) - (a < b)
 
