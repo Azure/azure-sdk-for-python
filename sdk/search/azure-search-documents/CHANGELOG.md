@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b12 (Unreleased)
+## 11.6.0b12 (2025-05-14)
 
 ### Features Added
 
@@ -37,10 +37,6 @@
     - `azure.search.documents.indexes.models.PermissionFilter`
     - `azure.search.documents.indexes.models.RankingOrder`
     - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
