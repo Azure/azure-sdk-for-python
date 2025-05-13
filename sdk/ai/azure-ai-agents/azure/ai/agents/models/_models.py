@@ -376,6 +376,73 @@ class AgentThreadCreationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AgentV1Error(_Model):
+    """Error payload returned by the agents API.
+
+    :ivar error: Represents the error. Required.
+    :vartype error: ~azure.ai.agents.models.AgentV1ErrorError
+    """
+
+    error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the error. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.AgentV1ErrorError",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentV1ErrorError(_Model):
+    """AgentV1ErrorError.
+
+    :ivar message:
+    :vartype message: str
+    :ivar type:
+    :vartype type: str
+    :ivar param:
+    :vartype param: str
+    :ivar code:
+    :vartype code: str
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        type: Optional[str] = None,
+        param: Optional[str] = None,
+        code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AISearchIndexResource(_Model):
     """A AI Search Index resource.
 
