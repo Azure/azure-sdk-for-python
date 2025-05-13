@@ -13,7 +13,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-class ChangeFeedClient:
+class ChangeFeedClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(
         self,
         account_url: str,
