@@ -1,10 +1,16 @@
 {
   "reportTypeCommentUsage": true,
   "reportMissingImports": false,
-  "pythonVersion": "3.11",
+  "pythonVersion": "3.9",
   "exclude": [
-    "**/_client.py",
-    "**/_operations.py"
+    "./azure/ai/projects/_client.py",
+    "./azure/ai/projects/operations/_operations.py",
+    "./azure/ai/agents/aio/_client.py",
+    "./azure/ai/agents/aio/operations/_operations.py",
+    "./azure/ai/projects/servicepatterns/operations/_operations.py",
+    "./azure/ai/projects/servicepatterns/buildingblocks/operations/_operations.py",
+    "./azure/ai/projects/servicepatterns/aio/operations/_operations.py",
+    "./azure/ai/projects/servicepatterns/buildingblocks/aio/operations/_operations.py"
   ],
   "extraPaths": [
     "./../../core/azure-core",
