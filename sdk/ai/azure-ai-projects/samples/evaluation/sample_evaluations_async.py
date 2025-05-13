@@ -34,8 +34,11 @@ from azure.ai.projects.models import (
     # DatasetVersion,
 )
 
+
 async def main() -> None:
-    endpoint = os.environ["PROJECT_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    endpoint = os.environ[
+        "PROJECT_ENDPOINT"
+    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
     model_api_key = os.environ["MODEL_API_KEY"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
@@ -85,10 +88,13 @@ async def main() -> None:
                 },
             )
 
-            evaluation_response: Evaluation = await project_client.evaluations.create(evaluation, headers={
-                "model-endpoint": model_endpoint,
-                "api-key": model_api_key,
-            })
+            evaluation_response: Evaluation = await project_client.evaluations.create(
+                evaluation,
+                headers={
+                    "model-endpoint": model_endpoint,
+                    "api-key": model_api_key,
+                },
+            )
             print(evaluation_response)
 
             print("Get evaluation")

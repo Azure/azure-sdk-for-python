@@ -35,10 +35,12 @@ from azure.ai.projects.models import (
     # DatasetVersion,
 )
 
-endpoint = os.environ["PROJECT_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-model_endpoint = os.environ["MODEL_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com
-model_api_key= os.environ["MODEL_API_KEY"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"] # Sample : gpt-4o-mini
+endpoint = os.environ[
+    "PROJECT_ENDPOINT"
+]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
+model_api_key = os.environ["MODEL_API_KEY"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -85,10 +87,13 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             },
         )
 
-        evaluation_response: Evaluation = project_client.evaluations.create(evaluation, headers={
-            "model-endpoint": model_endpoint,
-            "api-key": model_api_key,
-        })
+        evaluation_response: Evaluation = project_client.evaluations.create(
+            evaluation,
+            headers={
+                "model-endpoint": model_endpoint,
+                "api-key": model_api_key,
+            },
+        )
         print(evaluation_response)
 
         print("Get evaluation")
