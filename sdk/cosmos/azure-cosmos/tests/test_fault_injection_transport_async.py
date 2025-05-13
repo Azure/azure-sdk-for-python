@@ -330,7 +330,9 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
 
@@ -383,7 +385,9 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
 
@@ -508,7 +512,9 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         try:
             container: ContainerProxy = initialized_objects["col"]
             with pytest.raises(ServiceRequestError):

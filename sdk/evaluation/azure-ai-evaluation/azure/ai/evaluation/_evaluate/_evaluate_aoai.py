@@ -217,6 +217,16 @@ def _get_single_run_results(
                 + " completed successfully. Gathering results...")
     # Convert run results into a dictionary of metrics
     run_metrics = {}
+    if run_results.per_testing_criteria_results is None:
+        msg = ("AOAI evaluation run returned no results, despite 'completed' status. This might" +
+               " occur when invalid or conflicting models are selected in the model and grader configs."
+            f" Navigate to the evaluation run's report URL for more details: {run_results.report_url}")
+        raise EvaluationException(
+            message=msg,
+            blame=ErrorBlame.UNKNOWN,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.AOAI_GRADER,
+        ) 
     for criteria_result in run_results.per_testing_criteria_results:
         grader_name = run_info["grader_name_map"][criteria_result.testing_criteria]
         passed = criteria_result.passed
