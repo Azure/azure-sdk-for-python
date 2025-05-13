@@ -23,7 +23,6 @@ from azure.identity._constants import EnvironmentVariables
 def test_token_credentials_env_dev():
     """With AZURE_TOKEN_CREDENTIALS=dev, DefaultAzureCredential should use only developer credentials"""
 
-
     prod_credentials = {EnvironmentCredential, WorkloadIdentityCredential, ManagedIdentityCredential}
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "dev"}, clear=False):
@@ -109,3 +108,11 @@ def test_token_credentials_env_invalid():
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "invalid"}, clear=False):
         with pytest.raises(ValueError):
             credential = DefaultAzureCredential()
+
+
+def test_token_credentials_env_with_exclude():
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "prod"}, clear=False):
+        credential = DefaultAzureCredential(exclude_environment_credential=True)
+        actual_classes = {c.__class__ for c in credential.credentials}
+
+        assert EnvironmentCredential not in actual_classes
