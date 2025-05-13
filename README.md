@@ -77,8 +77,8 @@ try:
 
     # Setup user-agent override
     class NoUserAgentPolicy(UserAgentPolicy):
-    def on_request(self, request):
-        pass
+        def on_request(self, request):
+            pass
 
     # Create the BlobServiceClient object
     blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=NoUserAgentPolicy())
