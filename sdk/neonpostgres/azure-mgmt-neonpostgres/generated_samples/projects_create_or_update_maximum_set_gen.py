@@ -32,8 +32,8 @@ def main():
 
     response = client.projects.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
+        organization_name="contoso-org",
+        project_name="sample-resource",
         resource={
             "properties": {
                 "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],

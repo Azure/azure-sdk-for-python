@@ -32,9 +32,9 @@ def main():
 
     response = client.branches.get(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
+        organization_name="contoso-org",
+        project_name="sample-resource",
+        branch_name="sample-resource",
     )
     print(response)
 

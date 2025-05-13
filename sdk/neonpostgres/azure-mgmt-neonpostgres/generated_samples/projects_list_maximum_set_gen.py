@@ -32,7 +32,7 @@ def main():
 
     response = client.projects.list(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="contoso-org",
     )
     for item in response:
         print(item)

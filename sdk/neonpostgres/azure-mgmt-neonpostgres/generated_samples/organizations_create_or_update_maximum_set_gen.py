@@ -32,7 +32,7 @@ def main():
 
     response = client.organizations.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="contoso-org",
         resource={
             "location": "kcdph",
             "properties": {
@@ -143,7 +143,7 @@ def main():
                     "upn": "mixcikvxlnhkfugetqlngz",
                 },
             },
-            "tags": {"key8832": "rvukepuxkykdtqjtwk"},
+            "tags": {},
         },
     ).result()
     print(response)
