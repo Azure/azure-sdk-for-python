@@ -1,0 +1,17 @@
+{
+    "CrossLanguagePackageId": "Microsoft.CodeTransparency",
+    "CrossLanguageDefinitionId": {
+        "azure.codetransparency.CodeTransparencyClient.get_transparency_config_cbor": "Microsoft.CodeTransparency.getTransparencyConfigCbor",
+        "azure.codetransparency.aio.CodeTransparencyClient.get_transparency_config_cbor": "Microsoft.CodeTransparency.getTransparencyConfigCbor",
+        "azure.codetransparency.CodeTransparencyClient.get_public_keys": "Microsoft.CodeTransparency.getPublicKeys",
+        "azure.codetransparency.aio.CodeTransparencyClient.get_public_keys": "Microsoft.CodeTransparency.getPublicKeys",
+        "azure.codetransparency.CodeTransparencyClient.create_entry": "Microsoft.CodeTransparency.createEntry",
+        "azure.codetransparency.aio.CodeTransparencyClient.create_entry": "Microsoft.CodeTransparency.createEntry",
+        "azure.codetransparency.CodeTransparencyClient.get_operation": "Microsoft.CodeTransparency.getOperation",
+        "azure.codetransparency.aio.CodeTransparencyClient.get_operation": "Microsoft.CodeTransparency.getOperation",
+        "azure.codetransparency.CodeTransparencyClient.get_entry": "Microsoft.CodeTransparency.getEntry",
+        "azure.codetransparency.aio.CodeTransparencyClient.get_entry": "Microsoft.CodeTransparency.getEntry",
+        "azure.codetransparency.CodeTransparencyClient.get_entry_statement": "Microsoft.CodeTransparency.getEntryStatement",
+        "azure.codetransparency.aio.CodeTransparencyClient.get_entry_statement": "Microsoft.CodeTransparency.getEntryStatement"
+    }
+}
