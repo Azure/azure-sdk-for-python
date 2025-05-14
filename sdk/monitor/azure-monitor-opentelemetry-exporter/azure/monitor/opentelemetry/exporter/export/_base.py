@@ -314,7 +314,7 @@ class BaseExporter:
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception("Envelopes could not be exported and are not retryable: %s.")
+                logger.exception("Envelopes could not be exported and are not retryable: %s.")  # pylint: disable=C4769
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
@@ -456,7 +456,7 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 credential = ManagedIdentityCredential()
                 return credential
     except ValueError as exc:
-        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)
+        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)  # pylint: disable=do-not-log-exceptions-if-not-debug
     except Exception as e:
-        logger.error("Failed to get authentication credential and enable AAD: %s", e)
+        logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
     return None

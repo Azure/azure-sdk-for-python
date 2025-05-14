@@ -31,7 +31,17 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a CoherenceEvaluator with a query and response.
+            :caption: Initialize and call CoherenceEvaluator using azure.ai.evaluation.AzureAIProject
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START coherence_evaluator]
+            :end-before: [END coherence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call CoherenceEvaluator using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     
     .. admonition:: Example with Threshold:
 
@@ -40,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END threshold_coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and and call a CoherenceEvaluator with a query and response.
+            :caption: Initialize with threshold and call a CoherenceEvaluator with a query and response.
 
     .. note::
 

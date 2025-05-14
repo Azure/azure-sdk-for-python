@@ -17,7 +17,7 @@ USAGE:
     python queue_samples_service_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -28,7 +28,7 @@ import sys
 
 class QueueServiceSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def queue_service_properties_async(self):
         if self.connection_string is None:
@@ -37,6 +37,7 @@ class QueueServiceSamplesAsync(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with queue_service:
@@ -45,16 +46,22 @@ class QueueServiceSamplesAsync(object):
             from azure.storage.queue import QueueAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
             # Create logging settings
-            logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+            logging = QueueAnalyticsLogging(
+                read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            )
 
             # Create metrics for requests statistics
-            hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-            minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+            hour_metrics = Metrics(
+                enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            )
+            minute_metrics = Metrics(
+                enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            )
 
             # Create CORS rules
-            cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
-            allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-            allowed_methods = ['GET', 'PUT']
+            cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
+            allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+            allowed_methods = ["GET", "PUT"]
             max_age_in_seconds = 500
             exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
             allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -63,7 +70,7 @@ class QueueServiceSamplesAsync(object):
                 allowed_methods,
                 max_age_in_seconds=max_age_in_seconds,
                 exposed_headers=exposed_headers,
-                allowed_headers=allowed_headers
+                allowed_headers=allowed_headers,
             )
 
             cors = [cors_rule1, cors_rule2]
@@ -83,11 +90,12 @@ class QueueServiceSamplesAsync(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with queue_service:
             # [START async_qsc_create_queue]
-            await queue_service.create_queue("myqueue1")
+            await queue_service.create_queue("asyncmyqueue1")
             # [END async_qsc_create_queue]
 
             try:
@@ -105,7 +113,7 @@ class QueueServiceSamplesAsync(object):
 
             finally:
                 # [START async_qsc_delete_queue]
-                await queue_service.delete_queue("myqueue1")
+                await queue_service.delete_queue("asyncmyqueue1")
                 # [END async_qsc_delete_queue]
 
     async def get_queue_client_async(self):
@@ -115,11 +123,12 @@ class QueueServiceSamplesAsync(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client(queue="myqueue2")
+        queue = queue_service.get_queue_client(queue="asyncmyqueue2")
         # [END async_get_queue_client]
 
 
@@ -129,5 +138,6 @@ async def main():
     await sample.queues_in_account_async()
     await sample.get_queue_client_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -62,9 +62,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.last_refresh_time = 0
         self._database_account_cache = None
 
-    def get_use_multiple_write_locations(self):
-        return self.location_cache.can_use_multiple_write_locations()
-
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime
 
@@ -103,7 +100,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 await self.refresh_task
                 self.refresh_task = None
             except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
-                logger.exception("Health check task failed: %s", exception)
+                logger.exception("Health check task failed: %s", exception) #pylint: disable=do-not-use-logging-exception
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:

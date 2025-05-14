@@ -45,6 +45,16 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a ToolCallAccuracyEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START tool_call_accuracy_evaluator]
+            :end-before: [END tool_call_accuracy_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call ToolCallAccuracyEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
@@ -214,12 +224,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         score = math.nan
         if llm_output:
             score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[0-1]")
-            return {
-                self._result_key: bool(float(score)),
-                f"{self._result_key}_reason": reason,
-                "tool_call_id" : eval_input.get("tool_call").get("tool_call_id"),
-            }
-        return {self._result_key: float(score)}
+            if score >= 0 and score <= 1:
+                return {
+                    self._result_key: bool(float(score)),
+                    f"{self._result_key}_reason": reason,
+                    "tool_call_id" : eval_input.get("tool_call").get("tool_call_id"),
+                }
+        raise EvaluationException(
+            message="Tool call accuracy evaluator: Invalid score returned from LLM.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.INVALID_VALUE,
+            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+        )
 
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
@@ -231,12 +247,54 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        if len(eval_input_list) == 0:
+            return {self._AGGREGATE_RESULT_KEY: self._NOT_APPLICABLE_RESULT,
+                    f"{self._AGGREGATE_RESULT_KEY}_result": self._NOT_APPLICABLE_RESULT,
+                    f"{self._AGGREGATE_RESULT_KEY}_threshold": self.threshold,
+                    f"{self._AGGREGATE_RESULT_KEY}_reason":
+                        "No tool calls were made.",
+                    "per_tool_call_details": []
+                    }
+
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
-            per_turn_results.append(await self._do_eval(eval_input))
+            if self._is_applicable_tool(eval_input):
+                per_turn_results.append(await self._do_eval(eval_input))
+            else:
+                per_turn_results.append(self._not_applicable_result(eval_input))
 
         return self._aggregate_results(per_turn_results=per_turn_results)
+
+    def _is_applicable_tool(self, eval_input):
+        """Determine if a given tool should be evaluated, since we only evaluate tools that
+        have sufficient context available.
+
+        :type eval_input: Dict
+        :return: True if the tool call should be evaluated
+        :rtype: bool
+        """
+        tool_definition = eval_input.get("tool_definition")
+        if tool_definition is None or len(tool_definition) != 1:
+            return False
+        tool_type = tool_definition[0].get("type")
+        if tool_type is None or tool_type != "function":
+            return False
+        return True
+
+    def _not_applicable_result(self, eval_input):
+        """Return a result indicating that the tool call is not applicable for evaluation.
+
+        :param eval_input: The input to the evaluator.
+        :type eval_input: Dict
+        :return: A dictionary containing the result of the evaluation.
+        :rtype: Dict[str, Union[str, float]]
+        """
+        return {
+            f"{self._result_key}": self._NOT_APPLICABLE_RESULT,
+            f"{self._result_key}_reason": "Tool call not supported for evaluation",
+            "tool_call_id" : eval_input.get("tool_call").get("tool_call_id"),
+        }
 
     def _aggregate_results(self, per_turn_results):
         """Aggregate the evaluation results of each conversation turn into a single result.
@@ -260,11 +318,23 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Go over each turn, and rotate the results into a
         # metric: List[values] format for the evals_per_turn dictionary.
 
-        score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
+        num_evaluated = len([per_turn_result for per_turn_result in per_turn_results
+                             if per_turn_result.get(self._result_key) != self._NOT_APPLICABLE_RESULT])
+        if num_evaluated == 0:
+            # None of the invoked tools were applicable, return not applicable result
+            # (If a tool fails evaluation, we'll throw an exception)
+            return {self._AGGREGATE_RESULT_KEY: self._NOT_APPLICABLE_RESULT,
+                    f"{self._AGGREGATE_RESULT_KEY}_result": self._NOT_APPLICABLE_RESULT,
+                    f"{self._AGGREGATE_RESULT_KEY}_threshold": self.threshold,
+                    f"{self._AGGREGATE_RESULT_KEY}_reason":
+                        "Tool call accuracy evaluation is not yet supported for the invoked tools.",
+                    "per_tool_call_details": []
+                    }
+        # ignore not_applicable results, where the _result_key will be "not applicable"
+        score = sum([per_turn_result.get(self._result_key) == True for per_turn_result in per_turn_results])/num_evaluated
         aggregated[self._AGGREGATE_RESULT_KEY] = score
-        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
+        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = self._PASS_RESULT if score >= self.threshold else self._FAIL_RESULT
         aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
-
         aggregated["per_tool_call_details"] = per_turn_results
         return aggregated
 

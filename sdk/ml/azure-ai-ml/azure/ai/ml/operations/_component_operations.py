@@ -2,50 +2,42 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import collections
+import hashlib
+
 # pylint: disable=protected-access,too-many-lines
 import time
-import collections
 import types
 from functools import partial
 from inspect import Parameter, signature
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
-import hashlib
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient012024,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    ComponentVersion,
-    ListViewType,
-)
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import (
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
-)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._asset_utils import (
+    IgnoreFile,
     _archive_or_restore,
     _create_or_update_autoincrement,
     _get_file_hash,
     _get_latest,
     _get_next_version_from_container,
     _resolve_label_to_asset,
+    create_catalog_files,
+    delete_two_catalog_files,
     get_ignore_file,
     get_upload_files_from_folder,
-    IgnoreFile,
-    delete_two_catalog_files,
-    create_catalog_files,
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
@@ -59,12 +51,7 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, ValidationResult
-from azure.ai.ml.exceptions import (
-    ComponentException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from .._utils._cache_utils import CachedNodeResolver
@@ -675,7 +662,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
         if not result:
-            component = self.get(name=component.name, version=component.version)
+            component = self.get(name=name, version=version)
         else:
             component = Component._from_rest_object(result)
 
@@ -915,9 +902,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param node: The node
         :type node: BaseNode
         """
-        from azure.ai.ml.entities._job.pipeline._attr_dict import (
-            try_get_non_arbitrary_attr,
-        )
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         # compute binding to pipeline input is supported on node.

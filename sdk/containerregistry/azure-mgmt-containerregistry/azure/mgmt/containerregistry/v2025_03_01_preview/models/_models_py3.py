@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -38,7 +38,7 @@ class ActivationProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
+        self.status: Optional[Union[str, "_models.ActivationStatus"]] = None
 
 
 class ActiveDirectoryObject(_serialization.Model):
@@ -143,12 +143,12 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class AgentPool(Resource):
@@ -242,7 +242,7 @@ class AgentPool(Resource):
         self.tier = tier
         self.os = os
         self.virtual_network_subnet_resource_id = virtual_network_subnet_resource_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class AgentPoolListResult(_serialization.Model):
@@ -372,10 +372,10 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class Archive(ProxyResource):
@@ -449,8 +449,8 @@ class Archive(ProxyResource):
         self.package_source = package_source
         self.published_version = published_version
         self.repository_endpoint_prefix = repository_endpoint_prefix
-        self.repository_endpoint = None
-        self.provisioning_state = None
+        self.repository_endpoint: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ArchiveListResult(_serialization.Model):
@@ -572,8 +572,8 @@ class ArchiveProperties(_serialization.Model):
         self.package_source = package_source
         self.published_version = published_version
         self.repository_endpoint_prefix = repository_endpoint_prefix
-        self.repository_endpoint = None
-        self.provisioning_state = None
+        self.repository_endpoint: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ArchiveUpdateParameters(_serialization.Model):
@@ -643,7 +643,7 @@ class ArchiveVersion(ProxyResource):
         :paramtype archive_version_error_message: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.archive_version_error_message = archive_version_error_message
 
 
@@ -765,7 +765,7 @@ class AuthCredential(_serialization.Model):
         self.name = name
         self.username_secret_identifier = username_secret_identifier
         self.password_secret_identifier = password_secret_identifier
-        self.credential_health = None
+        self.credential_health: Optional["_models.CredentialHealth"] = None
 
 
 class AuthInfo(_serialization.Model):
@@ -1174,8 +1174,8 @@ class CacheRule(ProxyResource):
         self.credential_set_resource_id = credential_set_resource_id
         self.source_repository = source_repository
         self.target_repository = target_repository
-        self.creation_date = None
-        self.provisioning_state = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class CacheRulesListResult(_serialization.Model):
@@ -1382,17 +1382,17 @@ class ConnectedRegistry(ProxyResource):
          ~azure.mgmt.containerregistry.v2025_03_01_preview.models.GarbageCollectionProperties
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.mode = mode
-        self.version = None
-        self.connection_state = None
-        self.last_activity_time = None
-        self.activation = None
+        self.version: Optional[str] = None
+        self.connection_state: Optional[Union[str, "_models.ConnectionState"]] = None
+        self.last_activity_time: Optional[datetime.datetime] = None
+        self.activation: Optional["_models.ActivationProperties"] = None
         self.parent = parent
         self.client_token_ids = client_token_ids
         self.login_server = login_server
         self.logging = logging
-        self.status_details = None
+        self.status_details: Optional[List["_models.StatusDetailProperties"]] = None
         self.notifications_list = notifications_list
         self.garbage_collection = garbage_collection
 
@@ -1653,8 +1653,8 @@ class CredentialSet(ProxyResource):
         self.identity = identity
         self.login_server = login_server
         self.auth_credentials = auth_credentials
-        self.creation_date = None
-        self.provisioning_state = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class CredentialSetListResult(_serialization.Model):
@@ -1738,8 +1738,7 @@ class CustomRegistryCredentials(_serialization.Model):
      user-assigned identity
      this value is the Client ID. If a system-assigned identity, the value will be ``system``. In
      the case of a system-assigned identity, the Client ID will be determined by the runner. This
-     identity may be used to authenticate to key vault to retrieve credentials or it may be the
-     only
+     identity may be used to authenticate to key vault to retrieve credentials or it may be the only
      source of authentication used for accessing the registry.
     :vartype identity: str
     """
@@ -1768,8 +1767,7 @@ class CustomRegistryCredentials(_serialization.Model):
          user-assigned identity
          this value is the Client ID. If a system-assigned identity, the value will be ``system``. In
          the case of a system-assigned identity, the Client ID will be determined by the runner. This
-         identity may be used to authenticate to key vault to retrieve credentials or it may be the
-         only
+         identity may be used to authenticate to key vault to retrieve credentials or it may be the only
          source of authentication used for accessing the registry.
         :paramtype identity: str
         """
@@ -2144,7 +2142,7 @@ class TaskStepProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
-        self.base_image_dependencies = None
+        self.base_image_dependencies: Optional[List["_models.BaseImageDependency"]] = None
         self.context_path = context_path
         self.context_access_token = context_access_token
 
@@ -2713,8 +2711,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -2754,11 +2752,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -3128,7 +3126,7 @@ class ExportPipeline(ProxyResource):
         self.identity = identity
         self.target = target
         self.options = options
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ExportPipelineListResult(_serialization.Model):
@@ -3654,8 +3652,8 @@ class IdentityProperties(_serialization.Model):
          ~azure.mgmt.containerregistry.v2025_03_01_preview.models.UserIdentityProperties]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -3892,7 +3890,7 @@ class ImportPipeline(ProxyResource):
         self.source = source
         self.trigger = trigger
         self.options = options
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ImportPipelineListResult(_serialization.Model):
@@ -4147,10 +4145,10 @@ class KeyVaultProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_identifier = key_identifier
-        self.versioned_key_identifier = None
+        self.versioned_key_identifier: Optional[str] = None
         self.identity = identity
-        self.key_rotation_enabled = None
-        self.last_key_rotation_timestamp = None
+        self.key_rotation_enabled: Optional[bool] = None
+        self.last_key_rotation_timestamp: Optional[datetime.datetime] = None
 
 
 class LoggingProperties(_serialization.Model):
@@ -4215,8 +4213,8 @@ class LoginServerProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.host = None
-        self.tls = None
+        self.host: Optional[str] = None
+        self.tls: Optional["_models.TlsProperties"] = None
 
 
 class NetworkRuleSet(_serialization.Model):
@@ -4311,7 +4309,7 @@ class OperationDefinition(_serialization.Model):
          ~azure.mgmt.containerregistry.v2025_03_01_preview.models.OperationDisplayDefinition
         :keyword is_data_action: This property indicates if the operation is an action or a data action
          ref:
-         https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.  # pylint: disable=line-too-long
+         https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.
         :paramtype is_data_action: bool
         :keyword service_specification: The definition of Azure Monitoring service.
         :paramtype service_specification:
@@ -4635,7 +4633,7 @@ class PackageType(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.endpoint = None
+        self.endpoint: Optional[str] = None
 
 
 class ParentProperties(_serialization.Model):
@@ -4740,9 +4738,9 @@ class PipelineRun(ProxyResource):
         :paramtype force_update_tag: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.request = request
-        self.response = None
+        self.response: Optional["_models.PipelineRunResponse"] = None
         self.force_update_tag = force_update_tag
 
 
@@ -5357,7 +5355,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -5453,7 +5451,7 @@ class PrivateLinkResource(_serialization.Model):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.type = None
+        self.type: Optional[str] = None
         self.id = id
         self.name = name
         self.group_id = group_id
@@ -5827,17 +5825,17 @@ class Registry(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
-        self.login_server = None
-        self.creation_date = None
-        self.provisioning_state = None
-        self.status = None
+        self.login_server: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
         self.admin_user_enabled = admin_user_enabled
         self.network_rule_set = network_rule_set
         self.policies = policies
         self.encryption = encryption
         self.data_endpoint_enabled = data_endpoint_enabled
-        self.data_endpoint_host_names = None
-        self.private_endpoint_connections = None
+        self.data_endpoint_host_names: Optional[List[str]] = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
         self.network_rule_bypass_options = network_rule_bypass_options
         self.zone_redundancy = zone_redundancy
@@ -6336,8 +6334,8 @@ class Replication(Resource):
          ~azure.mgmt.containerregistry.v2025_03_01_preview.models.ZoneRedundancy
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.provisioning_state = None
-        self.status = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
         self.region_endpoint_enabled = region_endpoint_enabled
         self.zone_redundancy = zone_redundancy
 
@@ -6497,7 +6495,7 @@ class RetentionPolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.days = days
-        self.last_updated_time = None
+        self.last_updated_time: Optional[datetime.datetime] = None
         self.status = status
 
 
@@ -6709,9 +6707,9 @@ class Run(ProxyResource):
         self.agent_configuration = agent_configuration
         self.source_registry_auth = source_registry_auth
         self.custom_registries = custom_registries
-        self.run_error_message = None
+        self.run_error_message: Optional[str] = None
         self.update_trigger_token = update_trigger_token
-        self.log_artifact = None
+        self.log_artifact: Optional["_models.ImageDescriptor"] = None
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled
 
@@ -6946,9 +6944,9 @@ class ScopeMap(ProxyResource):
         """
         super().__init__(**kwargs)
         self.description = description
-        self.type_properties_type = None
-        self.creation_date = None
-        self.provisioning_state = None
+        self.type_properties_type: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.actions = actions
 
 
@@ -7127,7 +7125,7 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
 
 
 class SoftDeletePolicy(_serialization.Model):
@@ -7168,7 +7166,7 @@ class SoftDeletePolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.retention_days = retention_days
-        self.last_updated_time = None
+        self.last_updated_time: Optional[datetime.datetime] = None
         self.status = status
 
 
@@ -7606,9 +7604,9 @@ class Status(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.display_status = None
-        self.message = None
-        self.timestamp = None
+        self.display_status: Optional[str] = None
+        self.message: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
 
 
 class StatusDetailProperties(_serialization.Model):
@@ -7647,11 +7645,11 @@ class StatusDetailProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.code = None
-        self.description = None
-        self.timestamp = None
-        self.correlation_id = None
+        self.type: Optional[str] = None
+        self.code: Optional[str] = None
+        self.description: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.correlation_id: Optional[str] = None
 
 
 class StorageAccountProperties(_serialization.Model):
@@ -7753,8 +7751,8 @@ class SyncProperties(_serialization.Model):
         self.schedule = schedule
         self.sync_window = sync_window
         self.message_ttl = message_ttl
-        self.last_sync_time = None
-        self.gateway_endpoint = None
+        self.last_sync_time: Optional[datetime.datetime] = None
+        self.gateway_endpoint: Optional[str] = None
 
 
 class SyncUpdateProperties(_serialization.Model):
@@ -8095,8 +8093,8 @@ class Task(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
-        self.provisioning_state = None
-        self.creation_date = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.creation_date: Optional[datetime.datetime] = None
         self.status = status
         self.platform = platform
         self.agent_configuration = agent_configuration
@@ -8214,9 +8212,9 @@ class TaskRun(ProxyResource):
         super().__init__(**kwargs)
         self.identity = identity
         self.location = location
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.run_request = run_request
-        self.run_result = None
+        self.run_result: Optional["_models.Run"] = None
         self.force_update_tag = force_update_tag
 
 
@@ -8623,8 +8621,8 @@ class TlsCertificateProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.location = None
+        self.type: Optional[Union[str, "_models.CertificateType"]] = None
+        self.location: Optional[str] = None
 
 
 class TlsProperties(_serialization.Model):
@@ -8653,8 +8651,8 @@ class TlsProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.certificate = None
+        self.status: Optional[Union[str, "_models.TlsStatus"]] = None
+        self.certificate: Optional["_models.TlsCertificateProperties"] = None
 
 
 class Token(ProxyResource):
@@ -8728,8 +8726,8 @@ class Token(ProxyResource):
         :paramtype status: str or ~azure.mgmt.containerregistry.v2025_03_01_preview.models.TokenStatus
         """
         super().__init__(**kwargs)
-        self.creation_date = None
-        self.provisioning_state = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.scope_map_id = scope_map_id
         self.credentials = credentials
         self.status = status
@@ -8901,7 +8899,7 @@ class TokenPassword(_serialization.Model):
         self.creation_time = creation_time
         self.expiry = expiry
         self.name = name
-        self.value = None
+        self.value: Optional[str] = None
 
 
 class TokenUpdateParameters(_serialization.Model):
@@ -9098,8 +9096,8 @@ class UserIdentityProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class Webhook(Resource):
@@ -9193,7 +9191,7 @@ class Webhook(Resource):
         self.status = status
         self.scope = scope
         self.actions = actions
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class WebhookCreateParameters(_serialization.Model):

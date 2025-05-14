@@ -541,7 +541,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.client.client_connection.connection_policy.RetryOptions = old_retry
         await self.created_db.delete_container(created_collection.id)
 
-    async def test_query_request_params_none_retry_policy(self):
+    async def test_query_request_params_none_retry_policy_async(self):
         created_collection = await self.created_db.create_container_if_not_exists(
             id="query_request_params_none_retry_policy_" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
@@ -562,12 +562,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             query = "SELECT * FROM c"
             items = created_collection.query_items(
                 query=query,
-                enable_cross_partition_query=True
             )
             fetch_results = [item async for item in items]
+            pytest.fail("Expected 404.1002 Exception.")
         except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 404
-            assert e.sub_status == 1002
+            assert e.status_code == http_constants.StatusCodes.NOT_FOUND
+            assert e.sub_status == http_constants.SubStatusCodes.READ_SESSION_NOTAVAILABLE
 
         # Test endpoint discovery retry
         retry_utility.ExecuteFunctionAsync = self._MockExecuteFunctionEndPointRetry
@@ -577,9 +577,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             query = "SELECT * FROM c"
             items = created_collection.query_items(
                 query=query,
-                enable_cross_partition_query=True
             )
             fetch_results = [item async for item in items]
+            pytest.fail("Expected 403.3 Exception.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.FORBIDDEN
             assert e.sub_status == http_constants.SubStatusCodes.WRITE_FORBIDDEN
@@ -592,12 +592,35 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             query = "SELECT * FROM c"
             items = created_collection.query_items(
                 query=query,
-                enable_cross_partition_query=True
             )
             fetch_results = [item async for item in items]
+            pytest.fail("Expected 408 Exception.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.REQUEST_TIMEOUT
         retry_utility.ExecuteFunctionAsync = self.OriginalExecuteFunction
+        await self.created_db.delete_container(created_collection.id)
+
+    async def test_partitioned_query_response_hook_async(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
+            id="query_response_hook_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10}
+        ]
+
+        for item in items:
+            await created_collection.create_item(body=item)
+
+        response_hook = test_config.ResponseHookCaller()
+        item_list = [item async for item in created_collection.query_items("select * from c", partition_key="0", response_hook=response_hook)]
+        assert len(item_list) == 3
+        assert response_hook.count == 1
         await self.created_db.delete_container(created_collection.id)
 
     async def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):

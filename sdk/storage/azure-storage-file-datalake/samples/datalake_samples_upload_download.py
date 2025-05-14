@@ -20,8 +20,8 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_upload_download.py
     Set the environment variables with your own values before running the sample:
-    1) STORAGE_ACCOUNT_NAME - the storage account name
-    2) STORAGE_ACCOUNT_KEY - the storage account key
+    1) DATALAKE_STORAGE_ACCOUNT_NAME - the storage account name
+    2) DATALAKE_STORAGE_ACCOUNT_KEY - the storage account key
 """
 
 import os
@@ -30,7 +30,8 @@ import random
 from azure.storage.filedatalake import (
     DataLakeServiceClient,
 )
-SOURCE_FILE = 'SampleSource.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 def upload_download_sample(filesystem_client):
     # create a file before writing content to it
@@ -99,8 +100,8 @@ def get_random_bytes(size):
 
 
 def run():
-    account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
 
     # set up the service client with the credentials from the environment variables
     service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
@@ -109,7 +110,7 @@ def run():
     ), credential=account_key)
 
     # generate a random name for testing purpose
-    fs_name = "testfs{}".format(random.randint(1, 1000))
+    fs_name = "testfs{}download".format(random.randint(1, 1000))
     print("Generating a test filesystem named '{}'.".format(fs_name))
 
     # create the filesystem

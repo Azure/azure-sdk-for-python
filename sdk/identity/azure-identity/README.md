@@ -21,7 +21,7 @@ pip install azure-identity
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/python)
-- Python 3.8 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Authenticate during local development
 
@@ -40,6 +40,12 @@ Developers coding outside of an IDE can also use the [Azure Developer CLI][azure
 To authenticate with the [Azure Developer CLI][azure_developer_cli], run the command `azd auth login`. For users running on a system with a default web browser, the Azure Developer CLI launches the browser to authenticate the user.
 
 For systems without a default web browser, the `azd auth login --use-device-code` command uses the device code authentication flow.
+
+#### Authenticate via Azure PowerShell
+
+Developers coding outside of an IDE can also use [Azure PowerShell][azure_powershell] to authenticate. Applications using `DefaultAzureCredential` or `AzurePowerShellCredential` can then use this account to authenticate calls in their application when running locally.
+
+To authenticate with Azure PowerShell, run the `Connect-AzAccount` cmdlet. By default, like the Azure CLI, `Connect-AzAccount` launches the default web browser to authenticate the user. For systems without a default web browser, the `Connect-AzAccount` uses the device code authentication flow. The user can also force Azure PowerShell to use the device code flow rather than launching a browser by specifying the `-UseDeviceAuthentication` argument.
 
 ## Key concepts
 
@@ -363,6 +369,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azd_cli_cred_ref]: https://aka.ms/azsdk/python/identity/azuredeveloperclicredential
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_developer_cli]:https://aka.ms/azure-dev
+[azure_powershell]: https://learn.microsoft.com/powershell/azure
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_identity_broker]: https://pypi.org/project/azure-identity-broker
 [azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
