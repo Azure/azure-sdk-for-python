@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -198,7 +198,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -222,9 +222,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class AzureEntityResource(Resource):
@@ -233,7 +233,7 @@ class AzureEntityResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -261,7 +261,7 @@ class AzureEntityResource(Resource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
 
 
 class AzureFilesIdentityBasedAuthentication(_serialization.Model):
@@ -314,7 +314,7 @@ class BlobContainer(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -434,22 +434,22 @@ class BlobContainer(AzureEntityResource):
         :paramtype metadata: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
+        self.version: Optional[str] = None
+        self.deleted: Optional[bool] = None
+        self.deleted_time: Optional[datetime.datetime] = None
+        self.remaining_retention_days: Optional[int] = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
-        self.last_modified_time = None
-        self.lease_status = None
-        self.lease_state = None
-        self.lease_duration = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.lease_status: Optional[Union[str, "_models.LeaseStatus"]] = None
+        self.lease_state: Optional[Union[str, "_models.LeaseState"]] = None
+        self.lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = None
         self.metadata = metadata
-        self.immutability_policy = None
-        self.legal_hold = None
-        self.has_legal_hold = None
-        self.has_immutability_policy = None
+        self.immutability_policy: Optional["_models.ImmutabilityPolicyProperties"] = None
+        self.legal_hold: Optional["_models.LegalHoldProperties"] = None
+        self.has_legal_hold: Optional[bool] = None
+        self.has_immutability_policy: Optional[bool] = None
 
 
 class BlobInventoryPolicy(Resource):
@@ -458,7 +458,7 @@ class BlobInventoryPolicy(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -497,8 +497,8 @@ class BlobInventoryPolicy(Resource):
         :paramtype policy: ~azure.mgmt.storage.v2019_06_01.models.BlobInventoryPolicySchema
         """
         super().__init__(**kwargs)
-        self.system_data = None
-        self.last_modified_time = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
         self.policy = policy
 
 
@@ -789,10 +789,10 @@ class BlobRestoreStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.failure_reason = None
-        self.restore_id = None
-        self.parameters = None
+        self.status: Optional[Union[str, "_models.BlobRestoreProgressStatus"]] = None
+        self.failure_reason: Optional[str] = None
+        self.restore_id: Optional[str] = None
+        self.parameters: Optional["_models.BlobRestoreParameters"] = None
 
 
 class BlobServiceItems(_serialization.Model):
@@ -815,7 +815,7 @@ class BlobServiceItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.BlobServiceProperties"]] = None
 
 
 class BlobServiceProperties(Resource):
@@ -824,7 +824,7 @@ class BlobServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -934,7 +934,7 @@ class BlobServiceProperties(Resource):
          ~azure.mgmt.storage.v2019_06_01.models.LastAccessTimeTrackingPolicy
         """
         super().__init__(**kwargs)
-        self.sku = None
+        self.sku: Optional["_models.Sku"] = None
         self.cors = cors
         self.default_service_version = default_service_version
         self.delete_retention_policy = delete_retention_policy
@@ -1014,9 +1014,9 @@ class CheckNameAvailabilityResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.Reason"]] = None
+        self.message: Optional[str] = None
 
 
 class CloudErrorBody(_serialization.Model):
@@ -1435,7 +1435,7 @@ class EncryptionScope(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1503,8 +1503,8 @@ class EncryptionScope(Resource):
         super().__init__(**kwargs)
         self.source = source
         self.state = state
-        self.creation_time = None
-        self.last_modified_time = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
         self.key_vault_properties = key_vault_properties
 
 
@@ -1559,8 +1559,8 @@ class EncryptionScopeListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.EncryptionScope"]] = None
+        self.next_link: Optional[str] = None
 
 
 class EncryptionService(_serialization.Model):
@@ -1605,7 +1605,7 @@ class EncryptionService(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.last_enabled_time = None
+        self.last_enabled_time: Optional[datetime.datetime] = None
         self.key_type = key_type
 
 
@@ -1717,12 +1717,12 @@ class Endpoints(_serialization.Model):
          ~azure.mgmt.storage.v2019_06_01.models.StorageAccountInternetEndpoints
         """
         super().__init__(**kwargs)
-        self.blob = None
-        self.queue = None
-        self.table = None
-        self.file = None
-        self.web = None
-        self.dfs = None
+        self.blob: Optional[str] = None
+        self.queue: Optional[str] = None
+        self.table: Optional[str] = None
+        self.file: Optional[str] = None
+        self.web: Optional[str] = None
+        self.dfs: Optional[str] = None
         self.microsoft_endpoints = microsoft_endpoints
         self.internet_endpoints = internet_endpoints
 
@@ -1797,7 +1797,7 @@ class FileServiceItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.FileServiceProperties"]] = None
 
 
 class FileServiceProperties(Resource):
@@ -1806,7 +1806,7 @@ class FileServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1860,7 +1860,7 @@ class FileServiceProperties(Resource):
          ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
         """
         super().__init__(**kwargs)
-        self.sku = None
+        self.sku: Optional["_models.Sku"] = None
         self.cors = cors
         self.share_delete_retention_policy = share_delete_retention_policy
 
@@ -1871,7 +1871,7 @@ class FileShare(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1978,19 +1978,19 @@ class FileShare(AzureEntityResource):
         :paramtype access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
         """
         super().__init__(**kwargs)
-        self.last_modified_time = None
+        self.last_modified_time: Optional[datetime.datetime] = None
         self.metadata = metadata
         self.share_quota = share_quota
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
+        self.version: Optional[str] = None
+        self.deleted: Optional[bool] = None
+        self.deleted_time: Optional[datetime.datetime] = None
+        self.remaining_retention_days: Optional[int] = None
         self.access_tier = access_tier
-        self.access_tier_change_time = None
-        self.access_tier_status = None
-        self.share_usage_bytes = None
+        self.access_tier_change_time: Optional[datetime.datetime] = None
+        self.access_tier_status: Optional[str] = None
+        self.share_usage_bytes: Optional[int] = None
 
 
 class FileShareItem(AzureEntityResource):
@@ -1999,7 +1999,7 @@ class FileShareItem(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2106,19 +2106,19 @@ class FileShareItem(AzureEntityResource):
         :paramtype access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
         """
         super().__init__(**kwargs)
-        self.last_modified_time = None
+        self.last_modified_time: Optional[datetime.datetime] = None
         self.metadata = metadata
         self.share_quota = share_quota
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
+        self.version: Optional[str] = None
+        self.deleted: Optional[bool] = None
+        self.deleted_time: Optional[datetime.datetime] = None
+        self.remaining_retention_days: Optional[int] = None
         self.access_tier = access_tier
-        self.access_tier_change_time = None
-        self.access_tier_status = None
-        self.share_usage_bytes = None
+        self.access_tier_change_time: Optional[datetime.datetime] = None
+        self.access_tier_status: Optional[str] = None
+        self.share_usage_bytes: Optional[int] = None
 
 
 class FileShareItems(_serialization.Model):
@@ -2147,8 +2147,8 @@ class FileShareItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.FileShareItem"]] = None
+        self.next_link: Optional[str] = None
 
 
 class GeoReplicationStats(_serialization.Model):
@@ -2188,9 +2188,9 @@ class GeoReplicationStats(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.last_sync_time = None
-        self.can_failover = None
+        self.status: Optional[Union[str, "_models.GeoReplicationStatus"]] = None
+        self.last_sync_time: Optional[datetime.datetime] = None
+        self.can_failover: Optional[bool] = None
 
 
 class Identity(_serialization.Model):
@@ -2225,8 +2225,8 @@ class Identity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
 
 
 class ImmutabilityPolicy(AzureEntityResource):
@@ -2236,7 +2236,7 @@ class ImmutabilityPolicy(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2300,7 +2300,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         """
         super().__init__(**kwargs)
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
-        self.state = None
+        self.state: Optional[Union[str, "_models.ImmutabilityPolicyState"]] = None
         self.allow_protected_append_writes = allow_protected_append_writes
 
 
@@ -2363,10 +2363,10 @@ class ImmutabilityPolicyProperties(_serialization.Model):
         :paramtype allow_protected_append_writes: bool
         """
         super().__init__(**kwargs)
-        self.etag = None
-        self.update_history = None
+        self.etag: Optional[str] = None
+        self.update_history: Optional[List["_models.UpdateHistoryProperty"]] = None
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
-        self.state = None
+        self.state: Optional[Union[str, "_models.ImmutabilityPolicyState"]] = None
         self.allow_protected_append_writes = allow_protected_append_writes
 
 
@@ -2455,8 +2455,8 @@ class KeyVaultProperties(_serialization.Model):
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri
-        self.current_versioned_key_identifier = None
-        self.last_key_rotation_timestamp = None
+        self.current_versioned_key_identifier: Optional[str] = None
+        self.last_key_rotation_timestamp: Optional[datetime.datetime] = None
 
 
 class LastAccessTimeTrackingPolicy(_serialization.Model):
@@ -2650,7 +2650,7 @@ class LegalHold(_serialization.Model):
         :paramtype tags: list[str]
         """
         super().__init__(**kwargs)
-        self.has_legal_hold = None
+        self.has_legal_hold: Optional[bool] = None
         self.tags = tags
 
 
@@ -2683,7 +2683,7 @@ class LegalHoldProperties(_serialization.Model):
         :paramtype tags: list[~azure.mgmt.storage.v2019_06_01.models.TagProperty]
         """
         super().__init__(**kwargs)
-        self.has_legal_hold = None
+        self.has_legal_hold: Optional[bool] = None
         self.tags = tags
 
 
@@ -2707,7 +2707,7 @@ class ListAccountSasResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.account_sas_token = None
+        self.account_sas_token: Optional[str] = None
 
 
 class ListBlobInventoryPolicy(_serialization.Model):
@@ -2730,7 +2730,7 @@ class ListBlobInventoryPolicy(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.BlobInventoryPolicy"]] = None
 
 
 class ListContainerItem(AzureEntityResource):
@@ -2739,7 +2739,7 @@ class ListContainerItem(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2859,22 +2859,22 @@ class ListContainerItem(AzureEntityResource):
         :paramtype metadata: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
+        self.version: Optional[str] = None
+        self.deleted: Optional[bool] = None
+        self.deleted_time: Optional[datetime.datetime] = None
+        self.remaining_retention_days: Optional[int] = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
-        self.last_modified_time = None
-        self.lease_status = None
-        self.lease_state = None
-        self.lease_duration = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.lease_status: Optional[Union[str, "_models.LeaseStatus"]] = None
+        self.lease_state: Optional[Union[str, "_models.LeaseState"]] = None
+        self.lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = None
         self.metadata = metadata
-        self.immutability_policy = None
-        self.legal_hold = None
-        self.has_legal_hold = None
-        self.has_immutability_policy = None
+        self.immutability_policy: Optional["_models.ImmutabilityPolicyProperties"] = None
+        self.legal_hold: Optional["_models.LegalHoldProperties"] = None
+        self.has_legal_hold: Optional[bool] = None
+        self.has_immutability_policy: Optional[bool] = None
 
 
 class ListContainerItems(_serialization.Model):
@@ -2903,8 +2903,8 @@ class ListContainerItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.ListContainerItem"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ListQueue(Resource):
@@ -2913,7 +2913,7 @@ class ListQueue(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2970,8 +2970,8 @@ class ListQueueResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.ListQueue"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ListQueueServices(_serialization.Model):
@@ -2994,7 +2994,7 @@ class ListQueueServices(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.QueueServiceProperties"]] = None
 
 
 class ListServiceSasResponse(_serialization.Model):
@@ -3017,7 +3017,7 @@ class ListServiceSasResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.service_sas_token = None
+        self.service_sas_token: Optional[str] = None
 
 
 class ListTableResource(_serialization.Model):
@@ -3044,8 +3044,8 @@ class ListTableResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Table"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ListTableServices(_serialization.Model):
@@ -3068,7 +3068,7 @@ class ListTableServices(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.TableServiceProperties"]] = None
 
 
 class ManagementPolicy(Resource):
@@ -3077,7 +3077,7 @@ class ManagementPolicy(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3113,7 +3113,7 @@ class ManagementPolicy(Resource):
         :paramtype policy: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicySchema
         """
         super().__init__(**kwargs)
-        self.last_modified_time = None
+        self.last_modified_time: Optional[datetime.datetime] = None
         self.policy = policy
 
 
@@ -3640,7 +3640,7 @@ class ObjectReplicationPolicy(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3695,8 +3695,8 @@ class ObjectReplicationPolicy(Resource):
         :paramtype rules: list[~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyRule]
         """
         super().__init__(**kwargs)
-        self.policy_id = None
-        self.enabled_time = None
+        self.policy_id: Optional[str] = None
+        self.enabled_time: Optional[datetime.datetime] = None
         self.source_account = source_account
         self.destination_account = destination_account
         self.rules = rules
@@ -3924,7 +3924,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -3933,7 +3933,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3989,7 +3989,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -4018,7 +4018,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4056,8 +4056,8 @@ class PrivateLinkResource(Resource):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -4133,7 +4133,7 @@ class QueueServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4213,8 +4213,8 @@ class RestorePolicyProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.enabled = enabled
         self.days = days
-        self.last_enabled_time = None
-        self.min_restore_time = None
+        self.last_enabled_time: Optional[datetime.datetime] = None
+        self.min_restore_time: Optional[datetime.datetime] = None
 
 
 class Restriction(_serialization.Model):
@@ -4254,8 +4254,8 @@ class Restriction(_serialization.Model):
         :paramtype reason_code: str or ~azure.mgmt.storage.v2019_06_01.models.ReasonCode
         """
         super().__init__(**kwargs)
-        self.type = None
-        self.values = None
+        self.type: Optional[str] = None
+        self.values: Optional[List[str]] = None
         self.reason_code = reason_code
 
 
@@ -4531,7 +4531,7 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
 
 
 class SKUCapability(_serialization.Model):
@@ -4560,8 +4560,8 @@ class SKUCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class SkuInformation(_serialization.Model):
@@ -4633,11 +4633,11 @@ class SkuInformation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
-        self.resource_type = None
-        self.kind = None
-        self.locations = None
-        self.capabilities = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
+        self.resource_type: Optional[str] = None
+        self.kind: Optional[Union[str, "_models.Kind"]] = None
+        self.locations: Optional[List[str]] = None
+        self.capabilities: Optional[List["_models.SKUCapability"]] = None
         self.restrictions = restrictions
 
 
@@ -4650,7 +4650,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4698,7 +4698,7 @@ class StorageAccount(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4917,31 +4917,31 @@ class StorageAccount(TrackedResource):
         :paramtype allow_shared_key_access: bool
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.sku = None
-        self.kind = None
+        self.sku: Optional["_models.Sku"] = None
+        self.kind: Optional[Union[str, "_models.Kind"]] = None
         self.identity = identity
-        self.provisioning_state = None
-        self.primary_endpoints = None
-        self.primary_location = None
-        self.status_of_primary = None
-        self.last_geo_failover_time = None
-        self.secondary_location = None
-        self.status_of_secondary = None
-        self.creation_time = None
-        self.custom_domain = None
-        self.secondary_endpoints = None
-        self.encryption = None
-        self.access_tier = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.primary_endpoints: Optional["_models.Endpoints"] = None
+        self.primary_location: Optional[str] = None
+        self.status_of_primary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.last_geo_failover_time: Optional[datetime.datetime] = None
+        self.secondary_location: Optional[str] = None
+        self.status_of_secondary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.custom_domain: Optional["_models.CustomDomain"] = None
+        self.secondary_endpoints: Optional["_models.Endpoints"] = None
+        self.encryption: Optional["_models.Encryption"] = None
+        self.access_tier: Optional[Union[str, "_models.AccessTier"]] = None
         self.azure_files_identity_based_authentication = azure_files_identity_based_authentication
         self.enable_https_traffic_only = enable_https_traffic_only
-        self.network_rule_set = None
+        self.network_rule_set: Optional["_models.NetworkRuleSet"] = None
         self.is_hns_enabled = is_hns_enabled
-        self.geo_replication_stats = None
-        self.failover_in_progress = None
+        self.geo_replication_stats: Optional["_models.GeoReplicationStats"] = None
+        self.failover_in_progress: Optional[bool] = None
         self.large_file_shares_state = large_file_shares_state
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
         self.routing_preference = routing_preference
-        self.blob_restore_status = None
+        self.blob_restore_status: Optional["_models.BlobRestoreStatus"] = None
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
         self.allow_shared_key_access = allow_shared_key_access
@@ -5209,10 +5209,10 @@ class StorageAccountInternetEndpoints(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.blob = None
-        self.file = None
-        self.web = None
-        self.dfs = None
+        self.blob: Optional[str] = None
+        self.file: Optional[str] = None
+        self.web: Optional[str] = None
+        self.dfs: Optional[str] = None
 
 
 class StorageAccountKey(_serialization.Model):
@@ -5244,9 +5244,9 @@ class StorageAccountKey(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.key_name = None
-        self.value = None
-        self.permissions = None
+        self.key_name: Optional[str] = None
+        self.value: Optional[str] = None
+        self.permissions: Optional[Union[str, "_models.KeyPermission"]] = None
 
 
 class StorageAccountListKeysResult(_serialization.Model):
@@ -5270,7 +5270,7 @@ class StorageAccountListKeysResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.keys = None
+        self.keys: Optional[List["_models.StorageAccountKey"]] = None
 
 
 class StorageAccountListResult(_serialization.Model):
@@ -5298,8 +5298,8 @@ class StorageAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.StorageAccount"]] = None
+        self.next_link: Optional[str] = None
 
 
 class StorageAccountMicrosoftEndpoints(_serialization.Model):
@@ -5343,12 +5343,12 @@ class StorageAccountMicrosoftEndpoints(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.blob = None
-        self.queue = None
-        self.table = None
-        self.file = None
-        self.web = None
-        self.dfs = None
+        self.blob: Optional[str] = None
+        self.queue: Optional[str] = None
+        self.table: Optional[str] = None
+        self.file: Optional[str] = None
+        self.web: Optional[str] = None
+        self.dfs: Optional[str] = None
 
 
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
@@ -5555,7 +5555,7 @@ class StorageQueue(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5592,7 +5592,7 @@ class StorageQueue(Resource):
         """
         super().__init__(**kwargs)
         self.metadata = metadata
-        self.approximate_message_count = None
+        self.approximate_message_count: Optional[int] = None
 
 
 class StorageSkuListResult(_serialization.Model):
@@ -5615,7 +5615,7 @@ class StorageSkuListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.SkuInformation"]] = None
 
 
 class SystemData(_serialization.Model):
@@ -5688,7 +5688,7 @@ class Table(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5716,7 +5716,7 @@ class Table(Resource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.table_name = None
+        self.table_name: Optional[str] = None
 
 
 class TableServiceProperties(Resource):
@@ -5725,7 +5725,7 @@ class TableServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5842,11 +5842,11 @@ class TagProperty(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.tag = None
-        self.timestamp = None
-        self.object_identifier = None
-        self.tenant_id = None
-        self.upn = None
+        self.tag: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.object_identifier: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.upn: Optional[str] = None
 
 
 class UpdateHistoryProperty(_serialization.Model):
@@ -5892,12 +5892,12 @@ class UpdateHistoryProperty(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.update = None
-        self.immutability_period_since_creation_in_days = None
-        self.timestamp = None
-        self.object_identifier = None
-        self.tenant_id = None
-        self.upn = None
+        self.update: Optional[Union[str, "_models.ImmutabilityPolicyUpdateType"]] = None
+        self.immutability_period_since_creation_in_days: Optional[int] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.object_identifier: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.upn: Optional[str] = None
 
 
 class Usage(_serialization.Model):
@@ -5933,10 +5933,10 @@ class Usage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.unit = None
-        self.current_value = None
-        self.limit = None
-        self.name = None
+        self.unit: Optional[Union[str, "_models.UsageUnit"]] = None
+        self.current_value: Optional[int] = None
+        self.limit: Optional[int] = None
+        self.name: Optional["_models.UsageName"] = None
 
 
 class UsageListResult(_serialization.Model):
@@ -5983,8 +5983,8 @@ class UsageName(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+        self.value: Optional[str] = None
+        self.localized_value: Optional[str] = None
 
 
 class VirtualNetworkRule(_serialization.Model):
@@ -5993,7 +5993,7 @@ class VirtualNetworkRule(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
-     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
      Required.
     :vartype virtual_network_resource_id: str
     :ivar action: The action of virtual network rule. Default value is "Allow".
@@ -6023,7 +6023,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
-         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
          Required.
         :paramtype virtual_network_resource_id: str
         :keyword action: The action of virtual network rule. Default value is "Allow".

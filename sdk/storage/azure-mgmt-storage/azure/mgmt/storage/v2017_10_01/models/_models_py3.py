@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -150,9 +150,9 @@ class CheckNameAvailabilityResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.Reason"]] = None
+        self.message: Optional[str] = None
 
 
 class CustomDomain(_serialization.Model):
@@ -297,7 +297,7 @@ class EncryptionService(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.last_enabled_time = None
+        self.last_enabled_time: Optional[datetime.datetime] = None
 
 
 class EncryptionServices(_serialization.Model):
@@ -343,8 +343,8 @@ class EncryptionServices(_serialization.Model):
         super().__init__(**kwargs)
         self.blob = blob
         self.file = file
-        self.table = None
-        self.queue = None
+        self.table: Optional["_models.EncryptionService"] = None
+        self.queue: Optional["_models.EncryptionService"] = None
 
 
 class Endpoints(_serialization.Model):
@@ -379,10 +379,10 @@ class Endpoints(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.blob = None
-        self.queue = None
-        self.table = None
-        self.file = None
+        self.blob: Optional[str] = None
+        self.queue: Optional[str] = None
+        self.table: Optional[str] = None
+        self.file: Optional[str] = None
 
 
 class Identity(_serialization.Model):
@@ -417,8 +417,8 @@ class Identity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
 
 
 class IPRule(_serialization.Model):
@@ -514,7 +514,7 @@ class ListAccountSasResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.account_sas_token = None
+        self.account_sas_token: Optional[str] = None
 
 
 class ListServiceSasResponse(_serialization.Model):
@@ -537,7 +537,7 @@ class ListServiceSasResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.service_sas_token = None
+        self.service_sas_token: Optional[str] = None
 
 
 class MetricSpecification(_serialization.Model):
@@ -829,9 +829,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -873,8 +873,8 @@ class Restriction(_serialization.Model):
         :paramtype reason_code: str or ~azure.mgmt.storage.v2017_10_01.models.ReasonCode
         """
         super().__init__(**kwargs)
-        self.type = None
-        self.values = None
+        self.type: Optional[str] = None
+        self.values: Optional[List[str]] = None
         self.reason_code = reason_code
 
 
@@ -1136,11 +1136,11 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
-        self.resource_type = None
-        self.kind = None
-        self.locations = None
-        self.capabilities = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
+        self.resource_type: Optional[str] = None
+        self.kind: Optional[Union[str, "_models.Kind"]] = None
+        self.locations: Optional[List[str]] = None
+        self.capabilities: Optional[List["_models.SKUCapability"]] = None
         self.restrictions = restrictions
 
 
@@ -1170,8 +1170,8 @@ class SKUCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class StorageAccount(Resource):
@@ -1308,23 +1308,23 @@ class StorageAccount(Resource):
         :paramtype enable_https_traffic_only: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.sku = None
-        self.kind = None
+        self.sku: Optional["_models.Sku"] = None
+        self.kind: Optional[Union[str, "_models.Kind"]] = None
         self.identity = identity
-        self.provisioning_state = None
-        self.primary_endpoints = None
-        self.primary_location = None
-        self.status_of_primary = None
-        self.last_geo_failover_time = None
-        self.secondary_location = None
-        self.status_of_secondary = None
-        self.creation_time = None
-        self.custom_domain = None
-        self.secondary_endpoints = None
-        self.encryption = None
-        self.access_tier = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.primary_endpoints: Optional["_models.Endpoints"] = None
+        self.primary_location: Optional[str] = None
+        self.status_of_primary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.last_geo_failover_time: Optional[datetime.datetime] = None
+        self.secondary_location: Optional[str] = None
+        self.status_of_secondary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.custom_domain: Optional["_models.CustomDomain"] = None
+        self.secondary_endpoints: Optional["_models.Endpoints"] = None
+        self.encryption: Optional["_models.Encryption"] = None
+        self.access_tier: Optional[Union[str, "_models.AccessTier"]] = None
         self.enable_https_traffic_only = enable_https_traffic_only
-        self.network_rule_set = None
+        self.network_rule_set: Optional["_models.NetworkRuleSet"] = None
 
 
 class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
@@ -1510,9 +1510,9 @@ class StorageAccountKey(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.key_name = None
-        self.value = None
-        self.permissions = None
+        self.key_name: Optional[str] = None
+        self.value: Optional[str] = None
+        self.permissions: Optional[Union[str, "_models.KeyPermission"]] = None
 
 
 class StorageAccountListKeysResult(_serialization.Model):
@@ -1536,7 +1536,7 @@ class StorageAccountListKeysResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.keys = None
+        self.keys: Optional[List["_models.StorageAccountKey"]] = None
 
 
 class StorageAccountListResult(_serialization.Model):
@@ -1559,7 +1559,7 @@ class StorageAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.StorageAccount"]] = None
 
 
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
@@ -1710,7 +1710,7 @@ class StorageSkuListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.Sku"]] = None
 
 
 class Usage(_serialization.Model):
@@ -1746,10 +1746,10 @@ class Usage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.unit = None
-        self.current_value = None
-        self.limit = None
-        self.name = None
+        self.unit: Optional[Union[str, "_models.UsageUnit"]] = None
+        self.current_value: Optional[int] = None
+        self.limit: Optional[int] = None
+        self.name: Optional["_models.UsageName"] = None
 
 
 class UsageListResult(_serialization.Model):
@@ -1796,8 +1796,8 @@ class UsageName(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+        self.value: Optional[str] = None
+        self.localized_value: Optional[str] = None
 
 
 class VirtualNetworkRule(_serialization.Model):
@@ -1806,7 +1806,7 @@ class VirtualNetworkRule(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
-     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
      Required.
     :vartype virtual_network_resource_id: str
     :ivar action: The action of virtual network rule. Default value is "Allow".
@@ -1836,7 +1836,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
-         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
          Required.
         :paramtype virtual_network_resource_id: str
         :keyword action: The action of virtual network rule. Default value is "Allow".

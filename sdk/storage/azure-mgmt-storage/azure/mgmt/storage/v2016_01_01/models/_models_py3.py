@@ -8,7 +8,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -46,9 +46,9 @@ class CheckNameAvailabilityResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.Reason"]] = None
+        self.message: Optional[str] = None
 
 
 class CustomDomain(_serialization.Model):
@@ -158,7 +158,7 @@ class EncryptionService(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.last_enabled_time = None
+        self.last_enabled_time: Optional[datetime.datetime] = None
 
 
 class EncryptionServices(_serialization.Model):
@@ -213,10 +213,10 @@ class Endpoints(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.blob = None
-        self.queue = None
-        self.table = None
-        self.file = None
+        self.blob: Optional[str] = None
+        self.queue: Optional[str] = None
+        self.table: Optional[str] = None
+        self.file: Optional[str] = None
 
 
 class Resource(_serialization.Model):
@@ -260,9 +260,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -302,7 +302,7 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
 
 
 class StorageAccount(Resource):
@@ -416,20 +416,20 @@ class StorageAccount(Resource):
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.sku = None
-        self.kind = None
-        self.provisioning_state = None
-        self.primary_endpoints = None
-        self.primary_location = None
-        self.status_of_primary = None
-        self.last_geo_failover_time = None
-        self.secondary_location = None
-        self.status_of_secondary = None
-        self.creation_time = None
-        self.custom_domain = None
-        self.secondary_endpoints = None
-        self.encryption = None
-        self.access_tier = None
+        self.sku: Optional["_models.Sku"] = None
+        self.kind: Optional[Union[str, "_models.Kind"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.primary_endpoints: Optional["_models.Endpoints"] = None
+        self.primary_location: Optional[str] = None
+        self.status_of_primary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.last_geo_failover_time: Optional[datetime.datetime] = None
+        self.secondary_location: Optional[str] = None
+        self.status_of_secondary: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.custom_domain: Optional["_models.CustomDomain"] = None
+        self.secondary_endpoints: Optional["_models.Endpoints"] = None
+        self.encryption: Optional["_models.Encryption"] = None
+        self.access_tier: Optional[Union[str, "_models.AccessTier"]] = None
 
 
 class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
@@ -595,9 +595,9 @@ class StorageAccountKey(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.key_name = None
-        self.value = None
-        self.permissions = None
+        self.key_name: Optional[str] = None
+        self.value: Optional[str] = None
+        self.permissions: Optional[Union[str, "_models.KeyPermission"]] = None
 
 
 class StorageAccountListKeysResult(_serialization.Model):
@@ -621,7 +621,7 @@ class StorageAccountListKeysResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.keys = None
+        self.keys: Optional[List["_models.StorageAccountKey"]] = None
 
 
 class StorageAccountListResult(_serialization.Model):
@@ -644,7 +644,7 @@ class StorageAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.StorageAccount"]] = None
 
 
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
@@ -775,10 +775,10 @@ class Usage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.unit = None
-        self.current_value = None
-        self.limit = None
-        self.name = None
+        self.unit: Optional[Union[str, "_models.UsageUnit"]] = None
+        self.current_value: Optional[int] = None
+        self.limit: Optional[int] = None
+        self.name: Optional["_models.UsageName"] = None
 
 
 class UsageListResult(_serialization.Model):
@@ -825,5 +825,5 @@ class UsageName(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+        self.value: Optional[str] = None
+        self.localized_value: Optional[str] = None
