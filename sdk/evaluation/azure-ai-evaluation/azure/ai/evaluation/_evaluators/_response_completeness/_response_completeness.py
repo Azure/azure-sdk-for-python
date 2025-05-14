@@ -37,13 +37,26 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    
     .. admonition:: Example:
+    
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START completeness_evaluator]
             :end-before: [END completeness_evaluator]
             :language: python
             :dedent: 8
             :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
+    
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START completeness_evaluator]
+            :end-before: [END completeness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call CompletenessEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     """
 
     # Constants must be defined within eval's directory to be save/loadable
