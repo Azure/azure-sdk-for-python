@@ -2,12 +2,12 @@
     "CrossLanguagePackageId": "Azure.AI.Agents",
     "CrossLanguageDefinitionId": {
         "azure.ai.agents.models.Agent": "Azure.AI.Agents.Agent",
+        "azure.ai.agents.models.AgentErrorDetail": "Azure.AI.Agents.AgentErrorDetail",
         "azure.ai.agents.models.AgentsNamedToolChoice": "Azure.AI.Agents.AgentsNamedToolChoice",
         "azure.ai.agents.models.AgentsResponseFormat": "Azure.AI.Agents.AgentsResponseFormat",
         "azure.ai.agents.models.AgentThread": "Azure.AI.Agents.AgentThread",
         "azure.ai.agents.models.AgentThreadCreationOptions": "Azure.AI.Agents.AgentThreadCreationOptions",
         "azure.ai.agents.models.AgentV1Error": "Azure.AI.Agents.AgentV1Error",
-        "azure.ai.agents.models.AgentV1ErrorError": "Azure.AI.Agents.AgentV1Error.error.anonymous",
         "azure.ai.agents.models.AISearchIndexResource": "Azure.AI.Agents.AISearchIndexResource",
         "azure.ai.agents.models.ToolDefinition": "Azure.AI.Agents.ToolDefinition",
         "azure.ai.agents.models.AzureAISearchToolDefinition": "Azure.AI.Agents.AzureAISearchToolDefinition",

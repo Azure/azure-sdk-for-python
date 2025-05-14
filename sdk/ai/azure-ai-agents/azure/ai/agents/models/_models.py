@@ -187,6 +187,49 @@ class AgentDeletionStatus(_Model):
         self.object: Literal["assistant.deleted"] = "assistant.deleted"
 
 
+class AgentErrorDetail(_Model):
+    """Describes the error information returned by the agents API.
+
+    :ivar message: Human-readable description of the error.
+    :vartype message: str
+    :ivar type: Error type identifier (e.g. ``invalid_request_error``).
+    :vartype type: str
+    :ivar param: Name of the parameter that caused the error, if applicable.
+    :vartype param: str
+    :ivar code: Machine-readable error code.
+    :vartype code: str
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the error."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error type identifier (e.g. ``invalid_request_error``)."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the parameter that caused the error, if applicable."""
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Machine-readable error code."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        type: Optional[str] = None,
+        param: Optional[str] = None,
+        code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AgentsNamedToolChoice(_Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
@@ -380,56 +423,17 @@ class AgentV1Error(_Model):
     """Error payload returned by the agents API.
 
     :ivar error: Represents the error. Required.
-    :vartype error: ~azure.ai.agents.models.AgentV1ErrorError
+    :vartype error: ~azure.ai.agents.models.AgentErrorDetail
     """
 
-    error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.AgentErrorDetail" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the error. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.AgentV1ErrorError",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentV1ErrorError(_Model):
-    """AgentV1ErrorError.
-
-    :ivar message:
-    :vartype message: str
-    :ivar type:
-    :vartype type: str
-    :ivar param:
-    :vartype param: str
-    :ivar code:
-    :vartype code: str
-    """
-
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        message: Optional[str] = None,
-        type: Optional[str] = None,
-        param: Optional[str] = None,
-        code: Optional[str] = None,
+        error: "_models.AgentErrorDetail",
     ) -> None: ...
 
     @overload
