@@ -6,6 +6,9 @@
 
 - Added new enum values to `SystemEventNames` related to Azure Communication Services and Azure Edge.
 
+### Bugs Fixed
+- Fixed a bug where FailedLockToken error type was being incorrectly set to `Error` instead of `ODatav4Format`.
+
 ## 4.21.0 (2024-11-19)
 
 ### Features Added
