@@ -1316,7 +1316,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "assistants", "assistants_output",, and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
