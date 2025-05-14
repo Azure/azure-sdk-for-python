@@ -1438,7 +1438,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "assistants", "assistants_output",, and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
