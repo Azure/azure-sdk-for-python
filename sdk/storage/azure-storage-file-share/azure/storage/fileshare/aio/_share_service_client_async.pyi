@@ -24,8 +24,11 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
-    def __init__(
+class ShareServiceClient(  # type: ignore[misc] # pylint: disable=client-accepts-api-version-keyword
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin
+):
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         credential: Optional[
