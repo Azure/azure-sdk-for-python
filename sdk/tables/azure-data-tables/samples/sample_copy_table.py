@@ -19,8 +19,6 @@ USAGE:
     1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table storage service account URL suffix
     2) TABLES_STORAGE_ACCOUNT_NAME - the Tables storage account name
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the Tables storage account access key
-    4) STORAGE_ACCOUNT_NAME - the blob storage account name
-    5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
 import json
 import os
@@ -62,13 +60,10 @@ class CopyTableSamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.table_connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
+        self.storage_account_connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.copy_to_blob_table_name = "copytoblobtablename" + uuid4().hex
         self.copy_to_table_table_name = "copytotabletablename" + uuid4().hex
-        self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
-        self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
-        self.blob_connection_string = f"DefDefaultEndpointsProtocol=https;AccountName={self.blob_account_name};AccountKey={self.blob_account_key};EndpointSuffix=core.windows.net"
-        self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
+        self.blob_service_client = BlobServiceClient.from_connection_string(self.storage_account_connection_string)
         self.entity: EntityType = {
             "PartitionKey": "color",
             "text": "Marker",
@@ -109,7 +104,7 @@ class CopyTableSamples(object):
             blob_list = self.container_client.list_blobs()
             # Upload entities to a table
             table_service_client = TableServiceClient.from_connection_string(
-                conn_str=self.table_connection_string, table_name=self.copy_to_table_table_name
+                conn_str=self.storage_account_connection_string, table_name=self.copy_to_table_table_name
             )
             self.table_client = table_service_client.get_table_client(self.copy_to_table_table_name)
             self.table_client.create_table()
@@ -128,7 +123,7 @@ class CopyTableSamples(object):
 
     def _setup_table(self):
         table_service_client = TableServiceClient.from_connection_string(
-            conn_str=self.table_connection_string, table_name=self.copy_to_blob_table_name
+            conn_str=self.storage_account_connection_string, table_name=self.copy_to_blob_table_name
         )
         self.table_client = table_service_client.get_table_client(self.copy_to_blob_table_name)
         self.table_client.create_table()
