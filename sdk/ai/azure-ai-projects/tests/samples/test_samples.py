@@ -148,7 +148,7 @@ class TestSamples:
             ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
             ("samples\\connections\\sample_connections.py", "", "connection1", ""),
             ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
-            ("samples\\datasets\\sample_datasets.py", "", "", "samples\\datasets\\data_folder"),
+            ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
             # ("samples\\evaluation\\sample_evaluations.py", "", "", ""),
             ("samples\\indexes\\sample_indexes.py", "", "", ""),
             ("samples\\inference\\sample_chat_completions_with_azure_ai_inference_client.py", "Phi-4", "", ""),
@@ -232,7 +232,7 @@ class TestSamples:
         [
             ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
             ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
-            ("samples\\datasets\\sample_datasets_async.py", "", "", "samples\\datasets\\data_folder"),
+            ("samples\\datasets\\sample_datasets_async.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
             ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
             # ("samples\\evaluation\\sample_evaluations_async.py", "", "", ""),
             ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
