@@ -604,6 +604,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
+        index_asset_id: str = "",
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -619,6 +620,8 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type filter: str
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
+        :param index_asset_id: Index asset ID to be used by tool.
+        :type filter: str
         """
         self.index_list = [
             AISearchIndexResource(
@@ -627,6 +630,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
                 query_type=query_type,
                 filter=filter,
                 top_k=top_k,
+                index_asset_id=index_asset_id,
             )
         ]
 
