@@ -26,9 +26,9 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(StorageAccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
     snapshot: Optional[str]
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
         share_name: str,
