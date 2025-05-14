@@ -191,8 +191,8 @@ class AgentsNamedToolChoice(_Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
-     Known values are: "function", "code_interpreter", "file_search", "azure_ai_search",
-     "bing_custom_search", and "connected_agent".
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "azure_ai_search", and "connected_agent".
     :vartype type: str or ~azure.ai.agents.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.agents.models.FunctionName
@@ -202,8 +202,8 @@ class AgentsNamedToolChoice(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
-     values are: \"function\", \"code_interpreter\", \"file_search\", \"azure_ai_search\",
-     \"bing_custom_search\", and \"connected_agent\"."""
+     values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
+     \"azure_ai_search\", and \"connected_agent\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -376,13 +376,79 @@ class AgentThreadCreationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AgentV1Error(_Model):
+    """Error payload returned by the agents API.
+
+    :ivar error: Represents the error. Required.
+    :vartype error: ~azure.ai.agents.models.AgentV1ErrorError
+    """
+
+    error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the error. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.AgentV1ErrorError",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentV1ErrorError(_Model):
+    """AgentV1ErrorError.
+
+    :ivar message:
+    :vartype message: str
+    :ivar type:
+    :vartype type: str
+    :ivar param:
+    :vartype param: str
+    :ivar code:
+    :vartype code: str
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        type: Optional[str] = None,
+        param: Optional[str] = None,
+        code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AISearchIndexResource(_Model):
     """A AI Search Index resource.
 
     :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
     :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :ivar index_name: The name of an index in an IndexResource attached to this agent.
     :vartype index_name: str
     :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
      "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
@@ -391,12 +457,14 @@ class AISearchIndexResource(_Model):
     :vartype top_k: int
     :ivar filter: filter string for search resource.
     :vartype filter: str
+    :ivar index_asset_id: Index asset id for search resource.
+    :vartype index_asset_id: str
     """
 
-    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of an index in an IndexResource attached to this agent. Required."""
+    index_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this agent."""
+    index_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this agent."""
     query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -406,16 +474,19 @@ class AISearchIndexResource(_Model):
     """Number of documents to retrieve from search and present to the model."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """filter string for search resource."""
+    index_asset_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Index asset id for search resource."""
 
     @overload
     def __init__(
         self,
         *,
-        index_connection_id: str,
-        index_name: str,
+        index_connection_id: Optional[str] = None,
+        index_name: Optional[str] = None,
         query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
         top_k: Optional[int] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        index_asset_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -731,8 +802,8 @@ class BingGroundingSearchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingGroundingSearchConfigurationList(_Model):
-    """A list of search configurations currently used by the ``bing_grounding`` tool.
+class BingGroundingSearchToolParameters(_Model):
+    """The bing grounding search tool parameters.
 
     :ivar search_configurations: The search configurations attached to this tool. There can be a
      maximum of 1
@@ -771,24 +842,23 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: The list of search configurations used by the bing grounding tool.
-     Required.
-    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchConfigurationList
+    :ivar bing_grounding: The bing grounding search tool parameters. Required.
+    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchToolParameters
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: "_models.BingGroundingSearchConfigurationList" = rest_field(
+    bing_grounding: "_models.BingGroundingSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of search configurations used by the bing grounding tool. Required."""
+    """The bing grounding search tool parameters. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bing_grounding: "_models.BingGroundingSearchConfigurationList",
+        bing_grounding: "_models.BingGroundingSearchToolParameters",
     ) -> None: ...
 
     @overload
