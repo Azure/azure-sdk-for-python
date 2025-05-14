@@ -128,7 +128,7 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
 
 # Register tools for each TypeSpec client generator CLI command
 @mcp.tool("init")
-def init_tool(tsp_config_url: str, root_dir: Optional[str] = None) -> Dict[str, Any]:
+def init_tool(tsp_config_url: str) -> Dict[str, Any]:
     """Initialize a typespec client library directory given the url.
     
     Args:
@@ -146,20 +146,18 @@ def init_tool(tsp_config_url: str, root_dir: Optional[str] = None) -> Dict[str, 
     args["tsp-config"] = updated_url
     
     # If root_dir is not provided, use the repository root
-    if root_dir is None:
-        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-        logger.info(f"No root_dir provided, using repository root: {root_dir}")
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    logger.info(f"No root_dir provided, using repository root: {root_dir}")
     
     return run_typespec_cli_command("init", args, root_dir=root_dir)
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, root_dir: Optional[str] = None) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
     """Initialize a typespec client library directory from a local azure-rest-api-specs repo.
 
     Args:
         tsp_config_path: The path to the local tspconfig.yaml file.
-        root_dir: The root directory where the client library will be generated.
-    
+
     Returns:
         A dictionary containing the result of the command.
     """
@@ -168,9 +166,8 @@ def init_local_tool(tsp_config_path: str, root_dir: Optional[str] = None) -> Dic
     args["tsp-config"] = tsp_config_path
     
     # If root_dir is not provided, use the repository root
-    if root_dir is None:
-        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-        logger.info(f"No root_dir provided, using repository root: {root_dir}")
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+    logger.info(f"No root_dir provided, using repository root: {root_dir}")
     
     return run_typespec_cli_command("init", args, root_dir=root_dir)
 
