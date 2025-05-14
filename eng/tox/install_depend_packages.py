@@ -72,7 +72,7 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     ">=3.12.0": {
         "azure-core": "1.23.1",
-        "aiohttp": "3.8.6",
+        "aiohttp": "3.9.0",
         "six": "1.16.0",
         "requests": "2.30.0"
     },
