@@ -91,9 +91,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         # deque operations(append/pop) are thread-safe
         results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
-        task_workflow_manager = _TaskWorkflowManager(
-            self, job_id=job_id, task_collection=task_collection, **kwargs
-        )
+        task_workflow_manager = _TaskWorkflowManager(self, job_id=job_id, task_collection=task_collection, **kwargs)
 
         # multi-threaded behavior
         if concurrencies:
@@ -241,9 +239,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             creation_time=headers["ocp-creation-time"],
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
-            )
+        )
 
-        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
+        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal(  # type: ignore
             pool_id,
             node_id,
             file_path,
@@ -252,7 +250,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs)
+            **kwargs
+        )
 
         return get_response
 
@@ -309,9 +308,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             creation_time=headers["ocp-creation-time"],
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
-            )
+        )
 
-        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
+        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal(  # type: ignore
             job_id,
             task_id,
             file_path,
@@ -320,7 +319,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs)
+            **kwargs
+        )
 
         return get_response
 
@@ -523,9 +523,8 @@ class _TaskWorkflowManager:
                             for task in chunk_tasks_to_add:
                                 if task.id == task_result.task_id:
                                     self.tasks_to_add.appendleft(task)
-                    elif (
-                        task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
-                        and not (task_result.error and task_result.error.code == "TaskExists")
+                    elif task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR and not (
+                        task_result.error and task_result.error.code == "TaskExists"
                     ):
                         # Client error will be recorded unless Task already exists
                         self.failure_tasks.appendleft(task_result)

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -85,7 +85,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 pytest.fail("Inner BatchErrorException expected but not exist")
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
-    
+
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
