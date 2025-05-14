@@ -127,7 +127,29 @@ You also have the option (not shown) to explicitly specify the Azure OpenAI conn
 <!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
 ```python
+print(
+    "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
+)
 with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+
+    response = client.chat.completions.create(
+        model=model_deployment_name,
+        messages=[
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ],
+    )
+
+    print(response.choices[0].message.content)
+
+print(
+    "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
+)
+with project_client.inference.get_azure_openai_client(
+    api_version="2024-10-21", connection_name=connection_name
+) as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
