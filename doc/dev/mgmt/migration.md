@@ -45,7 +45,7 @@ print(model.properties.name) # equivalent to A
 print(model.properties_properties_name) # B
 print(model.properties.properties.name) # equivalent to B
 
-# Typespec SDK model
+# New SDK model
 model_after_migration = Model(...)
 print(model_after_migration.properties_name) # A
 print(model_after_migration.properties.name) # equivalent to A
