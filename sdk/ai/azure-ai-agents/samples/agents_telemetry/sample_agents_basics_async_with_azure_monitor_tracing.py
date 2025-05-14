@@ -54,6 +54,7 @@ async def main() -> None:
 
         try:
             from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
             agents_instrumentor = AIAgentsInstrumentor()
             if not agents_instrumentor.is_instrumented():
                 agents_instrumentor.instrument()

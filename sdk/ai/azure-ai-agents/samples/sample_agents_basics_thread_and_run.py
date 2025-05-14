@@ -26,7 +26,7 @@ import os
 import time
 
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import AgentThreadCreationOptions, ThreadMessageOptions, MessageTextContent, ListSortOrder
+from azure.ai.agents.models import AgentThreadCreationOptions, ThreadMessageOptions, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())

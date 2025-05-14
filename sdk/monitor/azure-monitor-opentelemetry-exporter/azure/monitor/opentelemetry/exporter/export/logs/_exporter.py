@@ -69,7 +69,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
@@ -131,7 +131,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     if location_ip:
         envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
+        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
