@@ -23,7 +23,7 @@ from azure.mgmt.test.models import Model
 model = Model(name="xxx")
 print(model.name)
 
-# access property as dictionary directly
+# access property as dictionary directly, no need to call `as_dict()` anymore
 print(model["name"])
 ```
 
