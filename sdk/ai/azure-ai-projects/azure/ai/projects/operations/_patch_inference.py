@@ -47,13 +47,33 @@ class InferenceOperations:
         :param input_url: The input endpoint URL used to construct AIProjectClient.
         :type input_url: str
 
-        :return: The endpoint URL required to construct inference clients from the azure-ai-inference package.
+        :return: The endpoint URL required to construct inference clients from the `azure-ai-inference` package.
         :rtype: str
         """
         parsed = urlparse(input_url)
         if parsed.scheme != "https" or not parsed.netloc:
             raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
         new_url = f"https://{parsed.netloc}/models"
+        return new_url
+
+    @classmethod
+    def _get_aoai_inference_url(cls, input_url: str) -> str:
+        """
+        Converts an input URL in the format:
+        https://<host-name>/<some-path>
+        to:
+        https://<host-name>
+
+        :param input_url: The input endpoint URL used to construct AIProjectClient.
+        :type input_url: str
+
+        :return: The endpoint URL required to construct an AzureOpenAI client from the `openai` package.
+        :rtype: str
+        """
+        parsed = urlparse(input_url)
+        if parsed.scheme != "https" or not parsed.netloc:
+            raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
+        new_url = f"https://{parsed.netloc}"
         return new_url
 
     @distributed_trace
@@ -177,9 +197,8 @@ class InferenceOperations:
     def get_azure_openai_client(
         self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
     ) -> "AzureOpenAI":  # type: ignore[name-defined]
-        """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
-        Azure OpenAI connection (if `connection_name` is not specified), or from the Azure OpenAI
-        resource given by its connection name.
+        """Get an authenticated AzureOpenAI client (from the `openai` package) to use with
+        AI models deployed to your AI Foundry Project or connected Azure OpenAI services.
 
         .. note:: The package `openai` must be installed prior to calling this method.
 
@@ -187,10 +206,13 @@ class InferenceOperations:
          See "Data plane - Inference" row in the table at
          https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
-        :paramtype api_version: str
-        :keyword connection_name: The name of a connection to an Azure OpenAI resource in your AI Foundry project.
-         resource. Optional. If not provided, the default Azure OpenAI connection will be used.
-        :type connection_name: str
+        :paramtype api_version: Optional[str]
+        :keyword connection_name: Optional. If specified, the connection named here must be of type Azure OpenAI.
+         The returned AzureOpenAI client will use the inference URL specified by the connected Azure OpenAI
+         service, and can be used with AI models deployed to that service. If not specified, the returned
+         AzureOpenAI client will use the inference URL of the parent AI Services resource, and can be used
+         with AI models deployed directly to your AI Foundry project.
+        :paramtype connection_name: Optional[str]
 
         :return: An authenticated AzureOpenAI client
         :rtype: ~openai.AzureOpenAI
@@ -212,70 +234,82 @@ class InferenceOperations:
                 "OpenAI SDK is not installed. Please install it using 'pip install openai'"
             ) from e
 
-        connection = Connection()
         if connection_name:
-            connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
-            if connection.type != ConnectionType.AZURE_OPEN_AI:
-                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
-        else:
-            # If connection name was not specified, try to get the default Azure OpenAI connection.
-            connections: Iterable[Connection] = self._outer_instance.connections.list(
-                connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
-            )
-            try:
-                connection = next(iter(connections))
-            except StopAsyncIteration as exc:
-                raise ResourceNotFoundError("No default Azure OpenAI connection found.") from exc
-            connection_name = connection.name
-
-            # TODO: if there isn't a default openai connection, we would have to by convention
-            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the
-            # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
-
-        # TODO: Confirm that it's okay to do two REST API calls here.
-        # If the connection uses API key authentication, we need to make another service call to get
-        # the connection with API key populated.
-        if connection.credentials.type == CredentialType.API_KEY:
             connection = self._outer_instance.connections._get_with_credentials(  # pylint: disable=protected-access
                 name=connection_name, **kwargs
             )
+            if connection.type != ConnectionType.AZURE_OPEN_AI:
+                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
 
-        logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
+            azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
 
-        azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
+            if isinstance(connection.credentials, ApiKeyCredentials):
 
-        if isinstance(connection.credentials, ApiKeyCredentials):
+                logger.debug(
+                    "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    connection_name,
+                    azure_endpoint,
+                    api_version,
+                )
+                api_key = connection.credentials.api_key
+                client = AzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
 
-            logger.debug(
-                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
-            )
-            api_key = connection.credentials.api_key
-            client = AzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
+            elif isinstance(connection.credentials, EntraIDCredentials):
 
-        elif isinstance(connection.credentials, EntraIDCredentials):
+                logger.debug(
+                    "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    connection_name,
+                    azure_endpoint,
+                    api_version,
+                )
 
-            logger.debug(
-                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
-            )
+                try:
+                    from azure.identity import get_bearer_token_provider
+                except ModuleNotFoundError as e:
+                    raise ModuleNotFoundError(
+                        "azure.identity package not installed. Please install it using 'pip install azure.identity'"
+                    ) from e
 
-            try:
-                from azure.identity import get_bearer_token_provider
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-                ) from e
+                client = AzureOpenAI(
+                    # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                    azure_ad_token_provider=get_bearer_token_provider(
+                        self._outer_instance._config.credential,  # pylint: disable=protected-access
+                        "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
+                    ),
+                    azure_endpoint=azure_endpoint,
+                    api_version=api_version,
+                )
 
-            client = AzureOpenAI(
-                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-                azure_ad_token_provider=get_bearer_token_provider(
-                    self._outer_instance._config.credential,  # pylint: disable=protected-access
-                    "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
-                ),
-                azure_endpoint=azure_endpoint,
-                api_version=api_version,
-            )
+            else:
+                raise ValueError("Unsupported authentication type {connection.type}")
 
-        else:
-            raise ValueError("Unsupported authentication type {connection.type}")
+            return client
+
+        try:
+            from azure.identity import get_bearer_token_provider
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "azure.identity package not installed. Please install it using 'pip install azure.identity'"
+            ) from e
+
+        azure_endpoint = self._get_aoai_inference_url(
+            self._outer_instance._config.endpoint
+        )  # pylint: disable=protected-access
+
+        logger.debug(
+            "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",
+            azure_endpoint,
+            api_version,
+        )
+
+        client = AzureOpenAI(
+            # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+            azure_ad_token_provider=get_bearer_token_provider(
+                self._outer_instance._config.credential,  # pylint: disable=protected-access
+                "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
+            ),
+            azure_endpoint=azure_endpoint,
+            api_version=api_version,
+        )
 
         return client
