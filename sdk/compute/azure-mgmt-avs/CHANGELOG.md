@@ -1,5 +1,50 @@
 # Release History
 
+## 9.1.0 (2025-05-14)
+
+### Features Added
+
+  - Client `AVSClient` added operation group `skus`
+  - Client `AVSClient` added operation group `hosts`
+  - Client `AVSClient` added operation group `provisioned_networks`
+  - Client `AVSClient` added operation group `pure_storage_policies`
+  - Model `AddonHcxProperties` added property `management_network`
+  - Model `AddonHcxProperties` added property `uplink_network`
+  - Model `Datastore` added property `pure_storage_volume`
+  - Model `PrivateCloud` added property `zones`
+  - Added model `GeneralHostProperties`
+  - Added model `Host`
+  - Added enum `HostKind`
+  - Added model `HostListResult`
+  - Added enum `HostMaintenance`
+  - Added model `HostProperties`
+  - Added enum `HostProvisioningState`
+  - Added model `PagedResourceSku`
+  - Added model `ProvisionedNetwork`
+  - Added model `ProvisionedNetworkListResult`
+  - Added enum `ProvisionedNetworkProvisioningState`
+  - Added enum `ProvisionedNetworkTypes`
+  - Added model `PureStoragePolicy`
+  - Added model `PureStoragePolicyListResult`
+  - Added enum `PureStoragePolicyProvisioningState`
+  - Added model `PureStorageVolume`
+  - Added model `ResourceSku`
+  - Added model `ResourceSkuCapabilities`
+  - Added model `ResourceSkuLocationInfo`
+  - Added enum `ResourceSkuResourceType`
+  - Added model `ResourceSkuRestrictionInfo`
+  - Added model `ResourceSkuRestrictions`
+  - Added enum `ResourceSkuRestrictionsReasonCode`
+  - Added enum `ResourceSkuRestrictionsType`
+  - Added model `ResourceSkuZoneDetails`
+  - Added model `SpecializedHostProperties`
+  - Added model `HostsOperations`
+  - Added model `ProvisionedNetworksOperations`
+  - Added model `PureStoragePoliciesOperations`
+  - Added model `SkusOperations`
+  - Method `PureStoragePoliciesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, resource: PureStoragePolicy, content_type: str)`
+  - Method `PureStoragePoliciesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, resource: IO[bytes], content_type: str)`
+
 ## 9.0.0 (2024-09-22)
 
 ### Features Added

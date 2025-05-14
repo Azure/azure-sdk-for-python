@@ -21,11 +21,11 @@ class TestAVSIscsiPathsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_private_cloud(self, resource_group):
+    async def test_iscsi_paths_list_by_private_cloud(self, resource_group):
         response = self.client.iscsi_paths.list_by_private_cloud(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestAVSIscsiPathsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_iscsi_paths_get(self, resource_group):
         response = await self.client.iscsi_paths.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestAVSIscsiPathsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_iscsi_paths_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.iscsi_paths.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,7 +65,7 @@ class TestAVSIscsiPathsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,12 +74,12 @@ class TestAVSIscsiPathsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_iscsi_paths_begin_delete(self, resource_group):
         response = await (
             await self.client.iscsi_paths.begin_delete(
                 resource_group_name=resource_group.name,
                 private_cloud_name="str",
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
