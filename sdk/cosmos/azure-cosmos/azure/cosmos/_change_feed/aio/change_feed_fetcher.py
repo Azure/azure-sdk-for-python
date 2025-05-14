@@ -147,7 +147,8 @@ class ChangeFeedFetcherV2(object):
                 # refresh change feed state
                 await self._change_feed_state.handle_feed_range_gone_async(
                     self._client._routing_map_provider,
-                    self._resource_link)
+                    self._resource_link,
+                    self._feed_options)
             else:
                 raise e
 

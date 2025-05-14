@@ -101,8 +101,10 @@ class FeedRangeCompositeContinuation:
     def handle_feed_range_gone(
             self,
             routing_provider: SmartRoutingMapProvider,
-            collection_link: str) -> None:
-        overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link, [self._current_token.feed_range])
+            collection_link: str,
+            feed_options: Dict[str, Any]) -> None:
+        overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link,
+                                                                     [self._current_token.feed_range], feed_options)
 
         if len(overlapping_ranges) == 1:
             # merge,reusing the existing the feedRange and continuationToken
@@ -122,11 +124,13 @@ class FeedRangeCompositeContinuation:
     async def handle_feed_range_gone_async(
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
-            collection_link: str) -> None:
+            collection_link: str,
+            feed_options: Dict[str, Any]) -> None:
         overlapping_ranges = \
             await routing_provider.get_overlapping_ranges(
                 collection_link,
-                [self._current_token.feed_range])
+                [self._current_token.feed_range],
+                feed_options)
 
         if len(overlapping_ranges) == 1:
             # merge,reusing the existing the feedRange and continuationToken

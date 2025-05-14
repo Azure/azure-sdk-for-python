@@ -140,7 +140,8 @@ class ChangeFeedFetcherV2(object):
         except CosmosHttpResponseError as e:
             if exceptions._partition_range_is_gone(e) or exceptions._is_partition_split_or_merge(e):
                 # refresh change feed state
-                self._change_feed_state.handle_feed_range_gone(self._client._routing_map_provider, self._resource_link)
+                self._change_feed_state.handle_feed_range_gone(self._client._routing_map_provider, self._resource_link,
+                                                               self._feed_options)
             else:
                 raise e
 

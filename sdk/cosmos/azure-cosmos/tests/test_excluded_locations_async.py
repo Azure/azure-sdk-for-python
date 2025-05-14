@@ -10,9 +10,9 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
-from test_excluded_locations import (CLIENT_ONLY_TEST_DATA, CLIENT_AND_REQUEST_TEST_DATA,
-                                     TestDataType, set_test_data_type,
-                                     get_test_data_with_expected_output, verify_endpoint)
+from test_excluded_locations import (TestDataType, set_test_data_type,
+                                     read_item_test_data, write_item_test_data, read_and_write_item_test_data,
+                                     verify_endpoint)
 
 class MockHandler(logging.Handler):
     def __init__(self):
@@ -31,7 +31,7 @@ CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
 KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
-CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID
+CONTAINER_ID = CONFIG.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID
 PARTITION_KEY = CONFIG.TEST_CONTAINER_PREFIX_PARTITION_KEY
 ITEM_ID = 'doc1'
 PARTITION_KEY_VALUES = [f'value{i+1}' for i in range(len(PARTITION_KEY))]
@@ -40,140 +40,23 @@ PARTITION_KEY_ITEMS = dict(zip(PARTITION_KEY, PARTITION_KEY_VALUES))
 TEST_ITEM = {'id': ITEM_ID}
 TEST_ITEM.update(PARTITION_KEY_ITEMS)
 
-L0 = "Default"
-L1 = "West US 3"
-L2 = "West US"
-L3 = "East US 2"
-
-# L0 = "Default"
-# L1 = "East US 2"
-# L2 = "East US"
-# L3 = "West US 2"
-
 set_test_data_type(TestDataType.ALL_TESTS)
 
-def read_item_test_data():
-    client_only_output_data = [
-        [L1],  # 0
-        [L2],  # 1
-        [L1],  # 2
-        [L1],  # 3
-    ]
-    client_and_request_output_data = [
-        [L2],  # 0
-        [L2],  # 1
-        [L2],  # 2
-        [L1],  # 3
-        [L1],  # 4
-        [L1],  # 5
-        [L1],  # 6
-        [L1],  # 7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def read_all_item_test_data():
-    client_only_output_data = [
-        [L1, L1],  # 0
-        [L2, L2],  # 1
-        [L1, L1],  # 2
-        [L1, L1],  # 3
-    ]
-    client_and_request_output_data = [
-        [L2, L2],  # 0
-        [L2, L2],  # 1
-        [L2, L2],  # 2
-        [L1, L1],  # 3
-        [L1, L1],  # 4
-        [L1, L1],  # 5
-        [L1, L1],  # 6
-        [L1, L1],  # 7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def query_items_test_data():
-    client_only_output_data = [
-        [L1, L1, L1],   #0
-        [L2, L2, L2],   #1
-        [L1, L1, L1],   #2
-        [L1, L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2, L2],   #0
-        [L2, L2, L2],   #1
-        [L2, L2, L2],   #2
-        [L1, L1, L1],   #3
-        [L1, L1, L1],   #4
-        [L1, L1, L1],   #5
-        [L1, L1, L1],   #6
-        [L1, L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def query_items_change_feed_test_data():
-    client_only_output_data = [
-        [L1, L1, L1, L1, L1],   #0
-        [L2, L2, L2, L2, L2],   #1
-        [L1, L1, L1, L1, L1],   #2
-        [L1, L1, L1, L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2, L2, L2, L2],   #0
-        [L2, L2, L2, L2, L2],   #1
-        [L2, L2, L2, L2, L2],   #2
-        [L1, L1, L1, L1, L1],   #3
-        [L1, L1, L1, L1, L1],   #4
-        [L1, L1, L1, L1, L1],   #5
-        [L1, L1, L1, L1, L1],   #6
-        [L1, L1, L1, L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def create_items_test_data():
-    client_only_output_data = [
-        [L1, L1],   #0
-        [L2, L2],   #1
-        [L1, L0],   #2
-        [L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2],   #0
-        [L2, L2],   #1
-        [L2, L2],   #2
-        [L1, L0],   #3
-        [L1, L0],   #4
-        [L1, L1],   #5
-        [L1, L1],   #6
-        [L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def patch_item_test_data():
-    client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #2
-        [L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-async def create_item_with_excluded_locations(container, body, excluded_locations):
+async def create_item_with_excluded_locations_async(container, body, excluded_locations):
     if excluded_locations is None:
         await container.create_item(body=body)
     else:
         await container.create_item(body=body, excluded_locations=excluded_locations)
 
+async def init_container_async(client):
+    db = client.get_database_client(DATABASE_ID)
+    container = db.get_container_client(CONTAINER_ID)
+    MOCK_HANDLER.reset()
+
+    return db, container
+
 @pytest_asyncio.fixture(scope="class", autouse=True)
-async def setup_and_teardown():
+async def setup_and_teardown_async():
     print("Setup: This runs before any tests")
     logger = logging.getLogger("azure")
     logger.addHandler(MOCK_HANDLER)
@@ -188,16 +71,9 @@ async def setup_and_teardown():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
-async def init_container(client):
-    db = client.get_database_client(DATABASE_ID)
-    container = db.get_container_client(CONTAINER_ID)
-    MOCK_HANDLER.reset()
-
-    return db, container
-
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
-@pytest.mark.usefixtures("setup_and_teardown")
+@pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
     async def test_read_item(self, test_data):
@@ -209,7 +85,7 @@ class TestExcludedLocations:
                               preferred_locations=preferred_locations,
                               excluded_locations=client_excluded_locations,
                               multiple_write_locations=True) as client:
-            db, container = await init_container(client)
+            db, container = await init_container_async(client)
 
             # API call: read_item
             if request_excluded_locations is None:
@@ -220,7 +96,7 @@ class TestExcludedLocations:
             # Verify endpoint locations
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_all_item_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     async def test_read_all_items(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -230,7 +106,7 @@ class TestExcludedLocations:
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
-            db, container = await init_container(client)
+            db, container = await init_container_async(client)
 
             # API call: read_all_items
             if request_excluded_locations is None:
@@ -241,8 +117,8 @@ class TestExcludedLocations:
             # Verify endpoint locations
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_test_data())
-    async def test_query_items(self, test_data):
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    async def test_query_items_with_partition_key(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -251,7 +127,7 @@ class TestExcludedLocations:
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
-            db, container = await init_container(client)
+            db, container = await init_container_async(client)
 
             # API call: query_items
             query = 'select * from c'
@@ -263,7 +139,29 @@ class TestExcludedLocations:
             # Verify endpoint locations
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_change_feed_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    async def test_query_items_with_query_plan(self, test_data):
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        # Client setup
+        async with CosmosClient(HOST, KEY,
+                                preferred_locations=preferred_locations,
+                                excluded_locations=client_excluded_locations,
+                                multiple_write_locations=True) as client:
+            db, container = await init_container_async(client)
+
+            # API call: query_items
+            query = 'Select top 10 value count(c.id) from c'
+            if request_excluded_locations is None:
+                all_items = [item async for item in container.query_items(query)]
+            else:
+                all_items = [item async for item in container.query_items(query, excluded_locations=request_excluded_locations)]
+
+            # Verify endpoint locations
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
+
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     async def test_query_items_change_feed(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -274,7 +172,7 @@ class TestExcludedLocations:
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
-            db, container = await init_container(client)
+            db, container = await init_container_async(client)
             # API call: query_items_change_feed
             if request_excluded_locations is None:
                 all_items = [item async for item in container.query_items_change_feed(start_time="Beginning", partition_key=PREFIX_PARTITION_KEY)]
@@ -285,7 +183,7 @@ class TestExcludedLocations:
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
 
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     async def test_replace_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -296,7 +194,7 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # API call: replace_item
                 if request_excluded_locations is None:
@@ -305,12 +203,9 @@ class TestExcludedLocations:
                     await container.replace_item(ITEM_ID, body=TEST_ITEM, excluded_locations=request_excluded_locations)
 
                 # Verify endpoint locations
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations[:-1] + [L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     async def test_upsert_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -321,7 +216,7 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # API call: upsert_item
                 body = {'id': f'doc2-{str(uuid.uuid4())}'}
@@ -332,12 +227,9 @@ class TestExcludedLocations:
                     await container.upsert_item(body=body, excluded_locations=request_excluded_locations)
 
                 # get location from mock_handler
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     async def test_create_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -348,20 +240,17 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # API call: create_item
                 body = {'id': f'doc2-{str(uuid.uuid4())}'}
                 body.update(PARTITION_KEY_ITEMS)
-                await create_item_with_excluded_locations(container, body, request_excluded_locations)
+                await create_item_with_excluded_locations_async(container, body, request_excluded_locations)
 
                 # get location from mock_handler
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     async def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -372,7 +261,7 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # API call: patch_item
                 operations = [
@@ -387,12 +276,9 @@ class TestExcludedLocations:
                                          excluded_locations=request_excluded_locations)
 
                 # get location from mock_handler
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     async def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -403,7 +289,7 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # API call: execute_item_batch
                 batch_operations = []
@@ -423,12 +309,9 @@ class TestExcludedLocations:
                                          excluded_locations=request_excluded_locations)
 
                 # get location from mock_handler
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     async def test_delete_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -439,13 +322,13 @@ class TestExcludedLocations:
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
-                db, container = await init_container(client)
+                db, container = await init_container_async(client)
 
                 # create before delete
                 item_id = f'doc2-{str(uuid.uuid4())}'
                 body = {'id': item_id}
                 body.update(PARTITION_KEY_ITEMS)
-                await create_item_with_excluded_locations(container, body, request_excluded_locations)
+                await create_item_with_excluded_locations_async(container, body, request_excluded_locations)
                 MOCK_HANDLER.reset()
 
                 # API call: delete_item
@@ -455,10 +338,7 @@ class TestExcludedLocations:
                     await container.delete_item(item_id, PARTITION_KEY_VALUES, excluded_locations=request_excluded_locations)
 
                 # Verify endpoint locations
-                if multiple_write_locations:
-                    verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-                else:
-                    verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
 if __name__ == "__main__":
     unittest.main()

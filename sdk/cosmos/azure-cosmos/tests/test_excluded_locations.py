@@ -34,7 +34,7 @@ CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
 KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
-CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID
+CONTAINER_ID = CONFIG.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID
 PARTITION_KEY = CONFIG.TEST_CONTAINER_PREFIX_PARTITION_KEY
 ITEM_ID = 'doc1'
 PARTITION_KEY_VALUES = [f'value{i+1}' for i in range(len(PARTITION_KEY))]
@@ -81,7 +81,7 @@ CLIENT_AND_REQUEST_TEST_DATA = [
     [[L1, L2], [L1], [L2]],
     # 6. Request excluded location not in preferred locations
     [[L1, L2], [L1, L2], [L3]],
-    # 7. Empty excluded locations, remove all client excluded locations
+    # 7. Empty excluded locations, remove all client level excluded locations
     [[L1, L2], [L1, L2], []],
 ]
 
@@ -123,69 +123,12 @@ def read_item_test_data():
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
-def query_items_test_data():
-    client_only_output_data = [
-        [L1, L1, L1],   #0
-        [L2, L2, L2],   #1
-        [L1, L1, L1],   #2
-        [L1, L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2, L2],   #0
-        [L2, L2, L2],   #1
-        [L2, L2, L2],   #2
-        [L1, L1, L1],   #3
-        [L1, L1, L1],   #4
-        [L1, L1, L1],   #5
-        [L1, L1, L1],   #6
-        [L1, L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def query_items_change_feed_test_data():
-    client_only_output_data = [
-        [L1, L1, L1, L1],   #0
-        [L2, L2, L2, L2],   #1
-        [L1, L1, L1, L1],   #2
-        [L1, L1, L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2, L2, L2],   #0
-        [L2, L2, L2, L2],   #1
-        [L2, L2, L2, L2],   #2
-        [L1, L1, L1, L1],   #3
-        [L1, L1, L1, L1],   #4
-        [L1, L1, L1, L1],   #5
-        [L1, L1, L1, L1],   #6
-        [L1, L1, L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def create_items_test_data():
-    client_only_output_data = [
-        [L1, L1],   #0
-        [L2, L2],   #1
-        [L1, L0],   #2
-        [L1, L1]    #3
-    ]
-    client_and_request_output_data = [
-        [L2, L2],   #0
-        [L2, L2],   #1
-        [L2, L2],   #2
-        [L1, L0],   #3
-        [L1, L0],   #4
-        [L1, L1],   #5
-        [L1, L1],   #6
-        [L1, L1],   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
-
-def patch_item_test_data():
+def write_item_test_data():
     client_only_output_data = [
         [L1],   #0
         [L2],   #1
-        [L0],   #3
-        [L1]    #4
+        [L0],   #2
+        [L1]    #3
     ]
     client_and_request_output_data = [
         [L2],   #0
@@ -199,11 +142,58 @@ def patch_item_test_data():
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
+def read_and_write_item_test_data():
+    read_item = read_item_test_data()
+    write_item = write_item_test_data()
+
+    # Combine the expected_locations of read and write item
+    for i in range(len(read_item)):
+        read_item[i][-1] += write_item[i][-1]
+    return read_item
+
 def create_item_with_excluded_locations(container, body, excluded_locations):
     if excluded_locations is None:
         container.create_item(body=body)
     else:
         container.create_item(body=body, excluded_locations=excluded_locations)
+
+def init_container(preferred_locations, client_excluded_locations, multiple_write_locations = True):
+    client = CosmosClient(HOST, KEY,
+                          preferred_locations=preferred_locations,
+                          excluded_locations=client_excluded_locations,
+                          multiple_write_locations=multiple_write_locations)
+    db = client.get_database_client(DATABASE_ID)
+    container = db.get_container_client(CONTAINER_ID)
+    MOCK_HANDLER.reset()
+
+    return client, db, container
+
+def verify_endpoint(messages, client, expected_locations, multiple_write_locations = True):
+    if not multiple_write_locations:
+        expected_locations[-1] = L1
+
+    # get mapping for locations
+    location_mapping = (client.client_connection._global_endpoint_manager.
+                        location_cache.account_locations_by_write_endpoints)
+    default_endpoint = (client.client_connection._global_endpoint_manager.
+                        location_cache.default_regional_routing_context.get_primary())
+
+    # get Request URL
+    req_urls = [url.replace("Request URL: '", "") for url in messages if 'Request URL:' in url]
+
+    # get location
+    actual_locations = set()
+    for req_url in req_urls:
+        if req_url.startswith(default_endpoint):
+            actual_locations.add(L0)
+        else:
+            for endpoint in location_mapping:
+                if req_url.startswith(endpoint):
+                    location = location_mapping[endpoint]
+                    actual_locations.add(location)
+                    break
+
+    assert actual_locations == set(expected_locations)
 
 @pytest.fixture(scope="class", autouse=True)
 def setup_and_teardown():
@@ -219,41 +209,6 @@ def setup_and_teardown():
     yield
     # Code to run after tests
     print("Teardown: This runs after all tests")
-
-def init_container(preferred_locations, client_excluded_locations, multiple_write_locations = True):
-    client = CosmosClient(HOST, KEY,
-                          preferred_locations=preferred_locations,
-                          excluded_locations=client_excluded_locations,
-                          multiple_write_locations=multiple_write_locations)
-    db = client.get_database_client(DATABASE_ID)
-    container = db.get_container_client(CONTAINER_ID)
-    MOCK_HANDLER.reset()
-
-    return client, db, container
-
-def verify_endpoint(messages, client, expected_locations):
-    # get mapping for locations
-    location_mapping = (client.client_connection._global_endpoint_manager.
-                        location_cache.account_locations_by_write_endpoints)
-    default_endpoint = (client.client_connection._global_endpoint_manager.
-                        location_cache.default_regional_routing_context.get_primary())
-
-    # get Request URL
-    req_urls = [url.replace("Request URL: '", "") for url in messages if 'Request URL:' in url]
-
-    # get location
-    actual_locations = []
-    for req_url in req_urls:
-        if req_url.startswith(default_endpoint):
-            actual_locations.append(L0)
-        else:
-            for endpoint in location_mapping:
-                if req_url.startswith(endpoint):
-                    location = location_mapping[endpoint]
-                    actual_locations.append(location)
-                    break
-
-    assert actual_locations == expected_locations
 
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
@@ -291,8 +246,8 @@ class TestExcludedLocations:
         # Verify endpoint locations
         verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_test_data())
-    def test_query_items(self, test_data):
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    def test_query_items_with_partition_key(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -309,7 +264,26 @@ class TestExcludedLocations:
         # Verify endpoint locations
         verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', query_items_change_feed_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
+    def test_query_items_with_query_plan(self, test_data):
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        # Client setup and create an item
+        client, db, container = init_container(preferred_locations, client_excluded_locations)
+
+        # API call: query_items
+        query = 'Select top 10 value count(c.id) from c'
+        if request_excluded_locations is None:
+            list(container.query_items(query, enable_cross_partition_query=True))
+            # list(container.query_items(query))
+        else:
+            list(container.query_items(query, enable_cross_partition_query=True, excluded_locations=request_excluded_locations))
+
+        # Verify endpoint locations
+        verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
+
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_query_items_change_feed(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -326,8 +300,7 @@ class TestExcludedLocations:
         # Verify endpoint locations
         verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
-
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_replace_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -343,12 +316,9 @@ class TestExcludedLocations:
                 container.replace_item(ITEM_ID, body=TEST_ITEM, excluded_locations=request_excluded_locations)
 
             # Verify endpoint locations
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_upsert_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -366,12 +336,9 @@ class TestExcludedLocations:
                 container.upsert_item(body=body, excluded_locations=request_excluded_locations)
 
             # get location from mock_handler
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', create_items_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_create_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -385,13 +352,10 @@ class TestExcludedLocations:
             body.update(PARTITION_KEY_ITEMS)
             create_item_with_excluded_locations(container, body, request_excluded_locations)
 
-            # get location from mock_handler
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [expected_locations[0], L1])
+            # Single write
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -414,12 +378,9 @@ class TestExcludedLocations:
                                      excluded_locations=request_excluded_locations)
 
             # get location from mock_handler
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -447,12 +408,9 @@ class TestExcludedLocations:
                                      excluded_locations=request_excluded_locations)
 
             # get location from mock_handler
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    @pytest.mark.parametrize('test_data', write_item_test_data())
     def test_delete_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -475,10 +433,7 @@ class TestExcludedLocations:
                 container.delete_item(item_id, PARTITION_KEY_VALUES, excluded_locations=request_excluded_locations)
 
             # Verify endpoint locations
-            if multiple_write_locations:
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
-            else:
-                verify_endpoint(MOCK_HANDLER.messages, client, [L1])
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
 if __name__ == "__main__":
     unittest.main()
