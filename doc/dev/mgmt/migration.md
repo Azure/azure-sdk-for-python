@@ -55,7 +55,7 @@ print(model_after_migration.properties.properties.name) # recommended approach a
 
 ## Additional properties
 
-### Swagger SDK model for additional properties
+### Old SDK model
 
 To support [additional properties](https://www.apimatic.io/openapi/additionalproperties), SDK models included an `additional_properties` parameter:
 
