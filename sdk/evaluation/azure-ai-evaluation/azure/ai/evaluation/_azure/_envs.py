@@ -11,7 +11,7 @@ import os
 
 from typing import Any, Dict, Final, Mapping, Optional, Sequence, TypedDict
 
-from azure.core import AsyncPipelineClient
+from azure.core import AsyncPipelineClient, PipelineClient
 from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import ProxyPolicy, AsyncRetryPolicy
@@ -82,7 +82,7 @@ class AzureEnvironmentClient:
         if config.proxy_policy is None and "proxy" in kwargs:
             config.proxy_policy = ProxyPolicy(proxies={"http": kwargs["proxy"], "https": kwargs["proxy"]})
 
-        self._async_client = AsyncPipelineClient(base_url, config=config, **kwargs)
+        self._sync_client = PipelineClient(base_url, config=config, **kwargs)
 
     async def get_default_cloud_name_async(self, *, update_cached: bool = True) -> str:
         current_cloud_env = os.getenv(_ENV_DEFAULT_CLOUD_NAME)
@@ -132,7 +132,7 @@ class AzureEnvironmentClient:
         metadata_url = metadata_url or self.get_default_metadata_url()
 
         clouds: Mapping[str, AzureEnvironmentMetadata]
-        async with self._async_client.send_request(HttpRequest("GET", metadata_url)) as response:  # type: ignore
+        with self._sync_client.send_request(HttpRequest("GET", metadata_url)) as response:  # type: ignore
             response.raise_for_status()
             clouds = await self._parse_cloud_endpoints_async(response.json())
 
@@ -142,7 +142,7 @@ class AzureEnvironmentClient:
         return clouds
 
     async def close(self) -> None:
-        await self._async_client.close()
+        self._sync_client.close()
 
     @staticmethod
     def get_default_metadata_url(default_endpoint: Optional[str] = None) -> str:
