@@ -257,25 +257,12 @@ class AzureRAIServiceTarget(PromptChatTarget):
         if not re.match(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', operation_id, re.IGNORECASE):
             self.logger.warning(f"Operation ID '{operation_id}' doesn't match expected UUID pattern")
         
-        # For debugging, log currently valid operations if available
-        try:
-            # This is a speculative call to help debug - it might not work on all APIs
-            active_operations = self._client._client.rai_svc.list_operations()
-            if active_operations:
-                if hasattr(active_operations, "__dict__"):
-                    self.logger.debug(f"Active operations response: {active_operations.__dict__}")
-                else:
-                    self.logger.debug(f"Active operations response type: {type(active_operations).__name__}")
-        except Exception as e:
-            # This is just for debugging, so suppress errors
-            self.logger.debug(f"Could not list active operations: {str(e)}")
-        
         invalid_op_id_count = 0
         last_error_message = None
         
         for retry in range(max_retries):
             try:
-                operation_result = self._client._client.rai_svc.get_operation_result(operation_id=operation_id)
+                operation_result = self._client._client.get_operation_result(operation_id=operation_id)
                 
                 # Check if we have a valid result
                 if operation_result:
@@ -473,7 +460,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
             
             # Step 2: Submit the simulation request
             self.logger.info(f"Submitting simulation request to RAI service with model={self._model or 'default'}")
-            long_running_response = self._client._client.rai_svc.submit_simulation(body=body)
+            long_running_response = self._client._client.submit_simulation(body=body)
             self.logger.debug(f"Received long running response type: {type(long_running_response).__name__}")
             
             if hasattr(long_running_response, "__dict__"):
@@ -490,7 +477,6 @@ class AzureRAIServiceTarget(PromptChatTarget):
             
             # Step 5: Process the response to extract content
             response_text = await self._process_response(operation_result)
-            self.logger.info(f"Successfully processed response: {response_text}")
             
             # If response is empty or missing required fields, provide a fallback response
             if not response_text or (isinstance(response_text, dict) and not response_text):
