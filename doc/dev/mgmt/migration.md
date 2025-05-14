@@ -49,7 +49,7 @@ print(model.properties.properties.name) # equivalent to B
 model_after_migration = Model(...)
 print(model_after_migration.properties_name) # A
 print(model_after_migration.properties.name) # equivalent to A
-print(model_after_migration.properties_properties_name) # no longer supported
+print(model_after_migration.properties_properties_name) # Will now raise an AttributeError
 print(model_after_migration.properties.properties.name) # recommended approach after migration
 ```
 
