@@ -1,27 +1,27 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b11 (2025-05-15)
 
-Major changes happened in this version as the client library switched to using the new AI Foundry data-plane REST APIs.
-(TODO: Add link). Please see updated samples.
-
-### Breaking changes
-
-* Endpoint URL is now needed to construct the `AIProjectClient`, instead of using the factory method
-`.from_connection_string`. Find this endpoint URL in your AI Foundry project page.
-* Agent operations that were previously part of the `azure.ai.projects` package have moved out to a separate new package
-`azure-ai-assistants` with a client named `AssistantClient`. See INSERT URL HERE for more information. You can get the `AssistantClient` by calling `.assistant.get_client()` method on your `AIProjectClient`.
-* Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
-* Several changes to `.connections` operations. Please see new connection samples.
-* TODO: `.evaluations` methods ..
+There have been significant updates with the release of version 1.0.0b11, including breaking changes.
+Please see new samples and package README.md file.
 
 ### Features added
 
-* `.deployment` methods to enumerate the deployed AI models in your AI Foundry project.
-* `.datasets` method to upload documents and reference them. These documents will be used to augment the capability
-of your selected LLM (RAG pattern).
-* `.indexes` methods to handle your AI search indexes and search queries, as part of RAG pattern.
-* TODO: `.red_team` methods ...
+* `.deployments` methods to enumerate AI models deployed to your AI Foundry project.
+* `.datasets` methods to upload documents and reference them. To be used with Evaluations.
+* `.indexes` methods to handle your Search Indexes.
+
+### Breaking changes
+
+* Azure AI Foundry project endpoint is now required to construct the `AIProjectClient`. Find it in your AI Foundry Project
+overview page. The factory method `from_connection_string` was removed.
+* Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
+`AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
+See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.
+* Several changes to the `.connections` methods, including the response object (now simply called `Connection`)
+* The method `.inference.get_azure_openai_client()` now supports returning an authenticated `AzureOpenAI` client to be used with
+AI models deployed to the Project's AI Services. This is in addition to the existing option to get an `AzureOpenAI` client for one of the connected Azure OpenAI services.
+* Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
 
 ### Sample updates
 

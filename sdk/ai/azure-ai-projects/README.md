@@ -14,6 +14,9 @@ Use it to:
 * **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
 * **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
+> **Note:** There have been significant updates with the release of version 1.0.0b11, including breaking changes.
+please see new code examples below and the samples folder.
+
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
@@ -36,7 +39,6 @@ To report an issue with the client library, or request additional features, plea
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
-  * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
 
 ### Install the package
 
@@ -47,6 +49,8 @@ pip install azure-ai-projects
 ## Key concepts
 
 ### Create and authenticate the client with Entra ID
+
+Entra ID is the only authentication method supported at the moment by the client.
 
 To construct a synchronous client:
 
@@ -85,9 +89,9 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an agent and delete it. To see what you can do with the `agent` you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) associated with the `azure-ai-agents` package.
+The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the `agent` you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) associated with the `azure-ai-agents` package.
 
-The code below assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
 <!-- SNIPPET:sample_agents.agents_sample -->
 
@@ -112,17 +116,9 @@ print("Deleted agent")
 
 Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
 
-First, install the package:
-
-```bash
-pip install openai
-```
-
-Then run the code below. Here we assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, or a connected Azure OpenAI resource. As shown in the "Models + endpoints" tab, under the "Name" column.
 
 Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
-
-You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials. If not present the default Azure OpenAI connection will be used.
 
 <!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
@@ -178,7 +174,7 @@ First, install the package:
 pip install azure-ai-inference
 ```
 
-Then run the code below. Here we assumes `model_deployment_name` (str) is defined. It's the deployment name of an AI model in your Foundry Project. As shown in the "Models + endpoints" tab, under the "Name" column.
+Then run the code below. Here we assume `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
 <!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.inference_sample-->
 
