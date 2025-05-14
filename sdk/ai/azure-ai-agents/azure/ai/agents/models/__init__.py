@@ -16,10 +16,10 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     AISearchIndexResource,
     Agent,
+    AgentErrorDetail,
     AgentThread,
     AgentThreadCreationOptions,
     AgentV1Error,
-    AgentV1ErrorError,
     AgentsNamedToolChoice,
     AgentsResponseFormat,
     AzureAISearchToolDefinition,
@@ -207,10 +207,10 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AISearchIndexResource",
     "Agent",
+    "AgentErrorDetail",
     "AgentThread",
     "AgentThreadCreationOptions",
     "AgentV1Error",
-    "AgentV1ErrorError",
     "AgentsNamedToolChoice",
     "AgentsResponseFormat",
     "AzureAISearchToolDefinition",
