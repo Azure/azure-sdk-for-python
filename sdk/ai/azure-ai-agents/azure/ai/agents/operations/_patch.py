@@ -1332,7 +1332,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "assistants", "assistants_output",, and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1448,7 +1448,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "assistants", "assistants_output",, and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1477,7 +1477,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "assistants", "assistants_output",, and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
