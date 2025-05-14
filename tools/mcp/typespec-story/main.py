@@ -93,14 +93,21 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     try:
         # TODO: maybe if we return and dont wait for output this will work
         # Run the command and capture the output
-        result = subprocess.run(
-            cli_args,
-            capture_output=True,
-            text=True,
-            cwd=root_dir,
-        )
+        if root_dir:
+            result = subprocess.run(
+                cli_args,
+                capture_output=True,
+                text=True,
+                cwd=root_dir,
+            )
+        else:
+            result = subprocess.run(
+                cli_args,
+                capture_output=True,
+                text=True,
+            )
         logger.info(f"Command output: {result.stdout}")
-        
+
         return {
             "success": True,
             "stdout": result.stdout,
@@ -138,7 +145,119 @@ def init_tool(tsp_config_url: str, root_dir: Optional[str] = None) -> Dict[str, 
     args = {}
     args["tsp-config"] = updated_url
     
+    # If root_dir is not provided, use the repository root
+    if root_dir is None:
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+        logger.info(f"No root_dir provided, using repository root: {root_dir}")
+    
     return run_typespec_cli_command("init", args, root_dir=root_dir)
+
+@mcp.tool("init_local")
+def init_local_tool(tsp_config_path: str, root_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Initialize a typespec client library directory from a local azure-rest-api-specs repo.
+
+    Args:
+        tsp_config_path: The path to the local tspconfig.yaml file.
+        root_dir: The root directory where the client library will be generated.
+    
+    Returns:
+        A dictionary containing the result of the command.
+    """
+    # Prepare arguments for the CLI command
+    args = {}
+    args["tsp-config"] = tsp_config_path
+    
+    # If root_dir is not provided, use the repository root
+    if root_dir is None:
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+        logger.info(f"No root_dir provided, using repository root: {root_dir}")
+    
+    return run_typespec_cli_command("init", args, root_dir=root_dir)
+
+@mcp.tool("generate")
+def generate_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Generate a typespec client library given the url.
+    
+    Args:
+        project_dir: The directory of the client library to be generated.
+    
+    Returns:
+        A dictionary containing the result of the command.
+    """
+    # Prepare arguments for the CLI command
+    args: Dict[str, Any] = {}
+    
+    # If project_dir is not provided, use the current directory
+    if project_dir is None:
+        logger.info("No project_dir provided, using current directory")
+    
+    return run_typespec_cli_command("generate", args, root_dir=project_dir)
+
+@mcp.tool("update")
+def update_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Update a typespec client library.
+    
+    This command looks for a tsp-location.yaml file in the current directory to sync a TypeSpec project
+    and generate a client library. It calls sync and generate commands internally.
+    
+    Args:
+        project_dir: The root directory where the client library will be updated.
+    
+    Returns:
+        A dictionary containing the result of the command.
+    """
+    # Prepare arguments for the CLI command
+    args: Dict[str, Any] = {}
+    
+    # If project_dir is not provided, use the current directory as this command
+    # expects to find tsp-location.yaml in the working directory
+    if project_dir is None:
+        logger.info("No project_dir provided, using current directory")
+    
+    return run_typespec_cli_command("update", args, root_dir=project_dir)
+
+@mcp.tool("sync") 
+def sync_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Sync a typespec client library from the remote repository.
+    
+    This command looks for a tsp-location.yaml file to get the project details and sync them to a temporary directory.
+    
+    Args:
+        project_dir: The root directory where the client library will be synced.
+    
+    Returns:
+        A dictionary containing the result of the command.
+    """
+    # Prepare arguments for the CLI command
+    args: Dict[str, Any] = {}
+    
+    # If project_dir is not provided, use the current directory as this command
+    # expects to find tsp-location.yaml in the working directory
+    if project_dir is None:
+        logger.info("No project_dir provided, using current directory")
+    
+    return run_typespec_cli_command("sync", args, root_dir=project_dir)
+
+@mcp.tool("sync_local")
+def sync_local_tool(local_spec_repo: str, project_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Sync a typespec client library from a local repository.
+    
+    Args:
+        local_spec_repo: The path to the local azure-rest-api-specs repository.
+        project_dir: The root directory where the client library will be synced.
+
+    Returns:
+        A dictionary containing the result of the command.
+    """
+    # Prepare arguments for the CLI command
+    args: Dict[str, Any] = {}
+    args["local-spec-repo"] = local_spec_repo
+    
+    # If project_dir is not provided, use the current directory
+    if project_dir is None:
+        logger.info("No project_dir provided, using current directory")
+    
+    return run_typespec_cli_command("sync", args, root_dir=project_dir)
 
 # Run the MCP server
 if __name__ == "__main__":
