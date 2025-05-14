@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-12-01-preview/examples/CosmosDBSqlTriggerGet.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlTriggerGet.json
 if __name__ == "__main__":
     main()

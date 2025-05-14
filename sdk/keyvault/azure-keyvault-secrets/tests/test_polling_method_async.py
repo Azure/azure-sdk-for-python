@@ -11,7 +11,7 @@ from azure.keyvault.secrets._shared._polling_async import AsyncDeleteRecoverPoll
 from _shared.helpers import mock, mock_response
 from _shared.helpers_async import get_completed_future
 
-SLEEP = AsyncHttpTransport.__module__ + ".asyncio.sleep"
+SLEEP = AsyncHttpTransport.__module__ + ".AsyncHttpTransport.sleep"
 
 raise_exception = lambda message: mock.Mock(side_effect=Exception(message))
 

@@ -58,6 +58,7 @@ class TestArizeAIObservabilityEvalMgmtOrganizationsOperations(AzureMgmtRecordedT
                         "subscriptionId": "str",
                         "subscriptionStatus": "str",
                     },
+                    "partnerProperties": {"description": "str"},
                     "user": {
                         "emailAddress": "str",
                         "firstName": "str",
@@ -65,7 +66,6 @@ class TestArizeAIObservabilityEvalMgmtOrganizationsOperations(AzureMgmtRecordedT
                         "phoneNumber": "str",
                         "upn": "str",
                     },
-                    "partnerProperties": {"description": "str"},
                     "provisioningState": "str",
                     "singleSignOnProperties": {
                         "type": "str",

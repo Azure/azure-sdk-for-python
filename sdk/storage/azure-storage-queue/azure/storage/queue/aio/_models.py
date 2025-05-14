@@ -31,17 +31,18 @@ class MessagesPaged(AsyncPageIterator):
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        max_messages: Optional[int] = None
+        max_messages: Optional[int] = None,
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
         super(MessagesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb, # type: ignore [arg-type]
+            self._extract_data_cb,  # type: ignore [arg-type]
         )
         self._command = command
         self.results_per_page = results_per_page
@@ -97,15 +98,16 @@ class QueuePropertiesPaged(AsyncPageIterator):
     """Function to retrieve the next page of items."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb, # type: ignore [arg-type]
-            continuation_token=continuation_token or ""
+            self._extract_data_cb,  # type: ignore [arg-type]
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -120,7 +122,8 @@ class QueuePropertiesPaged(AsyncPageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -130,6 +133,8 @@ class QueuePropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+        props_list = [
+            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
+        ]
         next_marker = self._response.next_marker
         return next_marker or None, props_list
