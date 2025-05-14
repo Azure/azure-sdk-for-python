@@ -16,11 +16,7 @@ if TYPE_CHECKING:
 
 
 class AgentV1Error(_Model):
-    """Error payload returned by the agents API.
-
-    :ivar error: Represents the error. Required.
-    :vartype error: ~azure.ai.agents._servicepatterns.models.AgentV1ErrorError
-    """
+    """Error payload returned by the agents API."""
 
     error: "_models.AgentV1ErrorError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the error. Required."""
