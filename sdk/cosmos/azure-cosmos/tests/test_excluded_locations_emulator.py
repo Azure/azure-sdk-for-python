@@ -10,7 +10,7 @@ from typing import Callable, List, Mapping, Any
 from azure.core.rest import HttpRequest
 from _fault_injection_transport import FaultInjectionTransport, ERROR_WITH_COUNTER
 from azure.cosmos.container import ContainerProxy
-from test_excluded_locations import (L1, L2,
+from test_excluded_locations import (L1, L2, read_item_test_data,
                                      TestDataType, set_test_data_type,
                                      get_test_data_with_expected_output)
 from test_fault_injection_transport import TestFaultInjectionTransport
@@ -31,25 +31,6 @@ URL_TO_LOCATIONS = {
 }
 
 set_test_data_type(TestDataType.ALL_TESTS)
-
-def delete_all_items_by_partition_key_test_data() -> List[str]:
-    client_only_output_data = [
-        L1,   #0
-        L2,   #1
-        L1,   #3
-        L1    #4
-    ]
-    client_and_request_output_data = [
-        L2,   #0
-        L2,   #1
-        L2,   #2
-        L1,   #3
-        L1,   #4
-        L1,   #5
-        L1,   #6
-        L1,   #7
-    ]
-    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
 # The output data is the number of retries that happened with different timeout region cases
 # [timeout L1, timeout L2]
@@ -90,7 +71,7 @@ def get_location(
 @pytest.mark.unittest
 @pytest.mark.cosmosEmulator
 class TestExcludedLocationsEmulator:
-    @pytest.mark.parametrize('test_data', delete_all_items_by_partition_key_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsEmulator", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_location = test_data
@@ -140,7 +121,7 @@ class TestExcludedLocationsEmulator:
             # Verify endpoint locations
             actual_location = get_location(initialized_objects)
             if multiple_write_locations:
-                assert actual_location == expected_location
+                assert actual_location == expected_location[0]
             else:
                 assert actual_location == L1
 

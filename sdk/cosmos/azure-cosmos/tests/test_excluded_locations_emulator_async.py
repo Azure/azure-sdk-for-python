@@ -15,11 +15,10 @@ from azure.core.rest import HttpRequest
 from azure.core.pipeline.transport import AioHttpTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync, ERROR_WITH_COUNTER
 from azure.cosmos.aio._container import ContainerProxy
-from test_excluded_locations import (L1, L2,
+from test_excluded_locations import (L1, L2, read_item_test_data,
                                      TestDataType, set_test_data_type)
 from test_excluded_locations_emulator import (L1_URL, L2_URL,
                                               get_location,
-                                              delete_all_items_by_partition_key_test_data,
                                               metadata_read_with_excluded_locations_test_data)
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -43,7 +42,7 @@ async def init_container(client, db_id, container_id):
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 class TestExcludedLocationsEmulatorAsync:
-    @pytest.mark.parametrize('test_data', delete_all_items_by_partition_key_test_data())
+    @pytest.mark.parametrize('test_data', read_item_test_data())
     async def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsEmulatorAsync", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_location = test_data
@@ -92,7 +91,7 @@ class TestExcludedLocationsEmulatorAsync:
             # Verify endpoint locations
             actual_location = get_location(initialized_objects)
             if multiple_write_locations:
-                assert actual_location == expected_location
+                assert actual_location == expected_location[0]
             else:
                 assert actual_location == L1
 
