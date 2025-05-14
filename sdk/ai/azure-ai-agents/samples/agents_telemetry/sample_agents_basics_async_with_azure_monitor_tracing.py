@@ -52,15 +52,6 @@ async def main() -> None:
         application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        try:
-            from azure.ai.agents.telemetry import AIAgentsInstrumentor
-
-            agents_instrumentor = AIAgentsInstrumentor()
-            if not agents_instrumentor.is_instrumented():
-                agents_instrumentor.instrument()
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
-
         with tracer.start_as_current_span(scenario):
             async with agents_client:
                 agent = await agents_client.create_agent(
