@@ -20,7 +20,7 @@ import pandas as pd
 from tqdm import tqdm
 
 # Azure AI Evaluation imports
-from azure.ai.evaluation._common.constants import Tasks
+from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -663,6 +663,12 @@ class RedTeam:
             return selected_prompts
             
         else:
+            content_harm_risk = None
+            other_risk = None
+            if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
+                content_harm_risk = risk_cat_value
+            else:
+                other_risk = risk_cat_value
             # Use the RAI service to get attack objectives
             try:
                 self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
@@ -670,13 +676,15 @@ class RedTeam:
                 # right now, only tense requires strategy-specific dataset
                 if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_category=risk_cat_value,
+                        risk_type=content_harm_risk,
+                        risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense"
                     )
-                else: 
+                else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_category=risk_cat_value,
+                        risk_type=content_harm_risk,
+                        risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None
                     )
@@ -1572,6 +1580,8 @@ class RedTeam:
             annotation_task = Tasks.CODE_VULNERABILITY
         elif risk_category == RiskCategory.ProtectedMaterial:
             annotation_task = Tasks.PROTECTED_MATERIAL
+        elif risk_category == RiskCategory.ECI:
+            annotation_task = _InternalAnnotationTasks.ECI
         else:
             annotation_task = Tasks.CONTENT_HARM
 
@@ -1583,7 +1593,7 @@ class RedTeam:
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
             query_response = {
-                "query": "",  # Empty query as required
+                "query": "query",  # Empty query as required
                 "response": " ".join(assistant_messages)  # Join all assistant messages
             }
             try:

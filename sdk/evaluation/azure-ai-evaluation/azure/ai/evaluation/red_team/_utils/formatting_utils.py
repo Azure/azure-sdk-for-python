@@ -121,7 +121,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     
     separator = "-" * 108
     output.append(separator)
-    output.append(f"{'Risk Category':<15}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}")
+    output.append(f"{'Risk Category':<18}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}")
     output.append(separator)
     
     for item in scorecard["joint_risk_attack_summary"]:
@@ -137,7 +137,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
         
-        output.append(f"{risk_category:<15}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(f"{risk_category:<18}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
     
     return "\n".join(output)
 
