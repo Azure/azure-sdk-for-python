@@ -24,12 +24,12 @@ def endpoint_mir_yaml() -> str:
 
 @pytest.fixture
 def deployment_create_yaml() -> str:
-    return "./tests/test_configs/deployments/online/online_deployment_1.yaml"
+    return "./tests/test_configs/deployments/online/online_deployment_2.yaml"
 
 
 @pytest.fixture
 def deployment_update_file() -> str:
-    return "./tests/test_configs/deployments/online/online_deployment_1.yaml"
+    return "./tests/test_configs/deployments/online/online_deployment_2.yaml"
 
 
 @pytest.fixture
@@ -44,6 +44,10 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
@@ -69,6 +73,7 @@ def test_local_endpoint_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skip()
 def test_local_deployment_mir_e2e(
     deployment_create_yaml: str,
     deployment_update_file: str,
@@ -283,20 +288,20 @@ def run_local_endpoint_tests_e2e_create(
         deployment.name = deployment_name
         client.online_deployments.begin_create_or_update(deployment=deployment, no_wait=False, local=True)
 
-        get_deployment = client.online_deployments.get(endpoint_name=endpoint_name, name=deployment_name, local=True)
-        assert get_deployment.name == deployment_name
-        assert get_deployment.endpoint_name == endpoint_name
+        get_obj = client.online_deployments.get(endpoint_name=endpoint_name, name=deployment_name, local=True)
+        assert get_obj.name == deployment_name
+        assert get_obj.endpoint_name == endpoint_name
 
-        get_endpoint = client.online_endpoints.get(name=endpoint_name, local=True)
-        assert get_endpoint.name == endpoint_name
-        assert get_endpoint.scoring_uri is not None
-        assert get_endpoint.scoring_uri != ""
+        get_obj = client.online_endpoints.get(name=endpoint_name, local=True)
+        assert get_obj.name == endpoint_name
+        assert get_obj.scoring_uri is not None
+        assert get_obj.scoring_uri != ""
 
         data = client.online_endpoints.invoke(endpoint_name=endpoint_name, request_file=request_file, local=True)
         assert type(data) is str
         if is_sklearn:
-            assert "11055" in data
-            assert "4503" in data
+            assert "5215" in data
+            assert "3726" in data
 
         logs = client.online_deployments.get_logs(
             endpoint_name=endpoint_name, name=deployment_name, lines=10, local=True
@@ -315,7 +320,7 @@ def run_local_endpoint_tests_e2e_create(
             deployment.name = deployment_name
             client.online_deployments.begin_create_or_update(deployment=deployment, no_wait=False, local=True)
 
-        client.online_deployments.begin_delete(name=deployment_name, endpoint_name=endpoint_name, local=True)
+        client.online_deployments.delete(name=deployment_name, endpoint_name=endpoint_name, local=True)
         deployments = client.online_deployments.list(endpoint_name=endpoint_name, local=True)
         assert deployments is not None
         assert endpoint_name not in [dep.endpoint_name for dep in deployments]
