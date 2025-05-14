@@ -91,8 +91,8 @@ class TestMassEvaluate:
     @pytest.mark.parametrize(
         ("proj_scope", "cred", "conv", "m_config"),
         (
-            # ("project_scope", "azure_cred", "data_file", "model_config"),
-            # ("project_scope_onedp", "azure_cred_onedp", "data_file", "model_config_onedp"),
+            pytest.param("project_scope", "azure_cred", "data_file", "model_config", marks=pytest.mark.skip(reason="Skipping due to known issue or temporary debugging.")),
+            pytest.param("project_scope_onedp", "azure_cred_onedp", "data_file", "model_config_onedp", marks=pytest.mark.skip(reason="Skipping due to known issue or temporary debugging.")),
         )
     )
     def test_evaluate_singleton_inputs(self, request, proj_scope, cred, conv, m_config):
