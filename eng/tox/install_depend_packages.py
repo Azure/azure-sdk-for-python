@@ -68,7 +68,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
-# filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
+# filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compat
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     ">=3.12.0": {
         "azure-core": "1.23.1",
@@ -78,6 +78,7 @@ PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     },
     ">=3.13.0": {
         "typing-extensions": "4.12.0",
+        "aiohttp": "3.10.6"
     }
 }
 
