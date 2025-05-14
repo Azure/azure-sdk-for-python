@@ -176,7 +176,7 @@ class TestSamples:
                 "",
                 "",
             ),
-            ("samples\\inference\\sample_chat_completions_with_azure_openai_client.py", "gpt-4o", "", ""),
+            ("samples\\inference\\sample_chat_completions_with_azure_openai_client.py", "gpt-4o", "connection1", ""),
             (
                 "samples\\inference\\sample_chat_completions_with_azure_openai_client_and_azure_monitor_tracing.py",
                 "gpt-4o",
@@ -245,7 +245,7 @@ class TestSamples:
             (
                 "samples\\inference\\async_samples\\sample_chat_completions_with_azure_openai_client_async.py",
                 "gpt-4o",
-                "",
+                "connection1",
                 "",
             ),
             (
