@@ -1306,8 +1306,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1323,8 +1322,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1364,8 +1362,8 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+            Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
@@ -1440,8 +1438,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1470,8 +1467,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
@@ -1506,8 +1502,8 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+            Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
