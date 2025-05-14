@@ -33,7 +33,7 @@ You can access properties of the SDK model as before. When accessing properties 
 
 To maintain backward compatibility, Typespec SDK models continue to support the `as_dict` method.
 
-## Model Flattening
+## Model hierarchy
 
 Some Swagger SDK models support flattening, which allows users to access nested properties directly. In the Typespec SDK model, this flattening functionality is no longer fully supported. However, for backward compatibility, the Typespec SDK model continues to support simple flattening. For deeply nested flattened properties, code modifications will be necessary:
 
