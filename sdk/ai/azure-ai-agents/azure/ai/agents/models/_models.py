@@ -1073,8 +1073,8 @@ class FileInfo(_Model):
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
     :vartype created_at: ~datetime.datetime
-    :ivar purpose: The intended purpose of a file. Required. Known values are: "fine-tune",
-     "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
+    :ivar purpose: The intended purpose of a file. Required. Known values are: "assistants",
+     "assistants_output", and "vision".
     :vartype purpose: str or ~azure.ai.agents.models.FilePurpose
     :ivar status: The state of the file. This field is available in Azure OpenAI only. Known values
      are: "uploaded", "pending", "running", "processed", "error", "deleting", and "deleted".
@@ -1097,9 +1097,8 @@ class FileInfo(_Model):
     )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
     purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The intended purpose of a file. Required. Known values are: \"fine-tune\",
-     \"fine-tune-results\", \"assistants\", \"assistants_output\", \"batch\", \"batch_output\", and
-     \"vision\"."""
+    """The intended purpose of a file. Required. Known values are: \"assistants\",
+     \"assistants_output\", and \"vision\"."""
     status: Optional[Union[str, "_models.FileState"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5496,8 +5495,8 @@ class UploadFileRequest(_Model):
     :vartype file: ~azure.ai.agents._utils.utils.FileType
     :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
      Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-     ``fine-tune`` for Fine-tuning. Required. Known values are: "fine-tune", "fine-tune-results",
-     "assistants", "assistants_output", "batch", "batch_output", and "vision".
+     ``fine-tune`` for Fine-tuning. Required. Known values are: "assistants", "assistants_output",
+     and "vision".
     :vartype purpose: str or ~azure.ai.agents.models.FilePurpose
     :ivar filename: The name of the file.
     :vartype filename: str
@@ -5510,8 +5509,7 @@ class UploadFileRequest(_Model):
     purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intended purpose of the uploaded file. Use ``assistants`` for Agents and Message files,
      ``vision`` for Agents image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
-     Fine-tuning. Required. Known values are: \"fine-tune\", \"fine-tune-results\", \"assistants\",
-     \"assistants_output\", \"batch\", \"batch_output\", and \"vision\"."""
+     Fine-tuning. Required. Known values are: \"assistants\", \"assistants_output\", and \"vision\"."""
     filename: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the file."""
 

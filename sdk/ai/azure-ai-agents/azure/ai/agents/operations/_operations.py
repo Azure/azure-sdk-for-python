@@ -3411,9 +3411,8 @@ class FilesOperations:
     ) -> _models.FileListResponse:
         """Gets a list of previously uploaded files.
 
-        :keyword purpose: The purpose of the file. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Default value is
-         None.
+        :keyword purpose: The purpose of the file. Known values are: "assistants", "assistants_output",
+         and "vision". Default value is None.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileListResponse. The FileListResponse is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileListResponse

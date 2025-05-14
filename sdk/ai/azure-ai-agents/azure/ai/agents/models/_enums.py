@@ -157,18 +157,10 @@ class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The possible values denoting the intended usage of a file."""
 
-    FINE_TUNE = "fine-tune"
-    """Indicates a file is used for fine tuning input."""
-    FINE_TUNE_RESULTS = "fine-tune-results"
-    """Indicates a file is used for fine tuning results."""
     AGENTS = "assistants"
     """Indicates a file is used as input to agents."""
     AGENTS_OUTPUT = "assistants_output"
     """Indicates a file is used as output by agents."""
-    BATCH = "batch"
-    """Indicates a file is used as input to ."""
-    BATCH_OUTPUT = "batch_output"
-    """Indicates a file is used as output by a vector store batch operation."""
     VISION = "vision"
     """Indicates a file is used as input to a vision operation."""
 
