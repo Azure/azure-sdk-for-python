@@ -4,9 +4,11 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -21,7 +23,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -30,14 +31,14 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource configurationstore_test 'Microsoft.AppConfiguration/configurationStores@2024-05-01' existing = {
-  name: 'test'
+resource configurationstore_teststore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' existing = {
+  name: 'teststore'
 }
 
-output AZURE_APPCONFIG_ID_R string = configurationstore_test.id
-output AZURE_APPCONFIG_NAME_R string = configurationstore_test.name
+output AZURE_APPCONFIG_ID_R string = configurationstore_teststore.id
+output AZURE_APPCONFIG_NAME_R string = configurationstore_teststore.name
 output AZURE_APPCONFIG_RESOURCE_GROUP_R string = resourceGroup().name
-output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_test.properties.endpoint
+output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_teststore.properties.endpoint
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -84,7 +85,7 @@ resource keyvalue_azureappconfigidr 'Microsoft.AppConfiguration/configurationSto
   parent: configurationstore
   name: 'AZURE_APPCONFIG_ID_R'
   properties: {
-    value: configurationstore_test.id
+    value: configurationstore_teststore.id
   }
 }
 
@@ -94,7 +95,7 @@ resource keyvalue_azureappconfignamer 'Microsoft.AppConfiguration/configurationS
   parent: configurationstore
   name: 'AZURE_APPCONFIG_NAME_R'
   properties: {
-    value: configurationstore_test.name
+    value: configurationstore_teststore.name
   }
 }
 
@@ -114,7 +115,7 @@ resource keyvalue_azureappconfigendpointr 'Microsoft.AppConfiguration/configurat
   parent: configurationstore
   name: 'AZURE_APPCONFIG_ENDPOINT_R'
   properties: {
-    value: configurationstore_test.properties.endpoint
+    value: configurationstore_teststore.properties.endpoint
   }
 }
 

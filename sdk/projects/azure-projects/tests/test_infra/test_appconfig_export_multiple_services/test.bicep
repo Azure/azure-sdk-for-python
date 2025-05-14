@@ -4,17 +4,27 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -29,13 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -48,7 +51,7 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 output AZURE_APPCONFIG_ENDPOINT_R1 string = configurationstore.properties.endpoint
 
 
-resource configurationstore_foo 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+resource configurationstore_foobar 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -58,28 +61,30 @@ resource configurationstore_foo 'Microsoft.AppConfiguration/configurationStores@
     }
     publicNetworkAccess: 'Enabled'
   }
-  name: 'foo'
-  sku: {
-    name: 'Standard'
-  }
-  location: location
-  tags: azdTags
+  name: 'foobar'
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
   }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  sku: {
+    name: 'Standard'
+  }
+  location: location
 }
 
-output AZURE_APPCONFIG_ID_R2 string = configurationstore_foo.id
-output AZURE_APPCONFIG_NAME_R2 string = configurationstore_foo.name
+output AZURE_APPCONFIG_ID_R2 string = configurationstore_foobar.id
+output AZURE_APPCONFIG_NAME_R2 string = configurationstore_foobar.name
 output AZURE_APPCONFIG_RESOURCE_GROUP_R2 string = resourceGroup().name
-output AZURE_APPCONFIG_ENDPOINT_R2 string = configurationstore_foo.properties.endpoint
+output AZURE_APPCONFIG_ENDPOINT_R2 string = configurationstore_foobar.properties.endpoint
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ID'
   properties: {
     value: configurationstore.id
@@ -89,7 +94,7 @@ resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStor
 
 
 resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ID_R1'
   properties: {
     value: configurationstore.id
@@ -99,7 +104,7 @@ resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationSt
 
 
 resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_NAME'
   properties: {
     value: configurationstore.name
@@ -109,7 +114,7 @@ resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationSt
 
 
 resource keyvalue_azureappconfignamer1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_NAME_R1'
   properties: {
     value: configurationstore.name
@@ -119,7 +124,7 @@ resource keyvalue_azureappconfignamer1 'Microsoft.AppConfiguration/configuration
 
 
 resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
   properties: {
     value: resourceGroup().name
@@ -129,7 +134,7 @@ resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/config
 
 
 resource keyvalue_azureappconfigresourcegroupr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R1'
   properties: {
     value: resourceGroup().name
@@ -139,7 +144,7 @@ resource keyvalue_azureappconfigresourcegroupr1 'Microsoft.AppConfiguration/conf
 
 
 resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ENDPOINT'
   properties: {
     value: configurationstore.properties.endpoint
@@ -149,7 +154,7 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 resource keyvalue_azureappconfigendpointr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ENDPOINT_R1'
   properties: {
     value: configurationstore.properties.endpoint
@@ -159,27 +164,27 @@ resource keyvalue_azureappconfigendpointr1 'Microsoft.AppConfiguration/configura
 
 
 resource keyvalue_azureappconfigidr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ID_R2'
   properties: {
-    value: configurationstore_foo.id
+    value: configurationstore_foobar.id
   }
 }
 
 
 
 resource keyvalue_azureappconfignamer2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_NAME_R2'
   properties: {
-    value: configurationstore_foo.name
+    value: configurationstore_foobar.name
   }
 }
 
 
 
 resource keyvalue_azureappconfigresourcegroupr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R2'
   properties: {
     value: resourceGroup().name
@@ -189,10 +194,10 @@ resource keyvalue_azureappconfigresourcegroupr2 'Microsoft.AppConfiguration/conf
 
 
 resource keyvalue_azureappconfigendpointr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
-  parent: configurationstore_foo
+  parent: configurationstore
   name: 'AZURE_APPCONFIG_ENDPOINT_R2'
   properties: {
-    value: configurationstore_foo.properties.endpoint
+    value: configurationstore_foobar.properties.endpoint
   }
 }
 
@@ -230,8 +235,8 @@ resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_fphbpzhnuggbagsiqrfr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foo', 'ServicePrincipal', 'App Configuration Data Reader')
+resource roleassignment_pwqxrhhecxownrnhjhlt 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foobar', 'ServicePrincipal', 'App Configuration Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -241,13 +246,13 @@ resource roleassignment_fphbpzhnuggbagsiqrfr 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: configurationstore_foo
+  scope: configurationstore_foobar
 }
 
 
 
-resource roleassignment_roouyxmawujljdelobxd 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foo', 'User', 'App Configuration Data Owner')
+resource roleassignment_tnzlvmclpukpogphvack 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foobar', 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -257,13 +262,13 @@ resource roleassignment_roouyxmawujljdelobxd 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: configurationstore_foo
+  scope: configurationstore_foobar
 }
 
 
 
-resource roleassignment_vhxymfftulupqwfkndxv 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftResourcesresourceGroups', environmentName, 'foo', 'User', 'App Configuration Data Owner')
+resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftResourcesresourceGroups', environmentName, defaultName, 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId
     principalType: 'User'

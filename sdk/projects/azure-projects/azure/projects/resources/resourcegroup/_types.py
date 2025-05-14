@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Union
+from typing import Union, Any
 from typing_extensions import TypedDict
 
 from ..._bicep.expressions import Parameter
@@ -14,9 +14,15 @@ VERSION = "2021-04-01"
 
 
 class ResourceGroupResource(TypedDict, total=False):
-    name: Union[str, Parameter]
-    """The name of the Resource Group."""
     location: Union[str, Parameter]
-    """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
-    """Tags of the Resource Group."""
+    """The location of the resource group. It cannot be changed after the resource group has been created.
+    It must be one of the supported Azure locations.
+    """
+    managedBy: Union[str, Parameter]
+    """The ID of the resource that manages this resource group."""
+    name: Union[str, Parameter]
+    """The resource name"""
+    properties: dict[str, Any]
+    """The resource group properties."""
+    tags: dict[str, Union[None, str, Parameter]]
+    """Resource tags"""
