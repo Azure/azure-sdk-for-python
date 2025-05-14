@@ -31,7 +31,7 @@ class ParameterizedCommandSchema(PathAwareSchema):
     environment = EnvironmentField(required=True)
     environment_variables = UnionField(
         [
-            fields.Dict(keys=fields.Str(), values=fields.Str()),
+            fields.Dict(),
             # Used for binding environment variables
             NestedField(InputLiteralValueSchema),
         ]
