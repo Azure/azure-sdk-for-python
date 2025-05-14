@@ -27,7 +27,7 @@ print(model.name)
 print(model["name"])
 ```
 
-Users can access properties of the Typespec SDK model as before. When accessing properties as a dictionary, there is no need to call `.as_dict()` as before, which is more convenient.
+You can access properties of the SDK model as before. When accessing properties as a dictionary, there is no need to call `.as_dict()` as before, which is more convenient. It also means that editing the model using dictionary syntax change the model directly. `as_dict` still provide you an independent copy of the dict of the model in memory.
 
 ### Usage Note
 
