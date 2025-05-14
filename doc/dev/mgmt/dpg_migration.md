@@ -4,7 +4,7 @@ Our new generation of SDK incorporates several refinements to enhance efficiency
 
 ## Access to the model as a dictionary
 
-### Access for Old SDK
+### Access for old SDK
 
 ```python
 from azure.mgmt.test.models import Model
@@ -16,7 +16,7 @@ json_model = model.as_dict()
 print(json_model["name"])
 ```
 
-### Access for New SDK
+### Access for new SDK
 
 ```python
 from azure.mgmt.test.models import Model
@@ -29,7 +29,7 @@ print(model.as_dict()["name"]) # still support `as_dict()`
 
 You can access properties of the SDK model as before. When accessing properties as a dictionary, you no longer need to call `.as_dict()`, which provides greater convenience. This also means that editing the model using dictionary syntax directly modifies the model. The `as_dict()` method continues to provide an independent copy of the model's dictionary representation in memory.
 
-### `as_dict()` Note
+### `as_dict()` note
 
 The positional parameter `keep_readonly` with default value `True` in the old SDK's `as_dict()` method has been renamed to a keyword-only parameter `exclude_readonly` with default value `False` in the new SDK.
 
@@ -53,7 +53,7 @@ print(model_after_migration.properties.properties.name) # recommended approach a
 
 ## Additional properties
 
-### Old SDK model
+### Old SDK model for additional properties
 
 To support [additional properties](https://www.apimatic.io/openapi/additionalproperties), SDK models included an `additional_properties` parameter:
 
@@ -82,14 +82,14 @@ print(model) # output is `{"hello": "world"}`
 
 ## `__str__` for SDK model
 
-### `__str__` for Old SDK Model
+### `__str__` for old SDK model
 
 ```python
 model = Model(type_name="type")
 print(str(model)) # output is `{"type_name": "type"}`
 ```
 
-### `__str__` for New SDK Model
+### `__str__` for new SDK model
 
 ```python
 model = Model(type_name="type")
