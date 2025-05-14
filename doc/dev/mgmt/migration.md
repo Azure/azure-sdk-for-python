@@ -66,7 +66,7 @@ print(model) # output is `{"hello": "world"}`
 
 ### New SDK model for additional properties
 
-Typespec SDK models inherently support additional properties through dictionary-like behavior. The `additional_properties` parameter is no longer supported in Typespec SDK models, so code modifications will be required for existing SDK users:
+Now, SDK models inherently support additional properties through dictionary-like behavior. The `additional_properties` parameter is no longer supported in Typespec SDK models, and they can no longer be read using `.additional_properties`.
 
 ```python
 model = Model(additional_properties={"hello": "world"}) # no longer supported
