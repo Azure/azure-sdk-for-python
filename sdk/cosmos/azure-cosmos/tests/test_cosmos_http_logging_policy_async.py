@@ -5,6 +5,7 @@
 """Tests for the CosmosHttpLoggingPolicy."""
 import unittest
 import uuid
+import logging
 
 import pytest
 
@@ -46,45 +47,37 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.mock_handler_default = MockHandler()
         self.mock_handler_diagnostic = MockHandler()
         self.mock_handler_filtered_diagnostic = MockHandler()
-
         # Add filter to the filtered diagnostics handler
 
         self.mock_handler_filtered_diagnostic.addFilter(FilterStatusCode())
-        self.logger_default = create_logger("testloggerdefault", self.mock_handler_default)
-        self.logger_diagnostic = create_logger("testloggerdiagnostic", self.mock_handler_diagnostic)
-        self.logger_filtered_diagnostic = create_logger("testloggerfiltereddiagnostic",
-                                                        self.mock_handler_filtered_diagnostic)
 
-        self.client_default = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                           consistency_level="Session",
-                                           connection_policy=self.connectionPolicy,
-                                           logger=self.logger_default)
-        await self.client_default.__aenter__()
-        self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                              consistency_level="Session",
-                                              connection_policy=self.connectionPolicy,
-                                              logger=self.logger_diagnostic,
-                                              enable_diagnostics_logging=True)
-        await self.client_diagnostic.__aenter__()
-        self.client_filtered_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                                     consistency_level="Session",
-                                                                     connection_policy=self.connectionPolicy,
-                                                                     logger=self.logger_filtered_diagnostic,
-                                                                     enable_diagnostics_logging=True)
-        await self.client_filtered_diagnostic.__aenter__()
+        self.logger = logging.getLogger("azure.cosmos")
+        self.logger.setLevel(logging.INFO)
 
+        self.client_default = None
+        self.client_diagnostic = None
+        self.client_filtered_diagnostic = None
 
     async def asyncTearDown(self):
-        await self.client_default.close()
-        await self.client_diagnostic.close()
-        await self.client_filtered_diagnostic.close()
-
-
+        if self.client_default:
+            await self.client_default.close()
+        if self.client_diagnostic:
+            await self.client_diagnostic.close()
+        if self.client_filtered_diagnostic:
+            await self.client_filtered_diagnostic.close()
 
     async def test_default_http_logging_policy_async(self):
+        self.logger.addHandler(self.mock_handler_default)
+        # Create a client with the default logging policy
+        self.client_default = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                         consistency_level="Session",
+                                                         connection_policy=self.connectionPolicy,
+                                                         logger=self.logger)
+        await self.client_default.__aenter__()
         # Test if we can log info from creating a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_default.create_database(id=database_id)
+
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
@@ -95,11 +88,19 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         assert 'Response headers:' in messages_response[1]
 
         self.mock_handler_default.reset()
+        self.logger.removeHandler(self.mock_handler_default)
 
         # delete database
         await self.client_default.delete_database(database_id)
 
     async def test_cosmos_http_logging_policy_async(self):
+        self.logger.addHandler(self.mock_handler_diagnostic)
+        # Create a client with the diagnostic logging policy
+        self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                            consistency_level="Session",
+                                                            connection_policy=self.connectionPolicy,
+                                                            logger=self.logger,
+                                                            enable_diagnostics_logging=True)
         # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_diagnostic.create_database(id=database_id)
@@ -150,8 +151,16 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         await self.client_diagnostic.delete_database(database_id)
 
         self.mock_handler_diagnostic.reset()
+        self.logger.removeHandler(self.mock_handler_diagnostic)
 
     async def test_filtered_diagnostics_logging_policy_async(self):
+        self.logger.addHandler(self.mock_handler_filtered_diagnostic)
+        # Create a client with the filtered diagnostics logging policy
+        self.client_filtered_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                                     consistency_level="Session",
+                                                                     connection_policy=self.connectionPolicy,
+                                                                     logger=self.logger,
+                                                                     enable_diagnostics_logging=True)
         # Test if we can log errors with the filtered diagnostics logger
         database_id = "database_test-" + str(uuid.uuid4())
         container_id = "container_test-" + str(uuid.uuid4())
@@ -193,6 +202,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         # Clean up
         await self.client_filtered_diagnostic.delete_database(database_id)
         self.mock_handler_filtered_diagnostic.reset()
+        self.logger.removeHandler(self.mock_handler_filtered_diagnostic)
 
     async def test_client_settings_async(self):
         # Test data
