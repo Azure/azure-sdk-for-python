@@ -1,6 +1,6 @@
 # Release History
 
-## 9.1.0 (2025-05-14)
+## 9.1.0 (2025-05-15)
 
 ### Features Added
 
@@ -38,12 +38,10 @@
   - Added enum `ResourceSkuRestrictionsType`
   - Added model `ResourceSkuZoneDetails`
   - Added model `SpecializedHostProperties`
-  - Added model `HostsOperations`
-  - Added model `ProvisionedNetworksOperations`
-  - Added model `PureStoragePoliciesOperations`
-  - Added model `SkusOperations`
-  - Method `PureStoragePoliciesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, resource: PureStoragePolicy, content_type: str)`
-  - Method `PureStoragePoliciesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, resource: IO[bytes], content_type: str)`
+  - Added operation group `HostsOperations`
+  - Added operation group `ProvisionedNetworksOperations`
+  - Added operation group `PureStoragePoliciesOperations`
+  - Added operation group `SkusOperations`
 
 ## 9.0.0 (2024-09-22)
 
