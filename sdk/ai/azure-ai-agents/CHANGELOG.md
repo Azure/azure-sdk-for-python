@@ -2,7 +2,7 @@
 
 ## 1.0.0b3 (2025-05-14)
 
-### Changes
+### Features Added
 
 - Internal updates based on TypeSpec finalization.
 
