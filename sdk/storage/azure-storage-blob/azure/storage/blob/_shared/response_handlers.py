@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import Dict, NoReturn, Optional
+from typing import NoReturn
 from xml.etree.ElementTree import Element
 
 from azure.core.exceptions import (
