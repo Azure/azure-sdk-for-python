@@ -817,7 +817,7 @@ class PageBlobOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureBlobStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -854,7 +854,7 @@ class PageBlobOperations:
         :type blob_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
@@ -1058,7 +1058,7 @@ class PageBlobOperations:
         :type transactional_content_crc64: bytes
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range. Default value is None.
@@ -1237,7 +1237,7 @@ class PageBlobOperations:
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range. Default value is None.
@@ -1411,7 +1411,7 @@ class PageBlobOperations:
         :type source_contentcrc64: bytes
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -1593,12 +1593,12 @@ class PageBlobOperations:
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         href="https://learn.microsoft.com/rest/api/storageservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range. Default value is None.
@@ -1732,12 +1732,12 @@ class PageBlobOperations:
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         href="https://learn.microsoft.com/rest/api/storageservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param prevsnapshot: Optional in version 2015-07-08 and newer. The prevsnapshot parameter is a
@@ -1883,7 +1883,7 @@ class PageBlobOperations:
         :type blob_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2011,7 +2011,7 @@ class PageBlobOperations:
         :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
@@ -2128,7 +2128,7 @@ class PageBlobOperations:
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
