@@ -1,6 +1,6 @@
 # Release History
 
-## 13.7.0b1 (2025-05-19)
+## 13.7.0b1 (2025-05-15)
 
 ### Features Added
 
@@ -56,27 +56,11 @@
   - Added enum `ScenarioType`
   - Added model `ServicePrincipalAuthTypeConnectionProperties`
   - Added model `UsernamePasswordAuthTypeConnectionProperties`
-  - Added model `AccountCapabilityHostsOperations`
-  - Added model `AccountConnectionOperations`
-  - Added model `ProjectCapabilityHostsOperations`
-  - Added model `ProjectConnectionOperations`
-  - Added model `ProjectsOperations`
-  - Method `AccountCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, capability_host_name: str, body: CapabilityHost, content_type: str)`
-  - Method `AccountCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, capability_host_name: str, body: IO[bytes], content_type: str)`
-  - Method `AccountConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[ConnectionPropertiesV2BasicResource], content_type: str)`
-  - Method `AccountConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `AccountConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[ConnectionUpdateContent], content_type: str)`
-  - Method `AccountConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, project_name: str, capability_host_name: str, body: CapabilityHost, content_type: str)`
-  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, project_name: str, capability_host_name: str, body: IO[bytes], content_type: str)`
-  - Method `ProjectConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[ConnectionPropertiesV2BasicResource], content_type: str)`
-  - Method `ProjectConnectionOperations.create` has a new overload `def create(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ProjectConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[ConnectionUpdateContent], content_type: str)`
-  - Method `ProjectConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, project_name: str, connection_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ProjectsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, account_name: str, project_name: str, project: Project, content_type: str)`
-  - Method `ProjectsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, account_name: str, project_name: str, project: IO[bytes], content_type: str)`
-  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, project_name: str, project: Project, content_type: str)`
-  - Method `ProjectsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, project_name: str, project: IO[bytes], content_type: str)`
+  - Added operation group `AccountCapabilityHostsOperations`
+  - Added operation group `AccountConnectionOperations`
+  - Added operation group `ProjectCapabilityHostsOperations`
+  - Added operation group `ProjectConnectionOperations`
+  - Added operation group `ProjectsOperations`
 
 ## 13.6.0 (2024-12-19)
 
