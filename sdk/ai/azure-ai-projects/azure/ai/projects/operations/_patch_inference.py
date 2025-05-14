@@ -8,12 +8,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, Iterable, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any
 from urllib.parse import urlparse
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
-from ..models._models import Connection, ApiKeyCredentials, EntraIDCredentials
-from ..models._enums import CredentialType, ConnectionType
+from ..models._models import ApiKeyCredentials, EntraIDCredentials
+from ..models._enums import ConnectionType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -293,8 +292,8 @@ class InferenceOperations:
             ) from e
 
         azure_endpoint = self._get_aoai_inference_url(
-            self._outer_instance._config.endpoint
-        )  # pylint: disable=protected-access
+            self._outer_instance._config.endpoint  # pylint: disable=protected-access
+        )
 
         logger.debug(
             "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",
