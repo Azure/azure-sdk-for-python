@@ -341,6 +341,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 SELECT TOP 10 c.index, c.title FROM c
                 ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1])
             """
+            
             res = self.test_container.query_items(query_missing_weight, enable_cross_partition_query=True)
             list(res)
             pytest.fail("Query with missing weights should fail.")
