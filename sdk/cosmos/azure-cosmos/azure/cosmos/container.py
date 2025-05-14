@@ -181,10 +181,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
-            If all preferred locations were excluded, primary/hub location will be used.
-            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
