@@ -38,7 +38,7 @@ To maintain backward compatibility, Typespec SDK models continue to support the 
 Some SDK models were trying to create a flat hierarchy that didn't match the RestAPI underlying layer, causing problems at times. Starting this new generation of SDK, the model hierarchy of attributes will mirror the RestAPI layer. However, for backward compatibility, the new SDK model continues to support simple flat hierarchy. In some cases when thee hierarchy was flat on many levels, code modifications will be necessary:
 
 ```python
-# swagger SDK model
+# Old SDK model
 model = Model(...)
 print(model.properties_name) # A
 print(model.properties.name) # equivalent to A
