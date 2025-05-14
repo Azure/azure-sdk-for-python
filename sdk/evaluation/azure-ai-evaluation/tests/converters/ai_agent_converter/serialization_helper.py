@@ -4,16 +4,37 @@ import json
 from datetime import datetime
 
 from azure.ai.evaluation._converters._models import ToolCall
-from azure.ai.projects.models import (
-    RunStepCodeInterpreterToolCall,
-    RunStepCodeInterpreterToolCallDetails,
-    RunStepFileSearchToolCall,
-    RunStepFileSearchToolCallResults,
-    RunStepFileSearchToolCallResult,
-    FileSearchRankingOptions,
-    RunStepBingGroundingToolCall,
-    ThreadRun,
-)
+
+
+# Breaking changes introduced in newer version of the agents SDK
+# Models have been moved, so try a few different locations
+try:
+    from azure.ai.projects.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+        FileSearchRankingOptions,
+        RunStepBingGroundingToolCall,
+        ThreadRun,
+    )
+except ImportError:
+    pass
+try:
+    from azure.ai.agents.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+        FileSearchRankingOptions,
+        RunStepBingGroundingToolCall,
+        ThreadRun,
+    )
+except ImportError:
+    pass
+
 
 
 class ToolDecoder(json.JSONDecoder):

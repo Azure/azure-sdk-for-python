@@ -46,7 +46,6 @@ from azure.ai.agents.models import (
     ThreadRun,
     RunStep,
 )
-from azure.ai.agents.telemetry import enable_telemetry
 from typing import Any
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
 

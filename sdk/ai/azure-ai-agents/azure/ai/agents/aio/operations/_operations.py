@@ -44,7 +44,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC, prepare_multipart_form_data
 from ...operations._operations import (
@@ -54,7 +54,7 @@ from ...operations._operations import (
     build_agents_get_agent_request,
     build_agents_list_agents_request,
     build_agents_update_agent_request,
-    build_files_delete_request,
+    build_files_delete_file_request,
     build_files_get_file_content_request,
     build_files_get_request,
     build_files_list_request,
@@ -72,7 +72,7 @@ from ...operations._operations import (
     build_runs_submit_tool_outputs_request,
     build_runs_update_request,
     build_threads_create_request,
-    build_threads_delete_request,
+    build_threads_delete_thread_request,
     build_threads_get_request,
     build_threads_list_request,
     build_threads_update_request,
@@ -81,11 +81,11 @@ from ...operations._operations import (
     build_vector_store_file_batches_get_request,
     build_vector_store_file_batches_list_files_request,
     build_vector_store_files_create_request,
-    build_vector_store_files_delete_request,
+    build_vector_store_files_delete_vector_store_file_request,
     build_vector_store_files_get_request,
     build_vector_store_files_list_request,
     build_vector_stores_create_request,
-    build_vector_stores_delete_request,
+    build_vector_stores_delete_vector_store_request,
     build_vector_stores_get_request,
     build_vector_stores_list_request,
     build_vector_stores_modify_request,
@@ -263,7 +263,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -349,7 +350,8 @@ class ThreadsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -403,7 +405,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -566,7 +569,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -579,13 +583,13 @@ class ThreadsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, thread_id: str, **kwargs: Any) -> _models.ThreadDeletionStatus:
+    async def _delete_thread(self, thread_id: str, **kwargs: Any) -> _models._models.ThreadDeletionStatus:
         """Deletes an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.ThreadDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.ThreadDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -599,9 +603,9 @@ class ThreadsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ThreadDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_threads_delete_request(
+        _request = build_threads_delete_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -626,12 +630,15 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.ThreadDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -831,7 +838,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -982,7 +990,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1142,7 +1151,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1525,7 +1535,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1615,7 +1626,8 @@ class RunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -1672,7 +1684,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1832,7 +1845,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1996,7 +2010,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2059,7 +2074,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2157,7 +2173,8 @@ class RunStepsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2258,7 +2275,8 @@ class RunStepsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2334,7 +2352,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2407,7 +2426,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2420,13 +2440,13 @@ class FilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, file_id: str, **kwargs: Any) -> _models.FileDeletionStatus:
+    async def _delete_file(self, file_id: str, **kwargs: Any) -> _models._models.FileDeletionStatus:
         """Delete a previously uploaded file.
 
         :param file_id: The ID of the file to delete. Required.
         :type file_id: str
         :return: FileDeletionStatus. The FileDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.FileDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.FileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2440,9 +2460,9 @@ class FilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.FileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_files_delete_request(
+        _request = build_files_delete_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2467,12 +2487,15 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FileDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.FileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2527,7 +2550,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2587,7 +2611,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes()
 
@@ -2688,7 +2713,8 @@ class VectorStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2861,7 +2887,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2921,7 +2948,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3082,7 +3110,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3095,14 +3124,16 @@ class VectorStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
+    async def _delete_vector_store(
+        self, vector_store_id: str, **kwargs: Any
+    ) -> _models._models.VectorStoreDeletionStatus:
         """Deletes the vector store object matching the specified ID.
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.agents.models.VectorStoreDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.VectorStoreDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3116,9 +3147,9 @@ class VectorStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_vector_stores_delete_request(
+        _request = build_vector_stores_delete_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3143,12 +3174,15 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VectorStoreDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.VectorStoreDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3256,7 +3290,8 @@ class VectorStoreFilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -3407,7 +3442,8 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3470,7 +3506,8 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3483,7 +3520,9 @@ class VectorStoreFilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFileDeletionStatus:
+    async def _delete_vector_store_file(
+        self, vector_store_id: str, file_id: str, **kwargs: Any
+    ) -> _models._models.VectorStoreFileDeletionStatus:
         """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
         itself).
 
@@ -3493,7 +3532,7 @@ class VectorStoreFilesOperations:
         :type file_id: str
         :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.agents.models.VectorStoreFileDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.VectorStoreFileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3507,9 +3546,9 @@ class VectorStoreFilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_vector_store_files_delete_request(
+        _request = build_vector_store_files_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -3535,12 +3574,15 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VectorStoreFileDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.VectorStoreFileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3710,7 +3752,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3773,7 +3816,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3837,7 +3881,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3908,6 +3953,7 @@ class VectorStoreFileBatchesOperations:
                 order=order,
                 after=_continuation_token,
                 before=before,
+                api_version=self._config.api_version,
                 headers=_headers,
                 params=_params,
             )
@@ -3935,14 +3981,17 @@ class VectorStoreFileBatchesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClientConfiguration]):
+class AgentsClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AgentsClientConfiguration]
+):
 
     @overload
     async def create_agent(
@@ -4163,7 +4212,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4249,7 +4299,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -4303,7 +4354,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4549,7 +4601,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4562,13 +4615,13 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def _delete_agent(self, agent_id: str, **kwargs: Any) -> _models._models.AgentDeletionStatus:
         """Deletes an agent.
 
         :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.agents.models.AgentDeletionStatus
+        :rtype: ~azure.ai.agents.models._models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4582,7 +4635,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_agent_request(
             agent_id=agent_id,
@@ -4609,12 +4662,15 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentDeletionStatus, response.json())
+            deserialized = _deserialize(
+                _models._models.AgentDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4631,7 +4687,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -4665,7 +4721,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -4766,7 +4822,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -4799,7 +4855,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -4926,7 +4982,8 @@ class AgentsClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, AgentsClie
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
