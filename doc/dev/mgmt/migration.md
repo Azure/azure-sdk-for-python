@@ -2,7 +2,7 @@
 
 Our new generation of SDK includes some refactoring for efficiency and clarity. While we made a lot of effort to keep the SDK backward compatible, some specific behaviors have changed. This document presents how you can update your source code. To adapt to those changes. Please submit an issue on GitHub, if your problem is not addressed in this document.
 
-## Model usage
+## Access to the model as a dictionnary
 
 ### Swagger SDK
 
