@@ -1,0 +1,47 @@
+{
+    "inputs": [
+          {
+            "type": "promptString",
+            "id": "gh_token",
+            "description": "GitHub Token",
+            "password": true
+          }
+        ],
+    "servers": {
+        "typespec-python": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${workspaceFolder}/tools/mcp/typespec-story/",
+                "run",
+                "main.py"
+            ],
+            "env": {
+                "GH_TOKEN": "${input:gh_token}"
+            },
+        },
+        "azure-sdk-validation": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${workspaceFolder}/tools/mcp/validation/",
+                "run",
+                "main.py"
+            ]
+        },
+        "github": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "-e",
+          "GITHUB_PERSONAL_ACCESS_TOKEN",
+          "ghcr.io/github/github-mcp-server"
+        ],
+        "env": {
+          "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:gh_token}"
+        }
+      }
+    }
+  }
