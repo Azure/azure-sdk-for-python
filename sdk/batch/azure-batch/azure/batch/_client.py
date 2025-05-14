@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import BatchClientConfiguration
 from ._operations import BatchClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -39,6 +39,7 @@ class BatchClient(BatchClientOperationsMixin):
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = BatchClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         kwargs["request_id_header_name"] = "client-request-id"
         _policies = kwargs.pop("policies", None)
         if _policies is None:

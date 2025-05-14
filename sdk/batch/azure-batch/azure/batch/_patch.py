@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential, TokenCredential
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse # pylint: disable=C4756
+from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
 from azure.core.rest import HttpRequest
 
 from ._client import BatchClient as GenerateBatchClient
@@ -139,10 +139,8 @@ class BatchClient(GenerateBatchClient):
     def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
             endpoint=endpoint,
-            credential=credential, # type: ignore
-            authentication_policy=kwargs.pop(
-                "authentication_policy", self._format_shared_key_credential(credential)
-            ),
+            credential=credential,  # type: ignore
+            authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential(credential)),
             **kwargs
         )
 
