@@ -31,7 +31,8 @@ You can access properties of the SDK model as before. When accessing properties 
 
 ### `as_dict()` note
 
-The positional parameter `keep_readonly` with default value `True` in the old SDK's `as_dict()` method has been renamed to a keyword-only parameter `exclude_readonly` with default value `False` in the new SDK.
+- The positional parameter `keep_readonly` with default value `True` in the old SDK's `as_dict()` method has been renamed to a keyword-only parameter `exclude_readonly` with default value `False` in the new SDK.
+- `as_dict()` of old SDK returns dictionary whose key is snake_case while in new SDK it is camelCase which is consistent with REST API layer.
 
 ## Model hierarchy
 
@@ -60,7 +61,6 @@ To support [additional properties](https://www.apimatic.io/openapi/additionalpro
 ```python
 model = Model(additional_properties={"hello": "world"})
 print(model.additional_properties) # output is `{"hello": "world"}`
-print(model.as_dict()) # output is `{"hello": "world"}`
 ```
 
 ### New SDK model for additional properties
@@ -86,14 +86,14 @@ print(model) # output is `{"hello": "world"}`
 
 ```python
 model = Model(type_name="type")
-print(str(model)) # output is `{"type_name": "type"}`
+print(model) # output is `{"type_name": "type"}`
 ```
 
 ### `__str__` for new SDK model
 
 ```python
 model = Model(type_name="type")
-print(str(model)) # output is `{"typeName": "type"}`
+print(model) # output is `{"typeName": "type"}`
 ```
 
 In the REST API layer, property names use camelCase format, whereas Python SDK typically utilizes snake_case. In the previous SDK version, the string output was presented in snake_case format. The new SDK version, however, outputs strings in camelCase format, maintaining consistency with the REST API layer.
