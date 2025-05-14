@@ -174,7 +174,7 @@ class ServiceOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureFileStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -192,7 +192,7 @@ class ServiceOperations:
         :type storage_service_properties: ~azure.storage.fileshare.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -257,7 +257,7 @@ class ServiceOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: StorageServiceProperties or the result of cls(response)
@@ -344,7 +344,7 @@ class ServiceOperations:
         :type include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: ListSharesResponse or the result of cls(response)
