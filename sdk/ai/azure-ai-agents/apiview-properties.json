@@ -17,7 +17,7 @@
         "azure.ai.agents.models.AzureFunctionStorageQueue": "Azure.AI.Agents.AzureFunctionStorageQueue",
         "azure.ai.agents.models.AzureFunctionToolDefinition": "Azure.AI.Agents.AzureFunctionToolDefinition",
         "azure.ai.agents.models.BingGroundingSearchConfiguration": "Azure.AI.Agents.BingGroundingSearchConfiguration",
-        "azure.ai.agents.models.BingGroundingSearchConfigurationList": "Azure.AI.Agents.BingGroundingSearchConfigurationList",
+        "azure.ai.agents.models.BingGroundingSearchToolParameters": "Azure.AI.Agents.BingGroundingSearchToolParameters",
         "azure.ai.agents.models.BingGroundingToolDefinition": "Azure.AI.Agents.BingGroundingToolDefinition",
         "azure.ai.agents.models.CodeInterpreterToolDefinition": "Azure.AI.Agents.CodeInterpreterToolDefinition",
         "azure.ai.agents.models.CodeInterpreterToolResource": "Azure.AI.Agents.CodeInterpreterToolResource",

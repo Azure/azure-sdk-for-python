@@ -66,7 +66,7 @@ from ._models import (
     RunStep,
     RunStepDeltaChunk,
     BingGroundingSearchConfiguration,
-    BingGroundingSearchConfigurationList,
+    BingGroundingSearchToolParameters,
     SubmitToolOutputsAction,
     ThreadRun,
     ToolDefinition,
@@ -867,7 +867,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         return [
             BingGroundingToolDefinition(
-                bing_grounding=BingGroundingSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_grounding=BingGroundingSearchToolParameters(search_configurations=self.connection_ids)
             )
         ]
 

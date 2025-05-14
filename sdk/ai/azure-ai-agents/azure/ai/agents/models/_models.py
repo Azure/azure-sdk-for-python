@@ -191,8 +191,8 @@ class AgentsNamedToolChoice(_Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
-     Known values are: "function", "code_interpreter", "file_search", "azure_ai_search",
-     "bing_custom_search", and "connected_agent".
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "azure_ai_search", and "connected_agent".
     :vartype type: str or ~azure.ai.agents.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.agents.models.FunctionName
@@ -202,8 +202,8 @@ class AgentsNamedToolChoice(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
-     values are: \"function\", \"code_interpreter\", \"file_search\", \"azure_ai_search\",
-     \"bing_custom_search\", and \"connected_agent\"."""
+     values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
+     \"azure_ai_search\", and \"connected_agent\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -802,8 +802,8 @@ class BingGroundingSearchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingGroundingSearchConfigurationList(_Model):
-    """A list of search configurations currently used by the ``bing_grounding`` tool.
+class BingGroundingSearchToolParameters(_Model):
+    """The bing grounding search tool parameters.
 
     :ivar search_configurations: The search configurations attached to this tool. There can be a
      maximum of 1
@@ -842,24 +842,23 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: The list of search configurations used by the bing grounding tool.
-     Required.
-    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchConfigurationList
+    :ivar bing_grounding: The bing grounding search tool parameters. Required.
+    :vartype bing_grounding: ~azure.ai.agents.models.BingGroundingSearchToolParameters
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: "_models.BingGroundingSearchConfigurationList" = rest_field(
+    bing_grounding: "_models.BingGroundingSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of search configurations used by the bing grounding tool. Required."""
+    """The bing grounding search tool parameters. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bing_grounding: "_models.BingGroundingSearchConfigurationList",
+        bing_grounding: "_models.BingGroundingSearchToolParameters",
     ) -> None: ...
 
     @overload
