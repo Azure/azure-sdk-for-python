@@ -12,5 +12,6 @@
         "getconnectionwithcredentials",
     ],
     "ignorePaths": [
+        "./tests/samples/test_samples.py"
     ]
 }
