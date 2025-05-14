@@ -19,10 +19,10 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``code_interpreter``"""
     FILE_SEARCH = "file_search"
     """Tool type ``file_search``"""
+    BING_GROUNDING = "bing_grounding"
+    """Tool type ``bing_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
-    BING_CUSTOM_SEARCH = "bing_custom_search"
-    """Tool type ``bing_custom_search``"""
     CONNECTED_AGENT = "connected_agent"
     """Tool type ``connected_agent``"""
 
