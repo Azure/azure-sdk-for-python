@@ -1,8 +1,8 @@
 # Overview
 
-Our new generation of SDK includes some refactoring for efficiency and clarity. While we made a lot of effort to keep the SDK backward compatible, some specific behaviors have changed. This document presents how you can update your source code. To adapt to those changes. Please submit an issue on GitHub, if your problem is not addressed in this document.
+Our new generation of SDK incorporates several refinements to enhance efficiency and clarity. Although we have made considerable efforts to maintain backward compatibility, certain specific behaviors have been modified. This document outlines how you can update your source code to accommodate these changes. If you encounter an issue not addressed in this document, please submit a report on GitHub.
 
-## Access to the model as a dictionnary
+## Access to the model as a dictionary
 
 ### Access for Old SDK
 
@@ -27,15 +27,15 @@ print(model["name"]) # access property as dictionary directly, no need to call `
 print(model.as_dict()["name"]) # still support `as_dict()`
 ```
 
-You can access properties of the SDK model as before. When accessing properties as a dictionary, there is no need to call `.as_dict()` as before, which is more convenient. It also means that editing the model using dictionary syntax change the model directly. `as_dict` still provide you an independent copy of the dict of the model in memory.
+You can access properties of the SDK model as before. When accessing properties as a dictionary, you no longer need to call `.as_dict()`, which provides greater convenience. This also means that editing the model using dictionary syntax directly modifies the model. The `as_dict()` method continues to provide an independent copy of the model's dictionary representation in memory.
 
 ### `as_dict()` Note
 
-Positional signature `keep_readonly` with default value `True` of `as_dict` in old SDK is renamed to keyword-only signature `exclude_readonly` with default value `False` in new SDK.
+The positional parameter `keep_readonly` with default value `True` in the old SDK's `as_dict()` method has been renamed to a keyword-only parameter `exclude_readonly` with default value `False` in the new SDK.
 
 ## Model hierarchy
 
-Some SDK models were trying to create a flat hierarchy that didn't match the RestAPI underlying layer, causing problems at times. Starting this new generation of SDK, the model hierarchy of attributes will mirror the RestAPI layer. However, for backward compatibility, the new SDK model continues to support simple flat hierarchy. In some cases when the hierarchy was flat on many levels, code modifications will be necessary:
+Previous SDK models attempted to implement a flat hierarchy that did not accurately reflect the underlying REST API structure, which occasionally led to complications. Beginning with this new generation of SDK, the attribute hierarchy in models will directly mirror the REST API layer. Nevertheless, to ensure backward compatibility, the new SDK model continues to support a simplified flat hierarchy. In instances where the hierarchy was previously flattened across multiple levels, code adjustments will be necessary:
 
 ```python
 # Old SDK model
@@ -80,20 +80,20 @@ model["hello"] = "world"
 print(model) # output is `{"hello": "world"}`
 ```
 
-## `__str__`
+## `__str__` for SDK model
 
-### `__str__` for Old SDK
+### `__str__` for Old SDK Model
 
 ```python
 model = Model(type_name="type")
 print(str(model)) # output is `{"type_name": "type"}`
 ```
 
-### `__str__` for New SDK
+### `__str__` for New SDK Model
 
 ```python
 model = Model(type_name="type")
 print(str(model)) # output is `{"typeName": "type"}`
 ```
 
-In Rest API layer, the property name is camel case and Python SDK usually use snake case. In old SDK, the string output is snake case, while in new SDK, the string output is camel case which is same with Rest API layer.
+In the REST API layer, property names use camelCase format, whereas Python SDK typically utilizes snake_case. In the previous SDK version, the string output was presented in snake_case format. The new SDK version, however, outputs strings in camelCase format, maintaining consistency with the REST API layer.
