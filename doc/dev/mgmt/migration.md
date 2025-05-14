@@ -35,7 +35,7 @@ To maintain backward compatibility, Typespec SDK models continue to support the 
 
 ## Model hierarchy
 
-Some Swagger SDK models support flattening, which allows users to access nested properties directly. In the Typespec SDK model, this flattening functionality is no longer fully supported. However, for backward compatibility, the Typespec SDK model continues to support simple flattening. For deeply nested flattened properties, code modifications will be necessary:
+Some SDK models were trying to create a flat hierarchy that didn't match the RestAPI underlying layer, causing problems at times. Starting this new generation of SDK, the model hierarchy of attributes will mirror the RestAPI layer. However, for backward compatibility, the new SDK model continues to support simple flat hierarchy. In some cases when thee hierarchy was flat on many levels, code modifications will be necessary:
 
 ```python
 # swagger SDK model
