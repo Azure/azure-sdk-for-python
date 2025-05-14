@@ -62,6 +62,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
     "azure-cosmos": {"azure-core": "1.30.0"},
     "azure-appconfiguration-provider": {"azure-appconfiguration": "1.7.2"},
+    "azure-ai-evaluation": {"aiohttp": "3.8.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
