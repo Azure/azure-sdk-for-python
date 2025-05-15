@@ -381,10 +381,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
         if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "operationType": {[unavailable_operation_type]}
+                "operationType": set([unavailable_operation_type])
             }
         else:
-            unavailable_operations = {[unavailable_operation_type]}.union(unavailability_info["operationType"])
+            unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
                 "operationType": unavailable_operations
             }

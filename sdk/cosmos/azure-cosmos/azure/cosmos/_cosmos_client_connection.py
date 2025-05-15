@@ -1159,7 +1159,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Queries change feed of a resource in a collection.
 
         :param str collection_link: The link to the document collection.
-        :param str resource_type: The type of the resource.
         :param dict options: The request options for the request.
         :param str partition_key_range_id: Specifies partition key range id.
         :param response_hook: A callable invoked with the response metadata
