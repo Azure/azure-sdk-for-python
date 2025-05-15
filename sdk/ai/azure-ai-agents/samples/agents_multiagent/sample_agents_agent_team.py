@@ -28,9 +28,9 @@ USAGE:
     2. Ensure `utils/agent_team_config.yaml` is present and TEAM_LEADER_MODEL points
        to a valid model deployment.
     3. Set these environment variables with your own values:
-         PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-         MODEL_DEPLOYMENT_NAME - the deployment name used for the worker
-                                 agents (`Coder` and `Reviewer`)
+         PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                            page of your Azure AI Foundry portal.
+         MODEL_DEPLOYMENT_NAME - The model deployment name used for the worker agents.
 """
 
 import os
