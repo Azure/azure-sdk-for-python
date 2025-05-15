@@ -7,19 +7,18 @@
 Initialize the Online Experimentation Client
 """
 
-# [START initialize_client]
+# [START initialize_async_client]
 import os
-from azure.identity import DefaultAzureCredential
-from azure.onlineexperimentation import OnlineExperimentationClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.onlineexperimentation.aio import OnlineExperimentationClient
 
-
-def initialize_client():
+def initialize_async_client():
     # Create a client with your Online Experimentation workspace endpoint and credentials
     endpoint = os.environ["AZURE_ONLINEEXPERIMENTATION_ENDPOINT"]
     client = OnlineExperimentationClient(endpoint, DefaultAzureCredential())
     print(f"Client initialized with endpoint: {endpoint}")
     return client
-# [END initialize_client]
+# [END initialize_async_client]
 
 def initialize_client_with_api_version():
     # Create a client with a specific API version
@@ -30,5 +29,5 @@ def initialize_client_with_api_version():
 
 
 if __name__ == "__main__":
-    initialize_client()
+    initialize_async_client()
     initialize_client_with_api_version()
