@@ -7,13 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ChaosManagementClientConfiguration
 from .operations import (
     CapabilitiesOperations,
@@ -26,34 +31,33 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
     """Chaos Management Client.
 
-    :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: azure.mgmt.chaos.aio.operations.CapabilitiesOperations
-    :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: azure.mgmt.chaos.aio.operations.CapabilityTypesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.chaos.aio.operations.Operations
     :ivar experiments: ExperimentsOperations operations
     :vartype experiments: azure.mgmt.chaos.aio.operations.ExperimentsOperations
     :ivar operation_statuses: OperationStatusesOperations operations
     :vartype operation_statuses: azure.mgmt.chaos.aio.operations.OperationStatusesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.chaos.aio.operations.Operations
     :ivar target_types: TargetTypesOperations operations
     :vartype target_types: azure.mgmt.chaos.aio.operations.TargetTypesOperations
+    :ivar capability_types: CapabilityTypesOperations operations
+    :vartype capability_types: azure.mgmt.chaos.aio.operations.CapabilityTypesOperations
     :ivar targets: TargetsOperations operations
     :vartype targets: azure.mgmt.chaos.aio.operations.TargetsOperations
+    :ivar capabilities: CapabilitiesOperations operations
+    :vartype capabilities: azure.mgmt.chaos.aio.operations.CapabilitiesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: GUID that represents an Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -61,34 +65,58 @@ class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ChaosManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.capability_types = CapabilityTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operation_statuses = OperationStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capability_types = CapabilityTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -108,12 +136,12 @@ class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keywo
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ChaosManagementClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
