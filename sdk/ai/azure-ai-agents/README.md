@@ -1,17 +1,19 @@
 <!-- PIPY LONG DESCRIPTION BEGIN -->
 # Azure AI Agents client library for Python
 
-Use the AI Agents client library (in preview) to:
+Use the AI Agents client library to:
 
-* **Develop Agents using the Azure AI Agents Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agents Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
-* **Enable OpenTelemetry tracing**.
+* **Develop Agents using the Azure AI Agents Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agents Service enables the building of Agents for a wide range of generative AI use cases.
+* **Note:** While this package can be used independently, we recommend using the Azure AI Projects client library (azure-ai-projects) for an enhanced experience. 
+The Projects library provides simplified access to advanced functionality, such as creating and managing agents, enumerating AI models, working with datasets and 
+managing search indexes, evaluating generative AI performance, and enabling OpenTelemetry tracing.
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Product documentation](https://aka.ms/azsdk/azure-ai-agents/product-doc)
 | [Samples][samples]
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-agents/python/reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-agents/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-agents/python/code)
+| [AI Starter Template](https://aka.ms/azsdk/azure-ai-agents/python/ai-starter-template)
 
 ## Reporting issues
 
@@ -34,7 +36,6 @@ To report an issue with the client library, or request additional features, plea
     - [Function call](#create-agent-with-function-call)
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
-    - [Fabric data](#create-an-agent-with-fabric)
   - [Create thread](#create-thread) with
     - [Tool resource](#create-thread-with-tool-resource)
   - [Create message](#create-message) with:
@@ -664,34 +665,6 @@ with agents_client:
 
 <!-- END SNIPPET -->
 
-### Create an Agent with Fabric
-
-To enable your Agent to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
-
-Here is an example:
-
-<!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
-
-```python
-conn_id = os.environ["FABRIC_CONNECTION_ID"]
-
-print(conn_id)
-
-# Initialize an Agent Fabric tool and add the connection id
-fabric = FabricTool(connection_id=conn_id)
-
-# Create an Agent with the Fabric tool and process an Agent run
-with agents_client:
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=fabric.definitions,
-    )
-```
-
-<!-- END SNIPPET -->
-
 
 ### Create Thread
 
@@ -1171,15 +1144,6 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 # Enable Azure Monitor tracing
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
-try:
-    from azure.ai.agents.telemetry import AIAgentsInstrumentor
-
-    agents_instrumentor = AIAgentsInstrumentor()
-    if not agents_instrumentor.is_instrumented():
-        agents_instrumentor.instrument()
-except Exception as exc:  # pylint: disable=broad-exception-caught
-    print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
