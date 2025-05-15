@@ -25,12 +25,14 @@ from ._generated.models import (
     OperatorInformationResult,
     PhoneNumbersBrowseResult,
     AvailablePhoneNumber,
-    PhoneNumbersReservation
+    PhoneNumbersReservation,
+    CommunicationError
 )
 
 from ._generated.models._enums import (
     ReservationStatus,
     PhoneNumberAvailabilityStatus,
+    PhoneNumberSearchResultError
 )
 
 __all__ = [
@@ -54,6 +56,8 @@ __all__ = [
     'PhoneNumbersReservation',
     'PhoneNumbersBrowseResult',
     'AvailablePhoneNumber',
+    'CommunicationError',
     'ReservationStatus',
-    'PhoneNumberAvailabilityStatus'
+    'PhoneNumberAvailabilityStatus',
+    'PhoneNumberSearchResultError',
 ]
