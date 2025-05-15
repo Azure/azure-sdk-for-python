@@ -372,7 +372,7 @@ evaluation: Evaluation = Evaluation(
     display_name="Sample Evaluation Test",
     description="Sample evaluation for testing",
     # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-    data=InputDataset(id=dataset.id),  # pyright: ignore
+    data=InputDataset(id=dataset.id if dataset.id else ""),
     evaluators={
         "relevance": EvaluatorConfiguration(
             id=EvaluatorIds.RELEVANCE.value,
