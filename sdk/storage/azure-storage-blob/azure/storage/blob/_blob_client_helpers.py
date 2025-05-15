@@ -664,17 +664,14 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         'cls': return_response_headers,
     }
 
-    if 'seal_destination_blob' in kwargs:
-        options['seal_blob'] = kwargs.pop('seal_destination_blob')
-    if 'blob_tags_string' is not None:
-        options['blob_tags_string'] = blob_tags_string
-
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
         options['source_modified_access_conditions'] = source_mod_conditions
         options['lease_access_conditions'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
+        options['seal_blob'] = kwargs.pop('seal_destination_blob', None)
+        options['blob_tags_string'] = blob_tags_string
     options.update(kwargs)
     return options
 
