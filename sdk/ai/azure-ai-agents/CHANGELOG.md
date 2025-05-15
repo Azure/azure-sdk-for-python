@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- First stable release of Azure AI Agents SDK.
+- First stable release of Azure AI Agents client library.
 
 ## 1.0.0b3 (2025-05-14)
 
