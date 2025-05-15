@@ -1120,6 +1120,7 @@ class RedTeam:
                     prompt_template_key="orchestrators/red_teaming/text_generation.yaml",
                     objective=prompt,
                     logger=self.logger,
+                    is_one_dp_project=self._one_dp_project,
                 )
 
                 orchestrator = RedTeamingOrchestrator(
