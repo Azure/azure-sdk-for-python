@@ -36,8 +36,10 @@ from azure.ai.projects.models import (
 def sample_red_team() -> None:
     """Demonstrates how to perform Red Team operations using the AIProjectClient."""
 
-    endpoint = ""
-    model_deployment_name = ""
+    endpoint = os.environ["PROJECT_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    model_endpoint = os.environ["MODEL_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com
+    model_api_key= os.environ["MODEL_API_KEY"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"] # Sample : gpt-4o-mini
 
     with AIProjectClient(
         endpoint=endpoint,
@@ -59,7 +61,7 @@ def sample_red_team() -> None:
         )
 
         # Create and run the Red Team scan
-        red_team_response = project_client.red_teams.create(red_team=red_team)
+        red_team_response = project_client.red_teams.create(red_team=red_team, headers={"model-endpoint": model_endpoint, "api-key": model_api_key,})
         print(f"Red Team scan created with scan name: {red_team_response.name}")
 
         print("Getting Red Team scan details")

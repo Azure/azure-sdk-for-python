@@ -610,7 +610,7 @@ def build_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/redTeams/runs:run"
+    _url = "/redteams/runs:run"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
