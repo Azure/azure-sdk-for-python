@@ -8,12 +8,12 @@ Use the AI Agents client library to:
 The Projects library provides simplified access to advanced functionality, such as creating and managing agents, enumerating AI models, working with datasets and 
 managing search indexes, evaluating generative AI performance, and enabling OpenTelemetry tracing.
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Product documentation](https://aka.ms/azsdk/azure-ai-agents/product-doc)
 | [Samples][samples]
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-agents/python/reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-agents/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-agents/python/code)
+| [AI Starter Template](https://aka.ms/azsdk/azure-ai-agents/python/ai-starter-template)
 
 ## Reporting issues
 
