@@ -1981,8 +1981,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @BlobPreparer()
+    @recorded_by_proxy
     def test_incremental_copy_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2022,8 +2022,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         assert copy_blob.copy.status == 'success'
         assert copy_blob.copy.destination_snapshot is not None
 
-        # strip off protocol
-        assert copy_blob.copy.source.endswith(sas_blob.url[5:])
+        # verify incremental copy blob source
+        copy_source = copy_blob.copy.source
+        assert sas_blob.container_name in copy_source
+        assert sas_blob.blob_name in copy_source
+        assert sas_blob.snapshot.replace(":", "%3a") in copy_source
 
     @BlobPreparer()
     @recorded_by_proxy
