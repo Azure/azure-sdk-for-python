@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - Interal package structure change
+  - Internal package structure change
 
 ## 14.0.0 (2025-04-27)
 
