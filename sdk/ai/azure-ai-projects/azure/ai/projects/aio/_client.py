@@ -23,7 +23,6 @@ from .operations import (
     EvaluationsOperations,
     IndexesOperations,
     RedTeamsOperations,
-    ServicePatternsOperations,
 )
 
 if TYPE_CHECKING:
@@ -33,8 +32,6 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar service_patterns: ServicePatternsOperations operations
-    :vartype service_patterns: azure.ai.projects.aio.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -89,9 +86,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service_patterns = ServicePatternsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
