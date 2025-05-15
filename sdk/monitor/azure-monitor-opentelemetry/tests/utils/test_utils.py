@@ -60,6 +60,8 @@ class TestUtils(TestCase):
         }, clear=True)
     def test_diagnostics_aks_attach(self):
         reload(_utils)
+        self.assertTrue(_utils._is_on_aks())
+        self.assertTrue(_utils._is_attach_enabled())
         self.assertTrue(_utils._is_diagnostics_enabled())
 
     @patch.dict("os.environ", {
