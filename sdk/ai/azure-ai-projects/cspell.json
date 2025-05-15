@@ -10,8 +10,8 @@
         "UPIA",
         "ansii",
         "getconnectionwithcredentials",
+        "balapvbyostoragecanary",
     ],
     "ignorePaths": [
-        "./tests/samples/test_samples.py"
     ]
 }

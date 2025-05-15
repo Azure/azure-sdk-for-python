@@ -25,7 +25,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 
 ### Sample updates
 
-### Bugs Fixed
+* All samples have been updated. New ones added for Deployments, Datasets and Indexes.
 
 ## 1.0.0b10 (2025-04-23)
 
