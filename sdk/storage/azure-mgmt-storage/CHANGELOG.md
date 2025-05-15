@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0(it should be stable) (2025-05-15)
+## 23.0.0 (2025-05-15)
 
+### Breaking Changes
 
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
 
 ## 22.2.0 (2025-04-21)
 
