@@ -658,13 +658,17 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     options = {
         'copy_source': source_url,
-        'seal_blob': kwargs.pop('seal_destination_blob', None),
         'timeout': timeout,
         'modified_access_conditions': dest_mod_conditions,
-        'blob_tags_string': blob_tags_string,
         'headers': headers,
         'cls': return_response_headers,
     }
+
+    if 'seal_destination_blob' in kwargs:
+        options['seal_blob'] = kwargs.pop('seal_destination_blob')
+    if 'blob_tags_string' in kwargs:
+        options['blob_tags_string'] = blob_tags_string
+
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
