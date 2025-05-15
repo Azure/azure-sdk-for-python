@@ -4,7 +4,7 @@
 import math
 import operator
 from itertools import starmap
-from typing import Dict, List, TypedDict, Tuple, Optional
+from typing import Any, Dict, List, TypedDict, Tuple, Optional, Union
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
@@ -56,7 +56,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         *,
         ground_truth_label_min: int = 0,
         ground_truth_label_max: int = 4,
-        threshold: Optional[dict] = None,
+        ndcg_threshold: Optional[float] = 0.5,
+        xdcg_threshold: Optional[float] = 50.0,
+        fidelity_threshold: Optional[float] = 0.5,
+        top1_relevance_threshold: Optional[float] = 50.0,
+        top3_max_relevance_threshold: Optional[float] = 50.0,
+        total_retrieved_documents_threshold: Optional[int] = 50,
+        total_ground_truth_documents_threshold: Optional[int] = 50
     ):
         super().__init__()
         self.k = 3
@@ -81,26 +87,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         self.ground_truth_label_max = ground_truth_label_max
 
         # The default threshold for metrics where higher numbers are better.
-        self._threshold_metrics = {
-            "ndcg@3": 0.5,
-            "xdcg@3": 0.5,
-            "fidelity": 0.5,
-            "top1_relevance": 50,
-            "top3_max_relevance": 50,
-            "total_retrieved_documents": 50,
-            "total_ground_truth_documents": 50,
+        self._threshold_metrics: Dict[str, Any] = {
+            "ndcg@3": ndcg_threshold,
+            "xdcg@3": xdcg_threshold,
+            "fidelity": fidelity_threshold,
+            "top1_relevance": top1_relevance_threshold,
+            "top3_max_relevance": top3_max_relevance_threshold,
+            "total_retrieved_documents": total_retrieved_documents_threshold,
+            "total_ground_truth_documents": total_ground_truth_documents_threshold,
         }
 
         # Ideally, the number of holes should be zero.
         self._threshold_holes = {"holes": 0, "holes_ratio": 0}
-
-        if threshold and not isinstance(threshold, dict):
-            raise EvaluationException(
-                f"Threshold must be a dictionary, got {type(threshold)}"
-            )
-
-        elif isinstance(threshold, dict):
-            self._threshold_metrics.update(threshold)
 
     def _compute_holes(self, actual_docs: List[str], labeled_docs: List[str]) -> int:
         """
@@ -224,22 +222,16 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
 
     def _get_binary_result(self, **metrics) -> Dict[str, float]:
-        result = {}
+        result: Dict[str, Any] = {}
 
         for metric_name, metric_value in metrics.items():
             if metric_name in self._threshold_metrics.keys():
-                result[f"{metric_name}_result"] = (
-                    metric_value >= self._threshold_metrics[metric_name]
-                )
-                result[f"{metric_name}_threshold"] = self._threshold_metrics[
-                    metric_name
-                ]
+                result[f"{metric_name}_result"] = "pass" if metric_value >= self._threshold_metrics[metric_name] else "fail"
+                result[f"{metric_name}_threshold"] = self._threshold_metrics[metric_name]
                 result[f"{metric_name}_higher_is_better"] = True
 
             elif metric_name in self._threshold_holes.keys():
-                result[f"{metric_name}_result"] = (
-                    metric_value <= self._threshold_holes[metric_name]
-                )
+                result[f"{metric_name}_result"] = "pass" if metric_value <= self._threshold_holes[metric_name] else "fail"
                 result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
                 result[f"{metric_name}_higher_is_better"] = False
 

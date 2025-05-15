@@ -90,18 +90,14 @@ async def main():
                 print(f"Run failed: {run.last_error}")
 
             # Get the last message from the sender
-            last_msg = await agents_client.messages.get_last_text_message_by_role(
+            last_msg = await agents_client.messages.get_last_message_text_by_role(
                 thread_id=thread.id, role=MessageRole.AGENT
             )
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 
             # Delete the agent once done
-            result = await agents_client.delete_agent(agent.id)
-            if result.deleted:
-                print(f"Deleted agent {result.id}")
-            else:
-                print(f"Failed to delete agent {result.id}")
+            await agents_client.delete_agent(agent.id)
 
 
 if __name__ == "__main__":
