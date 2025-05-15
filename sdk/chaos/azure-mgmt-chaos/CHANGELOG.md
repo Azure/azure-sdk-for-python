@@ -14,14 +14,6 @@
   - Added enum `ManagedServiceIdentityType`
   - Added model `OperationStatusResult`
   - Added model `ProxyResource`
-  - Method `CapabilitiesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, parent_provider_namespace: str, parent_resource_type: str, parent_resource_name: str, target_name: str, capability_name: str, resource: Capability, content_type: str)`
-  - Method `CapabilitiesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, parent_provider_namespace: str, parent_resource_type: str, parent_resource_name: str, target_name: str, capability_name: str, resource: IO[bytes], content_type: str)`
-  - Method `ExperimentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, experiment_name: str, resource: Experiment, content_type: str)`
-  - Method `ExperimentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, experiment_name: str, resource: IO[bytes], content_type: str)`
-  - Method `ExperimentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, experiment_name: str, properties: ExperimentUpdate, content_type: str)`
-  - Method `ExperimentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, experiment_name: str, properties: IO[bytes], content_type: str)`
-  - Method `TargetsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, parent_provider_namespace: str, parent_resource_type: str, parent_resource_name: str, target_name: str, resource: Target, content_type: str)`
-  - Method `TargetsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, parent_provider_namespace: str, parent_resource_type: str, parent_resource_name: str, target_name: str, resource: IO[bytes], content_type: str)`
 
 ### Breaking Changes
 
@@ -37,33 +29,15 @@
   - Deleted or renamed model `OperationStatus`
   - Deleted or renamed model `ResourceIdentity`
   - Deleted or renamed model `ResourceIdentityType`
-  - Method `CapabilitiesOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
-  - Method `CapabilitiesOperations.create_or_update` deleted or renamed its parameter `capability` of kind `positional_or_keyword`
-  - Method `CapabilityTypesOperations.get` inserted a `positional_or_keyword` parameter `location`
-  - Method `CapabilityTypesOperations.get` deleted or renamed its parameter `location_name` of kind `positional_or_keyword`
-  - Method `CapabilityTypesOperations.list` inserted a `positional_or_keyword` parameter `location`
-  - Method `CapabilityTypesOperations.list` deleted or renamed its parameter `location_name` of kind `positional_or_keyword`
-  - Method `ExperimentsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
-  - Method `ExperimentsOperations.begin_create_or_update` deleted or renamed its parameter `experiment` of kind `positional_or_keyword`
-  - Method `ExperimentsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
-  - Method `ExperimentsOperations.begin_update` deleted or renamed its parameter `experiment` of kind `positional_or_keyword`
-  - Method `OperationStatusesOperations.get` inserted a `positional_or_keyword` parameter `operation_id`
-  - Method `OperationStatusesOperations.get` deleted or renamed its parameter `async_operation_id` of kind `positional_or_keyword`
-  - Method `TargetTypesOperations.get` inserted a `positional_or_keyword` parameter `location`
-  - Method `TargetTypesOperations.get` deleted or renamed its parameter `location_name` of kind `positional_or_keyword`
-  - Method `TargetTypesOperations.list` inserted a `positional_or_keyword` parameter `location`
-  - Method `TargetTypesOperations.list` deleted or renamed its parameter `location_name` of kind `positional_or_keyword`
-  - Method `TargetsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
-  - Method `TargetsOperations.create_or_update` deleted or renamed its parameter `target` of kind `positional_or_keyword`
-  - Method `ExperimentsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'experiment_name', 'experiment', 'kwargs']` to `['self', 'resource_group_name', 'experiment_name', 'properties', 'kwargs']`
-  - Method `ExperimentsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'experiment_name', 'experiment', 'kwargs']` to `['self', 'resource_group_name', 'experiment_name', 'resource', 'kwargs']`
-  - Method `TargetTypesOperations.get` re-ordered its parameters from `['self', 'location_name', 'target_type_name', 'kwargs']` to `['self', 'location', 'target_type_name', 'kwargs']`
-  - Method `TargetTypesOperations.list` re-ordered its parameters from `['self', 'location_name', 'continuation_token_parameter', 'kwargs']` to `['self', 'location', 'continuation_token_parameter', 'kwargs']`
-  - Method `CapabilityTypesOperations.get` re-ordered its parameters from `['self', 'location_name', 'target_type_name', 'capability_type_name', 'kwargs']` to `['self', 'location', 'target_type_name', 'capability_type_name', 'kwargs']`
-  - Method `CapabilityTypesOperations.list` re-ordered its parameters from `['self', 'location_name', 'target_type_name', 'continuation_token_parameter', 'kwargs']` to `['self', 'location', 'target_type_name', 'continuation_token_parameter', 'kwargs']`
-  - Method `CapabilitiesOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'parent_provider_namespace', 'parent_resource_type', 'parent_resource_name', 'target_name', 'capability_name', 'capability', 'kwargs']` to `['self', 'resource_group_name', 'parent_provider_namespace', 'parent_resource_type', 'parent_resource_name', 'target_name', 'capability_name', 'resource', 'kwargs']`
-  - Method `OperationStatusesOperations.get` re-ordered its parameters from `['self', 'location', 'async_operation_id', 'kwargs']` to `['self', 'location', 'operation_id', 'kwargs']`
-  - Method `TargetsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'parent_provider_namespace', 'parent_resource_type', 'parent_resource_name', 'target_name', 'target', 'kwargs']` to `['self', 'resource_group_name', 'parent_provider_namespace', 'parent_resource_type', 'parent_resource_name', 'target_name', 'resource', 'kwargs']`
+  - Method `CapabilitiesOperations.create_or_update` renamed its parameter `capability` to `resource`
+  - Method `CapabilityTypesOperations.get` renamed its parameter `location_name` to `location`
+  - Method `CapabilityTypesOperations.list` renamed its parameter `location_name` to `location`
+  - Method `ExperimentsOperations.begin_create_or_update` renamed its parameter `experiment` to `resource`
+  - Method `ExperimentsOperations.begin_update` renamed its parameter `experiment` to `properties`
+  - Method `OperationStatusesOperations.get` renamed its parameter `async_operation_id` to `operation_id`
+  - Method `TargetTypesOperations.get` renamed its parameter `location_name` to `location`
+  - Method `TargetTypesOperations.list` renamed its parameter `location_name` to `location`
+  - Method `TargetsOperations.create_or_update` renamed its parameter `target` to `resource`
 
 ## 1.1.0 (2024-03-04)
 
