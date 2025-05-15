@@ -666,7 +666,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     if 'seal_destination_blob' in kwargs:
         options['seal_blob'] = kwargs.pop('seal_destination_blob')
-    if 'blob_tags_string' in kwargs:
+    if 'blob_tags_string' is not None:
         options['blob_tags_string'] = blob_tags_string
 
     if not incremental_copy:
