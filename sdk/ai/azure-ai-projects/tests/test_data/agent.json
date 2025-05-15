@@ -1,0 +1,11 @@
+{
+  "id": "{agent_id_placeholder}",
+  "object": "assistant",
+  "created_at": 1731539287,
+  "name": "{agent_name_placeholder}",
+  "description": null,
+  "model": "gpt-4-1106-preview",
+  "instructions": "You are a helpful assistant",
+  "metadata": {},
+  "response_format": "auto"
+}

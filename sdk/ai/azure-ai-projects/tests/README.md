@@ -10,9 +10,14 @@ The instructions below are for running tests locally, on a Windows machine, agai
     ```bash
     pip install -r dev_requirements.txt
     ```
-- Install package from sources:
+- Build the package:
     ```bash
-    pip install -e .
+    pip install wheel
+    python setup.py bdist_wheel
+    ```
+- Install the resulting wheel (update version `1.0.0b5` to the current one):
+    ```bash
+    pip install dist\azure_ai_projects-1.0.0b5-py3-none-any.whl --user --force-reinstall
     ```
 
 ## Log in to Azure
