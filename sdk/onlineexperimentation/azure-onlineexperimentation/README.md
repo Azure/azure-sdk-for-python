@@ -61,7 +61,7 @@ print(f"Client initialized with endpoint: {endpoint}")
 
 ### Online Experimentation Workspace
 
-[`Microsoft.OnlineExperimentation/workspaces`][az_exp_workspace] Azure resources work in conjuction with [Azure App Configuration][app_config] and [Azure Monitor][azure_monitor]. The Online Experimentation workspace handles management of metrics definitions and their continuous computation to monitor and evaluate experiment results.
+[`Microsoft.OnlineExperimentation/workspaces`][az_exp_workspace] Azure resources work in conjunction with [Azure App Configuration][app_config] and [Azure Monitor][azure_monitor]. The Online Experimentation workspace handles management of metrics definitions and their continuous computation to monitor and evaluate experiment results.
 
 ### Experiment Metrics
 
