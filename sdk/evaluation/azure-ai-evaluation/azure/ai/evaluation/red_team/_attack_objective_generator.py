@@ -18,8 +18,11 @@ class RiskCategory(str, Enum):
     Sexual = "sexual"
     SelfHarm = "self_harm"
     ProtectedMaterial = "protected_material"
-    ECI = "eci"
     CodeVulnerability = "code_vulnerability"
+
+@experimental
+class _InternalRiskCategory(str, Enum):
+    ECI = "eci"
 
 class _AttackObjectiveGenerator:
     """Generator for creating attack objectives.

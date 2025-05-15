@@ -48,7 +48,7 @@ from azure.core.credentials import TokenCredential
 # Red Teaming imports
 from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
 from ._attack_strategy import AttackStrategy
-from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
+from ._attack_objective_generator import RiskCategory, _InternalRiskCategory, _AttackObjectiveGenerator
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -1580,7 +1580,7 @@ class RedTeam:
             annotation_task = Tasks.CODE_VULNERABILITY
         elif risk_category == RiskCategory.ProtectedMaterial:
             annotation_task = Tasks.PROTECTED_MATERIAL
-        elif risk_category == RiskCategory.ECI:
+        elif risk_category == _InternalRiskCategory.ECI:
             annotation_task = _InternalAnnotationTasks.ECI
         else:
             annotation_task = Tasks.CONTENT_HARM
@@ -2019,7 +2019,7 @@ class RedTeam:
         # If risk categories aren't specified, use all available categories
         if not self.attack_objective_generator.risk_categories:
             self.logger.info("No risk categories specified, using all available categories")
-            self.attack_objective_generator.risk_categories = list(RiskCategory)
+            self.attack_objective_generator.risk_categories = [RiskCategory.HateUnfairness, RiskCategory.Sexual, RiskCategory.Violence, RiskCategory.SelfHarm]
             
         self.risk_categories = self.attack_objective_generator.risk_categories
         # Show risk categories to user
