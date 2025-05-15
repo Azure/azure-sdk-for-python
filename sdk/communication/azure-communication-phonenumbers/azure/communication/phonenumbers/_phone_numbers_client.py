@@ -6,6 +6,7 @@
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 from typing import List, Optional, Union, Any
+import uuid
 
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.paging import ItemPaged
@@ -31,6 +32,12 @@ from ._generated.models import (
     PhoneNumberLocality,
     PhoneNumberSearchResult,
     PurchasedPhoneNumber,
+    PhoneNumberBrowseCapabilitiesRequest,
+    AvailablePhoneNumber,
+    PhoneNumbersReservationPurchaseRequest,
+    PhoneNumbersReservation,
+    PhoneNumbersBrowseRequest,
+    PhoneNumbersBrowseResult
 )
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
@@ -63,7 +70,8 @@ class PhoneNumbersClient:
             raise ValueError("Account URL must be a string.") from e
 
         if not credential:
-            raise ValueError("You need to provide account shared key to authenticate.")
+            raise ValueError(
+                "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
         self._accepted_language = kwargs.pop("accepted_language", None)
@@ -71,7 +79,8 @@ class PhoneNumbersClient:
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             api_version=self._api_version,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
@@ -90,11 +99,19 @@ class PhoneNumbersClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def begin_purchase_phone_numbers(self, search_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_purchase_phone_numbers(
+            self,
+            search_id: str,
+            *,
+            agree_to_not_resell: bool = False,
+            **kwargs: Any) -> LROPoller[None]:
         """Purchases phone numbers.
 
         :param search_id: The search id.
         :type search_id: str
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
+            not provided.
+        :paramtype agree_to_not_resell: bool
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -104,9 +121,11 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the completion of the purchase.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
+        purchase_request = PhoneNumberPurchaseRequest(
+            search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             body=purchase_request, polling_interval=polling_interval, **kwargs
         )
@@ -126,7 +145,8 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the status of the release operation.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number, polling_interval=polling_interval, **kwargs
         )
@@ -173,7 +193,8 @@ class PhoneNumbersClient:
             quantity=kwargs.pop("quantity", None),
             area_code=kwargs.pop("area_code", None),
         )
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code, search_request, polling_interval=polling_interval, **kwargs
         )
@@ -205,9 +226,11 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
 
-        capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
+        capabilities_request = PhoneNumberCapabilitiesRequest(
+            calling=calling, sms=sms)
 
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
 
         if not phone_number:
             raise ValueError("phone_number can't be empty")
@@ -218,7 +241,8 @@ class PhoneNumbersClient:
 
         result_properties = poller.result().additional_properties
         if "status" in result_properties and result_properties["status"].lower() == "failed":
-            raise HttpResponseError(message=result_properties["error"]["message"])
+            raise HttpResponseError(
+                message=result_properties["error"]["message"])
 
         return poller
 
@@ -288,7 +312,8 @@ class PhoneNumbersClient:
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
             country_code,
-            administrative_division=kwargs.pop("administrative_division", None),
+            administrative_division=kwargs.pop(
+                "administrative_division", None),
             accept_language=self._accepted_language,
             **kwargs
         )
@@ -354,13 +379,14 @@ class PhoneNumbersClient:
             phone_number_type=phone_number_type,
             assignment_type=kwargs.pop("assignment_type", None),
             locality=kwargs.pop("locality", None),
-            administrative_division=kwargs.pop("administrative_division", None),
+            administrative_division=kwargs.pop(
+                "administrative_division", None),
             **kwargs
         )
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any # pylint: disable=line-too-long
+        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any  # pylint: disable=line-too-long
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -374,6 +400,214 @@ class PhoneNumbersClient:
         if not isinstance(phone_numbers, list):
             phone_numbers = [phone_numbers]
         if options is None:
-            options = OperatorInformationOptions(include_additional_operator_details=False)
-        request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
+            options = OperatorInformationOptions(
+                include_additional_operator_details=False)
+        request = OperatorInformationRequest(
+            phone_numbers=phone_numbers, options=options)
         return self._phone_number_client.phone_numbers.operator_information_search(request, **kwargs)
+
+    @distributed_trace
+    def get_reservation(
+        self, reservation_id: str, **kwargs: Any
+    ) -> PhoneNumbersReservation:
+        """Gets a reservation by its ID.
+
+        Retrieves the reservation with the given ID, including all of the phone numbers associated with
+        it.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
+        """
+        return self._phone_number_client.phone_numbers.get_reservation(
+            reservation_id, **kwargs)
+
+    @distributed_trace
+    def list_reservations(
+        self, *, max_page_size: int = 100,  **kwargs: Any
+    ) -> ItemPaged[PhoneNumbersReservation]:
+        """Lists all reservations.
+
+        Retrieves a paginated list of all phone number reservations. Note that the reservations will
+        not be populated with the phone numbers associated with them.
+
+        :keyword max_page_size: An optional parameter for how many entries to return, for pagination
+         purposes. The default value is 100. Default value is 100.
+        :paramtype max_page_size: int
+        :return: An iterator like instance of PhoneNumbersReservation
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
+        """
+
+        # This allows mapping the generated model to the public model.
+        # Internally, the generated client will create an instance of this iterator with each fetched page.
+
+        return self._phone_number_client.phone_numbers.list_reservations(
+            max_page_size=max_page_size,
+            **kwargs)
+
+    @distributed_trace
+    def create_or_update_reservation(
+        self, *,
+        reservation_id: str,
+        numbers_to_add: Optional[List[AvailablePhoneNumber]] = None,
+        numbers_to_remove: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Updates the reservation with the given ID if it exists; or creates a new one otherwise. 
+        The response will be the updated state of the reservation. 
+        Updating a reservation will extend the expiration time of the reservation to 15 minutes 
+        after the last change, up to a maximum of 2 hours from creation time. 
+        Partial success is possible, in which case the result will contain phone numbers with error status.
+
+        
+        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation, 
+         with that ID exists it will be updated; ortherwise a new reservation will be created.
+        :paramtype reservation_id: str
+        :keyword numbers_to_add: List of phone numbers to add to the reservation.
+        :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
+        :keyword numbers_to_remove: List of phone number IDs to remove from the reservation.
+        :paramtype numbers_to_remove: list[str]
+        :return: The updated reservation
+        :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
+        """
+        if reservation_id is None:
+            raise ValueError("reservation_id cannot be None")
+        try:
+            uuid.UUID(reservation_id)
+        except ValueError as exc:
+            raise ValueError("reservation_id must be in valid UUID format") from exc
+
+        phone_numbers = {}
+        if numbers_to_add:
+            for number in numbers_to_add:
+                phone_numbers[number.id] = number
+        if numbers_to_remove:
+            for number in numbers_to_remove:
+                phone_numbers[number] = None
+
+        reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
+
+        return self._phone_number_client.phone_numbers.create_or_update_reservation(
+            reservation_id, reservation, **kwargs)
+
+    @distributed_trace
+    def delete_reservation(
+        self, reservation_id: str, **kwargs: Any
+    ) -> None:
+        """Deletes a reservation by its ID.
+
+        Deletes the reservation with the given ID. Any phone number in the reservation will be released
+        and made available for others to purchase. Only reservations with 'active' status can be
+        deleted.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: None
+        :rtype: None
+        """
+        return self._phone_number_client.phone_numbers.delete_reservation(reservation_id, **kwargs)
+
+    @distributed_trace
+    def begin_purchase_reservation(
+        self,
+        reservation_id: str,
+        *,
+        agree_to_not_resell: bool = False,
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation.
+
+        Starts a long running operation to purchase all of the phone numbers in the reservation.
+        Purchase can only be started for active reservations that at least one phone number. If any of
+        the phone numbers in the reservation is from a country where reselling is not permitted, do not
+        resell agreement is required. 
+
+        The agreement to not resell is a legal requirement in some countries in order to purchase phone numbers.
+        For more information on which countries require this agreement, please refer to this documentation:
+        https://learn.microsoft.com/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
+         not provided.
+        :paramtype agree_to_not_resell: bool
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(
+            agree_to_not_resell=agree_to_not_resell)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+
+        return self._phone_number_client.phone_numbers.begin_purchase_reservation(
+            reservation_id,
+            reservation_purchase_request,
+            polling_interval=polling_interval,
+            **kwargs
+        )
+
+    @distributed_trace
+    def browse_available_phone_numbers(
+            self,
+            *,
+            country_code: str,
+            phone_number_type: Union[str, PhoneNumberType],
+            sms_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+            calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+            assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
+            phone_number_prefixes: Optional[List[str]] = None,
+            **kwargs: Any,
+    ) -> PhoneNumbersBrowseResult:
+        """Browses for available phone numbers to purchase.
+
+        Browses for available phone numbers to purchase. The response will be a randomized list of
+        phone numbers available to purchase matching the browsing criteria. This operation is not
+        paginated. Since the results are randomized, repeating the same request will not guarantee the
+        same results.
+
+        :keyword country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :paramtype country_code: str
+        :keyword phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
+            or tollFree. Possible values include: "geographic", "tollFree".
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
+        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound", 
+            "outbound", "inbound_outbound", "none".
+        :paramtype sms_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
+        :keyword calling_capability: The calling capability to search for. Known values are: "inbound",
+            "outbound", "inbound_outbound", "none".
+        :paramtype calling_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
+        :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
+            case. Known values are: "person" and "application".
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :keyword phone_number_prefixes: The phone number prefix to match. If specified, the search will
+            be limited to phone numbers that start with the any of the given prefixes.
+        :paramtype phone_number_prefixes: list[str]
+        :return: A list of available phone numbers matching the browsing criteria.
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        """
+        if not country_code:
+            raise ValueError("country_code is required.")
+        if not phone_number_type:
+            raise ValueError("phone_number_type is required.")
+
+        browse_capabilities = None
+        if sms_capability is not None or calling_capability is not None:
+            browse_capabilities = PhoneNumberBrowseCapabilitiesRequest(
+                calling=calling_capability,
+                sms=sms_capability,
+            )
+        browse_request = PhoneNumbersBrowseRequest(
+            phone_number_type=phone_number_type,
+            capabilities=browse_capabilities,
+            assignment_type=assignment_type,
+            phone_number_prefixes=phone_number_prefixes
+        )
+        return self._phone_number_client.phone_numbers.browse_available_numbers(
+            country_code,
+            browse_request,
+            **kwargs
+        )
