@@ -6,18 +6,35 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use multiple agents to execute tasks.
+    This sample demonstrates how to use an AgentTeam to execute a multi-step
+    user request with automatic function calling and trace collection.
+
+    The team consists of
+        • one leader agent - created automatically from the configuration in
+          `utils/agent_team_config.yaml`
+        • three worker agents - “TimeWeatherAgent”, “SendEmailAgent”, and
+          “TemperatureAgent”, each defined in the code below with its own tools
+
+    IMPORTANT - leader-agent model configuration
+        `utils/agent_team_config.yaml` contains the key TEAM_LEADER_MODEL.
+        Its value must be the name of a **deployed** model in your Azure AI
+        project (e.g. "gpt-4o-mini").
+        If this deployment does not exist, AgentTeam cannot instantiate the
+        leader agent and the sample will fail.
 
 USAGE:
     python sample_agents_multi_agent_team.py
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
-
-    Set these environment variables with your own values:
-    PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    MODEL_DEPLOYMENT_NAME - the name of the model deployment to use.
+    1. pip install azure-ai-agents azure-identity
+    2. Ensure `utils/agent_team_config.yaml` is present and TEAM_LEADER_MODEL points
+       to a valid model deployment.
+    3. Set these environment variables with your own values:
+         PROJECT_ENDPOINT - your Azure AI Agents endpoint
+         MODEL_DEPLOYMENT_NAME - the deployment name used for the worker
+                                 agents (“TimeWeatherAgent”, “SendEmailAgent”,
+                                 and “TemperatureAgent”)
 """
 
 import os
