@@ -62,6 +62,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         crescendo_format: bool = False,
+        is_one_dp_project: bool = False
     ) -> None:
         """Initialize the target.
         
@@ -78,6 +79,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         self.prompt_template_key = prompt_template_key
         self.logger = logger
         self.crescendo_format = crescendo_format
+        self.is_one_dp_project = is_one_dp_project  
 
     def _create_async_client(self):
         """Create an async client."""
@@ -262,7 +264,10 @@ class AzureRAIServiceTarget(PromptChatTarget):
         
         for retry in range(max_retries):
             try:
-                operation_result = self._client._client.get_operation_result(operation_id=operation_id)
+                if not self.is_one_dp_project:
+                    operation_result = self._client._client.get_operation_result(operation_id=operation_id)
+                else:
+                    operation_result = self._client._operations_client.operation_results(operation_id=operation_id)
                 
                 # Check if we have a valid result
                 if operation_result:

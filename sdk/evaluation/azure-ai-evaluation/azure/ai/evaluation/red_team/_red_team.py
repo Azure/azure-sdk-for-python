@@ -1268,7 +1268,8 @@ class RedTeam:
                     prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
                     objective=prompt,
                     logger=self.logger,
-                    crescendo_format=True
+                    crescendo_format=True,
+                    is_one_dp_project=self._one_dp_project,
                 )
 
                 orchestrator = CrescendoOrchestrator(
