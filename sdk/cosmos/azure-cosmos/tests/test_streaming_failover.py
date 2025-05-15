@@ -143,8 +143,8 @@ class TestStreamingFailOver(unittest.TestCase):
         endpoint_manager.mark_endpoint_unavailable_for_read = self._mock_mark_endpoint_unavailable_for_read
         self.original_mark_endpoint_unavailable_for_write_function = endpoint_manager.mark_endpoint_unavailable_for_write
         endpoint_manager.mark_endpoint_unavailable_for_write = self._mock_mark_endpoint_unavailable_for_write
-        self.original_resolve_service_endpoint = endpoint_manager.resolve_service_endpoint
-        endpoint_manager.resolve_service_endpoint = self._mock_resolve_service_endpoint
+        self.original_resolve_service_endpoint = endpoint_manager.resolve_service_endpoint_for_partition
+        endpoint_manager.resolve_service_endpoint_for_partition = self._mock_resolve_service_endpoint
 
         # Read and write counters count the number of times the endpoint manager's
         # mark_endpoint_unavailable_for_read() and mark_endpoint_unavailable_for_read() 

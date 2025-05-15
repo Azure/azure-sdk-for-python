@@ -142,9 +142,10 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[Re
 
     return applicable_regional_routing_contexts
 
+def current_time_millis() -> int:
+    return int(round(time.time() * 1000))
+
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-    def current_time_millis(self):
-        return int(round(time.time() * 1000))
 
     def __init__(
         self,
@@ -170,6 +171,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_read_regional_routing_contexts(self):
         return self.read_regional_routing_contexts
+
+    def get_location_from_endpoint(self, endpoint: str) -> str:
+        if endpoint in self.account_locations_by_read_regional_routing_context:
+            return self.account_locations_by_read_regional_routing_context[endpoint]
+        return self.account_write_locations[0]
 
     def get_write_regional_routing_context(self):
         return self.get_write_regional_routing_contexts()[0].get_primary()
@@ -200,8 +206,15 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # If excluded locations were configured on request, use request level excluded locations.
         excluded_locations = request.excluded_locations
         if excluded_locations is None:
-            # If excluded locations were only configured on client(connection_policy), use client level
-            excluded_locations = self.connection_policy.ExcludedLocations
+            if self.connection_policy.ExcludedLocations:
+                # If excluded locations were only configured on client(connection_policy), use client level
+                # make copy of excluded locations to avoid modifying the original list
+                excluded_locations = list(self.connection_policy.ExcludedLocations)
+            else:
+                excluded_locations = []
+        for excluded_location in request.excluded_locations_circuit_breaker:
+            if excluded_location not in excluded_locations:
+                excluded_locations.append(excluded_location)
         return excluded_locations
 
     def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
@@ -422,7 +435,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             EndpointOperationType.ReadType,
             self.write_regional_routing_contexts[0]
         )
-        self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_regional_routing_contexts(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint

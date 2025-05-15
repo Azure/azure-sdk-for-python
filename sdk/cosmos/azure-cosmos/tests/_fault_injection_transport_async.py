@@ -143,6 +143,11 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return is_document_operation
 
     @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+        return is_resource_type
+
+    @staticmethod
     def predicate_is_operation_type(r: HttpRequest, operation_type: str) -> bool:
         is_operation_type = r.headers.get(HttpHeaders.ThinClientProxyOperationType) == operation_type
         return is_operation_type

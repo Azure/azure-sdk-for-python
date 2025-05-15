@@ -16,6 +16,7 @@ from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -40,7 +41,10 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
+        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.created_container = await self.created_db.create_container(
             self.TEST_CONTAINER_ID,

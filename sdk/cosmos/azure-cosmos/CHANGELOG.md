@@ -3,10 +3,12 @@
 ### 4.11.0b2 (Unreleased)
 
 #### Features Added
+* Per partition circuit breaker support. It can be enabled through the environment variable `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed how resource tokens are parsed for metadata calls in the lifecycle of a document operation. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 * Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
 
 #### Other Changes
