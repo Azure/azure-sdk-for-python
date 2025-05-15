@@ -32,8 +32,8 @@ def main():
 
     response = client.projects.get_connection_uri(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
+        organization_name="contoso-org",
+        project_name="sample-resource",
         connection_uri_parameters={
             "branchId": "iimmlbqv",
             "databaseName": "xc",
