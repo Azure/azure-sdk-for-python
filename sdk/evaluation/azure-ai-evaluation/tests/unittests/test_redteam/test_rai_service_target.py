@@ -54,7 +54,8 @@ def rai_target():
         client=MockGeneratedRAIClient,
         logger=MockLogger,
         objective="Test Objective",
-        prompt_template_key="test_template.yaml"
+        prompt_template_key="test_template.yaml",
+        is_one_dp_project=False
     )
 
 @pytest.mark.asyncio
@@ -141,7 +142,7 @@ async def test_poll_operation_result_success(mock_sleep, rai_target):
     
     # Replace the method in the implementation to use our non-async function
     # This is needed because _poll_operation_result expects the result directly, not as a coroutine
-    rai_target._client._client.rai_svc.get_operation_result = get_operation_result
+    rai_target._client._client.get_operation_result = get_operation_result
 
     result = await rai_target._poll_operation_result(operation_id)
 
@@ -160,7 +161,7 @@ async def test_poll_operation_result_timeout(mock_sleep, rai_target):
     def always_running(operation_id=None):
         return {"status": "running"}
       # Replace the actual get_operation_result function with our mock
-    rai_target._client._client.rai_svc.get_operation_result = always_running
+    rai_target._client._client.get_operation_result = always_running
 
     result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
 
@@ -183,7 +184,7 @@ async def test_poll_operation_result_not_found_fallback(mock_sleep, rai_target):
         # Real exception with the text that the implementation will check for
         raise Exception("operation id 'not-found-op-id' not found")
       # Replace the client's get_operation_result with our function
-    rai_target._client._client.rai_svc.get_operation_result = operation_not_found
+    rai_target._client._client.get_operation_result = operation_not_found
 
     result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
 
@@ -239,7 +240,7 @@ async def test_send_prompt_async_success_flow(mock_process, mock_poll, mock_extr
         return mock_submit_response
     
     # Replace the submit_simulation with our function
-    rai_target._client._client.rai_svc.submit_simulation = submit_simulation
+    rai_target._client._client.submit_simulation = submit_simulation
     
     mock_extract.return_value = "mock-op-id"
     mock_poll.return_value = {"status": "succeeded", "raw": "poll_result"}
