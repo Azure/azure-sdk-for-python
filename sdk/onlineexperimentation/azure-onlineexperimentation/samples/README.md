@@ -4,7 +4,7 @@ This directory contains samples for the Azure Online Experimentation SDK for Pyt
 
 ## Prerequisites
 
-- Python 3.6 or later
+- Python 3.9 or later
 - Azure subscription
 - Online Experimentation workspace
 
