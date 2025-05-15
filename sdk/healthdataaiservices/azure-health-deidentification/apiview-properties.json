@@ -1,0 +1,26 @@
+{
+    "CrossLanguagePackageId": "HealthDataAIServices.DeidServices",
+    "CrossLanguageDefinitionId": {
+        "azure.health.deidentification.models.DeidentificationContent": "HealthDataAIServices.DeidServices.DeidentificationContent",
+        "azure.health.deidentification.models.DeidentificationCustomizationOptions": "HealthDataAIServices.DeidServices.DeidentificationCustomizationOptions",
+        "azure.health.deidentification.models.DeidentificationDocumentDetails": "HealthDataAIServices.DeidServices.DeidentificationDocumentDetails",
+        "azure.health.deidentification.models.DeidentificationDocumentLocation": "HealthDataAIServices.DeidServices.DeidentificationDocumentLocation",
+        "azure.health.deidentification.models.DeidentificationJob": "HealthDataAIServices.DeidServices.DeidentificationJob",
+        "azure.health.deidentification.models.DeidentificationJobCustomizationOptions": "HealthDataAIServices.DeidServices.DeidentificationJobCustomizationOptions",
+        "azure.health.deidentification.models.DeidentificationJobSummary": "HealthDataAIServices.DeidServices.DeidentificationJobSummary",
+        "azure.health.deidentification.models.DeidentificationResult": "HealthDataAIServices.DeidServices.DeidentificationResult",
+        "azure.health.deidentification.models.PhiEntity": "HealthDataAIServices.DeidServices.PhiEntity",
+        "azure.health.deidentification.models.PhiTaggerResult": "HealthDataAIServices.DeidServices.PhiTaggerResult",
+        "azure.health.deidentification.models.SourceStorageLocation": "HealthDataAIServices.DeidServices.SourceStorageLocation",
+        "azure.health.deidentification.models.StringIndex": "HealthDataAIServices.DeidServices.StringIndex",
+        "azure.health.deidentification.models.TargetStorageLocation": "HealthDataAIServices.DeidServices.TargetStorageLocation",
+        "azure.health.deidentification.models.DeidentificationOperationType": "HealthDataAIServices.DeidServices.DeidentificationOperationType",
+        "azure.health.deidentification.models.OperationStatus": "Azure.Core.Foundations.OperationState",
+        "azure.health.deidentification.models.PhiCategory": "HealthDataAIServices.DeidServices.PhiCategory",
+        "azure.health.deidentification.DeidentificationClient.get_job": "HealthDataAIServices.DeidServices.getJob",
+        "azure.health.deidentification.DeidentificationClient.begin_deidentify_documents": "HealthDataAIServices.DeidServices.deidentifyDocuments",
+        "azure.health.deidentification.DeidentificationClient.cancel_job": "HealthDataAIServices.DeidServices.cancelJob",
+        "azure.health.deidentification.DeidentificationClient.delete_job": "HealthDataAIServices.DeidServices.deleteJob",
+        "azure.health.deidentification.DeidentificationClient.deidentify_text": "HealthDataAIServices.DeidServices.deidentifyText"
+    }
+}
