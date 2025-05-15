@@ -70,9 +70,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.logger.addHandler(self.mock_handler_default)
         # Create a client with the default logging policy
         self.client_default = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                         consistency_level="Session",
-                                                         connection_policy=self.connectionPolicy,
-                                                         logger=self.logger)
+                                                         consistency_level="Session", logger=self.logger)
         await self.client_default.__aenter__()
         # Test if we can log info from creating a database
         database_id = "database_test-" + str(uuid.uuid4())
@@ -97,9 +95,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.logger.addHandler(self.mock_handler_diagnostic)
         # Create a client with the diagnostic logging policy
         self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                            consistency_level="Session",
-                                                            connection_policy=self.connectionPolicy,
-                                                            logger=self.logger,
+                                                            consistency_level="Session", logger=self.logger,
                                                             enable_diagnostics_logging=True)
         # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
@@ -158,7 +154,6 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         # Create a client with the filtered diagnostics logging policy
         self.client_filtered_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
                                                                      consistency_level="Session",
-                                                                     connection_policy=self.connectionPolicy,
                                                                      logger=self.logger,
                                                                      enable_diagnostics_logging=True)
         # Test if we can log errors with the filtered diagnostics logger
