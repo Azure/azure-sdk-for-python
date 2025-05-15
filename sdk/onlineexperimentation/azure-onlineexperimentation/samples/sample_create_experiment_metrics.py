@@ -24,7 +24,7 @@ from azure.onlineexperimentation.models import (
     ObservedEvent,
     AggregatedValue,
 )
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError
 
 
 def create_event_count_metric():
