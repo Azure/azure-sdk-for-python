@@ -17,7 +17,8 @@ USAGE:
     pip install azure-ai-agents azure-identity azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                          page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
@@ -28,7 +29,7 @@ USAGE:
        can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
 
-import os, time
+import os
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
@@ -45,15 +46,6 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 # Enable Azure Monitor tracing
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
-try:
-    from azure.ai.agents.telemetry import AIAgentsInstrumentor
-
-    agents_instrumentor = AIAgentsInstrumentor()
-    if not agents_instrumentor.is_instrumented():
-        agents_instrumentor.instrument()
-except Exception as exc:  # pylint: disable=broad-exception-caught
-    print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

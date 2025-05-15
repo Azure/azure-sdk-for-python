@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0 (2025-05-15)
+
+### Features Added
+
+- First stable release of Azure AI Agents client library.
+
+## 1.0.0b3 (2025-05-14)
+
+### Features Added
+
+- Internal updates based on TypeSpec finalization.
+
 ## 1.0.0b2 (2025-05-13)
 
 ### Breaking Changes

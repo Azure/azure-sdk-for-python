@@ -81,7 +81,6 @@ RESOLUTION_IMPOSSIBLE_LIBRARIES = {
     "azure-core": ["azure-core-experimental", "azure-core-tracing-opencensus", "azure-core-tracing-opentelemetry"],
     "azure-monitor-opentelemetry": ["azure-core-tracing-opentelemetry"],
     "azure-ai-evaluation": ["azure-monitor-opentelemetry-exporter", "azure-monitor-opentelemetry"],
-    "azure-ai-generative": ["azure-ai-resources"],
 }
 
 
