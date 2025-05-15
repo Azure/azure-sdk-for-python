@@ -23,7 +23,8 @@ USAGE:
     pip install azure-ai-agents azure-identity azure-mgmt-logic
 
     Set this environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                          page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
 
