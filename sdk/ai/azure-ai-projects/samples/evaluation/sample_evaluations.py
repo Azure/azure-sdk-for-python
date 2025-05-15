@@ -21,7 +21,7 @@ USAGE:
        Azure AI Foundry project.
     2) CONNECTION_NAME - Required. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
-    4) DATASET_VERSION - Optional. The first version of the Dataset to create and use in this sample.
+    4) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 
@@ -56,7 +56,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         # [START evaluations_sample]
         print(
-            "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+            "Upload a single file and create a new Dataset to reference the file."
         )
         dataset: DatasetVersion = project_client.datasets.upload_file(
             name=dataset_name,

@@ -23,11 +23,12 @@ See [Agents package document and samples](https://github.com/Azure/azure-sdk-for
 * The method `.inference.get_azure_openai_client()` now supports returning an authenticated `AzureOpenAI` client to be used with
 AI models deployed to the Project's AI Services. This is in addition to the existing option to get an `AzureOpenAI` client for one of the connected Azure OpenAI services.
 * Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
-* The method `.to_evaluator_model_config` on connection is removed. In place of `model_config` use `deployment_name` for LLM based evaluators.
-* The method `upload_file` on `AIProjectClient` had been removed, use `dataset.upload_file` instead.
-* Evaluator Ids are available using the Enum `EvaluatorIds`and no longer require `azure-ai-evaluation` package to be installed.
-* Property `scope` on `AIProjectClient` is removed, use Project Endpoint instead.
-* Property `id` on Evaluation is replace with `name`.
+* The class ConnectionProperties was renamed to Connection, and its properties have changed.
+* The method `.to_evaluator_model_config` on `ConnectionProperties` is no longer required and does not have an equivalent method on `Connection`. When constructing the EvaluatorConfiguration class, the `init_params` element now requires `deployment_name` instead of `model_config`.
+* The method `upload_file` on `AIProjectClient` had been removed, use `datasets.upload_file` instead.
+* Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
+* Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
+* Property `id` on Evaluation is replaced with `name`.
 
 ### Sample updates
 
