@@ -351,30 +351,43 @@ project_client.indexes.delete(name=index_name, version=index_version)
 <!-- END SNIPPET -->
 
 ### Evaluation
+
 Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
-<!-- SNIPPET:sample_evaluations.evalautions_sample-->
-
+<!-- SNIPPET:sample_evaluations.evaluations_sample-->
 
 ```python
-print(
-    f"Create Evaluation using dataset with id {dataset_id} and project {project_endpoint}".
+print("Upload a single file and create a new Dataset to reference the file.")
+dataset: DatasetVersion = project_client.datasets.upload_file(
+    name=dataset_name,
+    version=dataset_version,
+    file_path=data_file,
 )
+print(dataset)
 
-from azure.ai.projects.models import Evaluation, InputDataset, EvaluatorConfiguration, EvaluatorIds
-
-evaluation = Evaluation(
+print("Create an evaluation")
+evaluation: Evaluation = Evaluation(
     display_name="Sample Evaluation Test",
     description="Sample evaluation for testing",
     # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-    data=InputDataset(id=dataset_id),
+    data=InputDataset(id=dataset.id),  # pyright: ignore
     evaluators={
+        "relevance": EvaluatorConfiguration(
+            id=EvaluatorIds.RELEVANCE.value,
+            init_params={
+                "deployment_name": model_deployment_name,
+            },
+            data_mapping={
+                "query": "${data.query}",
+                "response": "${data.response}",
+            },
+        ),
         "violence": EvaluatorConfiguration(
             id=EvaluatorIds.VIOLENCE.value,
             init_params={
-                "azure_ai_project": project_endpoint,
+                "azure_ai_project": endpoint,
             },
         ),
         "bleu_score": EvaluatorConfiguration(
@@ -383,17 +396,26 @@ evaluation = Evaluation(
     },
 )
 
-project_client.evaluations.create(evaluation)
-print(evaluation)
+evaluation_response: Evaluation = project_client.evaluations.create(
+    evaluation,
+    headers={
+        "model-endpoint": model_endpoint,
+        "api-key": model_api_key,
+    },
+)
+print(evaluation_response)
 
-print(f"Get an evaluation with name {name}")
-evaluation = project_client.evaluations.get(evaluation.name)
-print(evaluation)
+print("Get evaluation")
+get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
 
-print("List all evaluation")
+print(get_evaluation_response)
+
+print("List evaluations")
 for evaluation in project_client.evaluations.list():
     print(evaluation)
 ```
+
+<!-- END SNIPPET -->
 
 ## Troubleshooting
 

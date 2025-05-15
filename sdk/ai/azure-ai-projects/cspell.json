@@ -1,4 +1,4 @@
-{
+v{
     "ignoreWords": [
         "aiproject",
         "Prompty",
@@ -10,6 +10,7 @@
         "UPIA",
         "ansii",
         "getconnectionwithcredentials",
+        "quantitive",
         "balapvbyostoragecanary",
     ],
     "ignorePaths": [

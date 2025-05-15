@@ -3,6 +3,9 @@
   "reportMissingImports": false,
   "pythonVersion": "3.11",
   "exclude": [
+    "**/sample_evaluations.py",
+    "**/sample_evaluations_async.py",
+    "**/sample_evaluations_aoai_graders.py",
   ],
   "extraPaths": [
     "./../../core/azure-core",

@@ -38,7 +38,9 @@ from azure.ai.projects.models import (
     DatasetVersion,
 )
 
-endpoint = os.environ["PROJECT_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+endpoint = os.environ[
+    "PROJECT_ENDPOINT"
+]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
@@ -55,9 +57,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # [START evaluations_sample]
-        print(
-            "Upload a single file and create a new Dataset to reference the file."
-        )
+        print("Upload a single file and create a new Dataset to reference the file.")
         dataset: DatasetVersion = project_client.datasets.upload_file(
             name=dataset_name,
             version=dataset_version,
@@ -70,7 +70,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             display_name="Sample Evaluation Test",
             description="Sample evaluation for testing",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-            data=InputDataset(id=dataset.id),  # pyright: ignore
+            data=InputDataset(id=dataset.id),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,

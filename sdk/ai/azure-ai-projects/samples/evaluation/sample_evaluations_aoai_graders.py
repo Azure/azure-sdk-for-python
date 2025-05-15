@@ -50,7 +50,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # [START evaluations_sample_aoai_graders]
         # TODO : Uncomment the following lines once dataset creation works
         # print(
         #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
@@ -153,5 +152,3 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print("List evaluations")
         for evaluation in project_client.evaluations.list():
             print(evaluation)
-
-        # [END evaluations_sample_aoai_graders]

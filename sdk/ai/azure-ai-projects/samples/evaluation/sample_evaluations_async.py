@@ -42,8 +42,11 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
+
 async def main() -> None:
-    endpoint = os.environ["PROJECT_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    endpoint = os.environ[
+        "PROJECT_ENDPOINT"
+    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
     model_api_key = os.environ["MODEL_API_KEY"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
@@ -54,10 +57,7 @@ async def main() -> None:
 
         async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-            # [START evaluations_sample]
-            print(
-                "Upload a single file and create a new Dataset to reference the file."
-            )
+            print("Upload a single file and create a new Dataset to reference the file.")
             dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
                 version=dataset_version,
@@ -70,7 +70,7 @@ async def main() -> None:
                 display_name="Sample Evaluation Async",
                 description="Sample evaluation for testing",
                 # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-                data=InputDataset(id=dataset.id),  # pyright: ignore
+                data=InputDataset(id=dataset.id),
                 evaluators={
                     "relevance": EvaluatorConfiguration(
                         id=EvaluatorIds.RELEVANCE.value,
@@ -111,8 +111,6 @@ async def main() -> None:
             print("List evaluations")
             async for evaluation in project_client.evaluations.list():
                 print(evaluation)
-
-            # [END evaluations_sample]
 
 
 if __name__ == "__main__":
