@@ -1145,14 +1145,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is not None and "partitionKeyRangeId" in options:
             partition_key_range_id = options["partitionKeyRangeId"]
 
-        return self._QueryChangeFeed(
-            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook,
-            **kwargs)
+        return self._QueryChangeFeed(collection_link, options, partition_key_range_id,response_hook=response_hook,
+                                     **kwargs)
 
     def _QueryChangeFeed(
         self,
         collection_link: str,
-        resource_type: str,
         options: Optional[Mapping[str, Any]] = None,
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
@@ -1178,14 +1176,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             options = dict(options)
 
-        resource_key_map = {"Documents": http_constants.ResourceType.Document}
-
-        # For now, change feed only supports Documents and Partition Key Range resource type
-        if resource_type not in resource_key_map:
-            raise NotImplementedError(resource_type + " change feed query is not supported.")
-
-        resource_key = resource_key_map[resource_type]
-        path = base.GetPathFromLink(collection_link, resource_key)
+        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
@@ -1196,9 +1187,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options = new_options
             return self.__QueryFeed(
                 path,
-                resource_key,
+                http_constants.ResourceType.Document,
                 collection_id,
-                lambda r: r[resource_type],
+                lambda r: r["Documents"],
                 lambda _, b: b,
                 None,
                 options,
