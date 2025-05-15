@@ -60,11 +60,7 @@
   - Added enum `UpgradeAvailable`
   - Added model `UserAssignedIdentity`
   - Model `ServicesOperations` added method `begin_upgrade`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
-  - Method `PrivateEndpointConnectionsOperations.update` has a new overload `def update(self: None, resource_group_name: str, search_service_name: str, private_endpoint_connection_name: str, private_endpoint_connection: IO[bytes], search_management_request_options: Optional[SearchManagementRequestOptions], content_type: str)`
-  - Method `ServicesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, search_service_name: str, service: IO[bytes], search_management_request_options: Optional[SearchManagementRequestOptions], content_type: str)`
-  - Method `ServicesOperations.update` has a new overload `def update(self: None, resource_group_name: str, search_service_name: str, service: IO[bytes], search_management_request_options: Optional[SearchManagementRequestOptions], content_type: str)`
-  - Method `SharedPrivateLinkResourcesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, search_service_name: str, shared_private_link_resource_name: str, shared_private_link_resource: IO[bytes], search_management_request_options: Optional[SearchManagementRequestOptions], content_type: str)`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ## 9.2.0b3 (2025-04-02)
 
