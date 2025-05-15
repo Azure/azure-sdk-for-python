@@ -33,8 +33,8 @@ USAGE:
     3. Set these environment variables with your own values:
          PROJECT_ENDPOINT - your Azure AI Agents endpoint
          MODEL_DEPLOYMENT_NAME - the deployment name used for the worker
-                                 agents (“TimeWeatherAgent”, “SendEmailAgent”,
-                                 and “TemperatureAgent”)
+                                 agents (`TimeWeatherAgent`, `SendEmailAgent`,
+                                 and `TemperatureAgent`)
 """
 
 import os

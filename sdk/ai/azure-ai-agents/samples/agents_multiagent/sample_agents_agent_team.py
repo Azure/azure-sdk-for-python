@@ -13,7 +13,7 @@ DESCRIPTION:
         • two worker agents - “Coder” and “Reviewer”, defined in the code below
 
     IMPORTANT - leader-agent model configuration
-        `agent_team_config.yaml` contains the key  TEAM_LEADER_MODEL.
+        `utils/agent_team_config.yaml` contains the key  TEAM_LEADER_MODEL.
         Its value must be the name of a **deployed** model in your Azure AI
         project (e.g. "gpt-4o-mini").  
         If this model deployment is not available, AgentTeam cannot instantiate
@@ -30,7 +30,7 @@ USAGE:
     3. Set these environment variables with your own values:
          PROJECT_ENDPOINT - the Azure AI Agents endpoint.
          MODEL_DEPLOYMENT_NAME - the deployment name used for the worker
-                                 agents (“Coder” and “Reviewer”)
+                                 agents (`Coder` and `Reviewer`)
 """
 
 import os
