@@ -7,10 +7,6 @@ import re
 import os
 from typing import Dict, TypeVar, Union
 
-if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
-    from promptflow.core._flow import AsyncPrompty
-else:
-    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
@@ -66,6 +62,11 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             self._DEFAULT_OPEN_API_VERSION,
             user_agent,
         )
+
+        if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
+            from promptflow.core._flow import AsyncPrompty
+        else:
+            from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
         self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config,
                                        is_reasoning_model=self._is_reasoning_model)

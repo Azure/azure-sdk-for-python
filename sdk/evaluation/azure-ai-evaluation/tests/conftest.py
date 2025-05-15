@@ -1,18 +1,16 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 
-import re
 import os
 import json
-import multiprocessing
 import time
 from datetime import datetime, timedelta
 import jwt
 from copy import deepcopy
 from logging import Logger
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
-from unittest.mock import patch
+from typing import Any, Dict, Final, Generator, Mapping, Optional
+from unittest.mock import AsyncMock, Mock, patch
+from inspect import isclass, isfunction
 
 import pytest
 from ci_tools.variables import in_ci
@@ -617,3 +615,58 @@ def run_from_temp_dir(tmp_path):
     os.chdir(tmp_path)
     yield
     os.chdir(original_cwd)
+
+
+@pytest.fixture
+def restore_env_vars():
+    """Fixture to restore environment variables after the test."""
+    original_vars = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(original_vars)
+
+
+@pytest.fixture
+def prompty_patched_credential(mocker: MockerFixture, azure_cred: TokenCredential) -> Optional[AsyncMock]:
+    """Injects a fake credential for tests that rely on Prompty getting credentials."""
+
+    mocked_method: Optional[AsyncMock] = None
+
+    if not is_live():
+        from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
+        class_to_patch = AsyncAzureTokenProvider
+        assert isclass(class_to_patch)
+        method_to_patch = class_to_patch._initialize_async
+        assert isfunction(method_to_patch)
+
+        mocked_method = AsyncMock(spec=method_to_patch, return_value=azure_cred)
+        mocker.patch.object(
+            target=class_to_patch,
+            attribute=method_to_patch.__name__,
+            new_callable=lambda: mocked_method)
+
+    return mocked_method
+
+@pytest.fixture
+def legacy_prompty_patched_credential(mocker: MockerFixture, azure_cred: TokenCredential) -> Optional[Mock]:
+    """Injects a fake credential for tests that rely on the legacy Prompty getting credentials."""
+
+    from azure.ai.evaluation._legacy._adapters._check import HAS_LEGACY_SDK
+    mocked_method: Optional[Mock] = None
+
+    if not is_live() and HAS_LEGACY_SDK:
+        from promptflow._core.token_provider import AzureTokenProvider
+        from promptflow._utils.credential_utils import get_default_azure_credential
+        class_to_patch = AzureTokenProvider
+        assert isclass(class_to_patch)
+        method_to_patch = get_default_azure_credential
+        assert isfunction(method_to_patch)
+
+        # Here we patch the imported get_default_azure_credential method in the AzureTokenProvider file/module
+        # to return the test credential hence the odd target string
+        mocked_method = Mock(spec=method_to_patch, return_value=azure_cred)
+        mocker.patch(
+            target=f"{class_to_patch.__module__}.{method_to_patch.__name__}",
+            new_callable=lambda: mocked_method)
+
+    return mocked_method
