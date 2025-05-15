@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2025-05-15)
+
+### Features Added
+
+- First stable release of Azure AI Agents SDK.
+
 ## 1.0.0b3 (2025-05-14)
 
 ### Features Added
