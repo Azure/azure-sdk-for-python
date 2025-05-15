@@ -50,7 +50,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils.isdir",
         return_value=True,
     )
-    def test_diagnostics_appsvc_attach(self, mock_isdir):
+    def test_diagnostics_app_service_attach(self, mock_isdir):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
