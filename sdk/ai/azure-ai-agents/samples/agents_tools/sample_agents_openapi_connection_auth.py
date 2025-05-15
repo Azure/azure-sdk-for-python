@@ -28,7 +28,8 @@ USAGE:
     pip install azure-ai-agents azure-identity jsonref
 
     Set this environment variables with your own values:
-    PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                       page of your Azure AI Foundry portal.
     OPENAPI_CONNECTION_ID - the connection ID for the OpenAPI connection, taken from Azure AI Foundry.
     MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Agents against
 """
