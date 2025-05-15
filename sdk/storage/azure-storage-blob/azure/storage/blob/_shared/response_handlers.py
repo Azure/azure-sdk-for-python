@@ -174,10 +174,10 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 
-    if additional_data.get('headername') == 'x-ms-version':
+    if additional_data.get('headername') == 'x-ms-version' and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
         sv_docs_url = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-service"
-        error_message += ("\nThe provided service version is not enabled on this storage account. " +
-                          f"Please see {sv_docs_url} for additional information.\n")
+        error_message = ("The provided service version is not enabled on this storage account." +
+                         f"Please see {sv_docs_url} for additional information.\n" + error_message)
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:
