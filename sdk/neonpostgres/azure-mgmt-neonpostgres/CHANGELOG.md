@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2025-05-13)
+## 2.0.0 (2025-05-15)
 
 ### Breaking Changes
 
@@ -23,7 +23,7 @@
   - Deleted or renamed method `NeonRolesOperations.delete`
   - Deleted or renamed method `NeonRolesOperations.get`
   - Deleted or renamed method `ProjectsOperations.begin_update`
-  - Deleted or renamed model `ModelsOperations`
+  - Deleted or renamed operation group `ModelsOperations`
 
 ## 1.0.0 (2025-04-21)
 
