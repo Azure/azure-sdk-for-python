@@ -135,33 +135,33 @@ try:
     print(f"Creating the experiment metric {example_metric_id}...")
     # Using upsert to create the metric with If-None-Match header
     create_response = client.create_or_update_metric(
-        metric_id=example_metric_id, 
-        metric=example_metric,
+        experiment_metric_id=example_metric_id, 
+        resource=example_metric,
         match_condition=None,  # This ensures If-None-Match: * header is sent
         etag=None
     )
     
-    print(f"Experiment metric {create_response.id} created, etag: {create_response.etag}.")
+    print(f"Experiment metric {create_response.id} created, etag: {create_response.e_tag}.")
     
     # [Step 4] Deactivate the experiment metric and update the description
-    updated_metric = ExperimentMetric(
-        lifecycle=LifecycleStage.INACTIVE,  # pauses computation of this metric
-        description="No longer need to compute this."
-    )
+    updated_metric = {
+        "lifecycle": LifecycleStage.INACTIVE,  # pauses computation of this metric
+        "description": "No longer need to compute this."
+    }
     
     update_response = client.create_or_update_metric(
-        metric_id=example_metric_id,
-        metric=updated_metric,
-        etag=create_response.etag,  # Ensures If-Match header is sent
+        experiment_metric_id=example_metric_id,
+        resource=updated_metric,
+        etag=create_response.e_tag,  # Ensures If-Match header is sent
         match_condition=None  # Not specifying match_condition as we're using etag
     )
     
-    print(f"Updated metric: {update_response.id}, etag: {update_response.etag}.")
+    print(f"Updated metric: {update_response.id}, etag: {update_response.e_tag}.")
     
     # [Step 5] Delete the experiment metric
     client.delete_metric(
-        metric_id=example_metric_id,
-        etag=update_response.etag  # Ensures If-Match header is sent
+        experiment_metric_id=example_metric_id,
+        etag=update_response.e_tag  # Ensures If-Match header is sent
     )
     
     print(f"Deleted metric: {example_metric_id}.")
