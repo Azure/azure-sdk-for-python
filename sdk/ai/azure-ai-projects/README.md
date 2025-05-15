@@ -351,117 +351,49 @@ project_client.indexes.delete(name=index_name, version=index_version)
 <!-- END SNIPPET -->
 
 ### Evaluation
+Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
-Evaluation in Azure AI Project client library is designed to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
-#### Evaluator
+<!-- SNIPPET:sample_evaluations.evalautions_sample-->
 
-Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
-
-Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Foundry for using them in the cloud.
-
-More details on built-in and custom evaluators can be found [here][evaluators].
-
-#### Run Evaluation in the cloud
-
-To run evaluation in the cloud the following are needed:
-
-* Evaluators
-* Data to be evaluated
-* [Optional] Azure Open AI model.
-
-##### Evaluators
-
-For running evaluator in the cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
 
 ```python
-# pip install azure-ai-evaluation
-
-from azure.ai.evaluation import RelevanceEvaluator
-
-evaluator_id = RelevanceEvaluator.id
-```
-
-##### Data to be evaluated
-
-Evaluation in the cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
-
-```python
-# Upload data for evaluation and get dataset id
-data_id, _ = project_client.upload_file("<data_file.jsonl>")
-```
-
-##### [Optional] Azure OpenAI Model
-
-Azure AI Foundry project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
-
-```python
-default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-```
-
-##### Example Remote Evaluation
-
-```python
-import os
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
-
-
-# Create project client
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["PROJECT_ENDPOINT"],
+print(
+    f"Create Evaluation using dataset with id {dataset_id} and project {project_endpoint}".
 )
 
-# Upload data for evaluation and get dataset id
-data_id, _ = project_client.upload_file("<data_file.jsonl>")
+from azure.ai.projects.models import Evaluation, InputDataset, EvaluatorConfiguration, EvaluatorIds
 
-deployment_name = "<deployment_name>"
-api_version = "<api_version>"
-
-# Create an evaluation
 evaluation = Evaluation(
-    display_name="Remote Evaluation",
-    description="Evaluation of dataset",
-    data=Dataset(id=data_id),
+    display_name="Sample Evaluation Test",
+    description="Sample evaluation for testing",
+    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+    data=InputDataset(id=dataset_id),
     evaluators={
-        "f1_score": EvaluatorConfiguration(
-            id=F1ScoreEvaluator.id,
-        ),
-        "relevance": EvaluatorConfiguration(
-            id=RelevanceEvaluator.id,
+        "violence": EvaluatorConfiguration(
+            id=EvaluatorIds.VIOLENCE.value,
             init_params={
-                "model_config": default_connection.to_evaluator_model_config(
-                    deployment_name=deployment_name, api_version=api_version
-                )
+                "azure_ai_project": project_endpoint,
             },
         ),
-        "violence": EvaluatorConfiguration(
-            id=ViolenceEvaluator.id,
-            init_params={"azure_ai_project": project_client.scope},
+        "bleu_score": EvaluatorConfiguration(
+            id=EvaluatorIds.BLEU_SCORE.value,
         ),
     },
 )
 
+project_client.evaluations.create(evaluation)
+print(evaluation)
 
-evaluation_response = project_client.evaluations.create(
-    evaluation=evaluation,
-)
+print(f"Get an evaluation with name {name}")
+evaluation = project_client.evaluations.get(evaluation.name)
+print(evaluation)
 
-# Get evaluation
-get_evaluation_response = project_client.evaluations.get(evaluation_response.id)
-
-print("----------------------------------------------------------------")
-print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
-print("Evaluation status: ", get_evaluation_response.status)
-if isinstance(get_evaluation_response.properties, dict):
-    print("AI Foundry URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
-print("----------------------------------------------------------------")
+print("List all evaluation")
+for evaluation in project_client.evaluations.list():
+    print(evaluation)
 ```
-
-NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
 
 ## Troubleshooting
 
