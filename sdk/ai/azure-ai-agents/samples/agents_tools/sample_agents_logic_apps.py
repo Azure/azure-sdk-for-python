@@ -20,7 +20,7 @@ USAGE:
  
     Before running the sample:
  
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-agents azure-identity azure-mgmt-logic
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
