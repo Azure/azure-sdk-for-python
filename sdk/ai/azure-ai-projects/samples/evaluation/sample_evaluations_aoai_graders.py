@@ -32,7 +32,7 @@ from azure.ai.projects.models import (
     InputDataset,
     EvaluatorConfiguration,
     EvaluatorIds,
-    # DatasetVersion,
+    DatasetVersion,
 )
 
 from dotenv import load_dotenv
@@ -45,28 +45,31 @@ endpoint = os.environ[
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
+dataset_version = os.environ.get("DATASET_VERSION", "1.0")
+
+# Construct the paths to the data folder and data file used in this sample
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
+data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # TODO : Uncomment the following lines once dataset creation works
-        # print(
-        #     "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
-        # )
-        # dataset: DatasetVersion = project_client.datasets.upload_file(
-        #     name=dataset_name,
-        #     version="1",
-        #     file="./samples_folder/sample_data_evaluation.jsonl",
-        # )
-        # print(dataset)
+        dataset: DatasetVersion = project_client.datasets.upload_file(
+            name=dataset_name,
+            version=dataset_version,
+            file_path=data_file,
+        )
+        print(dataset)
 
         print("Create an evaluation")
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation Test",
             description="Sample evaluation for testing",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-            data=InputDataset(id="<>"),
+            data=InputDataset(id=dataset.id),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
