@@ -1,0 +1,6 @@
+{
+  "commit": "d317a8b4c6db37ed4970eda5196f0dd8f7e6cb39",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/liftrmongodb/MongoDB.Atlas.Management",
+  "@azure-tools/typespec-python": "0.44.2"
+}
