@@ -1,6 +1,16 @@
 # Release History
 
-## 11.6.0b12 (Unreleased)
+## 11.6.0b13 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.6.0b12 (2025-05-14)
 
 ### Features Added
 
@@ -11,6 +21,7 @@
 - Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
 - Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
 - Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
+- Added property `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`.
 
 - Added new models:
     - `azure.search.documents.models.QueryResultDocumentInnerHit`
@@ -37,9 +48,9 @@
     - `azure.search.documents.indexes.models.RankingOrder`
     - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
 
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Fixed the issue batching in upload_documents() did not work.    #40157
 
 ### Other Changes
 

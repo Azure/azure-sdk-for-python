@@ -53,6 +53,16 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize with threshold and call a GroundednessEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START groundedness_evaluator]
+            :end-before: [END groundedness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call GroundednessEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.

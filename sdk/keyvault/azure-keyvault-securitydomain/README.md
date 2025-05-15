@@ -131,7 +131,7 @@ NEW_VAULT_URL = os.environ["NEW_VAULT_URL"]
 upload_client = SecurityDomainClient(vault_url=NEW_VAULT_URL, credential=credential)
 
 transfer_key: TransferKey = upload_client.get_transfer_key()
-assert transfer_key.transfer_key_jwk
+assert transfer_key.transfer_key
 ```
 
 ### Upload a security domain
@@ -141,9 +141,7 @@ example for disaster recovery. Like the download operation this will activate a 
 will return None if successful (and an error if unsuccessful) instead of the security domain object.
 
 ```python
-from azure.keyvault.securitydomain.models import SecurityDomainOperationStatus
-
-result: SecurityDomainOperationStatus = upload_client.begin_upload(security_domain=result).result()
+upload_client.begin_upload(security_domain=result).wait()
 print("The managed HSM has been successfully restored with the security domain.")
 ```
 

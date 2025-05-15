@@ -183,7 +183,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
             try:
                 handler.setFormatter(logging_formatter)
             except Exception as ex:  # pylint: disable=broad-except
-                _logger.warning(
+                _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Exception occurred when adding logging Formatter: %s.",
                     ex,
                 )
@@ -281,7 +281,8 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
-        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor")
+        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor"),
+        ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
     ]
 
     for module_path, class_name in instrumentors:
