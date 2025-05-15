@@ -44,14 +44,8 @@
   - Added enum `VolumeLanguage`
   - Model `VolumesOperations` added method `begin_list_quota_report`
   - Model `VolumesOperations` added method `begin_split_clone_from_parent`
-  - Added model `BucketsOperations`
-  - Added model `NetAppResourceQuotaLimitsAccountOperations`
-  - Method `BucketsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Bucket, content_type: str)`
-  - Method `BucketsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: IO[bytes], content_type: str)`
-  - Method `BucketsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Optional[BucketPatch], content_type: str)`
-  - Method `BucketsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `BucketsOperations.generate_credentials` has a new overload `def generate_credentials(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: BucketCredentialsExpiry, content_type: str)`
-  - Method `BucketsOperations.generate_credentials` has a new overload `def generate_credentials(self: None, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, bucket_name: str, body: IO[bytes], content_type: str)`
+  - Added operation group `BucketsOperations`
+  - Added operation group `NetAppResourceQuotaLimitsAccountOperations`
 
 ### Breaking Changes
 
