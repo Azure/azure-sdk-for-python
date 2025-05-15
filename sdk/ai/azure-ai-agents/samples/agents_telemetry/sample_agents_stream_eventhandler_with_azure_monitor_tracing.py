@@ -85,11 +85,6 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
-# enable additional instrumentations
-from azure.ai.agents.telemetry import enable_telemetry
-
-enable_telemetry()
-
 with tracer.start_as_current_span(scenario):
     with agents_client:
         # Create an agent and run stream with event handler

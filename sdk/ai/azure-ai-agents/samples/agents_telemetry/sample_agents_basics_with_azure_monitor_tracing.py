@@ -28,7 +28,7 @@ USAGE:
        can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
 
-import os, time
+import os
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
@@ -45,11 +45,6 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 # Enable Azure Monitor tracing
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
-# enable additional instrumentations
-from azure.ai.agents.telemetry import enable_telemetry
-
-enable_telemetry()
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

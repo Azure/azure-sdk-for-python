@@ -1084,12 +1084,7 @@ class _AIAgentsInstrumentorPreview:
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
 
-        span = start_span(
-            operation_name,
-            server_address=server_address,
-            thread_id=thread_id,
-            run_id=run_id
-        )
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
 
         if span is None:
             return function(*args, **kwargs)
@@ -1112,12 +1107,7 @@ class _AIAgentsInstrumentorPreview:
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
 
-        span = start_span(
-            operation_name,
-            server_address=server_address,
-            thread_id=thread_id,
-            run_id=run_id
-        )
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
 
         if span is None:
             return await function(*args, **kwargs)
@@ -1937,6 +1927,7 @@ class _AIAgentsInstrumentorPreview:
         module = module if module != "builtins" else ""
         error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
         self._set_attributes(span, ("error.type", error_type))
+
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def __init__(
