@@ -10,7 +10,7 @@ DESCRIPTION:
     The team consists of
         • one leader agent - automatically created by AgentTeam from the
           configuration in `utils/agent_team_config.yaml`
-        • two worker agents - “Coder” and “Reviewer”, defined in the code below
+        • two worker agents - `Coder` and `Reviewer`, defined in the code below
 
     IMPORTANT - leader-agent model configuration
         `utils/agent_team_config.yaml` contains the key  TEAM_LEADER_MODEL.

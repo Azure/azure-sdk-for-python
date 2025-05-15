@@ -12,8 +12,8 @@ DESCRIPTION:
     The team consists of
         • one leader agent - created automatically from the configuration in
           `utils/agent_team_config.yaml`
-        • three worker agents - “TimeWeatherAgent”, “SendEmailAgent”, and
-          “TemperatureAgent”, each defined in the code below with its own tools
+        • three worker agents - `TimeWeatherAgent`, `SendEmailAgent`, and
+          `TemperatureAgent`, each defined in the code below with its own tools
 
     IMPORTANT - leader-agent model configuration
         `utils/agent_team_config.yaml` contains the key TEAM_LEADER_MODEL.
