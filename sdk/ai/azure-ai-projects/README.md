@@ -1,7 +1,7 @@
 # Azure AI Projects client library for Python
 
-The AI Projects client library (in preview) provides easy access to resources in your Azure AI Foundry project.
-Use it to:
+The AI Projects client library (in preview) is part of the Azure AI Foundry SDK, and provides easy access to
+resources in your Azure AI Foundry Project. Use it to:
 
 * **Create and run Agents** using the `.agents` property on the client.
 * **Get an AzureOpenAI client** using the `.inference.get_azure_openai_client` method.
@@ -15,7 +15,11 @@ Use it to:
 * **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
 > **Note:** There have been significant updates with the release of version 1.0.0b11, including breaking changes.
-please see new code examples below and the samples folder.
+please see new code snippets below and the samples folder. Agents are now implemented in a separate package `azure-ai-agents`
+which will get installed automatically when you install `azure-ai-projects`. You can continue using ".agents"
+operations on the `AIProjectsClient` to create, run and delete agents, as before.
+See [full set of Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples)
+in their new location. Also see the [change log for the 1.0.0b11 release](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/CHANGELOG.md).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]

@@ -7,14 +7,15 @@ Please see new samples and package README.md file.
 
 ### Features added
 
-* `.deployments` methods to enumerate AI models deployed to your AI Foundry project.
+* `.deployments` methods to enumerate AI models deployed to your AI Foundry Project.
 * `.datasets` methods to upload documents and reference them. To be used with Evaluations.
 * `.indexes` methods to handle your Search Indexes.
 
 ### Breaking changes
 
-* Azure AI Foundry project endpoint is now required to construct the `AIProjectClient`. Find it in your AI Foundry Project
-overview page. The factory method `from_connection_string` was removed.
+* Azure AI Foundry Project endpoint is now required to construct the `AIProjectClient`. It has the form
+`https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. Find it in your AI Foundry Project
+Overview page. The factory method `from_connection_string` was removed.
 * Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
 `AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
 See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.
