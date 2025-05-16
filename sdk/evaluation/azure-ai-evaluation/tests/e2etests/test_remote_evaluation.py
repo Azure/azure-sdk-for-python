@@ -13,9 +13,9 @@ from azure.ai.evaluation import (
     AzureOpenAIGrader,
 )
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import Evaluation, InputDataset
+from azure.ai.projects.models import Evaluation, Dataset
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import Evaluation, InputDataset, EvaluatorConfiguration
+from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
 
 
 # TODO check out https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/evaluation/test_evaluation.py
@@ -76,7 +76,7 @@ class TestRemoteEvaluation():
         )
 
         from azure.ai.projects import AIProjectClient
-        from azure.ai.projects.models import Evaluation, InputDataset
+        from azure.ai.projects.models import Evaluation, Dataset
         from azure.identity import DefaultAzureCredential
         # Note you might want to change the run name to avoid confusion with others
         run_name = "Test Remote AOAI Evaluation"
@@ -89,7 +89,7 @@ class TestRemoteEvaluation():
                 "string": string_grader_config,
                 "similarity": sim_grader_config,
             },
-            data=InputDataset(id=dataset_id),
+            data=Dataset(id=dataset_id),
         )
         project_client = AIProjectClient.from_connection_string(
             credential=DefaultAzureCredential(),
