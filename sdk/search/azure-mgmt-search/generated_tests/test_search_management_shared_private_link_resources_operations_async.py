@@ -38,9 +38,17 @@ class TestSearchManagementSharedPrivateLinkResourcesOperationsAsync(AzureMgmtRec
                         "resourceRegion": "str",
                         "status": "str",
                     },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "type": "str",
                 },
-                api_version="2025-02-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -54,7 +62,7 @@ class TestSearchManagementSharedPrivateLinkResourcesOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             search_service_name="str",
             shared_private_link_resource_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +76,7 @@ class TestSearchManagementSharedPrivateLinkResourcesOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 search_service_name="str",
                 shared_private_link_resource_name="str",
-                api_version="2025-02-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,7 +89,7 @@ class TestSearchManagementSharedPrivateLinkResourcesOperationsAsync(AzureMgmtRec
         response = self.client.shared_private_link_resources.list_by_service(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
