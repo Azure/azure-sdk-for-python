@@ -1,14 +1,19 @@
 # Release History
 
-## 4.10.0b2 (Unreleased)
+## 4.10.0 (2025-06-10)
 
 ### Features Added
+
+- Added support for service API version `7.6`
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Key Vault API version `7.6` is now the default
+- (From 4.10.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.10.0b1 (2025-03-20)
 

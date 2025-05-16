@@ -1,14 +1,22 @@
 # Release History
 
-## 4.6.0b2 (Unreleased)
+## 4.6.0 (2025-06-10)
 
 ### Features Added
+
+- Added support for service API version `7.6`
+- (From 4.6.0b1) Added `KeyVaultBackupClient.begin_pre_backup` and `KeyVaultBackupClient.begin_pre_restore` methods for
+  checking if it is possible to perform a full key backup or full key restore
+  [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Key Vault API version `7.6` is now the default
+- (From 4.6.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.6.0b1 (2025-03-20)
 

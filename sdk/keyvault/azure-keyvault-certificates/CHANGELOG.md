@@ -1,14 +1,23 @@
 # Release History
 
-## 4.10.0b2 (Unreleased)
+## 4.10.0 (2025-06-10)
 
 ### Features Added
+
+- Added support for service API version `7.6`
+- (From 4.10.0b1) Added a `preserve_certificate_order` keyword-only argument when creating or importing certificates to
+  allow preserving a certificate chain's original order, and corresponding a `preserve_certificate_order` property to
+  `CertificateProperties` and `CertificateOperation` models
+  ([#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Key Vault API version `7.6` is now the default
+- (From 4.10.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.10.0b1 (2025-03-20)
 

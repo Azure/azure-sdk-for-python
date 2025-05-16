@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
 from typing import Any
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -16,10 +15,7 @@ from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 from .._generated import models as _models
 
-if sys.version_info < (3, 9):
-    from typing import Awaitable
-else:
-    from collections.abc import Awaitable
+from collections.abc import Awaitable
 
 
 class AsyncKeyVaultClientBase(object):
