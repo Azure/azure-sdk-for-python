@@ -68,6 +68,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             "rouge_3",
             "rouge_4",
             "rouge_5",
+            "rouge_l",
             "cosine",
         ],
         input: str,

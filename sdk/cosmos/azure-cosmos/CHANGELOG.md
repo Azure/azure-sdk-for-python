@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
 
 #### Other Changes
 * Added Client Generated Activity IDs to all Requests. Cosmos Diagnostics Logs will more clearly show the Activity ID for each request and response. [PR 41013](https://github.com/Azure/azure-sdk-for-python/pull/41013)

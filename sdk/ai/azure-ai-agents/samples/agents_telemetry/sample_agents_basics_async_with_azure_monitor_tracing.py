@@ -17,12 +17,13 @@ USAGE:
     pip install azure-ai-agents azure-identity opentelemetry-sdk azure-monitor-opentelemetry aiohttp
 
     Set these environment variables with your own values:
-    * PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    * PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                          page of your Azure AI Foundry portal.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
-    * AI_APPINSIGHTS_CONNECTION_STRING - Set to the connection string of your Application Insights resource.
+    * APPLICATIONINSIGHTS_CONNECTION_STRING - Set to the connection string of your Application Insights resource.
       This is used to send telemetry data to Azure Monitor. You can also get the connection string programmatically
       from AIProjectClient using the `telemetry.get_connection_string` method. A code sample showing how to do this
       can be found in the `sample_telemetry_async.py` file in the azure-ai-projects telemetry samples.
@@ -49,13 +50,8 @@ async def main() -> None:
         )
 
         # Enable Azure Monitor tracing
-        application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
+        application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
         configure_azure_monitor(connection_string=application_insights_connection_string)
-
-        # enable additional instrumentations
-        from azure.ai.agents.telemetry import enable_telemetry
-
-        enable_telemetry()
 
         with tracer.start_as_current_span(scenario):
             async with agents_client:
@@ -74,16 +70,7 @@ async def main() -> None:
                 )
                 print(f"Created message, message ID: {message.id}")
 
-                run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-
-                # Poll the run as long as run status is queued or in progress
-                while run.status in ["queued", "in_progress", "requires_action"]:
-                    # Wait for a second
-                    time.sleep(1)
-                    run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-
-                    print(f"Run status: {run.status}")
-
+                run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
                 print(f"Run completed with status: {run.status}")
 
                 await agents_client.delete_agent(agent.id)

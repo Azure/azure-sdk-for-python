@@ -22,7 +22,8 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    * PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                          page of your Azure AI Foundry portal.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -37,7 +38,6 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import ListSortOrder, MessageTextContent
-from azure.ai.agents.telemetry import enable_telemetry
 from azure.identity.aio import DefaultAzureCredential
 from opentelemetry import trace
 import os
@@ -76,16 +76,7 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await agent_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-
-            # Poll the run as long as run status is queued or in progress
-            while run.status in ["queued", "in_progress", "requires_action"]:
-                # Wait for a second
-                time.sleep(1)
-                run = await agent_client.runs.get(thread_id=thread.id, run_id=run.id)
-
-                print(f"Run status: {run.status}")
-
+            run = await agent_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
             print(f"Run completed with status: {run.status}")
 
             await agent_client.delete_agent(agent.id)
