@@ -167,6 +167,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARING_VIOLATION = "SharingViolation"
     SHARE_SNAPSHOT_IN_PROGRESS = "ShareSnapshotInProgress"
     SHARE_SNAPSHOT_COUNT_EXCEEDED = "ShareSnapshotCountExceeded"
+    SHARE_SNAPSHOT_NOT_FOUND = "ShareSnapshotNotFound"
     SHARE_SNAPSHOT_OPERATION_NOT_SUPPORTED = "ShareSnapshotOperationNotSupported"
     SHARE_HAS_SNAPSHOTS = "ShareHasSnapshots"
     CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"
