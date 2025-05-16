@@ -631,7 +631,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
-        dtmf_stop_tones: Optional[List[str or "DtmfTone"]] = None,
+        dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
         speech_language: Optional[str] = None,
         choices: Optional[List["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
@@ -978,15 +978,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def update_transcription(
         self,
-        locale: str,
         *,
+        locale: str,
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs) -> None:
         """API to change transcription language.
 
-        :param locale: Defines new locale for transcription.
+        :keyword locale: Defines new locale for transcription.
+        :paramtype locale: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
@@ -1107,7 +1108,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_callback_uri=operation_callback_url,
             operation_context=operation_context
         )
-        self._call_media_client.start_media_streaming(
+        await self._call_media_client.start_media_streaming(
             self._call_connection_id,
             start_media_streaming_request,
             **kwargs)
@@ -1137,7 +1138,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_callback_uri=operation_callback_url,
             operation_context=operation_context
             )
-        self._call_media_client.stop_media_streaming(
+        await self._call_media_client.stop_media_streaming(
             self._call_connection_id,
             stop_media_streaming_request,
             **kwargs

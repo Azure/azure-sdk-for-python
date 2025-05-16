@@ -391,6 +391,7 @@ class MediaStreamingOptions:
 
     def __init__(
         self,
+        *
         transport_url: str,
         transport_type: Union[str, 'StreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
@@ -407,7 +408,7 @@ class MediaStreamingOptions:
         self.enable_bidirectional = enable_bidirectional
         self.audio_format = audio_format
 
-    def to_generated(self):
+    def _to_generated(self):
         return WebSocketMediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
@@ -452,6 +453,7 @@ class TranscriptionOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
         transport_type: Union[str, "StreamingTransportType"],
         locale: str,
@@ -466,7 +468,7 @@ class TranscriptionOptions:
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
 
-    def to_generated(self):
+    def _to_generated(self):
         return WebSocketTranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,

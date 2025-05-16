@@ -610,11 +610,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
-        dtmf_stop_tones: Optional[List[Union[str, "DtmfTone"]]] = None,
+        dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
         speech_language: Optional[str] = None,
         choices: Optional[List["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs,
     ) -> None:
         """Recognize inputs from specific participant in this call.
@@ -952,16 +953,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def update_transcription(
         self,
-        locale: str,
         *,
+        locale: str,
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs) -> None:
         """API to change transcription language.
 
-        :param locale: Defines new locale for transcription.
-        :type locale: str
+        :keyword locale: Defines new locale for transcription.
+        :paramtype locale: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
