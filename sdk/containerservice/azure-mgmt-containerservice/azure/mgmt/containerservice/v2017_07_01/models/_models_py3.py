@@ -8,7 +8,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -56,9 +56,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -190,7 +190,7 @@ class ContainerService(Resource):
          ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceDiagnosticsProfile
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.orchestrator_profile = orchestrator_profile
         self.custom_profile = custom_profile
         self.service_principal_profile = service_principal_profile
@@ -385,7 +385,7 @@ class ContainerServiceAgentPoolProfile(_serialization.Model):
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
         self.dns_prefix = dns_prefix
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
         self.ports = ports
         self.storage_profile = storage_profile
         self.vnet_subnet_id = vnet_subnet_id
@@ -507,7 +507,7 @@ class ContainerServiceListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ContainerServiceMasterProfile(_serialization.Model):
@@ -679,7 +679,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
         self.vnet_subnet_id = vnet_subnet_id
         self.first_consecutive_static_ip = first_consecutive_static_ip
         self.storage_profile = storage_profile
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
 
 
 class ContainerServiceOrchestratorProfile(_serialization.Model):
@@ -864,7 +864,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.storage_uri = None
+        self.storage_uri: Optional[str] = None
 
 
 class ContainerServiceWindowsProfile(_serialization.Model):

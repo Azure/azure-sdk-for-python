@@ -1,5 +1,27 @@
 # Release History
 
+## 36.0.0 (2025-05-15)
+
+### Features Added
+
+  - Added operation group NamespacesOperations
+  - Model AgentPoolUpgradeSettings has a new parameter max_unavailable
+  - Model AgentPoolUpgradeSettings has a new parameter undrainable_node_behavior
+  - Model AutoScaleProfile has a new parameter size
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManualScaleProfile has a new parameter size
+
+### Breaking Changes
+
+  - Model AutoScaleProfile no longer has parameter os_disk_size_gb
+  - Model AutoScaleProfile no longer has parameter os_disk_type
+  - Model AutoScaleProfile no longer has parameter sizes
+  - Model ManagedCluster no longer has parameter enable_pod_security_policy
+  - Model ManualScaleProfile no longer has parameter os_disk_size_gb
+  - Model ManualScaleProfile no longer has parameter os_disk_type
+  - Model ManualScaleProfile no longer has parameter sizes
+
 ## 35.0.0 (2025-04-14)
 
 ### Features Added
