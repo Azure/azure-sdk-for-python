@@ -72,7 +72,7 @@ def retry_hook(settings, **kwargs):
 # respect the Retry-After header, whether this header is present, and
 # whether the returned status code is on the list of status codes to
 # be retried upon on the presence of the aforementioned header)
-def is_retry(response, mode):
+def is_retry(response, mode):  # pylint: disable=too-many-return-statements
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -84,11 +84,11 @@ def is_retry(response, mode):
             # Response code 408 is a timeout and should be retried.
             return True
         if status >= 400:
-            error_code = response.http_response.headers.get('x-ms-copy-source-error-code')
+            error_code = response.http_response.headers.get("x-ms-copy-source-error-code")
             if error_code in [
                 StorageErrorCode.OPERATION_TIMED_OUT,
                 StorageErrorCode.INTERNAL_ERROR,
-                StorageErrorCode.SERVER_BUSY
+                StorageErrorCode.SERVER_BUSY,
             ]:
                 return True
         return False
