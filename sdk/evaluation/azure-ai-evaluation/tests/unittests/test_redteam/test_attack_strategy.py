@@ -5,18 +5,10 @@ Unit tests for attack_strategy module.
 import pytest
 from unittest.mock import MagicMock, patch
 
-try:
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-
-if has_pyrit:
-    from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestAttackStrategyEnum:
     """Test the AttackStrategy enum values and behavior."""
 
@@ -40,7 +32,6 @@ class TestAttackStrategyEnum:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestAttackStrategyCompose:
     """Test the AttackStrategy.Compose functionality."""
 

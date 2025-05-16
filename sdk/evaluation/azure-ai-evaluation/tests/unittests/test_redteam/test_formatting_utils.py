@@ -6,19 +6,12 @@ import pytest
 import math
 import json
 from unittest.mock import patch, MagicMock, mock_open
-try: 
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-
-if has_pyrit:
-    from azure.ai.evaluation.red_team._utils.formatting_utils import (
-        message_to_dict, get_strategy_name, get_flattened_attack_strategies,
-        get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
-    )
-    from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
-    from pyrit.models import ChatMessage
+from azure.ai.evaluation.red_team._utils.formatting_utils import (
+    message_to_dict, get_strategy_name, get_flattened_attack_strategies,
+    get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
+)
+from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+from pyrit.models import ChatMessage
 
 
 @pytest.fixture(scope="function")
@@ -31,7 +24,6 @@ def mock_chat_message():
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestMessageToDict:
     """Test message_to_dict function."""
 
@@ -45,7 +37,6 @@ class TestMessageToDict:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestStrategyNameFunctions:
     """Test strategy name handling functions."""
 
@@ -66,7 +57,6 @@ class TestStrategyNameFunctions:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestAttackStrategyFunctions:
     """Test attack strategy related functions."""
     
@@ -134,7 +124,6 @@ class TestAttackStrategyFunctions:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestScorecardFormatting:
     """Test scorecard formatting functions."""
     
@@ -208,7 +197,6 @@ class TestScorecardFormatting:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestNumericalHelpers:
     """Test numerical helper functions."""
 

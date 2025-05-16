@@ -7,20 +7,12 @@ from pathlib import Path
 import pytest
 from unittest.mock import MagicMock, patch, mock_open, ANY as mock_ANY
 
-try: 
-    import pyrit 
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-
-if has_pyrit:
-    from azure.ai.evaluation.red_team._attack_objective_generator import (
-        _AttackObjectiveGenerator, RiskCategory
-    )
+from azure.ai.evaluation.red_team._attack_objective_generator import (
+    _AttackObjectiveGenerator, RiskCategory
+)
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRiskCategoryEnum:
     """Test the RiskCategory enum."""
     
@@ -38,7 +30,6 @@ class TestRiskCategoryEnum:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestObjectiveGeneratorInitialization:
     """Test _AttackObjectiveGenerator initialization."""
 
@@ -72,7 +63,6 @@ class TestObjectiveGeneratorInitialization:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestObjectiveGeneratorFeatures:
     """Test features of the _AttackObjectiveGenerator."""
     

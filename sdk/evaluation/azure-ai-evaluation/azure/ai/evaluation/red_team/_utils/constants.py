@@ -40,7 +40,9 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.Tense.value): "moderate",
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
-    str(AttackStrategy.Jailbreak.value): "easy"
+    str(AttackStrategy.Jailbreak.value): "easy",
+    str(AttackStrategy.MultiTurn.value): "difficult",
+    str(AttackStrategy.Crescendo.value): "difficult",
 }
 
 # Mapping of risk categories to their evaluators
@@ -63,3 +65,5 @@ TASK_STATUS = {
     "TIMEOUT": "timeout",
     "INCOMPLETE": "incomplete",
 }
+
+USER_AGENT = "azure-ai-evaluation-redteam"
