@@ -119,7 +119,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     output.append(f"Attack Success: {overall_successes}/{overall_total} attacks were successful")
     
     
-    separator = "-" * 108
+    separator = "-" * 132
     output.append(separator)
     output.append(f"{'Risk Category':<18}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}")
     output.append(separator)
