@@ -351,24 +351,18 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Query with missing weights should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-        # Weighted RRF query with an extra weight
-        query_extra_weight = """
-            SELECT TOP 10 c.index, c.title FROM c
-            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1, 1])
-        """
-        results_extra_weight = self.test_container.query_items(query_extra_weight)
-        result_list_extra_weight = [res['index'] async for res in results_extra_weight]
 
-        # Weighted RRF query with just two weights
-        query_two_weights = """
-            SELECT TOP 10 c.index, c.title FROM c
-            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1])
-        """
-        results_two_weights = self.test_container.query_items(query_two_weights)
-        result_list_two_weights = [res['index'] async for res in results_two_weights]
-
-        # Assertions
-        assert result_list_extra_weight == result_list_two_weights, "Results with extra weights should match results with correct amount of weights."
+        try:
+            # Weighted RRF query with an extra weight
+            query_extra_weight = """
+                SELECT TOP 10 c.index, c.title FROM c
+                ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1, 1])
+            """
+            results_extra_weight = self.test_container.query_items(query_extra_weight)
+            [item async for item in results_extra_weight]
+            pytest.fail("Query with extra weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
     async def test_weighted_reciprocal_rank_fusion_with_response_hook_async(self):
         response_hook = test_config.ResponseHookCaller()

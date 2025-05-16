@@ -9,7 +9,6 @@ from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
-
 # pylint: disable=protected-access
 RRF_CONSTANT = 60
 
