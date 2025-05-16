@@ -52,6 +52,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -67,26 +68,28 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "pyyaml>=5.1.0",
-        "msrest>=0.6.18",
+        "pyyaml>=5.1.0,<7.0.0",
+        "msrest>=0.6.18,<1.0.0",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
-        "marshmallow>=3.5",
-        "jsonschema>=4.0.0",
-        "tqdm",
+        "marshmallow>=3.5,<4.0.0",
+        "jsonschema>=4.0.0,<5.0.0",
+        "tqdm<5.0.0",
         # Used for PR 825138
-        "strictyaml",
+        "strictyaml<2.0.0",
         # Used for PR 718512
-        "colorama",
-        "pyjwt",
+        "colorama<1.0.0",
+        "pyjwt<3.0.0",
         "azure-storage-blob>=12.10.0",
         "azure-storage-file-share",
         "azure-storage-file-datalake>=12.2.0",
-        "pydash>=6.0.0",
-        "isodate",
+        "pydash>=6.0.0,<9.0.0",
+        "isodate<1.0.0",
         "azure-common>=1.1",
-        "typing-extensions",
+        "typing-extensions<5.0.0",
         "azure-monitor-opentelemetry",
+        # TODO: remove six after using new autorest
+        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package
@@ -97,7 +100,7 @@ setup(
         # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex along with this package
         # so user can call data.mount() and datastore.mount() operations supported by it.
         "mount": [
-            "azureml-dataprep-rslex>=2.22.0",
+            "azureml-dataprep-rslex>=2.22.0; python_version < '3.13'",
         ],
     },
     project_urls={

@@ -11,6 +11,7 @@ from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 
 
 def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> bool:
@@ -72,7 +73,7 @@ def is_closing_message_helper(response: str) -> bool:
 async def simulate_conversation(
     *,
     bots: List[ConversationBot],
-    session: AsyncHttpPipeline,
+    session: Union[AsyncHttpPipeline, AIProjectClient],
     language: SupportedLanguages,
     stopping_criteria: Callable[[str], bool] = is_closing_message,
     turn_limit: int = 10,
@@ -101,6 +102,7 @@ async def simulate_conversation(
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
 
+    session_state = {}
     # Read the first prompt.
     (first_response, request, _, full_response) = await bots[0].generate_response(
         session=session,
@@ -149,7 +151,10 @@ async def simulate_conversation(
                 conversation_history=conversation_history,
                 max_history=history_limit,
                 turn_number=current_turn,
+                session_state=session_state,
             )
+            if "session_state" in full_response and full_response["session_state"] is not None:
+                session_state.update(full_response["session_state"])
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:

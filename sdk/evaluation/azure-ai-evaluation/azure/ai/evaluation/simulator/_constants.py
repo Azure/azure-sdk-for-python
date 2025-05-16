@@ -25,3 +25,4 @@ class SupportedLanguages(Enum):
     Portuguese = "pt"
     Japanese = "ja"
     English = "en"
+    Korean = "ko"

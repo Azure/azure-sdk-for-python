@@ -60,7 +60,7 @@ def main():
                     },
                     "availabilityZones": ["1", "2", "3"],
                     "count": 3,
-                    "vmSkuName": "NC_XXXX",
+                    "vmSkuName": "NC_G6_28_v1",
                 },
                 "initialAgentPoolConfigurations": [
                     {
@@ -99,9 +99,9 @@ def main():
                         "labels": [{"key": "kubernetes.label", "value": "true"}],
                         "mode": "System",
                         "name": "SystemPool-1",
-                        "taints": [{"key": "kubernetes.taint", "value": "true"}],
+                        "taints": [{"key": "kubernetes.taint", "value": "true:NoSchedule"}],
                         "upgradeSettings": {"maxSurge": "1"},
-                        "vmSkuName": "NC_XXXX",
+                        "vmSkuName": "NC_P46_224_v1",
                     }
                 ],
                 "kubernetesVersion": "1.XX.Y",
@@ -146,6 +146,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/KubernetesClusters_L2LoadBalancer_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-10-01-preview/examples/KubernetesClusters_L2LoadBalancer_Create.json
 if __name__ == "__main__":
     main()

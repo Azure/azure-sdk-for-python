@@ -23,7 +23,7 @@ Azure AI SDK provides following to evaluate Generative AI Applications:
 ### Prerequisites
 
 - Python 3.9 or later is required to use this package.
-- [Optional] You must have [Azure AI Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
+- [Optional] You must have [Azure AI Foundry Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
 
 ### Install the package
 
@@ -31,10 +31,6 @@ Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-evaluation
-```
-If you want to track results in [AI Studio][ai_studio], install `remote` extra:
-```python
-pip install azure-ai-evaluation[remote]
 ```
 
 ## Key concepts
@@ -80,12 +76,22 @@ result = relevance_evaluator(
     response="The capital of Japan is Tokyo."
 )
 
-# AI assisted safety evaluator
+# There are two ways to provide Azure AI Project.
+# Option #1 : Using Azure AI Project Details 
 azure_ai_project = {
     "subscription_id": "<subscription_id>",
     "resource_group_name": "<resource_group_name>",
     "project_name": "<project_name>",
 }
+
+violence_evaluator = ViolenceEvaluator(azure_ai_project)
+result = violence_evaluator(
+    query="What is the capital of France?",
+    response="Paris."
+)
+
+# Option # 2 : Using Azure AI Project Url 
+azure_ai_project = "https://{resource_name}.services.ai.azure.com/api/projects/{project_name}"
 
 violence_evaluator = ViolenceEvaluator(azure_ai_project)
 result = violence_evaluator(
@@ -144,9 +150,9 @@ result = evaluate(
             } 
         }
     }
-    # Optionally provide your AI Studio project information to track your evaluation results in your Azure AI Studio project
+    # Optionally provide your AI Foundry project information to track your evaluation results in your Azure AI Foundry project
     azure_ai_project = azure_ai_project,
-    # Optionally provide an output path to dump a json of metric summary, row level data and metric and studio URL
+    # Optionally provide an output path to dump a json of metric summary, row level data and metric and AI Foundry URL
     output_path="./evaluation_results.json"
 )
 ```
@@ -237,11 +243,18 @@ with open("simulator_output.jsonl", "w") as f:
 ```python
 from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
 from azure.identity import DefaultAzureCredential
+
+# There are two ways to provide Azure AI Project.
+# Option #1 : Using Azure AI Project 
 azure_ai_project = {
     "subscription_id": <subscription_id>,
     "resource_group_name": <resource_group_name>,
     "project_name": <project_name>
 }
+
+# Option #2 : Using Azure AI Project Url 
+azure_ai_project = "https://{resource_name}.services.ai.azure.com/api/projects/{project_name}"
+
 scenario = AdversarialScenario.ADVERSARIAL_QA
 simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
 

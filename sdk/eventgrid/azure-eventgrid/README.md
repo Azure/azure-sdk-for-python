@@ -449,7 +449,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://learn.microsoft.com/azure/event-grid/overview
-[python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
+[python-eg-ref-docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-eventgrid/latest/index.html
 [publisher-service-doc]: https://learn.microsoft.com/azure/event-grid/concepts
 [python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples
 [python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/CHANGELOG.md

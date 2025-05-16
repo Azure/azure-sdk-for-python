@@ -21,7 +21,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_resource_group(self, resource_group):
+    async def test_deployment_stacks_list_at_resource_group(self, resource_group):
         response = self.client.deployment_stacks.list_at_resource_group(
             resource_group_name=resource_group.name,
             api_version="2022-08-01-preview",
@@ -32,7 +32,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_subscription(self, resource_group):
+    async def test_deployment_stacks_list_at_subscription(self, resource_group):
         response = self.client.deployment_stacks.list_at_subscription(
             api_version="2022-08-01-preview",
         )
@@ -42,7 +42,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_management_group(self, resource_group):
+    async def test_deployment_stacks_list_at_management_group(self, resource_group):
         response = self.client.deployment_stacks.list_at_management_group(
             management_group_id="str",
             api_version="2022-08-01-preview",
@@ -53,7 +53,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_at_resource_group(self, resource_group):
+    async def test_deployment_stacks_begin_create_or_update_at_resource_group(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_create_or_update_at_resource_group(
                 resource_group_name=resource_group.name,
@@ -132,7 +132,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_resource_group(self, resource_group):
+    async def test_deployment_stacks_get_at_resource_group(self, resource_group):
         response = await self.client.deployment_stacks.get_at_resource_group(
             resource_group_name=resource_group.name,
             deployment_stack_name="str",
@@ -144,7 +144,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_at_resource_group(self, resource_group):
+    async def test_deployment_stacks_begin_delete_at_resource_group(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_delete_at_resource_group(
                 resource_group_name=resource_group.name,
@@ -158,7 +158,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_at_subscription(self, resource_group):
+    async def test_deployment_stacks_begin_create_or_update_at_subscription(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_create_or_update_at_subscription(
                 deployment_stack_name="str",
@@ -236,7 +236,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_subscription(self, resource_group):
+    async def test_deployment_stacks_get_at_subscription(self, resource_group):
         response = await self.client.deployment_stacks.get_at_subscription(
             deployment_stack_name="str",
             api_version="2022-08-01-preview",
@@ -247,7 +247,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_at_subscription(self, resource_group):
+    async def test_deployment_stacks_begin_delete_at_subscription(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_delete_at_subscription(
                 deployment_stack_name="str",
@@ -260,7 +260,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_at_management_group(self, resource_group):
+    async def test_deployment_stacks_begin_create_or_update_at_management_group(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_create_or_update_at_management_group(
                 management_group_id="str",
@@ -339,7 +339,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_management_group(self, resource_group):
+    async def test_deployment_stacks_get_at_management_group(self, resource_group):
         response = await self.client.deployment_stacks.get_at_management_group(
             management_group_id="str",
             deployment_stack_name="str",
@@ -351,7 +351,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_at_management_group(self, resource_group):
+    async def test_deployment_stacks_begin_delete_at_management_group(self, resource_group):
         response = await (
             await self.client.deployment_stacks.begin_delete_at_management_group(
                 management_group_id="str",
@@ -365,7 +365,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_export_template_at_resource_group(self, resource_group):
+    async def test_deployment_stacks_export_template_at_resource_group(self, resource_group):
         response = await self.client.deployment_stacks.export_template_at_resource_group(
             resource_group_name=resource_group.name,
             deployment_stack_name="str",
@@ -377,7 +377,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_export_template_at_subscription(self, resource_group):
+    async def test_deployment_stacks_export_template_at_subscription(self, resource_group):
         response = await self.client.deployment_stacks.export_template_at_subscription(
             deployment_stack_name="str",
             api_version="2022-08-01-preview",
@@ -388,7 +388,7 @@ class TestDeploymentStacksDeploymentStacksOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_export_template_at_management_group(self, resource_group):
+    async def test_deployment_stacks_export_template_at_management_group(self, resource_group):
         response = await self.client.deployment_stacks.export_template_at_management_group(
             management_group_id="str",
             deployment_stack_name="str",

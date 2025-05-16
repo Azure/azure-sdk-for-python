@@ -1,0 +1,31 @@
+{
+    "id": "/subscriptions/some-sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/batchEndpoints/some-batch-endpoint-name",
+    "name": "some-batch-endpoint-name",
+    "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints",
+    "properties": {
+      "description": "A hello world endpoint for component deployments",
+      "properties": {
+        "BatchEndpointCreationApiVersion": "2023-10-01",
+        "azureml.onlineendpointid": "/subscriptions/some-sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/batchEndpoints/some-batch-endpoint-name"
+      },
+      "scoringUri": "https://some-batch-endpoint-name.eastus.inference.ml.azure.com/jobs",
+      "swaggerUri": null,
+      "authMode": "AADToken",
+      "defaults": {
+        "deploymentName": "hello-world-1"
+      },
+      "provisioningState": "Succeeded"
+    },
+    "systemData": {
+      "createdAt": "2025-01-29T06:39:10.8357986+00:00",
+      "createdBy": "Someone",
+      "lastModifiedAt": "2025-02-01T17:53:36.0766595+00:00"
+    },
+    "tags": {},
+    "location": "eastus",
+    "identity": {
+      "type": "SystemAssigned",
+      "principalId": "d6133098-1d22-4ea2-a875-709b47f277d1",
+      "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+    }
+  }

@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,10 +15,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -687,7 +686,7 @@ class DeploymentProperties(_serialization.Model):
         self.on_error_deployment = on_error_deployment
 
 
-class DeploymentPropertiesExtended(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DeploymentPropertiesExtended(_serialization.Model):
     """Deployment properties with additional details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1153,7 +1152,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class GenericResource(Resource):  # pylint: disable=too-many-instance-attributes
+class GenericResource(Resource):
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1243,7 +1242,7 @@ class GenericResource(Resource):  # pylint: disable=too-many-instance-attributes
         self.identity = identity
 
 
-class GenericResourceExpanded(GenericResource):  # pylint: disable=too-many-instance-attributes
+class GenericResourceExpanded(GenericResource):
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.

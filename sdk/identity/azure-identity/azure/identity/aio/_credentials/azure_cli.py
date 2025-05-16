@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
+import logging
 import os
 import shutil
 import sys
@@ -31,6 +32,9 @@ from ..._internal import (
     validate_scope,
     validate_subscription,
 )
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -123,7 +127,7 @@ class AzureCliCredential(AsyncContextManager):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -145,7 +149,7 @@ class AzureCliCredential(AsyncContextManager):
             validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
-        command = COMMAND_LINE.format(resource)
+        command_args = COMMAND_LINE + ["--resource", resource]
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -154,10 +158,11 @@ class AzureCliCredential(AsyncContextManager):
         )
 
         if tenant:
-            command += " --tenant " + tenant
+            command_args += ["--tenant", tenant]
+
         if self.subscription:
-            command += f' --subscription "{self.subscription}"'
-        output = await _run_command(command, self._process_timeout)
+            command_args += ["--subscription", self.subscription]
+        output = await _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -177,19 +182,16 @@ class AzureCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int) -> str:
+async def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    if shutil.which(EXECUTABLE_NAME) is None:
+    az_path = shutil.which(EXECUTABLE_NAME)
+    if not az_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
-    if sys.platform.startswith("win"):
-        args = ("cmd", "/c " + command)
-    else:
-        args = ("/bin/sh", "-c", command)
-
+    args = [az_path] + command_args
     working_directory = get_safe_working_dir()
-
     try:
+        _LOGGER.debug("Executing subprocess with the following arguments %s", args)
         proc = await asyncio.create_subprocess_exec(
             *args,
             stdout=asyncio.subprocess.PIPE,

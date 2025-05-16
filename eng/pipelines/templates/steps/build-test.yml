@@ -83,15 +83,22 @@ steps:
           }
           Write-Host (Get-Command python).Source
 
+          if ($env:TESTMARKARGUMENT) {
+            $markArg = $env:TESTMARKARGUMENT
+          }
+          else {
+            $markArg = "${{ parameters.TestMarkArgument }}"
+          }
+
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
-          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
-          ${{ parameters.ToxEnvParallel }};
+          --tenvparallel="${{ parameters.ToxEnvParallel }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
@@ -104,14 +111,22 @@ steps:
           . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
+
+        if ($env:TESTMARKARGUMENT) {
+          $markArg = $env:TESTMARKARGUMENT
+        }
+        else {
+          $markArg = "${{ parameters.TestMarkArgument }}"
+        }
+
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
           ${{ parameters.CoverageArg }} `
-          --mark_arg="${{ parameters.TestMarkArgument }}" `
+          --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="${{ parameters.ToxTestEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}" `
-          ${{ parameters.ToxEnvParallel }}
+          --tenvparallel="${{ parameters.ToxEnvParallel }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
@@ -138,9 +153,8 @@ steps:
       }
       Write-Host (Get-Command python).Source
 
-      python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
-    displayName: Create Coverage Report
+    displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:

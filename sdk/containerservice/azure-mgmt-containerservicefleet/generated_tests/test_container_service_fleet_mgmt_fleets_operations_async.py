@@ -21,9 +21,9 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_fleets_list_by_subscription(self, resource_group):
         response = self.client.fleets.list_by_subscription(
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_fleets_list_by_resource_group(self, resource_group):
         response = self.client.fleets.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_fleets_get(self, resource_group):
         response = await self.client.fleets.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_fleets_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.fleets.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -64,7 +64,11 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
                     "eTag": "str",
                     "hubProfile": {
                         "agentProfile": {"subnetId": "str", "vmSize": "str"},
-                        "apiServerAccessProfile": {"enablePrivateCluster": bool},
+                        "apiServerAccessProfile": {
+                            "enablePrivateCluster": bool,
+                            "enableVnetIntegration": bool,
+                            "subnetId": "str",
+                        },
                         "dnsPrefix": "str",
                         "fqdn": "str",
                         "kubernetesVersion": "str",
@@ -79,6 +83,16 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
                     },
                     "name": "str",
                     "provisioningState": "str",
+                    "status": {
+                        "lastOperationError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "lastOperationId": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -90,7 +104,7 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,7 +113,7 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_fleets_begin_update(self, resource_group):
         response = await (
             await self.client.fleets.begin_update(
                 resource_group_name=resource_group.name,
@@ -113,7 +127,7 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,12 +136,12 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_fleets_begin_delete(self, resource_group):
         response = await (
             await self.client.fleets.begin_delete(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -136,11 +150,11 @@ class TestContainerServiceFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_credentials(self, resource_group):
+    async def test_fleets_list_credentials(self, resource_group):
         response = await self.client.fleets.list_credentials(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

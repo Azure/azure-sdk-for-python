@@ -6,9 +6,11 @@
 
 import time
 import logging
+from uuid import uuid4
 from functools import partial
 from collections import namedtuple
 from typing import Optional, Union
+from threading import Lock
 
 from .sender import SenderLink
 from .receiver import ReceiverLink
@@ -37,9 +39,9 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
     """
 
     def __init__(self, session, endpoint, **kwargs):
-        self.next_message_id = 0
         self.state = ManagementLinkState.IDLE
         self._pending_operations = []
+        self.lock = Lock()
         self._session = session
         self._network_trace_params = kwargs.get("network_trace_params")
         self._request_link: SenderLink = session.create_sender_link(
@@ -157,6 +159,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
+        with self.lock:
             self._pending_operations.remove(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
@@ -228,9 +231,9 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             message.application_properties["locales"] = locales
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
-            new_properties = message.properties._replace(message_id=self.next_message_id)
+            new_properties = message.properties._replace(message_id=uuid4())
         except AttributeError:
-            new_properties = Properties(message_id=self.next_message_id)
+            new_properties = Properties(message_id=uuid4())
         message = message._replace(properties=new_properties)
         expire_time = (time.time() + timeout) if timeout else None
         message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
@@ -238,7 +241,6 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
         self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self.next_message_id += 1
         self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
 
     def close(self):

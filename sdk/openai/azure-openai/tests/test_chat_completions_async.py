@@ -6,6 +6,8 @@
 import os
 import pytest
 import json
+import base64
+import pathlib
 from typing import List
 from pydantic import BaseModel
 import openai
@@ -1239,7 +1241,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     async def test_chat_completion_parallel_tool_calls_disable(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
-            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
+            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles in Fahrenheit?"}
         ]
         tools = [
             {
@@ -1280,3 +1282,233 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.role
         assert len(completion.choices[0].message.tool_calls) == 1
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    async def test_chat_completion_token_details(self, client_async, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "developer", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "What is the meaning of life?"}
+        ]
+
+        completion = await client_async.chat.completions.create(
+            messages=messages,
+            model="o1",
+            reasoning_effort="low"
+        )
+
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert completion.usage.completion_tokens_details
+        assert completion.usage.completion_tokens_details.accepted_prediction_tokens is not None
+        assert completion.usage.completion_tokens_details.audio_tokens is not None
+        assert completion.usage.completion_tokens_details.reasoning_tokens is not None
+        assert completion.usage.completion_tokens_details.rejected_prediction_tokens is not None
+        assert completion.usage.prompt_tokens_details
+        assert completion.usage.prompt_tokens_details.audio_tokens is not None
+        assert completion.usage.prompt_tokens_details.cached_tokens is not None
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    async def test_chat_completion_audio_input(self, client_async, api_type, api_version, **kwargs):
+        path = pathlib.Path(__file__)
+        wav_file = path.parent / "assets" / "cat.wav"
+        with open(wav_file, "rb") as f:
+            encoded_string = base64.b64encode(f.read()).decode("utf-8")
+
+        completion = await client_async.chat.completions.create(
+            model="gpt-4o-audio-preview",
+            modalities=["text", "audio"],
+            audio={"voice": "alloy", "format": "wav"},
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        { 
+                            "type": "text",
+                            "text": "What is in this recording?"
+                        },
+                        {
+                            "type": "input_audio",
+                            "input_audio": {
+                                "data": encoded_string,
+                                "format": "wav"
+                            }
+                        }
+                    ]
+                },
+            ]
+        )
+
+        assert completion.choices[0]
+        assert completion.choices[0].message.audio.data
+        assert completion.choices[0].message.audio.transcript
+        assert completion.usage.completion_tokens_details.audio_tokens is not None
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    async def test_chat_completion_audio_output(self, client_async, api_type, api_version, **kwargs):
+        completion = await client_async.chat.completions.create(
+            model="gpt-4o-audio-preview",
+            modalities=["text", "audio"],
+            audio={"voice": "alloy", "format": "wav"},
+            messages=[
+                {
+                    "role": "user",
+                    "content": "Are bengals good cats? Keep it short."
+                }
+            ]
+        )
+
+        assert completion.choices[0]
+        assert completion.choices[0].message.audio.data
+        assert completion.choices[0].message.audio.transcript
+        assert completion.usage.completion_tokens_details.audio_tokens is not None
+        wav_bytes = base64.b64decode(completion.choices[0].message.audio.data)
+        assert wav_bytes.startswith(b"RIFF")
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    async def test_chat_completion_predicted_outputs(self, client_async, api_type, api_version, **kwargs):
+
+        code = """
+        class User {
+        firstName: string = "";
+        lastName: string = "";
+        username: string = "";
+        }
+
+        export default User;
+        """
+
+        refactor_prompt = """
+        Replace the "username" property with an "email" property. Respond only 
+        with code, and with no markdown formatting.
+        """
+
+        completion = await client_async.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": refactor_prompt
+                },
+                {
+                    "role": "user",
+                    "content": code
+                }
+            ],
+            prediction={
+                "type": "content",
+                "content": code
+            }
+        )
+
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert completion.usage.completion_tokens_details
+        assert completion.usage.completion_tokens_details.accepted_prediction_tokens is not None
+        assert completion.usage.completion_tokens_details.audio_tokens is not None
+        assert completion.usage.completion_tokens_details.reasoning_tokens is not None
+        assert completion.usage.completion_tokens_details.rejected_prediction_tokens is not None
+        assert completion.usage.prompt_tokens_details
+        assert completion.usage.prompt_tokens_details.audio_tokens is not None
+        assert completion.usage.prompt_tokens_details.cached_tokens is not None
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    async def test_chat_completion_predicted_outputs_stream(self, client_async, api_type, api_version, **kwargs):
+
+        code = """
+        class User {
+        firstName: string = "";
+        lastName: string = "";
+        username: string = "";
+        }
+
+        export default User;
+        """
+
+        refactor_prompt = """
+        Replace the "username" property with an "email" property. Respond only 
+        with code, and with no markdown formatting.
+        """
+
+        response = await client_async.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": refactor_prompt
+                },
+                {
+                    "role": "user",
+                    "content": code
+                }
+            ],
+            prediction={
+                "type": "content",
+                "content": code
+            },
+            stream=True,
+            stream_options={"include_usage": True}
+        )
+        async for completion in response:
+            if len(completion.choices) > 0:
+                assert completion.id
+                assert completion.object == "chat.completion.chunk"
+                assert completion.model
+                assert completion.created
+                for c in completion.choices:
+                    assert c.index is not None
+                    assert c.delta is not None
+            if completion.usage:
+                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                assert completion.usage.completion_tokens_details
+                assert completion.usage.completion_tokens_details.accepted_prediction_tokens is not None
+                assert completion.usage.completion_tokens_details.audio_tokens is not None
+                assert completion.usage.completion_tokens_details.reasoning_tokens is not None
+                assert completion.usage.completion_tokens_details.rejected_prediction_tokens is not None
+                assert completion.usage.prompt_tokens_details
+                assert completion.usage.prompt_tokens_details.audio_tokens is not None
+                assert completion.usage.prompt_tokens_details.cached_tokens is not None

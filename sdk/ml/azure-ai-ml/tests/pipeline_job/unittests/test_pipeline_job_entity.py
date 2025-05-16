@@ -776,7 +776,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -802,7 +802,7 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1343,7 +1343,7 @@ class TestPipelineJobEntity:
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -1369,7 +1369,7 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
                     "type": "spark",
                 },
             },
@@ -1433,7 +1433,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "kmeans_cluster",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -2192,7 +2192,7 @@ class TestPipelineJobEntity:
         pipeline_job_rest_object = pipeline_job._to_rest_object()
         assert pipeline_job_rest_object.properties.jobs["count_by_row"]["resources"] == {
             "instance_type": "${{parent.inputs.instance_type}}",
-            "runtime_version": "3.3.0",
+            "runtime_version": "3.4.0",
         }
 
     def test_local_input_in_pipeline_job(self, client: MLClient, tmp_path: Path):

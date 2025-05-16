@@ -314,6 +314,11 @@ def mock_aml_services_2024_10_01_preview(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
+def mock_aml_services_2025_01_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2025_01_01_preview")
+
+
+@pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.runhistory")
 
@@ -465,6 +470,18 @@ def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretC
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="UnsecureTest-testFeed",
+    )
+
+
+@pytest.fixture
+def sdkv2_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdkv2-testFeed",
     )
 
 

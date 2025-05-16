@@ -6,6 +6,7 @@
 import struct
 import uuid
 import logging
+import decimal
 from typing import (
     Callable,
     List,
@@ -47,6 +48,12 @@ c_unsigned_long_long = struct.Struct(">Q")
 c_signed_long_long = struct.Struct(">q")
 c_float = struct.Struct(">f")
 c_double = struct.Struct(">d")
+
+DECIMAL128_EXPONENT_MAX = 6144
+DECIMAL128_EXPONENT_MIN = -6143
+DECIMAL128_MAX_DIGITS = 34
+DECIMAL128_BIAS = 6176
+
 
 
 def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
@@ -146,6 +153,63 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
+def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+    """
+    Decode a Decimal128 value from the buffer.
+
+    The Decimal128 encoding is a 16-byte encoding that represents a 34-digit decimal number.
+    The encoding uses the IEEE 754-2008 decimal128 format.
+    See: https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal128
+
+    :param buffer: The buffer containing the Decimal128 encoded value.
+    :type buffer: memoryview
+    :return: A tuple containing the remaining buffer and the decoded decimal.Decimal value.
+    :rtype: Tuple[memoryview, decimal.Decimal]
+    """
+
+    # per the spec decimal128 has a width of 16 bytes
+    dec_value = bytearray(buffer[:16])
+
+    # Determine the sign of the decimal number
+    sign = 1 if dec_value[0] & 0x80 else 0
+    biased_exponent = 0
+
+    # Check if the exponent is not a special value
+    if dec_value[0] & 0x60 != 0x60:
+        # Extract the biased exponent from the first two bytes
+        biased_exponent = ((dec_value[0] & 0x7F) << 9) | ((dec_value[1] & 0xFE) >> 1)
+        dec_value[0] = 0
+        dec_value[1] &= 0x01
+    elif dec_value[0] & 0x78 != 0:
+        # Handle special values (NaN and Infinity)
+        if (dec_value[0] & 0x78) == 0x78:
+            return buffer[16:], decimal.Decimal('NaN')
+        return buffer[16:], decimal.Decimal('-Infinity')
+    else:
+        # If the exponent is zero, return zero
+        return buffer[16:], decimal.Decimal(0)
+
+    # Calculate the actual exponent by subtracting the bias
+    exponent = biased_exponent - DECIMAL128_BIAS
+
+    # Extract the significant digits from the remaining 14 bytes
+    hi = c_unsigned_int.unpack(dec_value[4:8])[0]
+    middle = c_unsigned_int.unpack(dec_value[8:12])[0]
+    lo = c_unsigned_int.unpack(dec_value[12:16])[0]
+    digits = tuple(int(digit) for digit in f"{hi:08}{middle:08}{lo:08}".lstrip('0'))
+
+    # Create a decimal context with the appropriate precision and exponent range
+    decimal_ctx = decimal.Context(
+        prec = DECIMAL128_MAX_DIGITS,
+        Emin = DECIMAL128_EXPONENT_MIN,
+        Emax = DECIMAL128_EXPONENT_MAX,
+        capitals =  1,
+        clamp = 1,
+    )
+
+    # Create the decimal value using the context
+    with decimal.localcontext(decimal_ctx) as ctx:
+        return buffer[16:], ctx.create_decimal((sign, digits, exponent))
 
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
@@ -231,6 +295,7 @@ def decode_payload(buffer: memoryview) -> Message:
         # described type then ulong.
         descriptor = buffer[2]
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[3]](buffer[4:])
+
         if descriptor == 112:
             message["header"] = Header(*value)
         elif descriptor == 113:
@@ -315,6 +380,7 @@ _DECODE_BY_CONSTRUCTOR[128] = _decode_ulong_large
 _DECODE_BY_CONSTRUCTOR[129] = _decode_long_large
 _DECODE_BY_CONSTRUCTOR[130] = _decode_double
 _DECODE_BY_CONSTRUCTOR[131] = _decode_timestamp
+_DECODE_BY_CONSTRUCTOR[148] = _decode_decimal128
 _DECODE_BY_CONSTRUCTOR[152] = _decode_uuid
 _DECODE_BY_CONSTRUCTOR[160] = _decode_binary_small
 _DECODE_BY_CONSTRUCTOR[161] = _decode_binary_small

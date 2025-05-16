@@ -40,7 +40,8 @@ def _get_default_port_db(db_system: str) -> int:
     return 0
 
 
-def _get_default_port_http(scheme: Optional[str]) -> int:
+def _get_default_port_http(attributes: Attributes) -> int:
+    scheme = _get_http_scheme(attributes)
     if scheme == "http":
         return 80
     if scheme == "https":
@@ -67,8 +68,9 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub
     if attributes:
         # New semconv attributes: https://github.com/Azure/azure-sdk-for-python/pull/29203
-        # TODO: Keep track of when azure-sdk supports stable semconv for these fields
-        peer_address = attributes.get("net.peer.name") or attributes.get("peer.address")
+        peer_address = (
+            attributes.get("server.address") or attributes.get("net.peer.name") or attributes.get("peer.address")
+        )
         destination = attributes.get("messaging.destination.name") or attributes.get("message_bus.destination")
         if peer_address and destination:
             return str(peer_address) + "/" + str(destination)
@@ -77,7 +79,8 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
 
 def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
-        scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = attributes.get(url_attributes.URL_SCHEME) or \
+            attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
             return str(scheme)
     return None
@@ -87,14 +90,17 @@ def _get_http_scheme(attributes: Attributes) -> Optional[str]:
 
 
 @no_type_check
-def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
-    url = None
+def _get_url_for_http_dependency(attributes: Attributes) -> Optional[str]:
+    url = ""
     if attributes:
-        if not scheme:
-            scheme = _get_http_scheme(attributes)
+        # Stable sem conv only supports populating url from `url.full`
+        if url_attributes.URL_FULL in attributes:
+            return attributes[url_attributes.URL_FULL]
         if SpanAttributes.HTTP_URL in attributes:
-            url = attributes[SpanAttributes.HTTP_URL]
-        elif scheme and SpanAttributes.HTTP_TARGET in attributes:
+            return attributes[SpanAttributes.HTTP_URL]
+        # Scheme
+        scheme = _get_http_scheme(attributes)
+        if scheme and SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes[SpanAttributes.HTTP_TARGET]
             if SpanAttributes.HTTP_HOST in attributes:
                 url = "{}://{}{}".format(
@@ -138,9 +144,8 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(
-                    str(attributes.get(SpanAttributes.HTTP_SCHEME))
-                ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                if port != _get_default_port_http(attributes) and \
+                    port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
     return target
 
@@ -148,42 +153,58 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
 @no_type_check
 def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
-    target: Optional[str],
-    url: Optional[str],
-    scheme: Optional[str] = None,
+    url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
 ) -> Tuple[Optional[str], str]:
-    target_from_url = None
-    path = ""
+    parsed_url = None
+    target = ""
+    path = "/"
+    default_port = _get_default_port_http(attributes)
+    # Find path from url
+    if not url:
+        url = _get_url_for_http_dependency(attributes)
+    try:
+        parsed_url = urlparse(url)
+        if parsed_url.path:
+            path = parsed_url.path
+    except Exception:  # pylint: disable=broad-except
+        pass
+    # Derive target
     if attributes:
-        if not scheme:
-            scheme = _get_http_scheme(attributes)
-        if url:
+        # Target from server.*
+        if server_attributes.SERVER_ADDRESS in attributes:
+            target = attributes[server_attributes.SERVER_ADDRESS]
+            server_port = attributes.get(server_attributes.SERVER_PORT)
+            # if not default port, include port in target
+            if server_port != default_port:
+                target = "{}:{}".format(target, server_port)
+        # Target from peer.service
+        elif SpanAttributes.PEER_SERVICE in attributes:
+            target = attributes[SpanAttributes.PEER_SERVICE]
+        # Target from http.host
+        elif SpanAttributes.HTTP_HOST in attributes:
+            host = attributes[SpanAttributes.HTTP_HOST]
             try:
-                parse_url = urlparse(url)
-                path = parse_url.path
-                if not path:
-                    path = "/"
-                if parse_url.port and parse_url.port == _get_default_port_http(scheme):
-                    target_from_url = parse_url.hostname
+                # urlparse insists on absolute URLs starting with "//"
+                # This logic assumes host does not include a "//"
+                host_name = urlparse("//" + str(host))
+                # Ignore port from target if default port
+                if host_name.port == default_port:
+                    target = host_name.hostname
                 else:
-                    target_from_url = parse_url.netloc
+                    # Else include the whole host as the target
+                    target = str(host)
             except Exception:  # pylint: disable=broad-except
                 pass
-        if SpanAttributes.PEER_SERVICE not in attributes:
-            if SpanAttributes.HTTP_HOST in attributes:
-                host = attributes[SpanAttributes.HTTP_HOST]
-                try:
-                    # urlparse insists on absolute URLs starting with "//"
-                    # This logic assumes host does not include a "//"
-                    host_name = urlparse("//" + str(host))
-                    if host_name.port == _get_default_port_http(scheme):
-                        target = host_name.hostname
-                    else:
-                        target = str(host)
-                except Exception:  # pylint: disable=broad-except
-                    pass
-            elif target_from_url and not target:
-                target = target_from_url
+        elif parsed_url:
+            # Target from httpUrl
+            if parsed_url.port and parsed_url.port == default_port:
+                if parsed_url.hostname:
+                    target = parsed_url.hostname
+            elif parsed_url.netloc:
+                target = parsed_url.netloc
+        if not target:
+            # Get target from peer.* attributes that are NOT peer.service
+            target = _get_target_for_dependency_from_peer(attributes)
     return (target, path)
 
 
@@ -250,29 +271,29 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         if SpanAttributes.HTTP_URL in attributes:
             return attributes[SpanAttributes.HTTP_URL]
         # Scheme
-        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = _get_http_scheme(attributes)
         # Target
         http_target = ""
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
-        if url_attributes.URL_QUERY in attributes:
-            http_target = "{}?{}".format(
-                http_target,
-                attributes.get(url_attributes.URL_QUERY, "")
-            )
-        if not http_target:
+            if http_target and url_attributes.URL_QUERY in attributes:
+                http_target = "{}?{}".format(
+                    http_target,
+                    attributes.get(url_attributes.URL_QUERY, "")
+                )
+        elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
             # Host
             http_host = ""
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
-            if server_attributes.SERVER_PORT in attributes:
-                http_host = "{}:{}".format(
-                    http_host,
-                    attributes.get(server_attributes.SERVER_PORT, "")
-                )
-            if not http_host:
+                if http_host and server_attributes.SERVER_PORT in attributes:
+                    http_host = "{}:{}".format(
+                        http_host,
+                        attributes.get(server_attributes.SERVER_PORT, "")
+                    )
+            elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
             if http_host:
                 url = "{}://{}{}".format(

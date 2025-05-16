@@ -1,4 +1,5 @@
 import os
+from decimal import Decimal
 import pytest
 
 try:
@@ -6,7 +7,7 @@ try:
     from azure.servicebus._transport._uamqp_transport import UamqpTransport
 except (ModuleNotFoundError, ImportError):
     uamqp = None
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from azure.servicebus import (
     ServiceBusClient,
     ServiceBusMessage,
@@ -19,6 +20,10 @@ from azure.servicebus._common.constants import (
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_ENQUEUED_TIME,
+)
+from azure.servicebus._common.utils import (
+    CE_ZERO_SECONDS,
 )
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus._pyamqp.message import Message
@@ -68,6 +73,15 @@ def test_servicebus_message_repr_with_props():
         in message.__repr__()
     )
 
+def test_servicebus_message_min_timestamp():
+    received_message = Message(
+        data=[b"data"],
+        message_annotations={
+            _X_OPT_ENQUEUED_TIME: CE_ZERO_SECONDS*1000,
+        },
+    )
+    received_message = ServiceBusReceivedMessage(received_message, receiver=None)
+    assert received_message.enqueued_time_utc == datetime.min.replace(tzinfo=timezone.utc)
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_received_message_repr(uamqp_transport):
@@ -79,6 +93,7 @@ def test_servicebus_received_message_repr(uamqp_transport):
                 _X_OPT_PARTITION_KEY: b"r_key",
                 _X_OPT_VIA_PARTITION_KEY: b"r_via_key",
                 _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
+                _X_OPT_ENQUEUED_TIME: CE_ZERO_SECONDS * 1000,
             },
             properties={},
         )
@@ -845,3 +860,40 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_message_property(
+        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
+    ):
+        queue_name = servicebus_queue.name
+        sb_message = ServiceBusMessage(
+            body="hello",
+            application_properties={
+                "prop": "test",
+                "intprop": 1,
+                "byteprop": b"byte",
+                "decimalprop": Decimal("1.2345"),
+                },
+        )
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
+        )
+        with sb_client.get_queue_sender(queue_name) as sender:
+            sender.send_messages(sb_message)
+
+        with sb_client.get_queue_receiver(
+            queue_name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10
+        ) as receiver:
+            batch = receiver.receive_messages()
+            incoming_message = batch[0]
+            assert incoming_message.application_properties
+            assert incoming_message.application_properties[b"prop"] == b"test"
+            assert incoming_message.application_properties[b"intprop"] == 1
+            assert incoming_message.application_properties[b"byteprop"] == b"byte"
+            assert incoming_message.application_properties[b"decimalprop"] == Decimal("1.2345")

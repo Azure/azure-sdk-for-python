@@ -1,6 +1,6 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.10.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
+
+### Other Changes
+- Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.9.0 (2024-10-17)
 
@@ -186,7 +194,7 @@ Used as a context manager, a `SecretClient` closes opened sockets on exit.
 ## 4.0.0 (2019-10-31)
 ### Breaking changes:
 - Moved optional parameters of two methods into kwargs (
-[docs](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-secrets/4.0.0/azure.keyvault.secrets.html)
+[docs](https://azuresdkdocs.z19.web.core.windows.net/python/azure-keyvault-secrets/latest/azure.keyvault.secrets.html)
 detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
   - `update_secret_properties` now has positional parameters `name` and

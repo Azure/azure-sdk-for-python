@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from functools import cached_property
-from logging import getLogger
+from logging import getLogger, Formatter
 from typing import Dict, List, cast
 
 from opentelemetry._events import _set_event_logger_provider
@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_TRACING_ARG,
     ENABLE_LIVE_METRICS_ARG,
     LOGGER_NAME_ARG,
+    LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
@@ -172,11 +173,20 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
+    logging_formatter: Formatter = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
     logger = getLogger(logger_name)
     # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
     # This is to prevent most duplicate logging telemetry
     if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
         handler = LoggingHandler(logger_provider=logger_provider)
+        if logging_formatter:
+            try:
+                handler.setFormatter(logging_formatter)
+            except Exception as ex:  # pylint: disable=broad-except
+                _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Exception occurred when adding logging Formatter: %s.",
+                    ex,
+                )
         logger.addHandler(handler)
 
     # Setup EventLoggerProvider
@@ -269,20 +279,32 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
         _logger.debug("Instrumentation skipped for library azure_sdk")
         return
 
-    try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
-    except Exception as ex:  # pylint: disable=broad-except
-        _logger.debug(
-            "Failed to import AIInferenceInstrumentor from azure-ai-inference",
-            exc_info=ex,
-        )
-        return
+    instrumentors = [
+        ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
+        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor"),
+        ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
+    ]
 
-    try:
-        AIInferenceInstrumentor().instrument()
-    except Exception as ex:  # pylint: disable=broad-except
-        _logger.warning(
-            "Exception occurred when instrumenting: %s.",
-            "azure-ai-inference",
-            exc_info=ex,
-        )
+    for module_path, class_name in instrumentors:
+        instrumentor_imported = False
+        try:
+            module = __import__(module_path, fromlist=[class_name])
+            instrumentor_imported = True
+        except Exception as ex:  # pylint: disable=broad-except
+            _logger.debug(
+                "Failed to import %s from %s",
+                class_name,
+                module_path,
+                exc_info=ex,
+            )
+
+        if instrumentor_imported:
+            try:
+                instrumentor_class = getattr(module, class_name)
+                instrumentor_class().instrument()
+            except Exception as ex:  # pylint: disable=broad-except
+                _logger.warning(
+                    "Exception occurred when instrumenting using: %s.",
+                    class_name,
+                    exc_info=ex,
+                )

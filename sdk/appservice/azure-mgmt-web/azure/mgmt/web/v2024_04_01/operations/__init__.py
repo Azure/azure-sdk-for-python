@@ -21,8 +21,6 @@ from ._top_level_domains_operations import TopLevelDomainsOperations  # type: ig
 from ._app_service_environments_operations import AppServiceEnvironmentsOperations  # type: ignore
 from ._app_service_plans_operations import AppServicePlansOperations  # type: ignore
 from ._certificates_operations import CertificatesOperations  # type: ignore
-from ._container_apps_operations import ContainerAppsOperations  # type: ignore
-from ._container_apps_revisions_operations import ContainerAppsRevisionsOperations  # type: ignore
 from ._deleted_web_apps_operations import DeletedWebAppsOperations  # type: ignore
 from ._diagnostics_operations import DiagnosticsOperations  # type: ignore
 from ._global_operations_operations import GlobalOperations  # type: ignore
@@ -58,8 +56,6 @@ __all__ = [
     "AppServiceEnvironmentsOperations",
     "AppServicePlansOperations",
     "CertificatesOperations",
-    "ContainerAppsOperations",
-    "ContainerAppsRevisionsOperations",
     "DeletedWebAppsOperations",
     "DiagnosticsOperations",
     "GlobalOperations",

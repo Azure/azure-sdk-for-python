@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-TEST_RUN_ID = "some-test-run-id"
+TEST_RUN_ID = "my-sdk-test-run-id"
 
 # Build a client through AAD and resource endpoint
 client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)

@@ -33,6 +33,6 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 - Support for ChangeFeedClient: get change feed events by page, get all change feed events, get events in a time range
 
 This package's
-[documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref)
+[documentation](https://learn.microsoft.com/python/api/overview/azure/storage-blob-changefeed-readme?view=azure-python-preview)
 and
 [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/samples)

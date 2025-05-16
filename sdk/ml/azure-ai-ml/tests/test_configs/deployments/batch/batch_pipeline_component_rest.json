@@ -1,0 +1,17 @@
+{
+    "id": "/subscriptions/sub-id/resourceGroups/some-res-group/providers/Microsoft.MachineLearningServices/workspaces/some-ws/batchEndpoints/achauhan-endpoint-name/deployments/hello-world-1",
+    "name":"hello-batch",
+    "description":"A batch pipeline component",
+    "properties":{
+        "deploymentConfiguration":{
+            "settings": {
+                "default_compute": "batch-cluster"
+            },
+            "tags": {
+                "tag1": "value1"
+            },
+            "componentId": "azureml:hello_batch@latest"
+        }
+    }
+
+}

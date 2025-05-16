@@ -6,7 +6,8 @@ import os
 import json
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelClientTestBase
+from typing import List
+from model_inference_test_base import ModelClientTestBase, HttpResponseForUnitTests, AsyncHttpResponseForUnitTests
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -86,6 +87,25 @@ class TestUnitTests(ModelClientTestBase):
         # Test invalid input arguments
         try:
             _ = (sdk.models.SystemMessage("some content", content="some content"),)
+            assert False
+        except ValueError as e:
+            assert str(e) == "content cannot be provided as positional and keyword arguments"
+
+    # Test custom class DeveloperMessage(), which allow specifying "content" as a positional argument
+    def test_developer_message(self, **kwargs):
+
+        # Verify that all these objects get serialized into the same dictionary
+        messages = [
+            sdk.models.DeveloperMessage(content="some content"),
+            sdk.models.DeveloperMessage("some content"),
+            sdk.models.DeveloperMessage({"role": "developer", "content": "some content"}),
+        ]
+        for message in messages:
+            assert message.as_dict() == {"role": "developer", "content": "some content"}
+
+        # Test invalid input arguments
+        try:
+            _ = (sdk.models.DeveloperMessage("some content", content="some content"),)
             assert False
         except ValueError as e:
             assert str(e) == "content cannot be provided as positional and keyword arguments"
@@ -272,3 +292,89 @@ class TestUnitTests(ModelClientTestBase):
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAApCAYAAAB9ctS7AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAB0CSURBVGhDRZpZzK33ddbXnufh2"
         )
         assert image_embedding_input.text == "some text"
+
+    # **********************************************************************************
+    #
+    #            UNIT TESTS (REGRESSION TESTS) FOR STREAMING RESPONSE PARSING
+    #
+    # **********************************************************************************
+
+    # Recorded from real chat completions streaming response
+    # - Using sample code `samples\sample_chat_completions_streaming.py`,
+    # - With SSE logging turned on (_ENABLE_CLASS_LOGS = True`),
+    # - With Mistral Large model, with user message "how many feet are in a mile?", with content safety turned on.
+    # - The bytes below are from the log output of `[Original element]`.
+    STREAMING_RESPONSE_BYTES: List[bytes] = [
+        b'data: {"choices":[{"delta":{"content":"","role":"assistant"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+        b'data: {"choices":[{"delta":{"content":"There"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" are"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" "},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"5"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":","},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"2"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"8"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"0"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" feet"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" in"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" a"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" mile"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"."},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" This"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+        b'data: {"choices":[{"delta":{"content":" is"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" a"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" standard"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" measurement"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" used"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" in"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" the"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" United"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" States"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" and"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" a"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" few"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" other"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" countries"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"."},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" If"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" you"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" need"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" help"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.',
+        b'chunk"}\n\ndata: {"choices":[{"delta":{"content":" conver"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"ting"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" other"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" units"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" of"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" measurement"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":","},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" feel"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" free"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" to"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":" ask"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+        b'data: {"choices":[{"delta":{"content":"!"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":""},"finish_reason":"stop","index":0,"logprobs":null}],"created":1739300519,"id":"f9a9e06e5c844339aee30ecb9f61ca8b","model":"mistral-large","object":"chat.completion.chunk","usage":{"completion_tokens":45,"prompt_tokens":19,"total_tokens":64}}\n\ndata: [DONE]\n\n',
+    ]
+    EXPECTED_STREAMING_RESPONSE = "There are 5,280 feet in a mile. This is a standard measurement used in the United States and a few other countries. If you need help converting other units of measurement, feel free to ask!"
+
+    # To test the case where a Chinese character (3 bytes in UTF8 encoding) is broken between two SSE "lines".
+    # See GitHub issue https://github.com/Azure/azure-sdk-for-python/issues/39565
+    # Recorded from real chat completions streaming response
+    # - Using sample code `samples\sample_chat_completions_streaming.py`,
+    # - With SSE logging turned on (_ENABLE_CLASS_LOGS = True`),
+    # - With Mistral Large model, with user message "Translate 'the sky is blue' to Chinese. Don't add any extra text before or after the Chinese translation. Just give the translation.", with content safety turned on.
+    # - The bytes below are from the log output of `[Original element]`.
+    # This was the original response:
+    # STREAMING_RESPONSE_BYTES_SPLIT_CHINISE_CHAR: List[bytes] = [
+    #     b'data: {"choices":[{"delta":{"content":"","role":"assistant"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+    #     b'data: {"choices":[{"delta":{"content":"\xe5\xa4\xa9"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+    #     b'data: {"choices":[{"delta":{"content":"\xe7\xa9\xba"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe6\x98\xaf"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe8\x93\x9d"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe8\x89\xb2"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe7\x9a\x84"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":""},"finish_reason":"stop","index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk","usage":{"completion_tokens":7,"prompt_tokens":41,"total_tokens":48}}\n\ndata: [DONE]\n\n'
+    # ]
+    # Below is a manually modifed response of the above, after splitting the 2nd line into two lines, in the middle of the 3-byte Chinese charcater. This is an
+    # This represents the case presented in the above GitHub issue:
+    STREAMING_RESPONSE_BYTES_SPLIT_CHINISE_CHAR: List[bytes] = [
+        b'data: {"choices":[{"delta":{"content":"","role":"assistant"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+        b'data: {"choices":[{"delta":{"content":"\xe5\xa4',
+        b'\xa9"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\n',
+        b'data: {"choices":[{"delta":{"content":"\xe7\xa9\xba"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe6\x98\xaf"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe8\x93\x9d"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe8\x89\xb2"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":"\xe7\x9a\x84"},"finish_reason":null,"index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk"}\n\ndata: {"choices":[{"delta":{"content":""},"finish_reason":"stop","index":0,"logprobs":null}],"created":1739388793,"id":"97f3900d75c94c028984e58bef2a2584","model":"mistral-large","object":"chat.completion.chunk","usage":{"completion_tokens":7,"prompt_tokens":41,"total_tokens":48}}\n\ndata: [DONE]\n\n',
+    ]
+    EXPECTED_STREAMING_RESPONSE_SPLIT_CHINESE_CHAR = "天空是蓝色的"  # "The sky is blue" in Chinese
+
+    # Regression test for the implementation of StreamingChatCompletions class,
+    # which does the SSE parsing for streaming response
+    def test_streaming_response_parsing(self, **kwargs):
+
+        http_response = HttpResponseForUnitTests(TestUnitTests.STREAMING_RESPONSE_BYTES)
+        response = sdk.models.StreamingChatCompletions(response=http_response)
+
+        actual_response: str = ""
+        for update in response:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+            actual_response += update.choices[0].delta.content or ""
+
+        assert actual_response == TestUnitTests.EXPECTED_STREAMING_RESPONSE
+
+    # Regression test for the implementation of AsyncStreamingChatCompletions class,
+    # which does the async SSE parsing for streaming response
+    async def test_streaming_response_parsing_async(self, **kwargs):
+
+        async_http_response = AsyncHttpResponseForUnitTests(TestUnitTests.STREAMING_RESPONSE_BYTES)
+        response = sdk.models.AsyncStreamingChatCompletions(response=async_http_response)
+
+        actual_response: str = ""
+        async for update in response:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+            actual_response += update.choices[0].delta.content or ""
+
+        assert actual_response == TestUnitTests.EXPECTED_STREAMING_RESPONSE
+
+    # Regression test for the implementation of StreamingChatCompletions class,
+    # which does the SSE parsing for streaming response, with input SSE "lines"
+    # that have a Chinese character (3 bytes in UTF8 encoding) split between between two "lines".
+    def test_streaming_response_parsing_split_chinese_char(self, **kwargs):
+
+        http_response = HttpResponseForUnitTests(TestUnitTests.STREAMING_RESPONSE_BYTES_SPLIT_CHINISE_CHAR)
+        response = sdk.models.StreamingChatCompletions(response=http_response)
+
+        actual_response: str = ""
+        for update in response:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+            actual_response += update.choices[0].delta.content or ""
+
+        assert actual_response == TestUnitTests.EXPECTED_STREAMING_RESPONSE_SPLIT_CHINESE_CHAR

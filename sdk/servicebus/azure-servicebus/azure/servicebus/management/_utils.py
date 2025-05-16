@@ -281,14 +281,12 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
 
 
 # Helper functions for common parameter validation errors in the client.
-def _validate_entity_name_type(entity_name, display_name="entity name"):
-    # type: (str, str) -> None
+def _validate_entity_name_type(entity_name: str, display_name: str = "entity name") -> None:
     if not isinstance(entity_name, str):
         raise TypeError("{} must be a string, not {}".format(display_name, type(entity_name)))
 
 
-def _validate_topic_and_subscription_types(topic_name, subscription_name):
-    # type: (str, str) -> None
+def _validate_topic_and_subscription_types(topic_name: str, subscription_name: str) -> None:
     if not isinstance(topic_name, str) or not isinstance(subscription_name, str):
         raise TypeError(
             "topic name and subscription name must be strings, not {} and {}".format(
@@ -297,8 +295,7 @@ def _validate_topic_and_subscription_types(topic_name, subscription_name):
         )
 
 
-def _validate_topic_subscription_and_rule_types(topic_name, subscription_name, rule_name):
-    # type: (str, str, str) -> None
+def _validate_topic_subscription_and_rule_types(topic_name: str, subscription_name: str, rule_name: str) -> None:
     if not isinstance(topic_name, str) or not isinstance(subscription_name, str) or not isinstance(rule_name, str):
         raise TypeError(
             "topic name, subscription name and rule name must be strings, not {} {} and {}".format(
@@ -307,17 +304,22 @@ def _validate_topic_subscription_and_rule_types(topic_name, subscription_name, r
         )
 
 
-def _normalize_entity_path_to_full_path_if_needed(entity_path, fully_qualified_namespace):
-    # type: (Optional[str], str) -> Optional[str]
+def _normalize_entity_path_to_full_path_if_needed(
+        entity_path: Optional[str],
+        fully_qualified_namespace: str
+    ) -> Optional[str]:
     if not entity_path:
         return entity_path
     parsed = urlparse.urlparse(entity_path)
-    entity_path = ("sb://" + fully_qualified_namespace + "/" + entity_path) if not parsed.netloc else entity_path
+    entity_path = ("sb://" + fully_qualified_namespace + "/" + entity_path) \
+        if not parsed.netloc else entity_path
     return entity_path
 
 
-def create_properties_from_dict_if_needed(properties, sb_resource_type):
-    # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
+def create_properties_from_dict_if_needed(
+        properties: Union["PropertiesType", Mapping[str, Any]],
+        sb_resource_type: Type["PropertiesType"]
+    ) -> "PropertiesType":
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.

@@ -40,6 +40,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -250,12 +251,14 @@ class MLClient:
                 self._service_client_10_2021_dataplanepreview,
                 resource_group_name,
                 subscription_id,
+                self._service_client_model_dataplane,
             ) = get_registry_client(
                 self._credential,
                 registry_name if registry_name else registry_reference,
                 workspace_location,
                 **kwargs,
             )
+
             if not workspace_name:
                 workspace_name = workspace_reference
 
@@ -386,6 +389,17 @@ class MLClient:
         )
 
         self._service_client_10_2024_preview = ServiceClient102024Preview(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_01_2025_preview = ServiceClient012025Preview(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -529,7 +543,7 @@ class MLClient:
         self._capability_hosts = CapabilityHostsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2024_preview,
+            self._service_client_01_2025_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -565,6 +579,7 @@ class MLClient:
                 else self._service_client_08_2023_preview
             ),
             self._datastores,
+            (self._service_client_model_dataplane if registry_name or registry_reference else None),
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_08_2023_preview,
@@ -683,6 +698,7 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
             service_client_10_2024_preview=self._service_client_10_2024_preview,
+            service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)

@@ -1,0 +1,118 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus2",
+        "properties": {
+          "description": "some compute",
+          "createdOn": "2021-04-01T22:00:00.0000000+00:00",
+          "modifiedOn": "2021-04-01T22:00:00.0000000+00:00",
+          "computeType": "ComputeInstance",
+          "provisioningState": "Succeeded",
+          "properties": {
+            "vmSize": "STANDARD_NC6",
+            "subnet": {
+              "id": "test-subnet-resource-id"
+            },
+            "applicationSharingPolicy": "Shared",
+            "sshSettings": {
+              "sshPublicAccess": "Enabled",
+              "adminUserName": "azureuser",
+              "sshPort": 22
+            },
+            "osImageMetadata": {
+              "currentImageVersion": "22.06.14",
+              "latestImageVersion": "22.07.22",
+              "isLatestOsImageVersion": false
+            },
+            "enableOSPatching": true,
+            "releaseQuotaOnStop": true,
+            "enableSSO": true,
+            "enableRootAccess": true,
+            "customServices": [
+              {
+                "name": "rstudio-workbench",
+                "image": {
+                  "type": "docker",
+                  "reference": "ghcr.io/azure/rstudio-workbench:latest"
+                },
+                "environmentVariables": {
+                  "RSP_LICENSE": {
+                    "type": "local",
+                    "value": "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+                  }
+                },
+                "docker": {
+                  "privileged": true
+                },
+                "endpoints": [
+                  {
+                    "protocol": "http",
+                    "name": "connect",
+                    "target": 8787,
+                    "published": 4444,
+                    "hostIp": null
+                  }
+                ],
+                "volumes": [
+                  {
+                    "type": "bind",
+                    "source": "/mnt/azureuser/",
+                    "target": "/home/testuser/",
+                    "readOnly": true,
+                    "consistency": "test",
+                    "bind": {
+                      "propagation": "test",
+                      "createHostPath": true,
+                      "selinux": "test"
+                    },
+                    "volume": {
+                      "nocopy": true
+                    },
+                    "tmpfs": {
+                      "size": 10
+                    }
+                  }
+                ]
+              }
+            ],
+            "computeInstanceAuthorizationType": "personal",
+            "personalComputeInstanceSettings": {
+              "assignedUser": {
+                "objectId": "00000000-0000-0000-0000-000000000000",
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "createdBy": {
+              "userName": "foobar@microsoft.com",
+              "userOrgId": "00000000-0000-0000-0000-000000000000",
+              "userId": "00000000-0000-0000-0000-000000000000"
+            },
+            "connectivityEndpoints": {
+              "publicIpAddress": "10.0.0.1",
+              "privateIpAddress": "10.0.0.1"
+            },
+            "applications": [
+              {
+                "displayName": "Jupyter",
+                "endpointUri": "https://compute123.eastus2.azureml.net/jupyter"
+              }
+            ],
+            "errors": null,
+            "state": "Running"
+          }
+        }
+      }
+    }
+  }
+}

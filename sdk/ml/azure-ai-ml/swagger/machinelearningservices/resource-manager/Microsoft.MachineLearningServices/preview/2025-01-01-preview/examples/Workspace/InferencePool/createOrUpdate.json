@@ -1,0 +1,103 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "inferencePoolName": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "properties": [
+          {
+            "key": "string",
+            "value": "string"
+          }
+        ],
+        "scaleUnitConfiguration": {
+          "registries": [
+            "string",
+            "registryName1"
+          ],
+          "disablePublicEgress": false
+        }
+      },
+      "tags": {},
+      "location": "string",
+      "kind": "string",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "string": {}
+        }
+      },
+      "sku": {
+        "name": "string",
+        "tier": "Free",
+        "size": "string",
+        "family": "string",
+        "capacity": 1
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": [
+            {
+              "key": "string",
+              "value": "string"
+            }
+          ],
+          "provisioningState": "Canceled"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:21",
+          "createdBy": "string",
+          "createdByType": "ManagedIdentity",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:21",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string"
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": [
+            {
+              "key": "string",
+              "value": "string"
+            }
+          ],
+          "provisioningState": "Canceled"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:21",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:21",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string"
+      }
+    }
+  }
+}

@@ -18,6 +18,7 @@ DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
 DISTRO_VERSION_ARG = _AZURE_MONITOR_DISTRO_VERSION_ARG
 LOGGER_NAME_ARG = "logger_name"
+LOGGING_FORMATTER_ARG = "logging_formatter"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"

@@ -3,34 +3,46 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing import (
+    Any, cast, Dict, Optional, Union,
+    TYPE_CHECKING
+)
+from typing_extensions import Self
 
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
 from azure.storage.blob.aio import BlobServiceClient
-from .._serialize import get_api_version
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._data_lake_service_client_helpers import _format_url, _parse_url
 from .._deserialize import get_datalake_service_properties
-from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
-from ._file_system_client_async import FileSystemClient
-from .._data_lake_service_client import DataLakeServiceClient as DataLakeServiceClientBase
+from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._models import (
+    DirectoryProperties,
+    FileProperties,
+    FileSystemProperties,
+    LocationMode,
+    UserDelegationKey
+)
+from .._serialize import convert_dfs_url_to_blob_url, get_api_version
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
+from ._file_system_client_async import FileSystemClient
 from ._models import FileSystemPropertiesPaged
-from .._models import UserDelegationKey, LocationMode
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from datetime import datetime
+    from .._models import PublicAccess
 
 
-class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
+class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with the DataLake Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -38,12 +50,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
     For operations relating to a specific file system, directory or file, clients for those entities
     can also be retrieved using the `get_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the datalake service endpoint.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URL to the DataLake storage account. Any other entities included
         in the URL path (e.g. file system or file) will be discarded. This URL can be optionally
@@ -61,12 +67,12 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
@@ -86,44 +92,110 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
     """
 
+    url: str
+    """The full endpoint URL to the datalake service endpoint."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
+
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(DataLakeServiceClient, self).__init__(
-            account_url,
-            credential=credential,
-            **kwargs
-        )
+
+        parsed_url = _parse_url(account_url=account_url)
+        blob_account_url = convert_dfs_url_to_blob_url(account_url)
+        self._blob_account_url = blob_account_url
+
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""
+
+        _, sas_token = parse_query(parsed_url.query)
+        self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
+
+        super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
+                                                    credential=self._raw_credential, **kwargs)
+        # ADLS doesn't support secondary endpoint, make sure it's empty
+        self._hosts[LocationMode.SECONDARY] = ""
+
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._loop = kwargs.get('loop', None)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
+        await super(DataLakeServiceClient, self).__aenter__()
         await self._blob_service_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._blob_service_client.close()
         await super(DataLakeServiceClient, self).__aexit__(*args)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self.__aexit__()
 
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to hostname.
+
+        :param str hostname: The hostname for the endpoint URL.
+        :returns: The formatted URL
+        :rtype: str
+        """
+        return _format_url(self.scheme, hostname, self._query_str)
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """
+        Create DataLakeServiceClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or Dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A DataLakeServiceClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START create_data_lake_service_client_from_conn_str]
+                :end-before: [END create_data_lake_service_client_from_conn_str]
+                :language: python
+                :dedent: 8
+                :caption: Creating the DataLakeServiceClient from a connection string.
+        """
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        return cls(account_url, credential=credential, **kwargs)
+
     @distributed_trace_async
-    async def get_user_delegation_key(self, key_start_time,  # type: datetime
-                                      key_expiry_time,  # type: datetime
-                                      **kwargs  # type: Any
-                                      ):
-        # type: (...) -> UserDelegationKey
+    async def get_user_delegation_key(
+        self, key_start_time: "datetime",
+        key_expiry_time: "datetime",
+        **kwargs: Any
+    ) -> UserDelegationKey:
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -153,14 +225,16 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         delegation_key = await self._blob_service_client.get_user_delegation_key(
             key_start_time=key_start_time,
             key_expiry_time=key_expiry_time,
-            **kwargs)
+            **kwargs
+        )
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
-                          include_metadata=None,  # type: Optional[bool]
-                          **kwargs):
-        # type: (...) -> ItemPaged[FileSystemProperties]
+    def list_file_systems(
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: bool = False,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FileSystemProperties]:
         """Returns a generator to list the file systems under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -189,7 +263,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             Flag specifying that system filesystems should be included.
             .. versionadded:: 12.6.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
         .. admonition:: Example:
 
@@ -200,18 +274,21 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
-        item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
-                                                               include_metadata=include_metadata,
-                                                               **kwargs)
+        item_paged = cast(AsyncItemPaged[FileSystemProperties], self._blob_service_client.list_containers(
+            name_starts_with=name_starts_with,
+            include_metadata=include_metadata,
+            **kwargs
+        ))
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
     @distributed_trace_async
-    async def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                                 metadata=None,  # type: Optional[Dict[str, str]]
-                                 public_access=None,  # type: Optional[PublicAccess]
-                                 **kwargs):
-        # type: (...) -> FileSystemClient
+    async def create_file_system(
+        self, file_system: Union[FileSystemProperties, str],
+        metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional["PublicAccess"] = None,
+        **kwargs: Any
+    ) -> FileSystemClient:
         """Creates a new file system under the specified account.
 
         If the file system with the same name already exists, a ResourceExistsError will
@@ -223,7 +300,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :param metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :param public_access:
             Possible values include: file system, file.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
@@ -256,8 +333,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         await file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
 
-    async def _rename_file_system(self, name, new_name, **kwargs):
-        # type: (str, str, **Any) -> FileSystemClient
+    async def _rename_file_system(self, name: str, new_name: str, **kwargs: Any) -> FileSystemClient:
         """Renames a filesystem.
 
         Operation is successful only if the source filesystem exists.
@@ -284,8 +360,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return renamed_file_system
 
     @distributed_trace_async
-    async def undelete_file_system(self, name, deleted_version, **kwargs):
-        # type: (str, str, **Any) -> FileSystemClient
+    async def undelete_file_system(self, name: str, deleted_version: str, **kwargs: Any) -> FileSystemClient:
         """Restores soft-deleted filesystem.
 
         Operation will only be successful if used within the specified number of days
@@ -313,9 +388,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return file_system
 
     @distributed_trace_async
-    async def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                                 **kwargs):
-        # type: (...) -> FileSystemClient
+    async def delete_file_system(
+        self, file_system: Union[FileSystemProperties, str],
+        **kwargs: Any
+    ) -> FileSystemClient:
         """Marks the specified file system for deletion.
 
         The file system and any files contained within it are later deleted during garbage collection.
@@ -369,9 +445,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         await file_system_client.delete_file_system(**kwargs)
         return file_system_client
 
-    def get_file_system_client(self, file_system  # type: Union[FileSystemProperties, str]
-                               ):
-        # type: (...) -> FileSystemClient
+    def get_file_system_client(self, file_system: Union[FileSystemProperties, str]) -> FileSystemClient:
         """Get a client to interact with the specified file system.
 
         The file system need not already exist.
@@ -392,24 +466,24 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Getting the file system client to interact with a specific file system.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
                                 api_version=self.api_version,
                                 _configuration=self._config,
                                 _pipeline=_pipeline, _hosts=self._hosts)
 
-    def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                             directory  # type: Union[DirectoryProperties, str]
-                             ):
-        # type: (...) -> DataLakeDirectoryClient
+    def get_directory_client(
+        self, file_system: Union[FileSystemProperties,str],
+        directory: Union[DirectoryProperties, str]
+    ) -> DataLakeDirectoryClient:
         """Get a client to interact with the specified directory.
 
         The directory need not already exist.
@@ -434,18 +508,18 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
-        try:
+        if isinstance(directory, DirectoryProperties):
             directory_name = directory.name
-        except AttributeError:
+        else:
             directory_name = directory
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
@@ -453,10 +527,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts)
 
-    def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                        file_path  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(
+        self, file_system: Union[FileSystemProperties, str],
+        file_path: Union[FileProperties, str]
+    ) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -481,18 +555,18 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
-        try:
+        if isinstance(file_path, FileProperties):
             file_path = file_path.name
-        except AttributeError:
+        else:
             pass
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
@@ -500,8 +574,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     @distributed_trace_async
-    async def set_service_properties(self, **kwargs):
-        # type: (**Any) -> None
+    async def set_service_properties(self, **kwargs: Any) -> None:
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
@@ -548,8 +621,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         await self._blob_service_client.set_service_properties(**kwargs)
 
     @distributed_trace_async
-    async def get_service_properties(self, **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
 
@@ -564,7 +636,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         props = await self._blob_service_client.get_service_properties(**kwargs)
         return get_datalake_service_properties(props)

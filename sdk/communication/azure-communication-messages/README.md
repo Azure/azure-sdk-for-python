@@ -51,16 +51,43 @@ Use the returned token credential to authenticate the client:
 
 ### Examples
 
+Send Text WhatsApp message using AdvancedMessages python SDK.
 ```python
->>> from azure.communication.messages import NotificationMessagesClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+import os
+import sys
 
->>> client = NotificationMessagesClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        # write test code here
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+sys.path.append("..")
+
+class SendWhatsAppMessageSample(object):
+
+    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+    phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
+    channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
+
+    def send_text_send_message(self):
+
+        from azure.communication.messages import NotificationMessagesClient
+        from azure.communication.messages.models import TextNotificationContent
+        from azure.identity import DefaultAzureCredential
+
+        messaging_client = NotificationMessagesClient(
+            endpoint=self.endpoint_string, credential=DefaultAzureCredential()
+        )
+        text_options = TextNotificationContent(
+            channel_registration_id=self.channel_id,
+            to=[self.phone_number],
+            content="Hello World via Notification Messaging SDK.",
+        )
+
+        # calling send() with whatsapp message details
+        message_responses = messaging_client.send(text_options)
+        response = message_responses.receipts[0]
+        print("Message with message id {} was successful sent to {}".format(response.message_id, response.to))
+
+
+if __name__ == "__main__":
+    sample = SendWhatsAppMessageSample()
+    sample.send_text_send_message()
 
 ```
 
@@ -101,4 +128,4 @@ additional questions or comments.
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages
 [product_docs]: https://learn.microsoft.com/azure/communication-services/overview
 [pypi]: https://pypi.org
-[nextsteps]: https://learn.microsoft.com/azure/communication-services/concepts/advanced-messaging/whatsapp/whatsapp-overview
+[nextsteps]: https://learn.microsoft.com/azure/communication-services/quickstarts/advanced-messaging/whatsapp/get-started

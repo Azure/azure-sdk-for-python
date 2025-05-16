@@ -6,12 +6,12 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
-from azure.ai.evaluation._constants import AggregationType
+from azure.ai.evaluation._constants import _AggregationType, EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -75,12 +75,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type eval_last_turn: bool
     :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
         to produce a single result.
-        Default is ~azure.ai.evaluation.AggregationType.MEAN.
-    :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
+        Default is ~azure.ai.evaluation._AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
         overrides the standard aggregator implied by conversation_aggregation_type. None by default.
     :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
+    :param threshold: The threshold for the evaluation. Default is 3.
+    :type threshold: Optional[int]
+    :param _higher_is_better: If True, higher scores are better. Default is True.
+    :type _higher_is_better: Optional[bool]
     """
+
+    _NOT_APPLICABLE_RESULT = "not applicable"
+    _PASS_RESULT = "pass"
+    _FAIL_RESULT = "fail"
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
@@ -89,16 +97,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def __init__(
         self,
         *,
+        threshold: float = 3.0,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
-        conversation_aggregation_type: AggregationType = AggregationType.MEAN,
+        conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
+        _higher_is_better: Optional[bool] = True,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+        self._higher_is_better = _higher_is_better
+        self._threshold = threshold
         if conversation_aggregator_override is not None:
             # Type ignore since we already checked for None, but mypy doesn't know that.
             self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
@@ -393,7 +405,29 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
-            per_turn_results.append(await self._do_eval(eval_input))
+            result = await self._do_eval(eval_input)
+            # logic to determine threshold pass/fail
+            try:
+                for key in list(result.keys()):
+                    if key.endswith("_score") and "rouge" not in key:
+                        score_value = result[key]
+                        base_key = key[:-6]  # Remove "_score" suffix
+                        result_key = f"{base_key}_result"
+                        threshold_key = f"{base_key}_threshold"
+                        result[threshold_key] = self._threshold
+                        if self._higher_is_better:
+                            if int(score_value) >= self._threshold:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                            else:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                        else:
+                            if int(score_value) <= self._threshold:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                            else:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+            except Exception as e:
+                print(f"Error calculating binary result: {e}")
+            per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
         if len(per_turn_results) == 1:
@@ -411,14 +445,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
     @experimental
     @final
-    def _set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
+    def _set_conversation_aggregation_type(self, conversation_aggregation_type: _AggregationType) -> None:
         """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
         multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
         multi-turn conversation into a single top-level result.
 
         :param conversation_aggregation_type: The type of aggregation to perform on the per-turn
             results of a conversation to produce a single result.
-        :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
+        :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
         """
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
 
@@ -437,14 +471,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
     @experimental
     @final
-    def _get_conversation_aggregator_type(self) -> AggregationType:
+    def _get_conversation_aggregator_type(self) -> _AggregationType:
         """Get the current conversation aggregation type used by this evaluator. This refers to the
         method used when a single input produces multiple evaluation results (ex: when a multi-turn conversation
         is inputted into an evaluator that evaluates each turn individually). The individual inputs
         are combined by the function implied here to produce a single overall result.
 
         :return: The conversation aggregation type.
-        :rtype: ~azure.ai.evaluation.AggregationType
+        :rtype: ~azure.ai.evaluation._AggregationType
         """
         return GetAggregatorType(self._conversation_aggregation_function)
 
@@ -464,7 +498,9 @@ class AsyncEvaluatorBase:
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
-        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None, **kwargs
+        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None,
+            tool_calls=None, tool_definitions=None, messages=None, retrieval_ground_truth=None,
+            retrieved_documents=None,**kwargs
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation
@@ -472,8 +508,21 @@ class AsyncEvaluatorBase:
             kwargs["query"] = query
         if response is not None:
             kwargs["response"] = response
+        if tool_definitions is not None:
+            kwargs["tool_definitions"] = tool_definitions
         if context is not None:
             kwargs["context"] = context
         if ground_truth is not None:
             kwargs["ground_truth"] = ground_truth
+        if tool_calls is not None:
+            kwargs["tool_calls"] = tool_calls
+        if tool_definitions is not None:
+            kwargs["tool_definitions"] = tool_definitions
+        if messages is not None:
+            kwargs["messages"] = messages
+        if retrieval_ground_truth is not None:
+            kwargs["retrieval_ground_truth"] = retrieval_ground_truth
+        if retrieved_documents is not None:
+            kwargs["retrieved_documents"] = retrieved_documents
+
         return await self._real_call(**kwargs)

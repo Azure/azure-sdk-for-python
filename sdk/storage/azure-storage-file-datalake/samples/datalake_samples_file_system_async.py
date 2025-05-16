@@ -14,19 +14,20 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_file_system_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) DATALAKE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 import asyncio
 import os
 
 from azure.core.exceptions import ResourceExistsError
 
-SOURCE_FILE = 'SampleSource.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class FileSystemSamplesAsync(object):
 
-    connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 
     #--Begin File System Samples-----------------------------------------------------------------
 
@@ -39,7 +40,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("mynewfilesystems")
+            file_system_client = datalake_service_client.get_file_system_client("mynewfilesystemsasync")
             # [END create_file_system_client_from_service]
 
             try:
@@ -66,7 +67,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("myleasefilesystem")
+            file_system_client = datalake_service_client.get_file_system_client("myleasefilesystemasync")
 
             # Create new File System
             try:
@@ -90,7 +91,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("mymetadatafilesystemsync")
+            file_system_client = datalake_service_client.get_file_system_client("mymetadatafilesystemsyncasync")
 
             try:
                 # Create new File System
@@ -119,7 +120,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("mypathfilesystem")
+            file_system_client = datalake_service_client.get_file_system_client("mypathfilesystemasync")
 
             # Create new File System
             await file_system_client.create_file_system()
@@ -150,7 +151,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("myclientfilesystem")
+            file_system_client = datalake_service_client.get_file_system_client("myclientfilesystemasync")
 
             # Create new File System
             try:
@@ -174,7 +175,7 @@ class FileSystemSamplesAsync(object):
 
         async with datalake_service_client:
             # Instantiate a FileSystemClient
-            file_system_client = datalake_service_client.get_file_system_client("mydirectoryfilesystem")
+            file_system_client = datalake_service_client.get_file_system_client("mydirectoryfilesystemasync")
 
             # Create new File System
             try:
@@ -193,7 +194,7 @@ class FileSystemSamplesAsync(object):
     async def create_file_from_file_system(self):
         # [START create_file_system_client_from_connection_string]
         from azure.storage.filedatalake.aio import FileSystemClient
-        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystemforcreate")
+        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystemforcreateasync")
         # [END create_file_system_client_from_connection_string]
 
         async with file_system_client:

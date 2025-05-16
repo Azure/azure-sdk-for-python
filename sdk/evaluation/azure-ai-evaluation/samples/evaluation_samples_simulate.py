@@ -232,7 +232,7 @@ class EvaluationSimulateSamples(object):
                 target=callback,
                 max_conversation_turns=2,
                 text="some text",
-                tasks=tasks,
+                tasks=["tasks"],
                 api_call_delay_sec=1,
                 num_queries=1,
             )

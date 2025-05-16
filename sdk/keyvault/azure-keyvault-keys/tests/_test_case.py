@@ -13,7 +13,7 @@ from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
 
-HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5}
+HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5, ApiVersion.V7_6_PREVIEW_2}
 
 
 def get_attestation_token(attestation_uri):
@@ -67,7 +67,8 @@ class KeysClientPreparer(AzureRecordedTestCase):
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
             self.vault_url = self.vault_url.rstrip("/")
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL", None)
+            hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
+            self.managed_hsm_url = hsm if hsm else None
             if self.managed_hsm_url:
                 self.managed_hsm_url = self.managed_hsm_url.rstrip("/")
         else:

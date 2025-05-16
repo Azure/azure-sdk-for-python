@@ -83,7 +83,9 @@ async def test_subscription(get_token_method):
     assert credential.subscription == subscription
 
     async def fake_exec(*args, **_):
-        assert f'--subscription "{subscription}"' in args[-1]
+        assert "--subscription" in args
+        subscription_id_index = args.index("--subscription")
+        assert args[subscription_id_index + 1]
         output = json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -318,8 +320,8 @@ async def test_multitenant_authentication(get_token_method):
     second_token = first_token * 2
 
     async def fake_exec(*args, **_):
-        match = re.search("--tenant (.*)", args[-1])
-        tenant = match[1] if match else default_tenant
+        tenant_index = args.index("--tenant") if "--tenant" in args else None
+        tenant = args[tenant_index + 1] if tenant_index is not None else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         output = json.dumps(
             {
@@ -361,8 +363,9 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
     expected_token = "***"
 
     async def fake_exec(*args, **_):
-        match = re.search("--tenant (.*)", args[-1])
-        assert match is None or match[1] == expected_tenant
+        tenant_index = args.index("--tenant") if "--tenant" in args else None
+        tenant = args[tenant_index + 1] if tenant_index is not None else None
+        assert tenant is None or tenant == expected_tenant
         output = json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),

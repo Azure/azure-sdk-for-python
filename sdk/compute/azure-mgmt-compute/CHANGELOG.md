@@ -1,5 +1,26 @@
 # Release History
 
+## 34.1.0 (2025-03-24)
+
+### Features Added
+
+  - Added operation AvailabilitySetsOperations.begin_convert_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.cancel_migration_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.start_migration_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.validate_migration_to_virtual_machine_scale_set
+  - Added operation VirtualMachineImagesOperations.list_with_properties
+  - Added operation VirtualMachinesOperations.begin_migrate_to_vm_scale_set
+  - Model AvailabilitySet has a new parameter virtual_machine_scale_set_migration_info
+  - Model AvailabilitySetUpdate has a new parameter virtual_machine_scale_set_migration_info
+  - Model ProxyAgentSettings has a new parameter imds
+  - Model ProxyAgentSettings has a new parameter wire_server
+  - Model ResiliencyPolicy has a new parameter automatic_zone_rebalancing_policy
+  - Model ScaleInPolicy has a new parameter prioritize_unhealthy_v_ms
+  - Model SkuProfileVMSize has a new parameter rank
+  - Model StorageProfile has a new parameter align_regional_disks_to_vm_zone
+  - Model VirtualMachine has a new parameter placement
+  - Model VirtualMachineScaleSetVM has a new parameter resilient_vm_deletion_status
+
 ## 34.0.0 (2025-01-20)
 
 ### Features Added

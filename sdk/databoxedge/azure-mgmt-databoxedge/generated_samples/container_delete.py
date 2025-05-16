@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
@@ -29,15 +30,14 @@ def main():
         subscription_id="4385cf00-2d3a-425a-832f-f4285b1c9dce",
     )
 
-    response = client.containers.begin_delete(
+    client.containers.begin_delete(
         device_name="testedgedevice",
         storage_account_name="storageaccount1",
         container_name="blobcontainer1",
         resource_group_name="GroupForEdgeAutomation",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2022-03-01/examples/ContainerDelete.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/ContainerDelete.json
 if __name__ == "__main__":
     main()

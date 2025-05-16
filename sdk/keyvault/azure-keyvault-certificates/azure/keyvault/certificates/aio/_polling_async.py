@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 class CreateCertificatePollerAsync(AsyncPollingMethod):
     def __init__(
-            self, pipeline_response: PipelineResponse, get_certificate_command: Callable, interval: int = 5
-        ) -> None:
+        self, pipeline_response: PipelineResponse, get_certificate_command: Callable, interval: int = 5
+    ) -> None:
         self._pipeline_response = pipeline_response
         self._command: Optional[Callable] = None
         self._resource: Optional[Union[CertificateOperation, KeyVaultCertificate]] = None

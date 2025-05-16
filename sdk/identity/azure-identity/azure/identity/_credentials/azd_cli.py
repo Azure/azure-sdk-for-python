@@ -5,6 +5,7 @@
 
 from datetime import datetime
 import json
+import logging
 import os
 import re
 import shutil
@@ -19,12 +20,15 @@ from .. import CredentialUnavailableError
 from .._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
+
+_LOGGER = logging.getLogger(__name__)
+
 CLI_NOT_FOUND = (
     "Azure Developer CLI could not be found. "
     "Please visit https://aka.ms/azure-dev for installation instructions and then,"
     "once installed, authenticate to your Azure account using 'azd auth login'."
 )
-COMMAND_LINE = "azd auth token --output json --scope {}"
+COMMAND_LINE = ["auth", "token", "--output", "json"]
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
 
@@ -138,7 +142,7 @@ class AzureDeveloperCliCredential:
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke
@@ -160,8 +164,9 @@ class AzureDeveloperCliCredential:
         for scope in scopes:
             validate_scope(scope)
 
-        commandString = " --scope ".join(scopes)
-        command = COMMAND_LINE.format(commandString)
+        command_args = COMMAND_LINE.copy()
+        for scope in scopes:
+            command_args += ["--scope", scope]
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -169,8 +174,8 @@ class AzureDeveloperCliCredential:
             **kwargs,
         )
         if tenant:
-            command += " --tenant-id " + tenant
-        output = _run_command(command, self._process_timeout)
+            command_args += ["--tenant-id", tenant]
+        output = _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -236,15 +241,13 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"token\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command: str, timeout: int) -> str:
+def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    if shutil.which(EXECUTABLE_NAME) is None:
+    azd_path = shutil.which(EXECUTABLE_NAME)
+    if not azd_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
-    if sys.platform.startswith("win"):
-        args = ["cmd", "/c", command]
-    else:
-        args = ["/bin/sh", "-c", command]
+    args = [azd_path] + command_args
     try:
         working_directory = get_safe_working_dir()
 
@@ -257,6 +260,7 @@ def _run_command(command: str, timeout: int) -> str:
             "timeout": timeout,
         }
 
+        _LOGGER.debug("Executing subprocess with the following arguments %s", args)
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell

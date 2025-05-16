@@ -36,12 +36,12 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
         raised = False
 
         text_options = TextNotificationContent(
-            channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
+            channel_registration_id="75476a19-a68d-4e10-806c-3680f099e069",
             to=[phone_number],
             content="Thanks for your feedback Hello.",
         )
 
-        message_response: MessageReceipt = None
+        message_response: MessageReceipt
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
@@ -59,16 +59,16 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
     @recorded_by_proxy
     def test_template_send_message(self):
         phone_number: str = "+14254360097"
-        input_template: MessageTemplate = MessageTemplate(name="pythontest", language="en_US")
+        input_template: MessageTemplate = MessageTemplate(name="cpm_welcome", language="en_US")
         raised = False
 
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         template_options = TemplateNotificationContent(
-            channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959", to=[phone_number], template=input_template
+            channel_registration_id="75476a19-a68d-4e10-806c-3680f099e069", to=[phone_number], template=input_template
         )
 
-        message_response: MessageReceipt = None
+        message_response: MessageReceipt
 
         try:
             with message_client:
@@ -90,7 +90,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
 
         input_template: MessageTemplate = MessageTemplate(
             name="sample_shipping_confirmation",
-            language="en_US",
+            language="en_us",
             template_values=[parammeter1],
             bindings=WhatsAppMessageTemplateBindings(
                 body=[WhatsAppMessageTemplateBindingsComponent(ref_value="first")]
@@ -99,10 +99,10 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
         raised = False
 
         template_options = TemplateNotificationContent(
-            channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959", to=[phone_number], template=input_template
+            channel_registration_id="75476a19-a68d-4e10-806c-3680f099e069", to=[phone_number], template=input_template
         )
 
-        message_response: MessageReceipt = None
+        message_response: MessageReceipt
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
@@ -124,10 +124,10 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
         raised = False
 
         template_options = ImageNotificationContent(
-            channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959", to=[phone_number], media_uri=input_media_uri
+            channel_registration_id="75476a19-a68d-4e10-806c-3680f099e069", to=[phone_number], media_uri=input_media_uri
         )
 
-        message_response: MessageReceipt = None
+        message_response: MessageReceipt
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
@@ -145,7 +145,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
     @recorded_by_proxy
     def test_download_media(self):
         phone_number: str = "+14254360097"
-        input_media_id: str = "77af35aa-2c17-4c32-8430-53b0559eb920"
+        input_media_id: str = "53a5dbc2-65ec-4b93-b652-b4bcc8830645"
         raised = False
         message_client: NotificationMessagesClient = self.create_notification_message_client()
         try:

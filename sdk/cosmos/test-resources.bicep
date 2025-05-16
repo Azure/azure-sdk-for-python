@@ -30,13 +30,13 @@ var singleRegionConfiguration = [
 ]
 var multiRegionConfiguration = [
   {
-    locationName: 'East US 2'
+    locationName: 'West US 3'
     provisioningState: 'Succeeded'
     failoverPriority: 0
     isZoneRedundant: false
   }
   {
-    locationName: 'East US'
+    locationName: 'West US'
     provisioningState: 'Succeeded'
     failoverPriority: 1
     isZoneRedundant: false
@@ -63,9 +63,9 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
     consistencyPolicy: {
       defaultConsistencyLevel: defaultConsistencyLevel
     }
-    capabilities: [{
-        name: 'EnableNoSQLVectorSearch'
-    }]
+    capabilities: [
+        {name: 'EnableNoSQLVectorSearch'}, {name: 'EnableNoSQLFullTextSearch'}
+    ]
     locations: locationsConfiguration
   }
 }

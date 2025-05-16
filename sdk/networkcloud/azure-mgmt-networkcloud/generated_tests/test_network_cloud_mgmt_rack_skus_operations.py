@@ -20,9 +20,9 @@ class TestNetworkCloudMgmtRackSkusOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_rack_skus_list_by_subscription(self, resource_group):
         response = self.client.rack_skus.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestNetworkCloudMgmtRackSkusOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_rack_skus_get(self, resource_group):
         response = self.client.rack_skus.get(
             rack_sku_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself

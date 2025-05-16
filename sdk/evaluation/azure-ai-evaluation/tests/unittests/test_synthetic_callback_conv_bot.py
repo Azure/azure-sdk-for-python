@@ -13,7 +13,7 @@ class MockOpenAIChatCompletionsModel(OpenAIChatCompletionsModel):
     def __init__(self):
         super().__init__(name="mockAIcompletionsModel", endpoint_url="some-url", token_manager="token_manager")
 
-    async def get_conversation_completion(self, messages, session, role):
+    async def get_conversation_completion(self, messages, session_state, role):
         return {"response": {}, "request": {}, "time_taken": 0, "full_response": {}}
 
 
@@ -22,9 +22,10 @@ class TestCallbackConversationBot:
     @pytest.mark.asyncio
     async def test_generate_response_with_valid_callback(self):
         # Mock the callback to return a predefined response
-        async def mock_callback(msg):
+        async def mock_callback(msg, session_state):
             return {
                 "messages": [{"content": "Test response", "role": "assistant"}],
+                "session_state": session_state,
                 "finish_reason": ["stop"],
                 "id": "test_id",
                 "template_parameters": {},
@@ -56,7 +57,7 @@ class TestCallbackConversationBot:
     @pytest.mark.asyncio
     async def test_generate_response_with_no_callback_response(self):
         # Mock the callback to return an empty result
-        async def mock_callback(msg):
+        async def mock_callback(msg, session_state):
             return {}
 
         # Create an instance of CallbackConversationBot with the mock callback
@@ -85,7 +86,7 @@ class TestCallbackConversationBot:
     @pytest.mark.asyncio
     async def test_generate_response_with_callback_exception(self):
         # Mock the callback to raise an exception
-        async def mock_callback(msg):
+        async def mock_callback(msg, session_state):
             raise RuntimeError("Unexpected error")
 
         # Create an instance of CallbackConversationBot with the mock callback

@@ -83,25 +83,10 @@ elif sys.platform.startswith("aix"):
     KNOWN_TCP_OPTS.remove("TCP_MAXSEG")
     KNOWN_TCP_OPTS.remove("TCP_USER_TIMEOUT")
 
-if sys.version_info < (2, 7, 7):  # pragma: no cover
-    import functools
-
-    def _to_bytes_arg(fun):
-        @functools.wraps(fun)
-        def _inner(s, *args, **kwargs):
-            return fun(s.encode(), *args, **kwargs)
-
-        return _inner
-
-    pack = _to_bytes_arg(struct.pack)
-    pack_into = _to_bytes_arg(struct.pack_into)
-    unpack = _to_bytes_arg(struct.unpack)
-    unpack_from = _to_bytes_arg(struct.unpack_from)
-else:
-    pack = struct.pack
-    pack_into = struct.pack_into
-    unpack = struct.unpack
-    unpack_from = struct.unpack_from
+pack = struct.pack
+pack_into = struct.pack_into
+unpack = struct.unpack
+unpack_from = struct.unpack_from
 
 __all__ = [
     "LINUX_VERSION",

@@ -5,5 +5,4 @@ type_check_samples = false
 verifytypes = false
 pylint = false
 black = false
-bandit = true
 ci_enabled = false

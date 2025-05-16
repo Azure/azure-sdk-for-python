@@ -3,76 +3,75 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
+import uuid
 from typing import (
     Union, Optional, Any,
-    TypeVar, TYPE_CHECKING
+    TYPE_CHECKING
 )
+from typing_extensions import Self
+
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobLeaseClient
-from .._data_lake_lease import DataLakeLeaseClient as DataLakeLeaseClientBase
-
 
 if TYPE_CHECKING:
-    FileSystemClient = TypeVar("FileSystemClient")
-    DataLakeDirectoryClient = TypeVar("DataLakeDirectoryClient")
-    DataLakeFileClient = TypeVar("DataLakeFileClient")
+    from datetime import datetime
+    from azure.storage.filedatalake.aio import FileSystemClient
+    from ._path_client_async import PathClient
 
 
-class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-accepts-api-version-keyword
+class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new DataLakeLeaseClient.
 
     This client provides lease operations on a FileSystemClient, DataLakeDirectoryClient or DataLakeFileClient.
 
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
-
     :param client:
         The client of the file system, directory, or file to lease.
-    :type client: ~azure.storage.filedatalake.aio.FileSystemClient or
-        ~azure.storage.filedatalake.aio.DataLakeDirectoryClient or ~azure.storage.filedatalake.aio.DataLakeFileClient
+    :type client:
+        ~azure.storage.filedatalake.aio.FileSystemClient or
+        ~azure.storage.filedatalake.aio.DataLakeDirectoryClient or
+        ~azure.storage.filedatalake.aio.DataLakeFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient], Optional[str]) -> None
-        super(DataLakeLeaseClient, self).__init__(client, lease_id)
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+        This will be `None` if no lease has yet been acquired or modified."""
+
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self, client: Union["FileSystemClient", "PathClient"],
+        lease_id: Optional[str] = None
+    ) -> None:
+        self.id = lease_id or str(uuid.uuid4())
+        self.last_modified = None
+        self.etag = None
 
         if hasattr(client, '_blob_client'):
-            _client = client._blob_client  # type: ignore
+            _client = client._blob_client
         elif hasattr(client, '_container_client'):
-            _client = client._container_client  # type: ignore
+            _client = client._container_client
         else:
-            raise TypeError("Lease must use any of FileSystemClient DataLakeDirectoryClient, or DataLakeFileClient.")
+            raise TypeError("Lease must use any of FileSystemClient, DataLakeDirectoryClient, or DataLakeFileClient.")
 
         self._blob_lease_client = BlobLeaseClient(_client, lease_id=lease_id)
 
-    def __enter__(self):
-        raise TypeError("Async lease must use 'async with'.")
-
-    def __exit__(self, *args):
-        self.release()
-
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.release()
 
     @distributed_trace_async
-    async def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, Optional[int], **Any) -> None
+    async def acquire(self, lease_duration: int = -1, **kwargs: Any) -> None:
         """Requests a new lease.
 
         If the file/file system does not have an active lease, the DataLake service creates a
@@ -112,8 +111,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         self._update_lease_client_attributes()
 
     @distributed_trace_async
-    async def renew(self, **kwargs):
-        # type: (Any) -> None
+    async def renew(self, **kwargs: Any) -> None:
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -151,8 +149,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         self._update_lease_client_attributes()
 
     @distributed_trace_async
-    async def release(self, **kwargs):
-        # type: (Any) -> None
+    async def release(self, **kwargs: Any) -> None:
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -188,8 +185,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         self._update_lease_client_attributes()
 
     @distributed_trace_async
-    async def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    async def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -224,8 +220,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         self._update_lease_client_attributes()
 
     @distributed_trace_async
-    async def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    async def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
         """Break the lease, if the file system or file has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -266,4 +261,9 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
-        await self._blob_lease_client.break_lease(lease_break_period=lease_break_period, **kwargs)
+        return await self._blob_lease_client.break_lease(lease_break_period=lease_break_period, **kwargs)
+
+    def _update_lease_client_attributes(self) -> None:
+        self.id = self._blob_lease_client.id
+        self.last_modified = self._blob_lease_client.last_modified
+        self.etag = self._blob_lease_client.etag

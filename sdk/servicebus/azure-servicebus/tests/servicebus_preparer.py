@@ -157,6 +157,9 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             client_kwargs=client_kwargs,
         )
         self.location = location
+        # Disable local auth if testing locally (without TME).
+        # We're running in the pipelines if AZURESUBSCRIPTION_SERVICE_CONNECTION_ID is set.
+        self.disable_local_auth = True if not os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID") else False
         self.sku = sku
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
@@ -181,6 +184,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
                         {
                             "sku": {"name": self.sku},
                             "location": self.location,
+                            "disableLocalAuth": self.disable_local_auth,
                         },
                     )
                     self.resource = namespace_async_operation.result()

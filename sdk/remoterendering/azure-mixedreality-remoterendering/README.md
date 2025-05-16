@@ -368,7 +368,7 @@ If you'd like to contribute to this library, please read the
 to build and test the code.
 
 <!-- LINKS -->
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%remoterendering%2Fazure-mixedreality-remoterendering%2FREADME.png)
+
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions

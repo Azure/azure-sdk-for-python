@@ -21,9 +21,9 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_virtual_machines_list_by_subscription(self, resource_group):
         response = self.client.virtual_machines.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_virtual_machines_list_by_resource_group(self, resource_group):
         response = self.client.virtual_machines.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machines_get(self, resource_group):
         response = await self.client.virtual_machines.get(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_machines_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -83,6 +83,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
                     "bareMetalMachineId": "str",
                     "bootMethod": "UEFI",
                     "clusterId": "str",
+                    "consoleExtendedLocation": {"name": "str", "type": "str"},
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
                     "id": "str",
@@ -122,7 +123,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
                     "vmImageRepositoryCredentials": {"password": "str", "registryUrl": "str", "username": "str"},
                     "volumes": ["str"],
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -131,12 +132,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_machines_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -145,12 +146,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_virtual_machines_begin_update(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_update(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -159,12 +160,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_power_off(self, resource_group):
+    async def test_virtual_machines_begin_power_off(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_power_off(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -173,12 +174,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reimage(self, resource_group):
+    async def test_virtual_machines_begin_reimage(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_reimage(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -187,12 +188,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart(self, resource_group):
+    async def test_virtual_machines_begin_restart(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_restart(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -201,12 +202,12 @@ class TestNetworkCloudMgmtVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_virtual_machines_begin_start(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_start(
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -20,14 +20,14 @@ class TestNetAppManagementBackupsUnderVolumeOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_migrate_backups(self, resource_group):
+    def test_backups_under_volume_begin_migrate_backups(self, resource_group):
         response = self.client.backups_under_volume.begin_migrate_backups(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             body={"backupVaultId": "str"},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

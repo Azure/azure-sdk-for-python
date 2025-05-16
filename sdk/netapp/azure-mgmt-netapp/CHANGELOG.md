@@ -1,5 +1,44 @@
 # Release History
 
+## 13.5.0 (2025-04-21)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `net_app_resource_usages`
+  - Model `Backup` added property `snapshot_creation_date`
+  - Model `Backup` added property `completion_date`
+  - Model `Backup` added property `is_large_volume`
+  - Model `EncryptionIdentity` added property `federated_client_id`
+  - Model `NetAppAccount` added property `nfs_v4_id_domain`
+  - Model `NetAppAccount` added property `multi_ad_status`
+  - Model `NetAppAccountPatch` added property `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` added property `multi_ad_status`
+  - Model `OperationListResult` added property `next_link`
+  - Model `ReplicationObject` added property `destination_replications`
+  - Added model `DestinationReplication`
+  - Added enum `MultiAdStatus`
+  - Added enum `ReplicationType`
+  - Added model `UsageName`
+  - Added model `UsageResult`
+  - Added model `UsagesListResult`
+  - Added model `NetAppResourceUsagesOperations`
+
+## 13.4.0 (2025-02-26)
+
+### Features Added
+
+  - Model `Volume` added property `cool_access_tiering_policy`
+  - Model `VolumeGroupVolumeProperties` added property `cool_access_tiering_policy`
+  - Model `VolumePatch` added property `cool_access_tiering_policy`
+  - Added model `ChangeKeyVault`
+  - Added enum `CoolAccessTieringPolicy`
+  - Added model `EncryptionTransitionRequest`
+  - Added model `GetKeyVaultStatusResponse`
+  - Added model `KeyVaultPrivateEndpoint`
+  - Operation group `AccountsOperations` added method `begin_change_key_vault`
+  - Operation group `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operation group `AccountsOperations` added method `begin_transition_to_cmk`
+
 ## 13.4.0b1 (2024-11-18)
 
 ### Features Added

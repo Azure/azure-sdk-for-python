@@ -1,0 +1,24 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "includeSpark": false
+    }
+  },
+  "responses": {
+    "202": {
+      "headers": {
+        "Location": "location_url_to_poll_for_status"
+      }
+    },
+    "200": {
+      "body": {
+        "status": "Active",
+        "sparkReady": true
+      }
+    }
+  }
+}

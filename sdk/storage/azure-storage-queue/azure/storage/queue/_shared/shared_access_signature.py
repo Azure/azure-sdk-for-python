@@ -10,42 +10,45 @@ from .parser import _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
+
 # cspell:ignoreRegExp rsc.
 # cspell:ignoreRegExp s..?id
 class QueryStringConstants(object):
-    SIGNED_SIGNATURE = 'sig'
-    SIGNED_PERMISSION = 'sp'
-    SIGNED_START = 'st'
-    SIGNED_EXPIRY = 'se'
-    SIGNED_RESOURCE = 'sr'
-    SIGNED_IDENTIFIER = 'si'
-    SIGNED_IP = 'sip'
-    SIGNED_PROTOCOL = 'spr'
-    SIGNED_VERSION = 'sv'
-    SIGNED_CACHE_CONTROL = 'rscc'
-    SIGNED_CONTENT_DISPOSITION = 'rscd'
-    SIGNED_CONTENT_ENCODING = 'rsce'
-    SIGNED_CONTENT_LANGUAGE = 'rscl'
-    SIGNED_CONTENT_TYPE = 'rsct'
-    START_PK = 'spk'
-    START_RK = 'srk'
-    END_PK = 'epk'
-    END_RK = 'erk'
-    SIGNED_RESOURCE_TYPES = 'srt'
-    SIGNED_SERVICES = 'ss'
-    SIGNED_OID = 'skoid'
-    SIGNED_TID = 'sktid'
-    SIGNED_KEY_START = 'skt'
-    SIGNED_KEY_EXPIRY = 'ske'
-    SIGNED_KEY_SERVICE = 'sks'
-    SIGNED_KEY_VERSION = 'skv'
-    SIGNED_ENCRYPTION_SCOPE = 'ses'
+    SIGNED_SIGNATURE = "sig"
+    SIGNED_PERMISSION = "sp"
+    SIGNED_START = "st"
+    SIGNED_EXPIRY = "se"
+    SIGNED_RESOURCE = "sr"
+    SIGNED_IDENTIFIER = "si"
+    SIGNED_IP = "sip"
+    SIGNED_PROTOCOL = "spr"
+    SIGNED_VERSION = "sv"
+    SIGNED_CACHE_CONTROL = "rscc"
+    SIGNED_CONTENT_DISPOSITION = "rscd"
+    SIGNED_CONTENT_ENCODING = "rsce"
+    SIGNED_CONTENT_LANGUAGE = "rscl"
+    SIGNED_CONTENT_TYPE = "rsct"
+    START_PK = "spk"
+    START_RK = "srk"
+    END_PK = "epk"
+    END_RK = "erk"
+    SIGNED_RESOURCE_TYPES = "srt"
+    SIGNED_SERVICES = "ss"
+    SIGNED_OID = "skoid"
+    SIGNED_TID = "sktid"
+    SIGNED_KEY_START = "skt"
+    SIGNED_KEY_EXPIRY = "ske"
+    SIGNED_KEY_SERVICE = "sks"
+    SIGNED_KEY_VERSION = "skv"
+    SIGNED_ENCRYPTION_SCOPE = "ses"
+    SIGNED_KEY_DELEGATED_USER_TID = "skdutid"
+    SIGNED_DELEGATED_USER_OID = "sduoid"
 
     # for ADLS
-    SIGNED_AUTHORIZED_OID = 'saoid'
-    SIGNED_UNAUTHORIZED_OID = 'suoid'
-    SIGNED_CORRELATION_ID = 'scid'
-    SIGNED_DIRECTORY_DEPTH = 'sdd'
+    SIGNED_AUTHORIZED_OID = "saoid"
+    SIGNED_UNAUTHORIZED_OID = "suoid"
+    SIGNED_CORRELATION_ID = "scid"
+    SIGNED_DIRECTORY_DEPTH = "sdd"
 
     @staticmethod
     def to_list():
@@ -77,6 +80,8 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
+            QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+            QueryStringConstants.SIGNED_DELEGATED_USER_OID,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
             QueryStringConstants.SIGNED_UNAUTHORIZED_OID,
@@ -86,28 +91,29 @@ class QueryStringConstants(object):
 
 
 class SharedAccessSignature(object):
-    '''
+    """
     Provides a factory for creating account access
     signature tokens with an account name and account key. Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
-    '''
+    """
 
     def __init__(self, account_name, account_key, x_ms_version=X_MS_VERSION):
-        '''
+        """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param str account_key:
             The access key to generate the shares access signatures.
         :param str x_ms_version:
             The service version used to generate the shared access signatures.
-        '''
+        """
         self.account_name = account_name
         self.account_key = account_key
         self.x_ms_version = x_ms_version
 
     def generate_account(
-        self, services,
+        self,
+        services,
         resource_types,
         permission,
         expiry,
@@ -116,7 +122,7 @@ class SharedAccessSignature(object):
         protocol=None,
         sts_hook=None,
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
@@ -162,7 +168,7 @@ class SharedAccessSignature(object):
         :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
-        '''
+        """
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
@@ -207,11 +213,9 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
 
-    def add_override_response_headers(self, cache_control,
-                                      content_disposition,
-                                      content_encoding,
-                                      content_language,
-                                      content_type):
+    def add_override_response_headers(
+        self, cache_control, content_disposition, content_encoding, content_language, content_type
+    ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
@@ -220,25 +224,25 @@ class _SharedAccessHelper(object):
 
     def add_account_signature(self, account_name, account_key):
         def get_value_to_append(query):
-            return_value = self.query_dict.get(query) or ''
-            return return_value + '\n'
+            return_value = self.query_dict.get(query) or ""
+            return return_value + "\n"
 
-        string_to_sign = \
-            (account_name + '\n' +
-             get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_SERVICES) +
-             get_value_to_append(QueryStringConstants.SIGNED_RESOURCE_TYPES) +
-             get_value_to_append(QueryStringConstants.SIGNED_START) +
-             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
-             '\n'   # Signed Encryption Scope - always empty for queue
-             )
+        string_to_sign = (
+            account_name
+            + "\n"
+            + get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_SERVICES)
+            + get_value_to_append(QueryStringConstants.SIGNED_RESOURCE_TYPES)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+            + "\n"  # Signed Encryption Scope - always empty for queue
+        )
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key, string_to_sign))
+        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:
-        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])
+        return "&".join([f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None])

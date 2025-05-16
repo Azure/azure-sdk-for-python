@@ -25,6 +25,7 @@
 """
 import os
 from urllib.parse import urlparse
+import uuid
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
@@ -112,7 +113,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-statements
             self,
             url_connection: str,
             auth: CredentialDict,
@@ -134,6 +135,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The default consistency policy for client operations.
 
         """
+        self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
@@ -160,6 +162,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
+
+        throughput_bucket = kwargs.pop('throughput_bucket', None)
+        if throughput_bucket:
+            self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
@@ -217,7 +223,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 logger=kwargs.pop("logger", None),
                 enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
                 global_endpoint_manager=self._global_endpoint_manager,
-                diagnostics_handler=kwargs.pop("diagnostics_handler", None),
                 **kwargs
             ),
         ]
@@ -294,11 +299,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     async def _setup(self) -> None:
         if 'database_account' not in self._setup_kwargs:
-            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
+            database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
             )
             self._setup_kwargs['database_account'] = database_account
-            await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+            await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
         else:
             database_account = self._setup_kwargs['database_account']
 
@@ -409,9 +414,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection = self.url_connection
 
         initial_headers = dict(self.default_headers)
-        headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)  # path  # id  # type
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+
         result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
         database_account = documents.DatabaseAccount()
         database_account.DatabasesLink = "/dbs/"
@@ -440,6 +448,28 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
+
+    async def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)  # path  # id  # type
+
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        await self.__Get("", request_params, headers, **kwargs)
 
     async def CreateDatabase(
         self,
@@ -698,7 +728,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id, "sprocs", options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id, "sprocs",
+                                  documents._OperationType.ExecuteJavaScript, options)
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
@@ -735,10 +766,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ,
+                                  documents._OperationType.Create, options)
         # Create will use WriteEndpoint since it uses POST operation
 
         request_params = _request_object.RequestObject(typ, documents._OperationType.Create)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -871,12 +904,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, documents._OperationType.Upsert,
+                                  options)
 
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -1174,9 +1209,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read,
+                                  options)
         # Read will use ReadEndpoint since it uses GET operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
         if response_hook:
@@ -1431,9 +1468,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "patch", path, document_id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "patch", path, document_id, typ,
+                                  documents._OperationType.Patch, options)
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Patch)
+        request_params.set_excluded_location_from_options(options)
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -1534,9 +1573,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, documents._OperationType.Replace,
+                                  options)
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1856,9 +1897,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
+        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, documents._OperationType.Delete,
+                                  options)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1969,8 +2012,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         initial_headers = self.default_headers.copy()
         base._populate_batch_headers(initial_headers)
-        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs",
+                                  documents._OperationType.Batch, options)
         request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)
+        request_params.set_excluded_location_from_options(options)
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
         return cast(Tuple[List[Dict[str, Any]], CaseInsensitiveDict], result)
 
@@ -2151,7 +2196,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
@@ -2159,7 +2204,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
 
@@ -2175,7 +2220,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[PartitionKeyType] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries documents in a collection.
@@ -2186,7 +2231,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key: Partition key for the query(default value None)
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None], None]
         :return:
             Query Iterable of Documents.
         :rtype:
@@ -2233,7 +2278,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options,
             fetch_function=fetch_fn,
             collection_link=database_or_container_link,
-            page_iterator_class=query_iterable.QueryIterable
+            page_iterator_class=query_iterable.QueryIterable,
+            response_hook=response_hook
         )
 
     def QueryItemsChangeFeed(
@@ -2780,7 +2826,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key_range_id: Optional[str] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
@@ -2796,7 +2842,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
-        :param function response_hook:
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
         :returns: A list of the queried resources.
@@ -2825,7 +2872,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 typ,
                 documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
             )
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
+            request_params.set_excluded_location_from_options(options)
+            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, request_params.operation_type,
+                                      options, partition_key_range_id)
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
@@ -2853,7 +2902,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
-        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+        request_params.set_excluded_location_from_options(options)
+        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, request_params.operation_type,
+                                      options, partition_key_range_id)
 
         # check if query has prefix partition key
         cont_prop = kwargs.pop("containerProperties", None)
@@ -3157,7 +3208,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf)
-        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
+                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                         documents._QueryFeature.CompositeAggregate + "," +
                                         documents._QueryFeature.Distinct + "," +
@@ -3218,8 +3270,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         initial_headers = dict(self.default_headers)
-        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "partitionkey", options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "partitionkey",
+                                  documents._OperationType.Delete, options)
         request_params = _request_object.RequestObject("partitionkey", documents._OperationType.Delete)
+        request_params.set_excluded_location_from_options(options)
         _, last_response_headers = await self.__Post(path=path, request_params=request_params,
                                                         req_headers=headers, body=None, **kwargs)
         self.last_response_headers = last_response_headers

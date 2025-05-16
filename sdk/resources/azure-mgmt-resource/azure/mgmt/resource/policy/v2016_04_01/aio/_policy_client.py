@@ -21,11 +21,10 @@ from ._configuration import PolicyClientConfiguration
 from .operations import PolicyAssignmentsOperations, PolicyDefinitionsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
+class PolicyClient:
     """To manage and control access to your resources, you can define customized policies and assign
     them at a scope.
 

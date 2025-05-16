@@ -20,11 +20,11 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_bare_metal_machine_key_sets_list_by_cluster(self, resource_group):
         response = self.client.bare_metal_machine_key_sets.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_bare_metal_machine_key_sets_get(self, resource_group):
         response = self.client.bare_metal_machine_key_sets.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_bare_metal_machine_key_sets_begin_create_or_update(self, resource_group):
         response = self.client.bare_metal_machine_key_sets.begin_create_or_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -84,7 +84,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "userListStatus": [{"azureUserName": "str", "status": "str", "statusMessage": "str"}],
             },
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,12 +92,12 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_bare_metal_machine_key_sets_begin_delete(self, resource_group):
         response = self.client.bare_metal_machine_key_sets.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,12 +105,12 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_bare_metal_machine_key_sets_begin_update(self, resource_group):
         response = self.client.bare_metal_machine_key_sets.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

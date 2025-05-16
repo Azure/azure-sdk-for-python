@@ -21,11 +21,11 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_backup_policies_list(self, resource_group):
         response = self.client.backup_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_backup_policies_get(self, resource_group):
         response = await self.client.backup_policies.get(
             resource_group_name=resource_group.name,
             account_name="str",
             backup_policy_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_backup_policies_begin_create(self, resource_group):
         response = await (
             await self.client.backup_policies.begin_create(
                 resource_group_name=resource_group.name,
@@ -78,7 +78,7 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
                     "volumesAssigned": 0,
                     "weeklyBackupsToKeep": 0,
                 },
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,7 +87,7 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_backup_policies_begin_update(self, resource_group):
         response = await (
             await self.client.backup_policies.begin_update(
                 resource_group_name=resource_group.name,
@@ -110,7 +110,7 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
                     "volumesAssigned": 0,
                     "weeklyBackupsToKeep": 0,
                 },
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,13 +119,13 @@ class TestNetAppManagementBackupPoliciesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_backup_policies_begin_delete(self, resource_group):
         response = await (
             await self.client.backup_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 backup_policy_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

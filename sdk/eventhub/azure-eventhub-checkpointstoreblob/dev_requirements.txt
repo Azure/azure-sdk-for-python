@@ -1,3 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
+azure-identity~=1.17.0
 ../azure-eventhub

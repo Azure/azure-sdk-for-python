@@ -2,14 +2,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    EnvironmentVersionData,
-    EnvironmentVersionDetails,
-)
-
+from azure.ai.ml import load_environment
+from azure.ai.ml._restclient.v2022_05_01.models import EnvironmentVersionData, EnvironmentVersionDetails
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.operations import EnvironmentOperations
-from azure.ai.ml import load_environment
 
 
 @pytest.fixture
@@ -58,3 +54,27 @@ class TestEnvironmentOperation:
             body=env_version,
             resource_group_name=mock_environment_operation._resource_group_name,
         )
+
+    def test_create_or_update_sas_uri_success(self, mock_environment_operation: EnvironmentOperations):
+        env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset", return_value="some_sas_uri"
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
+        ) as check_upload:
+            mock_environment_operation.create_or_update(env)
+            check_upload.assert_called_once()
+
+    def test_create_or_update_sas_uri_failure(self, mock_environment_operation: EnvironmentOperations):
+        env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
+        ) as check_upload:
+            mock_environment_operation.create_or_update(env)
+            check_upload.assert_not_called()

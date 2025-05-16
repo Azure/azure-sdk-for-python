@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,24 +37,26 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
-    keywords="azure, azure sdk",
+    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     zip_safe=False,
     packages=find_packages(
         exclude=[
             "tests",
+            "samples",
+            "generated_tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.ai",
@@ -67,6 +70,11 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.12.2",
+        "azure-storage-blob>=12.15.0",
+        "azure-ai-agents>=1.0.0b1",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
+    extras_require={
+        "prompts": ["prompty"],
+    },
 )

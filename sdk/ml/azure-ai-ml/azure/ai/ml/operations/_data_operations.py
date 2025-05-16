@@ -750,24 +750,25 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
+        *,
         mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
-        **_kwargs,
+        **kwargs,
     ) -> None:
         """Mount a data asset to a local path, so that you can access data inside it
         under a local path with any tools of your choice.
 
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
         :type path: str
-        :param mount_point: A local path used as mount point.
+        :keyword mount_point: A local path used as mount point.
         :type mount_point: str
-        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :keyword mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
         :type mode: str
-        :param debug: Whether to enable verbose logging.
+        :keyword debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+        :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None
@@ -809,6 +810,7 @@ class DataOperations(_ScopeDependentOperations):
                     )
                 ],
                 api_version="2021-01-01",
+                **kwargs,
             )
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
@@ -851,7 +853,9 @@ class DataOperations(_ScopeDependentOperations):
         data_versions_operation_ = self._operation
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub, _model_client = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

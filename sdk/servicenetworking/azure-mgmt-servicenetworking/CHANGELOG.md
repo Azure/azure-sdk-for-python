@@ -1,6 +1,22 @@
 # Release History
 
-## 2.0.0 (2025-01-20)
+## 2.1.0b1 (2025-05-12)
+
+### Features Added
+
+  - Model `FrontendProperties` added property `security_policy_configurations`
+  - Model `FrontendUpdate` added property `properties`
+  - Enum `PolicyType` added member `IP_ACCESS_RULES`
+  - Model `SecurityPolicyConfigurations` added property `ip_access_rules_security_policy`
+  - Model `SecurityPolicyProperties` added property `ip_access_rules_policy`
+  - Model `SecurityPolicyUpdateProperties` added property `ip_access_rules_policy`
+  - Added model `FrontendUpdateProperties`
+  - Added model `IpAccessRule`
+  - Added enum `IpAccessRuleAction`
+  - Added model `IpAccessRulesPolicy`
+  - Added model `IpAccessRulesSecurityPolicy`
+
+## 2.0.0 (2025-02-05)
 
 ### Features Added
 
@@ -24,7 +40,7 @@
   - Added model `WafPolicy`
   - Added model `WafSecurityPolicy`
   - Added operation group `SecurityPoliciesInterfaceOperations`
-
+  
 ### Breaking Changes
 
   - Model `Association` deleted or renamed its instance variable `association_type`
@@ -38,7 +54,6 @@
   - Model `TrafficController` deleted or renamed its instance variable `frontends`
   - Model `TrafficController` deleted or renamed its instance variable `associations`
   - Model `TrafficController` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `AssociationSubnetUpdate`
 
 ## 1.1.0b1 (2024-09-29)
 

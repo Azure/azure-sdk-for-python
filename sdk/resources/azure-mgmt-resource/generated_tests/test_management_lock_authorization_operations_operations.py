@@ -20,7 +20,7 @@ class TestManagementLockAuthorizationOperationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_authorization_operations_list(self, resource_group):
         response = self.client.authorization_operations.list(
             api_version="2016-09-01",
         )

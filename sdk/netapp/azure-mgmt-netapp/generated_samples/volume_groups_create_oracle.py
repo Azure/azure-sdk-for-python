@@ -27,7 +27,7 @@ from azure.mgmt.netapp import NetAppManagementClient
 def main():
     client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.volume_groups.begin_create(
@@ -46,7 +46,7 @@ def main():
                     {
                         "name": "test-ora-data1",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data1",
                             "exportPolicy": {
                                 "rules": [
@@ -70,7 +70,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data1",
@@ -80,7 +80,7 @@ def main():
                     {
                         "name": "test-ora-data2",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data2",
                             "exportPolicy": {
                                 "rules": [
@@ -104,7 +104,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data2",
@@ -114,7 +114,7 @@ def main():
                     {
                         "name": "test-ora-data3",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data3",
                             "exportPolicy": {
                                 "rules": [
@@ -138,7 +138,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data3",
@@ -148,7 +148,7 @@ def main():
                     {
                         "name": "test-ora-data4",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data4",
                             "exportPolicy": {
                                 "rules": [
@@ -172,7 +172,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data4",
@@ -182,7 +182,7 @@ def main():
                     {
                         "name": "test-ora-data5",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data5",
                             "exportPolicy": {
                                 "rules": [
@@ -206,7 +206,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data5",
@@ -216,7 +216,7 @@ def main():
                     {
                         "name": "test-ora-data6",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data6",
                             "exportPolicy": {
                                 "rules": [
@@ -240,7 +240,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data6",
@@ -250,7 +250,7 @@ def main():
                     {
                         "name": "test-ora-data7",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data7",
                             "exportPolicy": {
                                 "rules": [
@@ -274,7 +274,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data7",
@@ -284,7 +284,7 @@ def main():
                     {
                         "name": "test-ora-data8",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-data8",
                             "exportPolicy": {
                                 "rules": [
@@ -308,7 +308,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-data8",
@@ -318,7 +318,7 @@ def main():
                     {
                         "name": "test-ora-log",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-log",
                             "exportPolicy": {
                                 "rules": [
@@ -342,7 +342,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-log",
@@ -352,7 +352,7 @@ def main():
                     {
                         "name": "test-ora-log-mirror",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-log-mirror",
                             "exportPolicy": {
                                 "rules": [
@@ -376,7 +376,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-log-mirror",
@@ -386,7 +386,7 @@ def main():
                     {
                         "name": "test-ora-binary",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-binary",
                             "exportPolicy": {
                                 "rules": [
@@ -410,7 +410,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-binary",
@@ -420,7 +420,7 @@ def main():
                     {
                         "name": "test-ora-backup",
                         "properties": {
-                            "capacityPoolResourceId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
+                            "capacityPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1",
                             "creationToken": "test-ora-backup",
                             "exportPolicy": {
                                 "rules": [
@@ -444,7 +444,7 @@ def main():
                             },
                             "protocolTypes": ["NFSv4.1"],
                             "serviceLevel": "Premium",
-                            "subnetId": "/subscriptions/d633cc2e-722b-4ae1-b636-bbd9e4c60ed9/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+                            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
                             "throughputMibps": 10,
                             "usageThreshold": 107374182400,
                             "volumeSpecName": "ora-backup",
@@ -458,6 +458,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/VolumeGroups_Create_Oracle.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-01-01/examples/VolumeGroups_Create_Oracle.json
 if __name__ == "__main__":
     main()

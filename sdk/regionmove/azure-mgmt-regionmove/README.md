@@ -27,4 +27,9 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project. 
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-regionmove%2FREADME.png)
+
+
+
+Package source code and samples have been removed from the `main` branch and can be found under the release tag for the latest version. See [azure-mgmt-regionmove_1.0.0b1](https://github.com/Azure/azure-sdk-for-python/tree/azure-mgmt-regionmove_1.0.0b1/sdk/regionmove/azure-mgmt-regionmove). The latest release can be found on [PyPI](https://pypi.org/project/azure-mgmt-regionmove/).
+
+If you have any questions, please open a [GitHub Issue](https://github.com/Azure/azure-sdk-for-python/issues) or email `azpysdkhelp@microsoft.com`.

@@ -42,6 +42,8 @@ Note that the metadata under `products` must match an existing product slug foun
 
 ## Capturing code snippets in reference documentation
 Code snippets from samples can be captured as [examples][qa_example] in our reference documentation.
+See [code snippets documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/code_snippets.md) for more details on how to define and reference code snippets in Markdown files.
+
 To do this, place `# [START <keyword>]` and `# [END <keyword>]` comments which span the lines you want to show up in the reference documentation example.
 Note that the <keyword> used should be unique across all sync/async samples added to a client library.
 
@@ -84,7 +86,7 @@ For general how-to with the Python SDK, see the [Azure SDK for Python Overview][
 [samples_browser]: https://learn.microsoft.com/samples/browse/
 [product_slug]: https://review.learn.microsoft.com/help/platform/metadata-taxonomies?branch=main#product
 [request_product_slug]: https://review.learn.microsoft.com/help/platform/metadata-request-changes?branch=main
-[qa_example]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/1.1.0/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient.get_answers_from_text
+[qa_example]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient.get_answers_from_text
 [qa_code_snippet]: https://github.com/Azure/azure-sdk-for-python/blob/7b3dfdca0658f6a4706654556d3142b4bce2b0d1/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/_patch.py#L244-L251
 [literalinclude]: https://github.com/Azure/azure-sdk-for-python/blob/7b3dfdca0658f6a4706654556d3142b4bce2b0d1/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/_patch.py#L244-L251
 [snippet_guidelines]: https://azure.github.io/azure-sdk/python_design.html#code-snippets

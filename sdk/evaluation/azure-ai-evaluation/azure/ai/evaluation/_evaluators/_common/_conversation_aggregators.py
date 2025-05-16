@@ -5,19 +5,19 @@
 from typing import Callable, List
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import AggregationType
+from azure.ai.evaluation._constants import _AggregationType
 
 
-def GetAggregator(aggregation_type: AggregationType) -> Callable[[List[float]], float]:
-    if aggregation_type == AggregationType.SUM:
+def GetAggregator(aggregation_type: _AggregationType) -> Callable[[List[float]], float]:
+    if aggregation_type == _AggregationType.SUM:
         return sum
-    if aggregation_type == AggregationType.MEAN:
+    if aggregation_type == _AggregationType.MEAN:
         return list_mean
-    if aggregation_type == AggregationType.MAX:
+    if aggregation_type == _AggregationType.MAX:
         return max
-    if aggregation_type == AggregationType.MIN:
+    if aggregation_type == _AggregationType.MIN:
         return min
-    if aggregation_type == AggregationType.CUSTOM:
+    if aggregation_type == _AggregationType.CUSTOM:
         msg = (
             "Cannot 'get' aggregator function associated with custom aggregation enum."
             + " This enum value should only be outputted as an indicator of an injected"
@@ -37,13 +37,13 @@ def GetAggregator(aggregation_type: AggregationType) -> Callable[[List[float]], 
     )
 
 
-def GetAggregatorType(aggregation_function: Callable) -> AggregationType:
+def GetAggregatorType(aggregation_function: Callable) -> _AggregationType:
     if aggregation_function == sum:  # pylint: disable=comparison-with-callable
-        return AggregationType.SUM
+        return _AggregationType.SUM
     if aggregation_function == list_mean:  # pylint: disable=comparison-with-callable
-        return AggregationType.MEAN
+        return _AggregationType.MEAN
     if aggregation_function == max:  # pylint: disable=comparison-with-callable
-        return AggregationType.MAX
+        return _AggregationType.MAX
     if aggregation_function == min:  # pylint: disable=comparison-with-callable
-        return AggregationType.MIN
-    return AggregationType.CUSTOM
+        return _AggregationType.MIN
+    return _AggregationType.CUSTOM

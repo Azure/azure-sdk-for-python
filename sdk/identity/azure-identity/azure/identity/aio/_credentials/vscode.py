@@ -18,10 +18,10 @@ from ..._internal import within_dac
 class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
 
-    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
-    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
-    versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
-    authenticating with :class:`AzureCliCredential`.
+    **Deprecated**: This credential is deprecated because the Azure Account extension for Visual Studio Code, which
+    this credential relies on, has been deprecated. See the Azure Account extension deprecation notice here:
+    https://github.com/microsoft/vscode-azure-account/issues/964. Consider using other developer credentials such as
+    AzureCliCredential, AzureDeveloperCliCredential, or AzurePowerShellCredential.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
@@ -94,7 +94,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code.

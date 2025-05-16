@@ -1,0 +1,15 @@
+{
+    "name": "feature_set_full_rest",
+    "id": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/feature_set/feature_set_full_rest/versions/1",
+    "properties": {
+        "description": "Feature set for testing",
+        "provisioningState": "Succeeded",
+        "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+        },
+        "isArchived": false,
+        "latestVersion": "1",
+        "nextVersion": "2"
+    }
+}

@@ -1,5 +1,47 @@
 # Release History
 
+## 1.0.0 (2025-02-26)
+
+### Features Added
+
+  - Model `OperationStatusResult` added property `resource_id`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_assets`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_asset_endpoint_profiles`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_registries`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schemas`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_versions`
+  - Deleted or renamed model `DiscoveredAsset`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfile`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileProperties`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdate`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdateProperties`
+  - Deleted or renamed model `DiscoveredAssetProperties`
+  - Deleted or renamed model `DiscoveredAssetUpdate`
+  - Deleted or renamed model `DiscoveredAssetUpdateProperties`
+  - Deleted or renamed model `DiscoveredDataPoint`
+  - Deleted or renamed model `DiscoveredDataset`
+  - Deleted or renamed model `DiscoveredEvent`
+  - Deleted or renamed model `Format`
+  - Deleted or renamed model `Schema`
+  - Deleted or renamed model `SchemaProperties`
+  - Deleted or renamed model `SchemaRegistry`
+  - Deleted or renamed model `SchemaRegistryProperties`
+  - Deleted or renamed model `SchemaRegistryUpdate`
+  - Deleted or renamed model `SchemaRegistryUpdateProperties`
+  - Deleted or renamed model `SchemaType`
+  - Deleted or renamed model `SchemaVersion`
+  - Deleted or renamed model `SchemaVersionProperties`
+  - Deleted or renamed model `SystemAssignedServiceIdentity`
+  - Deleted or renamed model `SystemAssignedServiceIdentityType`
+  - Deleted or renamed operation group `DiscoveredAssetEndpointProfilesOperations`
+  - Deleted or renamed operation group `DiscoveredAssetsOperations`
+  - Deleted or renamed operation group `SchemaRegistriesOperations`
+  - Deleted or renamed operation group `SchemaVersionsOperations`
+  - Deleted or renamed operation group `SchemasOperations`
+
 ## 1.0.0b2 (2024-12-16)
 
 ### Features Added

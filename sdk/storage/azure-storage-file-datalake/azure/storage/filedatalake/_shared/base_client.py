@@ -20,7 +20,10 @@ from urllib.parse import parse_qs, quote
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+    HttpTransport,
+    RequestsTransport,
+)
 from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     ContentDecodePolicy,
@@ -65,27 +68,42 @@ _SERVICE_PARAMS = {
 
 
 class StorageAccountHostsMixin(object):
+
     _client: Any
+    _hosts: Dict[str, str]
+
     def __init__(
         self,
         parsed_url: Any,
         service: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                "AsyncTokenCredential",
+                TokenCredential,
+            ]
+        ] = None,
+        **kwargs: Any,
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
-        self._hosts = kwargs.get("_hosts")
+        self._hosts = kwargs.get("_hosts", {})
         self.scheme = parsed_url.scheme
         self._is_localhost = False
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
-        service_name = service.split('-')[0]
+        service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
         self.account_name = account[0] if len(account) > 1 else None
-        if not self.account_name and parsed_url.netloc.startswith("localhost") \
-                or parsed_url.netloc.startswith("127.0.0.1"):
+        if (
+            not self.account_name
+            and parsed_url.netloc.startswith("localhost")
+            or parsed_url.netloc.startswith("127.0.0.1")
+        ):
             self._is_localhost = True
             self.account_name = parsed_url.path.strip("/")
 
@@ -93,7 +111,7 @@ class StorageAccountHostsMixin(object):
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
 
-        secondary_hostname = None
+        secondary_hostname = ""
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
@@ -103,7 +121,7 @@ class StorageAccountHostsMixin(object):
                 secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
@@ -117,7 +135,7 @@ class StorageAccountHostsMixin(object):
         self._client.__exit__(*args)
 
     def close(self):
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._client.close()
@@ -128,6 +146,7 @@ class StorageAccountHostsMixin(object):
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
+
         :returns: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """
@@ -202,11 +221,16 @@ class StorageAccountHostsMixin(object):
         return self._client._config.version  # pylint: disable=protected-access
 
     def _format_query_string(
-        self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]],  # pylint: disable=line-too-long
+        self,
+        sas_token: Optional[str],
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]
+        ],
         snapshot: Optional[str] = None,
-        share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]]:  # pylint: disable=line-too-long
+        share_snapshot: Optional[str] = None,
+    ) -> Tuple[
+        str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]
+    ]:
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -214,7 +238,8 @@ class StorageAccountHostsMixin(object):
             query_str += f"sharesnapshot={share_snapshot}&"
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
-                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+            )
         if _is_credential_sastoken(credential):
             credential = cast(str, credential)
             query_str += credential.lstrip("?")
@@ -224,13 +249,16 @@ class StorageAccountHostsMixin(object):
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        self,
+        credential: Optional[
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+        ] = None,
+        **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
         if hasattr(credential, "get_token"):
-            if kwargs.get('audience'):
-                audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
+            if kwargs.get("audience"):
+                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
             self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
@@ -264,18 +292,14 @@ class StorageAccountHostsMixin(object):
             config.logging_policy,
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs)
+            HttpLoggingPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
         return config, Pipeline(transport, policies=policies)
 
-    def _batch_send(
-        self,
-        *reqs: "HttpRequest",
-        **kwargs: Any
-    ) -> Iterator["HttpResponse"]:
+    def _batch_send(self, *reqs: "HttpRequest", **kwargs: Any) -> Iterator["HttpResponse"]:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
@@ -288,25 +312,21 @@ class StorageAccountHostsMixin(object):
 
         request = self._client._client.post(  # pylint: disable=protected-access
             url=(
-                f'{self.scheme}://{self.primary_hostname}/'
+                f"{self.scheme}://{self.primary_hostname}/"
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
                 f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
             ),
             headers={
-                'x-ms-version': self.api_version,
-                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
-            }
+                "x-ms-version": self.api_version,
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False),
+            },
         )
 
         policies = [StorageHeadersPolicy()]
         if self._credential_policy:
             policies.append(self._credential_policy)
 
-        request.set_multipart_mixed(
-            *reqs,
-            policies=policies,
-            enforce_https=False
-        )
+        request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 
         Pipeline._prepare_multipart_mixed_request(request)  # pylint: disable=protected-access
         body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
@@ -314,9 +334,7 @@ class StorageAccountHostsMixin(object):
 
         temp = request.multipart_mixed_info
         request.multipart_mixed_info = None
-        pipeline_response = self._pipeline.run(
-            request, **kwargs
-        )
+        pipeline_response = self._pipeline.run(request, **kwargs)
         response = pipeline_response.http_response
         request.multipart_mixed_info = temp
 
@@ -328,8 +346,7 @@ class StorageAccountHostsMixin(object):
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts
+                        message="There is a partial failure in the batch operation.", response=response, parts=parts
                     )
                     raise error
                 return iter(parts)
@@ -343,6 +360,7 @@ class TransportWrapper(HttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
+
     def __init__(self, transport):
         self._transport = transport
 
@@ -363,8 +381,10 @@ class TransportWrapper(HttpTransport):
 
 
 def _format_shared_key_credential(
-    account_name: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None  # pylint: disable=line-too-long
+    account_name: Optional[str],
+    credential: Optional[
+        Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]
+    ] = None,
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
@@ -384,8 +404,12 @@ def _format_shared_key_credential(
 def parse_connection_str(
     conn_str: str,
     credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
-    service: str
-) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]]:  # pylint: disable=line-too-long
+    service: str,
+) -> Tuple[
+    str,
+    Optional[str],
+    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
+]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):
@@ -407,14 +431,11 @@ def parse_connection_str(
         if endpoints["secondary"] in conn_settings:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary =(
+            primary = (
                 f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
                 f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
-            secondary = (
-                f"{conn_settings['ACCOUNTNAME']}-secondary."
-                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
-            )
+            secondary = f"{conn_settings['ACCOUNTNAME']}-secondary." f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
         except KeyError:
             pass
 
@@ -434,7 +455,7 @@ def parse_connection_str(
 
 
 def create_configuration(**kwargs: Any) -> StorageConfiguration:
-     # Backwards compatibility if someone is not passing sdk_moniker
+    # Backwards compatibility if someone is not passing sdk_moniker
     if not kwargs.get("sdk_moniker"):
         kwargs["sdk_moniker"] = f"storage-{kwargs.pop('storage_sdk')}/{VERSION}"
     config = StorageConfiguration(**kwargs)
