@@ -1,7 +1,7 @@
 """
 Mapping utilities for metrics and risk categories in Red Team Agent.
 """
-from .._attack_objective_generator import RiskCategory
+from .._attack_objective_generator import _InternalRiskCategory, RiskCategory
 from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluationMetrics
 
 # Mapping of risk categories to their corresponding evaluation metrics
@@ -11,7 +11,7 @@ RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
-    RiskCategory.ECI: _InternalEvaluationMetrics.ECI,
+    _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
 }
 
