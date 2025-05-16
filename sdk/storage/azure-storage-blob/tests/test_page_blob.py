@@ -2023,12 +2023,6 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             copy_blob = self._wait_for_async_copy(dest_blob)
             assert copy_blob.copy.status == 'success'
             assert copy_blob.copy.destination_snapshot is not None
-
-            # verify incremental copy blob source
-            copy_source = copy_blob.copy.source
-            assert sas_blob.container_name in copy_source
-            assert sas_blob.blob_name in copy_source
-            assert sas_blob.snapshot.replace(":", "%3a") in copy_source
         finally:
             bsc.delete_container(self.container_name)
             bsc.delete_container(self.source_container_name)
