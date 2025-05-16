@@ -7,19 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AliasPathType(_serialization.Model):
@@ -275,7 +270,7 @@ class DeploymentExtended(_serialization.Model):
          ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentPropertiesExtended
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.name = name
         self.properties = properties
 
@@ -327,7 +322,7 @@ class DeploymentListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DeploymentOperation(_serialization.Model):
@@ -362,8 +357,8 @@ class DeploymentOperation(_serialization.Model):
          ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentOperationProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.operation_id = None
+        self.id: Optional[str] = None
+        self.operation_id: Optional[str] = None
         self.properties = properties
 
 
@@ -415,14 +410,14 @@ class DeploymentOperationProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.timestamp = None
-        self.service_request_id = None
-        self.status_code = None
-        self.status_message = None
-        self.target_resource = None
-        self.request = None
-        self.response = None
+        self.provisioning_state: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.service_request_id: Optional[str] = None
+        self.status_code: Optional[str] = None
+        self.status_message: Optional[Any] = None
+        self.target_resource: Optional["_models.TargetResource"] = None
+        self.request: Optional["_models.HttpMessage"] = None
+        self.response: Optional["_models.HttpMessage"] = None
 
 
 class DeploymentOperationsListResult(_serialization.Model):
@@ -452,7 +447,7 @@ class DeploymentOperationsListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DeploymentProperties(_serialization.Model):
@@ -646,9 +641,9 @@ class DeploymentPropertiesExtended(_serialization.Model):
         :paramtype debug_setting: ~azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.correlation_id = None
-        self.timestamp = None
+        self.provisioning_state: Optional[str] = None
+        self.correlation_id: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
         self.outputs = outputs
         self.providers = providers
         self.dependencies = dependencies
@@ -658,7 +653,7 @@ class DeploymentPropertiesExtended(_serialization.Model):
         self.parameters_link = parameters_link
         self.mode = mode
         self.debug_setting = debug_setting
-        self.error = None
+        self.error: Optional["_models.ErrorResponse"] = None
 
 
 class DeploymentValidateResult(_serialization.Model):
@@ -721,8 +716,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -763,11 +758,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ExportTemplateRequest(_serialization.Model):
@@ -841,9 +836,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1045,9 +1040,9 @@ class GenericResourceExpanded(GenericResource):
             identity=identity,
             **kwargs
         )
-        self.created_time = None
-        self.changed_time = None
-        self.provisioning_state = None
+        self.created_time: Optional[datetime.datetime] = None
+        self.changed_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
 
 
 class GenericResourceFilter(_serialization.Model):
@@ -1139,8 +1134,8 @@ class Identity(_serialization.Model):
         :paramtype type: str
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -1257,10 +1252,10 @@ class Provider(_serialization.Model):
         :paramtype namespace: str
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.namespace = namespace
-        self.registration_state = None
-        self.resource_types = None
+        self.registration_state: Optional[str] = None
+        self.resource_types: Optional[List["_models.ProviderResourceType"]] = None
 
 
 class ProviderListResult(_serialization.Model):
@@ -1290,7 +1285,7 @@ class ProviderListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ProviderResourceType(_serialization.Model):
@@ -1414,7 +1409,7 @@ class ResourceGroup(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.name = name
         self.properties = properties
         self.location = location
@@ -1509,7 +1504,7 @@ class ResourceGroupListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ResourceGroupProperties(_serialization.Model):
@@ -1532,7 +1527,7 @@ class ResourceGroupProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
 
 
 class ResourceListResult(_serialization.Model):
@@ -1563,7 +1558,7 @@ class ResourceListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ResourceManagementErrorWithDetails(_serialization.Model):
@@ -1599,10 +1594,10 @@ class ResourceManagementErrorWithDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ResourceManagementErrorWithDetails"]] = None
 
 
 class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -1837,7 +1832,7 @@ class TagDetails(_serialization.Model):
         :paramtype values: list[~azure.mgmt.resource.resources.v2016_09_01.models.TagValue]
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.tag_name = tag_name
         self.count = count
         self.values = values
@@ -1870,7 +1865,7 @@ class TagsListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class TagValue(_serialization.Model):
@@ -1906,7 +1901,7 @@ class TagValue(_serialization.Model):
         :paramtype count: ~azure.mgmt.resource.resources.v2016_09_01.models.TagCount
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.tag_value = tag_value
         self.count = count
 
