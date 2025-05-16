@@ -59,7 +59,7 @@ def _request_body_from_data(data):
     if data is None or isinstance(data, str) or _is_readable_stream(data):
         return data
     if isinstance(data, (dict, list, tuple)):
-        json_dumped = json.dumps(data, separators=(",", ":"))
+        json_dumped = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
 
         return json_dumped
     return None
