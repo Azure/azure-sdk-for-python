@@ -102,7 +102,7 @@ class FeedRangeCompositeContinuation:
             self,
             routing_provider: SmartRoutingMapProvider,
             collection_link: str,
-            feed_options: Dict[str, Any]) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link,
                                                                      [self._current_token.feed_range], feed_options)
 
@@ -125,7 +125,7 @@ class FeedRangeCompositeContinuation:
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
             collection_link: str,
-            feed_options: Dict[str, Any]) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         overlapping_ranges = \
             await routing_provider.get_overlapping_ranges(
                 collection_link,

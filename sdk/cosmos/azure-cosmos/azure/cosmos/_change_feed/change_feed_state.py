@@ -322,14 +322,14 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             routing_provider: SmartRoutingMapProvider,
             resource_link: str,
-            feed_options: Dict[str, Any]) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         self._continuation.handle_feed_range_gone(routing_provider, resource_link, feed_options)
 
     async def handle_feed_range_gone_async(
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
             resource_link: str,
-            feed_options: Dict[str, Any]) -> None:
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         await self._continuation.handle_feed_range_gone_async(routing_provider, resource_link, feed_options)
 
     def apply_server_response_continuation(self, continuation: str, has_modified_response: bool) -> None:
