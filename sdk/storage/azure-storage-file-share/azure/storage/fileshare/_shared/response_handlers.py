@@ -124,14 +124,9 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
-            for k, v in error_dict.items():
-                k_lower = k.lower()
-                if k_lower == "code":
-                    error_code = v
-                elif k_lower == "message":
-                    error_message = v
-                else:
-                    additional_data[k] = v
+            error_code = error_dict.get("code")
+            error_message = error_dict.get("message")
+            additional_data = {k: v for k, v in error_dict.items() if k not in {"code", "message"}}
     except DecodeError:
         pass
 
