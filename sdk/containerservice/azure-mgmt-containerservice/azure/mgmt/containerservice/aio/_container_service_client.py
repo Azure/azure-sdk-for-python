@@ -20,7 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
-from .._utils.serialization import Deserializer, Serializer
+from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 
 if TYPE_CHECKING:
