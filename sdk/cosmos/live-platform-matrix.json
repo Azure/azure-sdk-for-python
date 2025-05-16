@@ -83,10 +83,10 @@
     },
     {
       "WindowsConfig": {
-        "Windows2022_38": {
+        "Windows2022_39": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.8",
+          "PythonVersion": "3.9",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosMultiRegion"
