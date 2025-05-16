@@ -42,6 +42,17 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call an TaskAdherenceEvaluator with a query and response.
+    
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START task_adherence_evaluator]
+            :end-before: [END task_adherence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call TaskAdherenceEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
@@ -54,11 +65,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE,
+                 **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        super().__init__(model_config=model_config, prompty_file=prompty_path,
+                         result_key=self._RESULT_KEY,
+                         **kwargs)
 
     @overload
     def __call__(

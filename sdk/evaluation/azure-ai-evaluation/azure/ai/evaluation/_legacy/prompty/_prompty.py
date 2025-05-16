@@ -2,20 +2,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import re
+
+from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import Any, AsyncGenerator, Awaitable, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
-from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven
+from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven, OpenAIError
+from openai.lib.azure import AsyncAzureADTokenProvider
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.evaluation._exceptions import ErrorTarget
-from azure.ai.evaluation._constants import DefaultOpenEncoding
+from azure.ai.evaluation._constants import DefaultOpenEncoding, TokenScope
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
     PromptyException,
     MissingRequiredInputError,
     NotSupportedError,
+    WrappedOpenAIError,
 )
 from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
@@ -25,10 +32,14 @@ from azure.ai.evaluation._legacy.prompty._utils import (
     OpenAIChatResponseType,
     build_messages,
     format_llm_response,
+    openai_error_retryable,
     prepare_open_ai_request_params,
     resolve_references,
     update_dict_recursively,
 )
+from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+from azure.ai.evaluation._legacy._common._logging import get_logger
+from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
 
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -124,10 +135,24 @@ class AsyncPrompty:
     def __init__(
         self,
         path: Union[str, PathLike],
+        *,
+        logger: Optional[Logger] = None,
+        token_credential: Optional[Union[TokenCredential, AsyncTokenCredential]] = None,
+        is_reasoning_model: bool = False,
         **kwargs: Any,
     ):
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
+
+        if is_reasoning_model:
+            parameters = configs.get("model", {}).get("parameters", {})
+            if "max_tokens" in parameters:
+                parameters.pop("max_tokens", None)
+                parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+            # Remove unsupported parameters for reasoning models
+            for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
+                parameters.pop(key, None)
+
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
 
@@ -142,6 +167,9 @@ class AsyncPrompty:
         self._inputs: Dict[str, Any] = configs.get("inputs", {})
         self._outputs: Dict[str, Any] = configs.get("outputs", {})
         self._name: str = configs.get("name", path.stem)
+        self._logger = logger or get_logger(__name__)
+        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = \
+            token_credential or AsyncAzureTokenProvider()
 
     @property
     def path(self) -> Path:
@@ -234,9 +262,6 @@ class AsyncPrompty:
 
         return resolved_inputs
 
-    # TODO ralphe: error handling
-    # @trace
-    # @handle_openai_error()
     async def __call__(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         **kwargs: Any,
@@ -257,7 +282,7 @@ class AsyncPrompty:
         messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
         params = prepare_open_ai_request_params(self._model, messages)
 
-        timeout: Union[NotGiven, float] = NotGiven()
+        timeout: Optional[float] = None
         if timeout_val := cast(Any, kwargs.get("timeout", None)):
             timeout = float(timeout_val)
 
@@ -273,6 +298,9 @@ class AsyncPrompty:
                 azure_deployment=connection.azure_deployment,
                 api_version=connection.api_version,
                 max_retries=max_retries,
+                azure_ad_token_provider=(self.get_token_provider(self._token_credential)
+                    if not connection.api_key
+                    else None),
             )
         elif isinstance(connection, OpenAIConnection):
             api_client = AsyncOpenAI(
@@ -286,8 +314,10 @@ class AsyncPrompty:
                 f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
             )
 
-        response: OpenAIChatResponseType = await api_client.with_options(timeout=timeout).chat.completions.create(
-            **params
+        response: OpenAIChatResponseType = await self._send_with_retries(
+            api_client=api_client,
+            params=params,
+            timeout=timeout,
         )
 
         return await format_llm_response(
@@ -311,3 +341,83 @@ class AsyncPrompty:
         inputs = self._resolve_inputs(kwargs)
         messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
         return messages
+
+    async def _send_with_retries(
+        self,
+        api_client: Union[AsyncAzureOpenAI, AsyncOpenAI],
+        params: Mapping[str, Any],
+        timeout: Optional[float],
+        max_retries: int = 10,
+        max_entity_retries: int = 3,
+    ) -> OpenAIChatResponseType:
+        """Send the request with retries.
+
+        :param Union[AsyncAzureOpenAI, AsyncOpenAI] api_client: The OpenAI client.
+        :param Mapping[str, Any] params: The request parameters.
+        :param Optional[float] timeout: The timeout for the request.
+        :param int max_retries: The maximum number of retries.
+        :param int max_entity_retries: The maximum number of retries for entity errors.
+        :return: The response from OpenAI.
+        :rtype: OpenAIChatResponseType
+        """
+
+        client_name: str = api_client.__class__.__name__
+        client: Union[AsyncAzureOpenAI, AsyncOpenAI] = api_client.with_options(timeout=timeout or NotGiven())
+
+        entity_retries: List[int] = [0]
+        should_retry: bool = True
+        retry: int = 0
+        delay: Optional[float] = None
+
+        while should_retry:
+            try:
+                if delay:
+                    await asyncio.sleep(delay)
+
+                response = await client.chat.completions.create(**params)
+                return response
+            except OpenAIError as error:
+                if retry >= max_retries:
+                    should_retry = False
+                else:
+                    should_retry, delay = openai_error_retryable(error, retry, entity_retries, max_entity_retries)
+
+                if should_retry:
+                    self._logger.warning(
+                        "[%d/%d] %s request failed. %s: %s. Retrying in %f seconds.",
+                        retry,
+                        max_retries,
+                        client_name,
+                        type(error).__name__,
+                        str(error),
+                        delay or 0.0,
+                        exc_info=True,
+                    )
+                else:
+                    self._logger.exception(
+                        "[%d/%d] %s request failed. %s: %s",
+                        retry,
+                        max_retries,
+                        client_name,
+                        type(error).__name__,
+                        str(error),
+                    )
+                    raise WrappedOpenAIError(error=error) from error
+
+                retry += 1
+
+    @staticmethod
+    def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> AsyncAzureADTokenProvider:
+        """Get the token provider for the prompty.
+
+        :param Union[TokenCredential, AsyncTokenCredential] cred: The Azure authentication credential.
+        :return: The token provider if a credential is provided, otherwise None.
+        :rtype: Optional[AsyncAzureADTokenProvider]
+        """
+        async def _wrapper() -> str:
+            token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
+            if isinstance(token, Awaitable):
+                token = await token
+            return token.token
+
+        return _wrapper

@@ -81,7 +81,6 @@ RESOLUTION_IMPOSSIBLE_LIBRARIES = {
     "azure-core": ["azure-core-experimental", "azure-core-tracing-opencensus", "azure-core-tracing-opentelemetry"],
     "azure-monitor-opentelemetry": ["azure-core-tracing-opentelemetry"],
     "azure-ai-evaluation": ["azure-monitor-opentelemetry-exporter", "azure-monitor-opentelemetry"],
-    "azure-ai-generative": ["azure-ai-resources"],
 }
 
 
@@ -206,7 +205,7 @@ def get_packages_to_score() -> dict[str, dict[str, Any]]:
         for pkg_path in package_paths:
             package_path = pathlib.Path(pkg_path)
             package_name = package_path.name
-            if skip_package(package_name):
+            if skip_package(package_name) or not (package_path / "setup.py").exists():
                 continue
             package_path = str(package_path)
             package_info = ParsedSetup.from_path(package_path)

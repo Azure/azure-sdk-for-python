@@ -35,10 +35,6 @@
     "sdk/ai/azure-ai-generative/tests/**",
     "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3",
     "sdk/ai/azure-ai-inference/tests/hello_how_are_you.mp3",
-    "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
-    "sdk/ai/azure-ai-projects/samples/agents/tripadvisor_openapi.json",
-    "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
-    "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -105,6 +101,9 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/projects/azure-projects/tests/test_infra/**",
+    "sdk/projects/azure-projects/samples/**/*.html",
+    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -340,6 +339,7 @@
     "mynewpackage",
     "mypackage",
     "myvault",
+    "myservice",
     "mytable",
     "nazsdk",
     "nbytes",
@@ -377,6 +377,7 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prompty",
     "pschema",
     "PSECRET",
     "pydantic",
@@ -387,6 +388,8 @@
     "pyright",
     "pyrightconfig",
     "parameterizing",
+    "pypirc",
+    "pyrit",
     "pytyped",
     "pytz",
     "pywin",
@@ -636,6 +639,46 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/tests/**/*.py",
+      "words": [
+        "tofile",
+        "rgtest",
+        "rgexists",
+        "rgtag",
+        "kvtest",
+        "testb",
+        "sclient",
+        "aclient"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/**",
+      "words": [
+        "azproj",
+        "azproject",
+        "azprojects",
+        "aiservices",
+        "aifoundry",
+        "mcpcommand",
+        "fastmcp",
+        "GUNICORN",
+        "GZRS",
+        "RAGZRS",
+        "nfsv",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "Netezza",
+        "Odbc",
+        "Serp",
+        "Sybase",
+        "Vertica",
+        "Xero",
+        "redef"
       ]
     },
     {
@@ -1181,7 +1224,9 @@
         "racwdlmeop",
         "newfs",
         "adlsstorage",
-        "adlskey"
+        "adlskey",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1343,24 +1388,6 @@
       ]
     },
     {
-      "filename": "sdk/ai/azure-ai-projects/**",
-      "words": [
-        "coso",
-        "longtitude",
-        "abbrev",
-        "accommodations",
-        "ENTRAID",
-        "entraid",
-        "aiservices",
-        "OTEL",
-        "GENAI",
-        "fspath",
-        "myindexname",
-        "wttr",
-        "azureopenai"
-      ]
-    },
-    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
         "ctxt",
@@ -1381,7 +1408,7 @@
         "cómo",
         "estás",
         "logprobs",
-        "conver",
+        "conver"
       ]
     },
     {
@@ -1411,6 +1438,8 @@
         "Inadherent",
         "nbformat",
         "nbconvert",
+        "onedp",
+        "azureai"
       ]
     },
     {
@@ -1494,7 +1523,9 @@
         "Fsubdir",
         "Fdir",
         "adal",
-        "mytestshare"
+        "mytestshare",
+        "skdutid",
+        "sduoid"
       ]
     },
     {
@@ -1838,6 +1869,13 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
       "words": [
         "adfsasdfzsd"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
+      "words": [
+        "aicc",
+        "AICC"
       ]
     },
     {

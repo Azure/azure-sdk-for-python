@@ -32,6 +32,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class HealthStateCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StandbyPool health state."""
+
+    HEALTHY = "HealthState/healthy"
+    """StandbyPool is in healthy state."""
+    DEGRADED = "HealthState/degraded"
+    """StandbyPool is in degraded state."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -43,6 +52,40 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class PoolContainerGroupState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the pooled container groups."""
+
+    RUNNING = "Running"
+    """The container group is up and running."""
+    CREATING = "Creating"
+    """The container group is creating."""
+    DELETING = "Deleting"
+    """The container group is deleting."""
+
+
+class PoolVirtualMachineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the pooled virtual machines."""
+
+    RUNNING = "Running"
+    """The virtual machine is up and running."""
+    CREATING = "Creating"
+    """The virtual machine is creating."""
+    STARTING = "Starting"
+    """The virtual machine is starting."""
+    DELETING = "Deleting"
+    """The virtual machine is deleting."""
+    DEALLOCATED = "Deallocated"
+    """The virtual machine has released the lease on the underlying hardware and is powered off."""
+    DEALLOCATING = "Deallocating"
+    """The virtual machine is releasing the lease on the underlying hardware and is powered off."""
+    HIBERNATED = "Hibernated"
+    """The virtual machine has released the lease on the underlying hardware and is powered off.
+    Memory contents of the VM are stored in the OS disk. When started again, applications and
+    processes that were previously running in your VM resume from the state prior to hibernation."""
+    HIBERNATING = "Hibernating"
+    """The virtual machine is hibernating."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -72,3 +115,7 @@ class VirtualMachineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The virtual machine is up and running."""
     DEALLOCATED = "Deallocated"
     """The virtual machine has released the lease on the underlying hardware and is powered off."""
+    HIBERNATED = "Hibernated"
+    """The virtual machine has released the lease on the underlying hardware and is powered off.
+    Memory contents of the VM are stored in the OS disk.  When started again, applications and
+    processes that were previously running in your VM resume from the state prior to hibernation."""

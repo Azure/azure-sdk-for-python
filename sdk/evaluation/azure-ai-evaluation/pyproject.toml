@@ -1,9 +1,10 @@
 [tool.azure-sdk-build]
-mypy = true
+mypy = false
 pyright = false
-pylint = true
-black = true
+pylint = false
+black = false
 verifytypes = false
+whl_no_aio = false
 
 [tool.isort]
 profile = "black"

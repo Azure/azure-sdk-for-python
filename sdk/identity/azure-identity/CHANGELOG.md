@@ -1,8 +1,24 @@
 # Release History
 
-## 1.21.1 (Unreleased)
+## 1.23.1 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.23.0 (2025-05-13)
+
+### Features Added
+
+- Added `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential` to allow for choosing groups of credentials.
+  - `prod` for `EnvironmentCredential`, `WorkloadIdentityCredential`,  and `ManagedIdentityCredential`.
+  - `dev` for `SharedTokenCacheCredential`, `AzureCliCredential`, `AzurePowershellCredential`, and `AzureDeveloperCliCredential`.
+
+## 1.22.0 (2025-05-06)
 
 ### Breaking Changes
 
@@ -10,7 +26,12 @@
 
 ### Bugs Fixed
 
+- Fixed an issue with error handling in MSAL-based credentials when the response content is a string rather than a dictionary. ([#40281](https://github.com/Azure/azure-sdk-for-python/pull/40281))
+
 ### Other Changes
+
+- Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 1.21.0 (2025-03-11)
 

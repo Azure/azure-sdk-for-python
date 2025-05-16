@@ -26,17 +26,18 @@ logger = logging.getLogger(__name__)
 VERSION = 1
 
 if PY3:
-    MAGIC = b'Obj' + bytes([VERSION])
+    MAGIC = b"Obj" + bytes([VERSION])
     MAGIC_SIZE = len(MAGIC)
 else:
-    MAGIC = 'Obj' + chr(VERSION)
+    MAGIC = "Obj" + chr(VERSION)
     MAGIC_SIZE = len(MAGIC)
 
 # Size of the synchronization marker, in number of bytes:
 SYNC_SIZE = 16
 
 # Schema of the container header:
-META_SCHEMA = schema.parse("""
+META_SCHEMA = schema.parse(
+    """
 {
   "type": "record", "name": "org.apache.avro.file.Header",
   "fields": [{
@@ -50,13 +51,15 @@ META_SCHEMA = schema.parse("""
     "type": {"type": "fixed", "name": "sync", "size": %(sync_size)d}
   }]
 }
-""" % {
-    'magic_size': MAGIC_SIZE,
-    'sync_size': SYNC_SIZE,
-})
+"""
+    % {
+        "magic_size": MAGIC_SIZE,
+        "sync_size": SYNC_SIZE,
+    }
+)
 
 # Codecs supported by container files:
-VALID_CODECS = frozenset(['null', 'deflate'])
+VALID_CODECS = frozenset(["null", "deflate"])
 
 # Metadata key associated to the schema:
 SCHEMA_KEY = "avro.schema"
@@ -68,6 +71,7 @@ SCHEMA_KEY = "avro.schema"
 
 class DataFileException(schema.AvroException):
     """Problem reading or writing file object containers."""
+
 
 # ------------------------------------------------------------------------------
 
@@ -84,7 +88,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         """
         self._reader = reader
         self._raw_decoder = avro_io.BinaryDecoder(reader)
-        self._header_reader = kwargs.pop('header_reader', None)
+        self._header_reader = kwargs.pop("header_reader", None)
         self._header_decoder = None if self._header_reader is None else avro_io.BinaryDecoder(self._header_reader)
         self._datum_decoder = None  # Maybe reset at every block.
         self._datum_reader = datum_reader
@@ -97,11 +101,11 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         self._read_header()
 
         # ensure codec is valid
-        avro_codec_raw = self.get_meta('avro.codec')
+        avro_codec_raw = self.get_meta("avro.codec")
         if avro_codec_raw is None:
             self.codec = "null"
         else:
-            self.codec = avro_codec_raw.decode('utf-8')
+            self.codec = avro_codec_raw.decode("utf-8")
         if self.codec not in VALID_CODECS:
             raise DataFileException(f"Unknown codec: {self.codec}.")
 
@@ -110,7 +114,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
         # object_position is to support reading from current position in the future read,
         # no need to downloading from the beginning of avro.
-        if hasattr(self._reader, 'object_position'):
+        if hasattr(self._reader, "object_position"):
             self.reader.track_object_position()
 
         self._cur_object_index = 0
@@ -120,8 +124,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         if self._header_reader is not None:
             self._datum_decoder = self._raw_decoder
 
-        self.datum_reader.writer_schema = (
-            schema.parse(self.get_meta(SCHEMA_KEY).decode('utf-8')))
+        self.datum_reader.writer_schema = schema.parse(self.get_meta(SCHEMA_KEY).decode("utf-8"))
 
     def __enter__(self):
         return self
@@ -184,15 +187,15 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         header = self.datum_reader.read_data(META_SCHEMA, header_decoder)
 
         # check magic number
-        if header.get('magic') != MAGIC:
+        if header.get("magic") != MAGIC:
             fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC!r}."
             raise schema.AvroException(fail_msg)
 
         # set metadata
-        self._meta = header['meta']
+        self._meta = header["meta"]
 
         # set sync marker
-        self._sync_marker = header['sync']
+        self._sync_marker = header["sync"]
 
     def _read_block_header(self):
         self._block_count = self.raw_decoder.read_long()
@@ -200,7 +203,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
             # Skip a long; we don't need to use the length.
             self.raw_decoder.skip_long()
             self._datum_decoder = self._raw_decoder
-        elif self.codec == 'deflate':
+        elif self.codec == "deflate":
             # Compressed data is stored as (length, data), which
             # corresponds to how the "bytes" type is encoded.
             data = self.raw_decoder.read_bytes()
@@ -229,7 +232,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
             # object_position is to support reading from current position in the future read,
             # no need to downloading from the beginning of avro file with this attr.
-            if hasattr(self._reader, 'object_position'):
+            if hasattr(self._reader, "object_position"):
                 self.reader.track_object_position()
             self._cur_object_index = 0
 
@@ -242,7 +245,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         # object_position is to support reading from current position in the future read,
         # This will track the index of the next item to be read.
         # This will also track the offset before the next sync marker.
-        if hasattr(self._reader, 'object_position'):
+        if hasattr(self._reader, "object_position"):
             if self.block_count == 0:
                 # the next event to be read is at index 0 in the new chunk of blocks,
                 self.reader.track_object_position()

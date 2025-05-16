@@ -14,7 +14,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
 from ._operations import ConfidentialLedgerClientOperationsMixin
 
@@ -23,19 +23,20 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
-    :param endpoint: The Confidential Ledger URL, for example
+    :param ledger_endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
-    :type endpoint: str
+    :type ledger_endpoint: str
     :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
+        self, ledger_endpoint: str, **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}"
-        self._config = ConfidentialLedgerClientConfiguration(endpoint=endpoint, **kwargs)
+        _endpoint = "{ledgerEndpoint}"
+        self._config = ConfidentialLedgerClientConfiguration(ledger_endpoint=ledger_endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -81,7 +82,9 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -24,7 +24,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             resource_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             resource_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

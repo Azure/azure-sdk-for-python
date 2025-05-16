@@ -20,11 +20,11 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_detectors(self, resource_group):
+    def test_container_apps_diagnostics_list_detectors(self, resource_group):
         response = self.client.container_apps_diagnostics.list_detectors(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_detector(self, resource_group):
+    def test_container_apps_diagnostics_get_detector(self, resource_group):
         response = self.client.container_apps_diagnostics.get_detector(
             resource_group_name=resource_group.name,
             container_app_name="str",
             detector_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,11 +45,11 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_revisions(self, resource_group):
+    def test_container_apps_diagnostics_list_revisions(self, resource_group):
         response = self.client.container_apps_diagnostics.list_revisions(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -57,12 +57,12 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_revision(self, resource_group):
+    def test_container_apps_diagnostics_get_revision(self, resource_group):
         response = self.client.container_apps_diagnostics.get_revision(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -70,11 +70,11 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_root(self, resource_group):
+    def test_container_apps_diagnostics_get_root(self, resource_group):
         response = self.client.container_apps_diagnostics.get_root(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.aio import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.v2025_04_01.aio import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecord
         response = self.client.replications.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             registry_name="str",
             replication_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecord
                     "type": "str",
                     "zoneRedundancy": "str",
                 },
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,7 +86,7 @@ class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 registry_name="str",
                 replication_name="str",
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecord
                 registry_name="str",
                 replication_name="str",
                 replication_update_parameters={"regionEndpointEnabled": bool, "tags": {"str": "str"}},
-                api_version="2023-07-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

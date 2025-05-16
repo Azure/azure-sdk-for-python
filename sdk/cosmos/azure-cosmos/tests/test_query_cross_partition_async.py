@@ -534,6 +534,30 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert len(token.encode('utf-8')) <= 1024
         print("Test done")
 
+    async def test_cross_partition_query_response_hook_async(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
+            id="query_response_hook_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=12000
+        )
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10}
+        ]
+
+        for item in items:
+            await created_collection.create_item(body=item)
+
+        response_hook = test_config.ResponseHookCaller()
+        item_list = [item async for item in created_collection.query_items("select * from c", response_hook=response_hook)]
+        assert len(item_list) == 6
+        assert response_hook.count == 2
+        await self.created_db.delete_container(created_collection.id)
+
 
 if __name__ == '__main__':
     unittest.main()

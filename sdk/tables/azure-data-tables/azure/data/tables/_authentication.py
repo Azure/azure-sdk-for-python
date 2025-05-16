@@ -160,8 +160,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
-    authentication challenges.
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on Microsoft
+    Entra authentication challenges.
 
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
@@ -222,23 +222,31 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 
 
 @overload
-def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureNamedKeyCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: SharedKeyCredentialPolicy, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureSasCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> AzureSasCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: TokenCredential) -> BearerTokenChallengePolicy: ...
+def _configure_credential(
+    credential: TokenCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> BearerTokenChallengePolicy: ...
 
 
 @overload
-def _configure_credential(credential: None) -> None: ...
+def _configure_credential(credential: None, cosmos_endpoint: bool = False, audience: Optional[str] = None) -> None: ...
 
 
 def _configure_credential(
@@ -246,10 +254,14 @@ def _configure_credential(
         Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]
     ],
     cosmos_endpoint: bool = False,
+    audience: Optional[str] = None,
 ) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
+        if audience:
+            scope = audience.rstrip("/") + "/.default"
+        else:
+            scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
         return BearerTokenChallengePolicy(credential, scope)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential

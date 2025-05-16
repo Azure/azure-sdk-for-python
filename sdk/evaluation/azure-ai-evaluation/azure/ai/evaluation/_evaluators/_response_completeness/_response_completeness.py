@@ -37,13 +37,26 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    
     .. admonition:: Example:
+    
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START completeness_evaluator]
             :end-before: [END completeness_evaluator]
             :language: python
             :dedent: 8
             :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
+    
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START completeness_evaluator]
+            :end-before: [END completeness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call CompletenessEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     """
 
     # Constants must be defined within eval's directory to be save/loadable
@@ -60,11 +73,16 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD):
+    def __init__(self, model_config, *,
+                 threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
+                 **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        super().__init__(model_config=model_config,
+                         prompty_file=prompty_path,
+                         result_key=self._RESULT_KEY,
+                         **kwargs)
 
     @overload
     def __call__(

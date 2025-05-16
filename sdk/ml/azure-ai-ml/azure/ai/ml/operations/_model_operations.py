@@ -452,10 +452,10 @@ class ModelOperations(_ScopeDependentOperations):
                     from azure.identity import ClientSecretCredential
 
                     token_credential = ClientSecretCredential(
-                        tenant_id=ds.credentials["tenant_id"],
-                        client_id=ds.credentials["client_id"],
-                        client_secret=ds.credentials["client_secret"],
-                        authority=ds.credentials["authority_url"],
+                        tenant_id=ds.credentials["tenant_id"],  # type:ignore
+                        client_id=ds.credentials["client_id"],  # type:ignore
+                        client_secret=ds.credentials["client_secret"],  # type:ignore
+                        authority=ds.credentials["authority_url"],  # type:ignore
                     )
                     credential = token_credential
                 except (KeyError, TypeError):

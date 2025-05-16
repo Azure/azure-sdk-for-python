@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.v2025_04_01 import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -35,7 +35,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "targetTags": ["str"],
                 "untaggedTargetRepositories": ["str"],
             },
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
     def test_registries_check_name_availability(self, resource_group):
         response = self.client.registries.check_name_availability(
             registry_name_check_request={"name": "str", "type": "Microsoft.ContainerRegistry/registries"},
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_registries_list(self, resource_group):
         response = self.client.registries.list(
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
     def test_registries_list_by_resource_group(self, resource_group):
         response = self.client.registries.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
         response = self.client.registries.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -95,6 +95,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "location": "str",
                 "sku": {"name": "str", "tier": "str"},
                 "adminUserEnabled": False,
+                "anonymousPullEnabled": False,
                 "creationDate": "2020-02-20 00:00:00",
                 "dataEndpointEnabled": bool,
                 "dataEndpointHostNames": ["str"],
@@ -120,6 +121,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "networkRuleBypassOptions": "str",
                 "networkRuleSet": {"defaultAction": "Allow", "ipRules": [{"value": "str", "action": "Allow"}]},
                 "policies": {
+                    "azureADAuthenticationAsArmPolicy": {"status": "enabled"},
                     "exportPolicy": {"status": "enabled"},
                     "quarantinePolicy": {"status": "str"},
                     "retentionPolicy": {"days": 7, "lastUpdatedTime": "2020-02-20 00:00:00", "status": "str"},
@@ -162,7 +164,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "type": "str",
                 "zoneRedundancy": "str",
             },
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -174,7 +176,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
         response = self.client.registries.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -188,6 +190,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
             registry_name="str",
             registry_update_parameters={
                 "adminUserEnabled": bool,
+                "anonymousPullEnabled": bool,
                 "dataEndpointEnabled": bool,
                 "encryption": {
                     "keyVaultProperties": {
@@ -208,6 +211,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "networkRuleBypassOptions": "str",
                 "networkRuleSet": {"defaultAction": "Allow", "ipRules": [{"value": "str", "action": "Allow"}]},
                 "policies": {
+                    "azureADAuthenticationAsArmPolicy": {"status": "enabled"},
                     "exportPolicy": {"status": "enabled"},
                     "quarantinePolicy": {"status": "str"},
                     "retentionPolicy": {"days": 7, "lastUpdatedTime": "2020-02-20 00:00:00", "status": "str"},
@@ -217,7 +221,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -229,7 +233,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
         response = self.client.registries.list_usages(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -241,7 +245,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
         response = self.client.registries.list_private_link_resources(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -254,7 +258,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             registry_name="str",
             group_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -266,7 +270,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
         response = self.client.registries.list_credentials(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -279,7 +283,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             registry_name="str",
             regenerate_credential_parameters={"name": "str"},
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -292,7 +296,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             registry_name="str",
             generate_credentials_parameters={"expiry": "2020-02-20 00:00:00", "name": "str", "tokenId": "str"},
-            api_version="2023-07-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore apng, retriable
+
 import copy
-from dataclasses import dataclass, is_dataclass, fields
 import os
 import re
 import json
 import base64
+from dataclasses import dataclass, is_dataclass, fields
+from logging import Logger
 from pathlib import Path
 from typing import (
     Any,
@@ -30,6 +33,7 @@ from typing import (
 from jinja2 import Template
 from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
 from azure.ai.evaluation._legacy.prompty._exceptions import (
@@ -217,7 +221,7 @@ DEFAULT_IMAGE_MIME_TYPE: Final[str] = "image/*"
 """The mime type to use when we don't know the image type"""
 
 FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
-    ".apng": "image/apng",  # cspell:ignore apng
+    ".apng": "image/apng",
     ".avif": "image/avif",
     ".bmp": "image/bmp",
     ".gif": "image/gif",
@@ -540,6 +544,72 @@ async def format_llm_response(
         response_content = getattr(response.choices[0].message, "content", "")
     result = format_choice(response_content)
     return result
+
+
+def openai_error_retryable(
+    error: OpenAIError, retry: int, entity_retry: List[int], max_entity_retries: int
+) -> Tuple[bool, float]:
+    """
+    Determines if an OpenAI error is retryable, and optionally determines the min retry delay to use.
+    If none is returned, the caller will determine the delay to use.
+
+    :param OpenAIError error: The error to handle
+    :param int retry: The current retry count (0 means we're on the first attempt and no retries have been made)
+    :param List[int] entity_retry: The current retry count for the unprocessable entity failures. This should be a
+        list containing only 1 element to mimic pass by reference semantics. A value of 0 means we're on the
+        first attempt and no retries have been made.
+    :param int max_entity_retries: The maximum number of retries to make for unprocessable entity failures
+    :return: A tuple containing whether the error is retryable and the min delay to use if any
+    :rtype: Tuple[bool, Optional[float]]
+    """
+
+    # Using https://platform.openai.com/docs/guides/error-codes/api-errors#python-library-error-types as a reference
+
+    should_retry: bool
+    delay: Optional[float] = None
+
+    if isinstance(error, APIConnectionError):
+        retriable_error_messages: Sequence[str] = [
+            "connection aborted",
+            # issue 2296
+            "server disconnected without sending a response",
+        ]
+        should_retry = (
+            isinstance(error, APITimeoutError)  # APITimeoutError is a subclass of APIConnectionError
+            or str(error).lower() in retriable_error_messages
+            or str(error.__cause__).lower() in retriable_error_messages
+        )
+    elif isinstance(error, APIStatusError):
+        status_code: int = error.response.status_code
+        if status_code == 422:
+            # As per the original legacy code, UnprocessableEntityError (HTTP 422) should be handled differently
+            # with a smaller retry count, as retrying more may not be beneficial.
+            should_retry = entity_retry[0] < max_entity_retries
+            entity_retry[0] += 1
+        elif status_code == 429:
+            # Two types, one is you are throttled and so should retry after a delay, the other is you have exceeded
+            # your quota and should not retry.
+            if (error.type or "").lower() == "insufficient_quota":
+                should_retry = False
+            else:
+                should_retry = True
+            should_retry = error.type != "insufficient_quota"
+        else:
+            should_retry = status_code >= 500
+
+        # Use what the service tells us to use for the delay if it's provided
+        if should_retry and not delay:
+            delay_str = error.response.headers.get("Retry-After", None)
+            if delay_str is not None:
+                delay = float(delay_str)
+    else:
+        should_retry = False
+
+    # Use exponential backoff for retries if the service doesn't provide a delay
+    if not delay:
+        delay = min(60, 2 + 2**retry)
+
+    return (should_retry, delay)
 
 
 # endregion
