@@ -48,11 +48,17 @@ class SettingSelector:
     :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is
      EMPTY_LABEL i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
+    :keyword tag_filters: A filter to select configuration settings based on their tags. This is a list of strings
+     that will be used to match tags on the configuration settings.
+    :type tag_filters: Optional[str]
     """
 
-    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
+    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, tag_filters: Optional[str] = None):
+        """
         self.key_filter = key_filter
         self.label_filter = label_filter
+        self.tag_filters = tag_filters
+        """
 
 
 class WatchKey(NamedTuple):
