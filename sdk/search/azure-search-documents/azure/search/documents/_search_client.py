@@ -706,7 +706,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(batch=batch, **kwargs)
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -718,7 +718,7 @@ class SearchClient(HeadersMixin):
             else:
                 result_first_half = []
             batch_response_second_half = self._index_documents_actions(
-                actions=actions[pos:], error_map=error_map, **kwargs
+                actions=actions[pos:], **kwargs
             )
             if batch_response_second_half:
                 result_second_half = batch_response_second_half

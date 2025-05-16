@@ -146,12 +146,13 @@ class AdversarialTemplate:
 
 class AdversarialTemplateHandler:
     """
-    Adversarial template handler constructor.
+    Initialize the AdversarialTemplateHandler.
 
-    :param azure_ai_project: The Azure AI project.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param rai_client: The RAI client.
-    :type rai_client: ~azure.ai.evaluation.simulator._model_tools.RAIClient
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, AzureAIProject]
+    :param rai_client: The RAI client or AI Project client used for fetching parameters.
+    :type rai_client: Union[~azure.ai.evaluation.simulator._model_tools.RAIClient, ~azure.ai.evaluation._common.onedp._client.AIProjectClient]
     """
 
     def __init__(self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]) -> None:

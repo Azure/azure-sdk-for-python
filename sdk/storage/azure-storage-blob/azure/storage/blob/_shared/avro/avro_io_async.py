@@ -64,11 +64,11 @@ class AsyncBinaryDecoder(object):
         :returns: The next n bytes from the input.
         :rtype: bytes
         """
-        assert (n >= 0), n
+        assert n >= 0, n
         input_bytes = await self.reader.read(n)
         if n > 0 and not input_bytes:
             raise StopAsyncIteration
-        assert (len(input_bytes) == n), input_bytes
+        assert len(input_bytes) == n, input_bytes
         return input_bytes
 
     @staticmethod
@@ -132,7 +132,7 @@ class AsyncBinaryDecoder(object):
         Bytes are encoded as a long followed by that many bytes of data.
         """
         nbytes = await self.read_long()
-        assert (nbytes >= 0), nbytes
+        assert nbytes >= 0, nbytes
         return await self.read(nbytes)
 
     async def read_utf8(self):
@@ -143,13 +143,13 @@ class AsyncBinaryDecoder(object):
         input_bytes = await self.read_bytes()
         if PY3:
             try:
-                return input_bytes.decode('utf-8')
+                return input_bytes.decode("utf-8")
             except UnicodeDecodeError as exn:
-                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)  # pylint: disable=do-not-log-raised-errors
+                logger.error("Invalid UTF-8 input bytes: %r", input_bytes)  # pylint: disable=do-not-log-raised-errors
                 raise exn
         else:
             # PY2
-            return unicode(input_bytes, "utf-8") # pylint: disable=undefined-variable
+            return unicode(input_bytes, "utf-8")  # pylint: disable=undefined-variable
 
     def skip_null(self):
         pass
@@ -200,41 +200,40 @@ class AsyncDatumReader(object):
     def set_writer_schema(self, writer_schema):
         self._writer_schema = writer_schema
 
-    writer_schema = property(lambda self: self._writer_schema,
-                             set_writer_schema)
+    writer_schema = property(lambda self: self._writer_schema, set_writer_schema)
 
     async def read(self, decoder):
         return await self.read_data(self.writer_schema, decoder)
 
     async def read_data(self, writer_schema, decoder):
         # function dispatch for reading data based on type of writer's schema
-        if writer_schema.type == 'null':
+        if writer_schema.type == "null":
             result = decoder.read_null()
-        elif writer_schema.type == 'boolean':
+        elif writer_schema.type == "boolean":
             result = await decoder.read_boolean()
-        elif writer_schema.type == 'string':
+        elif writer_schema.type == "string":
             result = await decoder.read_utf8()
-        elif writer_schema.type == 'int':
+        elif writer_schema.type == "int":
             result = await decoder.read_int()
-        elif writer_schema.type == 'long':
+        elif writer_schema.type == "long":
             result = await decoder.read_long()
-        elif writer_schema.type == 'float':
+        elif writer_schema.type == "float":
             result = await decoder.read_float()
-        elif writer_schema.type == 'double':
+        elif writer_schema.type == "double":
             result = await decoder.read_double()
-        elif writer_schema.type == 'bytes':
+        elif writer_schema.type == "bytes":
             result = await decoder.read_bytes()
-        elif writer_schema.type == 'fixed':
+        elif writer_schema.type == "fixed":
             result = await self.read_fixed(writer_schema, decoder)
-        elif writer_schema.type == 'enum':
+        elif writer_schema.type == "enum":
             result = await self.read_enum(writer_schema, decoder)
-        elif writer_schema.type == 'array':
+        elif writer_schema.type == "array":
             result = await self.read_array(writer_schema, decoder)
-        elif writer_schema.type == 'map':
+        elif writer_schema.type == "map":
             result = await self.read_map(writer_schema, decoder)
-        elif writer_schema.type in ['union', 'error_union']:
+        elif writer_schema.type in ["union", "error_union"]:
             result = await self.read_union(writer_schema, decoder)
-        elif writer_schema.type in ['record', 'error', 'request']:
+        elif writer_schema.type in ["record", "error", "request"]:
             result = await self.read_record(writer_schema, decoder)
         else:
             fail_msg = f"Cannot read unknown schema type: {writer_schema.type}"
@@ -242,35 +241,35 @@ class AsyncDatumReader(object):
         return result
 
     async def skip_data(self, writer_schema, decoder):
-        if writer_schema.type == 'null':
+        if writer_schema.type == "null":
             result = decoder.skip_null()
-        elif writer_schema.type == 'boolean':
+        elif writer_schema.type == "boolean":
             result = await decoder.skip_boolean()
-        elif writer_schema.type == 'string':
+        elif writer_schema.type == "string":
             result = await decoder.skip_utf8()
-        elif writer_schema.type == 'int':
+        elif writer_schema.type == "int":
             result = await decoder.skip_int()
-        elif writer_schema.type == 'long':
+        elif writer_schema.type == "long":
             result = await decoder.skip_long()
-        elif writer_schema.type == 'float':
+        elif writer_schema.type == "float":
             result = await decoder.skip_float()
-        elif writer_schema.type == 'double':
+        elif writer_schema.type == "double":
             result = await decoder.skip_double()
-        elif writer_schema.type == 'bytes':
+        elif writer_schema.type == "bytes":
             result = await decoder.skip_bytes()
-        elif writer_schema.type == 'fixed':
+        elif writer_schema.type == "fixed":
             result = await self.skip_fixed(writer_schema, decoder)
-        elif writer_schema.type == 'enum':
+        elif writer_schema.type == "enum":
             result = await self.skip_enum(decoder)
-        elif writer_schema.type == 'array':
+        elif writer_schema.type == "array":
             await self.skip_array(writer_schema, decoder)
             result = None
-        elif writer_schema.type == 'map':
+        elif writer_schema.type == "map":
             await self.skip_map(writer_schema, decoder)
             result = None
-        elif writer_schema.type in ['union', 'error_union']:
+        elif writer_schema.type in ["union", "error_union"]:
             result = await self.skip_union(writer_schema, decoder)
-        elif writer_schema.type in ['record', 'error', 'request']:
+        elif writer_schema.type in ["record", "error", "request"]:
             await self.skip_record(writer_schema, decoder)
             result = None
         else:
@@ -373,8 +372,9 @@ class AsyncDatumReader(object):
         # schema resolution
         index_of_schema = int(await decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = (f"Can't access branch index {index_of_schema} "
-                    f"for union with {len(writer_schema.schemas)} branches")
+            fail_msg = (
+                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+            )
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
@@ -384,8 +384,9 @@ class AsyncDatumReader(object):
     async def skip_union(self, writer_schema, decoder):
         index_of_schema = int(await decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = (f"Can't access branch index {index_of_schema} "
-                    f"for union with {len(writer_schema.schemas)} branches")
+            fail_msg = (
+                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+            )
             raise SchemaResolutionException(fail_msg, writer_schema)
         return await self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 
