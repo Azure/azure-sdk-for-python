@@ -264,7 +264,7 @@
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
