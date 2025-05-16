@@ -2,17 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
 """
-FILE: sample_followup_communication_inference_async.py
+FILE: sample_guidance_inference.py
 
 DESCRIPTION:
-The sample_followup_communication_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_guidance_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display
--the date and time of the follow-up communication,
--the recipient of the follow-up communication, and
--whether the follow-up communication was acknowledged 
+submit it to the client, RadiologyInsightsClient, and display 
+  
 
 
 USAGE:
@@ -21,7 +18,7 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
-2. python sample_followup_communication_inference_async.py
+2. python sample_guidance_inference_async.py
    
 """
 
@@ -29,7 +26,6 @@ import asyncio
 import datetime
 import os
 import uuid
-
 from azure.healthinsights.radiologyinsights import models
 
 
@@ -38,34 +34,26 @@ async def radiology_insights_async() -> None:
     from azure.identity.aio import DefaultAzureCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
+    # [START create_radiology_insights_client]
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
     radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+    # [END create_radiology_insights_client]
 
-    doc_content1 = """CLINICAL HISTORY:   
-    20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
-    COMPARISON:   
-    Right upper quadrant sonographic performed 1 day prior.
-    TECHNIQUE:   
-    Transabdominal grayscale pelvic sonography with duplex color Doppler and spectral waveform analysis of the ovaries.
-    FINDINGS:   
-    The uterus is unremarkable given the transabdominal technique with endometrial echo complex within physiologic normal limits. The ovaries are symmetric in size, measuring 2.5 x 1.2 x 3.0 cm and the left measuring 2.8 x 1.5 x 1.9 cm.\n On duplex imaging, Doppler signal is symmetric.
-    IMPRESSION:   
-    1. Normal pelvic sonography. Findings of testicular torsion.
-    A new US pelvis within the next 6 months is recommended.
-    These results have been discussed with Dr. Jones at 3 PM on November 5 2020."""
+    # [START create_radiology_insights_request]
+    doc_content1 = "History: Left renal tumor with thin septations.\n\nFindings:\nThere is a right kidney tumor with nodular calcification."
 
     # Create ordered procedure
     procedure_coding = models.Coding(
-        system="Http://hl7.org/fhir/ValueSet/cpt-all",
-        code="USPELVIS",
-        display="US PELVIS COMPLETE",
+        system="Https://loinc.org",
+        code="24627-2",
+        display="CT CHEST",
     )
     procedure_code = models.CodeableConcept(coding=[procedure_coding])
-    ordered_procedure = models.OrderedProcedure(description="US PELVIS COMPLETE", code=procedure_code)
+    ordered_procedure = models.OrderedProcedure(description="CT CHEST", code=procedure_code)
     # Create encounter
     start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
     end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
@@ -111,6 +99,8 @@ async def radiology_insights_async() -> None:
         job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
     )
 
+    # [END create_radiology_insights_request]
+
     try:
         async with radiology_insights_client:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
@@ -118,31 +108,35 @@ async def radiology_insights_async() -> None:
                 resource=patient_data,
             )
             radiology_insights_result = await poller.result()
-
-            display_followup_communication(radiology_insights_result)
+            display_guidance(radiology_insights_result)
     except Exception as ex:
         raise ex
 
 
-def display_followup_communication(radiology_insights_result):
-    # [START display_followup_communication]
+def display_guidance(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:
+        counter = 0
         for ri_inference in patient_result.inferences:
-            if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:
-                print(f"Follow-up Communication Inference found")
-                if ri_inference.communicated_at is not None:
-                    for communicatedat in ri_inference.communicated_at:
-                        print(f"Follow-up Communication: Date Time: {communicatedat}")
-                else:
-                    print(f"Follow-up Communication: Date Time: Unknown")
-                if ri_inference.recipient is not None:
-                    for recipient in ri_inference.recipient:
-                        print(f"Follow-up Communication: Recipient: {recipient}")
-                else:
-                    print(f"Follow-up Communication: Recipient: Unknown")
-                print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
-
-    # [END display_followup_communication]
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.GUIDANCE:
+                counter += 1
+                print(f"Guidance {counter} Inference found")
+                identifier = ri_inference.identifier
+                if identifier.coding is not None:
+                    for code in identifier.coding:
+                        if code.code is not None and code.display is not None:
+                            print(f"Identifier: {code.display}")
+                missing_infos = ri_inference.missing_guidance_information
+                for info in missing_infos:
+                    print(f"Missing Guidance Information: {info}")
+                present_infos = ri_inference.present_guidance_information
+                for info in present_infos:
+                    item = info.present_guidance_item
+                    print(f"Present Guidance Information: {item}")
+                    values = info.present_guidance_values
+                    for value in values:
+                        print(f"Present Guidance Value: {value}")
+                ranking = ri_inference.ranking
+                print(f"Ranking: {ranking.value}")
 
 
 if __name__ == "__main__":

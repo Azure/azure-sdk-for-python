@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -32,13 +33,17 @@ from azure.healthinsights.radiologyinsights import models
 
 
 def radiology_insights_sync() -> None:
+
+    # [START create_radiology_insights_client]
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
     radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+    # [END create_radiology_insights_client]
 
+    # [START create_radiology_insights_request]
     doc_content1 = "History: Left renal tumor with thin septations.\n\nFindings:\nThere is a right kidney tumor with nodular calcification."
 
     # Create ordered procedure
@@ -93,6 +98,7 @@ def radiology_insights_sync() -> None:
     patient_data = models.RadiologyInsightsJob(
         job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
     )
+    # [END create_radiology_insights_request]
 
     # Health Insights Radiology Insights
     try:
@@ -117,9 +123,7 @@ def display_guidance(radiology_insights_result):
                 if identifier.coding is not None:
                     for code in identifier.coding:
                         if code.code is not None and code.display is not None:
-                            print(
-                                f"Identifier: {code.display}"
-                            )
+                            print(f"Identifier: {code.display}")
                 missing_infos = ri_inference.missing_guidance_information
                 for info in missing_infos:
                     print(f"Missing Guidance Information: {info}")
@@ -129,10 +133,10 @@ def display_guidance(radiology_insights_result):
                     print(f"Present Guidance Information: {item}")
                     values = info.present_guidance_values
                     for value in values:
-                        print(f"Present Guidance Value: {value}")                                                             
+                        print(f"Present Guidance Value: {value}")
                 ranking = ri_inference.ranking
                 print(f"Ranking: {ranking.value}")
-                
+
 
 if __name__ == "__main__":
     radiology_insights_sync()

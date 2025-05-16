@@ -25,7 +25,8 @@ class ClinicalDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ContactPointSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Contact Point System
-    see https://www.hl7.org/fhir/R4/valueset-contact-point-system.html.
+    see `https://www.hl7.org/fhir/R4/valueset-contact-point-system.html
+    <https://www.hl7.org/fhir/R4/valueset-contact-point-system.html>`_.
     """
 
     PHONE = "phone"
@@ -46,7 +47,8 @@ class ContactPointSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ContactPointUse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Contact Point Use
-    See:    http://hl7.org/fhir/ValueSet/contact-point-use.
+    See: 	`http://hl7.org/fhir/ValueSet/contact-point-use
+    <http://hl7.org/fhir/ValueSet/contact-point-use>`_.
     """
 
     HOME = "home"
@@ -303,7 +305,9 @@ class RecommendationFindingStatusType(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class ResearchStudyStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """https://www.hl7.org/fhir/R4/codesystem-research-study-status.html."""
+    """`https://www.hl7.org/fhir/R4/codesystem-research-study-status.html
+    <https://www.hl7.org/fhir/R4/codesystem-research-study-status.html>`_.
+    """
 
     ACTIVE = "active"
     """The study is open for accrual."""
