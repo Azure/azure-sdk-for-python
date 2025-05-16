@@ -16,7 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
 from .._generated import models as _models
-from .._generated._serialization import Serializer
+from .._generated._utils.serialization import Serializer
 from .._sdk_moniker import SDK_MONIKER
 
 
