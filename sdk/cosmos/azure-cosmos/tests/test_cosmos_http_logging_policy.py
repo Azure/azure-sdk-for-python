@@ -185,8 +185,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_filtered_diagnostics_logging_policy(self):
         # Test if we can log errors with the filtered diagnostics logger
-        database_id = "database_test-" + str(uuid.uuid4())
-        container_id = "container_test-" + str(uuid.uuid4())
+        database_id = "database_test_" + str(uuid.uuid4())
+        container_id = "diagnostics_container_test_" + str(uuid.uuid4())
         self.client_filtered_diagnostic.create_database(id=database_id)
         database = self.client_filtered_diagnostic.get_database_client(database_id)
         database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
