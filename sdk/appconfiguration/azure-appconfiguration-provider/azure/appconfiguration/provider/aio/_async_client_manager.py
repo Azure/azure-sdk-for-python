@@ -177,7 +177,10 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
+                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
+                label_filter=select.label_filter,
+                tags_filter=select.tag_filters,
+                **kwargs
             )
             async for feature_flag in feature_flags:
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
