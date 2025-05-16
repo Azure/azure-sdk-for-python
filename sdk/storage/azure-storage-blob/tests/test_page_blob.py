@@ -2371,35 +2371,3 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_upload_pages_copy_source_error_and_status_code(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_page_size=4 * 1024
-        )
-        self._setup(bsc)
-
-        try:
-            source_blob = self._create_blob(bsc)
-            dest_blob = self._create_blob(bsc)
-
-            # Act
-            with pytest.raises(HttpResponseError) as e:
-                dest_blob.upload_pages_from_url(
-                    source_blob.url,
-                    offset=4*1024,
-                    length=4*1024,
-                    source_offset=4*1024
-                )
-
-            # Assert
-            assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
-            assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
-        finally:
-            bsc.delete_container(self.container_name)

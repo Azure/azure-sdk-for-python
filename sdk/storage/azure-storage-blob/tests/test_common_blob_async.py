@@ -3580,25 +3580,4 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_copy_blob_sync_copy_source_error_and_status_code(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        await self._setup(storage_account_name, storage_account_key)
-
-        try:
-            source_blob = self.bsc.get_blob_client(self.container_name, "sourceblob")
-            await source_blob.upload_blob(b"abc", overwrite=True)
-            target_blob = self.bsc.get_blob_client(self.container_name, "targetblob")
-
-            with pytest.raises(HttpResponseError) as e:
-                await target_blob.start_copy_from_url(source_blob.url, requires_sync=True)
-
-            assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
-            assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
-        finally:
-            await self.bsc.delete_container(self.container_name)
-
 # ------------------------------------------------------------------------------

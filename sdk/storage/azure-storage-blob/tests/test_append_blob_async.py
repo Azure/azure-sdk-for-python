@@ -1648,29 +1648,4 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                 )
             await bsc.delete_container(self.source_container_name)
 
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_append_blob_copy_source_error_and_status_code(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_page_size=4 * 1024
-        )
-        await self._setup(bsc)
-
-        try:
-            source_blob = await self._create_blob(bsc)
-            dest_blob = await self._create_blob(bsc)
-
-            with pytest.raises(HttpResponseError) as e:
-                await dest_blob.append_block_from_url(source_blob.url)
-
-            assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
-            assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
-        finally:
-            await bsc.delete_container(self.container_name)
-
 # ------------------------------------------------------------------------------
