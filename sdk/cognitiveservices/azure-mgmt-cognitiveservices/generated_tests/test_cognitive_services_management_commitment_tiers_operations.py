@@ -20,10 +20,10 @@ class TestCognitiveServicesManagementCommitmentTiersOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_commitment_tiers_list(self, resource_group):
         response = self.client.commitment_tiers.list(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

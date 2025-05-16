@@ -1,5 +1,5 @@
 TEAM_LEADER_MODEL: |
-    gpt-4
+    gpt-4o-mini
 
 TEAM_LEADER_INSTRUCTIONS: |
     You are an agent named '{agent_name}'. You are a leader of a team of agents. The name of your team is '{team_name}'. 

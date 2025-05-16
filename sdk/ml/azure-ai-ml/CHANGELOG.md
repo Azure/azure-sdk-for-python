@@ -5,6 +5,11 @@
 
 ### Bugs Fixed
 
+## 1.27.1 (2025-05-13)
+
+### Bugs Fixed
+  - Handle key error for missing props in PAT url case.
+
 ## 1.27.0 (2025-05-07)
 
 ### Features Added
