@@ -854,8 +854,10 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param market: The market where the results come from.
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
-        :param freshness: Filter search results by a specific time range. Accepted values: 
-           https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
+        :param freshness: Filter search results by a specific time range.
+        
+        .. seealso:: 
+           `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(
