@@ -247,10 +247,52 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
         assert "tagged_config" in client
+        assert "two_tagged" in client
+        assert "only_second_tagged" not in client
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
 
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_two_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["a=b", "second=tag"])}
+        client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+            feature_flag_enabled=True,
+            feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" in client
+        assert "only_second_tagged" not in client
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "TaggedFeatureFlag")
+        assert "message" not in client
+
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_special_chars_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["Special:Tag=Value:With:Colons"])}
+        client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" not in client
+        assert "only_second_tagged" not in client
+        assert "complex_tag" in client
+
+        selects = {SettingSelector(key_filter="*", tag_filters=["Tag@With@At=Value@With@At"])}
+        client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" not in client
+        assert "only_second_tagged" not in client
+        assert "complex_tag" in client
 
 def secret_resolver(secret_id):
     return "Resolver Value"
