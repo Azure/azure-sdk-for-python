@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:  # pylint: disable=too-many-instance-attributes
+class AIProjectClient:
     """AIProjectClient.
 
     :ivar connections: ConnectionsOperations operations

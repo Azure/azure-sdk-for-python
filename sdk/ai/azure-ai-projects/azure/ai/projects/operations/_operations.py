@@ -633,7 +633,7 @@ class ConnectionsOperations:
         :attr:`connections` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -878,7 +878,7 @@ class EvaluationsOperations:
         :attr:`evaluations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -1295,7 +1295,7 @@ class DatasetsOperations:
         :attr:`datasets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -1951,7 +1951,7 @@ class IndexesOperations:
         :attr:`indexes` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -2400,7 +2400,7 @@ class DeploymentsOperations:
         :attr:`deployments` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -2583,7 +2583,7 @@ class RedTeamsOperations:
         :attr:`red_teams` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
