@@ -1,0 +1,18 @@
+{
+    "ignoreWords": [
+        "aiproject",
+        "Prompty",
+        "azureopenai",
+        "GLEU",
+        "aiservices",
+        "azureai",
+        "GENAI",
+        "UPIA",
+        "ansii",
+        "getconnectionwithcredentials",
+        "quantitive",
+        "balapvbyostoragecanary",
+    ],
+    "ignorePaths": [
+    ]
+}
