@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple, List
 from ._constants import EMPTY_LABEL
 
 if TYPE_CHECKING:
@@ -48,11 +48,17 @@ class SettingSelector:
     :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is
      EMPTY_LABEL i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
+    :keyword tag_filters: A filter to select configuration settings based on their tags. This is a list of strings
+     that will be used to match tags on the configuration settings.
+    :type tag_filters: Optional[List[str]]
     """
 
-    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
+    def __init__(
+        self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, tag_filters: Optional[List[str]] = None
+    ):
         self.key_filter = key_filter
         self.label_filter = label_filter
+        self.tag_filters = tag_filters
 
 
 class WatchKey(NamedTuple):

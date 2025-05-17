@@ -74,7 +74,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         client = self.create_aad_client(
             appconfiguration_endpoint_string, selects=selects, secret_resolver=secret_resolver
         )
-        assert client["secret"] == "Reslover Value"
+        assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -101,8 +101,24 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         client = self.create_aad_client(
             appconfiguration_endpoint_string, selects=selects, key_vault_options=key_vault_options
         )
-        assert client["secret"] == "Reslover Value"
+        assert client["secret"] == "Resolver Value"
+
+    @recorded_by_proxy
+    @app_config_decorator_aad
+    def test_provider_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
+        client = self.create_client(
+            appconfiguration_endpoint_string,
+            selects=selects,
+            feature_flag_enabled=True,
+            feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
+        assert "tagged_config" in client
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "TaggedFeatureFlag")
+        assert "message" not in client
 
 
 def secret_resolver(secret_id):
-    return "Reslover Value"
+    return "Resolver Value"
