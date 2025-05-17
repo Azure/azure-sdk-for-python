@@ -5,35 +5,30 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_sip_trunks_sample.py
+FILE: delete_sip_domain_sample_async.py
 DESCRIPTION:
-    This sample shows the usage of SIP routing client for retrieving the collection of
-    currently configured SIP trunks.
+    This sample shows the usage of SIP routing client for deleting the configuration
+    of a single SIP domain.
 
 USAGE:
-    python get_sip_trunks_sample.py
+    python delete_sip_domain_sample_async.py
         Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
+    2) COMMUNICATION_SAMPLES_DOMAIN_FQDN - fqdn of the domain to be deleted
 """
 
 import os
-from azure.communication.phonenumbers.siprouting import SipRoutingClient
+import asyncio
+from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 
-
-def get_sip_trunks_sample():
-    sip_trunks = client.list_trunks()
-
-    for trunk in sip_trunks:
-        print(trunk.fqdn)
-        print(trunk.sip_signaling_port)
-        print(trunk.enabled)
-        print(trunk.direct_transfer)
-        print(trunk.privacy_header)
-        print(trunk.ip_address_version)
+async def delete_sip_domain_sample():
+    domain_fqdn = os.getenv("COMMUNICATION_SAMPLES_DOMAIN_FQDN")
+    async with client:
+        await client.delete_domain(domain_fqdn)
 
 
 if __name__ == "__main__":
-    get_sip_trunks_sample()
+    asyncio.run(delete_sip_domain_sample())
