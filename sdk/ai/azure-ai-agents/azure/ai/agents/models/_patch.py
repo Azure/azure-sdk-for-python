@@ -848,13 +848,14 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
 
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
-        Initialize Bing Custom Search with a connection_id.
+        Initialize Bing Grounding tool with a connection_id.
 
-        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param market:
-        :param set_lang:
-        :param count:
-        :param freshness:
+        :param connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range. Accepted values: 
+           https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(
