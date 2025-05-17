@@ -84,7 +84,7 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EC_HSM = "EC-HSM"
     """Elliptic Curve with a private key which is not exportable from the HSM."""
     RSA = "RSA"
-    """RSA (https://tools.ietf.org/html/rfc3447)."""
+    """RSA (`https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_)."""
     RSA_HSM = "RSA-HSM"
     """RSA with a private key which is not exportable from the HSM."""
     OCT = "oct"
