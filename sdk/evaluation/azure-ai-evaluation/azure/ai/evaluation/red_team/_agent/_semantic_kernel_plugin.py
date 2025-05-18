@@ -13,7 +13,7 @@ from typing import Annotated, Dict, Any, Optional, Callable
 
 from semantic_kernel.functions import kernel_function
 
-from azure.ai.evaluation.red_team._agent import RedTeamToolProvider
+from azure.ai.evaluation.red_team._agent._agent_tools import RedTeamToolProvider
 from azure.identity import DefaultAzureCredential
 
 class RedTeamPlugin:
