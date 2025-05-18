@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from devtools_testutils import is_live
 
-from openai.types.eval_string_check_grader import EvalStringCheckGrader
+from openai.types.graders import StringCheckGrader
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
     evaluate,
@@ -66,7 +66,7 @@ class TestAoaiEvaluation:
         # ---- General Grader Initialization ----
 
         # Define an string check grader config directly using the OAI SDK
-        oai_string_check_grader = EvalStringCheckGrader(
+        oai_string_check_grader = StringCheckGrader(
             input="{{item.query}}",
             name="contains hello",
             operation="like",

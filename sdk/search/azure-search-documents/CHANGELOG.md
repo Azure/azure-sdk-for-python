@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b12 (Unreleased)
+## 11.6.0b13 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,52 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.6.0b12 (2025-05-14)
+
+### Features Added
+
+- Added `azure.search.documents.agent.KnowledgeAgentRetrievalClient`.
+- Added knowledge agents operations in `SearchIndexClient`.
+- Added `resync` method in `SearchIndexerClient`.
+- Exposed `@search.reranker_boosted_score` in the search results.
+- Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
+- Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
+- Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
+- Added property `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`.
+
+- Added new models:
+    - `azure.search.documents.models.QueryResultDocumentInnerHit`
+    - `azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormat`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatType`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatJsonSchemaProperties`
+    - `azure.search.documents.indexes.models.ChatCompletionSchema`
+    - `azure.search.documents.indexes.models.ChatCompletionSkill`
+    - `azure.search.documents.indexes.models.CommonModelParameters`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingProperties`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingUnit`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillExtractionOptions`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillOutputFormat`
+    - `azure.search.documents.indexes.models.IndexerPermissionOption`
+    - `azure.search.documents.indexes.models.IndexerResyncOption`
+    - `azure.search.documents.indexes.models.KnowledgeAgent`
+    - `azure.search.documents.indexes.models.KnowledgeAgentAzureOpenAIModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModelKind`
+    - `azure.search.documents.indexes.models.KnowledgeAgentRequestLimits`
+    - `azure.search.documents.indexes.models.KnowledgeAgentTargetIndex`
+    - `azure.search.documents.indexes.models.PermissionFilter`
+    - `azure.search.documents.indexes.models.RankingOrder`
+    - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+
+### Bugs Fixed
+
+- Fixed the issue batching in upload_documents() did not work.    #40157
+
+### Other Changes
+
+- Updated the API version to "2025-05-01-preview"
 
 ## 11.6.0b11 (2025-03-25)
 
