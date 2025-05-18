@@ -659,7 +659,7 @@ def mock_anon_component_version(mocker: MockFixture):
 
     def generate_name_version(*args, **kwargs):
         real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
         return ANONYMOUS_COMPONENT_NAME, real_uuid
 
     def fake_name_version(*args, **kwargs):
@@ -683,7 +683,7 @@ def mock_asset_name(mocker: MockFixture):
 
     def generate_uuid(*args, **kwargs):
         real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
         return real_uuid
 
     if is_live():
@@ -727,7 +727,7 @@ def generate_component_hash(*args, **kwargs):
     """Normalize component dict with sanitized value and return hash."""
     dict_hash = hash_dict(*args, **kwargs)
     normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
-    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash, function_scoped=True)
     return dict_hash
 
 
@@ -837,7 +837,7 @@ def mock_job_name_generator(mocker: MockFixture):
 
     def generate_and_sanitize_job_name(*args, **kwargs):
         real_job_name = generate_job_name()
-        add_general_string_sanitizer(value=fake_job_name, target=real_job_name)
+        add_general_string_sanitizer(value=fake_job_name, target=real_job_name, function_scoped=True)
         return real_job_name
 
     if is_live():
