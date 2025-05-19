@@ -178,8 +178,8 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
-    metadata_file_path = os.path.join(package_folder, "_metadata.json")
-    with open(metadata_file_path, "w") as writer:
+    metadata_file_path = package_folder / "_metadata.json"
+    with metadata_file_path.open("w") as writer:
         json.dump(metadata, writer, indent=2)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
 
