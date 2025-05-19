@@ -14,12 +14,12 @@ These code samples show common scenario operations with the Azure Health Data Se
 
 | File Name | Description |
 | --- | --- |
-| [deidentify_text_tag.py] and [deidentify_text_tag_async.py] | De-identify text using the tag operation |
-| [deidentify_text_redact.py] and [deidentify_text_redact_async.py] | De-identify text using the redact operation |
-| [deidentify_text_surrogate.py] and [deidentify_text_surrogate_async.py] | De-identify text using the surrogate operation |
-| [deidentify_documents.py] and [deidentify_documents_async.py] | De-identify documents in Azure Storage with an asynchronous job |
-| [list_jobs.py] and [list_jobs_async.py] | List de-identification jobs |
-| [list_job_documents.py] and [list_job_documents_async.py] | List the documents processed by a de-identification job |
+| [deidentify_text_tag.py][deidentify_text_tag] and [deidentify_text_tag_async.py][deidentify_text_tag_async] | De-identify text using the tag operation |
+| [deidentify_text_redact.py][deidentify_text_redact] and [deidentify_text_redact_async.py][deidentify_text_redact_async] | De-identify text using the redact operation |
+| [deidentify_text_surrogate.py][deidentify_text_surrogate] and [deidentify_text_surrogate_async.py][deidentify_text_surrogate_async] | De-identify text using the surrogate operation |
+| [deidentify_documents.py][deidentify_documents] and [deidentify_documents_async.py][deidentify_documents_async] | De-identify documents in Azure Storage with an asynchronous job |
+| [list_jobs.py][list_jobs] and [list_jobs_async.py][list_jobs_async] | List de-identification jobs |
+| [list_job_documents.py][list_job_documents] and [list_job_documents_async.py][list_job_documents_async] | List the documents processed by a de-identification job |
 
 ## Getting started
 
@@ -55,7 +55,6 @@ what you can do with the Azure Health Data Services de-identification service cl
 [deid_quickstart]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart
 [deid_rbac]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/manage-access-rbac
 
-<!-- Not checked in yet
 [deidentify_text_tag]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_tag.py
 [deidentify_text_redact]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_redact.py
 [deidentify_text_surrogate]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_surrogate.py
@@ -68,4 +67,3 @@ what you can do with the Azure Health Data Services de-identification service cl
 [deidentify_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_documents_async.py
 [list_jobs_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_jobs_async.py
 [list_job_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_job_documents_async.py
--->
