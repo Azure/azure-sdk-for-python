@@ -26,7 +26,6 @@ class RedTeamPlugin:
         ```python
         # Method 1: Create a plugin with individual environment variables
         plugin = RedTeamPlugin(
-            endpoint=os.environ.get("AZURE_AI_ENDPOINT"),
             azure_ai_project_endpoint=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
             target_func=lambda x: "Target model response"
         )
