@@ -23,6 +23,21 @@ class AadAuthFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     of 401 (Unauthorized) and present a Bearer Challenge."""
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources"""
+
+
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class AdminKeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AdminKeyKind."""
 
@@ -33,12 +48,12 @@ class AdminKeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Configure this property to support the search service using either the default compute or Azure
+    """Configure this property to support the search service using either the Default Compute or Azure
     Confidential Compute.
     """
 
     DEFAULT = "default"
-    """Create the service with the default compute."""
+    """Create the service with the Default Compute."""
     CONFIDENTIAL = "confidential"
     """Create the service with Azure Confidential Compute."""
 
@@ -50,29 +65,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
-
-
-class FeatureName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the feature offered in this region."""
-
-    GROK = "Grok"
-    """Supports Grok feature."""
-    IMAGE_VECTORIZATION = "ImageVectorization"
-    """Supports Image Vectorization feature."""
-    DOCUMENT_INTELLIGENCE = "DocumentIntelligence"
-    """Supports Document Intelligence feature."""
-    QUERY_REWRITE = "QueryRewrite"
-    """Supports Query Rewrite feature."""
-    S3 = "S3"
-    """Supports S3 feature."""
-    STORAGE_OPTIMIZED = "StorageOptimized"
-    """Supports Storage Optimized feature."""
-    SEMANTIC_SEARCH = "SemanticSearch"
-    """Supports Semantic Search feature."""
-    MEGA_STORE = "MegaStore"
-    """Supports Mega Store feature."""
-    AVAILABILITY_ZONES = "AvailabilityZones"
-    """Supports Availability Zones feature."""
 
 
 class HostingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,6 +95,46 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     """Indicates that system-assigned identity for the search service will be enabled along with the
     assignment of one or more user assigned identities."""
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type"""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
+
+
+class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
 
 
 class PrivateLinkServiceConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,11 +183,11 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     search service. This is because the free service uses capacity that is already set up.
     """
 
-    SUCCEEDED = "Succeeded"
+    SUCCEEDED = "succeeded"
     """The last provisioning operation has completed successfully."""
-    PROVISIONING = "Provisioning"
+    PROVISIONING = "provisioning"
     """The search service is being provisioned or scaled up or down."""
-    FAILED = "Failed"
+    FAILED = "failed"
     """The last provisioning operation has failed."""
 
 
@@ -170,6 +202,20 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "disabled"
     """The search service is not accessible from traffic originating from the public internet. Access
     is only permitted over approved private endpoint connections."""
+    SECURED_BY_PERIMETER = "securedByPerimeter"
+    """The network security perimeter configuration rules allow or disallow public network access to
+    the resource. Requires an associated network security perimeter."""
+
+
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked"""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked"""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked"""
 
 
 class SearchBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -178,18 +224,15 @@ class SearchBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     """Indicates that no origin can bypass the rules defined in the 'ipRules' section. This is the
     default."""
-    AZURE_PORTAL = "AzurePortal"
-    """Indicates that requests originating from the Azure portal can bypass the rules defined in the
-    'ipRules' section."""
     AZURE_SERVICES = "AzureServices"
     """Indicates that requests originating from Azure trusted services can bypass the rules defined in
     the 'ipRules' section."""
 
 
-class SearchDisabledDataExfiltrationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SearchDataExfiltrationProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A specific data exfiltration scenario that is disabled for the service."""
 
-    ALL = "All"
+    BLOCK_ALL = "BlockAll"
     """Indicates that all data exfiltration scenarios are disabled."""
 
 
@@ -267,6 +310,13 @@ class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     deleted."""
     STOPPED = "stopped"
     """The search service is in a subscription that's disabled."""
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
 class SharedPrivateLinkResourceAsyncOperationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -348,3 +398,12 @@ class UnavailableNameReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The search service name doesn't match naming requirements."""
     ALREADY_EXISTS = "AlreadyExists"
     """The search service name is already assigned to a different search service."""
+
+
+class UpgradeAvailable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the search service has an upgrade available."""
+
+    NOT_AVAILABLE = "notAvailable"
+    """An upgrade is currently not available for the service."""
+    AVAILABLE = "available"
+    """There is an upgrade available for the service."""
