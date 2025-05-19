@@ -448,8 +448,8 @@ def gen_typespec(
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
-        npm_package_verstion = {
-            typespec_python: data["dependencies"][typespec_python],
+        npm_package_version = {
+            "emitterVersion": data["dependencies"][typespec_python],
         }
 
-    return npm_package_verstion
+    return npm_package_version
