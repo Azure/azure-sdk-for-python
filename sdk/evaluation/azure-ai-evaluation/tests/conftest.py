@@ -331,12 +331,18 @@ def get_config(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
+        azure_endpoint="https://Sanitized.api.cognitive.microsoft.com",
         api_key="aoai-api-key",
-        api_version="2024-08-01-preview",
+        api_version="2023-07-01-preview",
         azure_deployment="aoai-deployment",
     )
-
+@pytest.fixture(scope="session")
+def mock_model_config_onedp() -> AzureOpenAIModelConfiguration:
+    return AzureOpenAIModelConfiguration(
+        azure_endpoint="https://Sanitized.services.ai.azure.com",
+        api_version="2024-12-01-preview",
+        azure_deployment="aoai-deployment",
+    )
 
 @pytest.fixture(scope="session")
 def mock_project_scope() -> Dict[str, str]:
@@ -350,9 +356,10 @@ def mock_project_scope() -> Dict[str, str]:
 
 @pytest.fixture(scope="session")
 def mock_onedp_project_scope() -> Dict[str, str]:
-    return "https://Sanitized.cognitiveservices.azure.com/api/projects/00000"
+    return "https://Sanitized.services.ai.azure.com/api/projects/00000"
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
+KEY_ONE_DP_AZURE_MODEL_CONFIG = "azure_openai_model_config_onedp"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
 KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
 KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
@@ -371,6 +378,18 @@ def model_config(
 
     return model_config
 
+@pytest.fixture(scope="session")
+def model_config_onedp(
+    connection_file: Dict[str, Any], mock_model_config_onedp: AzureOpenAIModelConfiguration
+) -> AzureOpenAIModelConfiguration:
+    if not is_live():
+        return mock_model_config_onedp
+
+    config = get_config(connection_file, KEY_ONE_DP_AZURE_MODEL_CONFIG)
+    model_config = AzureOpenAIModelConfiguration(**config)
+    AzureOpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
+
+    return model_config
 
 @pytest.fixture
 def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
@@ -513,11 +532,11 @@ def azure_cred_onedp() -> TokenCredential:
 
     try:
         credential = AzureCliCredential()
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        token = credential.get_token("https://ai.azure.com/.default")
     except Exception:
         credential = DefaultAzureCredential()
         # ensure we can get token
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        token = credential.get_token("https://ai.azure.com/.default")
         
     assert token is not None
     return credential

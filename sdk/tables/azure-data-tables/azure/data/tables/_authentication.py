@@ -160,8 +160,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
-    authentication challenges.
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on Microsoft
+    Entra authentication challenges.
 
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential

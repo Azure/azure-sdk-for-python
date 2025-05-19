@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,10 +34,10 @@ def main():
     client.backups.begin_delete(
         resource_group_name="TestGroup",
         server_name="testserver",
-        backup_name="backup_20210615T160516",
+        backup_name="backup_20250303T160516",
     ).result()
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/BackupDelete.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/BackupDelete.json
 if __name__ == "__main__":
     main()

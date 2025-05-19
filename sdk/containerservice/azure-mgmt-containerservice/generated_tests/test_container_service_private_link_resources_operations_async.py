@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice.aio import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_03_01.aio import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestContainerServicePrivateLinkResourcesOperationsAsync(AzureMgmtRecordedT
         response = await self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

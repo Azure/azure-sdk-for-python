@@ -24,8 +24,8 @@ _LOGGER = logging.getLogger(__name__)
 class EnvironmentCredential:
     """A credential configured by environment variables.
 
-    This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
-    a user with a username and password. Configuration is attempted in this order, using these environment variables:
+    This credential is capable of authenticating as a service principal using a client secret or a certificate.
+    Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -43,20 +43,6 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: (optional) If True, the credential will send the public certificate
         chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI)
         authentication. Defaults to False.
-      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
-        "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
-        when no value is given.
-
-    User with username and password:
-      **Deprecated**: Username and password authentication doesn't support multifactor authentication (MFA).
-      For more details on Microsoft Entra MFA enforcement, see https://aka.ms/azsdk/identity/mfa.
-
-      - **AZURE_CLIENT_ID**: the application's client ID
-      - **AZURE_USERNAME**: a username (usually an email address)
-      - **AZURE_PASSWORD**: that user's password
-      - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
-        If not provided, defaults to the 'organizations' tenant, which supports only Microsoft Entra work or
-        school accounts.
       - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
