@@ -569,10 +569,7 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # delete thread
-            deletion_status = client.threads.delete(thread.id)
-            assert deletion_status.id == thread.id
-            assert deletion_status.deleted == True
-            print("Deleted thread, thread ID", deletion_status.id)
+            client.threads.delete(thread.id)
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -1286,7 +1283,7 @@ class TestAgentClient(AzureRecordedTestCase):
         assert run.status == RunStatus.COMPLETED, run.last_error.message
         assert run.parallel_tool_calls == use_parallel_runs
 
-        assert client.delete_agent(agent.id).deleted, "The agent was not deleted"
+        client.delete_agent(agent.id)
         messages = list(client.messages.list(thread_id=run.thread_id))
         assert len(messages), "The data from the agent was not received."
 
@@ -2978,8 +2975,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
-            del_agent = ai_client.delete_agent(agent.id)
-            assert del_agent.deleted
+            ai_client.delete_agent(agent.id)
 
             messages = list(ai_client.messages.list(thread_id=thread.id))
 
@@ -3061,7 +3057,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 messages = list(client.messages.list(thread_id=thread.id))
                 print(f"Messages: {messages}")
 
-                last_msg = client.messages.get_last_text_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
+                last_msg = client.messages.get_last_message_text_by_role(thread_id=thread.id, role=MessageRole.AGENT)
                 if last_msg:
                     print(f"Last Message: {last_msg.text.value}")
 
@@ -3151,8 +3147,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert any("bar" in t.text.value.lower() for t in text_messages)
 
             # Delete the agent once done
-            result = client.delete_agent(agent.id)
-            assert result.deleted, "The agent was not deleted."
+            client.delete_agent(agent.id)
 
     @agentClientPreparer()
     @pytest.mark.skip("Recordings not yet implemented.")
@@ -3192,6 +3187,6 @@ class TestAgentClient(AzureRecordedTestCase):
                 )
             assert run.status in RunStatus.COMPLETED
 
-            assert client.delete_agent(agent.id).deleted, "The agent was not deleted"
+            client.delete_agent(agent.id)
             messages = list(client.messages.list(thread_id=thread.id))
             assert messages, "No data was received from the agent."

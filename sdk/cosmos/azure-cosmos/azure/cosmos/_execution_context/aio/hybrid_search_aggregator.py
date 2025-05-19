@@ -60,7 +60,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
 
-    async def _run_hybrid_search(self):
+    async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
@@ -150,21 +150,32 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             self._format_final_results(drained_results)
             return
 
+        # Get the Components weights if any
+        if self._hybrid_search_query_info.get('componentWeights'):
+            component_weights = self._hybrid_search_query_info['componentWeights']
+        else:
+            # If no weights are provided, we default to 1.0 for all components
+            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
+
         # Sort drained results by _rid
         drained_results.sort(key=lambda x: x['_rid'])
 
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
 
-        # Sort by scores in descending order
-        for score_tuples in component_scores:
-            score_tuples.sort(key=lambda x: x[0], reverse=True)
+        # Sort by scores using component weights
+        for index, score_tuples in enumerate(component_scores):
+            # Negative Weights will change sorting from Descending to Ascending
+            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
+            comparison_factor = not ordering.lower() == 'ascending'
+            #  pylint: disable=cell-var-from-loop
+            score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
 
         # Compute the ranks
         ranks = _compute_ranks(component_scores)
 
         # Compute the RRF scores and add them to output
-        _compute_rrf_scores(ranks, drained_results)
+        _compute_rrf_scores(ranks, component_weights, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)

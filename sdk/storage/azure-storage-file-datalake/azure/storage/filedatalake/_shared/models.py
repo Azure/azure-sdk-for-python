@@ -172,26 +172,26 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"
 
     # DataLake values
-    CONTENT_LENGTH_MUST_BE_ZERO = 'ContentLengthMustBeZero'
-    PATH_ALREADY_EXISTS = 'PathAlreadyExists'
-    INVALID_FLUSH_POSITION = 'InvalidFlushPosition'
-    INVALID_PROPERTY_NAME = 'InvalidPropertyName'
-    INVALID_SOURCE_URI = 'InvalidSourceUri'
-    UNSUPPORTED_REST_VERSION = 'UnsupportedRestVersion'
-    FILE_SYSTEM_NOT_FOUND = 'FilesystemNotFound'
-    PATH_NOT_FOUND = 'PathNotFound'
-    RENAME_DESTINATION_PARENT_PATH_NOT_FOUND = 'RenameDestinationParentPathNotFound'
-    SOURCE_PATH_NOT_FOUND = 'SourcePathNotFound'
-    DESTINATION_PATH_IS_BEING_DELETED = 'DestinationPathIsBeingDeleted'
-    FILE_SYSTEM_ALREADY_EXISTS = 'FilesystemAlreadyExists'
-    FILE_SYSTEM_BEING_DELETED = 'FilesystemBeingDeleted'
-    INVALID_DESTINATION_PATH = 'InvalidDestinationPath'
-    INVALID_RENAME_SOURCE_PATH = 'InvalidRenameSourcePath'
-    INVALID_SOURCE_OR_DESTINATION_RESOURCE_TYPE = 'InvalidSourceOrDestinationResourceType'
-    LEASE_IS_ALREADY_BROKEN = 'LeaseIsAlreadyBroken'
-    LEASE_NAME_MISMATCH = 'LeaseNameMismatch'
-    PATH_CONFLICT = 'PathConflict'
-    SOURCE_PATH_IS_BEING_DELETED = 'SourcePathIsBeingDeleted'
+    CONTENT_LENGTH_MUST_BE_ZERO = "ContentLengthMustBeZero"
+    PATH_ALREADY_EXISTS = "PathAlreadyExists"
+    INVALID_FLUSH_POSITION = "InvalidFlushPosition"
+    INVALID_PROPERTY_NAME = "InvalidPropertyName"
+    INVALID_SOURCE_URI = "InvalidSourceUri"
+    UNSUPPORTED_REST_VERSION = "UnsupportedRestVersion"
+    FILE_SYSTEM_NOT_FOUND = "FilesystemNotFound"
+    PATH_NOT_FOUND = "PathNotFound"
+    RENAME_DESTINATION_PARENT_PATH_NOT_FOUND = "RenameDestinationParentPathNotFound"
+    SOURCE_PATH_NOT_FOUND = "SourcePathNotFound"
+    DESTINATION_PATH_IS_BEING_DELETED = "DestinationPathIsBeingDeleted"
+    FILE_SYSTEM_ALREADY_EXISTS = "FilesystemAlreadyExists"
+    FILE_SYSTEM_BEING_DELETED = "FilesystemBeingDeleted"
+    INVALID_DESTINATION_PATH = "InvalidDestinationPath"
+    INVALID_RENAME_SOURCE_PATH = "InvalidRenameSourcePath"
+    INVALID_SOURCE_OR_DESTINATION_RESOURCE_TYPE = "InvalidSourceOrDestinationResourceType"
+    LEASE_IS_ALREADY_BROKEN = "LeaseIsAlreadyBroken"
+    LEASE_NAME_MISMATCH = "LeaseNameMismatch"
+    PATH_CONFLICT = "PathConflict"
+    SOURCE_PATH_IS_BEING_DELETED = "SourcePathIsBeingDeleted"
 
 
 class DictMixin(object):
@@ -222,7 +222,7 @@ class DictMixin(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
     def __contains__(self, key):
         return key in self.__dict__
@@ -234,13 +234,13 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        return [k for k in self.__dict__ if not k.startswith('_')]
+        return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key, default=None):
         if key in self.__dict__:
@@ -255,8 +255,8 @@ class LocationMode(object):
     must use PRIMARY.
     """
 
-    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
-    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+    PRIMARY = "primary"  #: Requests should be sent to the primary location.
+    SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
 class ResourceTypes(object):
@@ -281,17 +281,12 @@ class ResourceTypes(object):
     _str: str
 
     def __init__(
-        self,
-        service: bool = False,
-        container: bool = False,
-        object: bool = False  # pylint: disable=redefined-builtin
+        self, service: bool = False, container: bool = False, object: bool = False  # pylint: disable=redefined-builtin
     ) -> None:
         self.service = service
         self.container = container
         self.object = object
-        self._str = (('s' if self.service else '') +
-                ('c' if self.container else '') +
-                ('o' if self.object else ''))
+        self._str = ("s" if self.service else "") + ("c" if self.container else "") + ("o" if self.object else "")
 
     def __str__(self):
         return self._str
@@ -309,9 +304,9 @@ class ResourceTypes(object):
         :return: A ResourceTypes object
         :rtype: ~azure.storage.blob.ResourceTypes
         """
-        res_service = 's' in string
-        res_container = 'c' in string
-        res_object = 'o' in string
+        res_service = "s" in string
+        res_container = "c" in string
+        res_object = "o" in string
 
         parsed = cls(res_service, res_container, res_object)
         parsed._str = string
@@ -392,29 +387,30 @@ class AccountSasPermissions(object):
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
-        self.permanent_delete = kwargs.pop('permanent_delete', False)
+        self.permanent_delete = kwargs.pop("permanent_delete", False)
         self.list = list
         self.add = add
         self.create = create
         self.update = update
         self.process = process
-        self.tag = kwargs.pop('tag', False)
-        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
-        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
-        self._str = (('r' if self.read else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('x' if self.delete_previous_version else '') +
-                     ('y' if self.permanent_delete else '') +
-                     ('l' if self.list else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('u' if self.update else '') +
-                     ('p' if self.process else '') +
-                     ('f' if self.filter_by_tags else '') +
-                     ('t' if self.tag else '') +
-                     ('i' if self.set_immutability_policy else '')
-                     )
+        self.tag = kwargs.pop("tag", False)
+        self.filter_by_tags = kwargs.pop("filter_by_tags", False)
+        self.set_immutability_policy = kwargs.pop("set_immutability_policy", False)
+        self._str = (
+            ("r" if self.read else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("x" if self.delete_previous_version else "")
+            + ("y" if self.permanent_delete else "")
+            + ("l" if self.list else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("u" if self.update else "")
+            + ("p" if self.process else "")
+            + ("f" if self.filter_by_tags else "")
+            + ("t" if self.tag else "")
+            + ("i" if self.set_immutability_policy else "")
+        )
 
     def __str__(self):
         return self._str
@@ -432,23 +428,34 @@ class AccountSasPermissions(object):
         :return: An AccountSasPermissions object
         :rtype: ~azure.storage.filedatalake.AccountSasPermissions
         """
-        p_read = 'r' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_delete_previous_version = 'x' in permission
-        p_permanent_delete = 'y' in permission
-        p_list = 'l' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_update = 'u' in permission
-        p_process = 'p' in permission
-        p_tag = 't' in permission
-        p_filter_by_tags = 'f' in permission
-        p_set_immutability_policy = 'i' in permission
-        parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
-                     list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
-                     filter_by_tags=p_filter_by_tags, set_immutability_policy=p_set_immutability_policy,
-                     permanent_delete=p_permanent_delete)
+        p_read = "r" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_delete_previous_version = "x" in permission
+        p_permanent_delete = "y" in permission
+        p_list = "l" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_update = "u" in permission
+        p_process = "p" in permission
+        p_tag = "t" in permission
+        p_filter_by_tags = "f" in permission
+        p_set_immutability_policy = "i" in permission
+        parsed = cls(
+            read=p_read,
+            write=p_write,
+            delete=p_delete,
+            delete_previous_version=p_delete_previous_version,
+            list=p_list,
+            add=p_add,
+            create=p_create,
+            update=p_update,
+            process=p_process,
+            tag=p_tag,
+            filter_by_tags=p_filter_by_tags,
+            set_immutability_policy=p_set_immutability_policy,
+            permanent_delete=p_permanent_delete,
+        )
 
         return parsed
 
@@ -464,18 +471,11 @@ class Services(object):
         Access for the `~azure.storage.fileshare.ShareServiceClient`. Default is False.
     """
 
-    def __init__(
-        self, *,
-        blob: bool = False,
-        queue: bool = False,
-        fileshare: bool = False
-    ) -> None:
+    def __init__(self, *, blob: bool = False, queue: bool = False, fileshare: bool = False) -> None:
         self.blob = blob
         self.queue = queue
         self.fileshare = fileshare
-        self._str = (('b' if self.blob else '') +
-                ('q' if self.queue else '') +
-                ('f' if self.fileshare else ''))
+        self._str = ("b" if self.blob else "") + ("q" if self.queue else "") + ("f" if self.fileshare else "")
 
     def __str__(self):
         return self._str
@@ -493,9 +493,9 @@ class Services(object):
         :return: A Services object
         :rtype: ~azure.storage.blob.Services
         """
-        res_blob = 'b' in string
-        res_queue = 'q' in string
-        res_file = 'f' in string
+        res_blob = "b" in string
+        res_queue = "q" in string
+        res_file = "f" in string
 
         parsed = cls(blob=res_blob, queue=res_queue, fileshare=res_file)
         parsed._str = string
@@ -573,13 +573,13 @@ class StorageConfiguration(Configuration):
 
     def __init__(self, **kwargs):
         super(StorageConfiguration, self).__init__(**kwargs)
-        self.max_single_put_size = kwargs.pop('max_single_put_size', 64 * 1024 * 1024)
+        self.max_single_put_size = kwargs.pop("max_single_put_size", 64 * 1024 * 1024)
         self.copy_polling_interval = 15
-        self.max_block_size = kwargs.pop('max_block_size', 4 * 1024 * 1024)
-        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = kwargs.pop('use_byte_buffer', False)
-        self.max_page_size = kwargs.pop('max_page_size', 4 * 1024 * 1024)
-        self.min_large_chunk_upload_threshold = kwargs.pop('min_large_chunk_upload_threshold', 100 * 1024 * 1024 + 1)
-        self.max_single_get_size = kwargs.pop('max_single_get_size', 32 * 1024 * 1024)
-        self.max_chunk_get_size = kwargs.pop('max_chunk_get_size', 4 * 1024 * 1024)
-        self.max_range_size = kwargs.pop('max_range_size', 4 * 1024 * 1024)
+        self.max_block_size = kwargs.pop("max_block_size", 4 * 1024 * 1024)
+        self.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
+        self.use_byte_buffer = kwargs.pop("use_byte_buffer", False)
+        self.max_page_size = kwargs.pop("max_page_size", 4 * 1024 * 1024)
+        self.min_large_chunk_upload_threshold = kwargs.pop("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
+        self.max_single_get_size = kwargs.pop("max_single_get_size", 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.pop("max_chunk_get_size", 4 * 1024 * 1024)
+        self.max_range_size = kwargs.pop("max_range_size", 4 * 1024 * 1024)
