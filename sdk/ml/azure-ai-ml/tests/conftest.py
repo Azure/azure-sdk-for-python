@@ -630,15 +630,19 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
+    fake_uuid = "00000000000000000000000000000000"
+
     def generate_hash(*args, **kwargs):
-        return str(uuid.uuid4())
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
+        return real_uuid
 
     if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
             "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
-            return_value="00000000000000000000000000000000",
+            return_value=fake_uuid,
         )
 
 
