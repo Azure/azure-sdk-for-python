@@ -132,8 +132,14 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
         return
     for_swagger_gen = "meta" in config
-    metadata_folder = package_folder / "_meta.json"
-    if metadata_folder.exists() and for_swagger_gen:
+    # remove old _meta.json
+    old_metadata_folder = package_folder / "_meta.json"
+    if old_metadata_folder.exists():
+        os.remove(old_metadata_folder)
+        _LOGGER.info(f"Remove old metadata file: {old_metadata_folder}")
+    
+    metadata_folder = package_folder / "_metadata.json"
+    if metadata_folder.exists():
         with open(metadata_folder, "r") as file_in:
             metadata = json.load(file_in)
     else:
@@ -172,30 +178,10 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
-    metadata_file_path = os.path.join(package_folder, "_meta.json")
+    metadata_file_path = os.path.join(package_folder, "_metadata.json")
     with open(metadata_file_path, "w") as writer:
         json.dump(metadata, writer, indent=2)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
-
-    # Check whether MANIFEST.in includes _meta.json
-    if "resource-manager" in input_readme:
-        require_meta = "include _meta.json\n"
-        manifest_file = os.path.join(package_folder, "MANIFEST.in")
-        if not os.path.exists(manifest_file):
-            _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
-            return
-
-        includes = []
-        write_flag = False
-        with open(manifest_file, "r") as f:
-            includes = f.readlines()
-            if require_meta not in includes:
-                includes = [require_meta] + includes
-                write_flag = True
-
-        if write_flag:
-            with open(manifest_file, "w") as f:
-                f.write("".join(includes))
 
 
 @return_origin_path
