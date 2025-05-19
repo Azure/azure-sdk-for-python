@@ -17,6 +17,9 @@ import os
 import sphinx_rtd_theme
 import glob
 from shutil import copyfile
+import errno
+import sphinx.util.osutil
+sphinx.util.osutil.ENOENT = errno.ENOENT
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
