@@ -845,7 +845,6 @@
 
 /.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
 /.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
-/conda-releaselogs/                                                  @scbedd @xiangyan99 @lmazuel
 /conda/                                                              @scbedd @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
