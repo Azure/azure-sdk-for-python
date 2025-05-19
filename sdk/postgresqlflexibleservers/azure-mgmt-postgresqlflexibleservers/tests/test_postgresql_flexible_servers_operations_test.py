@@ -20,6 +20,7 @@ class TestPostgreSQLManagementOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_list(self):
         response = self.client.operations.list()
-        assert response.value
+        result = [r for r in response]
+        assert result

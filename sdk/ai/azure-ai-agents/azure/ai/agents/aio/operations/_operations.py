@@ -44,7 +44,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC, prepare_multipart_form_data
 from ...operations._operations import (
@@ -263,7 +263,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -349,7 +350,8 @@ class ThreadsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -403,7 +405,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -566,7 +569,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -626,7 +630,8 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -833,7 +838,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -984,7 +990,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1144,7 +1151,8 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1527,7 +1535,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1617,7 +1626,8 @@ class RunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -1674,7 +1684,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1834,7 +1845,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1998,7 +2010,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2061,7 +2074,8 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2159,7 +2173,8 @@ class RunStepsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2260,7 +2275,8 @@ class RunStepsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2290,9 +2306,8 @@ class FilesOperations:
     ) -> _models.FileListResponse:
         """Gets a list of previously uploaded files.
 
-        :keyword purpose: The purpose of the file. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Default value is
-         None.
+        :keyword purpose: The purpose of the file. Known values are: "assistants", "assistants_output",
+         and "vision". Default value is None.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileListResponse. The FileListResponse is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileListResponse
@@ -2336,7 +2351,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2409,7 +2425,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2469,7 +2486,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2531,7 +2549,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2591,7 +2610,8 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes()
 
@@ -2692,7 +2712,8 @@ class VectorStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2865,7 +2886,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2925,7 +2947,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3086,7 +3109,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3149,7 +3173,8 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3264,7 +3289,8 @@ class VectorStoreFilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -3415,7 +3441,8 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3478,7 +3505,8 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3545,7 +3573,8 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3722,7 +3751,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3785,7 +3815,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3849,7 +3880,8 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3920,6 +3952,7 @@ class VectorStoreFileBatchesOperations:
                 order=order,
                 after=_continuation_token,
                 before=before,
+                api_version=self._config.api_version,
                 headers=_headers,
                 params=_params,
             )
@@ -3947,7 +3980,8 @@ class VectorStoreFileBatchesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -4177,7 +4211,8 @@ class AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4263,7 +4298,8 @@ class AgentsClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -4317,7 +4353,8 @@ class AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4563,7 +4600,8 @@ class AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4623,7 +4661,8 @@ class AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4647,7 +4686,7 @@ class AgentsClientOperationsMixin(
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -4681,7 +4720,7 @@ class AgentsClientOperationsMixin(
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -4782,7 +4821,7 @@ class AgentsClientOperationsMixin(
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -4815,7 +4854,7 @@ class AgentsClientOperationsMixin(
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.agents.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -4942,7 +4981,8 @@ class AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()

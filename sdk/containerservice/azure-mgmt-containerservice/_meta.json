@@ -1,12 +1,12 @@
 {
-  "commit": "d18ba009da04dd6afc04402c39f87e032051fe9b",
+  "commit": "37a849b656ecfb33424822b9f245aebff2ae994f",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.27.4",
+    "@autorest/python@6.34.1",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.34.1 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md",
   "package-2024-05": "2024-07-10 04:37:35 +0800 794e29ee5f8eca63ce0ddf007c60da7df37baaad stable/2024-05-01/managedClusters.json",
   "package-preview-2024-04": "2024-08-27 19:55:39 -0700 4bc9b37173bd5fe0ed19f21edfb8a195e89caaf6 preview/2024-04-02-preview/managedClusters.json",

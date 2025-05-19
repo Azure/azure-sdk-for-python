@@ -26,8 +26,8 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
-       Azure AI Foundry project.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+                          page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
