@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-postgresqlflexibleservers
 # USAGE
-    python server_create_with_aad_auth_enabled.py
+    python server_create_with_microsoft_entra_enabled.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,8 +37,8 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
+                "administratorLogin": "login",
+                "administratorLoginPassword": "Password1",
                 "authConfig": {
                     "activeDirectoryAuth": "Enabled",
                     "passwordAuth": "Enabled",
@@ -53,15 +54,15 @@ def main():
                     "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
                 },
                 "storage": {"autoGrow": "Disabled", "storageSizeGB": 512, "tier": "P20"},
-                "version": "12",
+                "version": "16",
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
+            "sku": {"name": "Standard_D4ds_v5", "tier": "GeneralPurpose"},
             "tags": {"ElasticServer": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerCreateWithAadAuthEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ServerCreateWithMicrosoftEntraEnabled.json
 if __name__ == "__main__":
     main()
