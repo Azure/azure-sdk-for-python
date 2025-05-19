@@ -1,15 +1,13 @@
 ## Release History
 
-### 4.11.0b2 (Unreleased)
+### 4.12.0b1 (2025-05-19)
 
 #### Features Added
-
-#### Breaking Changes
+* Added ability to use weighted RRF (Reciprocal Rank Fusion) for Hybrid full text search queries. See [PR 40899](https://github.com/Azure/azure-sdk-for-python/pull/40899/files).
 
 #### Bugs Fixed
+* Fixed Diagnostics Error Log Formatting to handle error messages from non-CosmosHttpResponseExceptions. See [PR 40889](https://github.com/Azure/azure-sdk-for-python/pull/40889/files)
 * Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
-
-#### Other Changes
 
 ### 4.11.0b1 (2025-04-30)
 
