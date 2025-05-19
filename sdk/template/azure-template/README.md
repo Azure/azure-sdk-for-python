@@ -8,6 +8,17 @@ This package has been tested with Python 3.7+.
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 
+Here is a simple flow to test mermaid on pypi:
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+
+
 # Getting started
 
 For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
