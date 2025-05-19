@@ -248,7 +248,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert "tagged_config" in client
         assert "two_tagged" in client
-        assert "only_second_tagged" not in client
+        assert "only_second_tag" not in client
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
@@ -266,7 +266,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert "tagged_config" not in client
         assert "two_tagged" in client
-        assert "only_second_tagged" not in client
+        assert "only_second_tag" not in client
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
@@ -283,7 +283,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert "tagged_config" not in client
         assert "two_tagged" not in client
-        assert "only_second_tagged" not in client
+        assert "only_second_tag" not in client
         assert "complex_tag" in client
 
         selects = {SettingSelector(key_filter="*", tag_filters=["Tag@With@At=Value@With@At"])}
@@ -293,7 +293,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert "tagged_config" not in client
         assert "two_tagged" not in client
-        assert "only_second_tagged" not in client
+        assert "only_second_tag" not in client
         assert "complex_tag" in client
 
 
