@@ -7,18 +7,10 @@ from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Dict, List, cast
 
-from opentelemetry._events import _set_event_logger_provider
-from opentelemetry._logs import set_logger_provider
-from opentelemetry.instrumentation.dependencies import (
-    get_dist_dependency_conflicts,
-)
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
-from opentelemetry.sdk._events import EventLoggerProvider
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.metrics.view import View
@@ -58,7 +50,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pyl
 )
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
-    AzureMonitorLogExporter,
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
@@ -73,6 +64,9 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+)
+from azure.monitor.opentelemetry._utils.instrumentation import (
+    get_dist_dependency_conflicts,
 )
 
 _logger = getLogger(__name__)
@@ -161,37 +155,66 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
-    logger_provider = LoggerProvider(resource=resource)
-    if configurations.get(ENABLE_LIVE_METRICS_ARG):
-        qlp = _QuickpulseLogRecordProcessor()
-        logger_provider.add_log_record_processor(qlp)
-    log_exporter = AzureMonitorLogExporter(**configurations)
-    log_record_processor = BatchLogRecordProcessor(
-        log_exporter,
-    )
-    logger_provider.add_log_record_processor(log_record_processor)
-    set_logger_provider(logger_provider)
-    logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    logging_formatter: Formatter = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
-    logger = getLogger(logger_name)
-    # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
-    # This is to prevent most duplicate logging telemetry
-    if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
-        handler = LoggingHandler(logger_provider=logger_provider)
-        if logging_formatter:
-            try:
-                handler.setFormatter(logging_formatter)
-            except Exception as ex:  # pylint: disable=broad-except
-                _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                    "Exception occurred when adding logging Formatter: %s.",
-                    ex,
-                )
-        logger.addHandler(handler)
+    # Setup logging
+    # Use try catch while signal is experimental
+    try:
+        from opentelemetry._logs import set_logger_provider
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
-    # Setup EventLoggerProvider
-    event_provider = EventLoggerProvider(logger_provider)
-    _set_event_logger_provider(event_provider, False)
+        from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter # pylint: disable=import-error,no-name-in-module
+
+        resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+        logger_provider = LoggerProvider(resource=resource)
+        if configurations.get(ENABLE_LIVE_METRICS_ARG):
+            qlp = _QuickpulseLogRecordProcessor()
+            logger_provider.add_log_record_processor(qlp)
+        log_exporter = AzureMonitorLogExporter(**configurations)
+        log_record_processor = BatchLogRecordProcessor(
+            log_exporter,
+        )
+        logger_provider.add_log_record_processor(log_record_processor)
+        set_logger_provider(logger_provider)
+        logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
+        logging_formatter: Formatter = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
+        logger = getLogger(logger_name)
+        # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
+        # This is to prevent most duplicate logging telemetry
+        if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
+            handler = LoggingHandler(logger_provider=logger_provider)
+            if logging_formatter:
+                try:
+                    handler.setFormatter(logging_formatter)
+                except Exception as ex:  # pylint: disable=broad-except
+                    _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "Exception occurred when adding logging Formatter: %s.",
+                        ex,
+                    )
+            logger.addHandler(handler)
+
+        # Setup Events
+        try:
+            from opentelemetry._events import _set_event_logger_provider
+            from opentelemetry.sdk._events import EventLoggerProvider
+
+            event_provider = EventLoggerProvider(logger_provider)
+            _set_event_logger_provider(event_provider, False)
+        except ImportError as ex:
+            # If the events is not available, we will not set it up.
+            # This could possibly be due to breaking change in upstream OpenTelemetry
+            # Advise user to upgrade to latest OpenTelemetry version
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                "Exception occured when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
+                ex,
+            )
+    except ImportError as ex:
+        # If the events is not available, we will not set it up.
+        # This could possibly be due to breaking change in upstream OpenTelemetry
+        # Advise user to upgrade to latest OpenTelemetry version
+        _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "Exception occured when setting up Logging. Please upgrade to the latest OpenTelemetry version: %s.",
+            ex,
+        )
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):

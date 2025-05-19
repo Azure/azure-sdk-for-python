@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Defensively import and vendor experimental components from OpenTelemetry
+    ([#40866](https://github.com/Azure/azure-sdk-for-python/pull/40866))
+
 ## 1.6.9 (2025-05-12)
 
 ### Features Added
