@@ -394,7 +394,7 @@ agent = agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-For asynchronous functions, you must import `AgentsClient` from `azure.ai.agents.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async\sample_agents_functions_async.py):
+For asynchronous functions, you must import `AgentsClient` from `azure.ai.agents.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_functions_async.py):
 
 ```python
 from azure.ai.agents.aio import AgentsClient
