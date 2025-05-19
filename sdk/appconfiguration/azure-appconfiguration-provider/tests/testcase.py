@@ -169,7 +169,11 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("tagged_config", "\0", None, tags={"a": "b"}))
     configs.append(create_config_setting("two_tagged", "\0", None, tags={"a": "b", "second": "tag"}))
     configs.append(create_config_setting("only_second_tag", "\0", None, tags={"second": "tag"}))
-    configs.append(create_config_setting("complex_tag", "\0", None, tags={"Special:Tag": "Value:With:Colons", "Tag@With@At": "Value@With@At"}))
+    configs.append(
+        create_config_setting(
+            "complex_tag", "\0", None, tags={"Special:Tag": "Value:With:Colons", "Tag@With@At": "Value@With@At"}
+        )
+    )
     configs.append(
         create_config_setting(
             ".appconfig.featureflag/Alpha",

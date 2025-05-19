@@ -273,7 +273,9 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_special_chars_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_provider_special_chars_tag_filters(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
         selects = {SettingSelector(key_filter="*", tag_filters=["Special:Tag=Value:With:Colons"])}
         client = self.create_client(
             appconfiguration_connection_string,
@@ -293,6 +295,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert "two_tagged" not in client
         assert "only_second_tagged" not in client
         assert "complex_tag" in client
+
 
 def secret_resolver(secret_id):
     return "Resolver Value"

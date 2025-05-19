@@ -107,7 +107,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator_aad
     def test_provider_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
-        client = self.create_client(
+        client = self.create_aad_client(
             appconfiguration_endpoint_string,
             selects=selects,
             feature_flag_enabled=True,

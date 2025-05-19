@@ -60,6 +60,15 @@ class SettingSelector:
         self.label_filter = label_filter
         self.tag_filters = tag_filters
 
+        if tag_filters is not None:
+            if not isinstance(tag_filters, list):
+                raise TypeError("tag_filters must be a list of strings.")
+            for tag in tag_filters:
+                if not tag:
+                    raise ValueError("Tag filter cannot be an empty string or None.")
+                if not isinstance(tag, str) or "=" not in tag or tag.startswith("="):
+                    raise ValueError("Tag filter " + tag + ' does not follow the format "tagName=tagValue".')
+
 
 class WatchKey(NamedTuple):
     key: str
