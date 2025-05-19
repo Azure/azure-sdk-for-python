@@ -5,7 +5,7 @@ python -m pip install -U pip > /dev/null
 python scripts/dev_setup.py -p azure-core > /dev/null
 pip install tox==4.15.0 > /dev/null
 pip install wheel==0.46.1 > /dev/null
-pip install setuptools==78.1.0 > /dev/null
+pip install setuptools==80.7.1 > /dev/null
 
 # install tsp-client globally (local install may interfere with tooling)
 echo Install tsp-client

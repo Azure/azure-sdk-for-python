@@ -1,7 +1,5 @@
 # requirements leveraged by ci tools
-# setuptools 75.3.2 is the last version of setuptools that supports python 3.8.
-# it can be bumped further only when py3.8 is completely eliminated from CI
-setuptools==75.3.2
+setuptools==80.7.1
 virtualenv==20.29.3
 wheel==0.45.1
 packaging==24.2
