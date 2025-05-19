@@ -137,7 +137,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if old_metadata_folder.exists():
         os.remove(old_metadata_folder)
         _LOGGER.info(f"Remove old metadata file: {old_metadata_folder}")
-    
+
     metadata_folder = package_folder / "_metadata.json"
     if metadata_folder.exists():
         with open(metadata_folder, "r") as file_in:
