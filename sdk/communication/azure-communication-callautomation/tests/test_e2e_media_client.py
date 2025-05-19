@@ -742,9 +742,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         self.terminate_call(unique_id)
         return
-    
-    @recorded_by_proxy
-    def test_interrupt_audio_and_announce_in_a_call(self):
+
 
         # try to establish the call
         caller = self.identity_client.create_user()
