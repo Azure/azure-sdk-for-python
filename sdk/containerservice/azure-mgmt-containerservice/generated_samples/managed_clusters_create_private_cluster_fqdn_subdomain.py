@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,7 +55,6 @@ def main():
                     "privateDNSZone": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Network/privateDnsZones/privatelink.location1.azmk8s.io",
                 },
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "enablePodSecurityPolicy": True,
                 "enableRBAC": True,
                 "fqdnSubdomain": "domain1",
                 "kubernetesVersion": "",
@@ -74,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-02-01/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-03-01/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
 if __name__ == "__main__":
     main()
