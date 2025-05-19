@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This script is used to set up SIP Configuration domains for Azure Communication Services SIP Routing SDK GA tests
+# This script is used to set up test resources for the Azure Health Data Services de-identification service.
 
 # It is invoked by the https://github.com/Azure/azure-sdk-for-net/blob/main/eng/New-TestResources.ps1
 # script after the ARM template, defined in https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/storage/test-resources.json,
-# is finished being deployed. The ARM template is responsible for creating the Storage accounts needed for live tests.
+# is finished being deployed. The ARM template is responsible for creating the storage account and permissions needed for live tests.
 
 param (
     [hashtable] $DeploymentOutputs,

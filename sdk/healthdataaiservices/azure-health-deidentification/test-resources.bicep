@@ -1,9 +1,3 @@
-// "id": "/subscriptions/d12535ed-5958-4ce6-8350-b17b3af1d6b1/resourceGroups/oro-billing-exhaust-test/providers/Microsoft.HealthDataAIServices/DeidServices/deid-billing-test",
-// "name": "deid-billing-test",
-// "type": "microsoft.healthdataaiservices/deidservices",
-// "location": "East US 2 EUAP",
-// "tags": {},
-
 @minLength(10)
 param testApplicationOid string
 
@@ -15,10 +9,8 @@ param baseName string
 param location string = resourceGroup().location
 
 @description('The location of the resource. By default, this is the same as the resource group.')
-param deidLocation string = 'eastus2euap'
-param deidLocationShort string = 'eup'
-
-param deploymentTime string = utcNow('u')
+param deidLocation string = 'westus2'
+param deidLocationShort string = 'wus2'
 
 var realtimeDataUserRoleId = 'bb6577c4-ea0a-40b2-8962-ea18cb8ecd4e'
 var batchDataOwnerRoleId = '8a90fa6b-6997-4a07-8a95-30633a7c97b9'

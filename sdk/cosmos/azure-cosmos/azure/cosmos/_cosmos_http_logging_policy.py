@@ -37,7 +37,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._location_cache import LocationCache
 from .http_constants import HttpHeaders
 from ._global_endpoint_manager import _GlobalEndpointManager
-from .documents import DatabaseAccount, ConnectionPolicy
+from .documents import DatabaseAccount
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -55,10 +55,16 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 
 
 def _format_error(payload: str) -> str:
-    output = json.loads(payload)
-    ret_str = "\n\t" + "Code: " + output['code'] + "\n"
-    message = output["message"].replace("\r\n", "\n\t\t").replace(",", ",\n\t\t")
-    ret_str += "\t" + message + "\n"
+    try:
+        output = json.loads(payload)
+        ret_str = "\n\t" + "Code: " + output['code'] + "\n"
+        message = output["message"].replace("\r\n", "\n\t\t").replace(",", ",\n\t\t")
+        ret_str += "\t" + message + "\n"
+    except (json.JSONDecodeError, KeyError):
+        try:
+            ret_str = "\t" + payload.replace("\r\n", "\n\t\t").replace(",", ",\n\t\t") + "\n"
+        except AttributeError:
+            ret_str = str(payload)
     return ret_str
 
 
@@ -109,7 +115,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         if self._enable_diagnostics_logging:
 
             http_request = request.http_request
-            request.context["start_time"] = time.time()
+            if "start_time" not in request.context:
+                request.context["start_time"] = time.time()
             options = request.context.options
             # Get logger in my context first (request has been retried)
             # then read from kwargs (pop if that's the case)
@@ -117,7 +124,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             # If filtered is applied, and we are not calling on request from on response, just return to avoid logging
             # the request again
-            filter_applied = (logger.filters) or any(bool(h.filters) for h in logger.handlers)
+            filter_applied = bool(logger.filters) or any(bool(h.filters) for h in logger.handlers)
             if filter_applied and 'logger_attributes' not in request.context:
                 return
             operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
@@ -236,7 +243,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             http_response = response.http_response
             headers = request.http_request.headers
             sub_status_str = http_response.headers.get("x-ms-substatus")
-            sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
+            sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else 0
             url_obj = request.http_request.url  # type: ignore[attr-defined, union-attr]
             try:
                 duration: Optional[float] = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr, arg-type]  # pylint: disable=line-too-long
@@ -248,7 +255,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         "status_code": http_response.status_code, "sub_status_code": sub_status_code,
                         "verb": request.http_request.method,
                         "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
-                        "url": str(url_obj), "database_name": None, "collection_name": None,
+                        "url": str(url_obj), "database_name": "", "collection_name": "",
                         "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]  # pylint: disable=line-too-long
 
             if log_data["url"]:
@@ -316,10 +323,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         client_excluded_regions = []
         client_account_read_regions = []
         client_account_write_regions = []
-
-        if self.__global_endpoint_manager:
-            if self.__global_endpoint_manager.Client and self.__global_endpoint_manager.Client.connection_policy:
-                connection_policy: ConnectionPolicy = self.__global_endpoint_manager.Client.connection_policy
+        if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, 'client'):
+            gem_client = self.__global_endpoint_manager.client
+            if gem_client and gem_client.connection_policy:
+                connection_policy = gem_client.connection_policy
                 client_preferred_regions = connection_policy.PreferredLocations
                 client_excluded_regions = connection_policy.ExcludedLocations
 
@@ -328,10 +335,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 client_account_read_regions = location_cache.account_read_locations
                 client_account_write_regions = location_cache.account_write_locations
 
-        return {"Client Preferred Regions": client_preferred_regions,
-                "Client Excluded Regions": client_excluded_regions,
-                "Client Account Read Regions": client_account_read_regions,
-                "Client Account Write Regions": client_account_write_regions}
+        return {"Preferred Regions": client_preferred_regions,
+                "Excluded Regions": client_excluded_regions,
+                "Account Read Regions": client_account_read_regions,
+                "Account Write Regions": client_account_write_regions}
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
         if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, '_database_account_cache'):

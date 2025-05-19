@@ -29,6 +29,9 @@ extends:
   parameters:
     ServiceDirectory: onlineexperimentation
     TestProxy: true
+    VerifyAutorest: false
     Artifacts:
+    - name: azure-onlineexperimentation
+      safeName: azureonlineexperimentation
     - name: azure-mgmt-onlineexperimentation
       safeName: azuremgmtonlineexperimentation
