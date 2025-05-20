@@ -9,8 +9,6 @@
   attestation blob (stored in a new `KeyProperties.attestation` property) from a managed HSM
   [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
 

@@ -10,10 +10,6 @@
   `CertificateProperties` and `CertificateOperation` models
   ([#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507))
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Key Vault API version `7.6` is now the default
@@ -115,7 +111,7 @@
 ## 4.5.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.5.0b1 (2022-06-07)
