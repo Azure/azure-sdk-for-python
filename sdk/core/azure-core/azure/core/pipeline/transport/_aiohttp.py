@@ -49,7 +49,9 @@ from multidict import CIMultiDict
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
 )
 from azure.core.pipeline import AsyncPipeline
@@ -344,8 +346,10 @@ class AioHttpTransport(AsyncHttpTransport):
             raise
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ConnectionTimeoutError as err:
+            raise ServiceRequestTimeoutError(err, error=err)
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response
