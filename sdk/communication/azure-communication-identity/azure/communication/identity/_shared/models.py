@@ -347,6 +347,81 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         super().__init__(bot_id, **kwargs)
 
 
+class TeamsExtensionUserProperties(TypedDict):
+    """Dictionary of properties for a TeamsExtensionUserIdentifier."""
+
+    user_id: str
+    """The id of the Teams extension user."""
+    tenant_id: str
+    """The tenant id associated with the user."""
+    resource_id: str
+    """The resource id associated with the user."""
+    cloud: Union[CommunicationCloudEnvironment, str]
+    """Cloud environment that this identifier belongs to."""
+
+
+class TeamsExtensionUserIdentifier:
+    """Represents an identifier for a Teams Extension user."""
+
+    kind: Literal["teams_extension_user"] = "teams_extension_user"
+    """The type of identifier."""
+    properties: TeamsExtensionUserProperties
+    """The properties of the identifier."""
+    raw_id: str
+    """The raw ID of the identifier."""
+
+    def __init__(self, user_id: str, tenant_id: str, resource_id: str, cloud: Union[CommunicationCloudEnvironment, str], **kwargs: Any) -> None:
+        """
+        :param str user_id: Teams extension user id.
+        :param str tenant_id: Tenant id associated with the user.
+        :param str resource_id: Resource id associated with the user.
+        :param cloud: Cloud environment that the user belongs to.
+        :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from the other properties.
+        """
+        self.properties = TeamsExtensionUserProperties(
+            user_id=user_id,
+            tenant_id=tenant_id,
+            resource_id=resource_id,
+            cloud=cloud,
+        )
+        raw_id: Optional[str] = kwargs.get("raw_id")
+        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
+
+    def __eq__(self, other):
+        try:
+            if other.raw_id:
+                return self.raw_id == other.raw_id
+            return self.raw_id == self._format_raw_id(other.properties)
+        except Exception:
+            return False
+
+    def _format_raw_id(self, properties: TeamsExtensionUserProperties) -> str:
+        # The prefix depends on the cloud
+        cloud = properties["cloud"]
+        if cloud == CommunicationCloudEnvironment.DOD:
+            prefix = ACS_USER_DOD_CLOUD_PREFIX
+        elif cloud == CommunicationCloudEnvironment.GCCH:
+            prefix = ACS_USER_GCCH_CLOUD_PREFIX
+        else:
+            prefix = ACS_USER_PREFIX
+        return f"{prefix}{properties['resource_id']}_{properties['tenant_id']}_{properties['user_id']}"
+    
+def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsExtensionUserIdentifier]:
+    segments = suffix.split("_")
+    if len(segments) != 3:
+        return None
+    resource_id, tenant_id, user_id = segments
+    if prefix == ACS_USER_PREFIX:
+        cloud = CommunicationCloudEnvironment.PUBLIC
+    elif prefix == ACS_USER_DOD_CLOUD_PREFIX:
+        cloud = CommunicationCloudEnvironment.DOD
+    elif prefix == ACS_USER_GCCH_CLOUD_PREFIX:
+        cloud = CommunicationCloudEnvironment.GCCH
+    else:
+        raise ValueError(f"Invalid prefix {prefix} for TeamsExtensionUserIdentifier")
+    return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud)
+
+
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
     Creates a CommunicationIdentifier from a given raw ID.
@@ -407,11 +482,16 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
+    if prefix == SPOOL_USER_PREFIX:
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+    
     if prefix in [
         ACS_USER_PREFIX,
         ACS_USER_DOD_CLOUD_PREFIX,
         ACS_USER_GCCH_CLOUD_PREFIX,
-        SPOOL_USER_PREFIX,
     ]:
+        identifier = try_create_teams_extension_user(prefix, suffix)
+        if identifier is not None:
+            return identifier
         return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
     return UnknownIdentifier(identifier=raw_id)
