@@ -24,8 +24,6 @@ from opentelemetry.util._importlib_metadata import (
     entry_points,
 )
 
-from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_SDK_INSTRUMENTATION_NAME,
@@ -150,10 +148,12 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     )
     tracer_provider.add_span_processor(bsp)
     set_tracer_provider(tracer_provider)
+
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         try:
             from azure.core.settings import settings
             from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
             settings.tracing_implementation = OpenTelemetrySpan
         except ImportError as ex:
             # This could possibly be due to breaking change in upstream OpenTelemetry
