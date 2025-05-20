@@ -127,6 +127,10 @@ class PhoneNumberProperties(TypedDict):
 
     value: str
     """The phone number in E.164 format."""
+    asserted_id: Optional[str]
+    """The asserted Id set on a phone number to distinguish from other connections made through the same number."""
+    is_anonymous: Optional[bool]
+    """True if the phone number is anonymous, e.g. when used to represent a hidden caller Id."""
 
 
 class PhoneNumberIdentifier:
@@ -139,15 +143,44 @@ class PhoneNumberIdentifier:
     raw_id: str
     """The raw ID of the identifier."""
 
+    PHONE_NUMBER_ANONYMOUS_SUFFIX = "anonymous"
+
     def __init__(self, value: str, **kwargs: Any) -> None:
         """
         :param str value: The phone number.
         :keyword str raw_id: The raw ID of the identifier. If not specified, this will be constructed from
           the 'value' parameter.
+        :keyword str asserted_id: The asserted Id set on a phone number to distinguish from other connections made through the same number.
+        :keyword bool is_anonymous: True if the phone number is anonymous.
         """
-        self.properties = PhoneNumberProperties(value=value)
+        
         raw_id: Optional[str] = kwargs.get("raw_id")
-        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
+        asserted_id: Optional[str] = kwargs.get("asserted_id")
+        is_anonymous: Optional[bool] = kwargs.get("is_anonymous")
+
+        # If not provided, construct raw_id from value and asserted_id
+        if raw_id is None:
+            raw_id = self._format_raw_id(PhoneNumberProperties(value=value))
+            if asserted_id is not None:
+                raw_id += f"_{asserted_id}"
+            # If is_anonymous is True, set the raw_id to include the anonymous suffix
+            if is_anonymous:
+                raw_id = f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
+        else:
+            if raw_id[len(PHONE_NUMBER_PREFIX):] == self.PHONE_NUMBER_ANONYMOUS_SUFFIX:
+                is_anonymous = True
+            # Determine asserted_id if not explicitly provided
+            if asserted_id is None:
+                segments = raw_id[len(PHONE_NUMBER_PREFIX):].split("_")
+                if len(segments) > 1:
+                    asserted_id = segments[-1]
+
+        self.properties = PhoneNumberProperties(
+            value=value,
+            asserted_id=asserted_id,
+            is_anonymous=is_anonymous
+        )
+        self.raw_id = raw_id
 
     def __eq__(self, other):
         try:
@@ -163,6 +196,13 @@ class PhoneNumberIdentifier:
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
 
+    @property
+    def asserted_id(self) -> Optional[str]:
+        return self.properties.get("asserted_id")
+
+    @property
+    def is_anonymous(self) -> bool:
+        return bool(self.properties.get("is_anonymous"))
 
 class UnknownIdentifier:
     """Represents an identifier of an unknown type.
