@@ -357,26 +357,35 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertTrue(isinstance(metric._attach_metric, ObservableGauge))
         self.assertTrue(isinstance(metric._feature_metric, ObservableGauge))
         self.assertEqual(metric._attach_metric.name, _ATTACH_METRIC_NAME[0])
-        self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])
-
-    # pylint: disable=protected-access
+        self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])    # pylint: disable=protected-access
     def test_get_attach_metric_meet_threshold(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            2,
-            False,
-        )
-        metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 2
-        metric._vm_retry = False
-        observations = metric._get_attach_metric(options=None)
-        self.assertEqual(len(observations), 1)
-        self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 0)
+        
+        # Mock time.time for the initial_delay_seconds check
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # First setup for initialization
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                2,
+                False,
+            )
+            
+            # Then setup for check - delay has elapsed (20s > 15s)
+            mock_time.return_value = start_time + 20.0
+            
+            metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 2
+            metric._vm_retry = False
+            observations = metric._get_attach_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 0)
 
     # pylint: disable=protected-access
     def test_get_attach_metric_does_not_meet_threshold(self):
@@ -394,9 +403,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 1
         observations = metric._get_attach_metric(options=None)
         self.assertEqual(len(observations), 0)
-        self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 1)
-
-    # pylint: disable=protected-access
+        self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 1)    # pylint: disable=protected-access
     @mock.patch.dict(
         os.environ,
         {
@@ -409,17 +416,36 @@ class TestStatsbeatMetrics(unittest.TestCase):
         return_value=False,
     )
     def test_get_attach_metric_appsvc(self, metadata_mock):
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        attributes["rp"] = _RP_Names.APP_SERVICE.value
-        attributes["rpId"] = "site_name/stamp_name"
-        observations = self._metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.APP_SERVICE.value)
-
-    # pylint: disable=protected-access
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            # Initialize a fresh test metric instance
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            attributes["rp"] = _RP_Names.APP_SERVICE.value
+            attributes["rpId"] = "site_name/stamp_name"
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.APP_SERVICE.value)    # pylint: disable=protected-access
     @mock.patch.dict(
         os.environ,
         {
@@ -432,17 +458,36 @@ class TestStatsbeatMetrics(unittest.TestCase):
         return_value=False,
     )
     def test_get_attach_metric_functions(self, metadata_mock):
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        attributes["rp"] = _RP_Names.FUNCTIONS.value
-        attributes["rpId"] = "host_name"
-        observations = self._metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.FUNCTIONS.value)
-
-    # pylint: disable=protected-access
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            # Initialize a fresh test metric instance
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            attributes["rp"] = _RP_Names.FUNCTIONS.value
+            attributes["rpId"] = "host_name"
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.FUNCTIONS.value)# pylint: disable=protected-access
     @mock.patch.dict(
         os.environ,
         {
@@ -451,17 +496,36 @@ class TestStatsbeatMetrics(unittest.TestCase):
         },
     )
     def test_get_attach_metric_aks_attach(self):
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        attributes["rp"] = _RP_Names.AKS.value
-        attributes["rpId"] = "namespace_id"
-        observations = self._metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
-
-    # pylint: disable=protected-access
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            # Initialize a fresh test metric instance
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            attributes["rp"] = _RP_Names.AKS.value
+            attributes["rpId"] = "namespace_id"
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)            
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)    # pylint: disable=protected-access
     @mock.patch.dict(
         os.environ,
         {
@@ -469,100 +533,148 @@ class TestStatsbeatMetrics(unittest.TestCase):
         },
     )
     def test_get_attach_metric_aks_manual(self):
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        attributes["rp"] = _RP_Names.AKS.value
-        attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
-        observations = self._metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            # Initialize a fresh test metric instance
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            attributes["rp"] = _RP_Names.AKS.value
+            attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata"
     )
     def test_get_attach_metric_vm(self, metadata_mock):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-            False,
-        )
-        _vm_data = {}
-        _vm_data["vmId"] = "123"
-        _vm_data["subscriptionId"] = "sub123"
-        _vm_data["osType"] = "test_os"
-        metric._vm_data = _vm_data
-        metric._vm_retry = True
-        metadata_mock.return_value = True
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        self.assertEqual(attributes["os"], platform.system())
-        attributes["rp"] = _RP_Names.VM.value
-        attributes["rpId"] = "123/sub123"
-        attributes["os"] = "test_os"
-        observations = metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.VM.value)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], "test_os")
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            _vm_data = {}
+            _vm_data["vmId"] = "123"
+            _vm_data["subscriptionId"] = "sub123"
+            _vm_data["osType"] = "test_os"
+            metric._vm_data = _vm_data
+            metric._vm_retry = True
+            metadata_mock.return_value = True
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            self.assertEqual(attributes["os"], platform.system())
+            attributes["rp"] = _RP_Names.VM.value
+            attributes["rpId"] = "123/sub123"
+            attributes["os"] = "test_os"
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.VM.value)
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], "test_os")
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata",
         return_value=False,
     )
     def test_get_attach_metric_vm_no_os(self, metadata_mock):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-            False,
-        )
-        _vm_data = {}
-        _vm_data["vmId"] = "123"
-        _vm_data["subscriptionId"] = "sub123"
-        _vm_data["osType"] = None
-        metric._vm_data = _vm_data
-        metric._vm_retry = True
-        metadata_mock.return_value = True
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], platform.system())
-        observations = metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes["os"], platform.system())
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], platform.system())
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            _vm_data = {}
+            _vm_data["vmId"] = "123"
+            _vm_data["subscriptionId"] = "sub123"
+            _vm_data["osType"] = None
+            metric._vm_data = _vm_data
+            metric._vm_retry = True
+            metadata_mock.return_value = True
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], platform.system())
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes["os"], platform.system())
+            self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], platform.system())
 
     def test_get_attach_metric_unknown(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-            False,
-        )
-        metric._vm_retry = False
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        observations = metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes["rp"], _RP_Names.UNKNOWN.value)
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            metric._vm_retry = False
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+            observations = metric._get_attach_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes["rp"], _RP_Names.UNKNOWN.value)
 
     def test_get_azure_compute_metadata(self):
         mp = MeterProvider()
@@ -637,25 +749,32 @@ class TestStatsbeatMetrics(unittest.TestCase):
             vm_result = metric._get_azure_compute_metadata()
             self.assertFalse(vm_result)
             self.assertEqual(len(metric._vm_data), 0)
-            self.assertTrue(metric._vm_retry)
-
-    # pylint: disable=protected-access
+            self.assertTrue(metric._vm_retry)    # pylint: disable=protected-access
     def test_get_feature_metric_meet_threshold(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            2,
-            False,
-        )
-        metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 2
-        observations = metric._get_feature_metric(options=None)
-        self.assertEqual(len(observations), 1)
-        self.assertEqual(metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]], 0)
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                2,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 2
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            self.assertEqual(metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]], 0)
 
     # pylint: disable=protected-access
     def test_get_feature_metric_does_not_meet_threshold(self):
@@ -695,38 +814,55 @@ class TestStatsbeatMetrics(unittest.TestCase):
         observations = metric._get_feature_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
+            self.assertEqual(obs.attributes, attributes)    # pylint: disable=protected-access
 
-    # pylint: disable=protected-access
     def test_get_feature_metric_none(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
-        observations = metric._get_feature_metric(options=None)
-        self.assertEqual(len(observations), 0)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                True,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 0)
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)    # pylint: disable=protected-access
 
-    # pylint: disable=protected-access
     def test_get_feature_metric_aad(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, True)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
-        observations = metric._get_feature_metric(options=None)
-        self.assertEqual(len(observations), 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, True)
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)    # pylint: disable=protected-access
 
-    # pylint: disable=protected-access
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_custom_events_feature_set"
     )
@@ -735,52 +871,68 @@ class TestStatsbeatMetrics(unittest.TestCase):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 4)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        observations = metric._get_feature_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-
-    # pylint: disable=protected-access
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                True,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            self.assertEqual(attributes["feature"], 4)
+            self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+            observations = metric._get_feature_metric(options=None)
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)    # pylint: disable=protected-access
     def test_get_feature_metric_custom_events_runtime(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        self.assertTrue((metric._feature >> 2) & 1 == 0)
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 0)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
-        observations = metric._get_feature_metric(options=None)
-        attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                True,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            self.assertTrue((metric._feature >> 2) & 1 == 0)
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            self.assertEqual(attributes["feature"], 0)
+            self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+            _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
+            observations = metric._get_feature_metric(options=None)
+            attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
         self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 2) & 1 == 1)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False    # pylint: disable=protected-access
 
-    # pylint: disable=protected-access
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_live_metrics_feature_set"
     )
@@ -789,88 +941,119 @@ class TestStatsbeatMetrics(unittest.TestCase):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 16)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        observations = metric._get_feature_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-
-    # pylint: disable=protected-access
-    def test_get_feature_metric_live_metrics_runtime(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        self.assertTrue((metric._feature >> 4) & 1 == 0)
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 0)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
-        observations = metric._get_feature_metric(options=None)
-        attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1)
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
-
-    # pylint: disable=protected-access
-    def test_get_feature_metric_distro(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, False, "1.0.0")
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)
-        observations = metric._get_feature_metric(options=None)
-        self.assertEqual(len(observations), 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)
-
-    # pylint: disable=protected-access
-    def test_get_feature_metric_instrumentation(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-            False,
-        )
-        metric._feature = _StatsbeatFeature.NONE
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.INSTRUMENTATION)
-        self.assertEqual(attributes["feature"], 0)
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
-            instrumentations.return_value = 1026
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                True,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            self.assertEqual(attributes["feature"], 16)
+            self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
             observations = metric._get_feature_metric(options=None)
-        self.assertEqual(
-            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"],
-            1026,
-        )
-        attributes["feature"] = 1026
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)    # pylint: disable=protected-access
+    def test_get_feature_metric_live_metrics_runtime(self):
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                True,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            self.assertTrue((metric._feature >> 4) & 1 == 0)
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            self.assertEqual(attributes["feature"], 0)
+            self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+            _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
+            observations = metric._get_feature_metric(options=None)
+            attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                self.assertEqual(obs.attributes, attributes)
+        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1)
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False    # pylint: disable=protected-access
+    def test_get_feature_metric_distro(self):
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, False, "1.0.0")
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)    # pylint: disable=protected-access
+    def test_get_feature_metric_instrumentation(self):
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            mp = MeterProvider()
+            ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+            endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                0,
+                False,
+            )
+            
+            # Setup time check to bypass delay
+            mock_time.return_value = start_time + 20.0
+            
+            metric._feature = _StatsbeatFeature.NONE
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+            self.assertEqual(attributes["type"], _FEATURE_TYPES.INSTRUMENTATION)
+            self.assertEqual(attributes["feature"], 0)
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+                instrumentations.return_value = 1026
+                observations = metric._get_feature_metric(options=None)
+            self.assertEqual(
+                _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"],
+                1026,
+            )
+            attributes["feature"] = 1026
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
@@ -1093,6 +1276,94 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
+
+    def test_get_feature_metric_before_delay_elapsed(self):
+        """Test that feature metric observation isn't emitted before delay elapses."""
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,  # Not disabled, so DISK_RETRY should be set
+                2,
+                False,
+            )
+            
+            # Set up the feature to have a value
+            self.assertEqual(metric._feature, _StatsbeatFeature.DISK_RETRY)
+            
+            # Only 5 seconds elapsed (less than 15 second delay)
+            mock_time.return_value = start_time + 5.0
+            
+            # Make sure threshold is surpassed so only time is the constraint
+            metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 3
+            
+            # No observations should be returned due to delay
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 0)
+            
+            # Time now passes delay requirement
+            mock_time.return_value = start_time + 20.0
+            
+            # Now we should get observations
+            observations = metric._get_feature_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            
+            # Check observation content
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
+                attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+                attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+                self.assertEqual(obs.attributes, attributes)
+
+    def test_get_attach_metric_before_delay_elapsed(self):
+        """Test that attach metric observation isn't emitted before delay elapses."""
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        
+        with mock.patch('time.time') as mock_time:
+            start_time = 1000.0
+            # Setup initialization time
+            mock_time.return_value = start_time
+            
+            metric = _StatsbeatMetrics(
+                mp,
+                ikey,
+                endpoint,
+                False,
+                2,
+                False,
+            )
+            
+            # Only 5 seconds elapsed (less than 15 second delay)
+            mock_time.return_value = start_time + 5.0
+            
+            # Make sure threshold is surpassed so only time is the constraint
+            metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 3
+            
+            # No observations should be returned due to delay
+            observations = metric._get_attach_metric(options=None)
+            self.assertEqual(len(observations), 0)
+            
+            # Time now passes delay requirement
+            mock_time.return_value = start_time + 20.0
+            
+            # Now we should get observations
+            observations = metric._get_attach_metric(options=None)
+            self.assertEqual(len(observations), 1)
+            
+            # Check observation content
+            for obs in observations:
+                self.assertEqual(obs.value, 1)
 
 
 # cSpell:enable
