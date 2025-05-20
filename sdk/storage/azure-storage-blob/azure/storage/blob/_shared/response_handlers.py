@@ -22,6 +22,7 @@ from .models import get_enum_value, StorageErrorCode, UserDelegationKey
 from .parser import _to_utc_datetime
 
 
+SV_DOCS_URL = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-service"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -175,9 +176,8 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         error_message += f"\n{name}:{info}"
 
     if additional_data.get('headername') == 'x-ms-version' and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
-        sv_docs_url = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-service"
         error_message = ("The provided service version is not enabled on this storage account." +
-                         f"Please see {sv_docs_url} for additional information.\n" + error_message)
+                         f"Please see {SV_DOCS_URL} for additional information.\n" + error_message)
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:
