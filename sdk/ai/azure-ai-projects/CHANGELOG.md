@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+* Fix for enable_telemetry to correctly instrument azure-ai-agents
+
 ### Sample updates
 
 ## 1.0.0b11 (2025-05-15)
