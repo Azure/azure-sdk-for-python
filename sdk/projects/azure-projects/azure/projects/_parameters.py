@@ -6,7 +6,7 @@
 
 from typing_extensions import TypedDict
 
-from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable, PlaceholderParameter
+from ._bicep.expressions import Parameter, UniqueString, Subscription, PlaceholderParameter
 
 
 LOCATION = Parameter(
@@ -32,9 +32,6 @@ LOCAL_PRINCIPAL = Parameter(
     description="ID of the user or app to assign application roles",
     env_var="AZURE_PRINCIPAL_ID",
     type="string",
-)
-AZD_TAGS = Variable(
-    "azdTags", value={"azd-env-name": ENV_NAME}, description="Tags to apply to all resources in AZD environment."
 )
 TENANT_ID = Parameter(
     "tenantId",
@@ -77,7 +74,6 @@ class GlobalParamsType(TypedDict):
     defaultName: Parameter
     principalId: Parameter
     tenantId: Parameter
-    azdTags: Parameter
     managedIdentityId: Parameter
     managedIdentityPrincipalId: Parameter
     managedIdentityClientId: Parameter
@@ -90,7 +86,6 @@ GLOBAL_PARAMS: GlobalParamsType = {
     "defaultName": DEFAULT_NAME,
     "principalId": LOCAL_PRINCIPAL,
     "tenantId": TENANT_ID,
-    "azdTags": AZD_TAGS,
     "managedIdentityId": _MANAGED_IDENTITY_ID,
     "managedIdentityPrincipalId": _MANAGED_IDENTITY_PRINCIPAL_ID,
     "managedIdentityClientId": _MANAGED_IDENTITY_CLIENT_ID,

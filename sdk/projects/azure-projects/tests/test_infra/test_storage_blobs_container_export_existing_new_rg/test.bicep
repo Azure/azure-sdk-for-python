@@ -4,9 +4,11 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -21,7 +23,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -35,7 +36,7 @@ resource resourcegroup_rgtest 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   scope: subscription()
 }
 
-resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
   name: 'storagetest'
   scope: resourcegroup_rgtest
 }
@@ -53,7 +54,7 @@ resource blobservice_storagetest 'Microsoft.Storage/storageAccounts/blobServices
 output AZURE_BLOBS_ENDPOINT_R string = storageaccount_storagetest.properties.primaryEndpoints.blob
 
 
-resource container_storagetest_test 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' existing = {
+resource container_storagetest_test 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' existing = {
   name: 'test'
   parent: blobservice_storagetest
 }
