@@ -85,6 +85,14 @@ Phone numbers can be searched through the search creation API by providing an ar
 
 Phone numbers can also be released using the release API.
 
+#### Browsing and reserving phone numbers
+
+The Browse and Reservations APIs provide an alternate way to acquire phone numbers via a shopping-cart-like experience. This is achieved by splitting the search operation, which finds and reserves numbers using a single LRO, into two separate synchronous steps, Browse and Reservation. 
+
+The browse operation retrieves a random sample of phone numbers that are available for purchase for a given country, with optional filtering criteria to narrow down results. The returned phone numbers are not reserved for any customer.
+
+Reservations represent a collection of phone numbers that are locked by a specific customer and are awaiting purchase. They have an expiration time of 15 minutes after the last modification or 2 hours from creation time. A reservation can include numbers from different countries, in contrast with the Search operation. Customers can Create, Retrieve, Modify (by adding and removing numbers), Delete, and Purchase reservations. Purchasing a reservation is an LRO.
+
 ### SIP routing client
 
 Direct routing feature allows connecting customer-provided telephony infrastructure to Azure Communication Resources. In order to setup routing configuration properly, customer needs to supply the SIP trunk configuration and SIP routing rules for calls. SIP routing client provides the necessary interface for setting this configuration.
@@ -114,6 +122,33 @@ Gets the information from the specified phone number
 result = phone_numbers_client.get_purchased_phone_number("<phone number>")
 print(result.country_code)
 print(result.phone_number)
+```
+
+#### Broswing and Reserving Available Phone Numbers
+
+Use the Browse and Reservations API to reserve a phone number
+
+```python
+import uuid
+
+browse_result = await phone_numbers_client.browse_available_phone_numbers(
+    country_code="US",
+    phone_number_type="tollFree"
+)
+number_to_reserve = browse_result.phone_numbers[0]
+
+# The reservation ID needs to be a valid UUID.
+reservation_id = str(uuid.uuid4())
+reservation = await phone_numbers_client.create_or_update_reservation(
+    reservation_id=reservation_id,
+    numbers_to_add=[number_to_reserve]
+)
+
+numbers_with_error = [n for n in reservation.phone_numbers.values() if n.status == "error"]
+if any(numbers_with_error):
+    print("Errors occurred during reservation")
+else:
+    print("Reservation operation completed without errors.")
 ```
 
 ### Long Running Operations
@@ -180,6 +215,32 @@ poller = phone_numbers_client.begin_update_phone_number_capabilities(
     PhoneNumberCapabilityType.INBOUND_OUTBOUND,
     polling = True
 )
+```
+
+#### Purchase Reservation
+
+Given an existing and active reservation, purchase the phone numbers in that reservation.
+
+```python
+reservation_id = "<reservation id>"
+poller = phone_numbers_client.begin_purchase_reservation(
+    reservation_id,
+    polling = True
+)
+```
+
+After the LRO finishes processing, the status of each individual number can be validated by retrieving the reservation.
+
+```python
+reservation_id = "<reservation id>"
+reservation = phone_numbers_client.get_reservation(reservation_id)
+
+numbers_with_error = [
+    n for n in reservation.phone_numbers.values() if n.status == "error"]
+if any(numbers_with_error):
+    print("Errors occurred during purchase")
+else:
+    print("Reservation purchase completed without errors.")
 ```
 
 ### SipRoutingClient
