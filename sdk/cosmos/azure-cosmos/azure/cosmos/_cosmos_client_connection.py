@@ -3121,9 +3121,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if isPrefixPartitionQuery:
             last_response_headers = CaseInsensitiveDict()
             # here get the over lapping ranges
-            partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
-            pk_properties = partition_key_definition
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            pk_properties: Optional[PartitionKey] = kwargs.pop("partitionKeyDefinition", None)
+            partition_key_definition = PartitionKey(
+                path=pk_properties["paths"],
+                kind=pk_properties["kind"],
+                version=pk_properties["version"])
             partition_key_value = pk_properties["partition_key"]
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
                 partition_key_value

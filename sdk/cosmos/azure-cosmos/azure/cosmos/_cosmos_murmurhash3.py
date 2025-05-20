@@ -147,3 +147,45 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
     h2 += h1
 
     return _UInt128(int(h1.value), int(h2.value))
+
+def murmurhash3_32(data: bytearray, length: int, seed: int) -> int:
+        c1: int = 0xcc9e2d51
+        c2: int = 0x1b873593
+
+        h1: int = seed
+        rounded_end: int = (length & 0xfffffffc)  # round down to 4 byte block
+
+        for i in range(0, rounded_end, 4):
+            # little endian load order
+            k1: int = (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) | ((data[i + 2] & 0xff) << 16) | (
+                        data[i + 3] << 24)
+            k1 *= c1
+            k1 = (k1 << 15) | (k1 >> 17)  # ROTL32(k1,15)
+            k1 *= c2
+
+            h1 ^= k1
+            h1 = (h1 << 13) | (h1 >> 19)  # ROTL32(h1,13)
+            h1 = h1 * 5 + 0xe6546b64
+
+        # tail
+        k1: int = 0
+        if length & 0x03 == 3:
+            k1 = (data[rounded_end + 2] & 0xff) << 16
+        if length & 0x03 >= 2:
+            k1 |= (data[rounded_end + 1] & 0xff) << 8
+        if length & 0x03 >= 1:
+            k1 |= (data[rounded_end] & 0xff)
+            k1 *= c1
+            k1 = (k1 << 15) | (k1 >> 17)
+            k1 *= c2
+            h1 ^= k1
+
+        # finalization
+        h1 ^= length
+        h1 ^= h1 >> 16
+        h1 *= 0x85ebca6b
+        h1 ^= h1 >> 13
+        h1 *= 0xc2b2ae35
+        h1 ^= h1 >> 16
+
+        return h1
