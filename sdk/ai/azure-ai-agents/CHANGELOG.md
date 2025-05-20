@@ -5,7 +5,8 @@
 ## 1.1.0b1 (2025-05-20)
 
 ### Features Added
-TBD
+
+- Add FabricTool, SharepointTool, and BingCustomSearchTool classes along with samples.
 
 ## 1.0.0 (2025-05-15)
 
