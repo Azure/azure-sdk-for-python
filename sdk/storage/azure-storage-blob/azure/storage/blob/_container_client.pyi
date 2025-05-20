@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from datetime import datetime
 from typing import (
@@ -24,7 +24,7 @@ from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
 from ._blob_service_client import BlobServiceClient
@@ -48,13 +48,13 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, super-init-not-called, too-many-public-methods
+class ContainerClient(
     StorageAccountHostsMixin,
     StorageEncryptionMixin
 ):
     account_name: str
     container_name: str
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         account_url: str,
         container_name: str,
@@ -341,7 +341,7 @@ class ContainerClient(  # pylint: disable=client-accepts-api-version-keyword, su
         **kwargs: Any,
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
     @distributed_trace
-    def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
+    def delete_blobs(
         self,
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         delete_snapshots: Optional[str] = None,

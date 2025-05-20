@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from datetime import datetime
 from typing import (
@@ -27,7 +27,7 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -54,14 +54,14 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ContainerClient(   # type: ignore[misc] # pylint: disable=client-accepts-api-version-keyword, too-many-public-methods
+class ContainerClient(   # type: ignore[misc]
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
 ):
     account_name: str
     container_name: str
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         account_url: str,
         container_name: str,
