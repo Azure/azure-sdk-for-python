@@ -31,7 +31,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V7_2 = "7.2"
 
 
-DEFAULT_VERSION = ApiVersion.V7_6_PREVIEW_2
+DEFAULT_VERSION = ApiVersion.V7_6
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
