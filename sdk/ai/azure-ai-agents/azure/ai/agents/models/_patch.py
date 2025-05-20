@@ -890,7 +890,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
-        
+
         """
         self.connection_ids = [
             BingGroundingSearchConfiguration(
@@ -929,7 +929,15 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     A tool that searches for information using Bing Custom Search.
     """
 
-    def __init__(self, connection_id: str, instance_name: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
+    def __init__(
+        self,
+        connection_id: str,
+        instance_name: str,
+        market: str = "",
+        set_lang: str = "",
+        count: int = 5,
+        freshness: str = "",
+    ):
         """
         Initialize Bing Custom Search with a connection_id.
 
@@ -940,13 +948,14 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
         """
-        self._search_configurations = [BingCustomSearchConfiguration(
+        self._search_configurations = [
+            BingCustomSearchConfiguration(
                 connection_id=connection_id,
                 instance_name=instance_name,
                 market=market,
                 set_lang=set_lang,
                 count=count,
-                freshness=freshness
+                freshness=freshness,
             )
         ]
 
@@ -988,7 +997,11 @@ class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [MicrosoftFabricToolDefinition(fabric_dataagent=FabricDataAgentToolParameters(connection_list=self.connection_ids))]
+        return [
+            MicrosoftFabricToolDefinition(
+                fabric_dataagent=FabricDataAgentToolParameters(connection_list=self.connection_ids)
+            )
+        ]
 
 
 class SharepointTool(ConnectionTool[SharepointToolDefinition]):
@@ -1003,7 +1016,11 @@ class SharepointTool(ConnectionTool[SharepointToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [SharepointToolDefinition(sharepoint_grounding=SharepointGroundingToolParameters(connection_list=self.connection_ids))]
+        return [
+            SharepointToolDefinition(
+                sharepoint_grounding=SharepointGroundingToolParameters(connection_list=self.connection_ids)
+            )
+        ]
 
 
 class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):

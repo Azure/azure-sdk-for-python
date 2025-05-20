@@ -7,7 +7,7 @@
 FILE: sample_agents_sharepoint.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     Sharepoint tool from the Azure Agents service using a synchronous client.
     The sharepoint tool is currently available only to whitelisted customers.
     For access and onboarding instructions, please contact azureagents-preview@microsoft.com.
