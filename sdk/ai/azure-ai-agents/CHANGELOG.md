@@ -4,6 +4,9 @@
 
 ## 1.1.0b1 (2025-05-20)
 
+### Features Added
+TBD
+
 ## 1.0.0 (2025-05-15)
 
 ### Features Added
