@@ -1,10 +1,16 @@
+
+
 # Release History
 
 ## 1.1.0b1 (2025-05-20)
 
+### Features Added
+
+- Add FabricTool, SharepointTool, and BingCustomSearchTool classes along with samples.
+
 ### Bugs Fixed
 
-* Adding instrumentation for create_thread_and_run
+- Adding instrumentation for create_thread_and_run
 
 ## 1.0.0 (2025-05-15)
 
