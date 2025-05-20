@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from datetime import datetime
 from typing import Any, Dict, Optional, Union
@@ -13,7 +13,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-class ChangeFeedClient:  # pylint: disable=client-accepts-api-version-keyword
+class ChangeFeedClient:
     def __init__(
         self,
         account_url: str,
