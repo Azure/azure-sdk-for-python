@@ -175,7 +175,7 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 
-    if additional_data.get('headername') == 'x-ms-version' and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
+    if additional_data.get("headername") == "x-ms-version" and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
         error_message = ("The provided service version is not enabled on this storage account." +
                          f"Please see {SV_DOCS_URL} for additional information.\n" + error_message)
 
