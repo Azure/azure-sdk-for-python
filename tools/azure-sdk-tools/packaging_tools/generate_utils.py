@@ -421,7 +421,7 @@ def gen_typespec(
             with open(tspconfig, "r") as file_in:
                 content = yaml.safe_load(file_in)
                 if content.get("options", {}).get("@azure-tools/typespec-python"):
-                    content["options"]["@azure-tools/typespec-python"]["apiVersion"] = api_version
+                    content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
             with open(tspconfig, "w") as file_out:
                 yaml.dump(content, file_out)
         cmd = (
