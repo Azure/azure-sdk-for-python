@@ -10,7 +10,7 @@ import uuid
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.container import ContainerProxy
+from azure.cosmos import PartitionKey, ContainerProxy
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
 from test_fault_injection_transport import TestFaultInjectionTransport
@@ -34,6 +34,12 @@ class MockHandler(logging.Handler):
 
     def emit(self, record):
         self.messages.append(record)
+
+class FilterStatusCode(logging.Filter):
+    def filter(self, record):
+        if hasattr(record, 'status_code') and record.status_code >= 400:
+            return True
+        return False
 
 CONFIG = test_config.TestConfig
 L1 = "Location1"
@@ -83,8 +89,15 @@ class TestCosmosHttpLogger(unittest.TestCase):
                 "tests.")
         cls.mock_handler_default = MockHandler()
         cls.mock_handler_diagnostic = MockHandler()
+        cls.mock_handler_filtered_diagnostic = MockHandler()
+
+        # Add filter to the filtered diagnostics handler
+
+        cls.mock_handler_filtered_diagnostic.addFilter(FilterStatusCode())
         cls.logger_default = create_logger("testloggerdefault", cls.mock_handler_default)
         cls.logger_diagnostic = create_logger("testloggerdiagnostic", cls.mock_handler_diagnostic)
+        cls.logger_filtered_diagnostic = create_logger("testloggerfiltereddiagnostic",
+                                                       cls.mock_handler_filtered_diagnostic)
         cls.client_default = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                         consistency_level="Session",
                                                         connection_policy=cls.connectionPolicy,
@@ -94,6 +107,11 @@ class TestCosmosHttpLogger(unittest.TestCase):
                                                            connection_policy=cls.connectionPolicy,
                                                            logger=cls.logger_diagnostic,
                                                            enable_diagnostics_logging=True)
+        cls.client_filtered_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
+                                                                    consistency_level="Session",
+                                                                    connection_policy=cls.connectionPolicy,
+                                                                    logger=cls.logger_filtered_diagnostic,
+                                                                    enable_diagnostics_logging=True)
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
@@ -114,26 +132,30 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.client_default.delete_database(database_id)
 
     def test_cosmos_http_logging_policy(self):
-        # Test if we can log into from reading a database
+        # Test if we can log info from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[1]
-        messages_response = self.mock_handler_diagnostic.messages[2]
-        elapsed_time = messages_request.duration
+        # Check that we made a databaseaccount read request only once and that we only logged it once
+        messages_request = self.mock_handler_diagnostic.messages[0]
+        messages_response = self.mock_handler_diagnostic.messages[1]
+        elapsed_time = messages_response.duration
         assert "databaseaccount" == messages_request.resource_type
         assert messages_request.verb == "GET"
-        assert 200 == messages_request.status_code
+        assert 200 == messages_response.status_code
         assert "Read" == messages_request.operation_type
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
+        # Verify we only have a total of 4 logged messages: 2 from databaseaccount read and 2 from create database
+        assert len(self.mock_handler_diagnostic.messages) == 4
         # Test if we can log into from creating a database
-        messages_request = self.mock_handler_diagnostic.messages[4]
-        messages_response = self.mock_handler_diagnostic.messages[5]
-        elapsed_time = messages_request.duration
+        # The request to create database should follow the databaseaccount read request immediately
+        messages_request = self.mock_handler_diagnostic.messages[2]
+        messages_response = self.mock_handler_diagnostic.messages[3]
+        elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"
-        assert 201 == messages_request.status_code
+        assert 201 == messages_response.status_code
         assert messages_request.operation_type == "Create"
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
@@ -145,14 +167,14 @@ class TestCosmosHttpLogger(unittest.TestCase):
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[1]
-        messages_response = self.mock_handler_diagnostic.messages[2]
-        elapsed_time = messages_request.duration
+        messages_request = self.mock_handler_diagnostic.messages[0]
+        messages_response = self.mock_handler_diagnostic.messages[1]
+        elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.operation_type == "Create"
         assert 'Request headers:' in messages_request.msg
         assert 'A body is sent with the request' in messages_request.msg
-        assert messages_request.status_code == 409
+        assert messages_response.status_code == 409
         assert elapsed_time is not None
         assert "Response headers" in messages_response.msg
 
@@ -160,6 +182,49 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.client_diagnostic.delete_database(database_id)
 
         self.mock_handler_diagnostic.reset()
+
+    def test_filtered_diagnostics_logging_policy(self):
+        # Test if we can log errors with the filtered diagnostics logger
+        database_id = "database_test_" + str(uuid.uuid4())
+        container_id = "diagnostics_container_test_" + str(uuid.uuid4())
+        self.client_filtered_diagnostic.create_database(id=database_id)
+        database = self.client_filtered_diagnostic.get_database_client(database_id)
+        database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+        # Try to read an item that doesn't exist
+        try:
+            container = database.get_container_client(container_id)
+            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
+        except:
+            pass
+
+        # Assert that the filtered logger only captured the error
+        request_log = self.mock_handler_filtered_diagnostic.messages[0]
+        response_log = self.mock_handler_filtered_diagnostic.messages[1]
+        assert response_log.status_code == 404
+        assert request_log.resource_type == "docs"
+        assert request_log.operation_type == "Read"
+        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
+
+        self.mock_handler_filtered_diagnostic.reset()
+
+        # Try to create an item with an invalid partition key
+        try:
+            container.create_item(body={"FakeProperty": "item1", "NotPk": None})
+        except:
+            pass
+
+        # Assert that the filtered logger captured the error
+        request_log = self.mock_handler_filtered_diagnostic.messages[0]
+        response_log = self.mock_handler_filtered_diagnostic.messages[1]
+        assert response_log.status_code == 400
+        assert request_log.resource_type == "docs"
+        assert request_log.operation_type == "Create"
+        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
+
+        # Clean up
+        self.client_filtered_diagnostic.delete_database(database_id)
+        self.mock_handler_filtered_diagnostic.reset()
 
     def test_client_settings(self):
         # Test data
@@ -208,16 +273,16 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Verify endpoint locations
         messages_split = mock_handler.messages[1].message.split("\n")
         for message in messages_split:
-            if "Client Preferred Regions:" in message:
+            if "Preferred Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
-            elif "Client Excluded Regions:" in message:
+            elif "Excluded Regions:" in message:
                 locations = get_locations_list(message)
                 assert client_excluded_locations == locations
-            elif "Client Account Read Regions:" in message:
+            elif "Account Read Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
-            elif "Client Account Write Regions:" in message:
+            elif "Account Write Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
 

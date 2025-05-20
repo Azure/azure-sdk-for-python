@@ -88,8 +88,18 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
 
-    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
-    def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "conv", "m_config"),
+        (
+            # ("project_scope", "azure_cred", "data_file", "model_config"),
+            # ("project_scope_onedp", "azure_cred_onedp", "data_file", "model_config_onedp"),
+        )
+    )
+    def test_evaluate_singleton_inputs(self, request, proj_scope, cred, conv, m_config):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        data_file = request.getfixturevalue(conv)
+        model_config = request.getfixturevalue(m_config)
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
         evaluators = {
@@ -184,7 +194,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 62
+        assert len(metrics.keys()) == 76
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -225,7 +235,19 @@ class TestMassEvaluate:
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
 
-    def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "conv", "m_config"),
+        (
+            ("project_scope", "azure_cred", "data_convo_file", "model_config"),
+            # ("project_scope_onedp", "azure_cred_onedp", "data_convo_file", "model_config_onedp"),
+        )
+    )
+    def test_evaluate_conversation(self, request, proj_scope, cred, conv, m_config):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        data_convo_file = request.getfixturevalue(conv)
+        model_config = request.getfixturevalue(m_config)
+        
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
             "coherence": CoherenceEvaluator(model_config),
@@ -312,14 +334,24 @@ class TestMassEvaluate:
             "b64_images",
         ],
     )
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
     def test_evaluate_multimodal(
         self,
         multi_modal_input_type,
         multimodal_input_selector,
-        azure_cred,
-        project_scope,
+        request, 
+        proj_scope, 
+        cred,
         run_from_temp_dir,
     ):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
         evaluators = {
             "content_safety": ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
             "protected_material": ProtectedMaterialEvaluator(credential=azure_cred, azure_ai_project=project_scope),
@@ -398,7 +430,17 @@ class TestMassEvaluate:
         assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
-    def test_evaluate_code_based_inputs(self, azure_cred, project_scope, code_based_data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "data_file"),
+        (
+            ("project_scope", "azure_cred", "code_based_data_file"),
+            ("project_scope_onedp", "azure_cred_onedp", "code_based_data_file"),
+        )
+    )
+    def test_evaluate_code_based_inputs(self, request, proj_scope, cred, data_file):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        code_based_data_file = request.getfixturevalue(data_file)
         evaluators = {
             "code_vulnerability": CodeVulnerabilityEvaluator(azure_cred, project_scope),
         }
@@ -573,7 +615,17 @@ class TestMassEvaluate:
         assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
 
-    def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred", "data_file"),
+        (
+            ("project_scope", "azure_cred", "chat_based_data_file"),
+            ("project_scope_onedp", "azure_cred_onedp", "chat_based_data_file"),
+        )
+    )
+    def test_evaluate_chat_inputs(self, request, proj_scope, cred, data_file):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        chat_based_data_file = request.getfixturevalue(data_file)
         evaluators = {
             "ungrounded_attributes": UngroundedAttributesEvaluator(azure_cred, project_scope),
         }

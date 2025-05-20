@@ -1,6 +1,21 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.8.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0 (2025-05-12)
+
+### Bugs Fixed
+- azure-ai-evaluation failed with module not found [#40992](https://github.com/Azure/azure-sdk-for-python/issues/40992)
+
+## 1.6.0 (2025-05-07)
 
 ### Features Added
 - New `<evaluator>.binary_aggregate` field added to evaluation result metrics. This field contains the aggregated binary evaluation results for each evaluator, providing a summary of the evaluation outcomes.
@@ -21,8 +36,6 @@
     throws error when passed into `evaluator_config` as `{"evaluator_name": {"column_mapping": {"query": "${data.query1}", "response": "${data.response}"}},}`.
     Now, users may import data containing fields with numeric characters. 
 
-
-### Other Changes
 
 ## 1.5.0 (2025-04-04)
 

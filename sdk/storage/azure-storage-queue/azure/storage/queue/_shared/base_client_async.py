@@ -65,17 +65,22 @@ class AsyncStorageAccountHostsMixin(object):
         await self._client.__aexit__(*args)
 
     async def close(self):
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._client.close()
 
     def _format_query_string(
-        self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]],  # pylint: disable=line-too-long
+        self,
+        sas_token: Optional[str],
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]
+        ],  # pylint: disable=line-too-long
         snapshot: Optional[str] = None,
-        share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]]:  # pylint: disable=line-too-long
+        share_snapshot: Optional[str] = None,
+    ) -> Tuple[
+        str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]
+    ]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -83,7 +88,8 @@ class AsyncStorageAccountHostsMixin(object):
             query_str += f"sharesnapshot={share_snapshot}&"
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
-                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+            )
         if _is_credential_sastoken(credential):
             query_str += credential.lstrip("?")  # type: ignore [union-attr]
             credential = None
@@ -92,35 +98,40 @@ class AsyncStorageAccountHostsMixin(object):
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = None, # pylint: disable=line-too-long
-        **kwargs: Any
+        self,
+        credential: Optional[
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
-            Union[AsyncStorageBearerTokenCredentialPolicy,
-            SharedKeyCredentialPolicy,
-            AzureSasCredentialPolicy]] = None
-        if hasattr(credential, 'get_token'):
-            if kwargs.get('audience'):
-                audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
+            Union[AsyncStorageBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]
+        ] = None
+        if hasattr(credential, "get_token"):
+            if kwargs.get("audience"):
+                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
-                                        cast(AsyncTokenCredential, credential), audience)
+                cast(AsyncTokenCredential, credential), audience
+            )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {type(credential)}")
-        config = kwargs.get('_configuration') or create_configuration(**kwargs)
-        if kwargs.get('_pipeline'):
-            return config, kwargs['_pipeline']
-        transport = kwargs.get('transport')
+        config = kwargs.get("_configuration") or create_configuration(**kwargs)
+        if kwargs.get("_pipeline"):
+            return config, kwargs["_pipeline"]
+        transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not transport:
             try:
-                from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
+                from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+                    AioHttpTransport,
+                )
             except ImportError as exc:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.") from exc
             transport = AioHttpTransport(**kwargs)
@@ -143,15 +154,11 @@ class AsyncStorageAccountHostsMixin(object):
             HttpLoggingPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
-            policies = policies + kwargs.get("_additional_pipeline_policies")  #type: ignore
-        config.transport = transport #type: ignore
-        return config, AsyncPipeline(transport, policies=policies) #type: ignore
+            policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
+        config.transport = transport  # type: ignore
+        return config, AsyncPipeline(transport, policies=policies)  # type: ignore
 
-    async def _batch_send(
-        self,
-        *reqs: "HttpRequest",
-        **kwargs: Any
-    ) -> AsyncList["HttpResponse"]:
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs: Any) -> AsyncList["HttpResponse"]:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
@@ -162,34 +169,26 @@ class AsyncStorageAccountHostsMixin(object):
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
             url=(
-                f'{self.scheme}://{self.primary_hostname}/'
+                f"{self.scheme}://{self.primary_hostname}/"
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
                 f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
             ),
-            headers={
-                'x-ms-version': self.api_version
-            }
+            headers={"x-ms-version": self.api_version},
         )
 
         policies = [StorageHeadersPolicy()]
         if self._credential_policy:
             policies.append(self._credential_policy)  # type: ignore
 
-        request.set_multipart_mixed(
-            *reqs,
-            policies=policies,
-            enforce_https=False
-        )
+        request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs
-        )
+        pipeline_response = await self._pipeline.run(request, **kwargs)
         response = pipeline_response.http_response
 
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            parts = response.parts() # Return an AsyncIterator
+            parts = response.parts()  # Return an AsyncIterator
             if raise_on_any_failure:
                 parts_list = []
                 async for part in parts:
@@ -197,7 +196,8 @@ class AsyncStorageAccountHostsMixin(object):
                 if any(p for p in parts_list if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
                         message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts_list
+                        response=response,
+                        parts=parts_list,
                     )
                     raise error
                 return AsyncList(parts_list)
@@ -205,11 +205,16 @@ class AsyncStorageAccountHostsMixin(object):
         except HttpResponseError as error:
             process_storage_error(error)
 
+
 def parse_connection_str(
     conn_str: str,
     credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
-    service: str
-) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]]: # pylint: disable=line-too-long
+    service: str,
+) -> Tuple[
+    str,
+    Optional[str],
+    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
+]:  # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):
@@ -231,14 +236,11 @@ def parse_connection_str(
         if endpoints["secondary"] in conn_settings:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary =(
+            primary = (
                 f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
                 f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
-            secondary = (
-                f"{conn_settings['ACCOUNTNAME']}-secondary."
-                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
-            )
+            secondary = f"{conn_settings['ACCOUNTNAME']}-secondary." f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
         except KeyError:
             pass
 
@@ -256,11 +258,13 @@ def parse_connection_str(
             secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
+
 class AsyncTransportWrapper(AsyncHttpTransport):
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
+
     def __init__(self, async_transport):
         self._transport = async_transport
 

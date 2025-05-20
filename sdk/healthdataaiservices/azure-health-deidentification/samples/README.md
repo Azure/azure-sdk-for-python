@@ -1,66 +1,69 @@
-# Azure Health Deidentification client library for Python
-Azure Health Deidentification is Microsoft's solution to anonymize unstructured health text.
+---
+page_type: sample
+languages:
+- python
+products:
+- azure
+- azure-health-data-services
+name: azure-health-deidentification samples for Python
+description: Samples for the azure-health-deidentification client library
+---
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/azure/health/deidentification)
-<!-- TODO: | [Package (PyPI)](https://pypi.org/project/azure-health-deidentification/) -->
-<!-- TODO: | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref) -->
-| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples)
+# Samples for Azure Health Data Services de-identification service client library for Python
+These code samples show common scenario operations with the Azure Health Data Services de-identification service client library.
 
+| File Name | Description |
+| --- | --- |
+| [deidentify_text_tag.py][deidentify_text_tag] and [deidentify_text_tag_async.py][deidentify_text_tag_async] | De-identify text using the tag operation |
+| [deidentify_text_redact.py][deidentify_text_redact] and [deidentify_text_redact_async.py][deidentify_text_redact_async] | De-identify text using the redact operation |
+| [deidentify_text_surrogate.py][deidentify_text_surrogate] and [deidentify_text_surrogate_async.py][deidentify_text_surrogate_async] | De-identify text using the surrogate operation |
+| [deidentify_documents.py][deidentify_documents] and [deidentify_documents_async.py][deidentify_documents_async] | De-identify documents in Azure Storage with an asynchronous job |
+| [list_jobs.py][list_jobs] and [list_jobs_async.py][list_jobs_async] | List de-identification jobs |
+| [list_job_documents.py][list_job_documents] and [list_job_documents_async.py][list_job_documents_async] | List the documents processed by a de-identification job |
 
 ## Getting started
 
 ### Prerequisites
-* Python 3.8 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
-* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-**Azure Deidentification Service** to use this package.
+- Python 3.9 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- [Deploy the de-identification service][deid_quickstart].
+- [Configure Azure role-based access control (RBAC)][deid_rbac] for the operations you will perform.
 
-### Install the package
-Install the Azure Health Deidentification client library for Python with [pip](https://pypi.org/project/pip/):
+## Setup
+1. Install the Azure Health Deidentification client library for Python with [pip](https://pypi.org/project/pip/):
+   
+   ```bash
+   pip install azure-health-deidentification
+   ```
+1. Clone or download this sample repository.
+1. Open the sample folder in Visual Studio Code or your IDE of choice.
 
-```bash
-pip install azure-health-deidentification
-```
+## Running the samples
 
-### Create a Deidentification Service
-If you wish to create a new storage account, you can use the
-[Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal).
+1. Open a terminal window and `cd` to the directory that the samples are saved in.
+2. Set the environment variables specified in the sample file you wish to run.
+3. Follow the usage described in the file, e.g. `python deidentify_text.py`
 
-### Create the client
-In order to create a Deidentification client you must obtain the **Service URL** from your Azure Deidentification Service
+## Next steps
 
-```python
-    endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    endpoint = endpoint.replace("https://", "")
-    print(endpoint)
-    # example: fuf4h4bxg5b0d0dr.api.cac001.deid.azure.com
+Check out the [API reference documentation][api_explorer] to learn more about
+what you can do with the Azure Health Data Services de-identification service client library.
 
-    credential = DefaultAzureCredential()
+<!-- LINKS -->
+[api_explorer]: https://learn.microsoft.com/python/api/overview/azure/health-deidentification
+[azure_sub]: https://azure.microsoft.com/free/
+[deid_quickstart]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart
+[deid_rbac]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/manage-access-rbac
 
-    client = DeidentificationClient(endpoint, DefaultAzureCredential())
-```
-
-### Deidentify a string
-
-```python
-    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
-
-    result: DeidentificationResult = client.deidentify(body)
-    
-    print(f'Original Text:     "{body.input_text}"')
-    print(f'Deidentified Text: "{result.output_text}"')
-```
-
-## Key concepts
-Operation Modes:
-- Tag: Will return a structure of offset and length with the PHI category of the related text spans.
-- Redact: Will return output text with placeholder stubbed text. ex. `[name]`
-- Surrogate: Will return output text with synthetic replacements.
-  - `My name is John Smith`
-  - `My name is Tom Jones`
-
-## Contributing
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+[deidentify_text_tag]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_tag.py
+[deidentify_text_redact]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_redact.py
+[deidentify_text_surrogate]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_surrogate.py
+[deidentify_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_documents.py
+[list_jobs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/list_jobs.py
+[list_job_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/list_job_documents.py
+[deidentify_text_tag_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_tag_async.py
+[deidentify_text_redact_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_redact_async.py
+[deidentify_text_surrogate_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_surrogate_async.py
+[deidentify_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_documents_async.py
+[list_jobs_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_jobs_async.py
+[list_job_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_job_documents_async.py
