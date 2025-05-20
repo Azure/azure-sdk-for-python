@@ -432,7 +432,7 @@ class TeamsExtensionUserIdentifier:
             if other.raw_id:
                 return self.raw_id == other.raw_id
             return self.raw_id == self._format_raw_id(other.properties)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             return False
 
     def _format_raw_id(self, properties: TeamsExtensionUserProperties) -> str:
