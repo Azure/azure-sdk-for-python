@@ -252,16 +252,8 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:
-            logger.debug(
-                "An exception occurred during list_ownership for "
-                "namespace %r eventhub %r consumer group %r. "
-                "Exception is %r",
-                fully_qualified_namespace,
-                eventhub_name,
-                consumer_group,
-                error,
-            )
+        except Exception:
+            # Re-raising the exception without logging it to comply with rule C4762 (do-not-log-raised-errors)
             raise
 
     def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any) -> Iterable[Dict[str, Any]]:
