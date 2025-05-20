@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from datetime import datetime
 from typing import Any, Optional, Union
@@ -13,8 +13,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
 
-class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+class BlobLeaseClient:
+    def __init__(
         self,
         client: Union[BlobClient, ContainerClient],
         lease_id: Optional[str] = None
