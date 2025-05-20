@@ -416,12 +416,13 @@ def gen_typespec(
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        if api_version:
-            with open(tsp_dir, "r") as file_in:
+        tspconfig = tsp_dir / "tspconfig.yaml"
+        if api_version and tspconfig.exists():
+            with open(tspconfig, "r") as file_in:
                 content = yaml.safe_load(file_in)
                 if content.get("options", {}).get("@azure-tools/typespec-python"):
                     content["options"]["@azure-tools/typespec-python"]["apiVersion"] = api_version
-            with open(tsp_dir, "w") as file_out:
+            with open(tspconfig, "w") as file_out:
                 yaml.dump(content, file_out)
         cmd = (
             f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
