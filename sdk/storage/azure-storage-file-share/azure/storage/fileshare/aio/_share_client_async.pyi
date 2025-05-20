@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from typing import Any, Dict, List, Literal, Optional, Union
 
@@ -31,12 +31,12 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareClient(  # type: ignore[misc] # pylint: disable=client-accepts-api-version-keyword
+class ShareClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin
 ):
     snapshot: Optional[str]
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         account_url: str,
         share_name: str,
