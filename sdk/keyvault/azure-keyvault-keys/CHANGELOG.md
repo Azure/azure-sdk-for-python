@@ -9,8 +9,13 @@
   attestation blob (stored in a new `KeyProperties.attestation` property) from a managed HSM
   [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
+### Bugs Fixed
+
+- Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
+
 ### Other Changes
 
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 - Key Vault API version `7.6` is now the default
 - (From 4.11.0b1) Updated minimum `typing-extensions` version to 4.6.0
 

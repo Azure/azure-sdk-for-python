@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,30 +33,30 @@ def main():
 
     response = client.servers.begin_create(
         resource_group_name="testrg",
-        server_name="pgtestsvc4",
+        server_name="testpgflex",
         parameters={
-            "location": "westus",
+            "location": "eastus",
             "properties": {
-                "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
+                "administratorLogin": "login",
+                "administratorLoginPassword": "Password1",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled"},
                 "createMode": "Create",
                 "highAvailability": {"mode": "ZoneRedundant"},
                 "network": {
-                    "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-vnet-subnet",
-                    "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
+                    "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet",
+                    "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/privateDnsZones/testpgflex.private.postgres.database",
                 },
                 "storage": {"autoGrow": "Disabled", "storageSizeGB": 512, "tier": "P20"},
-                "version": "12",
+                "version": "16",
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
-            "tags": {"ElasticServer": "1"},
+            "sku": {"name": "Standard_D4ds_v5", "tier": "GeneralPurpose"},
+            "tags": {"VNetServer": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

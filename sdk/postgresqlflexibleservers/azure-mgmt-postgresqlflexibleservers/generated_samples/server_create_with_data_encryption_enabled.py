@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -42,15 +43,15 @@ def main():
             },
             "location": "westus",
             "properties": {
-                "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
+                "administratorLogin": "login",
+                "administratorLoginPassword": "Password1",
                 "availabilityZone": "1",
                 "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "createMode": "Create",
                 "dataEncryption": {
                     "geoBackupKeyURI": "",
                     "geoBackupUserAssignedIdentityId": "",
-                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/77f57315bab34b0189daa113fbc78787",
+                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-usermanagedidentity",
                     "type": "AzureKeyVault",
                 },
@@ -59,16 +60,15 @@ def main():
                     "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-vnet-subnet",
                     "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
                 },
-                "storage": {"autoGrow": "Disabled", "storageSizeGB": 512},
-                "version": "12",
+                "storage": {"autoGrow": "Disabled", "storageSizeGB": 512, "tier": "P20"},
+                "version": "16",
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
-            "tags": {"ElasticServer": "1"},
+            "sku": {"name": "Standard_D4ds_v5", "tier": "GeneralPurpose"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerCreateWithDataEncryptionEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ServerCreateWithDataEncryptionEnabled.json
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from ._serialization import Serializer, Deserializer
-from typing import Any, Iterable
+from typing import Any
 
 from azure.core.paging import ItemPaged
 
@@ -21,7 +21,7 @@ class ApplicationClientOperationsMixin(object):
     def list_operations(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.Operation"]:
+    ) -> ItemPaged["_models.Operation"]:
         """Lists all of the available Microsoft.Solutions REST API operations.
 
         :return: An iterator like instance of either Operation or the result of cls(response)

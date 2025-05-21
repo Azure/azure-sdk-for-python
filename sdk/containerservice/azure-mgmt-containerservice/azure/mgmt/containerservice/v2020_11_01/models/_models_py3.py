@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -44,9 +44,9 @@ class SubResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class AgentPool(SubResource):
@@ -390,10 +390,10 @@ class AgentPool(SubResource):
         self.type_properties_type = type_properties_type
         self.mode = mode
         self.orchestrator_version = orchestrator_version
-        self.node_image_version = None
+        self.node_image_version: Optional[str] = None
         self.upgrade_settings = upgrade_settings
-        self.provisioning_state = None
-        self.power_state = None
+        self.provisioning_state: Optional[str] = None
+        self.power_state: Optional["_models.PowerState"] = None
         self.availability_zones = availability_zones
         self.enable_node_public_ip = enable_node_public_ip
         self.scale_set_priority = scale_set_priority
@@ -451,9 +451,9 @@ class AgentPoolAvailableVersions(_serialization.Model):
          list[~azure.mgmt.containerservice.v2020_11_01.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.agent_pool_versions = agent_pool_versions
 
 
@@ -523,7 +523,7 @@ class AgentPoolListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class AgentPoolUpgradeProfile(_serialization.Model):
@@ -593,9 +593,9 @@ class AgentPoolUpgradeProfile(_serialization.Model):
         :paramtype latest_node_image_version: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.kubernetes_version = kubernetes_version
         self.os_type = os_type
         self.upgrades = upgrades
@@ -792,7 +792,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(_serialization.Model):  # pyl
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
     """
 
     _validation = {
@@ -925,17 +925,17 @@ class Components1Q1Og48SchemasManagedclusterAllof1(_serialization.Model):  # pyl
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
+         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
         """
         super().__init__(**kwargs)
         self.identity = identity
-        self.provisioning_state = None
-        self.power_state = None
-        self.max_agent_pools = None
+        self.provisioning_state: Optional[str] = None
+        self.power_state: Optional["_models.PowerState"] = None
+        self.max_agent_pools: Optional[int] = None
         self.kubernetes_version = kubernetes_version
         self.dns_prefix = dns_prefix
-        self.fqdn = None
-        self.private_fqdn = None
+        self.fqdn: Optional[str] = None
+        self.private_fqdn: Optional[str] = None
         self.agent_pool_profiles = agent_pool_profiles
         self.linux_profile = linux_profile
         self.windows_profile = windows_profile
@@ -980,8 +980,8 @@ class Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidenti
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -1268,7 +1268,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
         self.vnet_subnet_id = vnet_subnet_id
         self.first_consecutive_static_ip = first_consecutive_static_ip
         self.storage_profile = storage_profile
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
 
 
 class ContainerServiceNetworkProfile(_serialization.Model):
@@ -1476,7 +1476,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.storage_uri = None
+        self.storage_uri: Optional[str] = None
 
 
 class CredentialResult(_serialization.Model):
@@ -1503,8 +1503,8 @@ class CredentialResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[bytes] = None
 
 
 class CredentialResults(_serialization.Model):
@@ -1527,7 +1527,7 @@ class CredentialResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kubeconfigs = None
+        self.kubeconfigs: Optional[List["_models.CredentialResult"]] = None
 
 
 class KubeletConfig(_serialization.Model):
@@ -1703,9 +1703,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1780,7 +1780,7 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -1938,7 +1938,7 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
+         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
         :keyword location: Resource location. Required.
         :paramtype location: str
         :keyword tags: Resource tags.
@@ -1971,13 +1971,13 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
             **kwargs
         )
         self.identity = identity
-        self.provisioning_state = None
-        self.power_state = None
-        self.max_agent_pools = None
+        self.provisioning_state: Optional[str] = None
+        self.power_state: Optional["_models.PowerState"] = None
+        self.max_agent_pools: Optional[int] = None
         self.kubernetes_version = kubernetes_version
         self.dns_prefix = dns_prefix
-        self.fqdn = None
-        self.private_fqdn = None
+        self.fqdn: Optional[str] = None
+        self.private_fqdn: Optional[str] = None
         self.agent_pool_profiles = agent_pool_profiles
         self.linux_profile = linux_profile
         self.windows_profile = windows_profile
@@ -1995,9 +1995,9 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
         self.disk_encryption_set_id = disk_encryption_set_id
         self.identity_profile = identity_profile
         self.sku = sku
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -2166,7 +2166,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.enabled = enabled
         self.config = config
-        self.identity = None
+        self.identity: Optional["_models.ManagedClusterAddonProfileIdentity"] = None
 
 
 class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
@@ -2507,10 +2507,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         self.type = type
         self.mode = mode
         self.orchestrator_version = orchestrator_version
-        self.node_image_version = None
+        self.node_image_version: Optional[str] = None
         self.upgrade_settings = upgrade_settings
-        self.provisioning_state = None
-        self.power_state = None
+        self.provisioning_state: Optional[str] = None
+        self.power_state: Optional["_models.PowerState"] = None
         self.availability_zones = availability_zones
         self.enable_node_public_ip = enable_node_public_ip
         self.scale_set_priority = scale_set_priority
@@ -2962,9 +2962,9 @@ class ManagedClusterIdentity(_serialization.Model):
     :ivar user_assigned_identities: The user identity associated with the managed cluster. This
      identity will be used in control plane and only one user assigned identity is allowed. The user
      identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
+     ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
     """
 
     _validation = {
@@ -3004,13 +3004,13 @@ class ManagedClusterIdentity(_serialization.Model):
         :keyword user_assigned_identities: The user identity associated with the managed cluster. This
          identity will be used in control plane and only one user assigned identity is allowed. The user
          identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
+         ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -3042,7 +3042,7 @@ class ManagedClusterListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ManagedClusterLoadBalancerProfile(_serialization.Model):
@@ -3254,8 +3254,8 @@ class ManagedClusterPodIdentity(_serialization.Model):
         self.name = name
         self.namespace = namespace
         self.identity = identity
-        self.provisioning_state = None
-        self.provisioning_info = None
+        self.provisioning_state: Optional[Union[str, "_models.ManagedClusterPodIdentityProvisioningState"]] = None
+        self.provisioning_info: Optional["_models.ManagedClusterPodIdentityProvisioningInfo"] = None
 
 
 class ManagedClusterPodIdentityException(_serialization.Model):
@@ -3699,9 +3699,9 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
          list[~azure.mgmt.containerservice.v2020_11_01.models.ManagedClusterPoolUpgradeProfile]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.control_plane_profile = control_plane_profile
         self.agent_pool_profiles = agent_pool_profiles
 
@@ -3797,7 +3797,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.OperationValue"]] = None
 
 
 class OperationValue(_serialization.Model):
@@ -3840,12 +3840,12 @@ class OperationValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.origin = None
-        self.name = None
-        self.operation = None
-        self.resource = None
-        self.description = None
-        self.provider = None
+        self.origin: Optional[str] = None
+        self.name: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.description: Optional[str] = None
+        self.provider: Optional[str] = None
 
 
 class PowerState(_serialization.Model):
@@ -3948,10 +3948,10 @@ class PrivateEndpointConnection(_serialization.Model):
          ~azure.mgmt.containerservice.v2020_11_01.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.provisioning_state = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
 
@@ -4038,7 +4038,7 @@ class PrivateLinkResource(_serialization.Model):
         self.type = type
         self.group_id = group_id
         self.required_members = required_members
-        self.private_link_service_id = None
+        self.private_link_service_id: Optional[str] = None
 
 
 class PrivateLinkResourcesListResult(_serialization.Model):

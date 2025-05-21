@@ -132,7 +132,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.client_default.delete_database(database_id)
 
     def test_cosmos_http_logging_policy(self):
-        # Test if we can log into from reading a database
+        # Test if we can log info from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
@@ -185,8 +185,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_filtered_diagnostics_logging_policy(self):
         # Test if we can log errors with the filtered diagnostics logger
-        database_id = "database_test-" + str(uuid.uuid4())
-        container_id = "container_test-" + str(uuid.uuid4())
+        database_id = "database_test_" + str(uuid.uuid4())
+        container_id = "diagnostics_container_test_" + str(uuid.uuid4())
         self.client_filtered_diagnostic.create_database(id=database_id)
         database = self.client_filtered_diagnostic.get_database_client(database_id)
         database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
@@ -273,16 +273,16 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Verify endpoint locations
         messages_split = mock_handler.messages[1].message.split("\n")
         for message in messages_split:
-            if "Client Preferred Regions:" in message:
+            if "Preferred Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
-            elif "Client Excluded Regions:" in message:
+            elif "Excluded Regions:" in message:
                 locations = get_locations_list(message)
                 assert client_excluded_locations == locations
-            elif "Client Account Read Regions:" in message:
+            elif "Account Read Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
-            elif "Client Account Write Regions:" in message:
+            elif "Account Write Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
 

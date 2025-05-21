@@ -9,13 +9,6 @@ extends:
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
-        STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
-        STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
-        BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
-        BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
-        OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
-        OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
-        BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

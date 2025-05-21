@@ -153,9 +153,9 @@ When TokenCredential authentication is used, all clients are configured to use t
 
 | Cloud | Audience |
 |-------|----------|
-| Azure Public | https://storage.azure.com / https://cosmos.azure.com |
-| Azure US Government | https://storage.azure.us / https://cosmos.azure.us |
-| Azure China | https://storage.chinacloudapi.cn / https://cosmos.chinacloudapi.cn |
+| Azure Public | "https://storage.azure.com" / "https://cosmos.azure.com" |
+| Azure US Government | "https://storage.azure.us" / "https://cosmos.azure.us" |
+| Azure China | "https://storage.chinacloudapi.cn" / "https://cosmos.chinacloudapi.cn" |
 
 The following example shows how to configure the `TableServiceClient` to connect to Azure US Government:
 

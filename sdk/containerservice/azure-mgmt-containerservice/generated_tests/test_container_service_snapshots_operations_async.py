@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice.aio import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_03_01.aio import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_snapshots_list(self, resource_group):
         response = self.client.snapshots.list(
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vmSize": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
