@@ -99,7 +99,8 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     stdin=subprocess.DEVNULL,  # Explicitly close stdin
-                    text=True
+                    text=True,
+                    cwd=root_dir,
                 )
                 result.wait()  # Wait for it to complete
             else:

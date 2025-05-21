@@ -47,7 +47,8 @@ def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]
                     stdout=log_file,
                     stderr=log_file,
                     stdin=subprocess.DEVNULL,  # Explicitly close stdin
-                    text=True
+                    text=True,
+                    cwd=cwd,
                 )
                 process.wait()  # Wait for it to complete
             # Read the result from the file
