@@ -186,11 +186,11 @@ class IdentifierRawIdTest(unittest.TestCase):
         # cspell:disable
         _assert_communication_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768", asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         _assert_communication_identifier(
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="+112345556789", asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         # cspell:enable
         _assert_communication_identifier(

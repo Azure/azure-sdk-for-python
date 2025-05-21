@@ -156,32 +156,23 @@ class PhoneNumberIdentifier:
         
         raw_id: Optional[str] = kwargs.get("raw_id")
         asserted_id: Optional[str] = kwargs.get("asserted_id")
-        is_anonymous: Optional[bool] = kwargs.get("is_anonymous")
+        is_anonymous: Optional[bool] = kwargs.get("is_anonymous", False)
+
+        if value[len(PHONE_NUMBER_PREFIX):] == self.PHONE_NUMBER_ANONYMOUS_SUFFIX:
+            is_anonymous = True
 
         # If not provided, construct raw_id from value and asserted_id
-        if raw_id is None:
-            raw_id = self._format_raw_id(PhoneNumberProperties(value=value))
-            if asserted_id is not None:
-                raw_id += f"_{asserted_id}"
-            # If is_anonymous is True, set the raw_id to include the anonymous suffix
-            if is_anonymous:
-                raw_id = f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
-        else:
-            if raw_id[len(PHONE_NUMBER_PREFIX):] == self.PHONE_NUMBER_ANONYMOUS_SUFFIX:
-                is_anonymous = True
-            # Determine asserted_id if not explicitly provided
-            if asserted_id is None:
-                segments = raw_id[len(PHONE_NUMBER_PREFIX):].split("_")
-                if len(segments) > 1:
-                    asserted_id = segments[-1]
+        # If raw_id is provided, we don't need to construct it again
+        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(
+            PhoneNumberProperties(value=value, is_anonymous=is_anonymous, asserted_id=asserted_id)
+        )
 
         self.properties = PhoneNumberProperties(
             value=value,
             asserted_id=asserted_id,
             is_anonymous=is_anonymous
         )
-        self.raw_id = raw_id
-
+        
     def __eq__(self, other):
         try:
             if other.raw_id:
@@ -194,7 +185,15 @@ class PhoneNumberIdentifier:
         # We just assume correct E.164 format here because
         # validation should only happen server-side, not client-side.
         value = properties["value"]
-        return f"{PHONE_NUMBER_PREFIX}{value}"
+        asserted_id = properties.get("asserted_id")
+        is_anonymous = properties.get("is_anonymous", False)
+
+        raw_id = f"{PHONE_NUMBER_PREFIX}{value}"
+
+        if asserted_id is not None:
+            raw_id += f"_{asserted_id}"
+
+        return raw_id if not is_anonymous else f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
 
     @property
     def asserted_id(self) -> Optional[str]:
@@ -461,6 +460,24 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
         raise ValueError(f"Invalid prefix {prefix} for TeamsExtensionUserIdentifier")
     return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud)
 
+def build_phone_number_identifier(raw_id: str) -> PhoneNumberIdentifier:
+    """
+    Builds a phone number identifier from the given raw ID.
+
+    :param str raw_id: The raw ID to parse.
+    :return: A phone number identifier containing the phone number, is_anonymous, and asserted_id.
+    :rtype: PhoneNumberIdentifier
+    """
+    phone_number = raw_id[len(PHONE_NUMBER_PREFIX):]
+    is_anonymous = phone_number == PhoneNumberIdentifier.PHONE_NUMBER_ANONYMOUS_SUFFIX
+    asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
+    has_asserted_id = 0 < asserted_id_index < len(phone_number)
+    asserted_id = phone_number[asserted_id_index:] if has_asserted_id else None
+
+    if has_asserted_id:
+        phone_number = phone_number[:asserted_id_index - 1]
+        
+    return PhoneNumberIdentifier(value=phone_number, raw_id=raw_id, is_anonymous=is_anonymous, asserted_id=asserted_id)
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
@@ -473,7 +490,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
+        return build_phone_number_identifier(raw_id)
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
