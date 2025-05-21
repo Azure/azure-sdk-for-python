@@ -11,6 +11,7 @@
 
 ### Other Changes
 
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 - Key Vault API version `7.6` is now the default
 - (From 4.6.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
