@@ -53,6 +53,8 @@ def collect_statsbeat_metrics(exporter) -> None:
     metrics for collecting statistics about the exporter's behavior.
     
     Args:
+        exporter: The exporter instance to collect metrics from. Contains information
+                 about instrumentation key, endpoint, and other configuration details.
         exporter: The exporter instance to collect metrics from.
     """
     global _STATSBEAT_METRICS
