@@ -6,6 +6,7 @@
 
 ### Features Added
 
+- API version is changed to 2025-05-15-preview.
 - Add FabricTool, SharepointTool, and BingCustomSearchTool classes along with samples.
 
 ### Bugs Fixed
