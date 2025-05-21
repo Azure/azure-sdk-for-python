@@ -391,7 +391,7 @@ class MediaStreamingOptions:
 
     def __init__(
         self,
-        *
+        *,
         transport_url: str,
         transport_type: Union[str, 'StreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
