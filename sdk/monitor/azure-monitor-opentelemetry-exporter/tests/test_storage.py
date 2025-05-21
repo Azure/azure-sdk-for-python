@@ -177,3 +177,41 @@ class TestLocalFileStorage(unittest.TestCase):
                 stor._maintenance_routine()
             with mock.patch("os.path.isdir", side_effect=throw(Exception)):
                 stor._maintenance_routine()
+
+
+class TestLocalFileStoragePermissions(unittest.TestCase):
+    def setUp(self):
+        self.test_dir = os.path.join(TEST_FOLDER, "permtest")
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def tearDown(self):
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    @mock.patch("os.name", "nt")
+    @mock.patch("subprocess.run")
+    @mock.patch("getpass.getuser", return_value="TestUser")
+    def test_windows_permissions(self, mock_getuser, mock_subprocess):
+        with mock.patch("os.path.isdir", return_value=False):
+            with mock.patch("os.makedirs"):
+                LocalFileStorage(self.test_dir)
+        mock_subprocess.assert_any_call(
+            [
+                "icacls",
+                self.test_dir,
+                "/inheritance:r",
+                "/grant:r",
+                "TestUser:(OI)(CI)F",
+            ],
+            check=False,
+            capture_output=True,
+        )
+
+    @mock.patch("os.name", "posix")
+    @mock.patch("os.chmod")
+    def test_unix_permissions(self, mock_chmod):
+        with mock.patch("os.path.isdir", return_value=False):
+            with mock.patch("os.makedirs"):
+                LocalFileStorage(self.test_dir)
+        mock_chmod.assert_any_call(self.test_dir, 0o700)

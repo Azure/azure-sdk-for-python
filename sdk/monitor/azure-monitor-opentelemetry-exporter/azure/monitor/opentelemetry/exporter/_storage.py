@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import random
+import subprocess
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
@@ -170,6 +171,27 @@ class LocalFileStorage:
         try:
             if not os.path.isdir(self._path):
                 os.makedirs(self._path, exist_ok=True)
+                try:
+                    if os.name == "nt":
+                        import getpass
+
+                        user = getpass.getuser()
+                        # Remove inherited permissions and grant full control to current user only
+                        subprocess.run(
+                            [
+                                "icacls",
+                                self._path,
+                                "/inheritance:r",
+                                "/grant:r",
+                                f"{user}:(OI)(CI)F",
+                            ],
+                            check=False,
+                            capture_output=True,
+                        )
+                    else:
+                        os.chmod(self._path, 0o700)  # Restrict permissions to owner only
+                except Exception:
+                    pass  # keep silent if chmod/icacls fails
         except Exception:
             pass  # keep silent
         if not self._check_storage_size():
