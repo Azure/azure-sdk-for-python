@@ -109,7 +109,7 @@ agent = agents_client.create_agent(
 )
 ```
 
-Stream the run using AgentEventHandler or your own event handler that is derieved from AgentEventHandler:
+Stream the run using AgentEventHandler or your own event handler that is derived from AgentEventHandler:
 ```
 from azure.ai.agents.models import AgentEventHandler
 
@@ -132,7 +132,7 @@ for step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
 
 The @trace_function is provided for tracing your own functions:
 ```
-# The trace_func decorator will trace the function call and enable adding additional attributes
+# The trace_function decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
 @trace_function()
 def fetch_weather(location: str) -> str:
@@ -180,18 +180,22 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 ```
 
-Add your custom span processor the the global trace provider:
+Add your custom span processor to the global trace provider:
 
 ```
-# Add the custom span processor to the global tracer provider
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
 ```
 
+**View Azure Monitor Traces in Azure AI Foundry**
+
+Traces can be viewed on the Tracing tab in the Azure AI Foundry.
+
+![Sample trace in Azure AI Foundry](trace.png)
 
 **Sample Spans**
 
-Follwing are some sample console traces from various Agent API scenarios to show what kind of info gets collected as  part of the traces.
+Following are some sample console traces from various Agent API scenarios to show what kind of info gets collected as part of the traces.
 
 ***Create Agent***
 ```
