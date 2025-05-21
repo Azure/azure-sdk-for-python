@@ -1,3 +1,11 @@
+**Content Recording**
+
+Content recording determines whether message contents and tool call details—such as parameter values and return values—are captured in traces. These contents may include personal information. By default, content recording is disabled. To enable it, set the following environment variable to TRUE:
+
+```bash
+set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=TRUE
+```
+
 **Enable Azure Monitor Tracing**
 
 Using environment variable:
@@ -18,18 +26,12 @@ from azure.ai.projects import AIProjectClient
 endpoint = os.environ["PROJECT_ENDPOINT"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-        print("Get the Application Insights connection string:")
-        connection_string = project_client.telemetry.get_connection_string()
-        print(connection_string)
-
-application_insights_connection_string = project_client.telemetry.get_connection_string()
-if not application_insights_connection_string:
-    print("Application Insights was not enabled for this project.")
-    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
-    exit()
+        application_insights_connection_string = project_client.telemetry.get_connection_string()
+        if not application_insights_connection_string:
+            print("Application Insights was not enabled for this project.")
+            print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
+            exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
 ```
 
@@ -62,7 +64,23 @@ from azure.ai.projects import enable_telemetry
 enable_telemetry(destination=sys.stdout)
 ```
 
+**Collect Traces from Scenario Under One Span**
+
+Creating a span that contain the spans from a single scenario will make it more convenient to view the traces.
+
+```
+# Create the desired name for the scenario
+scenario = os.path.basename(__file__)
+tracer = trace.get_tracer(__name__)
+
+with tracer.start_as_current_span(scenario):
+    # Execute your scenario here
+```
+
+
 **Trace Tool Calls Streaming**
+
+This section demonstrates Agent API usage that will provide detailed traces of the run, including tool calls.
 
 Setup agent with BingGroundingTool:
 ```
@@ -91,39 +109,13 @@ agent = agents_client.create_agent(
 )
 ```
 
-Define an event handler derived from AgentEventHandler, or use AgentEventHandler directly if you do not need to monitor any events:
+Stream the run using AgentEventHandler or your own event handler that is derieved from AgentEventHandler:
 ```
-class MyEventHandler(AgentEventHandler):
+from azure.ai.agents.models import AgentEventHandler
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received: {delta.text}")
+...
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
-
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
-
-        if run.status == "failed":
-            print(f"Run failed. Error: {run.last_error}")
-
-    def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
-
-    def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
-
-    def on_done(self) -> None:
-        print("Stream completed.")
-
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
-
-```
-
-Stream the run using event handler that is derieved from AgentEventHandler:
-```
-with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
+with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=AgentEventHandler()) as stream:
     stream.until_done()
 ```
 
@@ -198,6 +190,8 @@ provider.add_span_processor(CustomAttributeSpanProcessor())
 
 
 **Sample Spans**
+
+Follwing are some sample console traces from various Agent API scenarios to show what kind of info gets collected as  part of the traces.
 
 ***Create Agent***
 ```
