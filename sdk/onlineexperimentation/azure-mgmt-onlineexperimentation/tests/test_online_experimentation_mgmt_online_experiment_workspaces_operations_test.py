@@ -21,7 +21,7 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_online_experiment_workspaces_list_by_resource_group(self, resource_group):
-        response = self.client.online_experiment_workspaces.list_by_resource_group(
+        response = self.client.online_experimentation_workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -30,6 +30,6 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_online_experiment_workspaces_list_by_subscription(self, resource_group):
-        response = self.client.online_experiment_workspaces.list_by_subscription()
+        response = self.client.online_experimentation_workspaces.list_by_subscription()
         result = [r for r in response]
         assert response
