@@ -5,60 +5,54 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset from
+    This sample demonstrates how to use Agent operations with the Bing Custom Search tool from
     the Azure Agents service using a synchronous client.
+    For more information on the Bing Custom Search tool, see: https://aka.ms/AgentCustomSearchDoc
 
 USAGE:
-    python sample_agents_run_with_toolset.py
+    python sample_agents_bing_custom_search.py
 
     Before running the sample:
 
     pip install azure-ai-agents azure-identity
 
-    Set these environment variables with your own values:
+    Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) BING_CUSTOM_CONNECTION_ID  - The ID of the Bing Custom Search connection, in the format of:
+       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
-import os, sys
+import os
 from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, ToolSet, CodeInterpreterTool
+from azure.ai.agents.models import BingCustomSearchTool
 
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
-from samples.utils.user_functions import user_functions
+
+# Create an Azure AI Client from a connection string, copied from your AI Studio project.
+# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
+# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-# Create agent with toolset and process agent run
+conn_id = os.environ["BING_CUSTOM_CONNECTION_ID"]
+
+# Initialize Bing Custom Search tool with connection id and instance name
+bing_custom_tool = BingCustomSearchTool(connection_id=conn_id, instance_name="<config_instance_name>")
+
+# Create Agent with the Bing Custom Search tool and process Agent run
 with agents_client:
-    # Initialize agent toolset with user functions and code interpreter
-    # [START create_agent_toolset]
-    functions = FunctionTool(user_functions)
-    code_interpreter = CodeInterpreterTool()
-
-    toolset = ToolSet()
-    toolset.add(functions)
-    toolset.add(code_interpreter)
-
-    # To enable tool calls executed automatically
-    agents_client.enable_auto_function_calls(toolset)
-
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are a helpful agent",
-        toolset=toolset,
+        tools=bing_custom_tool.definitions,
     )
-    # [END create_agent_toolset]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -69,20 +63,18 @@ with agents_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="How many medals did the USA win in the 2024 summer olympics?",
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process agent run in thread with tools
-    # [START create_and_process_run]
+    # Create and process Agent run in thread with tools
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-    # [END create_and_process_run]
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # Delete the agent when done
+    # Delete the Agent when done
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
@@ -90,5 +82,7 @@ with agents_client:
     messages = agents_client.messages.list(thread_id=thread.id)
     for msg in messages:
         if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+            for text_message in msg.text_messages:
+                print(f"Agent response: {text_message.text.value}")
+            for annotation in msg.url_citation_annotations:
+                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
