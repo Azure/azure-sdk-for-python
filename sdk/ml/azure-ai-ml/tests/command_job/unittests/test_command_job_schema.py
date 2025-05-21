@@ -126,7 +126,10 @@ class TestCommandJob:
         assert internal_representation.environment.name != envName
         assert internal_representation.environment.name == ANONYMOUS_ENV_NAME
         assert internal_representation.environment._is_anonymous
-        assert internal_representation.environment.version == "9a8126427ef71af0cdc4a56218a9b24e764524f68383d5c4b645448376a03f6b"
+        assert (
+            internal_representation.environment.version
+            == "9a8126427ef71af0cdc4a56218a9b24e764524f68383d5c4b645448376a03f6b"
+        )
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted
