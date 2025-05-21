@@ -610,7 +610,7 @@ def build_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/redTeams/runs:run"
+    _url = "/redteams/runs:run"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2823,7 +2823,7 @@ class RedTeamsOperations:
         if isinstance(red_team, (IOBase, bytes)):
             _content = red_team
         else:
-            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=False)  # type: ignore
 
         _request = build_red_teams_create_request(
             content_type=content_type,

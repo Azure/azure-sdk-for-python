@@ -2271,7 +2271,7 @@ class RedTeamsOperations:
         if isinstance(red_team, (IOBase, bytes)):
             _content = red_team
         else:
-            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=False)  # type: ignore
 
         _request = build_red_teams_create_request(
             content_type=content_type,
