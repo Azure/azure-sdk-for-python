@@ -105,8 +105,7 @@ def tox_tool(package_path: str, environment: Optional[str] = None, config_file: 
     command = ["tox", "run"]
     if environment:
         command.extend(["-e", environment])
-    if config_file:
-        command.extend(["-c", config_file or _TOX_INI_PATH])
+    command.extend(["-c", config_file if config_file is not None else _TOX_INI_PATH])
     command.extend(["--root", package_path])
     return run_command(command, cwd=package_path)
 
