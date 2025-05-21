@@ -153,7 +153,11 @@ def init_tool(tsp_config_url: str) -> Dict[str, Any]:
 
 @mcp.tool("init_local")
 def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
-    """Initializes and generates a typespec client library directory from a local azure-rest-api-specs repo.
+    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
+
+    This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
+    commands are needed to generate the client library.
+
 
     Args:
         tsp_config_path: The path to the local tspconfig.yaml file.
