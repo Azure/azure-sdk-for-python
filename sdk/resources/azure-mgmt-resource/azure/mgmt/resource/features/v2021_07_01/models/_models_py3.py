@@ -8,7 +8,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -50,11 +50,11 @@ class AuthorizationProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.requested_time = None
-        self.requester = None
-        self.requester_object_id = None
-        self.approved_time = None
-        self.approver = None
+        self.requested_time: Optional[datetime.datetime] = None
+        self.requester: Optional[str] = None
+        self.requester_object_id: Optional[str] = None
+        self.approved_time: Optional[datetime.datetime] = None
+        self.approver: Optional[str] = None
 
 
 class ErrorDefinition(_serialization.Model):
@@ -87,8 +87,8 @@ class ErrorDefinition(_serialization.Model):
         :paramtype details: list[~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition]
         """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
         self.details = details
 
 
@@ -330,9 +330,9 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class SubscriptionFeatureRegistration(ProxyResource):
@@ -509,17 +509,17 @@ class SubscriptionFeatureRegistrationProperties(_serialization.Model):  # pylint
         :paramtype description: str
         """
         super().__init__(**kwargs)
-        self.tenant_id = None
-        self.subscription_id = None
-        self.feature_name = None
-        self.display_name = None
-        self.provider_namespace = None
+        self.tenant_id: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.feature_name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.provider_namespace: Optional[str] = None
         self.state = state
         self.authorization_profile = authorization_profile
         self.metadata = metadata
-        self.release_date = None
-        self.registration_date = None
-        self.documentation_link = None
-        self.approval_type = None
+        self.release_date: Optional[datetime.datetime] = None
+        self.registration_date: Optional[datetime.datetime] = None
+        self.documentation_link: Optional[str] = None
+        self.approval_type: Optional[Union[str, "_models.SubscriptionFeatureRegistrationApprovalType"]] = None
         self.should_feature_display_in_portal = should_feature_display_in_portal
         self.description = description
