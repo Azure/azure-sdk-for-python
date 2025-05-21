@@ -79,12 +79,13 @@ CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 
 try:
-    # ConnectionTimeoutError was only introduced in aiohttp 3.10 so we want to keep
-    # this backwards compatible. If client is using aiohttp <3.10, the behaviour will
-    # safely fall back to treating a TimeoutError as a non-retriable ServiceResponseError.
+    # ConnectionTimeoutError was only introduced in aiohttp 3.10 so we want to keep this
+    # backwards compatible. If client is using aiohttp <3.10, the behaviour will safely
+    # fall back to treating a TimeoutError as a ServiceResponseError (that wont be retried).
     from aiohttp.client_exceptions import ConnectionTimeoutError
 except ImportError:
-    class ConnectionTimeoutError(asyncio.TimeoutError): ...
+
+    class ConnectionTimeoutError(asyncio.TimeoutError): ...  # type: ignore[no-redef]
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -356,7 +357,7 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceResponseError(err, error=err) from err
         except asyncio.TimeoutError as err:
             if isinstance(err, ConnectionTimeoutError):
-                raise ServiceRequestTimeoutError(err, error=err)
+                raise ServiceRequestTimeoutError(err, error=err) from err
             raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
