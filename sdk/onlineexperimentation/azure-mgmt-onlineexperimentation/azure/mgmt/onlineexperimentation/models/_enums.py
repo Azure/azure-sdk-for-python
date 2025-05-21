@@ -95,6 +95,39 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Connection has been provisioned"""
+    CREATING = "Creating"
+    """Connection is being created"""
+    DELETING = "Deleting"
+    """Connection is being deleted"""
+    FAILED = "Failed"
+    """Connection provisioning has failed"""
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    """Connection waiting for approval or rejection"""
+    APPROVED = "Approved"
+    """Connection approved"""
+    REJECTED = "Rejected"
+    """Connection Rejected"""
+
+
+class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public network access type for an online experimentation resource."""
+
+    ENABLED = "Enabled"
+    """Enabled: The resource can be accessed from the public internet"""
+    DISABLED = "Disabled"
+    """Disabled: The resource can only be accessed from a private endpoint."""
+
+
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of a resource type."""
 

@@ -18,8 +18,13 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import OnlineExperimentationMgmtClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import OnlineExperimentWorkspacesOperations, Operations
+from ._utils.serialization import Deserializer, Serializer
+from .operations import (
+    OnlineExperimentationWorkspacesOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -30,9 +35,15 @@ class OnlineExperimentationMgmtClient:
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.onlineexperimentation.operations.Operations
-    :ivar online_experiment_workspaces: OnlineExperimentWorkspacesOperations operations
-    :vartype online_experiment_workspaces:
-     azure.mgmt.onlineexperimentation.operations.OnlineExperimentWorkspacesOperations
+    :ivar online_experimentation_workspaces: OnlineExperimentationWorkspacesOperations operations
+    :vartype online_experimentation_workspaces:
+     azure.mgmt.onlineexperimentation.operations.OnlineExperimentationWorkspacesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.onlineexperimentation.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources:
+     azure.mgmt.onlineexperimentation.operations.PrivateLinkResourcesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -40,7 +51,7 @@ class OnlineExperimentationMgmtClient:
     :param base_url: Service host. Default value is None.
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-31-preview". Note that overriding this default value may result in unsupported
+     "2025-08-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -88,7 +99,13 @@ class OnlineExperimentationMgmtClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.online_experiment_workspaces = OnlineExperimentWorkspacesOperations(
+        self.online_experimentation_workspaces = OnlineExperimentationWorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

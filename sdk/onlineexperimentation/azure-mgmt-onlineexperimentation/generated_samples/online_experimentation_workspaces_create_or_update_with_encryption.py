@@ -16,7 +16,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_update_with_encryption.py
+    python online_experimentation_workspaces_create_or_update_with_encryption.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,10 +31,10 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.online_experiment_workspaces.begin_update(
+    response = client.online_experimentation_workspaces.begin_create_or_update(
         resource_group_name="res9871",
-        workspace_name="expworkspace3",
-        properties={
+        workspace_name="expworkspace7",
+        resource={
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
@@ -42,7 +42,9 @@ def main():
                     "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/eu2cgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id2": {},
                 },
             },
+            "location": "eastus2",
             "properties": {
+                "appConfigurationResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/res9871/providers/Microsoft.AppConfiguration/configurationStores/appconfig9871",
                 "encryption": {
                     "customerManagedKeyEncryption": {
                         "keyEncryptionKeyIdentity": {
@@ -54,13 +56,15 @@ def main():
                 },
                 "logAnalyticsWorkspaceResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/res9871/providers/Microsoft.OperationalInsights/workspaces/log9871",
                 "logsExporterStorageAccountResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/res9871/providers/Microsoft.Storage/storageAccounts/sto9871",
+                "publicNetworkAccess": "Enabled",
             },
+            "sku": {"name": "F0"},
             "tags": {"newKey": "newVal"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_UpdateWithEncryption.json
+# x-ms-original-file: 2025-08-01-preview/OnlineExperimentationWorkspaces_CreateOrUpdateWithEncryption.json
 if __name__ == "__main__":
     main()

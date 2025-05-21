@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_update.py
+    python online_experimentation_workspaces_list_by_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,23 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.online_experiment_workspaces.begin_update(
+    response = client.online_experimentation_workspaces.list_by_resource_group(
         resource_group_name="res9871",
-        workspace_name="expworkspace3",
-        properties={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/eu2cgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1": {},
-                    "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/eu2cgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id2": {},
-                },
-            },
-            "tags": {"newKey": "newVal"},
-        },
-    ).result()
-    print(response)
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_Update.json
+# x-ms-original-file: 2025-08-01-preview/OnlineExperimentationWorkspaces_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

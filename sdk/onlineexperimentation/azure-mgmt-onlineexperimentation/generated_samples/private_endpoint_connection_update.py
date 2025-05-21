@@ -15,7 +15,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_delete.py
+    python private_endpoint_connection_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.online_experiment_workspaces.begin_delete(
+    response = client.private_endpoint_connections.update(
         resource_group_name="res9871",
         workspace_name="expworkspace3",
-    ).result()
+        private_endpoint_connection_name="jitf",
+        resource={
+            "properties": {
+                "privateLinkServiceConnectionState": {
+                    "actionsRequired": "afwbq",
+                    "description": "y",
+                    "status": "Approved",
+                }
+            }
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_Delete.json
+# x-ms-original-file: 2025-08-01-preview/PrivateEndpointConnection_Update.json
 if __name__ == "__main__":
     main()

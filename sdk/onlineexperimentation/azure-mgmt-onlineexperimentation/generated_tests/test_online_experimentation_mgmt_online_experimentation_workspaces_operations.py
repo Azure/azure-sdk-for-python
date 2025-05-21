@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgmtRecordedTestCase):
+class TestOnlineExperimentationMgmtOnlineExperimentationWorkspacesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(OnlineExperimentationMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_get(self, resource_group):
-        response = self.client.online_experiment_workspaces.get(
+    def test_online_experimentation_workspaces_get(self, resource_group):
+        response = self.client.online_experimentation_workspaces.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
         )
@@ -31,8 +31,8 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_begin_create_or_update(self, resource_group):
-        response = self.client.online_experiment_workspaces.begin_create_or_update(
+    def test_online_experimentation_workspaces_begin_create_or_update(self, resource_group):
+        response = self.client.online_experimentation_workspaces.begin_create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
             resource={
@@ -60,7 +60,33 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
                         }
                     },
                     "endpoint": "str",
+                    "privateEndpointConnections": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "properties": {
+                                "privateLinkServiceConnectionState": {
+                                    "actionsRequired": "str",
+                                    "description": "str",
+                                    "status": "str",
+                                },
+                                "groupIds": ["str"],
+                                "privateEndpoint": {"id": "str"},
+                                "provisioningState": "str",
+                            },
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
+                            "type": "str",
+                        }
+                    ],
                     "provisioningState": "str",
+                    "publicNetworkAccess": "str",
                     "workspaceId": "str",
                 },
                 "sku": {"name": "str", "tier": "str"},
@@ -82,8 +108,8 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_begin_update(self, resource_group):
-        response = self.client.online_experiment_workspaces.begin_update(
+    def test_online_experimentation_workspaces_begin_update(self, resource_group):
+        response = self.client.online_experimentation_workspaces.begin_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
             properties={
@@ -106,6 +132,7 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
                     },
                     "logAnalyticsWorkspaceResourceId": "str",
                     "logsExporterStorageAccountResourceId": "str",
+                    "publicNetworkAccess": "str",
                 },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},
@@ -117,8 +144,8 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_begin_delete(self, resource_group):
-        response = self.client.online_experiment_workspaces.begin_delete(
+    def test_online_experimentation_workspaces_begin_delete(self, resource_group):
+        response = self.client.online_experimentation_workspaces.begin_delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
         ).result()  # call '.result()' to poll until service return final result
@@ -128,8 +155,8 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_list_by_resource_group(self, resource_group):
-        response = self.client.online_experiment_workspaces.list_by_resource_group(
+    def test_online_experimentation_workspaces_list_by_resource_group(self, resource_group):
+        response = self.client.online_experimentation_workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -138,8 +165,8 @@ class TestOnlineExperimentationMgmtOnlineExperimentWorkspacesOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_online_experiment_workspaces_list_by_subscription(self, resource_group):
-        response = self.client.online_experiment_workspaces.list_by_subscription()
+    def test_online_experimentation_workspaces_list_by_subscription(self, resource_group):
+        response = self.client.online_experimentation_workspaces.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -1,6 +1,7 @@
 {
-  "commit": "908f30f83295f8afe862310153344468510e3b88",
+  "apiVersion": "2025-08-01-preview",
+  "commit": "92d30ce3b5d901b4dab77bb3d7784e49e5456519",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/onlineexperimentation/OnlineExperimentation.Management",
-  "@azure-tools/typespec-python": "0.43.0"
+  "emitterVersion": "0.45.0"
 }

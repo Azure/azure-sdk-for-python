@@ -15,7 +15,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_list_by_resource_group.py
+    python private_link_resource_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.online_experiment_workspaces.list_by_resource_group(
+    response = client.private_link_resources.list(
         resource_group_name="res9871",
+        workspace_name="expworkspace3",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_ListByResourceGroup.json
+# x-ms-original-file: 2025-08-01-preview/PrivateLinkResource_List.json
 if __name__ == "__main__":
     main()
