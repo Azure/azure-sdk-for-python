@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import threading
-import time
 from threading import Timer
 
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 
+from azure.monitor.opentelemetry.exporter._constants import _INITIAL_DELAY_SECONDS
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -20,11 +20,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_stats_short_export_interval,
 )
 
-
 _STATSBEAT_METRICS = None
 _STATSBEAT_LOCK = threading.Lock()
-_INITIAL_DELAY_SECONDS = 15.0  # 15 second delay for the second export
-
 
 def _delayed_export_statsbeat():
     """
@@ -35,14 +32,13 @@ def _delayed_export_statsbeat():
     with _STATSBEAT_STATE_LOCK:
         if _STATSBEAT_STATE["SHUTDOWN"]:
             return
-    
+
     if _STATSBEAT_METRICS is not None and _STATSBEAT_METRICS._meter_provider is not None:
         try:
             # Trigger a forced export of the metrics after the delay
             _STATSBEAT_METRICS._meter_provider.force_flush()
         except:  # pylint: disable=bare-except
             pass
-
 
 # pylint: disable=global-statement
 # pylint: disable=protected-access
@@ -78,13 +74,12 @@ def collect_statsbeat_metrics(exporter) -> None:
         mp.force_flush()
         # initialize non-initial stats
         _STATSBEAT_METRICS.init_non_initial_metrics()
-        
-        # Schedule a second export after 15 seconds to send feature, instrumentation, 
+
+        # Schedule a second export after the initial delay to send feature, instrumentation,
         # and attach statsbeat metrics (which have a 15-second delay)
         timer = Timer(_INITIAL_DELAY_SECONDS, _delayed_export_statsbeat)
         timer.daemon = True  # Set as daemon so it doesn't block program exit
         timer.start()
-
 
 def shutdown_statsbeat_metrics() -> None:
     global _STATSBEAT_METRICS
@@ -95,7 +90,7 @@ def shutdown_statsbeat_metrics() -> None:
                 # Cancel any pending timers by marking for shutdown
                 with _STATSBEAT_STATE_LOCK:
                     _STATSBEAT_STATE["SHUTDOWN"] = True
-                
+
                 if _STATSBEAT_METRICS._meter_provider is not None:
                     _STATSBEAT_METRICS._meter_provider.shutdown()
                     _STATSBEAT_METRICS = None

@@ -19,6 +19,7 @@ from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
+    _INITIAL_DELAY_SECONDS,
     _KUBERNETES_SERVICE_HOST,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
