@@ -16,7 +16,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_create_or_update_with_encryption.py
+    python online_experimentation_workspaces_create_or_update_with_encryption.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.online_experiment_workspaces.begin_create_or_update(
+    response = client.online_experimentation_workspaces.begin_create_or_update(
         resource_group_name="res9871",
         workspace_name="expworkspace7",
         resource={
@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_CreateOrUpdateWithEncryption.json
+# x-ms-original-file: 2025-05-31-preview/OnlineExperimentationWorkspaces_CreateOrUpdateWithEncryption.json
 if __name__ == "__main__":
     main()
