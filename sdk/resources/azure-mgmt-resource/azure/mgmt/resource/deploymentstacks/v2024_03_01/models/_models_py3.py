@@ -7,20 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ActionOnUnmanage(_serialization.Model):
@@ -120,10 +115,10 @@ class AzureResourceBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class DenySettings(_serialization.Model):
@@ -460,15 +455,15 @@ class DeploymentStack(AzureResourceBase):
         self.deployment_scope = deployment_scope
         self.description = description
         self.deny_settings = deny_settings
-        self.provisioning_state = None
-        self.correlation_id = None
-        self.detached_resources = None
-        self.deleted_resources = None
-        self.failed_resources = None
-        self.resources = None
-        self.deployment_id = None
-        self.outputs = None
-        self.duration = None
+        self.provisioning_state: Optional[Union[str, "_models.DeploymentStackProvisioningState"]] = None
+        self.correlation_id: Optional[str] = None
+        self.detached_resources: Optional[List["_models.ResourceReference"]] = None
+        self.deleted_resources: Optional[List["_models.ResourceReference"]] = None
+        self.failed_resources: Optional[List["_models.ResourceReferenceExtended"]] = None
+        self.resources: Optional[List["_models.ManagedResourceReference"]] = None
+        self.deployment_id: Optional[str] = None
+        self.outputs: Optional[JSON] = None
+        self.duration: Optional[str] = None
 
 
 class DeploymentStackListResult(_serialization.Model):
@@ -499,7 +494,7 @@ class DeploymentStackListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DeploymentStacksError(_serialization.Model):
@@ -716,15 +711,15 @@ class DeploymentStackProperties(DeploymentStacksError):
         self.deployment_scope = deployment_scope
         self.description = description
         self.deny_settings = deny_settings
-        self.provisioning_state = None
-        self.correlation_id = None
-        self.detached_resources = None
-        self.deleted_resources = None
-        self.failed_resources = None
-        self.resources = None
-        self.deployment_id = None
-        self.outputs = None
-        self.duration = None
+        self.provisioning_state: Optional[Union[str, "_models.DeploymentStackProvisioningState"]] = None
+        self.correlation_id: Optional[str] = None
+        self.detached_resources: Optional[List["_models.ResourceReference"]] = None
+        self.deleted_resources: Optional[List["_models.ResourceReference"]] = None
+        self.failed_resources: Optional[List["_models.ResourceReferenceExtended"]] = None
+        self.resources: Optional[List["_models.ManagedResourceReference"]] = None
+        self.deployment_id: Optional[str] = None
+        self.outputs: Optional[JSON] = None
+        self.duration: Optional[str] = None
 
 
 class DeploymentStacksDebugSetting(_serialization.Model):
@@ -1032,10 +1027,10 @@ class DeploymentStackValidateResult(AzureResourceBase, DeploymentStacksError):
         super().__init__(error=error, **kwargs)
         self.error = error
         self.properties = properties
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1062,8 +1057,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1103,11 +1098,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class KeyVaultParameterReference(_serialization.Model):
@@ -1203,7 +1198,7 @@ class ResourceReference(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class ManagedResourceReference(ResourceReference):
@@ -1285,7 +1280,7 @@ class ResourceReferenceExtended(ResourceReference, DeploymentStacksError):
         """
         super().__init__(error=error, **kwargs)
         self.error = error
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
