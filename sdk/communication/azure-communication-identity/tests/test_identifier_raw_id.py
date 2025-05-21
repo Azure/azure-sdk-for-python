@@ -9,7 +9,6 @@ import pytest
 import unittest
 from azure.communication.identity import *
 
-
 class IdentifierRawIdTest(unittest.TestCase):
     def test_raw_id(self):
         _assert_raw_id(
@@ -97,7 +96,81 @@ class IdentifierRawIdTest(unittest.TestCase):
             ),
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
         )
-
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value="+112345556789",
+                is_anonymous=True,
+            ),
+            "4:anonymous",
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value="+112345556789",
+                is_anonymous=True,
+                asserted_id="20eacaae2768",
+            ),
+            "4:anonymous",
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value="+112345556789",
+                is_anonymous=False,
+            ),
+            "4:+112345556789",
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value="+112345556789",
+                is_anonymous=False,
+                asserted_id="20eacaae2768",
+            ),
+            "4:+112345556789_20eacaae2768",
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value="+112345556789",
+                asserted_id="20eacaae2768",
+            ),
+            "4:+112345556789_20eacaae2768",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+            ),
+            "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD"
+            ),
+            "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH"
+            ),
+            "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC",
+            raw_id="8:extension:legacyFormat"
+            ),
+            "8:extension:legacyFormat",
+        )
+        
     def test_identifier_from_raw_id(self):
         _assert_communication_identifier(
             "8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130",

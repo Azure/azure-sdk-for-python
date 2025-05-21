@@ -193,7 +193,10 @@ class PhoneNumberIdentifier:
         if asserted_id is not None:
             raw_id += f"_{asserted_id}"
 
-        return raw_id if not is_anonymous else f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
+        if is_anonymous:
+            raw_id = f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
+
+        return raw_id
 
     @property
     def asserted_id(self) -> Optional[str]:
