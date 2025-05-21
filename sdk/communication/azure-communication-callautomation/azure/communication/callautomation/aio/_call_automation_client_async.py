@@ -293,8 +293,8 @@ class CallAutomationClient:
             callback_uri=callback_url,
             operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options,
-            media_streaming_options=media_streaming_options.to_generated() if media_streaming_options else None,
-            transcription_options=transcription_options.to_generated() if transcription_options else None
+            media_streaming_options=media_streaming_options._to_generated() if media_streaming_options else None,
+            transcription_options=transcription_options._to_generated() if transcription_options else None
         )
 
         process_repeatability_first_sent(kwargs)
@@ -365,8 +365,8 @@ class CallAutomationClient:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
             targets = [serialize_identifier(target_participant)]
-        media_config = media_streaming.to_generated() if media_streaming else None
-        transcription_config = transcription.to_generated() if transcription else None
+        media_config = media_streaming._to_generated() if media_streaming else None
+        transcription_config = transcription._to_generated() if transcription else None
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
@@ -473,9 +473,9 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            media_streaming_options=media_streaming.to_generated(
+            media_streaming_options=media_streaming._to_generated(
             ) if media_streaming else None,
-            transcription_options=transcription.to_generated()
+            transcription_options=transcription._to_generated()
             if transcription else None,
             answered_by=serialize_communication_user_identifier(self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
