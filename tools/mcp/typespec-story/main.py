@@ -91,16 +91,34 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     logger.info(f"Running command: {' '.join(cli_args)}")
     
     try:
-        # TODO: maybe if we return and dont wait for output this will work
         # Run the command and capture the output
         if root_dir:
-            result = subprocess.run(
-                cli_args,
-                capture_output=True,
-                text=True,
-                cwd=root_dir,
-            )
+            if os.name == "nt":  # Windows
+                result = subprocess.Popen(
+                    cli_args,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                    text=True
+                )
+                result.wait()  # Wait for it to complete
+            else:
+                result = subprocess.run(
+                    cli_args,
+                    capture_output=True,
+                    text=True,
+                    cwd=root_dir,
+                )
         else:
+            if os.name == "nt":
+                result = subprocess.Popen(
+                    cli_args,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                    text=True
+                )
+                result.wait()
             result = subprocess.run(
                 cli_args,
                 capture_output=True,
