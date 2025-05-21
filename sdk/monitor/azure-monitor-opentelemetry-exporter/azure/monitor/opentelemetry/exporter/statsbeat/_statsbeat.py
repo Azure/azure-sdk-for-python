@@ -31,16 +31,15 @@ def _delayed_export_statsbeat():
     """
     Function to perform a delayed export of statsbeat metrics
     after the initial delay period has passed.
-    """
-    # Check if we're in a shutdown state
+    """    # Check if we're in a shutdown state
     with _STATSBEAT_STATE_LOCK:
         if _STATSBEAT_STATE["SHUTDOWN"]:
             return
 
-    if _STATSBEAT_METRICS is not None and _STATSBEAT_METRICS._meter_provider is not None:
+    if _STATSBEAT_METRICS is not None and _STATSBEAT_METRICS._meter_provider is not None:  # pylint: disable=protected-access
         try:
             # Trigger a forced export of the metrics after the delay
-            _STATSBEAT_METRICS._meter_provider.force_flush()
+            _STATSBEAT_METRICS._meter_provider.force_flush()  # pylint: disable=protected-access
         except:  # pylint: disable=bare-except
             pass
 
@@ -72,7 +71,8 @@ def collect_statsbeat_metrics(exporter) -> None:
                 metric_readers=[reader],
                 resource=Resource.get_empty(),
             )
-            # long_interval_threshold represents how many collects for short interval            # should have passed before a long interval collect
+            # long_interval_threshold represents how many collects for short interval
+            # should have passed before a long interval collect
             long_export = _get_stats_long_export_interval()
             short_export = _get_stats_short_export_interval()
             long_interval_threshold = long_export // short_export
