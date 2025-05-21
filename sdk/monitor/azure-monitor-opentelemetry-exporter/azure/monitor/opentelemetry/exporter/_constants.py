@@ -99,6 +99,7 @@ _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5
 _DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
 _DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
 _DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
+_INITIAL_DELAY_SECONDS = 15.0  # 15 second delay for the first long-interval export
 _EU_ENDPOINTS = [
     "westeurope",
     "northeurope",

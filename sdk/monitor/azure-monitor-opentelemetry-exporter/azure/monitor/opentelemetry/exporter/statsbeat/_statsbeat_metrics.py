@@ -142,8 +142,7 @@ class _StatsbeatMetrics:
         # Add startup timestamp and delay for initial statsbeat metrics
         self._startup_time = time.time()
         from azure.monitor.opentelemetry.exporter._constants import INITIAL_DELAY_SECONDS
-        self._initial_delay_seconds = INITIAL_DELAY_SECONDS  # 15 second delay for initial metrics
-        self._initial_delay_seconds = INITIAL_DELAY_SECONDS  # 15 second delay for initial metrics
+        self._initial_delay_seconds = _INITIAL_DELAY_SECONDS  # 15 second delay for initial metrics
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         if _utils._is_attach_enabled():
             _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
