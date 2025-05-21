@@ -142,6 +142,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers = dict(default_headers)
     options = options or {}
 
+    # Generate a new activity ID for each request client side.
+    headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
     if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
