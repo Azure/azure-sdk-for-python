@@ -272,11 +272,11 @@ class _StatsbeatMetrics:
 
     def _meets_long_interval_threshold(self, name) -> bool:
         # For feature and attach metrics, check if the initial delay has passed
-        if name in [_ATTACH_METRIC_NAME[0], _FEATURE_METRIC_NAME[0]]:
-            # Check if enough time has passed since startup
-            elapsed_time = time.time() - self._startup_time
-            if elapsed_time < self._initial_delay_seconds:
-                return False
+        # if name in [_ATTACH_METRIC_NAME[0], _FEATURE_METRIC_NAME[0]]:
+        #     # Check if enough time has passed since startup
+        #     elapsed_time = time.time() - self._startup_time
+        #     if elapsed_time < self._initial_delay_seconds:
+        #         return False
 
         with self._long_interval_lock:
             # if long interval theshold not met, it is not time to export

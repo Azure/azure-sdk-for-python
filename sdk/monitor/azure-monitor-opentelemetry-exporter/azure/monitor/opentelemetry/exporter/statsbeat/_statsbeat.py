@@ -31,17 +31,19 @@ def _delayed_export_statsbeat():
     """
     Function to perform a delayed export of statsbeat metrics
     after the initial delay period has passed.
-    """    # Check if we're in a shutdown state
+    """
+    # Check if we're in a shutdown state
     with _STATSBEAT_STATE_LOCK:
         if _STATSBEAT_STATE["SHUTDOWN"]:
             return
 
-    if _STATSBEAT_METRICS is not None and _STATSBEAT_METRICS._meter_provider is not None:  # pylint: disable=protected-access
-        try:
-            # Trigger a forced export of the metrics after the delay
-            _STATSBEAT_METRICS._meter_provider.force_flush()  # pylint: disable=protected-access
-        except:  # pylint: disable=bare-except
-            pass
+    with _STATSBEAT_LOCK:
+        if _STATSBEAT_METRICS is not None and _STATSBEAT_METRICS._meter_provider is not None:  # pylint: disable=protected-access
+            try:
+                # Trigger a forced export of the metrics after the delay
+                _STATSBEAT_METRICS._meter_provider.force_flush()  # pylint: disable=protected-access
+            except:  # pylint: disable=bare-except
+                pass
 
 # pylint: disable=global-statement
 # pylint: disable=protected-access
@@ -85,8 +87,6 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._credential is not None,
                 exporter._distro_version,
             )
-        # Export some initial stats on program start
-        mp.force_flush()
         # initialize non-initial stats
         _STATSBEAT_METRICS.init_non_initial_metrics()
 
@@ -108,10 +108,6 @@ def shutdown_statsbeat_metrics() -> None:
     if _STATSBEAT_METRICS is not None:
         with _STATSBEAT_LOCK:
             try:
-                # Cancel any pending timers by marking for shutdown
-                with _STATSBEAT_STATE_LOCK:
-                    _STATSBEAT_STATE["SHUTDOWN"] = True
-
                 if _STATSBEAT_METRICS._meter_provider is not None:
                     _STATSBEAT_METRICS._meter_provider.shutdown()
                     _STATSBEAT_METRICS = None
