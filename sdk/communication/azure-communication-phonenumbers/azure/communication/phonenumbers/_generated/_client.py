@@ -29,8 +29,8 @@ class PhoneNumbersClient:
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2025-04-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-04-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

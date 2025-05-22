@@ -312,6 +312,8 @@ class PhoneNumbersClient:
             administrative_division=kwargs.pop(
                 "administrative_division", None),
             accept_language=self._accepted_language,
+            phone_number_type=kwargs.pop(
+                "phone_number_type", None),
             **kwargs
         )
 
