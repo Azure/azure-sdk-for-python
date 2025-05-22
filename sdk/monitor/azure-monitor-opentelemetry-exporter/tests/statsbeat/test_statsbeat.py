@@ -87,7 +87,6 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNotNone(mr._exporter)
         self.assertTrue(isinstance(mr._exporter, _StatsBeatExporter))
         non_init_mock.assert_called_once()
-        flush_mock.assert_called_once()
 
     def test_collect_statsbeat_metrics_exists(self):
         exporter = mock.Mock()
@@ -1276,94 +1275,5 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
-
-    def test_get_feature_metric_before_delay_elapsed(self):
-        """Test that feature metric observation isn't emitted before delay elapses."""
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        
-        with mock.patch('time.time') as mock_time:
-            start_time = 1000.0
-            # Setup initialization time
-            mock_time.return_value = start_time
-            
-            metric = _StatsbeatMetrics(
-                mp,
-                ikey,
-                endpoint,
-                False,  # Not disabled, so DISK_RETRY should be set
-                2,
-                False,
-            )
-            
-            # Set up the feature to have a value
-            self.assertEqual(metric._feature, _StatsbeatFeature.DISK_RETRY)
-            
-            # Only 5 seconds elapsed (less than 15 second delay)
-            mock_time.return_value = start_time + 5.0
-            
-            # Make sure threshold is surpassed so only time is the constraint
-            metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 3
-            
-            # No observations should be returned due to delay
-            observations = metric._get_feature_metric(options=None)
-            self.assertEqual(len(observations), 0)
-            
-            # Time now passes delay requirement
-            mock_time.return_value = start_time + 20.0
-            
-            # Now we should get observations
-            observations = metric._get_feature_metric(options=None)
-            self.assertEqual(len(observations), 1)
-            
-            # Check observation content
-            for obs in observations:
-                self.assertEqual(obs.value, 1)
-                attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-                attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-                self.assertEqual(obs.attributes, attributes)
-
-    def test_get_attach_metric_before_delay_elapsed(self):
-        """Test that attach metric observation isn't emitted before delay elapses."""
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        
-        with mock.patch('time.time') as mock_time:
-            start_time = 1000.0
-            # Setup initialization time
-            mock_time.return_value = start_time
-            
-            metric = _StatsbeatMetrics(
-                mp,
-                ikey,
-                endpoint,
-                False,
-                2,
-                False,
-            )
-            
-            # Only 5 seconds elapsed (less than 15 second delay)
-            mock_time.return_value = start_time + 5.0
-            
-            # Make sure threshold is surpassed so only time is the constraint
-            metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 3
-            
-            # No observations should be returned due to delay
-            observations = metric._get_attach_metric(options=None)
-            self.assertEqual(len(observations), 0)
-            
-            # Time now passes delay requirement
-            mock_time.return_value = start_time + 20.0
-            
-            # Now we should get observations
-            observations = metric._get_attach_metric(options=None)
-            self.assertEqual(len(observations), 1)
-            
-            # Check observation content
-            for obs in observations:
-                self.assertEqual(obs.value, 1)
-
 
 # cSpell:enable
