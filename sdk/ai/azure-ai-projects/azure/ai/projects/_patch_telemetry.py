@@ -72,7 +72,7 @@ def enable_telemetry(
         )
 
     try:
-        from azure.ai.agents.tracing import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.agents.telemetry import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
 
         agents_instrumentor = AIAgentsInstrumentor()
         if not agents_instrumentor.is_instrumented():
