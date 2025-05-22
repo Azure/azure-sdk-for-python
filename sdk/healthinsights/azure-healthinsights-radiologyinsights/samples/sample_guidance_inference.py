@@ -113,6 +113,7 @@ def radiology_insights_sync() -> None:
 
 
 def display_guidance(radiology_insights_result):
+    # [START display_guidance]
     for patient_result in radiology_insights_result.patient_results:
         counter = 0
         for ri_inference in patient_result.inferences:
@@ -136,6 +137,7 @@ def display_guidance(radiology_insights_result):
                         print(f"Present Guidance Value: {value}")
                 ranking = ri_inference.ranking
                 print(f"Ranking: {ranking.value}")
+    # [END display_guidance]
 
 
 if __name__ == "__main__":
