@@ -37,6 +37,7 @@ class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
     MICROSOFT_TEAMS_APP = "microsoft_teams_app"
+    TEAMS_EXTENSION_USER = "teams_extension_user"
 
 
 class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -188,13 +189,13 @@ class PhoneNumberIdentifier:
         asserted_id = properties.get("asserted_id")
         is_anonymous = properties.get("is_anonymous", False)
 
+        if is_anonymous:
+            return f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
+
         raw_id = f"{PHONE_NUMBER_PREFIX}{value}"
 
         if asserted_id is not None:
             raw_id += f"_{asserted_id}"
-
-        if is_anonymous:
-            raw_id = f"{PHONE_NUMBER_PREFIX}{self.PHONE_NUMBER_ANONYMOUS_SUFFIX}"
 
         return raw_id
 
@@ -405,7 +406,7 @@ class TeamsExtensionUserProperties(TypedDict):
 class TeamsExtensionUserIdentifier:
     """Represents an identifier for a Teams Extension user."""
 
-    kind: Literal["teams_extension_user"] = "teams_extension_user"
+    kind: Literal[CommunicationIdentifierKind.TEAMS_EXTENSION_USER] = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
     """The type of identifier."""
     properties: TeamsExtensionUserProperties
     """The properties of the identifier."""
@@ -476,9 +477,7 @@ def build_phone_number_identifier(raw_id: str) -> PhoneNumberIdentifier:
     asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
     has_asserted_id = 0 < asserted_id_index < len(phone_number)
     asserted_id = phone_number[asserted_id_index:] if has_asserted_id else None
-
-    if has_asserted_id:
-        phone_number = phone_number[:asserted_id_index - 1]
+    phone_number = phone_number[:asserted_id_index - 1] if has_asserted_id else phone_number
         
     return PhoneNumberIdentifier(value=phone_number, raw_id=raw_id, is_anonymous=is_anonymous, asserted_id=asserted_id)
 
