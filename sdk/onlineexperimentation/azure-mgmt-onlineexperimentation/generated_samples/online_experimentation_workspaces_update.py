@@ -16,7 +16,7 @@ from azure.mgmt.onlineexperimentation import OnlineExperimentationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-onlineexperimentation
 # USAGE
-    python online_experiment_workspaces_update_with_encryption.py
+    python online_experimentation_workspaces_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.online_experiment_workspaces.begin_update(
+    response = client.online_experimentation_workspaces.begin_update(
         resource_group_name="res9871",
         workspace_name="expworkspace3",
         properties={
@@ -42,25 +42,12 @@ def main():
                     "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/eu2cgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id2": {},
                 },
             },
-            "properties": {
-                "encryption": {
-                    "customerManagedKeyEncryption": {
-                        "keyEncryptionKeyIdentity": {
-                            "identityType": "UserAssignedIdentity",
-                            "userAssignedIdentityResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/eu2cgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1",
-                        },
-                        "keyEncryptionKeyUrl": "https://contosovault.vault.azure.net/keys/contosokek",
-                    }
-                },
-                "logAnalyticsWorkspaceResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/res9871/providers/Microsoft.OperationalInsights/workspaces/log9871",
-                "logsExporterStorageAccountResourceId": "/subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/res9871/providers/Microsoft.Storage/storageAccounts/sto9871",
-            },
             "tags": {"newKey": "newVal"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-31-preview/OnlineExperimentWorkspaces_UpdateWithEncryption.json
+# x-ms-original-file: 2025-05-31-preview/OnlineExperimentationWorkspaces_Update.json
 if __name__ == "__main__":
     main()
