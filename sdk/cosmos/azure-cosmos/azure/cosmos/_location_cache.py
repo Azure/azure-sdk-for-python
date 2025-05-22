@@ -28,7 +28,7 @@ import time
 from typing import Set, Mapping, List
 from urllib.parse import urlparse
 
-from . import documents
+from . import documents, _base as base
 from .http_constants import ResourceType
 from .documents import _OperationType
 from ._request_object import RequestObject
@@ -142,7 +142,7 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[Re
 
     # Preserves the excluded locations at the end of the list, because for the metadata API calls, excluded locations
     # are not preferred, but all endpoints must be used.
-    if ResourceType.IsMetadataChild(resource_type):
+    if base.IsMasterResource(resource_type):
         applicable_regional_routing_contexts.extend(excluded_regional_routing_contexts)
 
     # If applicable_regional_routing_contexts is empty add fallback regional routing context

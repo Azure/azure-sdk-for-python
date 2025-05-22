@@ -56,11 +56,6 @@ class RequestObject(object):
         self.location_endpoint_to_route = None
 
     def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
-        # If resource types for requests are not one of the followings, excluded locations cannot be set
-        if not (ResourceType.IsDocumentChild(self.resource_type)
-                or ResourceType.IsMetadataChild(self.resource_type)):
-            return False
-
         # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
         if (options is None
             or 'excludedLocations' not in options):
