@@ -1049,14 +1049,16 @@ async def test_close_too_soon_works_fine(caplog, port, http_request):
     assert result  # No exception is good enough here
 
 
-@pytest.mark.skipif(parse_version(aiohttp.__version__) >= parse_version("3.10"), reason="aiohttp 3.10 introduced separate connection timeout")
+@pytest.mark.skipif(
+    parse_version(aiohttp.__version__) >= parse_version("3.10"),
+    reason="aiohttp 3.10 introduced separate connection timeout",
+)
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 @pytest.mark.asyncio
 async def test_aiohttp_timeout_response(http_request):
     transport = AioHttpTransport()
     await transport.open()
-    transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError('Too slow!'))
-
+    transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError("Too slow!"))
 
     request = http_request("GET", f"http://localhost:12345/basic/string")
 
@@ -1067,13 +1069,16 @@ async def test_aiohttp_timeout_response(http_request):
         await transport.send(request)
 
 
-@pytest.mark.skipif(parse_version(aiohttp.__version__) < parse_version("3.10"), reason="aiohttp 3.10 introduced separate connection timeout")
+@pytest.mark.skipif(
+    parse_version(aiohttp.__version__) < parse_version("3.10"),
+    reason="aiohttp 3.10 introduced separate connection timeout",
+)
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 @pytest.mark.asyncio
 async def test_aiohttp_timeout_request(http_request):
     transport = AioHttpTransport()
     await transport.open()
-    transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError('Too slow!'))
+    transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError("Too slow!"))
 
     request = http_request("GET", f"http://localhost:12345/basic/string")
 
