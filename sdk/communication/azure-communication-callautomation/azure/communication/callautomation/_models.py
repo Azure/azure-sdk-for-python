@@ -549,23 +549,28 @@ class TranscriptionSubscription:
     """transcription subscription state."""
     subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
     """subscribed transcription result types."""
+    """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
+    locale: Optional[str]
 
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
-        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None
+        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None,
+        locale: Optional[str] = None,
     ) -> None:
         self.id = id
         self.state = state
         self.subscribed_result_types = subscribed_result_types
+        self.locale = locale
 
     def _to_generated(self):
         return TranscriptionSubscriptionInternal(
             id=self.id,
             state=self.state ,
-            subscribed_result_types=self.subscribed_result_types
+            subscribed_result_types=self.subscribed_result_types,
+            locale=self.locale
         )
 
 

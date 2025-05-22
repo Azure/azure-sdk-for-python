@@ -1038,7 +1038,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def unhold(
-        self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
+        self, 
+        target_participant: "CommunicationIdentifier", 
+        *, 
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -1046,6 +1051,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation. 
+            This setup is per-action. If this is not set, the default callback URL set by
+            CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1054,6 +1064,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         unhold_request = UnholdRequest(
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
+            operation_callback_url=operation_callback_url,
             kwargs=kwargs,
         )
 
