@@ -51,11 +51,9 @@ def collect_statsbeat_metrics(exporter) -> None:
     
     Sets up a periodic metric reader to export metrics and initializes required
     metrics for collecting statistics about the exporter's behavior.
-    
-    Args:
+      Args:
         exporter: The exporter instance to collect metrics from. Contains information
                  about instrumentation key, endpoint, and other configuration details.
-        exporter: The exporter instance to collect metrics from.
     """
     global _STATSBEAT_METRICS
     # Only start statsbeat if did not exist before
