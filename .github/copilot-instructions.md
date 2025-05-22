@@ -15,7 +15,7 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
 ## Prerequisites
 - The user should have a GitHub account and be logged in to GitHub using the GitHub CLI `gh auth login`.
 - The user should have a GitHub Personal Access Token (PAT) with the `repo` scope.
-- The user should be on a new branch for their changes. If they are not, prompt them to create a new branch using `git checkout -b <branch name>`.
+- Make sure the user is on a new branch for their changes. If they are not, prompt them to create a new branch using `git checkout -b <branch name>`.
 
 ## Basic Rules:
 ### When running tsp-client commands:
@@ -27,8 +27,11 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
  instead of a branch name like `main`. If the url does not have a commit hash, use the GitHub API to get the most recent commit hash of the tspconfig.yaml file.
   If you are unable to do this, ask the user to provide the correct url.
    `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`
-- Ensure that node, python, tox, and the required dependencies are installed in your environment (@azure-tools/typespec-client-generator-cli)
+- Ensure that node, python, tox, and the required dependencies are installed in your environment
 
+
+### When following the steps to generate an SDK from TypeSpec:
+- Do not repeat any steps in the instructions. Instead, follow the steps numerically and provide the user with the results of each step before moving on to the next step.
 
 ## Steps to Generate:
 
@@ -50,8 +53,9 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
       - Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`
       - Running pyright validation using tox: `tox -e pyright -c [path to tox.ini] --root .`
       - Running verifytypes validation using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
-   - Fix issues found during validation.
-   - If there are any issues that cannot be fixed, please ask the user to fix them and then come back to proceed with the next step.
+   - Fix any issues found during validation.
+   - After fixing the issues, run the validation again to ensure that all issues are fixed.
+   - Proceed to the next step if all issues are fixed.
 
 ### Step 4: Post-Processing of the SDK
 - Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. 
