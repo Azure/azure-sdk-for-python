@@ -16,7 +16,7 @@ from azure.mgmt.appconfiguration import AppConfigurationManagementClient
     pip install azure-identity
     pip install azure-mgmt-appconfiguration
 # USAGE
-    python deleted_configuration_stores_purge.py
+    python configuration_stores_create_with_telemetry.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,23 @@ def main():
         subscription_id="c80fb759-c965-4c6a-9110-9b2b2d038882",
     )
 
-    client.configuration_stores.begin_purge_deleted(
-        location="westus",
+    response = client.configuration_stores.begin_create(
+        resource_group_name="myResourceGroup",
         config_store_name="contoso",
+        config_store_creation_parameters={
+            "location": "westus",
+            "properties": {
+                "telemetry": {
+                    "resourceId": "/subscriptions/c80fb759-c965-4c6a-9110-9b2b2d038882/resourceGroups/myResourceGroup/providers/microsoft.insights/components/appInsightsName"
+                }
+            },
+            "sku": {"name": "Standard"},
+            "tags": {"myTag": "myTagValue"},
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/preview/2024-06-15-preview/examples/DeletedConfigurationStoresPurge.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/preview/2024-06-15-preview/examples/ConfigurationStoresCreateWithTelemetry.json
 if __name__ == "__main__":
     main()

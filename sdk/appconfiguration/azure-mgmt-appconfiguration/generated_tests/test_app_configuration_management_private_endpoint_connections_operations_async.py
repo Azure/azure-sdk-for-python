@@ -21,11 +21,11 @@ class TestAppConfigurationManagementPrivateEndpointConnectionsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_configuration_store(self, resource_group):
+    async def test_private_endpoint_connections_list_by_configuration_store(self, resource_group):
         response = self.client.private_endpoint_connections.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAppConfigurationManagementPrivateEndpointConnectionsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_private_endpoint_connections_get(self, resource_group):
         response = await self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAppConfigurationManagementPrivateEndpointConnectionsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.private_endpoint_connections.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -64,7 +64,7 @@ class TestAppConfigurationManagementPrivateEndpointConnectionsOperationsAsync(Az
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-06-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -73,13 +73,13 @@ class TestAppConfigurationManagementPrivateEndpointConnectionsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 config_store_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2024-05-01",
+                api_version="2024-06-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

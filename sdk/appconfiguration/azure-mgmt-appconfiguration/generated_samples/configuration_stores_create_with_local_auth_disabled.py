@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,13 +36,16 @@ def main():
         config_store_name="contoso",
         config_store_creation_parameters={
             "location": "westus",
-            "properties": {"disableLocalAuth": True},
+            "properties": {
+                "dataPlaneProxy": {"authenticationMode": "Pass-through", "privateLinkDelegation": "Disabled"},
+                "disableLocalAuth": True,
+            },
             "sku": {"name": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2024-05-01/examples/ConfigurationStoresCreateWithLocalAuthDisabled.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/preview/2024-06-15-preview/examples/ConfigurationStoresCreateWithLocalAuthDisabled.json
 if __name__ == "__main__":
     main()
