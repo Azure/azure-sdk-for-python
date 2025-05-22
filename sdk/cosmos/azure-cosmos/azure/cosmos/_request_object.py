@@ -22,7 +22,6 @@
 """Represents a request object.
 """
 from typing import Optional, Mapping, Any
-from .http_constants import ResourceType
 
 class RequestObject(object):
     def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
