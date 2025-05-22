@@ -56,6 +56,9 @@ def collect_statsbeat_metrics(exporter) -> None:
     
     :param exporter: The exporter instance to collect metrics from. Contains information
                      about instrumentation key, endpoint, and other configuration details.
+    :type exporter: ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter or 
+                    ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter or
+                    ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
     """
     global _STATSBEAT_METRICS
     # Only start statsbeat if did not exist before
