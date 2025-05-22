@@ -9,6 +9,7 @@ from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 
+from typing import Optional, Mapping, Any
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -17,7 +18,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
 
-        def _ReadPartitionKeyRanges(self, collection_link):
+        def _ReadPartitionKeyRanges(self, collection_link: str, feed_options: Optional[Mapping[str, Any]] = None):
             return self.partition_key_ranges
 
     def setUp(self):

@@ -22,7 +22,6 @@
 """Represents a request object.
 """
 from typing import Optional, Mapping, Any
-from . import http_constants
 
 class RequestObject(object):
     def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
@@ -56,15 +55,6 @@ class RequestObject(object):
         self.location_endpoint_to_route = None
 
     def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
-        # If resource types for requests are not one of the followings, excluded locations cannot be set
-        acceptable_resource_types = [
-            http_constants.ResourceType.Document,
-            http_constants.ResourceType.PartitionKey,
-            http_constants.ResourceType.Collection,
-        ]
-        if self.resource_type.lower() not in acceptable_resource_types:
-            return False
-
         # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
         if (options is None
             or 'excludedLocations' not in options):

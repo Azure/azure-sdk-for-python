@@ -64,14 +64,16 @@ class ChangeFeedState(ABC):
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any],
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any],
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
@@ -149,7 +151,8 @@ class ChangeFeedStateV1(ChangeFeedState):
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any],
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         self._change_feed_start_from.populate_request_headers(request_headers)
@@ -159,7 +162,8 @@ class ChangeFeedStateV1(ChangeFeedState):
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None: # pylint: disable=unused-argument
+            request_headers: Dict[str, Any],
+            feed_options: Optional[Dict[str, Any]] = None) -> None: # pylint: disable=unused-argument
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
@@ -277,14 +281,16 @@ class ChangeFeedStateV2(ChangeFeedState):
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any],
+            feed_options = None) -> None:
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
         over_lapping_ranges = \
             routing_provider.get_overlapping_ranges(
                 self._container_link,
-                [self._continuation.current_token.feed_range])
+                [self._continuation.current_token.feed_range],
+                feed_options)
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
@@ -294,14 +300,16 @@ class ChangeFeedStateV2(ChangeFeedState):
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any],
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
         over_lapping_ranges = \
             await async_routing_provider.get_overlapping_ranges(
                 self._container_link,
-                [self._continuation.current_token.feed_range])
+                [self._continuation.current_token.feed_range],
+                feed_options)
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
@@ -313,14 +321,16 @@ class ChangeFeedStateV2(ChangeFeedState):
     def handle_feed_range_gone(
             self,
             routing_provider: SmartRoutingMapProvider,
-            resource_link: str) -> None:
-        self._continuation.handle_feed_range_gone(routing_provider, resource_link)
+            resource_link: str,
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
+        self._continuation.handle_feed_range_gone(routing_provider, resource_link, feed_options)
 
     async def handle_feed_range_gone_async(
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
-            resource_link: str) -> None:
-        await self._continuation.handle_feed_range_gone_async(routing_provider, resource_link)
+            resource_link: str,
+            feed_options: Optional[Dict[str, Any]] = None) -> None:
+        await self._continuation.handle_feed_range_gone_async(routing_provider, resource_link, feed_options)
 
     def apply_server_response_continuation(self, continuation: str, has_modified_response: bool) -> None:
         self._continuation.apply_server_response_continuation(continuation, has_modified_response)

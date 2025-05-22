@@ -1,6 +1,7 @@
 ## Release History
 
 ### 4.12.0b2 (Unreleased)
+* Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 
 #### Features Added
 
