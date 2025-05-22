@@ -91,16 +91,35 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     logger.info(f"Running command: {' '.join(cli_args)}")
     
     try:
-        # TODO: maybe if we return and dont wait for output this will work
         # Run the command and capture the output
         if root_dir:
-            result = subprocess.run(
-                cli_args,
-                capture_output=True,
-                text=True,
-                cwd=root_dir,
-            )
+            if os.name == "nt":  # Windows
+                result = subprocess.Popen(
+                    cli_args,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                    text=True,
+                    cwd=root_dir,
+                )
+                result.wait()  # Wait for it to complete
+            else:
+                result = subprocess.run(
+                    cli_args,
+                    capture_output=True,
+                    text=True,
+                    cwd=root_dir,
+                )
         else:
+            if os.name == "nt":
+                result = subprocess.Popen(
+                    cli_args,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                    text=True
+                )
+                result.wait()
             result = subprocess.run(
                 cli_args,
                 capture_output=True,
@@ -129,7 +148,7 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
 # Register tools for each TypeSpec client generator CLI command
 @mcp.tool("init")
 def init_tool(tsp_config_url: str) -> Dict[str, Any]:
-    """Initialize a typespec client library directory given the url.
+    """Initializes and generates a typespec client library directory given the url.
     
     Args:
         tsp_config_url: The URL to the tspconfig.yaml file.
@@ -153,7 +172,11 @@ def init_tool(tsp_config_url: str) -> Dict[str, Any]:
 
 @mcp.tool("init_local")
 def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
-    """Initialize a typespec client library directory from a local azure-rest-api-specs repo.
+    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
+
+    This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
+    commands are needed to generate the client library.
+
 
     Args:
         tsp_config_path: The path to the local tspconfig.yaml file.
@@ -173,7 +196,7 @@ def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
 
 @mcp.tool("generate")
 def generate_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
-    """Generate a typespec client library given the url.
+    """Generates a typespec client library given the url.
     
     Args:
         project_dir: The directory of the client library to be generated.
@@ -192,7 +215,7 @@ def generate_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
 
 @mcp.tool("update")
 def update_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
-    """Update a typespec client library.
+    """Updates and generates a typespec client library.
     
     This command looks for a tsp-location.yaml file in the current directory to sync a TypeSpec project
     and generate a client library. It calls sync and generate commands internally.
@@ -216,9 +239,9 @@ def update_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
 @mcp.tool("sync") 
 def sync_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
     """Sync a typespec client library from the remote repository.
-    
     This command looks for a tsp-location.yaml file to get the project details and sync them to a temporary directory.
-    
+    A generate or update command is then needed to generate the client library.
+
     Args:
         project_dir: The root directory where the client library will be synced.
     
@@ -238,6 +261,9 @@ def sync_tool(project_dir: Optional[str] = None) -> Dict[str, Any]:
 @mcp.tool("sync_local")
 def sync_local_tool(local_spec_repo: str, project_dir: Optional[str] = None) -> Dict[str, Any]:
     """Sync a typespec client library from a local repository.
+
+    This command looks for a tsp-location.yaml file to get the project details and sync them to a temporary directory.
+    A generate or update command is then needed to generate the client library.
     
     Args:
         local_spec_repo: The path to the local azure-rest-api-specs repository.
