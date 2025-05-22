@@ -4,6 +4,11 @@ environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 name: "test1"
 compute: "azureml:testCompute"
 experiment_name: mfe-test1
+environment_variables:
+  env-str: test_value
+  env-int: 1
+  env-bool: true
+  env-float: 1.0
 properties:
   test_property: test_value
 inputs:
