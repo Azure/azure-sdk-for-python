@@ -1,9 +1,3 @@
-// "id": "/subscriptions/d12535ed-5958-4ce6-8350-b17b3af1d6b1/resourceGroups/oro-billing-exhaust-test/providers/Microsoft.HealthDataAIServices/DeidServices/deid-billing-test",
-// "name": "deid-billing-test",
-// "type": "microsoft.healthdataaiservices/deidservices",
-// "location": "East US 2 EUAP",
-// "tags": {},
-
 @minLength(10)
 param testApplicationOid string
 
@@ -15,10 +9,8 @@ param baseName string
 param location string = resourceGroup().location
 
 @description('The location of the resource. By default, this is the same as the resource group.')
-param deidLocation string = 'eastus2euap'
-param deidLocationShort string = 'eup'
-
-param deploymentTime string = utcNow('u')
+param deidLocation string = 'westus2'
+param deidLocationShort string = 'wus2'
 
 var realtimeDataUserRoleId = 'bb6577c4-ea0a-40b2-8962-ea18cb8ecd4e'
 var batchDataOwnerRoleId = '8a90fa6b-6997-4a07-8a95-30633a7c97b9'
@@ -26,7 +18,7 @@ var storageBlobDataContributor = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
 
 var blobStorageName = take(toLower(replace('blob-${baseName}', '-', '')), 24)
 var blobContainerName = 'container-${baseName}'
-var deidServiceName = 'deid-${baseName}-${deidLocationShort}'
+var deidServiceName = take('deid-${deidLocationShort}-${baseName}', 24)
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: blobStorageName
@@ -187,7 +179,7 @@ resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-
   scope: storageAccount
 }
 
-resource testDeidService 'microsoft.healthdataaiservices/deidservices@2024-02-28-preview' = {
+resource testDeidService 'microsoft.healthdataaiservices/deidservices@2024-09-20' = {
   name: deidServiceName
   location: deidLocation
   identity: {

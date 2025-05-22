@@ -7,6 +7,6 @@ pytest-cov
 pytest-mock
 pytest-xdist
 azure-ai-inference>=1.0.0b4
-azure-ai-projects
+azure-ai-projects<=1.0.0b10
 aiohttp
 -e ../azure-ai-evaluation

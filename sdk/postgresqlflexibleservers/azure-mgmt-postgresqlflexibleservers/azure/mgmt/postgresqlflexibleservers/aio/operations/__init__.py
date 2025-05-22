@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,9 +32,13 @@ from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOper
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
+from ._quota_usages_operations import QuotaUsagesOperations  # type: ignore
 from ._replicas_operations import ReplicasOperations  # type: ignore
 from ._log_files_operations import LogFilesOperations  # type: ignore
 from ._server_threat_protection_settings_operations import ServerThreatProtectionSettingsOperations  # type: ignore
+from ._tuning_options_operations import TuningOptionsOperations  # type: ignore
+from ._tuning_index_operations import TuningIndexOperations  # type: ignore
+from ._tuning_configuration_operations import TuningConfigurationOperations  # type: ignore
 from ._virtual_endpoints_operations import VirtualEndpointsOperations  # type: ignore
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations  # type: ignore
 
@@ -61,9 +66,13 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "PrivateEndpointConnectionOperations",
     "PrivateLinkResourcesOperations",
+    "QuotaUsagesOperations",
     "ReplicasOperations",
     "LogFilesOperations",
     "ServerThreatProtectionSettingsOperations",
+    "TuningOptionsOperations",
+    "TuningIndexOperations",
+    "TuningConfigurationOperations",
     "VirtualEndpointsOperations",
     "VirtualNetworkSubnetUsageOperations",
 ]
