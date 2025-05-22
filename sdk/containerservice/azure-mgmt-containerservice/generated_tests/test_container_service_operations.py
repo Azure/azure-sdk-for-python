@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_03_01 import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestContainerServiceOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

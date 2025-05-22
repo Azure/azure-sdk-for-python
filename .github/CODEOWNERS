@@ -1,19 +1,6 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
 # https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
-################
-# Orphaned paths
-################
-# As of 1/26/2023 these paths have no owners:
-
-# /**
-# /.devcontainer/
-# /.vscode/
-# /conda-releaselogs/
-# /doc/
-# /scripts/
-# /tools/
-
 ###########
 # SDK
 ###########
@@ -264,7 +251,7 @@
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
@@ -318,6 +305,10 @@
 # PRLabel: %Mixed Reality
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
+
+# ServiceLabel: %Online Experimentation
+# PRLabel: %Online Experimentation
+/sdk/onlineexperimentation/                                          @Azure/azure-sdk-write-onlineexperimentation
 
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
@@ -837,9 +828,8 @@
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
-
 ###########
-# Eng Sys
+# Eng Sys and other
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
@@ -848,8 +838,13 @@
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
+/.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
+/.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
 /tools/                                                              @scbedd @mccoyp
+/scripts/                                                            @scbedd @mccoyp
+/doc/                                                                @scbedd @mccoyp
+/conda/                                                              @scbedd @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
