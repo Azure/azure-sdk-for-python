@@ -114,7 +114,7 @@ print("Evaluation created:", evaluation_response)
 
 ### Create an Evaluation(advanced)
 
-Create an evaluation with custom parameters and custom evaluators.
+Create an evaluation with custom parameters and custom evaluators. Details of how to define a custom evaluator are [here](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/custom-evaluators) 
 
 Define common data mapping and initialization parameters
 
@@ -128,7 +128,7 @@ common_init_params = {
     "deployment_name": model_deployment_name,
 }
 
-# Create and register a custom evaluator. Details of how to define a custom evaluator can be found at https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/custom-evaluators
+# Create and register a custom evaluator.
 custom_evaluator = Evaluator(
     id ="custom://friendliness",
     path="<local_folder_path>",
