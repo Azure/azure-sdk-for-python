@@ -14,7 +14,6 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
 
 ## Prerequisites
 - The user should have a GitHub account and be logged in to GitHub using the GitHub CLI `gh auth login`.
-- The user should have a GitHub Personal Access Token (PAT) with the `repo` scope.
 - Make sure the user is on a new branch for their changes. If they are not, prompt them to create a new branch using `git checkout -b <branch name>`.
 
 ## Basic Rules:
@@ -30,56 +29,52 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
 - Ensure that node, python, tox, and the required dependencies are installed in your environment
 
 
-### When following the steps to generate an SDK from TypeSpec:
-- Do not repeat any steps in the instructions. Instead, follow the steps numerically and provide the user with the results of each step before moving on to the next step.
-
 ## Steps to Generate:
+Here is the order of steps to follow when generating an SDK from TypeSpec: Verify Environment, Generate SDK, Static Validation, Post-Processing of the SDK, Commit and Push the Changes, Manage Pull Requests, Finalize the Process.
 
-### Step 1: Validate the correct environment is set up
+### Verify Environment
 - Check if the user has the correct environment set up. If not, guide them to set it up. 
 - Using the `verify_setup` tool in the azure-sdk-validation server is a good way to do this.
 
-### Step 2: Run the correct tsp-client command(s):
+### Generate SDK:
 - The typspec-python mcp server tools should be used to run the commands.
 - If the user gives a local path, run only the local mcp tools using the path to the tspconfig.yaml file in the local azure-rest-api-specs repo.
 - If any of the commands fail, check the error message and guide the user to fix the issue.
    - If a command fails due to a TypeSpec error, direct the user back to the TypeSpec to fix the error.
 - If the user is generating a new package, ensure that the package name is valid and follows the naming conventions for Python packages.
 
-### Step 3: Validate the generated SDK and Fix the issues
-   - Installing the newly generated package and its dev_requirements in a .venv and installing tox.
-   - Use the tox mcp tool from the azure-sdk-validation server to run the following validations when possible:
-      - Running pylint validation using tox: `tox -e pylint -c [path to tox.ini] --root .`
-      - Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`
-      - Running pyright validation using tox: `tox -e pyright -c [path to tox.ini] --root .`
-      - Running verifytypes validation using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
-   - Fix any issues found during validation.
-   - After fixing the issues, run the validation again to ensure that all issues are fixed.
-   - Proceed to the next step if all issues are fixed.
+### Static Validation:
+- Use the tox mcp tool from the azure-sdk-validation server to run the following validations. 
+- After each validation, provide a summary of the results and any errors or warnings that need to be addressed.
+- If any validation fails, fix it and rerun that step before running the next validation.
+- Running pylint validation using tox: `tox -e pylint -c [path to tox.ini] --root .`
+- Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`
+- Running pyright validation using tox: `tox -e pyright -c [path to tox.ini] --root .`
+- Running verifytypes validation using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
 
-### Step 4: Post-Processing of the SDK
+### Post-Processing of the SDK
 - Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. 
 The CHANGELOG entry should look like:
+```
+## 1.0.0 (YYYY-MM-DD)
 
-         ## 1.0.0 (YYYY-MM-DD)
+### Features Added
+- Added a new feature to do X.
 
-         ### Features Added
-         - Added a new feature to do X.
+### Breaking Changes
+   - Changed the way Y is done, which may break existing code that relies on the old behavior.
 
-         ### Breaking Changes
-            - Changed the way Y is done, which may break existing code that relies on the old behavior.
+### Bugs Fixed
+   - Fixed a bug that caused Z to not work as expected.
 
-         ### Bugs Fixed
-            - Fixed a bug that caused Z to not work as expected.
-
-         ### Other Changes
-            - Updated the documentation to reflect the new changes.
-            - Refactored the code to improve readability and maintainability.
-
+### Other Changes
+   - Updated the documentation to reflect the new changes.
+   - Refactored the code to improve readability and maintainability.
+```
 - Confirm that the package version in the most recent CHANGELOG entry is correct based on the API spec version and the last released package version. 
 If the package version is not correct, update it in _version.py and the CHANGELOG entry.
 
-### Step 5: Commit and Push the Changes
+### Commit and Push the Changes
 - Display the list of changed files in the repository and prompt the user to confirm the changes. Ignore uncommitted changes in .github and .vscode folders.
    - If the user confirms:
       - Prompt the user to commit the changes:
@@ -90,7 +85,7 @@ If the package version is not correct, update it in _version.py and the CHANGELO
          - If the push fails due to authentication, prompt the user to run `gh auth login` and retry the push command.
          - If the user does not confirm, prompt them to fix the changes and re-run validation.
 
-### Step 6: Manage Pull Requests
+### Manage Pull Requests
 - Check if a pull request exists for the current branch:
    - If a pull request exists, inform the user and display its details.
    - If no pull request exists:
@@ -99,10 +94,11 @@ If the package version is not correct, update it in _version.py and the CHANGELO
       - Generate a title and description for the pull request based on the changes. Prompt the user to confirm or edit them.
       - Prompt the user to select the target branch for the pull request, defaulting to "main."
       - Create the pull request in DRAFT mode with the specified project, target branch, title, and description.
+      - Always return the link to the pull request to the user.
    - Retrieve and display the pull request summary, including its status, checks, and comments. Highlight any action items.
    - Return the link to the pull request for the user to review and hand off back to the azure-rest-api-specs Agent.
 
-### Step 7: Finalize the Process
+### Finalize the Process
  - Prompt the user to review the pull request and make any necessary changes.
  - If the user is satisfied with the pull request guide them to go back to the TypeSpec project and make any necessary changes.
 
