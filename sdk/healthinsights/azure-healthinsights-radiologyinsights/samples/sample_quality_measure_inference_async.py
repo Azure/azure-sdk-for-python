@@ -187,6 +187,7 @@ def display_quality_measure(radiology_insights_result):
                         print(f"Quality Criterium: {criteria}")
     # [END display_quality_measure]
 
+
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())

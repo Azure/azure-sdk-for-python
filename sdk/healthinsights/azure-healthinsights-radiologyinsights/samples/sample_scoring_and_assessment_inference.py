@@ -149,6 +149,7 @@ def radiology_insights_sync() -> None:
     except Exception as ex:
         raise ex
 
+
 def display_quality_measure(radiology_insights_result):
     # [START display_scoring_and_assessment]
     for patient_result in radiology_insights_result.patient_results:

@@ -140,6 +140,7 @@ def display_guidance(radiology_insights_result):
                 print(f"Ranking: {ranking.value}")
     # [END display_guidance]
 
+
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
