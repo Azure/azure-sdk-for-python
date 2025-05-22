@@ -1,11 +1,11 @@
 ## Release History
 
-### 4.12.0b2 (2025-06-18)
+### 4.12.0b2 (Unrealeased)
 
 #### Features Added
 
 #### Bugs Fixed
-* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR #####]()
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/conflicts)
 
 #### Other Changes
 
