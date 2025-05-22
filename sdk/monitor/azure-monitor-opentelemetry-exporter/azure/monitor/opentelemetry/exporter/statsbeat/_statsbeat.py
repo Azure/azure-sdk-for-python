@@ -51,9 +51,9 @@ def collect_statsbeat_metrics(exporter) -> None:
     
     Sets up a periodic metric reader to export metrics and initializes required
     metrics for collecting statistics about the exporter's behavior.
-      Args:
-        exporter: The exporter instance to collect metrics from. Contains information
-                 about instrumentation key, endpoint, and other configuration details.
+    
+    :param exporter: The exporter instance to collect metrics from. Contains information
+                     about instrumentation key, endpoint, and other configuration details.
     """
     global _STATSBEAT_METRICS
     # Only start statsbeat if did not exist before
@@ -62,7 +62,7 @@ def collect_statsbeat_metrics(exporter) -> None:
             statsbeat_exporter = _StatsBeatExporter(
                 connection_string=_get_stats_connection_string(exporter._endpoint),
                 disable_offline_storage=exporter._disable_offline_storage,
-            )            # Short export interval is 15 minutes by default
+            )
             reader = PeriodicExportingMetricReader(
                 statsbeat_exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,
@@ -84,7 +84,8 @@ def collect_statsbeat_metrics(exporter) -> None:
                 long_interval_threshold,
                 exporter._credential is not None,
                 exporter._distro_version,
-            )        # Export some initial stats on program start
+            )
+        # Export some initial stats on program start
         mp.force_flush()
         # initialize non-initial stats
         _STATSBEAT_METRICS.init_non_initial_metrics()
