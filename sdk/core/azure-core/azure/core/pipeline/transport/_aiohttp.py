@@ -85,7 +85,7 @@ try:
     from aiohttp.client_exceptions import ConnectionTimeoutError
 except ImportError:
 
-    class ConnectionTimeoutError(asyncio.TimeoutError): ...  # type: ignore[no-redef]
+    class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -355,9 +355,9 @@ class AioHttpTransport(AsyncHttpTransport):
             raise
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
+        except ConnectionTimeoutError as err:
+            raise ServiceRequestTimeoutError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            if isinstance(err, ConnectionTimeoutError):
-                raise ServiceRequestTimeoutError(err, error=err) from err
             raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
