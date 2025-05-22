@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.12.0b2 (Unrealeased)
+### 4.12.0b2 (Unreleased)
 
 #### Features Added
 
