@@ -32,3 +32,7 @@ extends:
       safeName: azuremgmtkubernetesconfiguration
     - name: azure-mgmt-kubernetesconfiguration-extensions
       safeName: azuremgmtkubernetesconfigurationextensions
+    - name: azure-mgmt-kubernetesconfiguration-extensiontypes
+      safeName: azuremgmtkubernetesconfigurationextensiontypes
+    - name: azure-mgmt-kubernetesconfiguration-fluxconfigurations
+      safeName: azuremgmtkubernetesconfigurationfluxconfigurations
