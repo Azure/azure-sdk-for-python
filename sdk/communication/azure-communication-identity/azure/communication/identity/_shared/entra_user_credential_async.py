@@ -142,3 +142,4 @@ class EntraTokenCredential(object):
             self._timer.cancel()
         self._timer = None
         self._is_closed.set()
+        

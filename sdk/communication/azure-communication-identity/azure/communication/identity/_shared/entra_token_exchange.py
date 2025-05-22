@@ -7,6 +7,7 @@
 from typing import Any, Optional
 from azure.core.credentials import AccessToken
 import requests
+import threading
 
 class EntraTokenExchangeClient(object):
     """Client for exchanging a customer-provided Entra ID token for a new user access token via the TeamsExtension token exchange endpoint.
@@ -22,7 +23,7 @@ class EntraTokenExchangeClient(object):
             raise ValueError("Customer token must be a non-empty string.")
         self._endpoint = endpoint
         self._customer_token = customer_token
-        # Add any additional initialization here
+        self._lock = threading.Lock()  # Add a lock for thread safety
 
     def exchange_token(self, **kwargs: Any) -> AccessToken:
         """Exchanges the customer-provided Entra ID token for a new user access token.
@@ -30,18 +31,18 @@ class EntraTokenExchangeClient(object):
         :return: An AccessToken instance containing the new user access token and its expiration.
         :rtype: ~azure.core.credentials.AccessToken
         """
-
-        response = requests.post(
-            self._endpoint,
-            headers={
-            "Authorization": f"Bearer {self._customer_token}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            },
-            json=kwargs.get("payload", {}),
-            timeout=30,
-        )
-        response.raise_for_status()
-        token_data = response.json()
-        return AccessToken(token_data["accessToken"]["token"], token_data["accessToken"]["expiresOn"])
+        with self._lock:
+            response = requests.post(
+                self._endpoint,
+                headers={
+                    "Authorization": f"Bearer {self._customer_token}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                json=kwargs.get("payload", {}),
+                timeout=30,
+            )
+            response.raise_for_status()
+            token_data = response.json()
+            return AccessToken(token_data["accessToken"]["token"], token_data["accessToken"]["expiresOn"])
     
