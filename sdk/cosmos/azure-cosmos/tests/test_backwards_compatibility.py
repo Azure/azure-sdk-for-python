@@ -89,7 +89,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         assert len(container_list2) > 0
         container2_read = container2.read(session_token=str(uuid.uuid4()))
         assert container2_read is not None
-        replace_container = database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
