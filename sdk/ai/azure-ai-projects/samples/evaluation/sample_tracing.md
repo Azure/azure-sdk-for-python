@@ -1,4 +1,30 @@
-**Content Recording**
+# Table of Contents
+
+- [1. Setup](#1-setup)
+  - [1.1 Content Recording](#11-content-recording)
+  - [1.2 Enable Azure Monitor Tracing](#12-enable-azure-monitor-tracing)
+  - [1.3 Enable Console Tracing](#13-enable-console-tracing)
+- [2. Use Cases & Features](#2-use-cases--features)
+  - [2.1 Collect Traces from Scenario Under One Span](#21-collect-traces-from-scenario-under-one-span)
+  - [2.2 Trace Tool Calls Streaming](#22-trace-tool-calls-streaming)
+  - [2.3 Trace Tool Calls Non-Streaming](#23-trace-tool-calls-non-streaming)
+  - [2.4 Trace Your Own Function](#24-trace-your-own-function)
+  - [2.5 Add Custom Attributes to Spans](#25-add-custom-attributes-to-spans)
+- [3 View Azure Monitor Traces in Azure AI Foundry](#3-view-azure-monitor-traces-in-azure-ai-foundry)
+- [4 Sample Spans](#4-sample-spans)
+  - [4.1 Create Agent](#41-create-agent)
+  - [4.2 Create Thread](#42-create-thread)
+  - [4.3 Create Message](#43-create-message)
+  - [4.4 Submit Tool Outputs](#44-submit-tool-outputs)
+  - [4.5 Process Thread Run Streaming with Tool Calls](#45-process-thread-run-streaming-with-tool-calls)
+  - [4.6 List Messages](#46-list-messages)
+  - [4.7 Tracing Own Function](#47-tracing-own-function)
+  - [4.8 Trace with Custom Attribute](#48-trace-with-custom-attribute)
+  - [4.9 List Run Steps](#49-list-run-steps)
+
+# 1. Setup
+
+## 1.1 Content Recording
 
 Content recording determines whether message contents and tool call details—such as parameter values and return values—are captured in traces. These contents may include personal information. By default, content recording is disabled. To enable it, set the following environment variable to TRUE:
 
@@ -6,10 +32,10 @@ Content recording determines whether message contents and tool call details—su
 set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=TRUE
 ```
 
-**Enable Azure Monitor Tracing**
+## 1.2 Enable Azure Monitor Tracing
 
 Using environment variable:
-```
+```python
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -18,7 +44,7 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 
 Using connection string from projects client:
 
-```
+```python
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -35,11 +61,11 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 configure_azure_monitor(connection_string=application_insights_connection_string)
 ```
 
-**Enable Console Tracing**
+## 1.3 Enable Console Tracing
 
 Without AIProjectClient:
 
-```
+```python
 from azure.core.settings import settings
 settings.tracing_implementation = "opentelemetry"
 from opentelemetry import trace
@@ -58,17 +84,19 @@ AIAgentsInstrumentor().instrument()
 
 With AIProjectClient (pending fix):
 
-```
+```python
 from azure.ai.projects import enable_telemetry
 
 enable_telemetry(destination=sys.stdout)
 ```
 
-**Collect Traces from Scenario Under One Span**
+# 2. Use Cases & Features
+
+## 2.1 Collect Traces from Scenario Under One Span
 
 Creating a span that contain the spans from a single scenario will make it more convenient to view the traces.
 
-```
+```python
 # Create the desired name for the scenario
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
@@ -78,12 +106,12 @@ with tracer.start_as_current_span(scenario):
 ```
 
 
-**Trace Tool Calls Streaming**
+## 2.2 Trace Tool Calls Streaming
 
 This section demonstrates Agent API usage that will provide detailed traces of the run, including tool calls.
 
 Setup agent with BingGroundingTool:
-```
+```python
 bing = BingGroundingTool(connection_id=bing_connection_id)
 
 agent = agents_client.create_agent(
@@ -95,7 +123,7 @@ agent = agents_client.create_agent(
 ```
 
 Setup agent with FunctionTool using ToolSet:
-```
+```python
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
 toolset.add(functions)
@@ -110,7 +138,7 @@ agent = agents_client.create_agent(
 ```
 
 Stream the run using AgentEventHandler or your own event handler that is derived from AgentEventHandler:
-```
+```python
 from azure.ai.agents.models import AgentEventHandler
 
 ...
@@ -119,19 +147,19 @@ with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_han
     stream.until_done()
 ```
 
-**Trace Tool Calls Non-Streaming**
+## 2.3 Trace Tool Calls Non-Streaming
 
 Listing the run steps will trace the tool calls that were part of the run:
-```
+```python
 agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
 for step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
     print(f"Run step ID: {step.id}, Type: {step.type}, Status: {step.status}")
 ```
 
-**Trace Your Own Function**
+## 2.4 Trace Your Own Function
 
 The @trace_function is provided for tracing your own functions:
-```
+```python
 # The trace_function decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
 @trace_function()
@@ -156,11 +184,11 @@ def fetch_weather(location: str) -> str:
     return weather_json
 ```
 
-**Add Custom Attributes to Spans**
+## 2.5 Add Custom Attributes to Spans
 
 Define your own span processor which adds your custom attributes:
 
-```
+```python
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
 class CustomAttributeSpanProcessor(SpanProcessor):
@@ -182,23 +210,23 @@ class CustomAttributeSpanProcessor(SpanProcessor):
 
 Add your custom span processor to the global trace provider:
 
-```
+```python
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
 ```
 
-**View Azure Monitor Traces in Azure AI Foundry**
+# 3 View Azure Monitor Traces in Azure AI Foundry
 
 Traces can be viewed on the Tracing tab in the Azure AI Foundry.
 
 ![Sample trace in Azure AI Foundry](trace.png)
 
-**Sample Spans**
+# 4 Sample Spans
 
 Following are some sample console traces from various Agent API scenarios to show what kind of info gets collected as part of the traces.
 
-***Create Agent***
-```
+## 4.1 Create Agent
+```json
 {
     "name": "create_agent my-agent",
     "context": {
@@ -244,8 +272,8 @@ Following are some sample console traces from various Agent API scenarios to sho
 }
 ```
 
-**Create Thread**
-```
+## 4.2 Create Thread
+```json
 {
     "name": "create_thread",
     "context": {
@@ -280,8 +308,8 @@ Following are some sample console traces from various Agent API scenarios to sho
 }
 ```
 
-**Create Message**
-```
+## 4.3 Create Message
+```json
 {
     "name": "create_message",
     "context": {
@@ -327,8 +355,8 @@ Following are some sample console traces from various Agent API scenarios to sho
 }
 ```
 
-**Submit Tool Outputs**
-```
+## 4.4 Submit Tool Outputs
+```json
 {
     "name": "submit_tool_outputs",
     "context": {
@@ -421,10 +449,10 @@ Following are some sample console traces from various Agent API scenarios to sho
 }
 ```
 
-**Process Thread Run Streaming with Tool Calls**
+## 4.5 Process Thread Run Streaming with Tool Calls
 
 With function tool:
-```
+```json
 {
     "name": "process_thread_run",
     "context": {
@@ -537,7 +565,7 @@ With function tool:
 
 With bing grounding:
 
-```
+```json
 {
     "name": "process_thread_run",
     "context": {
@@ -611,8 +639,8 @@ With bing grounding:
 }
 ```
 
-**List Messages**
-```
+## 4.6 List Messages
+```json
 {
     "name": "list_messages",
     "context": {
@@ -670,8 +698,8 @@ With bing grounding:
 }
 ```
 
-**Tracing Own Function**
-```
+## 4.7 Tracing Own Function
+```json
 {
     "name": "fetch_weather",
     "context": {
@@ -705,8 +733,8 @@ With bing grounding:
 }
 ```
 
-**Trace with Custom Attribute**
-```
+## 4.8 Trace with Custom Attribute
+```json
 {
     "name": "create_message",
     "context": {
@@ -754,8 +782,8 @@ With bing grounding:
 }
 ```
 
-**List Run Steps**
-```
+## 4.9 List Run Steps
+```json
 {
     "name": "list_run_steps",
     "context": {
