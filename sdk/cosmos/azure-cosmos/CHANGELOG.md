@@ -1,5 +1,14 @@
 ## Release History
 
+### 4.12.0b2 (2025-06-18)
+
+#### Features Added
+
+#### Bugs Fixed
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR #####]()
+
+#### Other Changes
+
 ### 4.12.0b1 (2025-05-19)
 
 #### Features Added
