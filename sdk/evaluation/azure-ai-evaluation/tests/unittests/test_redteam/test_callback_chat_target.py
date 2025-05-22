@@ -6,18 +6,11 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 import asyncio
 
-try:
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
+from pyrit.common import initialize_pyrit, IN_MEMORY
 
-if has_pyrit:   
-    from pyrit.common import initialize_pyrit, IN_MEMORY
+from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
 
-    from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
-
-    initialize_pyrit(memory_db_type=IN_MEMORY)
+initialize_pyrit(memory_db_type=IN_MEMORY)
 
 @pytest.fixture(scope="function")
 def mock_callback():
@@ -63,7 +56,6 @@ def mock_request():
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetInitialization:
     """Test the initialization of _CallbackChatTarget."""
 
@@ -80,7 +72,6 @@ class TestCallbackChatTargetInitialization:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetPrompts:
     """Test _CallbackChatTarget prompt handling."""
     
@@ -134,7 +125,6 @@ class TestCallbackChatTargetPrompts:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetFeatures:
     """Test _CallbackChatTarget feature support."""
 
