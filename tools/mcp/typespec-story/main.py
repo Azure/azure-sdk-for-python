@@ -165,7 +165,7 @@ def init_tool(tsp_config_url: str) -> Dict[str, Any]:
     args["tsp-config"] = updated_url
     
     # If root_dir is not provided, use the repository root
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
     logger.info(f"No root_dir provided, using repository root: {root_dir}")
     
     return run_typespec_cli_command("init", args, root_dir=root_dir)

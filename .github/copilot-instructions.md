@@ -9,12 +9,13 @@
 # Generating an SDK From TypeSpec
 
 ## Agent Context
-- Check if there are any TypeSpec project paths in the context. If there are, use those paths to locally generate the SDK from the tsp-config.yaml file. If there 
-are no TypeSpec project paths in the context, ask the user for the path to the tsp-config.yaml file. If the user does not have a path, ask them to provide one.
+- Check if there are any TypeSpec project paths in the context. If there are, use those paths to locally generate the SDK from the tspconfig.yaml file. If there 
+are no TypeSpec project paths in the context, ask the user for the path to the tspconfig.yaml file. If the user does not have a path, ask them to provide one.
 
 ## Prerequisites
 - The user should have a GitHub account and be logged in to GitHub using the GitHub CLI `gh auth login`.
 - The user should have a GitHub Personal Access Token (PAT) with the `repo` scope.
+- The user should be on a new branch for their changes. If they are not, prompt them to create a new branch using `git checkout -b <branch name>`.
 
 ## Basic Rules:
 ### When running tsp-client commands:
@@ -37,6 +38,7 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
 
 ### Step 2: Run the correct tsp-client command(s):
 - The typspec-python mcp server tools should be used to run the commands.
+- If the user gives a local path, run only the local mcp tools using the path to the tspconfig.yaml file in the local azure-rest-api-specs repo.
 - If any of the commands fail, check the error message and guide the user to fix the issue.
    - If a command fails due to a TypeSpec error, direct the user back to the TypeSpec to fix the error.
 - If the user is generating a new package, ensure that the package name is valid and follows the naming conventions for Python packages.
@@ -52,28 +54,26 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
    - If there are any issues that cannot be fixed, please ask the user to fix them and then come back to proceed with the next step.
 
 ### Step 4: Post-Processing of the SDK
-- Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. If the package version is not correct, update it in _version.py and the CHANGELOG entry.
-- Confirm that the package version in the most recent CHANGELOG entry is correct based on the API spec version and the last released package version. 
-
+- Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. 
 The CHANGELOG entry should look like:
-```markdown
-# Release History
 
-## 1.0.0 (YYYY-MM-DD)
+         ## 1.0.0 (YYYY-MM-DD)
 
-### Features Added
-  - Added a new feature to do X.
+         ### Features Added
+         - Added a new feature to do X.
 
-### Breaking Changes
-   - Changed the way Y is done, which may break existing code that relies on the old behavior.
+         ### Breaking Changes
+            - Changed the way Y is done, which may break existing code that relies on the old behavior.
 
-### Bugs Fixed
-   - Fixed a bug that caused Z to not work as expected.
+         ### Bugs Fixed
+            - Fixed a bug that caused Z to not work as expected.
 
-### Other Changes
-   - Updated the documentation to reflect the new changes.
-   - Refactored the code to improve readability and maintainability.
-```
+         ### Other Changes
+            - Updated the documentation to reflect the new changes.
+            - Refactored the code to improve readability and maintainability.
+
+- Confirm that the package version in the most recent CHANGELOG entry is correct based on the API spec version and the last released package version. 
+If the package version is not correct, update it in _version.py and the CHANGELOG entry.
 
 ### Step 5: Commit and Push the Changes
 - Display the list of changed files in the repository and prompt the user to confirm the changes. Ignore uncommitted changes in .github and .vscode folders.
@@ -96,7 +96,7 @@ The CHANGELOG entry should look like:
       - Prompt the user to select the target branch for the pull request, defaulting to "main."
       - Create the pull request in DRAFT mode with the specified project, target branch, title, and description.
    - Retrieve and display the pull request summary, including its status, checks, and comments. Highlight any action items.
-   - Return the link to the pull request for the user to review.
+   - Return the link to the pull request for the user to review and hand off back to the azure-rest-api-specs Agent.
 
 ### Step 7: Finalize the Process
  - Prompt the user to review the pull request and make any necessary changes.
