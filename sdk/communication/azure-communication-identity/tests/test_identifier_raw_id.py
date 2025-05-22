@@ -262,8 +262,43 @@ class IdentifierRawIdTest(unittest.TestCase):
             PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768", asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         _assert_communication_identifier(
+            "4:anonymous",
+            PhoneNumberIdentifier(value="anonymous", is_anonymous=True),
+        )
+        _assert_communication_identifier(
+            "4:+112345556789",
+            PhoneNumberIdentifier(value="+112345556789", is_anonymous=False),
+        )
+        _assert_communication_identifier(
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="+112345556789", asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="+112345556789", is_anonymous=False, asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
+        )
+        _assert_communication_identifier(
+            "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC",
+            ),
+        )
+        _assert_communication_identifier(
+            "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD",
+            ),
+        )
+        _assert_communication_identifier(
+            "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH",
+            ),
         )
         # cspell:enable
         _assert_communication_identifier(
@@ -273,6 +308,7 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_communication_identifier("", UnknownIdentifier(identifier=""))
         with pytest.raises(Exception):
             identifier_from_raw_id(None)
+        
 
     def test_roundtrip(self):
         _assert_roundtrip("8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130")
