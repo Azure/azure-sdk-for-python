@@ -1,5 +1,21 @@
 # Release History
 
+## 5.0.0b1 (2025-06-15)
+
+### Features Added
+
+  - Model `ConfigurationStore` added property `default_key_value_revision_retention_period_in_seconds`
+  - Model `ConfigurationStore` added property `telemetry`
+  - Model `ConfigurationStoreUpdateParameters` added property `telemetry`
+  - Model `ConfigurationStoreUpdateParameters` added property `default_key_value_revision_retention_period_in_seconds`
+  - Added model `TelemetryProperties`
+  - Method `KeyValuesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, config_store_name: str, key_value_name: str, key_value_parameters: KeyValue, content_type: str)`
+  - Method `KeyValuesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, config_store_name: str, key_value_name: str, key_value_parameters: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Method `KeyValuesOperations.create_or_update` removed default value `None` from its parameter `key_value_parameters`
+
 ## 4.0.0 (2024-10-29)
 
 ### Breaking Changes
