@@ -27,7 +27,7 @@ from typing import IO, Sequence, Type, Union, overload, List, cast
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt64, _UInt128
-from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128
+from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128, murmurhash3_32 as _murmurhash3_32
 from ._routing.routing_range import Range as _Range
 
 
@@ -187,9 +187,34 @@ class PartitionKey(dict):
                 cast(List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]], [pk_value]))
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
-    def _get_effective_partition_key_for_hash_partitioning(self) -> str:
-        # We shouldn't be supporting V1
-        return ""
+    @staticmethod
+    def _as_unsigned_long(x: int) -> int: return x & 0xFFFFFFFF
+
+    @staticmethod
+    def _truncate_for_v1_hashing(value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]) -> Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]:
+        if isinstance(value, str):
+            return value[:100]
+
+        return value
+
+    @staticmethod
+    def _get_effective_partition_key_for_hash_partitioning(
+            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+    ) -> str:
+        with (BytesIO() as ms):
+            truncated_components: List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]] = \
+                [None] + [PartitionKey._truncate_for_v1_hashing(v) for v in pk_value]
+
+            for component in truncated_components[1:]:
+                PartitionKey._write_for_hashing(component, ms)
+
+            ms_bytes: bytes = ms.getvalue()
+            hash_as_int: int = _murmurhash3_32(bytearray(ms_bytes),len(bytes), 0)
+            hash_value = float(PartitionKey._as_unsigned_long(hash_as_int))
+
+            truncated_components[0] = hash_value
+
+        return _to_hex_encoded_binary_string(truncated_components)
 
     def _get_effective_partition_key_string(
         self,
@@ -205,16 +230,31 @@ class PartitionKey(dict):
         if kind == 'Hash':
             version = self.version or 2
             if version == 1:
-                return self._get_effective_partition_key_for_hash_partitioning()
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
             if version == 2:
-                return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
         return _to_hex_encoded_binary_string(pk_value)
 
+    @staticmethod
+    def _write_for_hashing(
+            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+            writer: IO[bytes]
+    ) -> None:
+        PartitionKey._write_for_hashing_core(value, bytes([0]), writer)
+
+    @staticmethod
     def _write_for_hashing_v2(
-        self,
         value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        writer: IO[bytes]
+    ) -> None:
+        PartitionKey._write_for_hashing_core(value, bytes([0xFF]), writer)
+
+    @staticmethod
+    def _write_for_hashing_core(
+        value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        string_suffix: bytes,
         writer: IO[bytes]
     ) -> None:
         if value is True:
@@ -232,17 +272,18 @@ class PartitionKey(dict):
         elif isinstance(value, str):
             writer.write(bytes([_PartitionKeyComponentType.String]))
             writer.write(value.encode('utf-8'))
-            writer.write(bytes([0xFF]))
+            writer.write(string_suffix)
         elif isinstance(value, _Undefined):
             writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
+
+    @staticmethod
     def _get_effective_partition_key_for_hash_partitioning_v2(
-        self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
-                self._write_for_hashing_v2(component, ms)
+                PartitionKey._write_for_hashing_v2(component, ms)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
@@ -255,8 +296,8 @@ class PartitionKey(dict):
 
         return ''.join('{:02X}'.format(x) for x in hash_bytes)
 
+    @staticmethod
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(
-        self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         sb = []
@@ -265,7 +306,7 @@ class PartitionKey(dict):
             binary_writer = ms  # In Python, you can write bytes directly to a BytesIO object
 
             # Assuming paths[i] is the correct object to call write_for_hashing_v2 on
-            self._write_for_hashing_v2(value, binary_writer)
+            PartitionKey._write_for_hashing_v2(value, binary_writer)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
