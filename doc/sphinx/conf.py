@@ -56,7 +56,9 @@ for example_file in all_files:
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
-              'myst_parser', 'sphinxcontrib.jquery']
+              'myst_parser', 'sphinxcontrib.jquery', 'sphinxcontrib.mermaid']
+
+myst_fence_as_directive = ["mermaid"]
 
 intersphinx_mapping = {
     # Dependencies
