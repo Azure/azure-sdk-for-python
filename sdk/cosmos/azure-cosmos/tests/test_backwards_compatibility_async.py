@@ -100,21 +100,21 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 404
 
         # Container
-        container = await database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container = await self.created_database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                               etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert container is not None
-        container2 = await database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container2 = await self.created_database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert container2 is not None
         container2_read = await container2.read()
         assert container2_read is not None
-        replace_container = await database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
+        replace_container = await self.created_database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
                                                        etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         replace_container_read = await replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        await database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        await self.created_database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
             await container2.read()
             pytest.fail("Container read should have failed")
