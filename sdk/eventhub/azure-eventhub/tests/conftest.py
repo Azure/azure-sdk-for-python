@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import sys
 import os
+import tempfile
 import pytest
 import logging
 import uuid
@@ -15,7 +17,11 @@ import signal
 import ssl
 import functools
 
-from typing import Callable
+# Load environment variables from .env file automatically for all tests
+from dotenv import load_dotenv
+load_dotenv()
+
+from typing import Callable, Literal
 
 from functools import partial
 from logging.handlers import RotatingFileHandler
@@ -42,6 +48,8 @@ socket_transport_ids = ["amqp", "ws"]
 
 from devtools_testutils import get_region_override, get_credential as get_devtools_credential
 from tracing_common import FakeSpan
+from typing import Dict, Any
+from typing import TypedDict
 
 collect_ignore = []
 PARTITION_COUNT = 2
@@ -52,18 +60,146 @@ EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
+class FaultInjectorConfig(TypedDict):
+    path: None
+    custom_endpoint_address: str
+    transport_type: TransportType
+    logs_dir: str
+
+def setup_faultinjector(test_name: str) -> FaultInjectorConfig | None:
+    if os.environ.get("USE_FAULTINJECTOR") != 'true':
+        print("USE_FAULTINJECTOR is not enabled. See conftest.py::setup_faultinjector for requirements.")
+        return
+
+    # Set up the faultinjector environment variables
+    env_path = os.environ.get("FAULTINJECTOR_PATH")
+    faultinjector_path = os.path.abspath(env_path) if env_path else None
+    
+    # TODO: is test_name always a safe directory/filename?
+    logs_dir = os.path.join(os.path.dirname(__file__), "faultinjector_logs", test_name)
+
+    os.makedirs(logs_dir, exist_ok=True)
+
+    return {
+        "path": faultinjector_path,
+        "custom_endpoint_address": "sb://localhost:5671",   # TODO: we can fix this up later to use a dynamic address
+        "transport_type": TransportType.Amqp,
+        "logs_dir": logs_dir,
+    }
+
+@pytest.fixture(scope="function")
+def faultinjector_detach_after_delay(live_eventhub, request):
+    yield from faultinjector("detach_after_delay", live_eventhub, request)
+
+@pytest.fixture(scope="function")
+def faultinjector_multi_transfer(live_eventhub, request):
+    yield from faultinjector("multi_transfer", live_eventhub, request)
+
+@pytest.fixture(scope="function")
+def faultinjector_disconnect(live_eventhub, request):
+    yield from faultinjector("disconnect", live_eventhub, request)
+
+def faultinjector(type : Literal["detach_after_delay", "multi_transfer", "disconnect"], live_eventhub, request):
+    test_name = request.node.name
+
+    # make testname safe for a directory name
+    test_name = test_name.replace("[", "_").replace("]", "_")
+
+    config = setup_faultinjector(test_name)
+
+    if not config:
+        print("Fault injector not enabled. See conftest.py::setup_faultinjector for requirements.")
+        yield None
+        return
+    
+    if not type:
+        print("Do not use faultinjector directly, choose a specific fault injector (ie: faultinjector_detach_after_delay)")
+        yield None
+        return
+
+    print("Setting up fault injector")
+
+    # Create a temporary file for the faultinjector log
+    with tempfile.NamedTemporaryFile(prefix="faultinjector_", suffix=".log", mode="w") as log_file:
+        # Optionally kill any existing process if needed, similar to amqpproxy logic
+        # Start the faultinjector process
+        log_file.write(f"####### Starting faultinjector for test: {test_name}\n")
+        log_file.write("Starting faultinjector process...\n")
+        log_file.flush()
+
+        args = []
+
+        if type == "detach_after_delay":
+            args = [
+                "detach_after_delay",
+                "--host", live_eventhub["hostname"],
+                "--logs", config["logs_dir"],
+                "--desc", "DETACHED FOR FAULT INJECTOR TEST"
+            ]
+        elif type == "transfer_delay":
+            args = [
+                "transfer_delay",
+                "--after", "1",     # start delaying after 1 received event
+                "--delay", "5",     # delay for 5 seconds for each subsequent event
+                "--host", live_eventhub["hostname"],
+                "--logs", config["logs_dir"],
+            ]
+        elif type == "disconnect":
+            args = [
+                "disconnect",
+                "--host", live_eventhub["hostname"],
+                "--logs", config["logs_dir"],
+            ]
+        else:
+            # Default case or unknown fault type
+            log_file.write(f"Unknown fault type: {type}\n")
+            log_file.flush()
+            args = []
+
+        process = subprocess.Popen(
+            [
+                config["path"],         # faultinjector path
+                *args,
+            ],
+            # stdout=log_file,
+            # stderr=log_file,            
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            preexec_fn=os.setsid
+        )
+
+        if not process:
+            log_file.write("Failed to start faultinjector.\n")
+            log_file.seek(0)     # just dump the entire log to the console if we can't start it.
+            print(log_file.read())
+            raise RuntimeError(f"Failed to start faultinjector. See output for details.")
+    
+        try:
+            time.sleep(1)
+            # Add proxy args to test context
+            # TODO: Um..not sure if I actually have 'request' here or not.
+            # request.node.user_properties.append(("client_args", config))
+            yield config
+        
+            # this is after the test has completed.
+
+            print(f"===> Fault injector logs are in '{config['logs_dir']}'")
+
+        finally:
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+            process.wait()
+
 # Set up the amqpproxy environment variables
-path = os.environ.get("AMQPPROXY_PATH")
-AMQPPROXY_PATH = os.path.abspath(path) if path else None
+amqpproxy_path = os.environ.get("AMQPPROXY_PATH")
+AMQPPROXY_PATH = os.path.abspath(amqpproxy_path) if amqpproxy_path else None
 RECORD_AMQP_PROXY = os.environ.get("RECORD_AMQP_PROXY") == 'true'
 AMQPPROXY_RECORDINGS_DIR = os.path.join(os.path.dirname(__file__), "amqpproxy_recordings")
 if RECORD_AMQP_PROXY:
     if not os.path.exists(AMQPPROXY_RECORDINGS_DIR):
         os.makedirs(AMQPPROXY_RECORDINGS_DIR)
 
-    # Create/overwrite the amqp proxy startup log file
+    # Create/overwrite the amqpproxy startup log file
     AMQPPROXY_STARTUP_LOG = os.path.join(AMQPPROXY_RECORDINGS_DIR, "amqpproxy_startup.log")
-    # Create/overwrite the amqp proxy startup log file
     if os.path.exists(AMQPPROXY_STARTUP_LOG):
         with open(AMQPPROXY_STARTUP_LOG, "w") as log_file:
             log_file.write("")  # Overwrite the file with an empty string
@@ -82,7 +218,6 @@ AMQPPROXY_CLIENT_ARGS = {
     "ssl_context": AMQPPROXY_SSL_CONTEXT,
     "transport_type": AMQPPROXY_TRANSPORT_TYPE,
 }
-
 
 def pytest_addoption(parser):
     parser.addoption("--sleep", action="store", default="True", help="sleep on reconnect test: True or False")
@@ -154,7 +289,6 @@ def get_logger(filename, level=logging.INFO):
 
 
 log = get_logger(None, logging.DEBUG)
-
 
 @pytest.fixture(scope="session")
 def timeout_factor(uamqp_transport):
