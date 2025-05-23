@@ -61,7 +61,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        await self.database.delete_container(created_container.id)
+        await database.delete_container(created_container.id)
 
     async def test_container_read_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
