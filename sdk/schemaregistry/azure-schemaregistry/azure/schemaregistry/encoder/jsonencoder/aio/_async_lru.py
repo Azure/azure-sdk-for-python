@@ -51,7 +51,7 @@ def _done_callback(fut, task):
         fut.cancel()
         return
 
-    exc = task.exception()
+    exc = task.exception()  # pylint: disable=do-not-use-logging-exception
     if exc is not None:
         fut.set_exception(exc)
         return
