@@ -15,7 +15,7 @@ from azure.mgmt.neonpostgres import NeonPostgresMgmtClient
     pip install azure-identity
     pip install azure-mgmt-neonpostgres
 # USAGE
-    python computes_create_or_update_maximum_set_gen.py
+    python organizations_list_by_resource_group_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,26 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.computes.begin_create_or_update(
+    response = client.organizations.list_by_resource_group(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        compute_name="entity-name",
-        resource={
-            "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "cpuCores": 29,
-                "entityName": "entity-name",
-                "memory": 2,
-                "region": "mcfyojzptdliawyuxyxzqxif",
-                "status": "upwdpznysuwt",
-            }
-        },
-    ).result()
-    print(response)
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-03-01/Computes_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01/Organizations_ListByResourceGroup_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,7 +32,7 @@ def main():
 
     response = client.organizations.begin_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="contoso-org",
         properties={
             "properties": {
                 "companyDetails": {
@@ -42,6 +42,18 @@ def main():
                     "domain": "snoshqumfsthyofpnrsgyjhszvgtj",
                     "numberOfEmployees": 12,
                     "officeAddress": "icirtoqmmozijk",
+                },
+                "marketplaceDetails": {
+                    "offerDetails": {
+                        "offerId": "bunyeeupoedueofwrzej",
+                        "planId": "nlbfiwtslenfwek",
+                        "planName": "ljbmgpkfqklaufacbpml",
+                        "publisherId": "hporaxnopmolttlnkbarw",
+                        "termId": "aedlchikwqckuploswthvshe",
+                        "termUnit": "qbcq",
+                    },
+                    "subscriptionId": "yxmkfivp",
+                    "subscriptionStatus": "PendingFulfillmentStart",
                 },
                 "partnerOrganizationProperties": {
                     "organizationId": "fynmpcbivqkwqdfhrmsyusjd",
@@ -130,7 +142,7 @@ def main():
                     "upn": "mixcikvxlnhkfugetqlngz",
                 },
             },
-            "tags": {"key609": "qyosjypklxtiamqebd"},
+            "tags": {},
         },
     ).result()
     print(response)
