@@ -89,9 +89,9 @@ def setup_faultinjector(test_name: str) -> FaultInjectorConfig | None:
 
 @pytest.fixture(scope="function")
 def faultinjector_detach_after_delay(live_eventhub, request):
-    yield from faultInjector("detach_after_delay", live_eventhub, request)
+    yield from faultinjector("detach_after_delay", live_eventhub, request)
 
-def faultInjector(type : Literal["detach_after_delay"], live_eventhub, request):
+def faultinjector(type : Literal["detach_after_delay"], live_eventhub, request):
     test_name = request.node.name
 
     # make testname safe for a directory name
