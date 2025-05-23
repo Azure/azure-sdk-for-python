@@ -44,6 +44,7 @@ class QueryIterable(PageIterator):
         partition_key=None,
         continuation_token=None,
         response_hook=None,
+        raw_response_hook=None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -74,7 +75,8 @@ class QueryIterable(PageIterator):
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
-            self._client, self._collection_link, self._query, self._options, self._fetch_function, response_hook)
+            self._client, self._collection_link, self._query, self._options, self._fetch_function,
+            response_hook, raw_response_hook)
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):

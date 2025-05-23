@@ -10,7 +10,7 @@ import uuid
 from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos.http_constants import StatusCodes, HttpHeaders
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
                           http_constants, _retry_utility)
@@ -57,10 +57,10 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
 
-    TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
 
@@ -296,6 +296,14 @@ class FakeHttpResponse:
 
     def body(self):
         return None
+
+def no_token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is None
+
+def token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is not None
 
 
 class MockConnectionRetryPolicy(RetryPolicy):
