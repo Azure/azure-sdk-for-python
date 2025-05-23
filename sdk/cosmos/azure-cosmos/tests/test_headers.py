@@ -106,7 +106,7 @@ class TestHeaders(unittest.TestCase):
     def test_request_precedence_throughput_bucket(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
-        created_db = client.create_database("test_db" + str(uuid.uuid4()))
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
         created_container = created_db.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
