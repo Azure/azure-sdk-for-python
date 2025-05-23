@@ -3,6 +3,7 @@
 ### 4.12.0b2 (Unreleased)
 
 #### Features Added
+* Added option to enable automatic retries for write operations. See [PR]().
 
 #### Breaking Changes
 

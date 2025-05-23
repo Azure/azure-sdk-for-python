@@ -334,6 +334,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         int or ~azure.cosmos.ConnectionRetryPolicy
     :ivar boolean ResponsePayloadOnWriteDisabled:
         Indicates whether service should be instructed to skip sending response payloads
+    :ivar boolean RetryNonIdempotentWrites:
+        Indicates whether the client should retry non-idempotent write requests for items
     """
 
     __defaultRequestTimeout: int = 5  # seconds
@@ -360,6 +362,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
+        self.RetryNonIdempotentWrites: bool = False
 
     def override_dba_timeouts(
             self,

@@ -772,6 +772,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         request_params = _request_object.RequestObject(typ, documents._OperationType.Create)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options.pop('retryWrite', False))
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -912,6 +913,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options.pop('retryWrite', False))
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -1473,6 +1475,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Patch)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options.pop('retryWrite', False))
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -1578,6 +1581,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options.pop('retryWrite', False))
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1902,6 +1906,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options.pop('retryWrite', False))
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 

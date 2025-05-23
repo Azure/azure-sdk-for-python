@@ -35,6 +35,7 @@ class RequestObject(object):
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
         self.excluded_locations = None
+        self.retry_write = False
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -80,3 +81,6 @@ class RequestObject(object):
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
+
+    def set_retry_write(self, retry_write: bool) -> None:
+        self.retry_write = retry_write

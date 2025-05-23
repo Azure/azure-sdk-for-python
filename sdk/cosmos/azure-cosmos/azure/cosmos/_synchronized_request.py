@@ -122,6 +122,12 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         and not connection_policy.DisableSSLVerification
     )
 
+    if request.headers['x-ms-thinclient-proxy-resource-type'] == 'docs':
+        raise exceptions.CosmosHttpResponseError(
+            status_code=408,
+            message="Forbidden",
+            response=FakeResponse(headers=request.headers))
+
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -173,6 +179,11 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     return result, headers
 
+class FakeResponse:
+    def __init__(self, headers):
+        self.headers = headers
+        self.reason = "foo"
+        self.status_code = "bar"
 
 def _replace_url_prefix(original_url, new_prefix):
     parts = original_url.split('/', 3)
