@@ -170,7 +170,7 @@ def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
         h1 = h1 * _UInt32(5) + _UInt32(0xe6546b64)
 
     # tail
-    k1: _UInt32 = _UInt32(0)
+    k1 = _UInt32(0)
     if length.value & 0x03 == 3:
         k1 ^= _UInt32((data[rounded_end.value + 2] & 0xff) << 16)
     if length.value & 0x03 >= 2:
@@ -191,4 +191,3 @@ def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
     h1.value ^= h1.value >> 16
 
     return h1
-

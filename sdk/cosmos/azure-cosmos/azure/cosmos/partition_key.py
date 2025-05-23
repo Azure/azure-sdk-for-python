@@ -192,10 +192,11 @@ class PartitionKey(dict):
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     @staticmethod
-    def _truncate_for_v1_hashing(value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]) -> Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]:
+    def _truncate_for_v1_hashing(
+            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]
+    ) -> Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]:
         if isinstance(value, str):
             return value[:100]
-
         return value
 
     @staticmethod
@@ -208,7 +209,7 @@ class PartitionKey(dict):
             truncated_components.append(PartitionKey._truncate_for_v1_hashing(pk_value))
         else:
             truncated_components = [PartitionKey._truncate_for_v1_hashing(v) for v in pk_value]
-        with (BytesIO() as ms):
+        with BytesIO() as ms:
             for component in truncated_components:
                 if isinstance(component, int) and not isinstance(component, bool):
                     component = float(int(_UInt32(component)))
