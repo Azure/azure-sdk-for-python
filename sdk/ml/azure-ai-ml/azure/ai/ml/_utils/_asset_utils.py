@@ -5,9 +5,9 @@
 # pylint: disable=protected-access,too-many-lines
 
 import hashlib
+import json
 import logging
 import os
-import json
 import uuid
 import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,17 +16,7 @@ from multiprocessing import cpu_count
 from os import PathLike
 from pathlib import Path
 from platform import system
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
@@ -67,11 +57,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import (
-    MAX_AUTOINCREMENT_ATTEMPTS,
-    DefaultOpenEncoding,
-    OrderString,
-)
+from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -92,7 +78,7 @@ if TYPE_CHECKING:
         ModelOperations,
     )
 
-hash_type = type(hashlib.md5())  # nosec
+hash_type = type(hashlib.sha256())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -335,7 +321,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
+    _hash = hashlib.sha256(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
