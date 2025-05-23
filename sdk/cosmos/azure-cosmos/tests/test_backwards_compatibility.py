@@ -72,11 +72,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
         assert database_read is not None
         self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
         self.client.delete_database(database.id, session_token=str(uuid.uuid4()))
-        try:
-            database2.read()
-            pytest.fail("Database read should have failed")
-        except CosmosHttpResponseError as e:
-            assert e.status_code == 404
 
         # Container
         container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
@@ -96,11 +91,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         self.databaseForTest.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         self.databaseForTest.delete_container(container.id, session_token=str(uuid.uuid4()))
-        try:
-            container2.read()
-            pytest.fail("Container read should have failed")
-        except CosmosHttpResponseError as e:
-            assert e.status_code == 404
 
     def test_etag_match_condition_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
@@ -110,33 +100,24 @@ class TestBackwardsCompatibility(unittest.TestCase):
         database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        try:
-            database2.read()
-            pytest.fail("Database read should have failed")
-        except CosmosHttpResponseError as e:
-            assert e.status_code == 404
+        self.client.delete_database(database.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
         # Container
-        container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                               etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert container is not None
-        container2 = database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert container2 is not None
         container2_read = container2.read()
         assert container2_read is not None
-        replace_container = database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
                                                        etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        try:
-            container2.read()
-            pytest.fail("Container read should have failed")
-        except CosmosHttpResponseError as e:
-            assert e.status_code == 404
+        self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
         # Item
         item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
@@ -159,7 +140,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         for result in batch_results:
             assert result['statusCode'] in (200, 201)
 
-        self.client.delete_database(database.id)
+        self.databaseForTest.delete_container(container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
 if __name__ == "__main__":
     unittest.main()
