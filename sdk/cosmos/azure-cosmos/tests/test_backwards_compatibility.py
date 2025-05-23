@@ -117,21 +117,21 @@ class TestBackwardsCompatibility(unittest.TestCase):
             assert e.status_code == 404
 
         # Container
-        container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                               etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert container is not None
-        container2 = database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert container2 is not None
         container2_read = container2.read()
         assert container2_read is not None
-        replace_container = database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
                                                        etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
             container2.read()
             pytest.fail("Container read should have failed")
