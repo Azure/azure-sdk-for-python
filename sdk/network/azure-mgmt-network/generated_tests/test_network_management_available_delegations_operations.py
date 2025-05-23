@@ -23,7 +23,7 @@ class TestNetworkManagementAvailableDelegationsOperations(AzureMgmtRecordedTestC
     def test_available_delegations_list(self, resource_group):
         response = self.client.available_delegations.list(
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
