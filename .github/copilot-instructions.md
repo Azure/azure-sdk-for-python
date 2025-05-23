@@ -10,7 +10,7 @@
 
 ## Agent Context
 - Check if there are any TypeSpec project paths in the context. If there are, use those paths to locally generate the SDK from the tspconfig.yaml file. If there 
-are no TypeSpec project paths in the context, ask the user for the path to the tspconfig.yaml file. If the user does not have a path, ask them to provide one.
+are no TypeSpec project paths in the context, ask the user for the path to the tspconfig.yaml file.
 
 ## Prerequisites
 - The user should have a GitHub account and be logged in to GitHub using the GitHub CLI `gh auth login`.
@@ -22,35 +22,34 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
 - Do not manually create directories. The command will create the directories for you.
 - If asked to sync or generate `package-name` we need to find the path to the package's tsp-location.yaml
  in the azure-sdk-for-python repo and run the command in the same directory.
-- If provided a url to a tspconfig.yaml ensure it has the most recent commit hash of the tspconfig.yaml file
+- If provided a url to a tspconfig.yaml, ensure it has the most recent commit hash of the tspconfig.yaml file
  instead of a branch name like `main`. If the url does not have a commit hash, use the GitHub API to get the most recent commit hash of the tspconfig.yaml file.
   If you are unable to do this, ask the user to provide the correct url.
    `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`
-- Ensure that node, python, tox, and the required dependencies are installed in your environment
+- Ensure that node, python, tox and the required dependencies are installed in your environment
 
 
 ## Steps to Generate:
 Here is the order of steps to follow when generating an SDK from TypeSpec: Verify Environment, Generate SDK, Static Validation, Post-Processing of the SDK, Commit and Push the Changes, Manage Pull Requests, Finalize the Process.
 
 ### Verify Environment
-- Check if the user has the correct environment set up. If not, guide them to set it up. 
-- Using the `verify_setup` tool in the azure-sdk-validation server is a good way to do this.
+- Use the `verify_setup` tool in the azure-sdk-validation server to check if the correct dependencies are installed.
+   - If the user is missing any dependencies, prompt them to install the missing dependencies before moving on to the next step.
 
 ### Generate SDK:
-- The typspec-python mcp server tools should be used to run the commands.
+- The typspec-python mcp server tools should be used to generate the SDK.
 - If the user gives a local path, run only the local mcp tools using the path to the tspconfig.yaml file in the local azure-rest-api-specs repo.
 - If any of the commands fail, check the error message and guide the user to fix the issue.
-   - If a command fails due to a TypeSpec error, direct the user back to the TypeSpec to fix the error.
-- If the user is generating a new package, ensure that the package name is valid and follows the naming conventions for Python packages.
+   - If a command fails due to a TypeSpec error, direct the user back to the TypeSpec in the azure-rest-api-specs repo to fix the error.
 
 ### Static Validation:
-- Use the tox mcp tool from the azure-sdk-validation server to run the following validations. 
-- After each validation, provide a summary of the results and any errors or warnings that need to be addressed.
-- If any validation fails, fix it and rerun that step before running the next validation.
-- Running pylint validation using tox: `tox -e pylint -c [path to tox.ini] --root .`
-- Running mypy type checking using tox: `tox -e mypy -c [path to tox.ini] --root .`
-- Running pyright validation using tox: `tox -e pyright -c [path to tox.ini] --root .`
-- Running verifytypes validation using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
+- Use the tox mcp tool from the azure-sdk-validation server to run the static validations. 
+- Do provide a summary of the results and any errors or warnings that need to be addressed after each validation step.
+- If any validation run fails, fix it and rerun that step before running the next validation.
+- Running pylint validation step using tox: `tox -e pylint -c [path to tox.ini] --root .`
+- Running mypy type checking step using tox: `tox -e mypy -c [path to tox.ini] --root .`
+- Running pyright validation step using tox: `tox -e pyright -c [path to tox.ini] --root .`
+- Running verifytypes validation step using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
 
 ### Post-Processing of the SDK
 - Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. 
@@ -96,12 +95,11 @@ If the package version is not correct, update it in _version.py and the CHANGELO
       - Create the pull request in DRAFT mode with the specified project, target branch, title, and description.
       - Always return the link to the pull request to the user.
    - Retrieve and display the pull request summary, including its status, checks, and comments. Highlight any action items.
-   - Return the link to the pull request for the user to review and hand off back to the azure-rest-api-specs Agent.
 
 ### Finalize the Process
- - Prompt the user to review the pull request and make any necessary changes.
- - If the user is satisfied with the pull request guide them to go back to the TypeSpec project and make any necessary changes.
-
+ - Do return the url to the created pull request for the user to review.
+ - Do prompt the user to hand off back to the azure-rest-api-specs Agent: 
+ `Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request.`
 
 # Pylint
 
