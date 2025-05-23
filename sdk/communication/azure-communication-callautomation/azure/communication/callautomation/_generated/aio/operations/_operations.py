@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -72,7 +72,9 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[AsyncPipelineClient, AzureCommunicationCallAutomationServiceConfiguration]
+    ClientMixinABC[
+        AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AzureCommunicationCallAutomationServiceConfiguration
+    ]
 ):
 
     @overload
@@ -909,7 +911,7 @@ class CallConnectionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_participants(self, call_connection_id: str, **kwargs: Any) -> AsyncIterable["_models.CallParticipant"]:
+    def get_participants(self, call_connection_id: str, **kwargs: Any) -> AsyncItemPaged["_models.CallParticipant"]:
         """Get participants from a call. Recording and transcription bots are omitted from this list.
 
         Get participants from a call. Recording and transcription bots are omitted from this list.

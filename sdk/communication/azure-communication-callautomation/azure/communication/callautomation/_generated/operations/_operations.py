@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 import datetime
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 import uuid
 
@@ -1001,7 +1001,7 @@ def build_call_recording_resume_recording_request(  # pylint: disable=name-too-l
 
 
 class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[PipelineClient, AzureCommunicationCallAutomationServiceConfiguration]
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureCommunicationCallAutomationServiceConfiguration]
 ):
 
     @overload
@@ -1542,7 +1542,7 @@ class CallConnectionOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureCommunicationCallAutomationServiceConfiguration = (
@@ -1842,7 +1842,7 @@ class CallConnectionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_participants(self, call_connection_id: str, **kwargs: Any) -> Iterable["_models.CallParticipant"]:
+    def get_participants(self, call_connection_id: str, **kwargs: Any) -> ItemPaged["_models.CallParticipant"]:
         """Get participants from a call. Recording and transcription bots are omitted from this list.
 
         Get participants from a call. Recording and transcription bots are omitted from this list.
@@ -2512,7 +2512,7 @@ class CallMediaOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureCommunicationCallAutomationServiceConfiguration = (
@@ -4037,7 +4037,7 @@ class CallRecordingOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureCommunicationCallAutomationServiceConfiguration = (
