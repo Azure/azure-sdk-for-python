@@ -91,7 +91,7 @@ def setup_faultinjector(test_name: str) -> FaultInjectorConfig | None:
 def faultinjector_detach_after_delay(live_eventhub, request):
     yield from faultinjector("detach_after_delay", live_eventhub, request)
 
-def faultinjector(type : Literal["detach_after_delay"], live_eventhub, request):
+def faultinjector(fi_type : Literal["detach_after_delay"], live_eventhub, request):
     test_name = request.node.name
 
     # make testname safe for a directory name
@@ -104,7 +104,7 @@ def faultinjector(type : Literal["detach_after_delay"], live_eventhub, request):
         yield None
         return
     
-    if not type:
+    if not fi_type:
         print("Do not use faultinjector directly, choose a specific fault injector (ie: faultinjector_detach_after_delay)")
         yield None
         return
@@ -121,14 +121,14 @@ def faultinjector(type : Literal["detach_after_delay"], live_eventhub, request):
 
         args = []
 
-        if type == "detach_after_delay":
+        if fi_type == "detach_after_delay":
             args = [
                 "detach_after_delay",
                 "--desc", "DETACHED FOR FAULT INJECTOR TEST"
             ]
         else:
             # Default case or unknown fault type
-            log_file.write(f"Unknown fault type: {type}\n")
+            log_file.write(f"Unknown fault type: {fi_type}\n")
             log_file.flush()
             yield None
             return
