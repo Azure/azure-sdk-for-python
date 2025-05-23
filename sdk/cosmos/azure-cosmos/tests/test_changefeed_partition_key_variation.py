@@ -75,13 +75,15 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.config.host, cls.config.masterKey)
         cls.db = cls.client.get_database_client(cls.config.TEST_DATABASE_ID)
 
-    def create_container(self, db, container_id, partition_key, version=None):
+    def create_container(self, db, container_id, partition_key, version=None, throughput=None):
         """Helper to create a container with a specific partition key definition."""
         if isinstance(partition_key, list):
             # Assume multihash (hierarchical partition key) for the container
             pk_definition = PartitionKey(path=partition_key, kind='MultiHash')
         else:
             pk_definition = PartitionKey(path=partition_key, kind='Hash', version=version)
+        if throughput:
+            return db.create_container(id=container_id, partition_key=pk_definition, offer_throughput=throughput)
         return db.create_container(id=container_id, partition_key=pk_definition)
 
     def insert_items(self, container, items):
@@ -174,6 +176,53 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         self.insert_items(container, items)
         self.validate_changefeed_hpk(container)
         self.db.delete_container(container.id)
+
+    def test_multiple_physical_partitions(self):
+        """Test change feed with a container having multiple physical partitions."""
+        db = self.db
+
+        # Test for Hash V1 partition key
+        container_id_v1 = f"container_test_multiple_partitions_hash_v1_{uuid.uuid4()}"
+        throughput = 12000  # Ensure multiple physical partitions
+        container_v1 = self.create_container(db, container_id_v1, "/pk", version=1, throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_v1 = container_v1.read_feed_ranges()
+        feed_ranges_v1 = [frange for frange in feed_ranges_v1]
+        assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for Hash V1
+        self.insert_items(container_v1, self.single_hash_items)
+        self.validate_changefeed(container_v1)
+        self.db.delete_container(container_v1.id)
+
+        # Test for Hash V2 partition key
+        container_id_v2 = f"container_test_multiple_partitions_hash_v2_{uuid.uuid4()}"
+        container_v2 = self.create_container(db, container_id_v2, "/pk", version=2, throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_v2 = container_v2.read_feed_ranges()
+        feed_ranges_v2 = [frange for frange in feed_ranges_v2]
+        assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for Hash V2
+        self.insert_items(container_v2, self.single_hash_items)
+        self.validate_changefeed(container_v2)
+        self.db.delete_container(container_v2.id)
+
+        # Test for Hierarchical Partition Keys (HPK)
+        container_id_hpk = f"container_test_multiple_partitions_hpk_{uuid.uuid4()}"
+        container_hpk = self.create_container(db, container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_hpk = container_hpk.read_feed_ranges()
+        feed_ranges_hpk = [frange for frange in feed_ranges_hpk]
+        assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for HPK
+        self.insert_items(container_hpk, self.hpk_items)
+        self.validate_changefeed_hpk(container_hpk)
+        self.db.delete_container(container_hpk.id)
 
 if __name__ == "__main__":
     unittest.main()

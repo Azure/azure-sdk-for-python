@@ -76,13 +76,15 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def create_container(self, db, container_id, partition_key, version=None):
+    async def create_container(self, db, container_id, partition_key, version=None, throughput=None):
         """Helper to create a container with a specific partition key definition."""
         if isinstance(partition_key, list):
             # Assume multihash (hierarchical partition key) for the container
             pk_definition = PartitionKey(path=partition_key, kind='MultiHash')
         else:
             pk_definition = PartitionKey(path=partition_key, kind='Hash', version=version)
+        if throughput:
+            return await db.create_container(container_id, pk_definition, offer_throughput=throughput)
         return await db.create_container(container_id, pk_definition)
 
     async def insert_items(self, container, items):
@@ -172,6 +174,53 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         await self.insert_items(container, items)
         await self.validate_changefeed_hpk(container)
         await self.db.delete_container(container.id)
+
+    async def test_multiple_physical_partitions(self):
+        """Test change feed with a container having multiple physical partitions."""
+        db = self.db
+
+        # Test for Hash V1 partition key
+        container_id_v1 = f"container_test_multiple_partitions_hash_v1_{uuid.uuid4()}"
+        throughput = 12000  # Ensure multiple physical partitions
+        container_v1 = await self.create_container(db, container_id_v1, "/pk", version=1, throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_v1 = container_v1.read_feed_ranges()
+        feed_ranges_v1 = [frange async for frange in feed_ranges_v1]
+        assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for Hash V1
+        await self.insert_items(container_v1, self.single_hash_items)
+        await self.validate_changefeed(container_v1)
+        await self.db.delete_container(container_v1.id)
+
+        # Test for Hash V2 partition key
+        container_id_v2 = f"container_test_multiple_partitions_hash_v2_{uuid.uuid4()}"
+        container_v2 = await self.create_container(db, container_id_v2, "/pk", version=2, throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_v2 = container_v2.read_feed_ranges()
+        feed_ranges_v2 = [frange async for frange in feed_ranges_v2]
+        assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for Hash V2
+        await self.insert_items(container_v2, self.single_hash_items)
+        await self.validate_changefeed(container_v2)
+        await self.db.delete_container(container_v2.id)
+
+        # Test for Hierarchical Partition Keys (HPK)
+        container_id_hpk = f"container_test_multiple_partitions_hpk_{uuid.uuid4()}"
+        container_hpk = await self.create_container(db, container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
+
+        # Verify the container has more than one physical partition
+        feed_ranges_hpk = container_hpk.read_feed_ranges()
+        feed_ranges_hpk = [frange async for frange in feed_ranges_hpk]
+        assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
+
+        # Insert items and validate change feed for HPK
+        await self.insert_items(container_hpk, self.hpk_items)
+        await self.validate_changefeed_hpk(container_hpk)
+        await self.db.delete_container(container_hpk.id)
 
 if __name__ == '__main__':
     unittest.main()
