@@ -51,9 +51,7 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
         folder_path = "/".join(parts)
         logger.info(f"Extracted folder path from URL: {folder_path}")
 
-        auth = Auth.Token(os.getenv("GH_TOKEN"))
-        g = Github(auth=auth)
-        logger.info(f"Authenticated to GitHub with token: {g}")
+        g = Github()
         repo = g.get_repo(repo_name)
 
         # Get commits that affect the specific folder
