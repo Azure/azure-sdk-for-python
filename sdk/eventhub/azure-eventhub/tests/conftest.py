@@ -91,15 +91,7 @@ def setup_faultinjector(test_name: str) -> FaultInjectorConfig | None:
 def faultinjector_detach_after_delay(live_eventhub, request):
     yield from faultinjector("detach_after_delay", live_eventhub, request)
 
-@pytest.fixture(scope="function")
-def faultinjector_multi_transfer(live_eventhub, request):
-    yield from faultinjector("multi_transfer", live_eventhub, request)
-
-@pytest.fixture(scope="function")
-def faultinjector_disconnect(live_eventhub, request):
-    yield from faultinjector("disconnect", live_eventhub, request)
-
-def faultinjector(type : Literal["detach_after_delay", "multi_transfer", "disconnect"], live_eventhub, request):
+def faultinjector(type : Literal["detach_after_delay"], live_eventhub, request):
     test_name = request.node.name
 
     # make testname safe for a directory name
@@ -132,29 +124,18 @@ def faultinjector(type : Literal["detach_after_delay", "multi_transfer", "discon
         if type == "detach_after_delay":
             args = [
                 "detach_after_delay",
-                "--host", live_eventhub["hostname"],
-                "--logs", config["logs_dir"],
                 "--desc", "DETACHED FOR FAULT INJECTOR TEST"
-            ]
-        elif type == "transfer_delay":
-            args = [
-                "transfer_delay",
-                "--after", "1",     # start delaying after 1 received event
-                "--delay", "5",     # delay for 5 seconds for each subsequent event
-                "--host", live_eventhub["hostname"],
-                "--logs", config["logs_dir"],
-            ]
-        elif type == "disconnect":
-            args = [
-                "disconnect",
-                "--host", live_eventhub["hostname"],
-                "--logs", config["logs_dir"],
             ]
         else:
             # Default case or unknown fault type
             log_file.write(f"Unknown fault type: {type}\n")
             log_file.flush()
-            args = []
+            yield None
+            return
+
+        args.append(                
+            "--host", live_eventhub["hostname"],
+            "--logs", config["logs_dir"])
 
         process = subprocess.Popen(
             [
