@@ -1062,10 +1062,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def unhold(
-        self, 
-        target_participant: "CommunicationIdentifier", 
-        *, 
-        operation_context: Optional[str] = None, 
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:

@@ -549,8 +549,8 @@ class TranscriptionSubscription:
     """transcription subscription state."""
     subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
     """subscribed transcription result types."""
-    """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
     locale: Optional[str]
+    """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
 
     def __init__(
         self,
