@@ -93,7 +93,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         await self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        await self.client.delete_database(database.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        await self.client.delete_database(database.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
         # Container
         container = await self.created_database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
@@ -110,7 +110,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        await self.created_database.delete_container(container2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        await self.created_database.delete_container(container2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
         # Item
         item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
@@ -134,7 +134,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         for result in batch_results:
             assert result['statusCode'] in (200, 201)
 
-        await self.created_database.delete_container(container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        await self.created_database.delete_container(container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
 
 
 if __name__ == '__main__':
