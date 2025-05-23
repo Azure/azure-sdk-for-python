@@ -388,6 +388,8 @@ class MediaStreamingOptions:
     """A value indicating whether bidirectional streaming is enabled"""
     audio_format: Optional[Union[str, 'AudioFormat']] = None
     """Specifies the audio format used for encoding."""
+    enable_dtmf_tones: Optional[bool] = None
+    """A value that indicates whether to stream the DTMF tones."""
 
     def __init__(
         self,
@@ -399,6 +401,7 @@ class MediaStreamingOptions:
         start_media_streaming: Optional[bool] = None,
         enable_bidirectional: Optional[bool] = None,
         audio_format: Optional[Union[str, 'AudioFormat']] = None,
+        enable_dtmf_tones: Optional[bool] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -407,6 +410,7 @@ class MediaStreamingOptions:
         self.start_media_streaming = start_media_streaming
         self.enable_bidirectional = enable_bidirectional
         self.audio_format = audio_format
+        self.enable_dtmf_tones = enable_dtmf_tones
 
     def _to_generated(self):
         return WebSocketMediaStreamingOptionsRest(
@@ -416,7 +420,8 @@ class MediaStreamingOptions:
             audio_channel_type=self.audio_channel_type,
             start_media_streaming=self.start_media_streaming,
             enable_bidirectional = self.enable_bidirectional,
-            audio_format=self.audio_format
+            audio_format=self.audio_format,
+            enable_dtmf_tones=self.enable_dtmf_tones,
         )
 
 class TranscriptionOptions:
