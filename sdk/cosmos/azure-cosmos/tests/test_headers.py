@@ -114,7 +114,7 @@ class TestHeaders(unittest.TestCase):
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        client.delete_database(created_db.id)
+        created_db.delete_container(created_container.id)
 
     def test_container_read_item_throughput_bucket(self):
         created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
