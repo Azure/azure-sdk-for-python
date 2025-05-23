@@ -133,9 +133,10 @@ def faultInjector(type : Literal["detach_after_delay"], live_eventhub, request):
             yield None
             return
 
-        args.append(                
+        args.extend([                
             "--host", live_eventhub["hostname"],
-            "--logs", config["logs_dir"])
+            "--logs", config["logs_dir"]
+        ])
 
         process = subprocess.Popen(
             [
