@@ -62,6 +62,7 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
+    'retry_write': 'retryWrite',
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': 'excludedLocations'

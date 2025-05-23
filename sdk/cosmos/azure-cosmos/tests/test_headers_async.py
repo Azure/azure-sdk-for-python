@@ -53,15 +53,15 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     async def test_request_precedence_throughput_bucket_async(self):
         client = CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
-        created_db = await client.create_database("test_db" + str(uuid.uuid4()))
-        created_container = await created_db.create_container(
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        created_container = await database.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         await created_container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        await client.delete_database(created_db.id)
+        await self.database.delete_container(created_container.id)
 
     async def test_container_read_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

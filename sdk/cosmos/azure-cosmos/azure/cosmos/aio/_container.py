@@ -211,6 +211,7 @@ class ContainerProxy:
         initial_headers: Optional[Dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -240,6 +241,9 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
@@ -270,6 +274,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs['retry_write'] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -785,6 +791,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -810,6 +817,9 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -836,6 +846,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs['retry_write'] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -865,6 +877,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -891,6 +904,9 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -919,6 +935,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs['retry_write'] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -946,6 +964,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -975,6 +994,9 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1000,6 +1022,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs['retry_write'] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1028,6 +1052,7 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -1054,6 +1079,9 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -1075,6 +1103,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if retry_write is not None:
+            kwargs['retry_write'] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)

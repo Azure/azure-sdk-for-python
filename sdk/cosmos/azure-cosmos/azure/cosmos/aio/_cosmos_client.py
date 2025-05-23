@@ -123,6 +123,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
+    policy.RetryNonIdempotentWrites = kwargs.pop('retry_write', False)
     return policy
 
 
@@ -159,6 +160,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword bool retry_write: Indicates whether the SDK should automatically retry write operations for items, even if
+        the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+        tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
