@@ -54,7 +54,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         {
             "version": 2,
             "expected_epk": (
-                "2032D236DA8678BFB900E866D7EBCE76"  # Replace with the actual expected value for Hash V2
+                "2032D236DA8678BFB900E866D7EBCE76"
             ),
         },
     ]
@@ -68,7 +68,6 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)

@@ -58,7 +58,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         {
             "version": 2,
             "expected_epk": (
-                "2032D236DA8678BFB900E866D7EBCE76"  # Replace with the actual expected value for Hash V2
+                "2032D236DA8678BFB900E866D7EBCE76"
             ),
         },
     ]
