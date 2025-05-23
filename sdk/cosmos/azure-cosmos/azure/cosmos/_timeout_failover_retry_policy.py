@@ -17,7 +17,8 @@ class _TimeoutFailoverRetryPolicy(object):
         # If an account only has 1 region, then we still want to retry once on the same region
         if self.request:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts) + 1
+                self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
+                                                    .read_regional_routing_contexts) + 1
             else:
                 # we only want to retry once on non-idempotent writes
                 self._max_retry_attempt_count = 2
