@@ -17,18 +17,8 @@ def test_receive_partition_using_fault_injector(auth_credential_senders, uamqp_t
     fault_injector_config = faultinjector_detach_after_delay
     
     if not fault_injector_config:
-        print("Skipping test")
-        print("Skipping test")
-        print("Skipping test")
-        print("Skipping test")
-        print("Skipping test")
         pytest.skip("Fault injector not enabled. See conftest.py::faultinjector for requirements.")
 
-    print("Running test")
-    print("Running test")
-    print("Running test")
-    print("Running test")
-    print("Running test")
 
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
 
