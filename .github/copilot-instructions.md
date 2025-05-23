@@ -28,52 +28,40 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
    `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`
 - Ensure that node, python, tox and the required dependencies are installed in your environment
 
+### Following the steps:
+- Do follow the steps in the order they are given.
+- Do not skip any steps unless the user explicitly asks to skip a step.
+- Do complete each step as described in the instructions before moving on to the next step.
+- DO NOT REPEAT THE INSTRUCTIONS. The user should be able to follow the instructions without needing to repeat them.
 
 ## Steps to Generate:
-Here is the order of steps to follow when generating an SDK from TypeSpec: Verify Environment, Generate SDK, Static Validation, Post-Processing of the SDK, Commit and Push the Changes, Manage Pull Requests, Finalize the Process.
+Here is the order of steps to follow when generating an SDK from TypeSpec: Verify Environment, Generate SDK, Static Validation, Cleanup of the SDK, Commit and Push the Changes, Manage Pull Requests, Finalize the Process.
 
-### Verify Environment
+### STEP 1 - Verify Environment:
 - Use the `verify_setup` tool in the azure-sdk-validation server to check if the correct dependencies are installed.
    - If the user is missing any dependencies, prompt them to install the missing dependencies before moving on to the next step.
 
-### Generate SDK:
+### STEP 2 - Generate SDK:
 - The typspec-python mcp server tools should be used to generate the SDK.
 - If the user gives a local path, run only the local mcp tools using the path to the tspconfig.yaml file in the local azure-rest-api-specs repo.
 - If any of the commands fail, check the error message and guide the user to fix the issue.
    - If a command fails due to a TypeSpec error, direct the user back to the TypeSpec in the azure-rest-api-specs repo to fix the error.
 
-### Static Validation:
+### STEP 3 - Static Validation:
 - Use the tox mcp tool from the azure-sdk-validation server to run the static validations. 
-- Do provide a summary of the results and any errors or warnings that need to be addressed after each validation step.
+- DO provide a summary of the results and any errors or warnings that need to be addressed after each validation step.
 - If any validation run fails, fix it and rerun that step before running the next validation.
-- Running pylint validation step using tox: `tox -e pylint -c [path to tox.ini] --root .`
-- Running mypy type checking step using tox: `tox -e mypy -c [path to tox.ini] --root .`
-- Running pyright validation step using tox: `tox -e pyright -c [path to tox.ini] --root .`
-- Running verifytypes validation step using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
+- Run pylint validation step using tox: `tox -e pylint -c [path to tox.ini] --root .`
+- Run mypy type checking step using tox: `tox -e mypy -c [path to tox.ini] --root .`
+- Run pyright validation step using tox: `tox -e pyright -c [path to tox.ini] --root .`
+- Run verifytypes validation step using tox: `tox -e verifytypes -c [path to tox.ini] --root .`
 
-### Post-Processing of the SDK
+### STEP 4 - Update documentation:
 - Create a CHANGELOG.md entry for the changes made. If there is no CHANGELOG.md file, create one in the root directory of the package. 
-The CHANGELOG entry should look like:
-```
-## 1.0.0 (YYYY-MM-DD)
-
-### Features Added
-- Added a new feature to do X.
-
-### Breaking Changes
-   - Changed the way Y is done, which may break existing code that relies on the old behavior.
-
-### Bugs Fixed
-   - Fixed a bug that caused Z to not work as expected.
-
-### Other Changes
-   - Updated the documentation to reflect the new changes.
-   - Refactored the code to improve readability and maintainability.
-```
 - Confirm that the package version in the most recent CHANGELOG entry is correct based on the API spec version and the last released package version. 
 If the package version is not correct, update it in _version.py and the CHANGELOG entry.
 
-### Commit and Push the Changes
+### STEP 5 - Commit and Push the Changes
 - Display the list of changed files in the repository and prompt the user to confirm the changes. Ignore uncommitted changes in .github and .vscode folders.
    - If the user confirms:
       - Prompt the user to commit the changes:
@@ -84,7 +72,7 @@ If the package version is not correct, update it in _version.py and the CHANGELO
          - If the push fails due to authentication, prompt the user to run `gh auth login` and retry the push command.
          - If the user does not confirm, prompt them to fix the changes and re-run validation.
 
-### Manage Pull Requests
+### STEP 6 - Manage Pull Requests
 - Check if a pull request exists for the current branch:
    - If a pull request exists, inform the user and display its details.
    - If no pull request exists:
@@ -96,7 +84,7 @@ If the package version is not correct, update it in _version.py and the CHANGELO
       - Always return the link to the pull request to the user.
    - Retrieve and display the pull request summary, including its status, checks, and comments. Highlight any action items.
 
-### Finalize the Process
+### STEP 7 - Finalize the Process
  - Do return the url to the created pull request for the user to review.
  - Do prompt the user to hand off back to the azure-rest-api-specs Agent: 
  `Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request.`
