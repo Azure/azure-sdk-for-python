@@ -1,14 +1,16 @@
 # Release History
 
-## 4.10.0b2 (Unreleased)
+## 4.10.0 (2025-06-10)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service API version `7.6`
 
 ### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+- Key Vault API version `7.6` is now the default
+- (From 4.10.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.10.0b1 (2025-03-20)
 
@@ -85,7 +87,7 @@
 ## 4.5.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.5.0b1 (2022-06-07)
