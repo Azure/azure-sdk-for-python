@@ -15,6 +15,21 @@ param (
     [Parameter()]
     [hashtable] $DeploymentOutputs,
 
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string] $TenantId,
+
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $TestApplicationId,
+
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $TestApplicationOid,
+
+    [Parameter()]
+    [switch] $CI = ($null -ne $env:SYSTEM_TEAMPROJECTID),
+
     # Captures any arguments from eng/New-TestResources.ps1 not declared here (no parameter errors).
     [Parameter(ValueFromRemainingArguments = $true)]
     $RemainingArguments
@@ -73,6 +88,15 @@ if (!$DeploymentOutputs['AZURE_MANAGEDHSM_URL']) {
     exit
 }
 
+if ($CI) {
+    Log "Refreshing login"
+    az cloud set -n $DeploymentOutputs['KEYVAULT_ENVIRONMENT']
+    az login --federated-token $env:ARM_OIDC_TOKEN --service-principal -t $TenantId -u $TestApplicationId
+    if ($LASTEXITCODE) { exit $LASTEXITCODE }
+    az account set --subscription $SubscriptionId
+    if ($LASTEXITCODE) { exit $LASTEXITCODE }
+}
+
 [Uri] $hsmUrl = $DeploymentOutputs['AZURE_MANAGEDHSM_URL']
 $hsmName = $hsmUrl.Host.Substring(0, $hsmUrl.Host.IndexOf('.'))
 
@@ -113,5 +137,5 @@ New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName "Managed HSM 
 Log "Role assignments created for '$testApplicationOid'"
 
 Log "Associating managed identity with managed HSM"
-Update-AzKeyVaultManagedHsm -HsmName $hsmName -ResourceGroupName $DeploymentOutputs["KEYVAULT_RESOURCE_GROUP"] -UserAssignedIdentity $DeploymentOutputs["MANAGED_IDENTITY_ID"]
+Update-AzKeyVaultManagedHsm -HsmName $hsmName -ResourceGroupName $DeploymentOutputs["KEYVAULT_RESOURCE_GROUP"] -UserAssignedIdentity $DeploymentOutputs["MANAGED_IDENTITY_CLIENT_ID"]
 Log "Managed identity associated with managed HSM - backup and restore using managed identity is enabled"
