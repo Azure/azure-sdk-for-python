@@ -26,7 +26,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
             await self.client.ip_allocations.begin_delete(
                 resource_group_name=resource_group.name,
                 ip_allocation_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -39,7 +39,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.ip_allocations.get(
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
                     "type": "str",
                     "virtualNetwork": {"id": "str"},
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,7 +81,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_ip_allocations_list(self, resource_group):
         response = self.client.ip_allocations.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestNetworkManagementIpAllocationsOperationsAsync(AzureMgmtRecordedTestCas
     async def test_ip_allocations_list_by_resource_group(self, resource_group):
         response = self.client.ip_allocations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
