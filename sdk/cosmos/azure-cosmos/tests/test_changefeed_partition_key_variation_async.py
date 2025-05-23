@@ -175,7 +175,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         await self.validate_changefeed_hpk(container)
         await self.db.delete_container(container.id)
 
-    async def test_multiple_physical_partitions(self):
+    async def test_multiple_physical_partitions_async(self):
         """Test change feed with a container having multiple physical partitions."""
         db = self.db
 
