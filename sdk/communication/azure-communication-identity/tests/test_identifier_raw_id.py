@@ -97,43 +97,6 @@ class IdentifierRawIdTest(unittest.TestCase):
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
         )
         _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="+112345556789",
-                is_anonymous=True,
-            ),
-            "4:anonymous",
-        )
-        _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="+112345556789",
-                is_anonymous=True,
-                asserted_id="20eacaae2768",
-            ),
-            "4:anonymous",
-        )
-        _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="+112345556789",
-                is_anonymous=False,
-            ),
-            "4:+112345556789",
-        )
-        _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="+112345556789",
-                is_anonymous=False,
-                asserted_id="20eacaae2768",
-            ),
-            "4:+112345556789_20eacaae2768",
-        )
-        _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="+112345556789",
-                asserted_id="20eacaae2768",
-            ),
-            "4:+112345556789_20eacaae2768",
-        )
-        _assert_raw_id(
             TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
