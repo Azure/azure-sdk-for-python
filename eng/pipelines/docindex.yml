@@ -21,13 +21,14 @@ parameters:
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
+  - template: /eng/pipelines/templates/variables/image.yml
 jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
 
   - job: UpdateDocsMsBuildConfig
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: Ubuntu20.04
+      name: $(LINUXPOOL)
+      demands: $(LinuxImageDemand)
     variables:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: MicrosoftDocs
