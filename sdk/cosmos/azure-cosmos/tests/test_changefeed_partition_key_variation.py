@@ -188,7 +188,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
 
         # Verify the container has more than one physical partition
         feed_ranges_v1 = container_v1.read_feed_ranges()
-        feed_ranges_v1 = [frange for frange in feed_ranges_v1]
+        feed_ranges_v1 = [feed_range for feed_range in feed_ranges_v1]
         assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
 
         # Insert items and validate change feed for Hash V1
@@ -202,7 +202,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
 
         # Verify the container has more than one physical partition
         feed_ranges_v2 = container_v2.read_feed_ranges()
-        feed_ranges_v2 = [frange for frange in feed_ranges_v2]
+        feed_ranges_v2 = [feed_range for feed_range in feed_ranges_v2]
         assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
 
         # Insert items and validate change feed for Hash V2
@@ -216,7 +216,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
 
         # Verify the container has more than one physical partition
         feed_ranges_hpk = container_hpk.read_feed_ranges()
-        feed_ranges_hpk = [frange for frange in feed_ranges_hpk]
+        feed_ranges_hpk = [feed_range for feed_range in feed_ranges_hpk]
         assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
 
         # Insert items and validate change feed for HPK
