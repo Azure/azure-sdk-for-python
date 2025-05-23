@@ -52,6 +52,7 @@ from ._attack_objective_generator import RiskCategory, _InternalRiskCategory, _A
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
+from ._utils.metric_mapping import get_annotation_task_from_risk_category
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -1899,14 +1900,7 @@ class RedTeam:
         :return: None
         """
 
-        if risk_category == RiskCategory.CodeVulnerability:
-            annotation_task = Tasks.CODE_VULNERABILITY
-        elif risk_category == RiskCategory.ProtectedMaterial:
-            annotation_task = Tasks.PROTECTED_MATERIAL
-        elif risk_category == _InternalRiskCategory.ECI:
-            annotation_task = _InternalAnnotationTasks.ECI
-        else:
-            annotation_task = Tasks.CONTENT_HARM
+        annotation_task = get_annotation_task_from_risk_category(risk_category)
 
         messages = conversation["conversation"]["messages"]
         

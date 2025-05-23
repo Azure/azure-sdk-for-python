@@ -126,9 +126,9 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if risk_types is not None:
-        _params["riskCategory"] = [_SERIALIZER.query("risk_types", q, "str") if q is not None else "" for q in risk_types]
+        _params["riskTypes"] = [_SERIALIZER.query("risk_types", q, "str") if q is not None else "" for q in risk_types]
     if risk_categories is not None:
-        _params["riskCategories"] = [_SERIALIZER.query("risk_categories", q, "str") if q is not None else "" for q in risk_categories]
+        _params["riskCategory"] = [_SERIALIZER.query("risk_categories", q, "str") if q is not None else "" for q in risk_categories]
     if lang is not None:
         _params["lang"] = _SERIALIZER.query("lang", lang, "str")
     if strategy is not None:
