@@ -34,6 +34,8 @@ class RsaSsaPss(SignatureAlgorithm):
         return RsaSignatureTransform(key, self._get_padding, self._default_hash_algorithm)
 
     def _get_padding(self, digest):
+        if self._default_hash_algorithm is None:
+            raise ValueError("Default hash algorithm not set")
         return padding.PSS(mgf=padding.MGF1(self._default_hash_algorithm), salt_length=len(digest))
 
 
