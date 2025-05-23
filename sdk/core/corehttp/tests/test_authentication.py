@@ -429,3 +429,33 @@ def test_send_with_auth_flows():
     pipeline = Pipeline(transport=transport, policies=[policy])
     pipeline.run(HttpRequest("GET", "https://localhost"))
     policy._credential.get_token_info.assert_called_with("scope", options={"auth_flows": auth_flows})
+
+
+def test_disable_authorization_header():
+    """Tests that we can disable the Authorization header in the request"""
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
+    )
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    request = HttpRequest("GET", "https://localhost")
+    pipeline.run(request, disable_auth=True)
+    assert "Authorization" not in request.headers
+
+
+def test_bearer_token_policy_no_credential():
+    """Tests that we can create a BearerTokenCredentialPolicy without a credential"""
+    credential = None
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    request = HttpRequest("GET", "https://localhost")
+    with pytest.raises(ValueError):
+        pipeline.run(request)
+
+    pipeline.run(request, disable_auth=True)
+    assert "Authorization" not in request.headers
