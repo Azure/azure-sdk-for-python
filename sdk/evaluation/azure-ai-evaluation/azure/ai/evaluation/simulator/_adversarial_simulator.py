@@ -368,13 +368,14 @@ class AdversarialSimulator:
                     retry_mode=RetryMode.Fixed,
                 )
             )
-        _, conversation_history = await simulate_conversation(
-            bots=bots,
-            session=session,
-            turn_limit=max_conversation_turns,
-            api_call_delay_sec=api_call_delay_sec,
-            language=language,
-        )
+        async with semaphore, session:
+            _, conversation_history = await simulate_conversation(
+                bots=bots,
+                session=session,
+                turn_limit=max_conversation_turns,
+                api_call_delay_sec=api_call_delay_sec,
+                language=language,
+            )
 
         return self._to_chat_protocol(
             conversation_history=conversation_history,
