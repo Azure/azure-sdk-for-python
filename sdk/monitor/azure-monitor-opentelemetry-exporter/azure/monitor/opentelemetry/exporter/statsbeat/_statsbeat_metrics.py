@@ -7,6 +7,7 @@ import platform
 import re
 import sys
 import threading
+import time
 from typing import Any, Dict, Iterable, List
 
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
@@ -18,6 +19,7 @@ from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
+    _INITIAL_DELAY_SECONDS,
     _KUBERNETES_SERVICE_HOST,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -138,6 +140,9 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0]: sys.maxsize,
         }
         self._long_interval_lock = threading.Lock()
+        # Add startup timestamp and delay for initial statsbeat metrics
+        self._startup_time = time.time()
+        self._initial_delay_seconds = _INITIAL_DELAY_SECONDS  # 15 second delay for initial metrics
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         if _utils._is_attach_enabled():
             _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
@@ -266,6 +271,7 @@ class _StatsbeatMetrics:
         return observations
 
     def _meets_long_interval_threshold(self, name) -> bool:
+        # For feature and attach metrics, check if the initial delay has passed
         with self._long_interval_lock:
             # if long interval theshold not met, it is not time to export
             # statsbeat metrics that are long intervals
