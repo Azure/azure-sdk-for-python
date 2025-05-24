@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 import types
-from typing import Optional, Type, Union
+from typing import Optional, Type
 
 from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
 from azure.ai.evaluation._legacy._adapters.utils import ClientUserAgentUtil
