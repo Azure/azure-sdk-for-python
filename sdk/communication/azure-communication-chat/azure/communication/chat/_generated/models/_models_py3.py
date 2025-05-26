@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -63,7 +62,7 @@ class AddChatParticipantsResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.invalid_participants = None
+        self.invalid_participants: Optional[List["_models.ChatError"]] = None
 
 
 class ChatAttachment(_serialization.Model):
@@ -172,12 +171,12 @@ class ChatError(_serialization.Model):
         super().__init__(**kwargs)
         self.code = code
         self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ChatError"]] = None
+        self.inner_error: Optional["_models.ChatError"] = None
 
 
-class ChatMessage(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ChatMessage(_serialization.Model):
     """Chat message.
 
     All required parameters must be populated in order to send to server.
@@ -462,7 +461,7 @@ class ChatMessageReadReceiptsCollection(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ChatMessagesCollection(_serialization.Model):
@@ -496,7 +495,7 @@ class ChatMessagesCollection(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ChatParticipant(_serialization.Model):
@@ -515,6 +514,9 @@ class ChatParticipant(_serialization.Model):
     :ivar share_history_time: Time from which the chat history is shared with the participant. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype share_history_time: ~datetime.datetime
+    :ivar metadata: Contextual metadata for the chat participant. The metadata consists of
+     name/value pairs. The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -525,6 +527,7 @@ class ChatParticipant(_serialization.Model):
         "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifierModel"},
         "display_name": {"key": "displayName", "type": "str"},
         "share_history_time": {"key": "shareHistoryTime", "type": "iso-8601"},
+        "metadata": {"key": "metadata", "type": "{str}"},
     }
 
     def __init__(
@@ -533,6 +536,7 @@ class ChatParticipant(_serialization.Model):
         communication_identifier: "_models.CommunicationIdentifierModel",
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
+        metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -547,11 +551,15 @@ class ChatParticipant(_serialization.Model):
         :keyword share_history_time: Time from which the chat history is shared with the participant.
          The timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype share_history_time: ~datetime.datetime
+        :keyword metadata: Contextual metadata for the chat participant. The metadata consists of
+         name/value pairs. The total size of all metadata pairs can be up to 1KB in size.
+        :paramtype metadata: dict[str, str]
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
         self.display_name = display_name
         self.share_history_time = share_history_time
+        self.metadata = metadata
 
 
 class ChatParticipantsCollection(_serialization.Model):
@@ -585,7 +593,35 @@ class ChatParticipantsCollection(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
+
+
+class ChatRetentionPolicy(_serialization.Model):
+    """Data retention policy for auto deletion.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    NoneRetentionPolicy, ThreadCreationDateRetentionPolicy
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"none": "NoneRetentionPolicy", "threadCreationDate": "ThreadCreationDateRetentionPolicy"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
 
 
 class ChatThreadItem(_serialization.Model):
@@ -641,7 +677,7 @@ class ChatThreadItem(_serialization.Model):
         self.id = id
         self.topic = topic
         self.deleted_on = deleted_on
-        self.last_message_received_on = None
+        self.last_message_received_on: Optional[datetime.datetime] = None
 
 
 class ChatThreadProperties(_serialization.Model):
@@ -665,6 +701,11 @@ class ChatThreadProperties(_serialization.Model):
     :ivar deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype deleted_on: ~datetime.datetime
+    :ivar metadata: Contextual metadata for the thread. The metadata consists of name/value pairs.
+     The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
     """
 
     _validation = {
@@ -683,6 +724,8 @@ class ChatThreadProperties(_serialization.Model):
             "type": "CommunicationIdentifierModel",
         },
         "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "retention_policy": {"key": "retentionPolicy", "type": "ChatRetentionPolicy"},
     }
 
     def __init__(
@@ -693,6 +736,8 @@ class ChatThreadProperties(_serialization.Model):
         created_on: datetime.datetime,
         created_by_communication_identifier: "_models.CommunicationIdentifierModel",
         deleted_on: Optional[datetime.datetime] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        retention_policy: Optional["_models.ChatRetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -712,6 +757,11 @@ class ChatThreadProperties(_serialization.Model):
         :keyword deleted_on: The timestamp when the chat thread was deleted. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype deleted_on: ~datetime.datetime
+        :keyword metadata: Contextual metadata for the thread. The metadata consists of name/value
+         pairs. The total size of all metadata pairs can be up to 1KB in size.
+        :paramtype metadata: dict[str, str]
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
         """
         super().__init__(**kwargs)
         self.id = id
@@ -719,6 +769,8 @@ class ChatThreadProperties(_serialization.Model):
         self.created_on = created_on
         self.created_by_communication_identifier = created_by_communication_identifier
         self.deleted_on = deleted_on
+        self.metadata = metadata
+        self.retention_policy = retention_policy
 
 
 class ChatThreadsItemCollection(_serialization.Model):
@@ -752,7 +804,7 @@ class ChatThreadsItemCollection(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class CommunicationErrorResponse(_serialization.Model):
@@ -884,6 +936,11 @@ class CreateChatThreadRequest(_serialization.Model):
     :vartype topic: str
     :ivar participants: Participants to be added to the chat thread.
     :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar metadata: Contextual metadata for the thread. The metadata consists of name/value pairs.
+     The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
     """
 
     _validation = {
@@ -893,20 +950,35 @@ class CreateChatThreadRequest(_serialization.Model):
     _attribute_map = {
         "topic": {"key": "topic", "type": "str"},
         "participants": {"key": "participants", "type": "[ChatParticipant]"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "retention_policy": {"key": "retentionPolicy", "type": "ChatRetentionPolicy"},
     }
 
     def __init__(
-        self, *, topic: str, participants: Optional[List["_models.ChatParticipant"]] = None, **kwargs: Any
+        self,
+        *,
+        topic: str,
+        participants: Optional[List["_models.ChatParticipant"]] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        retention_policy: Optional["_models.ChatRetentionPolicy"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword topic: The chat thread topic. Required.
         :paramtype topic: str
         :keyword participants: Participants to be added to the chat thread.
         :paramtype participants: list[~azure.communication.chat.models.ChatParticipant]
+        :keyword metadata: Contextual metadata for the thread. The metadata consists of name/value
+         pairs. The total size of all metadata pairs can be up to 1KB in size.
+        :paramtype metadata: dict[str, str]
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
         """
         super().__init__(**kwargs)
         self.topic = topic
         self.participants = participants
+        self.metadata = metadata
+        self.retention_policy = retention_policy
 
 
 class CreateChatThreadResult(_serialization.Model):
@@ -936,7 +1008,7 @@ class CreateChatThreadResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.chat_thread = chat_thread
-        self.invalid_participants = None
+        self.invalid_participants: Optional[List["_models.ChatError"]] = None
 
 
 class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
@@ -1027,6 +1099,29 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
         self.user_id = user_id
         self.is_anonymous = is_anonymous
         self.cloud = cloud
+
+
+class NoneRetentionPolicy(ChatRetentionPolicy):
+    """No thread retention policy.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "none"
 
 
 class PhoneNumberIdentifierModel(_serialization.Model):
@@ -1185,6 +1280,39 @@ class SendTypingNotificationRequest(_serialization.Model):
         self.sender_display_name = sender_display_name
 
 
+class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
+    """Thread retention policy based on thread creation date.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    :ivar delete_thread_after_days: Indicates how many days after the thread creation the thread
+     will be deleted. Required.
+    :vartype delete_thread_after_days: int
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "delete_thread_after_days": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "delete_thread_after_days": {"key": "deleteThreadAfterDays", "type": "int"},
+    }
+
+    def __init__(self, *, delete_thread_after_days: int, **kwargs: Any) -> None:
+        """
+        :keyword delete_thread_after_days: Indicates how many days after the thread creation the thread
+         will be deleted. Required.
+        :paramtype delete_thread_after_days: int
+        """
+        super().__init__(**kwargs)
+        self.kind: str = "threadCreationDate"
+        self.delete_thread_after_days = delete_thread_after_days
+
+
 class UpdateChatMessageRequest(_serialization.Model):
     """Request payload for updating a chat message.
 
@@ -1218,16 +1346,37 @@ class UpdateChatThreadRequest(_serialization.Model):
 
     :ivar topic: Chat thread topic.
     :vartype topic: str
+    :ivar metadata: Contextual metadata for the thread. The metadata consists of name/value pairs.
+     The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
     """
 
     _attribute_map = {
         "topic": {"key": "topic", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "retention_policy": {"key": "retentionPolicy", "type": "ChatRetentionPolicy"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        topic: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        retention_policy: Optional["_models.ChatRetentionPolicy"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword topic: Chat thread topic.
         :paramtype topic: str
+        :keyword metadata: Contextual metadata for the thread. The metadata consists of name/value
+         pairs. The total size of all metadata pairs can be up to 1KB in size.
+        :paramtype metadata: dict[str, str]
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
         """
         super().__init__(**kwargs)
         self.topic = topic
+        self.metadata = metadata
+        self.retention_policy = retention_policy

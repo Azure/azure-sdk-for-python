@@ -8,18 +8,19 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureCommunicationChatServiceConfiguration
 from .operations import ChatOperations, ChatThreadOperations
 
 
-class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationChatService:
     """Azure Communication Chat Service.
 
     :ivar chat_thread: ChatThreadOperations operations
@@ -28,7 +29,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :vartype chat: azure.communication.chat.aio.operations.ChatOperations
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-03-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-03-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -38,6 +39,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureCommunicationChatServiceConfiguration(endpoint=endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -95,7 +97,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureCommunicationChatService":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
