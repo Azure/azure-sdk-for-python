@@ -9,9 +9,9 @@ from datetime import timedelta
 from typing import Any, Optional
 import sys
 
-from .utils import get_current_utc_as_int
-from .utils import create_access_token
-from .utils_async import AsyncTimer
+from utils import get_current_utc_as_int
+from utils import create_access_token
+from utils_async import AsyncTimer
 from azure.core.credentials import AccessToken
 from entra_token_exchange_async import EntraTokenExchangeClientAsync
 from typing import List, Optional
@@ -82,7 +82,7 @@ class EntraTokenCredential(object):
         self._some_thread_refreshing = False
         self._is_closed = Event()
 
-        self._token: AccessToken  # This will be set after exchange
+        self._token: AccessToken = None  # This will be set after exchange
         self._original_token = None
 
     async def get_token(self, **kwargs):  # pylint: disable=unused-argument
@@ -91,7 +91,7 @@ class EntraTokenCredential(object):
             raise RuntimeError("An instance of EntraTokenCredential cannot be reused once it has been closed.")
 
         if self._token is None:
-            self._original_token = await _get_entra_token(self.options.token_credential, self.options.scopes)
+            self._original_token = await self._get_entra_token(self.options.token_credential, self.options.scopes)
             self._token = await self._exchange_token(self._original_token)
 
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
@@ -147,12 +147,18 @@ class EntraTokenCredential(object):
         token = await client.exchange_token()
         return AccessToken(token.token, token.expires_on)
 
-    async def _get_entra_token(self):
+    async def _get_entra_token(self, token_credential: AsyncTokenCredential, scopes: Optional[List[str]] = None):
         """
         Helper method to get a token from the provided token_credential and scopes.
+
+        :param token_credential: The credential to use for acquiring the token.
+        :type token_credential: AsyncTokenCredential
+        :param scopes: The scopes to request.
+        :type scopes: Optional[List[str]]
+        :return: The acquired token.
         """
-        token = await self.options.token_credential.get_token_info(*self.options.scopes)
-        return token.token
+        token = await token_credential.get_token(*scopes)
+        return token
 
     async def _update_token_and_reschedule(self):
         should_this_thread_refresh = False
@@ -170,7 +176,7 @@ class EntraTokenCredential(object):
         if should_this_thread_refresh:
             try:
                 new_options = await self._token_refresher()
-                new_entra_token = await _get_entra_token(new_options.token_credential, new_options.scopes)
+                new_entra_token = await self._get_entra_token(new_options.token_credential, new_options.scopes)
                 new_token = await self._exchange_token(new_entra_token)
 
                 if not self._is_token_valid(new_token):
