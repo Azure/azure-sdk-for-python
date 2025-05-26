@@ -1,0 +1,6 @@
+{
+  "commit": "2b65955ebd52f2e735b971910053fe7091d00894",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/confidentialledger/Microsoft.CodeTransparency",
+  "@azure-tools/typespec-python": "0.44.1"
+}
