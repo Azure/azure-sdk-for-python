@@ -151,8 +151,7 @@ class EntraTokenCredential(object):
         """
         Helper method to get a token from the provided token_credential and scopes.
         """
-        scopes_str = " ".join(self.options.scopes) if isinstance(self.options.scopes, list) else self.options.scopes
-        token = await self.options.token_credential.get_token_info(scopes_str)
+        token = await self.options.token_credential.get_token_info(*self.options.scopes)
         return token.token
 
     async def _update_token_and_reschedule(self):
