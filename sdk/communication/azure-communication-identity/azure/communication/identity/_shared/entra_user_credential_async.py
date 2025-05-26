@@ -44,14 +44,6 @@ class EntraCommunicationTokenCredentialOptions:
         self.scopes = scopes or ["https://communication.azure.com/clients/.default"]
 
 
-async def _get_entra_token(token_credential, scopes):
-    """
-    Helper method to get a token from the provided token_credential and scopes.
-    """
-    token = await token_credential.get_token_info(*scopes)
-    return token.token
-
-
 class EntraTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service via Entra ID.
     The provided token will be exchanged for another token used for authentication.
@@ -154,6 +146,14 @@ class EntraTokenCredential(object):
         # Optionally, you can pass additional payload via kwargs if needed
         token = await client.exchange_token()
         return AccessToken(token.token, token.expires_on)
+
+    async def _get_entra_token(self):
+        """
+        Helper method to get a token from the provided token_credential and scopes.
+        """
+        scopes_str = " ".join(self.options.scopes) if isinstance(self.options.scopes, list) else self.options.scopes
+        token = await self.options.token_credential.get_token_info(scopes_str)
+        return token.token
 
     async def _update_token_and_reschedule(self):
         should_this_thread_refresh = False
