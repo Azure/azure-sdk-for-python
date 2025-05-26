@@ -33,7 +33,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigOperationStatus
             cluster_name="str",
             flux_configuration_name="str",
             operation_id="str",
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

@@ -53,8 +53,6 @@ class ProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE = "Azure"
     """Azure provider can be used to authenticate to Azure DevOps repositories using Managed Identity."""
-    GIT_HUB = "GitHub"
-    """GitHub provider can be used to authenticate"""
     GENERIC = "Generic"
     """Generic is the default provider that indicates secret-based authentication mechanism."""
 

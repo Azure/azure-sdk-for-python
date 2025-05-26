@@ -851,8 +851,8 @@ class GitRepositoryDefinition(_serialization.Model):
     :ivar local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
      authentication secret rather than the managed or user-provided configuration secrets.
     :vartype local_auth_ref: str
-    :ivar provider: Name of the provider used for authentication. Known values are: "Azure",
-     "GitHub", and "Generic".
+    :ivar provider: Name of the provider used for authentication. Known values are: "Azure" and
+     "Generic".
     :vartype provider: str or
      ~azure.mgmt.kubernetesconfiguration.fluxconfigurations.models.ProviderType
     """
@@ -907,8 +907,8 @@ class GitRepositoryDefinition(_serialization.Model):
         :keyword local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
-        :keyword provider: Name of the provider used for authentication. Known values are: "Azure",
-         "GitHub", and "Generic".
+        :keyword provider: Name of the provider used for authentication. Known values are: "Azure" and
+         "Generic".
         :paramtype provider: str or
          ~azure.mgmt.kubernetesconfiguration.fluxconfigurations.models.ProviderType
         """
@@ -949,8 +949,8 @@ class GitRepositoryPatchDefinition(_serialization.Model):
     :ivar local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
      authentication secret rather than the managed or user-provided configuration secrets.
     :vartype local_auth_ref: str
-    :ivar provider: Name of the provider used for authentication. Known values are: "Azure",
-     "GitHub", and "Generic".
+    :ivar provider: Name of the provider used for authentication. Known values are: "Azure" and
+     "Generic".
     :vartype provider: str or
      ~azure.mgmt.kubernetesconfiguration.fluxconfigurations.models.ProviderType
     """
@@ -1005,8 +1005,8 @@ class GitRepositoryPatchDefinition(_serialization.Model):
         :keyword local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
-        :keyword provider: Name of the provider used for authentication. Known values are: "Azure",
-         "GitHub", and "Generic".
+        :keyword provider: Name of the provider used for authentication. Known values are: "Azure" and
+         "Generic".
         :paramtype provider: str or
          ~azure.mgmt.kubernetesconfiguration.fluxconfigurations.models.ProviderType
         """

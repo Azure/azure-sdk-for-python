@@ -27,7 +27,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigurationsOperati
             cluster_resource_name="str",
             cluster_name="str",
             flux_configuration_name="str",
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -166,7 +166,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigurationsOperati
                 "type": "str",
                 "waitForReconciliation": bool,
             },
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -257,7 +257,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigurationsOperati
                 "sourceKind": "str",
                 "suspend": bool,
             },
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -272,7 +272,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigurationsOperati
             cluster_resource_name="str",
             cluster_name="str",
             flux_configuration_name="str",
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -286,7 +286,7 @@ class TestKubernetesConfigurationFluxConfigurationsMgmtFluxConfigurationsOperati
             cluster_rp="str",
             cluster_resource_name="str",
             cluster_name="str",
-            api_version="2025-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
