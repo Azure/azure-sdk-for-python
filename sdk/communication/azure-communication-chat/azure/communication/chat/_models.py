@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 import datetime
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
@@ -24,6 +24,9 @@ class ChatParticipant:
     :vartype display_name: str or None
     :ivar share_history_time: Time from which the chat history is shared with the participant.
     :vartype share_history_time: ~datetime.datetime or None
+    :ivar metadata: Contextual metadata for the chat participant. The metadata consists of
+     name/value pairs. The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
     """
 
     def __init__(  # pylint: disable=unused-argument
@@ -32,6 +35,7 @@ class ChatParticipant:
         identifier: CommunicationIdentifier,
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
+        metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -44,10 +48,12 @@ class ChatParticipant:
         :paramtype display_name: str or None
         :keyword share_history_time: Time from which the chat history is shared with the participant.
         :paramtype share_history_time: ~datetime.datetime or None
+        :paramtype metadata: dict[str, str]
         """
         self.identifier = identifier
         self.display_name = display_name
         self.share_history_time = share_history_time
+        self.metadata = metadata
 
     @classmethod
     def _from_generated(cls, chat_thread_participant):
@@ -55,6 +61,7 @@ class ChatParticipant:
             identifier=deserialize_identifier(chat_thread_participant.communication_identifier),
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time,
+            metadata=chat_thread_participant.metadata 
         )
 
     def _to_generated(self):
@@ -62,6 +69,7 @@ class ChatParticipant:
             communication_identifier=serialize_identifier(self.identifier),
             display_name=self.display_name,
             share_history_time=self.share_history_time,
+            metadata=self.metadata
         )
 
 
