@@ -14,9 +14,9 @@ from .utils import create_access_token
 from .utils_async import AsyncTimer
 from azure.core.credentials import AccessToken
 from entra_token_exchange_async import EntraTokenExchangeClientAsync
-from entra_communication_token_credential_options import EntraCommunicationTokenCredentialOptions
 from typing import List, Optional
-from azure.core.credentials import TokenCredential
+from sdk.core.corehttp.corehttp.credentials import AsyncTokenCredential
+
 
 class EntraCommunicationTokenCredentialOptions:
     """Options for EntraCommunicationTokenCredential.
@@ -28,20 +28,29 @@ class EntraCommunicationTokenCredentialOptions:
     """
 
     def __init__(
-        self,
-        resource_endpoint: str,
-        token_credential: AsyncTokenCredential,
-        scopes: Optional[List[str]] = None,
+            self,
+            resource_endpoint: str,
+            token_credential: AsyncTokenCredential,
+            scopes: Optional[List[str]] = None,
     ) -> None:
-       
+
         if not resource_endpoint:
             raise ValueError("resource_endpoint cannot be empty")
         if not token_credential:
             raise ValueError("token_credential cannot be None")
-            
+
         self.resource_endpoint = resource_endpoint
         self.token_credential = token_credential
         self.scopes = scopes or ["https://communication.azure.com/clients/.default"]
+
+
+async def _get_entra_token(token_credential, scopes):
+    """
+    Helper method to get a token from the provided token_credential and scopes.
+    """
+    token = await token_credential.get_token_info(*scopes)
+    return token.token
+
 
 class EntraTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service via Entra ID.
@@ -55,13 +64,23 @@ class EntraTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
+    TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
+    COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
+    TEAMS_EXTENSION_ENDPOINT = "/access/teamsExtension/:exchangeAccessToken"
+    TEAMS_EXTENSION_API_VERSION = "2025-06-30"
+    COMMUNICATION_CLIENTS_ENDPOINT = "/access/entra/:exchangeAccessToken"
+    COMMUNICATION_CLIENTS_API_VERSION = "2025-03-02-preview"
+
     def __init__(self, options: EntraCommunicationTokenCredentialOptions, **kwargs: Any):
         if options is None:
             raise ValueError("Options must be provided.")
+        self.options = options
+
         self._token_refresher = kwargs.pop("token_refresher", None)
         self._proactive_refresh = kwargs.pop("proactive_refresh", False)
         if self._proactive_refresh and self._token_refresher is None:
             raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
+
         self._timer = None
         self._async_mutex = Lock()
         if sys.version_info[:3] == (3, 10, 0):
@@ -70,16 +89,17 @@ class EntraTokenCredential(object):
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
         self._is_closed = Event()
-        self._token: AccessToken  # This will be set after exchange
-        self._original_token: str = None
 
-    async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
+        self._token: AccessToken  # This will be set after exchange
+        self._original_token = None
+
+    async def get_token(self, **kwargs):  # pylint: disable=unused-argument
         """Returns the exchanged token."""
         if self._proactive_refresh and self._is_closed.is_set():
             raise RuntimeError("An instance of EntraTokenCredential cannot be reused once it has been closed.")
 
         if self._token is None:
-            self._original_token = await self._get_entra_token(options.token_credential, options.scopes)
+            self._original_token = await _get_entra_token(self.options.token_credential, self.options.scopes)
             self._token = await self._exchange_token(self._original_token)
 
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
@@ -87,20 +107,50 @@ class EntraTokenCredential(object):
         await self._update_token_and_reschedule()
         return self._token
 
-    async def _get_entra_token(self, token_credential, scopes):
+    def _create_request_uri(self, resource_endpoint: str, scopes: Optional[list] = None) -> str:
         """
-        Helper method to get a token from the provided token_credential and scopes.
+        Constructs the request URI for token exchange based on the resource endpoint and scopes.
+
+        :param str resource_endpoint: The Azure Communication Service resource endpoint URL.
+        :param list[str] scopes: The scopes for retrieving the Entra ID access token.
+        :return: The constructed request URI.
+        :rtype: str
         """
-        token = await token_credential.get_token(*scopes)
-        return token.token
+        endpoint, api_version = self._determine_endpoint_and_api_version(scopes)
+        request_uri = f"{resource_endpoint}{endpoint}?api-version={api_version}"
+        return request_uri
+
+    def _determine_endpoint_and_api_version(self, scopes):
+        """
+        Determines the endpoint and API version based on the provided scopes.
+
+        :param list[str] scopes: The scopes to validate.
+        :return: Tuple of (endpoint, api_version)
+        :rtype: (str, str)
+        :raises ValueError: If scopes are invalid.
+        """
+
+        if not scopes or not isinstance(scopes, list) or not scopes:
+            raise ValueError(
+                f"Scopes validation failed. Ensure all scopes start with either {self.TEAMS_EXTENSION_SCOPE_PREFIX} or {self.COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
+            )
+
+        if all(scope.startswith(self.TEAMS_EXTENSION_SCOPE_PREFIX) for scope in scopes):
+            return self.TEAMS_EXTENSION_ENDPOINT, self.TEAMS_EXTENSION_API_VERSION
+        elif all(scope.startswith(self.COMMUNICATION_CLIENTS_SCOPE_PREFIX) for scope in scopes):
+            return self.COMMUNICATION_CLIENTS_ENDPOINT, self.COMMUNICATION_CLIENTS_API_VERSION
+        else:
+            raise ValueError(
+                f"Scopes validation failed. Ensure all scopes start with either {self.TEAMS_EXTENSION_SCOPE_PREFIX} or {self.COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
+            )
 
     async def _exchange_token(self, original_token):
         """Exchanges the original token for a new token using EntraTokenExchangeClientAsync."""
 
         # Instantiate the async client with the endpoint and original token
-        endpoint = ""  # TO BE DONE
+        uri = self._create_request_uri(self.options.resource_endpoint, self.options.scopes)  # TO BE DONE
 
-        client = EntraTokenExchangeClientAsync(endpoint, original_token)
+        client = EntraTokenExchangeClientAsync(uri, original_token)
         # Optionally, you can pass additional payload via kwargs if needed
         token = await client.exchange_token()
         return AccessToken(token.token, token.expires_on)
@@ -121,7 +171,7 @@ class EntraTokenCredential(object):
         if should_this_thread_refresh:
             try:
                 new_options = await self._token_refresher()
-                new_entra_token = await self._get_entra_token(new_options.token_credential, new_options.scopes)
+                new_entra_token = await _get_entra_token(new_options.token_credential, new_options.scopes)
                 new_token = await self._exchange_token(new_entra_token)
 
                 if not self._is_token_valid(new_token):
