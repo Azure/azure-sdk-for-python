@@ -1,10 +1,11 @@
 # Copilot Instructions
 
+DO NOT REPEAT ANY STEPS. IF GUIDING A USER, DO NOT REPEAT THE INSTRUCTIONS. THE USER SHOULD BE ABLE TO FOLLOW THE INSTRUCTIONS WITHOUT NEEDING YOU TO REPEAT.
 
 # General Repository Guidelines
 - DO check this [website](https://azure.github.io/azure-sdk/python_design.html), and link to pages found there, if possible, when asked about guidelines, or guidance on how to write SDKs. The general guidelines for SDK in this repo are defined there.
 - DO ensure folks have the appropriate setup when working with this repository. Use the verify_setup tool in the azure-sdk-validation server.
-
+- Before running any commands in the terminal, ensure the user has a python virtual environment set up and activated. If they do not have one, guide them to create one using `python -m venv <env_name>` and activate it with the appropriate command for their operating system.
 
 # Generating an SDK From TypeSpec
 
