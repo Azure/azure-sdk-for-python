@@ -10,9 +10,13 @@ from pathlib import Path
 from typing import Any, AsyncGenerator, DefaultDict, Dict, Final, Mapping, Optional, cast
 
 from openai.types.chat import ChatCompletion
+from openai import OpenAIError
+from unittest.mock import AsyncMock
 
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
+from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
+from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 
 
 PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
@@ -185,3 +189,31 @@ class TestPrompty:
         response: str = result.choices[0].message.content or ""
         assert "Bob" in response
         assert "Paris" in response
+
+
+class TestPromptyAdaptParameters:
+    @pytest.mark.asyncio
+    async def test_parameter_adaptation_function(self, mocker):
+        """Test the static method that adapts parameters for reasoning models directly."""
+        # Create sample parameters dict with all parameters that should be modified
+        parameters = {
+            "temperature": 0.7,
+            "max_tokens": 100,
+            "top_p": 0.95,
+            "presence_penalty": 0.5,
+            "frequency_penalty": 0.5,
+            "other_param": "value"  # This should remain unchanged
+        }
+
+        # Call the adaptation method directly
+        AsyncPrompty._adapt_parameters_for_reasoning_model(parameters)
+
+        # Verify parameters were correctly adapted
+        assert "temperature" not in parameters
+        assert "top_p" not in parameters
+        assert "presence_penalty" not in parameters
+        assert "frequency_penalty" not in parameters
+        assert "max_tokens" not in parameters
+        assert "max_completion_tokens" in parameters
+        assert parameters["max_completion_tokens"] == DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+        assert parameters["other_param"] == "value"
