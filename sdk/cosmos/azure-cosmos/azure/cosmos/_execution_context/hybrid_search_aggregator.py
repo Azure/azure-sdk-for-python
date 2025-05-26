@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
+from typing import List, Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
@@ -36,12 +36,13 @@ def _retrieve_component_scores(drained_results):
     return component_scores_list
 
 
-def _compute_rrf_scores(ranks, query_results):
+def _compute_rrf_scores(ranks: List[List[int]], component_weights: List[Union[int, float]], query_results: List[dict]):
     component_count = len(ranks)
     for index, result in enumerate(query_results):
         rrf_score = 0.0
         for component_index in range(component_count):
-            rrf_score += 1.0 / (RRF_CONSTANT + ranks[component_index][index])
+            rrf_score += component_weights[component_index] / (RRF_CONSTANT + ranks[component_index][index])
+
         # Add the score to the item to be returned
         result['Score'] = rrf_score
 
@@ -54,7 +55,7 @@ def _compute_ranks(component_scores):
         rank = 1  # ranks are 1-based
         for index, score_tuple in enumerate(scores):
             # Identical scores should have the same rank
-            if index > 0 and score_tuple[0] < scores[index - 1][0]:
+            if index > 0 and score_tuple[0] != scores[index - 1][0]:
                 rank += 1
             ranks[component_index][score_tuple[1]] = rank
 
@@ -150,7 +151,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     """
 
     def __init__(self, client, resource_link, options,
-                 partitioned_query_execution_info, hybrid_search_query_info):
+                 partitioned_query_execution_info, hybrid_search_query_info, response_hook):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -162,8 +163,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
+        self._response_hook = response_hook
 
-    def _run_hybrid_search(self):
+    def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
@@ -180,6 +182,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
+                        self._response_hook
                     )
                 )
 
@@ -221,6 +224,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         rewritten_query['rewrittenQuery'],
                         self._document_producer_comparator,
                         self._options,
+                        self._response_hook
                     )
                 )
         # verify all document producers have items/ no splits
@@ -248,21 +252,33 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             self._format_final_results(drained_results)
             return
 
+        # Get the Components weight if any
+        if self._hybrid_search_query_info.get('componentWeights'):
+            component_weights = self._hybrid_search_query_info['componentWeights']
+        else:
+            # If no weights are provided, we assume all components have equal weight
+            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
+
         # Sort drained results by _rid
         drained_results.sort(key=lambda x: x['_rid'])
 
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
 
-        # Sort by scores in descending order
-        for score_tuples in component_scores:
-            score_tuples.sort(key=lambda x: x[0], reverse=True)
+        # Sort by scores using component weights
+        for index, score_tuples in enumerate(component_scores):
+            # Ordering of the component query is based on if the weight is negative or positive
+            # A positive weight ordering means descending order, a negative weight ordering means ascending order
+            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
+            comparison_factor = not ordering.lower() == 'ascending'
+            #  pylint: disable=cell-var-from-loop
+            score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
 
         # Compute the ranks
         ranks = _compute_ranks(component_scores)
 
         # Compute the RRF scores and add them to output
-        _compute_rrf_scores(ranks, drained_results)
+        _compute_rrf_scores(ranks, component_weights, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
@@ -347,6 +363,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     query,
                     self._document_producer_comparator,
                     self._options,
+                    self._response_hook
                 )
             )
 

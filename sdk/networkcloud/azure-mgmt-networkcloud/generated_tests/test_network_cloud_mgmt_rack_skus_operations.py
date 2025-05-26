@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtRackSkusOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_rack_skus_list_by_subscription(self, resource_group):
         response = self.client.rack_skus.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtRackSkusOperations(AzureMgmtRecordedTestCase):
     def test_rack_skus_get(self, resource_group):
         response = self.client.rack_skus.get(
             rack_sku_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -63,12 +63,16 @@ class UsernamePasswordCredential(InteractiveCredential):
     """
 
     def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
-        warnings.warn(
-            f"{self.__class__.__name__} is deprecated, as is it doesn't support multifactor "
-            "authentication (MFA). For more details, see https://aka.ms/azsdk/identity/mfa.",
-            category=DeprecationWarning,
-            stacklevel=2,
-        )
+        if not kwargs.pop("_silence_deprecation_warning", False):
+            # Only emit the deprecation warning if the credential was constructed directly and not via
+            # EnvironmentCredential since EnvironmentCredential will emit its own deprecation
+            # warning if it is used to create a UsernamePasswordCredential.
+            warnings.warn(
+                f"{self.__class__.__name__} is deprecated, as it doesn't support multifactor "
+                "authentication (MFA). For more details, see https://aka.ms/azsdk/identity/mfa.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint:disable=protected-access,no-else-return
+# pylint:disable=protected-access,no-else-return,unreachable
 
 from copy import deepcopy
 from functools import reduce
@@ -270,4 +270,4 @@ class RegistryRegionDetails:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
             log_and_raise_error(err)
-            return None
+            return None  # pylint: disable=unreachable

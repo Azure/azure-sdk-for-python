@@ -33,10 +33,10 @@ def main():
     client.task_hubs.begin_delete(
         resource_group_name="rgopenapi",
         scheduler_name="testscheduler",
-        task_hub_name="testtuskhub",
+        task_hub_name="testtaskhub",
     ).result()
 
 
-# x-ms-original-file: 2024-10-01-preview/TaskHubs_Delete.json
+# x-ms-original-file: 2025-04-01-preview/TaskHubs_Delete.json
 if __name__ == "__main__":
     main()

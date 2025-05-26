@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.aio import ServiceBusManagementClient
+from azure.mgmt.servicebus.v2021_11_01.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_namespaces_list(self, resource_group):
         response = self.client.namespaces.list(
             api_version="2021-11-01",
         )
@@ -31,7 +31,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_namespaces_list_by_resource_group(self, resource_group):
         response = self.client.namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2021-11-01",
@@ -42,7 +42,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_namespaces_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.namespaces.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -118,7 +118,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_namespaces_begin_delete(self, resource_group):
         response = await (
             await self.client.namespaces.begin_delete(
                 resource_group_name=resource_group.name,
@@ -132,7 +132,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_namespaces_get(self, resource_group):
         response = await self.client.namespaces.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -144,7 +144,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_namespaces_update(self, resource_group):
         response = await self.client.namespaces.update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -209,7 +209,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_network_rule_set(self, resource_group):
+    async def test_namespaces_create_or_update_network_rule_set(self, resource_group):
         response = await self.client.namespaces.create_or_update_network_rule_set(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -240,7 +240,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_network_rule_set(self, resource_group):
+    async def test_namespaces_get_network_rule_set(self, resource_group):
         response = await self.client.namespaces.get_network_rule_set(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -252,7 +252,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_network_rule_sets(self, resource_group):
+    async def test_namespaces_list_network_rule_sets(self, resource_group):
         response = self.client.namespaces.list_network_rule_sets(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -264,7 +264,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_authorization_rules(self, resource_group):
+    async def test_namespaces_list_authorization_rules(self, resource_group):
         response = self.client.namespaces.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -276,7 +276,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_authorization_rule(self, resource_group):
+    async def test_namespaces_create_or_update_authorization_rule(self, resource_group):
         response = await self.client.namespaces.create_or_update_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -304,7 +304,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete_authorization_rule(self, resource_group):
+    async def test_namespaces_delete_authorization_rule(self, resource_group):
         response = await self.client.namespaces.delete_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -317,7 +317,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_authorization_rule(self, resource_group):
+    async def test_namespaces_get_authorization_rule(self, resource_group):
         response = await self.client.namespaces.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -330,7 +330,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_keys(self, resource_group):
+    async def test_namespaces_list_keys(self, resource_group):
         response = await self.client.namespaces.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -343,7 +343,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_regenerate_keys(self, resource_group):
+    async def test_namespaces_regenerate_keys(self, resource_group):
         response = await self.client.namespaces.regenerate_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -357,7 +357,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_name_availability(self, resource_group):
+    async def test_namespaces_check_name_availability(self, resource_group):
         response = await self.client.namespaces.check_name_availability(
             parameters={"name": "str"},
             api_version="2021-11-01",

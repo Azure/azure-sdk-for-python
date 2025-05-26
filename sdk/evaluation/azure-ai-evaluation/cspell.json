@@ -8,11 +8,25 @@
         "vuln",
         "pyrit",
         "Pyrit",
-        "submitaoaievaluation"
+        "submitaoaievaluation",
+        "ilike",
+        "ndcg",
+        "NDCG",
+        "xdcg",
+        "XDCG",
+        "idcg",
+        "qrel",
+        "qrels",
+        "ollama",
+        "prompty"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/simulator/_data_sources/grounding.json",
         "sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+    ],
+    "words": [
+        "Aoai",
+        "onedp"
     ]
 }

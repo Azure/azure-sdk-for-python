@@ -1,12 +1,12 @@
 {
-  "commit": "2d73bd7fb1c68a8b6829fac1760bd0fc84ca5554",
+  "commit": "03dc846ecc0adf0ec99ba3aca01676df7fa58dc5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.27.4",
+    "@autorest/python@6.34.1",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/storage/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/storage/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.34.1 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/storage/resource-manager/readme.md",
   "package-2023-01": "2023-07-20 11:56:40 -0700 3e6b4ddca225530c27273d0f816466a905c0151b Microsoft.Storage/stable/2023-01-01/table.json",
   "package-2022-09": "2022-11-13 19:43:16 -0800 da0cfefaa0e6c237e1e3819f1cb2e11d7606878d Microsoft.Storage/stable/2022-09-01/table.json",

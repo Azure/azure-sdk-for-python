@@ -1,15 +1,41 @@
 ## Release History
 
-### 4.10.0b5 (Unreleased)
+### 4.12.0b2 (Unreleased)
 
 #### Features Added
 
-#### Breaking Changes
-
 #### Bugs Fixed
-* Fixed how the environment variables in the sdk are parsed. See [PR 40303](https://github.com/Azure/azure-sdk-for-python/pull/40303).
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
 
 #### Other Changes
+
+### 4.12.0b1 (2025-05-19)
+
+#### Features Added
+* Added ability to use weighted RRF (Reciprocal Rank Fusion) for Hybrid full text search queries. See [PR 40899](https://github.com/Azure/azure-sdk-for-python/pull/40899/files).
+
+#### Bugs Fixed
+* Fixed Diagnostics Error Log Formatting to handle error messages from non-CosmosHttpResponseExceptions. See [PR 40889](https://github.com/Azure/azure-sdk-for-python/pull/40889/files)
+* Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
+
+### 4.11.0b1 (2025-04-30)
+
+#### Features Added
+* Added ability to set `throughput_bucket` header at the client level and for all requests. See [PR 40340](https://github.com/Azure/azure-sdk-for-python/pull/40340).
+* Added ability to use Filters from Logging module on Diagnostics Logging based on Http request/response related attributes. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897).
+* Added ability to use `excluded_locations` on client level and document API request level. See [PR 40298](https://github.com/Azure/azure-sdk-for-python/pull/40298) 
+
+#### Bugs Fixed
+* Fixed bug where change feed requests would not respect the partition key filter. See [PR 40677](https://github.com/Azure/azure-sdk-for-python/pull/40677).
+* Fixed how the environment variables in the sdk are parsed. See [PR 40303](https://github.com/Azure/azure-sdk-for-python/pull/40303).
+* Fixed health check to check the first write region when it is not specified in the preferred regions. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
+* Fixed `response_hook` not getting called for aggregate queries. See [PR 40696](https://github.com/Azure/azure-sdk-for-python/pull/40696).
+* Fixed bug where writes were being retried for 5xx status codes for patch and replace. See [PR 40672](https://github.com/Azure/azure-sdk-for-python/pull/40672).
+
+#### Other Changes
+* Optimized Diagnostics Logging by reducing time spent on logging. Logged Errors are more readable and formatted. See [PR 39897](https://github.com/Azure/azure-sdk-for-python/pull/39897).
+* Health checks are now done concurrently and for all regions for async apis. See [PR 40588](https://github.com/Azure/azure-sdk-for-python/pull/40588).
+
 
 ### 4.10.0b4 (2025-04-01)
 

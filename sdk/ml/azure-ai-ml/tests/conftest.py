@@ -474,6 +474,18 @@ def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretC
 
 
 @pytest.fixture
+def sdkv2_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdkv2-testFeed",
+    )
+
+
+@pytest.fixture
 def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
@@ -618,15 +630,19 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
+    fake_uuid = "00000000000000000000000000000000"
+
     def generate_hash(*args, **kwargs):
-        return str(uuid.uuid4())
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
+        return real_uuid
 
     if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
             "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
-            return_value="00000000000000000000000000000000",
+            return_value=fake_uuid,
         )
 
 
@@ -647,7 +663,7 @@ def mock_anon_component_version(mocker: MockFixture):
 
     def generate_name_version(*args, **kwargs):
         real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
         return ANONYMOUS_COMPONENT_NAME, real_uuid
 
     def fake_name_version(*args, **kwargs):
@@ -671,7 +687,7 @@ def mock_asset_name(mocker: MockFixture):
 
     def generate_uuid(*args, **kwargs):
         real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid, function_scoped=True)
         return real_uuid
 
     if is_live():
@@ -715,7 +731,7 @@ def generate_component_hash(*args, **kwargs):
     """Normalize component dict with sanitized value and return hash."""
     dict_hash = hash_dict(*args, **kwargs)
     normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
-    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash, function_scoped=True)
     return dict_hash
 
 
@@ -825,7 +841,7 @@ def mock_job_name_generator(mocker: MockFixture):
 
     def generate_and_sanitize_job_name(*args, **kwargs):
         real_job_name = generate_job_name()
-        add_general_string_sanitizer(value=fake_job_name, target=real_job_name)
+        add_general_string_sanitizer(value=fake_job_name, target=real_job_name, function_scoped=True)
         return real_job_name
 
     if is_live():

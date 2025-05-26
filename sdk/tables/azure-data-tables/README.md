@@ -55,7 +55,7 @@ The `credential` parameter may be provided in a number of different forms, depen
 * Shared Key
 * Connection String
 * Shared Access Signature Token
-* TokenCredential(AAD)(Supported on Storage)
+* TokenCredential (Microsoft Entra ID)(Supported on Storage)
 
 ##### Creating the client from a shared key
 To use an account [shared key][azure_shared_key] (aka account key or access key), provide the key as a string. This can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
@@ -79,7 +79,7 @@ with TableServiceClient(
 ```
 
 ##### Creating the client from a connection string
-Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the connection string to the client's `from_connection_string` class method. If the connection string does not specify a fully qualified endpoint URL (`"TableEndpoint"`), or URL suffix (`"EndpointSuffix"`), the endpoint will be assumed to be an Azure Storage account, and the URL automatically formatted accordingly. 
+Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the connection string to the client's `from_connection_string` class method. If the connection string does not specify a fully qualified endpoint URL (`"TableEndpoint"`), or URL suffix (`"EndpointSuffix"`), the endpoint will be assumed to be an Azure Storage account, and the URL automatically formatted accordingly.
 
 For Tables Storage, the connection string can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or with the following Azure CLI command:
 
@@ -129,11 +129,12 @@ with TableServiceClient(
 ```
 
 ##### Creating the client from a TokenCredential
-Azure Tables provides integration with Azure Active Directory(Azure AD) for identity-based authentication of requests to the Table service when targeting a Storage endpoint. With Azure AD, you can use role-based access control(RBAC) to grant access to your Azure Table resources to users, groups, or applications.
+
+Azure Tables provides integration with Microsoft Entra ID for identity-based authentication of requests to the Table service when targeting a Storage endpoint. With Microsoft Entra ID, you can use role-based access control (RBAC) to grant access to your Azure Table resources to users, groups, or applications.
 
 To access a table resource with a TokenCredential, the authenticated identity should have either the "Storage Table Data Contributor" or "Storage Table Data Reader" role.
 
-With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure AD integration in Azure Storage, see the [azure-identity README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
+With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Microsoft Entra ID integration in Azure Storage, see the [azure-identity README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
 
 ```python
 from azure.data.tables import TableServiceClient
@@ -145,6 +146,33 @@ with TableServiceClient(
     properties = table_service_client.get_service_properties()
     print(f"{properties}")
 ```
+
+###### Configure client for an Azure sovereign cloud
+
+When TokenCredential authentication is used, all clients are configured to use the Azure public cloud by default. To configure a client for a sovereign cloud, you should provide the correct `audience` keyword argument when creating the client. The following table lists some known audiences:
+
+| Cloud | Audience |
+|-------|----------|
+| Azure Public | "https://storage.azure.com" / "https://cosmos.azure.com" |
+| Azure US Government | "https://storage.azure.us" / "https://cosmos.azure.us" |
+| Azure China | "https://storage.chinacloudapi.cn" / "https://cosmos.chinacloudapi.cn" |
+
+The following example shows how to configure the `TableServiceClient` to connect to Azure US Government:
+
+```python
+from azure.data.tables import TableServiceClient
+from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+
+# Authority can also be set via the AZURE_AUTHORITY_HOST environment variable.
+credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+
+table_service_client = TableServiceClient(
+    endpoint="https://<my_account_name>.table.core.usgovcloudapi.net",
+    credential=credential,
+    audience="https://storage.azure.us"
+)
+```
+
 
 ## Key concepts
 Common uses of the Table service included:

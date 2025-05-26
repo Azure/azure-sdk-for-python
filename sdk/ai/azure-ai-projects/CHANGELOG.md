@@ -1,5 +1,75 @@
 # Release History
 
+## 1.0.0b11 (2025-05-15)
+
+There have been significant updates with the release of version 1.0.0b11, including breaking changes.
+Please see new samples and package README.md file.
+
+### Features added
+
+* `.deployments` methods to enumerate AI models deployed to your AI Foundry Project.
+* `.datasets` methods to upload documents and reference them. To be used with Evaluations.
+* `.indexes` methods to handle your Search Indexes.
+
+### Breaking changes
+
+* Azure AI Foundry Project endpoint is now required to construct the `AIProjectClient`. It has the form
+`https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. Find it in your AI Foundry Project
+Overview page. The factory method `from_connection_string` was removed.
+* Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
+`AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
+See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.
+* Several changes to the `.connections` methods, including the response object (now simply called `Connection`)
+* The method `.inference.get_azure_openai_client()` now supports returning an authenticated `AzureOpenAI` client to be used with
+AI models deployed to the Project's AI Services. This is in addition to the existing option to get an `AzureOpenAI` client for one of the connected Azure OpenAI services.
+* Import `PromptTemplate` from `azure.ai.projects` instead of `azure.ai.projects.prompts`.
+* The class ConnectionProperties was renamed to Connection, and its properties have changed.
+* The method `.to_evaluator_model_config` on `ConnectionProperties` is no longer required and does not have an equivalent method on `Connection`. When constructing the EvaluatorConfiguration class, the `init_params` element now requires `deployment_name` instead of `model_config`.
+* The method `upload_file` on `AIProjectClient` had been removed, use `datasets.upload_file` instead.
+* Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
+* Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
+* Property `id` on Evaluation is replaced with `name`.
+
+### Sample updates
+
+* All samples have been updated. New ones added for Deployments, Datasets and Indexes.
+
+## 1.0.0b10 (2025-04-23)
+
+### Features added
+
+* Added `ConnectedAgentTool` class for better connected Agent support.
+* Added Agent tool call tracing for all tool call types when streaming with `AgentEventHandler` based event handler.
+* Added tracing for listing Agent run steps.
+* Add a `max_retry` argument to the Agent's `enable_auto_function_calls` function to cancel the run if the maximum number of retries for auto function calls is reached.
+
+### Sample updates
+
+* Added connected Agent tool sample.
+
+### Bugs Fixed
+
+* Fix for filtering of Agent messages by run ID (see [GitHub issue 49513](https://github.com/Azure/azure-sdk-for-net/issues/49513)).
+
+## 1.0.0b9 (2025-04-16)
+
+### Features added
+
+* Utilities to load prompt template strings and Prompty file content
+* Added BingCustomSearchTool class with sample
+* Added list_threads API to agents namespace
+* Added image input support for agents create_message
+
+### Sample updates
+
+* Added `project_client.agents.enable_auto_function_calls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
+* New BingCustomSearchTool sample
+* New samples added for image input from url, file and base64
+
+### Breaking Changes
+
+Redesigned automatic function calls because agents retrieved by `update_agent` and `get_agent` do not support them.  With the new design, the toolset parameter in `create_agent` no longer executes toolcalls automatically during `create_and_process_run` or `create_stream`. To retain this behavior, call `enable_auto_function_calls` without additional changes.
+
 ## 1.0.0b8 (2025-03-28)
 
 ### Features added

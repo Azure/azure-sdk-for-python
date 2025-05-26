@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +31,7 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.table.update(
+    response = client.table.create(
         resource_group_name="res3376",
         account_name="sto328",
         table_name="table6185",

@@ -27,7 +27,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
             pool_name="str",
             volume_name="str",
             volume_quota_rule_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +101,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                     "quotaType": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,7 +118,7 @@ class TestNetAppManagementVolumeQuotaRulesOperationsAsync(AzureMgmtRecordedTestC
                 pool_name="str",
                 volume_name="str",
                 volume_quota_rule_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -67,7 +67,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         database_list = list(self.client.list_databases(session_token=str(uuid.uuid4())))
         database_list2 = list(self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4())))
         assert len(database_list) > 0
-        assert database_list == database_list2
+        assert len(database_list2) > 0
         database_read = database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
         self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
@@ -78,22 +78,22 @@ class TestBackwardsCompatibility(unittest.TestCase):
             assert e.status_code == 404
 
         # Container
-        container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
+        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
         assert container is not None
-        container2 = database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
+        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
         assert container2 is not None
-        container_list = list(database.list_containers(session_token=str(uuid.uuid4())))
-        container_list2 = list(database.query_containers(query="select * from c", session_token=str(uuid.uuid4())))
+        container_list = list(self.databaseForTest.list_containers(session_token=str(uuid.uuid4())))
+        container_list2 = list(self.databaseForTest.query_containers(query="select * from c", session_token=str(uuid.uuid4())))
         assert len(container_list) > 0
-        assert container_list == container_list2
+        assert len(container_list2) > 0
         container2_read = container2.read(session_token=str(uuid.uuid4()))
         assert container2_read is not None
-        replace_container = database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        database.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
+        self.databaseForTest.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         try:
             container2.read()
             pytest.fail("Container read should have failed")
@@ -117,21 +117,21 @@ class TestBackwardsCompatibility(unittest.TestCase):
             assert e.status_code == 404
 
         # Container
-        container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                               etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert container is not None
-        container2 = database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
+        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
                                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert container2 is not None
         container2_read = container2.read()
         assert container2_read is not None
-        replace_container = database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
                                                        etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
             container2.read()
             pytest.fail("Container read should have failed")

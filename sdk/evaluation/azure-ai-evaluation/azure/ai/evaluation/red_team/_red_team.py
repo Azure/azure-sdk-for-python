@@ -10,7 +10,7 @@ import logging
 import tempfile
 import time
 from datetime import datetime
-from typing import Callable, Dict, List, Optional, Union, cast
+from typing import Callable, Dict, List, Optional, Union, cast, Any
 import json
 from pathlib import Path
 import itertools
@@ -23,7 +23,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding, EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding, EVALUATION_PASS_FAIL_MAPPING, TokenScope
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
 from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
 from azure.ai.evaluation._version import VERSION
@@ -31,13 +31,15 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate._utils import _write_output
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import  EvaluationResult
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, RAIClient
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation import evaluate
+from azure.ai.evaluation._common import RedTeamUpload, ResultType
 
 # Azure Core imports
 from azure.core.credentials import TokenCredential
@@ -46,6 +48,9 @@ from azure.core.credentials import TokenCredential
 from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
+from ._utils._rai_service_target import AzureRAIServiceTarget
+from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -53,9 +58,18 @@ from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.memory import CentralMemory
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
+from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
+from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+
+# Retry imports
+import httpx
+import httpcore
+import tenacity
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 # Local imports - constants and utilities
 from ._utils.constants import (
@@ -69,7 +83,7 @@ from ._utils.logging_utils import (
 )
 
 @experimental
-class RedTeam():
+class RedTeam:
     """
     This class uses various attack strategies to test the robustness of AI models against adversarial inputs.
     It logs the results of these evaluations and provides detailed scorecards summarizing the attack success rates.
@@ -86,35 +100,144 @@ class RedTeam():
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
-    :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
+    :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
-    :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
-    :type max_parallel_tasks: int
     """
+      # Retry configuration constants
+    MAX_RETRY_ATTEMPTS = 5  # Increased from 3
+    MIN_RETRY_WAIT_SECONDS = 2  # Increased from 1
+    MAX_RETRY_WAIT_SECONDS = 30  # Increased from 10
+    
+    def _create_retry_config(self):
+        """Create a standard retry configuration for connection-related issues.
+        
+        Creates a dictionary with retry configurations for various network and connection-related
+        exceptions. The configuration includes retry predicates, stop conditions, wait strategies,
+        and callback functions for logging retry attempts.
+        
+        :return: Dictionary with retry configuration for different exception types
+        :rtype: dict
+        """
+        return {            # For connection timeouts and network-related errors
+            "network_retry": {
+                "retry": retry_if_exception(
+                    lambda e: isinstance(e, (
+                        httpx.ConnectTimeout, 
+                        httpx.ReadTimeout,
+                        httpx.ConnectError,
+                        httpx.HTTPError, 
+                        httpx.TimeoutException,
+                        httpx.HTTPStatusError,
+                        httpcore.ReadTimeout,
+                        ConnectionError,
+                        ConnectionRefusedError,
+                        ConnectionResetError,
+                        TimeoutError,
+                        OSError,
+                        IOError,
+                        asyncio.TimeoutError,
+                        ServiceRequestError, 
+                        ServiceResponseError
+                    )) or (
+                        isinstance(e, httpx.HTTPStatusError) and 
+                        (e.response.status_code == 500 or "model_error" in str(e))
+                    )
+                ),
+                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
+                "wait": wait_exponential(multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS),
+                "retry_error_callback": self._log_retry_error,
+                "before_sleep": self._log_retry_attempt,
+            }
+        }
+    
+    def _log_retry_attempt(self, retry_state):
+        """Log retry attempts for better visibility.
+        
+        Logs information about connection issues that trigger retry attempts, including the 
+        exception type, retry count, and wait time before the next attempt.
+        
+        :param retry_state: Current state of the retry
+        :type retry_state: tenacity.RetryCallState
+        """
+        exception = retry_state.outcome.exception()
+        if exception:
+            self.logger.warning(
+                f"Connection issue: {exception.__class__.__name__}. "
+                f"Retrying in {retry_state.next_action.sleep} seconds... "
+                f"(Attempt {retry_state.attempt_number}/{self.MAX_RETRY_ATTEMPTS})"
+            )
+    
+    def _log_retry_error(self, retry_state):
+        """Log the final error after all retries have been exhausted.
+        
+        Logs detailed information about the error that persisted after all retry attempts have been exhausted.
+        This provides visibility into what ultimately failed and why.
+        
+        :param retry_state: Final state of the retry
+        :type retry_state: tenacity.RetryCallState
+        :return: The exception that caused retries to be exhausted
+        :rtype: Exception
+        """
+        exception = retry_state.outcome.exception()
+        self.logger.error(
+            f"All retries failed after {retry_state.attempt_number} attempts. "
+            f"Last error: {exception.__class__.__name__}: {str(exception)}"
+        )
+        return exception
+
     def __init__(
             self,
-            azure_ai_project,
+            azure_ai_project: Union[dict, str],
             credential,
             *,
             risk_categories: Optional[List[RiskCategory]] = None,
             num_objectives: int = 10,
             application_scenario: Optional[str] = None,
             custom_attack_seed_prompts: Optional[str] = None,
-            output_dir=None
+            output_dir="."
         ):
+        """Initialize a new Red Team agent for AI model evaluation.
+        
+        Creates a Red Team agent instance configured with the specified parameters.
+        This initializes the token management, attack objective generation, and logging
+        needed for running red team evaluations against AI models.
+        
+        :param azure_ai_project: Azure AI project details for connecting to services
+        :type azure_ai_project: dict
+        :param credential: Authentication credential for Azure services
+        :type credential: TokenCredential
+        :param risk_categories: List of risk categories to test (required unless custom prompts provided)
+        :type risk_categories: Optional[List[RiskCategory]]
+        :param num_objectives: Number of attack objectives to generate per risk category
+        :type num_objectives: int
+        :param application_scenario: Description of the application scenario for contextualizing attacks
+        :type application_scenario: Optional[str]
+        :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
+        :type custom_attack_seed_prompts: Optional[str]
+        :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
+        :type output_dir: str
+        """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
-        
+        self._one_dp_project = is_onedp_project(azure_ai_project)
+
         # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
         
-        self.token_manager = ManagedIdentityAPITokenManager(
-            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("RedTeamLogger"),
-            credential=cast(TokenCredential, credential),
-        )
+        if not self._one_dp_project:
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+                logger=logging.getLogger("RedTeamLogger"),
+                credential=cast(TokenCredential, credential),
+            )
+        else:
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("RedTeamLogger"),
+                credential=cast(TokenCredential, credential),
+            )
         
         # Initialize task tracking
         self.task_statuses = {}
@@ -125,8 +248,7 @@ class RedTeam():
         self.scan_id = None
         self.scan_output_dir = None
         
-        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential()) #type: ignore
+        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential) #type: ignore
 
         # Initialize a cache for attack objectives by risk category and strategy
         self.attack_objectives = {}
@@ -148,128 +270,163 @@ class RedTeam():
     ) -> EvalRun:
         """Start an MLFlow run for the Red Team Agent evaluation.
         
+        Initializes and configures an MLFlow run for tracking the Red Team Agent evaluation process.
+        This includes setting up the proper logging destination, creating a unique run name, and
+        establishing the connection to the MLFlow tracking server based on the Azure AI project details.
+        
         :param azure_ai_project: Azure AI project details for logging
         :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
         :param run_name: Optional name for the MLFlow run
         :type run_name: Optional[str]
         :return: The MLFlow run object
         :rtype: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
+        :raises EvaluationException: If no azure_ai_project is provided or trace destination cannot be determined
         """
         if not azure_ai_project:
-            log_error(self.logger, "No azure_ai_project provided, cannot start MLFlow run")
+            log_error(self.logger, "No azure_ai_project provided, cannot upload run")
             raise EvaluationException(
                 message="No azure_ai_project provided",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.RED_TEAM
             )
-        
-        trace_destination = _trace_destination_from_project_scope(azure_ai_project)
-        if not trace_destination:
-            self.logger.warning("Could not determine trace destination from project scope")
-            raise EvaluationException(
-                message="Could not determine trace destination",
-                blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.UNKNOWN,
-                target=ErrorTarget.RED_TEAM
+
+        if self._one_dp_project:
+            response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
+                red_team=RedTeamUpload(
+                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                )
             )
-        
-        ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
-        
-        management_client = LiteMLClient(
-            subscription_id=ws_triad.subscription_id,
-            resource_group=ws_triad.resource_group_name,
-            logger=self.logger,
-            credential=azure_ai_project.get("credential")
-        )
-        
-        tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
-        
-        run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-        self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
-        
-        eval_run = EvalRun(
-            run_name=run_display_name,
-            tracking_uri=cast(str, tracking_uri),
-            subscription_id=ws_triad.subscription_id,
-            group_name=ws_triad.resource_group_name,
-            workspace_name=ws_triad.workspace_name,
-            management_client=management_client, # type: ignore
-        )
 
-        self.trace_destination = trace_destination
-        self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
+            self.ai_studio_url = response.properties.get("AiStudioEvaluationUri")
 
-        return eval_run
+            return response
+
+        else:
+            trace_destination = _trace_destination_from_project_scope(azure_ai_project)
+            if not trace_destination:
+                self.logger.warning("Could not determine trace destination from project scope")
+                raise EvaluationException(
+                    message="Could not determine trace destination",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.UNKNOWN,
+                    target=ErrorTarget.RED_TEAM
+                )
+
+            ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
+
+            management_client = LiteMLClient(
+                subscription_id=ws_triad.subscription_id,
+                resource_group=ws_triad.resource_group_name,
+                logger=self.logger,
+                credential=azure_ai_project.get("credential")
+            )
+
+            tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
+
+            run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
+            eval_run = EvalRun(
+                run_name=run_display_name,
+                tracking_uri=cast(str, tracking_uri),
+                subscription_id=ws_triad.subscription_id,
+                group_name=ws_triad.resource_group_name,
+                workspace_name=ws_triad.workspace_name,
+                management_client=management_client, # type: ignore
+            )
+            eval_run._start_run()
+            self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
+
+            self.trace_destination = trace_destination
+            self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
+
+            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination,
+                                                    evaluation_id=eval_run.info.run_id)
+
+            return eval_run
 
 
     async def _log_redteam_results_to_mlflow(
         self,
-        redteam_output: RedTeamResult,
+        redteam_result: RedTeamResult,
         eval_run: EvalRun,
-        data_only: bool = False,
+        _skip_evals: bool = False,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
-        :param redteam_output: The output from the red team agent evaluation
-        :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
+        :param redteam_result: The output from the red team agent evaluation
+        :type redteam_result: ~azure.ai.evaluation.RedTeamResult
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
-        :param data_only: Whether to log only data without evaluation results
-        :type data_only: bool
+        :param _skip_evals: Whether to log only data without evaluation results
+        :type _skip_evals: bool
         :return: The URL to the run in Azure AI Studio, if available
         :rtype: Optional[str]
         """
-        self.logger.debug(f"Logging results to MLFlow, data_only={data_only}")
-        artifact_name = "instance_results.json" if not data_only else "instance_data.json"
+        self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
+        artifact_name = "instance_results.json"
+        eval_info_name = "redteam_info.json"
+        properties = {}
 
         # If we have a scan output directory, save the results there first
-        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-            artifact_path = os.path.join(self.scan_output_dir, artifact_name)
-            self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
-            
-            with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                if data_only:
-                    # In data_only mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                elif redteam_output.scan_result:
-                    json.dump(redteam_output.scan_result, f)
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                artifact_path = os.path.join(self.scan_output_dir, artifact_name)
+                self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
+                with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    if _skip_evals:
+                        # In _skip_evals mode, we write the conversations in conversation/messages format
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        # Create a copy to avoid modifying the original scan result
+                        result_with_conversations = redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
+                        
+                        # Preserve all original fields needed for scorecard generation
+                        result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
+                        result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
+                        
+                        # Add conversations field with all conversation data including user messages
+                        result_with_conversations["conversations"] = redteam_result.attack_details or []
+                        
+                        # Keep original attack_details field to preserve compatibility with existing code
+                        if "attack_details" not in result_with_conversations and redteam_result.attack_details is not None:
+                            result_with_conversations["attack_details"] = redteam_result.attack_details
+                        
+                        json.dump(result_with_conversations, f)
 
-            eval_info_name = "redteam_info.json"
-            eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
-            self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
-            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                # Remove evaluation_result from red_team_info before logging
-                red_team_info_logged = {}
-                for strategy, harms_dict in self.red_team_info.items():
-                    red_team_info_logged[strategy] = {}
-                    for harm, info_dict in harms_dict.items():
-                        info_dict.pop("evaluation_result", None)
-                        red_team_info_logged[strategy][harm] = info_dict
-                f.write(json.dumps(red_team_info_logged))
-            
-            # Also save a human-readable scorecard if available
-            if not data_only and redteam_output.scan_result:
-                scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
-                with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    f.write(self._to_scorecard(redteam_output.scan_result))
-                self.logger.debug(f"Saved scorecard to: {scorecard_path}")
+                eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
+                self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+                with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    # Remove evaluation_result from red_team_info before logging
+                    red_team_info_logged = {}
+                    for strategy, harms_dict in self.red_team_info.items():
+                        red_team_info_logged[strategy] = {}
+                        for harm, info_dict in harms_dict.items():
+                            info_dict.pop("evaluation_result", None)
+                            red_team_info_logged[strategy][harm] = info_dict
+                    f.write(json.dumps(red_team_info_logged))
                 
-            # Create a dedicated artifacts directory with proper structure for MLFlow
-            # MLFlow requires the artifact_name file to be in the directory we're logging
-            
-            import tempfile
-            with tempfile.TemporaryDirectory() as tmpdir:
-                # First, create the main artifact file that MLFlow expects
+                # Also save a human-readable scorecard if available
+                if not _skip_evals and redteam_result.scan_result:
+                    scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
+                    with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                        f.write(self._to_scorecard(redteam_result.scan_result))
+                    self.logger.debug(f"Saved scorecard to: {scorecard_path}")
+                    
+                # Create a dedicated artifacts directory with proper structure for MLFlow
+                # MLFlow requires the artifact_name file to be in the directory we're logging
+                
+                    # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
-                        redteam_output.scan_result["redteaming_parameters"] = redteam_output.scan_result.get("parameters", None)
-                        redteam_output.scan_result["redteaming_data"] = redteam_output.scan_result.get("attack_details", None)
+                    if _skip_evals:
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get("scorecard", None)
+                        redteam_result.scan_result["redteaming_parameters"] = redteam_result.scan_result.get("parameters", None)
+                        redteam_result.scan_result["redteaming_data"] = redteam_result.scan_result.get("attack_details", None)
 
-                        json.dump(redteam_output.scan_result, f)
+                        json.dump(redteam_result.scan_result, f)
                 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -291,51 +448,89 @@ class RedTeam():
                         self.logger.warning(f"Failed to copy file {file} to artifact directory: {str(e)}")
                 
                 # Log the entire directory to MLFlow
-                try:
-                    eval_run.log_artifact(tmpdir, artifact_name)
-                    eval_run.log_artifact(tmpdir, eval_info_name)
-                    self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
-                except Exception as e:
-                    self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
-            
-            # Also log a direct property to capture the scan output directory
-            try:
-                eval_run.write_properties_to_run_history({"scan_output_dir": str(self.scan_output_dir)})
-                self.logger.debug("Logged scan_output_dir property to MLFlow")
-            except Exception as e:
-                self.logger.warning(f"Failed to log scan_output_dir property to MLFlow: {str(e)}")
-        else:
-            # Use temporary directory as before if no scan output directory exists
-            with tempfile.TemporaryDirectory() as tmpdir:
+                # try:
+                #     eval_run.log_artifact(tmpdir, artifact_name)
+                #     eval_run.log_artifact(tmpdir, eval_info_name)
+                #     self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
+                # except Exception as e:
+                #     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
+
+                properties.update({"scan_output_dir": str(self.scan_output_dir)})
+            else:
+                # Use temporary directory as before if no scan output directory exists
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
-                    elif redteam_output.scan_result:
-                        json.dump(redteam_output.scan_result, f)
-                eval_run.log_artifact(tmpdir, artifact_name)
+                    if _skip_evals:
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
+                    elif redteam_result.scan_result:
+                        json.dump(redteam_result.scan_result, f)
+                # eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
-        eval_run.write_properties_to_run_history({
-            EvaluationRunProperties.RUN_TYPE: "eval_run",
-            "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
-            EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-            "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-        })
+            properties.update({
+                "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
+                EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+            })
+        
+            metrics = {}
+            if redteam_result.scan_result:
+                scorecard = redteam_result.scan_result["scorecard"]
+                joint_attack_summary = scorecard["joint_risk_attack_summary"]
+                
+                if joint_attack_summary:
+                    for risk_category_summary in joint_attack_summary:
+                        risk_category = risk_category_summary.get("risk_category").lower()
+                        for key, value in risk_category_summary.items():
+                            if key != "risk_category":
+                                metrics.update({
+                                    f"{risk_category}_{key}": cast(float, value)
+                                })
+                                # eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
+                                self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
 
-        if redteam_output.scan_result:
-            scorecard = redteam_output.scan_result["scorecard"]
-            joint_attack_summary = scorecard["joint_risk_attack_summary"]
-            
-            if joint_attack_summary:
-                for risk_category_summary in joint_attack_summary:
-                    risk_category = risk_category_summary.get("risk_category").lower()
-                    for key, value in risk_category_summary.items():
-                        if key != "risk_category":
-                            eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
-                            self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
+            if self._one_dp_project:
+                try:
+                    create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                        name=uuid.uuid4(),
+                        path=tmpdir,
+                        metrics=metrics,
+                        result_type=ResultType.REDTEAM
+                    )
 
-        self.logger.info("Successfully logged results to MLFlow")
+                    update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
+                        name=eval_run.id,
+                        red_team=RedTeamUpload(
+                            id=eval_run.id,
+                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            status="Completed",
+                            outputs={
+                                'evaluationResultId': create_evaluation_result_response.id,
+                            },
+                            properties=properties,
+                        )
+                    )
+                    self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
+                except Exception as e:
+                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+            else:
+                # Log the entire directory to MLFlow
+                try:
+                    eval_run.log_artifact(tmpdir, artifact_name)
+                    if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                        eval_run.log_artifact(tmpdir, eval_info_name)
+                    self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
+                except Exception as e:
+                    self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
+
+                for k,v in metrics.items():
+                    eval_run.log_metric(k, v)
+                    self.logger.debug(f"Logged metric: {k} = {v}")
+
+                eval_run.write_properties_to_run_history(properties)
+
+                eval_run._end_run("FINISHED")
+
+        self.logger.info("Successfully logged results to AI Foundry")
         return None
 
     # Using the utility function from strategy_utils.py instead
@@ -351,14 +546,18 @@ class RedTeam():
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
         
-        :param attack_objective_generator: The generator with risk categories to get attack objectives for
-        :type attack_objective_generator: ~azure.ai.evaluation.redteam._AttackObjectiveGenerator
+        Retrieves attack objectives based on the provided risk category and strategy. These objectives
+        can come from either the RAI service or from custom attack seed prompts if provided. The function 
+        handles different strategies, including special handling for jailbreak strategy which requires 
+        applying prefixes to messages. It also maintains a cache of objectives to ensure consistency 
+        across different strategies for the same risk category.
+        
         :param risk_category: The specific risk category to get objectives for
         :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
-        :type application_scenario: str
+        :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
-        :type strategy: str
+        :type strategy: Optional[str]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -408,9 +607,17 @@ class RedTeam():
                 
             # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
             if strategy == "jailbreak":
-                self.logger.debug("Applying jailbreak prefixes to custom objectives")
+                self.logger.debug("Applying jailbreak prefixes to custom objectives")                
                 try:
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def get_jailbreak_prefixes_with_retry():
+                        try:
+                            return await self.generated_rai_client.get_jailbreak_prefixes()
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError, ConnectionError) as e:
+                            self.logger.warning(f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}")
+                            raise
+
+                    jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
                     for objective in selected_cat_objectives:
                         if "messages" in objective and len(objective["messages"]) > 0:
                             message = objective["messages"][0]
@@ -588,21 +795,65 @@ class RedTeam():
 
     # Replace with utility function
     def _message_to_dict(self, message: ChatMessage):
+        """Convert a PyRIT ChatMessage object to a dictionary representation.
+        
+        Transforms a ChatMessage object into a standardized dictionary format that can be
+        used for serialization, storage, and analysis. The dictionary format is compatible 
+        with JSON serialization.
+        
+        :param message: The PyRIT ChatMessage to convert
+        :type message: ChatMessage
+        :return: Dictionary representation of the message
+        :rtype: dict
+        """
         from ._utils.formatting_utils import message_to_dict
         return message_to_dict(message)
     
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
+        """Get a standardized string name for an attack strategy or list of strategies.
+        
+        Converts an AttackStrategy enum value or a list of such values into a standardized
+        string representation used for logging, file naming, and result tracking. Handles both
+        single strategies and composite strategies consistently.
+        
+        :param attack_strategy: The attack strategy or list of strategies to name
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: Standardized string name for the strategy
+        :rtype: str
+        """
         from ._utils.formatting_utils import get_strategy_name
         return get_strategy_name(attack_strategy)
 
     # Replace with utility function
     def _get_flattened_attack_strategies(self, attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Union[AttackStrategy, List[AttackStrategy]]]:
+        """Flatten a nested list of attack strategies into a single-level list.
+        
+        Processes a potentially nested list of attack strategies to create a flat list
+        where composite strategies are handled appropriately. This ensures consistent
+        processing of strategies regardless of how they are initially structured.
+        
+        :param attack_strategies: List of attack strategies, possibly containing nested lists
+        :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :return: Flattened list of attack strategies
+        :rtype: List[Union[AttackStrategy, List[AttackStrategy]]]
+        """
         from ._utils.formatting_utils import get_flattened_attack_strategies
         return get_flattened_attack_strategies(attack_strategies)
     
     # Replace with utility function
     def _get_converter_for_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Union[PromptConverter, List[PromptConverter]]:
+        """Get the appropriate prompt converter(s) for a given attack strategy.
+        
+        Maps attack strategies to their corresponding prompt converters that implement
+        the attack technique. Handles both single strategies and composite strategies,
+        returning either a single converter or a list of converters as appropriate.
+        
+        :param attack_strategy: The attack strategy or strategies to get converters for
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: The prompt converter(s) for the specified strategy
+        :rtype: Union[PromptConverter, List[PromptConverter]]
+        """
         from ._utils.strategy_utils import get_converter_for_strategy
         return get_converter_for_strategy(attack_strategy)
 
@@ -611,31 +862,41 @@ class RedTeam():
         chat_target: PromptChatTarget, 
         all_prompts: List[str], 
         converter: Union[PromptConverter, List[PromptConverter]], 
+        *,
         strategy_name: str = "unknown", 
-        risk_category: str = "unknown",
-        timeout: int = 120
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
         
+        Creates and configures a PyRIT PromptSendingOrchestrator to efficiently send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
         :param chat_target: The target to send prompts to
         :type chat_target: PromptChatTarget
-        :param all_prompts: List of prompts to send
+        :param all_prompts: List of prompts to process and send
         :type all_prompts: List[str]
-        :param converter: Converter or list of converters to use for prompt transformation
+        :param converter: Prompt converter or list of converters to transform prompts
         :type converter: Union[PromptConverter, List[PromptConverter]]
-        :param strategy_name: Name of the strategy being used (for logging)
+        :param strategy_name: Name of the attack strategy being used
         :type strategy_name: str
-        :param risk_category: Name of the risk category being evaluated (for logging)
+        :param risk_category_name: Name of the risk category being evaluated
+        :type risk_category_name: str
+        :param risk_category: Risk category being evaluated
         :type risk_category: str
-        :param timeout: The timeout in seconds for API calls
+        :param timeout: Timeout in seconds for each prompt
         :type timeout: int
-        :return: The orchestrator instance with processed results
+        :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
-        task_key = f"{strategy_name}_{risk_category}_orchestrator"
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
         
-        log_strategy_start(self.logger, strategy_name, risk_category)
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
         
         # Create converter list from single converter or list of converters
         converter_list = [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
@@ -658,7 +919,7 @@ class RedTeam():
             )
             
             if not all_prompts:
-                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category}")
+                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
             
@@ -678,90 +939,434 @@ class RedTeam():
             else:
                 output_path = f"{base_path}{DATA_EXT}"
 
-            self.red_team_info[strategy_name][risk_category]["data_file"] = output_path
+            self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
             
             # Process prompts concurrently within each batch
             if len(all_prompts) > batch_size:
-                self.logger.debug(f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category}")
+                self.logger.debug(f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category_name}")
                 batches = [all_prompts[i:i + batch_size] for i in range(0, len(all_prompts), batch_size)]
                 
                 for batch_idx, batch in enumerate(batches):
-                    self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category}")
+                    self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category_name}")
                     
-                    batch_start_time = datetime.now()
-                    # Send prompts in the batch concurrently with a timeout
-                    try:
-                        # Use wait_for to implement a timeout
-                        await asyncio.wait_for(
-                            orchestrator.send_prompts_async(prompt_list=batch, memory_labels = {"risk_strategy_path": output_path, "batch": batch_idx+1}),
-                            timeout=timeout  # Use provided timeouts
-                        )
+                    batch_start_time = datetime.now()  # Send prompts in the batch concurrently with a timeout and retry logic
+                    try:  # Create retry decorator for this specific call with enhanced retry strategy
+                        @retry(**self._create_retry_config()["network_retry"])
+                        async def send_batch_with_retry():
+                            try:
+                                return await asyncio.wait_for(
+                                    orchestrator.send_prompts_async(prompt_list=batch, memory_labels={"risk_strategy_path": output_path, "batch": batch_idx+1}),
+                                    timeout=timeout  # Use provided timeouts
+                                )
+                            except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                                   ConnectionError, TimeoutError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                                   httpx.HTTPStatusError) as e:
+                                # Log the error with enhanced information and allow retry logic to handle it
+                                self.logger.warning(f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}")
+                                # Add a small delay before retry to allow network recovery
+                                await asyncio.sleep(1)
+                                raise
+                        
+                        # Execute the retry-enabled function
+                        await send_batch_with_retry()
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                        self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
+                        self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds")
                         
                         # Print progress to console 
                         if batch_idx < len(batches) - 1:  # Don't print for the last batch
-                            print(f"Strategy {strategy_name}, Risk {risk_category}: Processed batch {batch_idx+1}/{len(batches)}")
+                            print(f"Strategy {strategy_name}, Risk {risk_category_name}: Processed batch {batch_idx+1}/{len(batches)}")
                             
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
-                        self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
-                        print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
+                    except (asyncio.TimeoutError, tenacity.RetryError):
+                        self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results")
+                        self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
+                        print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}")
                         # Set task status to TIMEOUT
-                        batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
+                        batch_task_key = f"{strategy_name}_{risk_category_name}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
+                        self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=batch_idx+1)
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
-                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
-                        self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
-                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
+                        log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category_name}")
+                        self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}: {str(e)}")
+                        self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=batch_idx+1)
                         # Continue with other batches even if one fails
                         continue
-            else:
-                # Small number of prompts, process all at once with a timeout
-                self.logger.debug(f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category}")
+            else:  # Small number of prompts, process all at once with a timeout and retry logic
+                self.logger.debug(f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category_name}")
                 batch_start_time = datetime.now()
-                try:
-                    await asyncio.wait_for(
-                        orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels = {"risk_strategy_path": output_path, "batch": 1}),
-                        timeout=timeout  # Use provided timeout
-                    )
+                try: # Create retry decorator with enhanced retry strategy
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def send_all_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                timeout=timeout  # Use provided timeout
+                            )
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                               ConnectionError, TimeoutError, OSError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                               httpx.HTTPStatusError) as e:
+                            # Enhanced error logging with type information and context
+                            self.logger.warning(f"Network error in single batch for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}")
+                            # Add a small delay before retry to allow network recovery
+                            await asyncio.sleep(2)
+                            raise
+                    
+                    # Execute the retry-enabled function
+                    await send_all_with_retry()
                     batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                    self.logger.debug(f"Successfully processed single batch for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
-                except asyncio.TimeoutError:
-                    self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
-                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}")
+                    self.logger.debug(f"Successfully processed single batch for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds")
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results")
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
                     # Set task status to TIMEOUT
-                    single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
+                    single_batch_task_key = f"{strategy_name}_{risk_category_name}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
-                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
                 except Exception as e:
-                    log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
-                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
-                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
+                    log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category_name}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
             
         except Exception as e:
-            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
-            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
+            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
+    async def _multi_turn_orchestrator(
+        self, 
+        chat_target: PromptChatTarget, 
+        all_prompts: List[str], 
+        converter: Union[PromptConverter, List[PromptConverter]], 
+        *,
+        strategy_name: str = "unknown", 
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+    ) -> Orchestrator:
+        """Send prompts via the RedTeamingOrchestrator, the simplest form of MultiTurnOrchestrator, with optimized performance.
+        
+        Creates and configures a PyRIT RedTeamingOrchestrator to efficiently send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: str
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        max_turns = 5  # Set a default max turns value
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
+        
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+        converter_list = []
+        # Create converter list from single converter or list of converters
+        if converter and isinstance(converter, PromptConverter):
+            converter_list = [converter]
+        elif converter and isinstance(converter, list):
+            # Filter out None values from the converter list
+            converter_list = [c for c in converter if c is not None]
+        
+        # Log which converter is being used
+        if converter_list:
+            if isinstance(converter_list, list) and len(converter_list) > 0:
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
+                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
+            elif converter is not None:
+                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
+        else:
+            self.logger.debug("No converters specified")
+
+        for prompt_idx, prompt in enumerate(all_prompts):
+            prompt_start_time = datetime.now()
+            self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")  
+            try: 
+                azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    # objective=prompt,
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                azure_rai_service_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    prompt_template_key="orchestrators/red_teaming/text_generation.yaml",
+                    objective=prompt,
+                    logger=self.logger,
+                    is_one_dp_project=self._one_dp_project,
+                )
+
+                orchestrator = RedTeamingOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=azure_rai_service_target,
+                    # adversarial_chat_seed_prompt=prompt,
+                    max_turns=max_turns,
+                    prompt_converters=converter_list,
+                    objective_scorer=azure_rai_service_scorer,
+                    use_score_as_feedback=False,
+                )
+            
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
+
+                # Initialize output path for memory labelling
+                base_path = str(uuid.uuid4())
+                
+                # If scan output directory exists, place the file there
+                if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                    output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+                else:
+                    output_path = f"{base_path}{DATA_EXT}"
+
+                self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+                try:  # Create retry decorator for this specific call with enhanced retry strategy
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def send_prompt_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.run_attack_async(objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": 1}),
+                                timeout=timeout  # Use provided timeouts
+                            )
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                                ConnectionError, TimeoutError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                                httpx.HTTPStatusError) as e:
+                            # Log the error with enhanced information and allow retry logic to handle it
+                            self.logger.warning(f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}")
+                            # Add a small delay before retry to allow network recovery
+                            await asyncio.sleep(1)
+                            raise
+                    
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds")
+                    
+                    # Print progress to console 
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}")
+                        
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results")
+                    self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1} after {timeout} seconds.", exc_info=True)
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    # Continue with partial results rather than failing completely
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category_name}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=1)
+                    # Continue with other batches even if one fails
+                    continue              
+            except Exception as e:
+                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}")
+                self.task_statuses[task_key] = TASK_STATUS["FAILED"]
+                raise
+        self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+        return orchestrator
+
+    async def _crescendo_orchestrator(
+        self, 
+        chat_target: PromptChatTarget, 
+        all_prompts: List[str], 
+        converter: Union[PromptConverter, List[PromptConverter]], 
+        *,
+        strategy_name: str = "unknown", 
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+    ) -> Orchestrator:
+        """Send prompts via the CrescendoOrchestrator with optimized performance.
+        
+        Creates and configures a PyRIT CrescendoOrchestrator to send prompts to the target
+        model or function. The orchestrator handles prompt conversion using the specified converters,
+        applies appropriate timeout settings, and manages the database engine for storing conversation
+        results. This function provides centralized management for prompt-sending operations with proper
+        error handling and performance optimizations.
+        
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: str
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        max_turns = 10  # Set a default max turns value
+        max_backtracks = 5
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
+        
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+        
+        # If scan output directory exists, place the file there
+        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+        for prompt_idx, prompt in enumerate(all_prompts):
+            prompt_start_time = datetime.now()
+            self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")  
+            try: 
+                red_llm_scoring_target = RAIServiceEvalChatTarget(
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                azure_rai_service_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
+                    objective=prompt,
+                    logger=self.logger,
+                    crescendo_format=True,
+                    is_one_dp_project=self._one_dp_project,
+                )
+
+                orchestrator = CrescendoOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=azure_rai_service_target,
+                    max_turns=max_turns,
+                    scoring_target=red_llm_scoring_target,
+                    max_backtracks=max_backtracks,
+                )
+
+                orchestrator._objective_scorer = AzureRAIServiceTrueFalseScorer(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    # objective=prompt,
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+            
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
+
+                try:  # Create retry decorator for this specific call with enhanced retry strategy
+                    @retry(**self._create_retry_config()["network_retry"])
+                    async def send_prompt_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.run_attack_async(objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": prompt_idx+1}),
+                                timeout=timeout  # Use provided timeouts
+                            )
+                        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, httpx.HTTPError,
+                                ConnectionError, TimeoutError, asyncio.TimeoutError, httpcore.ReadTimeout,
+                                httpx.HTTPStatusError) as e:
+                            # Log the error with enhanced information and allow retry logic to handle it
+                            self.logger.warning(f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}")
+                            # Add a small delay before retry to allow network recovery
+                            await asyncio.sleep(1)
+                            raise
+                    
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds")
+
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
+                    
+                    # Print progress to console 
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}")
+                        
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results")
+                    self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1} after {timeout} seconds.", exc_info=True)
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
+                    # Continue with partial results rather than failing completely
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category_name}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category_name, batch_idx=prompt_idx+1)
+                    # Continue with other batches even if one fails
+                    continue              
+            except Exception as e:
+                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}")
+                self.task_statuses[task_key] = TASK_STATUS["FAILED"]
+                raise
+        self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+        return orchestrator
+
     def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
-        """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
+        """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
+        
+        Extracts conversation data from the PyRIT orchestrator's memory and writes it to a JSON lines file.
+        Each line in the file represents a conversation with messages in a standardized format.
+        The function handles file management including creating new files and appending to or updating 
+        existing files based on conversation counts.
         
         :param orchestrator: The orchestrator that generated the outputs
         :type orchestrator: Orchestrator
+        :param strategy_name: The name of the strategy used to generate the outputs
+        :type strategy_name: str
+        :param risk_category: The risk category being evaluated
+        :type risk_category: str
+        :param batch_idx: Optional batch index for multi-batch processing
+        :type batch_idx: Optional[int]
         :return: Path to the output file
-        :rtype: Union[str, os.PathLike]
+        :rtype: str
         """
         output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
@@ -786,6 +1391,9 @@ class RedTeam():
                     #Convert to json lines
                     json_lines = ""
                     for conversation in conversations: # each conversation is a List[ChatMessage]
+                        if conversation[0].role == "system":
+                            # Skip system messages in the output
+                            continue
                         json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
                     with Path(output_path).open("w") as f:
                         f.writelines(json_lines)
@@ -799,7 +1407,11 @@ class RedTeam():
             self.logger.debug(f"Creating new file: {output_path}")
             #Convert to json lines
             json_lines = ""
+
             for conversation in conversations: # each conversation is a List[ChatMessage]
+                if conversation[0].role == "system":
+                    # Skip system messages in the output
+                    continue
                 json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
             with Path(output_path).open("w") as f:
                 f.writelines(json_lines)
@@ -808,35 +1420,72 @@ class RedTeam():
     
     # Replace with utility function
     def _get_chat_target(self, target: Union[PromptChatTarget,Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
+        """Convert various target types to a standardized PromptChatTarget object.
+        
+        Handles different input target types (function, model configuration, or existing chat target)
+        and converts them to a PyRIT PromptChatTarget object that can be used with orchestrators.
+        This function provides flexibility in how targets are specified while ensuring consistent
+        internal handling.
+        
+        :param target: The target to convert, which can be a function, model configuration, or chat target
+        :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        :return: A standardized PromptChatTarget object
+        :rtype: PromptChatTarget
+        """
         from ._utils.strategy_utils import get_chat_target
         return get_chat_target(target)
     
+    
     # Replace with utility function
-    def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
+    def _get_orchestrator_for_attack_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Callable:
+        """Get appropriate orchestrator functions for the specified attack strategy.
+        
+        Determines which orchestrator functions should be used based on the attack strategies, max turns.
+        Returns a list of callable functions that can create orchestrators configured for the 
+        specified strategies. This function is crucial for mapping strategies to the appropriate
+        execution environment.
+        
+        :param attack_strategy: List of attack strategies to get orchestrators for
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: List of callable functions that create appropriately configured orchestrators
+        :rtype: List[Callable]
+        """
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
-        call_to_orchestrators = []
-        # Sending PromptSendingOrchestrator for each complexity level
-        if AttackStrategy.EASY in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        elif AttackStrategy.MODERATE in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        elif AttackStrategy.DIFFICULT in attack_strategy:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        else:
-            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
-        return call_to_orchestrators
+        if isinstance(attack_strategy, list):
+            if AttackStrategy.MultiTurn in attack_strategy or AttackStrategy.Crescendo in attack_strategy:
+                self.logger.error("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+                raise ValueError("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+        elif AttackStrategy.MultiTurn == attack_strategy:
+            return self._multi_turn_orchestrator
+        elif AttackStrategy.Crescendo == attack_strategy:
+            return self._crescendo_orchestrator
+        return self._prompt_sending_orchestrator
     
     # Replace with utility function
     def _get_attack_success(self, result: str) -> bool:
+        """Determine if an attack was successful based on the evaluation result string.
+        
+        Parses evaluation result strings (like "fail" or "pass") and converts them to boolean
+        values indicating whether an attack was successful. This standardizes the interpretation
+        of results across different evaluation formats.
+        
+        :param result: The evaluation result string to parse
+        :type result: str
+        :return: Boolean indicating whether the attack was successful
+        :rtype: bool
+        """
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
     def _to_red_team_result(self) -> RedTeamResult:
         """Convert tracking data from red_team_info to the RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
+        Processes the internal red_team_info tracking dictionary to build a structured RedTeamResult object.
+        This includes compiling information about the attack strategies used, complexity levels, risk categories,
+        conversation details, attack success rates, and risk assessments. The resulting object provides
+        a standardized representation of the red team evaluation results for reporting and analysis.
         
-        :return: Structured red team agent results
+        :return: Structured red team agent results containing evaluation metrics and conversation details
         :rtype: RedTeamResult
         """
         converters = []
@@ -893,7 +1542,7 @@ class RedTeam():
                                                     # Found matching conversation
                                                     if f"outputs.{risk_category}.{risk_category}_result" in r:
                                                         attack_success = self._get_attack_success(r[f"outputs.{risk_category}.{risk_category}_result"])
-                                                    
+
                                                     # Extract risk assessments for all categories
                                                     for risk in self.risk_categories:
                                                         risk_value = risk.value
@@ -1207,8 +1856,98 @@ class RedTeam():
 
     # Replace with utility function
     def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
+        """Convert RedTeamResult to a human-readable scorecard format.
+        
+        Creates a formatted scorecard string presentation of the red team evaluation results.
+        This scorecard includes metrics like attack success rates, risk assessments, and other
+        relevant evaluation information presented in an easily readable text format.
+        
+        :param redteam_result: The structured red team evaluation results
+        :type redteam_result: RedTeamResult
+        :return: A formatted text representation of the scorecard
+        :rtype: str
+        """
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
+
+    async def _evaluate_conversation(self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int) -> None:
+        """Evaluate a single conversation using the specified metric and risk category.
+        
+        Processes a single conversation for evaluation, extracting assistant messages and applying
+        the appropriate evaluator based on the metric name and risk category. The evaluation results
+        are stored for later aggregation and reporting.
+        
+        :param conversation: Dictionary containing the conversation to evaluate
+        :type conversation: Dict
+        :param metric_name: Name of the evaluation metric to apply
+        :type metric_name: str
+        :param strategy_name: Name of the attack strategy used in the conversation
+        :type strategy_name: str
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param idx: Index of the conversation for tracking purposes
+        :type idx: int
+        :return: None
+        """
+
+        messages = conversation["conversation"]["messages"]
+        
+        # Extract all assistant messages for evaluation
+        assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
+        
+        if assistant_messages:
+            # Create query-response pair with empty query and all assistant messages
+            query_response = {
+                "query": "",  # Empty query as required
+                "response": " ".join(assistant_messages)  # Join all assistant messages
+            }
+            try:
+                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}") # Create retry-enabled wrapper for evaluate_with_rai_service with enhanced retry strategy
+                @retry(**self._create_retry_config()["network_retry"])
+                async def evaluate_with_rai_service_with_retry():
+                    try:
+                        return await evaluate_with_rai_service(
+                            data=query_response,
+                            metric_name=metric_name,
+                            project_scope=self.azure_ai_project,
+                            credential=self.credential
+                        )
+                    except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError, 
+                            httpx.HTTPError, httpx.TimeoutException, ConnectionError,
+                            ConnectionRefusedError, ConnectionResetError, TimeoutError, 
+                            OSError, IOError) as e:
+                        self.logger.warning(f"Network error while evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {type(e).__name__}: {str(e)}")
+                        # Add a short delay before retry to increase success probability
+                        await asyncio.sleep(2)
+                        raise
+                
+                # Call the retry-enabled function
+                evaluate_output = await evaluate_with_rai_service_with_retry()
+                
+                # Create a row with the format expected by _to_red_team_result
+                row = {
+                    "inputs.conversation": {"messages": messages}
+                }
+                
+                # Add the evaluation results in the expected format
+                risk_cat_value = risk_category.value
+                if evaluate_output and risk_cat_value in evaluate_output:
+                    row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = evaluate_output.get(risk_cat_value)
+                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(f"{risk_cat_value}_reason", "")
+                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = evaluate_output.get(f"{risk_cat_value}_score", 0)
+                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
+                    
+                    # Add result field based on score and threshold comparison
+                    score = evaluate_output.get(f"{risk_cat_value}_score", 0)
+                    threshold = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
+                    #TODO: Handle higher is better scenarios when we add different evaluators
+                    result = int(score) <= int(threshold)
+                    row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result]
+                    self.logger.debug(f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}")
+                    return row
+            except Exception as e:
+                self.logger.error(f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}")
+                return {}
     
     async def _evaluate(
         self,
@@ -1216,27 +1955,35 @@ class RedTeam():
         risk_category: RiskCategory,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
-        data_only: bool = False,
-        output_path: Optional[Union[str, os.PathLike]] = None
+        output_path: Optional[Union[str, os.PathLike]] = None,
+        _skip_evals: bool = False,
     ) -> None:
-        """Call the evaluate method if not data_only.
-
-        :param scan_name: Optional name for the evaluation.
+        """Perform evaluation on collected red team attack data.
+        
+        Processes red team attack data from the provided data path and evaluates the conversations
+        against the appropriate metrics for the specified risk category. The function handles
+        evaluation result storage, path management, and error handling. If _skip_evals is True,
+        the function will not perform actual evaluations and only process the data.
+        
+        :param data_path: Path to the input data containing red team conversations
+        :type data_path: Union[str, os.PathLike]
+        :param risk_category: Risk category to evaluate against
+        :type risk_category: RiskCategory
+        :param strategy: Attack strategy or strategies used to generate the data
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :param scan_name: Optional name for the evaluation
         :type scan_name: Optional[str]
-        :param data_only: Whether to return only data paths instead of evaluation results.
-        :type data_only: bool
-        :param data_path: Path to the input data.
-        :type data_path: Optional[Union[str, os.PathLike]]
-        :param output_path: Path for output results.
+        :param output_path: Path for storing evaluation results
         :type output_path: Optional[Union[str, os.PathLike]]
-        :return: Evaluation results or data paths.
-        :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: None
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, scan_name={scan_name}")
-        if data_only:
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_evals={_skip_evals}, scan_name={scan_name}")
+        if _skip_evals:
             return None
-            
+        
         # If output_path is provided, use it; otherwise create one in the scan output directory if available
         if output_path:
             result_path = output_path
@@ -1245,148 +1992,108 @@ class RedTeam():
             result_path = os.path.join(self.scan_output_dir, result_filename)
         else:
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
-            
-        evaluators_dict = {
-            risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential)
-        }
         
-        # Completely suppress all output during evaluation call 
-        import io
-        import sys
-        import logging
-        # Don't re-import os as it's already imported at the module level
-        
-        # Create a DevNull class to completely discard all writes
-        class DevNull:
-            def write(self, msg):
-                pass
-            def flush(self):
-                pass
-        
-        # Store original stdout, stderr and logger settings
-        original_stdout = sys.stdout
-        original_stderr = sys.stderr
-        
-        # Get all relevant loggers
-        root_logger = logging.getLogger()
-        promptflow_logger = logging.getLogger('promptflow')
-        azure_logger = logging.getLogger('azure')
-        
-        # Store original levels
-        orig_root_level = root_logger.level
-        orig_promptflow_level = promptflow_logger.level
-        orig_azure_level = azure_logger.level
-        
-        # Setup a completely silent logger filter
-        class SilentFilter(logging.Filter):
-            def filter(self, record):
-                return False
-        
-        # Get original filters to restore later
-        orig_handlers = []
-        for handler in root_logger.handlers:
-            orig_handlers.append((handler, handler.filters.copy(), handler.level))
-        
-        try:
-            # Redirect all stdout/stderr output to DevNull to completely suppress it
-            sys.stdout = DevNull()
-            sys.stderr = DevNull()
+        try: # Run evaluation silently
+            # Import the utility function to get the appropriate metric
+            from ._utils.metric_mapping import get_metric_from_risk_category
             
-            # Set all loggers to CRITICAL level to suppress most log messages
-            root_logger.setLevel(logging.CRITICAL)
-            promptflow_logger.setLevel(logging.CRITICAL)
-            azure_logger.setLevel(logging.CRITICAL)
+            # Get the appropriate metric for this risk category
+            metric_name = get_metric_from_risk_category(risk_category)
+            self.logger.debug(f"Using metric '{metric_name}' for risk category '{risk_category.value}'")
             
-            # Add silent filter to all handlers
-            silent_filter = SilentFilter()
-            for handler in root_logger.handlers:
-                handler.addFilter(silent_filter)
-                handler.setLevel(logging.CRITICAL)
-            
-            # Create a file handler for any logs we actually want to keep
-            file_log_path = os.path.join(self.scan_output_dir, "redteam.log")
-            file_handler = logging.FileHandler(file_log_path, mode='a')
-            file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s'))
-            
-            # Allow file handler to capture DEBUG logs
-            file_handler.setLevel(logging.DEBUG)
-            
-            # Setup our own minimal logger for critical events
-            eval_logger = logging.getLogger('redteam_evaluation')
-            eval_logger.propagate = False  # Don't pass to root logger
-            eval_logger.setLevel(logging.DEBUG)
-            eval_logger.addHandler(file_handler)
-            
-            # Run evaluation silently
-            eval_logger.debug(f"Starting evaluation for {risk_category.value}/{strategy_name}")
-            evaluate_outputs = evaluate(
-                data=data_path,
-                evaluators=evaluators_dict,
-                output_path=result_path,
-            )
-            eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
-        finally:
-            # Restore original stdout and stderr
-            sys.stdout = original_stdout
-            sys.stderr = original_stderr
-            
-            # Restore original log levels
-            root_logger.setLevel(orig_root_level)
-            promptflow_logger.setLevel(orig_promptflow_level)
-            azure_logger.setLevel(orig_azure_level)
-            
-            # Restore original handlers and filters
-            for handler, filters, level in orig_handlers:
-                # Remove any filters we added
-                for filter in list(handler.filters):
-                    handler.removeFilter(filter)
-                
-                # Restore original filters
-                for filter in filters:
-                    handler.addFilter(filter)
-                
-                # Restore original level
-                handler.setLevel(level)
-            
-            # Clean up our custom logger
+            # Load all conversations from the data file
+            conversations = []
             try:
-                if 'eval_logger' in locals() and 'file_handler' in locals():
-                    eval_logger.removeHandler(file_handler)
-                    file_handler.close()
+                with open(data_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        try:
+                            data = json.loads(line)
+                            if "conversation" in data and "messages" in data["conversation"]:
+                                conversations.append(data)
+                        except json.JSONDecodeError:
+                            self.logger.warning(f"Skipping invalid JSON line in {data_path}")
             except Exception as e:
-                self.logger.warning(f"Failed to clean up logger: {str(e)}")
+                self.logger.error(f"Failed to read conversations from {data_path}: {str(e)}")
+                return None
+            
+            if not conversations:
+                self.logger.warning(f"No valid conversations found in {data_path}, skipping evaluation")
+                return None
+                
+            self.logger.debug(f"Found {len(conversations)} conversations in {data_path}")
+            
+            # Evaluate each conversation
+            eval_start_time = datetime.now()  
+            tasks = [self._evaluate_conversation(conversation=conversation, metric_name=metric_name, strategy_name=strategy_name, risk_category=risk_category, idx=idx) for idx, conversation in enumerate(conversations)]
+            rows = await asyncio.gather(*tasks)
+
+            if not rows:
+                self.logger.warning(f"No conversations could be successfully evaluated in {data_path}")
+                return None
+                
+            # Create the evaluation result structure
+            evaluation_result = {
+                "rows": rows,  # Add rows in the format expected by _to_red_team_result
+                "metrics": {}  # Empty metrics as we're not calculating aggregate metrics
+            }
+            
+            # Write evaluation results to the output file
+            _write_output(result_path, evaluation_result)
+            eval_duration = (datetime.now() - eval_start_time).total_seconds()
+            self.logger.debug(f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {eval_duration} seconds")
+            self.logger.debug(f"Successfully wrote evaluation results for {len(rows)} conversations to {result_path}")
+            
+        except Exception as e:
+            self.logger.error(f"Error during evaluation for {risk_category.value}/{strategy_name}: {str(e)}")
+            evaluation_result = None  # Set evaluation_result to None if an error occurs
+
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
-        self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
+        self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluation_result
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
         self.logger.debug(f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_info")
 
     async def _process_attack(
             self, 
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-            call_orchestrator: Callable, 
             strategy: Union[AttackStrategy, List[AttackStrategy]],
             risk_category: RiskCategory,
             all_prompts: List[str],
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
             scan_name: Optional[str] = None,
-            data_only: bool = False, 
+            skip_upload: bool = False,
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
+            _skip_evals: bool = False,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
-        :param target: The target model or function to scan
-        :param call_orchestrator: Function to call to create an orchestrator
+        Executes a red team attack process using the specified strategy and risk category against the
+        target model or function. This includes creating an orchestrator, applying prompts through the
+        appropriate converter, saving results to files, and optionally evaluating the results.
+        The function handles progress tracking, logging, and error handling throughout the process.
+        
         :param strategy: The attack strategy to use
+        :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
+        :type risk_category: RiskCategory
         :param all_prompts: List of prompts to use for the scan
+        :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
+        :type progress_bar: tqdm
         :param progress_bar_lock: Lock for the progress bar
+        :type progress_bar_lock: asyncio.Lock
         :param scan_name: Optional name for the evaluation
-        :param data_only: Whether to return only data without evaluation
+        :type scan_name: Optional[str]
+        :param skip_upload: Whether to return only data without evaluation
+        :type skip_upload: bool
         :param output_path: Optional path for output
+        :type output_path: Optional[Union[str, os.PathLike]]
         :param timeout: The timeout in seconds for API calls
+        :type timeout: int
+        :param _skip_evals: Whether to skip the actual evaluation process
+        :type _skip_evals: bool
+        :return: Evaluation result if available
+        :rtype: Optional[EvaluationResult]
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
@@ -1398,9 +2105,10 @@ class RedTeam():
             log_strategy_start(self.logger, strategy_name, risk_category.value)
             
             converter = self._get_converter_for_strategy(strategy)
+            call_orchestrator = self._get_orchestrator_for_attack_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
-                orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
+                orchestrator = await call_orchestrator(chat_target=self.chat_target, all_prompts=all_prompts, converter=converter, strategy_name=strategy_name, risk_category=risk_category, risk_category_name=risk_category.value, timeout=timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
                 self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
@@ -1423,7 +2131,7 @@ class RedTeam():
                     scan_name=scan_name,
                     risk_category=risk_category,
                     strategy=strategy,
-                    data_only=data_only,
+                    _skip_evals=_skip_evals,
                     data_path=data_path,
                     output_path=output_path,
                 )
@@ -1474,14 +2182,15 @@ class RedTeam():
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
             *,
             scan_name: Optional[str] = None,
-            num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
-            data_only: bool = False, 
+            skip_upload: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120
+            timeout: int = 120,
+            skip_evals: bool = False,
+            **kwargs: Any
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1489,12 +2198,10 @@ class RedTeam():
         :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
         :param scan_name: Optional name for the evaluation
         :type scan_name: Optional[str]
-        :param num_turns: Number of conversation turns to use in the scan
-        :type num_turns: int
         :param attack_strategies: List of attack strategies to use
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-        :param data_only: Whether to return only data without evaluation
-        :type data_only: bool
+        :param skip_upload: Flag to determine if the scan results should be uploaded
+        :type skip_upload: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
         :param application_scenario: Optional description of the application scenario
@@ -1505,8 +2212,10 @@ class RedTeam():
         :type max_parallel_tasks: int
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
+        :param skip_evals: Whether to skip the evaluation process
+        :type skip_evals: bool
         :return: The output from the red team scan
-        :rtype: RedTeamOutput
+        :rtype: RedTeamResult
         """
         # Start timing for performance tracking
         self.start_time = time.time()
@@ -1538,7 +2247,7 @@ class RedTeam():
                     return False
                 if 'The path to the artifact is either not a directory or does not exist' in record.getMessage():
                     return False
-                if 'RedTeamOutput object at' in record.getMessage():
+                if 'RedTeamResult object at' in record.getMessage():
                     return False
                 if 'timeout won\'t take effect' in record.getMessage():
                     return False
@@ -1566,7 +2275,7 @@ class RedTeam():
         self.logger.info(f"Scan ID: {self.scan_id}")
         self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
-        self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
+        self.logger.debug(f"skip_upload: {skip_upload}, output_path: {output_path}")
         self.logger.debug(f"Timeout: {timeout} seconds")
         
         # Clear, minimal output for start of scan
@@ -1644,241 +2353,235 @@ class RedTeam():
                 attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
                 self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
             
-        with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
-            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
+        if skip_upload:
+            self.ai_studio_url = None
+            eval_run = {}
+        else:
+            eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
 
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
-            self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
-            
-            log_subsection_header(self.logger, "Setting up scan configuration")
-            flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-            self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
-            self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
-            
-            orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
-            self.logger.debug(f"Selected {len(orchestrators)} orchestrators for attack strategies")
-            
-            # Calculate total tasks: #risk_categories * #converters * #orchestrators
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
-            # Show task count for user awareness
-            print(f"📋 Planning {self.total_tasks} total tasks")
-            self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
-            
-            # Initialize our tracking dictionary early with empty structures
-            # This ensures we have a place to store results even if tasks fail
-            self.red_team_info = {}
-            for strategy in flattened_attack_strategies:
-                strategy_name = self._get_strategy_name(strategy)
-                self.red_team_info[strategy_name] = {}
-                for risk_category in self.risk_categories:
-                    self.red_team_info[strategy_name][risk_category.value] = {
-                        "data_file": "",
-                        "evaluation_result_file": "",
-                        "evaluation_result": None,
-                        "status": TASK_STATUS["PENDING"]
-                    }
-            
-            self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
-            
-            # More visible progress bar with additional status
-            progress_bar = tqdm(
-                total=self.total_tasks,
-                desc="Scanning: ",
-                ncols=100,
-                unit="scan",
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-            )
-            progress_bar.set_postfix({"current": "initializing"})
-            progress_bar_lock = asyncio.Lock()
-            
-            # Process all API calls sequentially to respect dependencies between objectives
-            log_section_header(self.logger, "Fetching attack objectives")
-            
-            # Log the objective source mode
-            if using_custom_objectives:
-                self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-                print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
-            else:
-                self.logger.info("Using attack objectives from Azure RAI service")
-                print("📚 Using attack objectives from Azure RAI service")
-            
-            # Dictionary to store all objectives
-            all_objectives = {}
-            
-            # First fetch baseline objectives for all risk categories
-            # This is important as other strategies depend on baseline objectives
-            self.logger.info("Fetching baseline objectives for all risk categories")
+            self.logger.info(f"Started Uploading run: {self.ai_studio_url}")
+        
+        log_subsection_header(self.logger, "Setting up scan configuration")
+        flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
+        self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
+        self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+
+        if len(flattened_attack_strategies) > 2 and (AttackStrategy.MultiTurn in flattened_attack_strategies or AttackStrategy.Crescendo in flattened_attack_strategies):
+            self.logger.warning("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+            print("⚠️ Warning: MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+            raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+
+        # Calculate total tasks: #risk_categories * #converters
+        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) 
+        # Show task count for user awareness
+        print(f"📋 Planning {self.total_tasks} total tasks")
+        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)")
+        
+        # Initialize our tracking dictionary early with empty structures
+        # This ensures we have a place to store results even if tasks fail
+        self.red_team_info = {}
+        for strategy in flattened_attack_strategies:
+            strategy_name = self._get_strategy_name(strategy)
+            self.red_team_info[strategy_name] = {}
             for risk_category in self.risk_categories:
-                progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
-                self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
-                baseline_objectives = await self._get_attack_objectives(
+                self.red_team_info[strategy_name][risk_category.value] = {
+                    "data_file": "",
+                    "evaluation_result_file": "",
+                    "evaluation_result": None,
+                    "status": TASK_STATUS["PENDING"]
+                }
+        
+        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
+        
+        # More visible progress bar with additional status
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning: ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+        progress_bar_lock = asyncio.Lock()
+        
+        # Process all API calls sequentially to respect dependencies between objectives
+        log_section_header(self.logger, "Fetching attack objectives")
+        
+        # Log the objective source mode
+        if using_custom_objectives:
+            self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+            print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+        else:
+            self.logger.info("Using attack objectives from Azure RAI service")
+            print("📚 Using attack objectives from Azure RAI service")
+        
+        # Dictionary to store all objectives
+        all_objectives = {}
+        
+        # First fetch baseline objectives for all risk categories
+        # This is important as other strategies depend on baseline objectives
+        self.logger.info("Fetching baseline objectives for all risk categories")
+        for risk_category in self.risk_categories:
+            progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
+            self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
+            baseline_objectives = await self._get_attack_objectives(
+                risk_category=risk_category,
+                application_scenario=application_scenario,
+                strategy="baseline"
+            )
+            if "baseline" not in all_objectives:
+                all_objectives["baseline"] = {}
+            all_objectives["baseline"][risk_category.value] = baseline_objectives
+            print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
+        
+        # Then fetch objectives for other strategies
+        self.logger.info("Fetching objectives for non-baseline strategies")
+        strategy_count = len(flattened_attack_strategies)
+        for i, strategy in enumerate(flattened_attack_strategies):
+            strategy_name = self._get_strategy_name(strategy)
+            if strategy_name == "baseline":
+                continue  # Already fetched
+                
+            print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            all_objectives[strategy_name] = {}
+            
+            for risk_category in self.risk_categories:
+                progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
+                self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
+                objectives = await self._get_attack_objectives(
                     risk_category=risk_category,
                     application_scenario=application_scenario,
-                    strategy="baseline"
+                    strategy=strategy_name
                 )
-                if "baseline" not in all_objectives:
-                    all_objectives["baseline"] = {}
-                all_objectives["baseline"][risk_category.value] = baseline_objectives
-                print(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
-            
-            # Then fetch objectives for other strategies
-            self.logger.info("Fetching objectives for non-baseline strategies")
-            strategy_count = len(flattened_attack_strategies)
-            for i, strategy in enumerate(flattened_attack_strategies):
-                strategy_name = self._get_strategy_name(strategy)
-                if strategy_name == "baseline":
-                    continue  # Already fetched
-                    
-                print(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
-                all_objectives[strategy_name] = {}
+                all_objectives[strategy_name][risk_category.value] = objectives
                 
-                for risk_category in self.risk_categories:
-                    progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
-                    self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    objectives = await self._get_attack_objectives(
-                        risk_category=risk_category,
-                        application_scenario=application_scenario,
-                        strategy=strategy_name
-                    )
-                    all_objectives[strategy_name][risk_category.value] = objectives
-                    
+        self.logger.info("Completed fetching all attack objectives")
+        
+        log_section_header(self.logger, "Starting orchestrator processing")
+        
+        # Create all tasks for parallel processing
+        orchestrator_tasks = []
+        combinations = list(itertools.product(flattened_attack_strategies, self.risk_categories))
+        
+        for combo_idx, (strategy, risk_category) in enumerate(combinations):
+            strategy_name = self._get_strategy_name(strategy)
+            objectives = all_objectives[strategy_name][risk_category.value]
             
-            self.logger.info("Completed fetching all attack objectives")
+            if not objectives:
+                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
+                print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+                async with progress_bar_lock:
+                    progress_bar.update(1)
+                continue
             
-            log_section_header(self.logger, "Starting orchestrator processing")
-            # Removed console output
+            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {strategy_name} + {risk_category.value}")
             
-            # Create all tasks for parallel processing
-            orchestrator_tasks = []
-            combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
-            
-            for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
-                strategy_name = self._get_strategy_name(strategy)
-                objectives = all_objectives[strategy_name][risk_category.value]
-                
-                if not objectives:
-                    self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                    print(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
-                    self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
-                    async with progress_bar_lock:
-                        progress_bar.update(1)
-                    continue
-                
-                self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
-                
-                orchestrator_tasks.append(
-                    self._process_attack(
-                        target=target,
-                        call_orchestrator=call_orchestrator,
-                        all_prompts=objectives,
-                        strategy=strategy,
-                        progress_bar=progress_bar,
-                        progress_bar_lock=progress_bar_lock,
-                        scan_name=scan_name,
-                        data_only=data_only,
-                        output_path=output_path,
-                        risk_category=risk_category,
-                        timeout=timeout
-                    )
+            orchestrator_tasks.append(
+                self._process_attack(
+                    all_prompts=objectives,
+                    strategy=strategy,
+                    progress_bar=progress_bar,
+                    progress_bar_lock=progress_bar_lock,
+                    scan_name=scan_name,
+                    skip_upload=skip_upload,
+                    output_path=output_path,
+                    risk_category=risk_category,
+                    timeout=timeout,
+                    _skip_evals=skip_evals,
                 )
-                
-            # Process tasks in parallel with optimized batching
-            if parallel_execution and orchestrator_tasks:
-                print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-                
-                # Create batches for processing
-                for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
-                    end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
-                    batch = orchestrator_tasks[i:end_idx]
-                    progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
-                    self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
-                    
-                    try:
-                        # Add timeout to each batch
-                        await asyncio.wait_for(
-                            asyncio.gather(*batch),
-                            timeout=timeout * 2  # Double timeout for batches
-                        )
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
-                        print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
-                        # Set task status to TIMEOUT
-                        batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
-                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
-                        continue
-            else:
-                # Sequential execution 
-                self.logger.info("Running orchestrator processing sequentially")
-                print("⚙️ Processing tasks sequentially")
-                for i, task in enumerate(orchestrator_tasks):
-                    progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
-                    self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
-                    
-                    try:
-                        # Add timeout to each task
-                        await asyncio.wait_for(task, timeout=timeout)
-                    except asyncio.TimeoutError:
-                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
-                        print(f"⚠️ Task {i+1} timed out, continuing with next task")
-                        # Set task status to TIMEOUT
-                        task_key = f"scan_task_{i+1}"
-                        self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                        continue
-                    except Exception as e:
-                        log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
-                        continue
-            
-            progress_bar.close()
-            
-            # Print final status
-            tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
-            tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
-            tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
-            
-            total_time = time.time() - self.start_time
-            # Only log the summary to file, don't print to console
-            self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
-            
-            # Process results
-            log_section_header(self.logger, "Processing results")
-            
-            # Convert results to RedTeamResult using only red_team_info
-            red_team_result = self._to_red_team_result()
-            scan_result = ScanResult(
-                scorecard=red_team_result["scorecard"],
-                parameters=red_team_result["parameters"],
-                attack_details=red_team_result["attack_details"],
-                studio_url=red_team_result["studio_url"],
             )
             
-            # Create output with either full results or just conversations
-            if data_only:
-                self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
-            else:
-                output = RedTeamResult(
-                    scan_result=red_team_result, 
-                    attack_details=red_team_result["attack_details"]
-                )
+        # Process tasks in parallel with optimized batching
+        if parallel_execution and orchestrator_tasks:
+            print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
             
-            # Log results to MLFlow
-            self.logger.info("Logging results to MLFlow")
+            # Create batches for processing
+            for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
+                end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
+                batch = orchestrator_tasks[i:end_idx]
+                progress_bar.set_postfix({"current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"})
+                self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
+                
+                try:
+                    # Add timeout to each batch
+                    await asyncio.wait_for(
+                        asyncio.gather(*batch),
+                        timeout=timeout * 2  # Double timeout for batches
+                    )
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
+                    print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
+                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
+                    self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                    continue
+        else:
+            # Sequential execution 
+            self.logger.info("Running orchestrator processing sequentially")
+            print("⚙️ Processing tasks sequentially")
+            for i, task in enumerate(orchestrator_tasks):
+                progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
+                self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
+                
+                try:
+                    # Add timeout to each task
+                    await asyncio.wait_for(task, timeout=timeout)
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
+                    print(f"⚠️ Task {i+1} timed out, continuing with next task")
+                    # Set task status to TIMEOUT
+                    task_key = f"scan_task_{i+1}"
+                    self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
+                    self.logger.debug(f"Error in task {i+1}: {str(e)}")
+                    continue
+        
+        progress_bar.close()
+        
+        # Print final status
+        tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
+        tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
+        tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
+        
+        total_time = time.time() - self.start_time
+        # Only log the summary to file, don't print to console
+        self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
+        
+        # Process results
+        log_section_header(self.logger, "Processing results")
+        
+        # Convert results to RedTeamResult using only red_team_info
+        red_team_result = self._to_red_team_result()
+        scan_result = ScanResult(
+            scorecard=red_team_result["scorecard"],
+            parameters=red_team_result["parameters"],
+            attack_details=red_team_result["attack_details"],
+            studio_url=red_team_result["studio_url"],
+        )
+        
+        output = RedTeamResult(
+            scan_result=red_team_result, 
+            attack_details=red_team_result["attack_details"]
+        )
+        
+        if not skip_upload:
+            self.logger.info("Logging results to AI Foundry")
             await self._log_redteam_results_to_mlflow(
-                redteam_output=output,
+                redteam_result=output,
                 eval_run=eval_run,
-                data_only=data_only
+                _skip_evals=skip_evals
             )
         
-        if data_only: 
-            self.logger.info("Data-only mode, returning results without evaluation")
-            return output
         
         if output_path and output.scan_result:
             # Ensure output_path is an absolute path
@@ -1917,4 +2620,8 @@ class RedTeam():
         
         print(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
+        for handler in self.logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                self.logger.removeHandler(handler)
         return output

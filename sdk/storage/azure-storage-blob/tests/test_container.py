@@ -2722,3 +2722,32 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         response = cc.exists()
         assert response is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_and_set_access_policy_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
+        container = self._create_container(bsc)
+
+        # Act
+        container.set_container_access_policy(signed_identifiers={})
+
+        # Assert
+        acl = container.get_container_access_policy()
+        assert acl is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_account_information_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
+        container = self._create_container(bsc)
+
+        # Act / Assert
+        cc_info = container.get_account_information()
+        assert cc_info is not None

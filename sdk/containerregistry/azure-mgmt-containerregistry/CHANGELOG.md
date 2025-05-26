@@ -1,5 +1,52 @@
 # Release History
 
+## 14.1.0b1 (2025-05-15)
+
+### Other Changes
+
+  - Internal package structure change
+
+## 14.0.0 (2025-04-27)
+
+### Breaking Changes
+
+  - Model Policies no longer has parameter soft_delete_policy
+  - Model Registry no longer has parameter auto_generated_domain_name_label_scope
+  - Model Registry no longer has parameter metadata_search
+  - Model Registry no longer has parameter role_assignment_mode
+  - Model RegistryNameCheckRequest no longer has parameter auto_generated_domain_name_label_scope
+  - Model RegistryNameCheckRequest no longer has parameter resource_group_name
+  - Model RegistryNameStatus no longer has parameter available_login_server_name
+  - Model RegistryUpdateParameters no longer has parameter metadata_search
+  - Model RegistryUpdateParameters no longer has parameter role_assignment_mode
+  - Removed operation RegistriesOperations.get_build_source_upload_url
+  - Removed operation RegistriesOperations.schedule_run
+
+## 13.0.0 (2025-04-21)
+
+### Features Added
+
+  - Added operation RegistriesOperations.get_build_source_upload_url
+  - Added operation RegistriesOperations.schedule_run
+  - Added operation RunsOperations.cancel
+  - Added operation RunsOperations.update
+  - Added operation TaskRunsOperations.delete
+  - Added operation TasksOperations.create
+  - Added operation TasksOperations.delete
+  - Added operation TasksOperations.update
+  - Model Registry has a new parameter role_assignment_mode
+  - Model RegistryUpdateParameters has a new parameter role_assignment_mode
+  - Model SourceRegistryCredentials has a new parameter identity
+
+### Breaking Changes
+
+  - Removed operation RunsOperations.begin_cancel
+  - Removed operation RunsOperations.begin_update
+  - Removed operation TaskRunsOperations.begin_delete
+  - Removed operation TasksOperations.begin_create
+  - Removed operation TasksOperations.begin_delete
+  - Removed operation TasksOperations.begin_update
+
 ## 12.0.0 (2025-02-24)
 
 ### Breaking Changes

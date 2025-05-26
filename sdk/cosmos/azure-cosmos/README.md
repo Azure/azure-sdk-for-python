@@ -867,6 +867,13 @@ All of these mentioned queries would look something like this:
 
 - `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}))"`
 
+You can also use Weighted Reciprocal Rank Fusion to assign different weights to the different scores being used in the RRF function.
+This is done by passing in a list of weights to the RRF function in the query. **NOTE: If more weights are given than there are components of the RRF function, or if weights are missing a BAD REQUEST exception will occur.**
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [0.5, 0.3, 0.2])`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [-0.5, 0.3, 0.2])`
+
 These queries must always use a TOP or LIMIT clause within the query since hybrid search queries have to look through a lot of data otherwise and may become too expensive or long-running.
 Since these queries are relatively expensive, the SDK sets a default limit of 1000 max items per query - if you'd like to raise that further, you
 can use the `AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS` environment variable to do so. However, be advised that queries with too many vector results
@@ -874,6 +881,20 @@ may have additional latencies associated with searching in the service.
 
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well for additional guidance.
 
+### Public Preview - Throughput Buckets
+When multiple workloads share the same Azure Cosmos DB container, resource contention can lead to throttling, increased latency, and potential business impact.
+To address this, Cosmos DB allows you to allocate throughput buckets, which help manage resource consumption for workloads sharing a Cosmos DB container by limiting the maximum throughput a bucket can consume.
+However, throughput isn't reserved for any bucket, it remains shared across all workloads.
+
+Up to five (5) throughput buckets can be configured per container, with an ID ranging from 1-5. Each bucket has a maximum throughput percentage, capping the fraction of the container’s total throughput that it can consume.
+Requests assigned to a bucket can consume throughput only up to this limit. If the bucket exceeds its configured limit, subsequent requests are throttled. 
+This ensures that no single workload consumes excessive throughput and impacts others.
+
+Throughput bucket configurations can be changed once every 10 minutes, otherwise the request is throttled with an HTTP 429 status code and substatus code 3213.
+Also, requests with an invalid bucket ID (less than 1 or greater than 5) results in an error, as only bucket IDs 1 to 5 are valid.
+
+See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
+After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
 ## Troubleshooting
 
 ### General
@@ -950,53 +971,39 @@ However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional i
 client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
 database = client.create_database(DATABASE_NAME, logger=logger)
 ```
-**NOTICE: The Following is a Preview Feature that is subject to significant change.**
-To further customize what gets logged, you can use a  **PREVIEW** diagnostics handler to filter out the logs you don't want to see.
-There are several ways to use the diagnostics handler, those include the following:
-- Using the "CosmosDiagnosticsHandler" class, which has default behaviour that can be modified.
-    **NOTE: The diagnostics handler will only be used if the `enable_diagnostics_logging` argument is passed in at the client constructor.
-      The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has preset keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in an int and returns a boolean as it relates to the duration of an operation to complete).**
-    ```python
-    from azure.cosmos import CosmosClient, CosmosDiagnosticsHandler
-    import logging
-    # Initialize the logger
-    logger = logging.getLogger('azure.cosmos')
-    logger.setLevel(logging.INFO)
-    file_handler = logging.FileHandler('diagnostics1.output')
-    logger.addHandler(file_handler)
-    diagnostics_handler = cosmos_diagnostics_handler.CosmosDiagnosticsHandler()
-    diagnostics_handler["duration"] = lambda x: x > 2000
-    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
-    
-    ```
-- Using a dictionary with the relevant functions to filter out the logs you don't want to see.
-    ```python
-    # Initialize the logger
-    logger = logging.getLogger('azure.cosmos')
-    logger.setLevel(logging.INFO)
-    file_handler = logging.FileHandler('diagnostics2.output')
-    logger.addHandler(file_handler)
-    diagnostics_handler = {
-        "duration": lambda x: x > 2000
-    }
-    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
-    ```
-- Using a function that will replace the should_log function in the CosmosHttpLoggingPolicy which expects certain paramameters and returns a boolean. **Note: the parameters of the custom should_log must match the parameters of the original should_log function as shown in the sample.**
-  ```python
-  # Custom should_log method
-  def should_log(self, **kwargs):
-      return kwargs.get('duration') and kwargs['duration'] > 2000
-  
-  # Initialize the logger
+**NOTICE: The Following is a Preview Feature.**
+To further customize what gets logged, you can use logger filters to filter out the logs you don't want to see. You are able to filter based on the following attributes in the log record of cosmos diagnostics logs:
+- `status_code`
+- `sub_status_code`
+- `duration`
+- `verb`
+- `database_name`
+- `collection_name`
+- `operation_type`
+- `url`
+- `resource_type`
+- `is_request`
+
+You can take a look at the samples [here][cosmos_diagnostics_filter_sample] or take a quick look at this snippet:
+- Using **filters** from the **logging** library, it is possible to filter the diagnostics logs. Several filterable attributes are made available to the log record of the diagnostics logs when using logging filters.
+```python
+  import logging
+  from azure.cosmos import CosmosClient
   logger = logging.getLogger('azure.cosmos')
   logger.setLevel(logging.INFO)
-  file_handler = logging.FileHandler('diagnostics3.output')
+  file_handler = logging.FileHandler('diagnostics.output')
   logger.addHandler(file_handler)
-  
-  # Initialize the Cosmos client with custom diagnostics handler
-  client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=should_log, enable_diagnostics_logging=True)
-    ```
-
+  # Create a filter to filter out logs
+  class CustomFilter(logging.Filter):
+    def filter(self, record):
+        ret = (hasattr(record, 'status_code') and record.status_code > 400
+           and not (record.status_code in [404, 409, 412] and getattr(record, 'sub_status_code', None) in [0, None])
+           and hasattr(record, 'duration') and record.duration > 1000)
+        return ret
+  # Add the filter to the logger
+  logger.addFilter(CustomFilter())
+  client = CosmosClient(endpoint, key,logger=logger, enable_diagnostics_logging=True)
+```
 ### Telemetry
 Azure Core provides the ability for our Python SDKs to use OpenTelemetry with them. The only packages that need to be installed
 to use this functionality are the following:
@@ -1060,6 +1067,10 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
 [cosmos_fts]: https://aka.ms/cosmosfulltextsearch
 [cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
+[cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
+[cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
+[cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
+[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets
 
 ## Contributing
 

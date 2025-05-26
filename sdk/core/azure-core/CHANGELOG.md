@@ -1,6 +1,6 @@
 # Release History
 
-## 1.33.1 (Unreleased)
+## 1.35.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,19 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- A timeout error when using the `aiohttp` transport (the default for async SDKs) will now be raised as a `azure.core.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.
+- When using with `aiohttp` 3.10 or later, a connection timeout error will now be raised as a `azure.core.exceptions.ServiceRequestTimeoutError`, which can be retried.
+
+## 1.34.0 (2025-05-01)
+
+### Features Added
+
+- Added a `set_span_error_status` method to the `OpenTelemetryTracer` class. This method allows users to set the status of a span to `ERROR` after it has been created. #40703
+
+### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 1.33.0 (2025-04-03)
 

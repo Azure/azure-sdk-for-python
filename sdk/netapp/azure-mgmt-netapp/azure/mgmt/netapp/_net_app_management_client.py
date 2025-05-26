@@ -7,17 +7,19 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import NetAppManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccountsOperations,
     BackupPoliciesOperations,
@@ -26,9 +28,12 @@ from .operations import (
     BackupsUnderAccountOperations,
     BackupsUnderBackupVaultOperations,
     BackupsUnderVolumeOperations,
+    BucketsOperations,
     NetAppResourceOperations,
+    NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
     NetAppResourceRegionInfosOperations,
+    NetAppResourceUsagesOperations,
     Operations,
     PoolsOperations,
     SnapshotPoliciesOperations,
@@ -50,6 +55,8 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype operations: azure.mgmt.netapp.operations.Operations
     :ivar net_app_resource: NetAppResourceOperations operations
     :vartype net_app_resource: azure.mgmt.netapp.operations.NetAppResourceOperations
+    :ivar net_app_resource_usages: NetAppResourceUsagesOperations operations
+    :vartype net_app_resource_usages: azure.mgmt.netapp.operations.NetAppResourceUsagesOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsOperations
@@ -76,6 +83,10 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.operations.BackupsOperations
+    :ivar net_app_resource_quota_limits_account: NetAppResourceQuotaLimitsAccountOperations
+     operations
+    :vartype net_app_resource_quota_limits_account:
+     azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsAccountOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.netapp.operations.BackupVaultsOperations
     :ivar backups_under_backup_vault: BackupsUnderBackupVaultOperations operations
@@ -85,29 +96,33 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype backups_under_volume: azure.mgmt.netapp.operations.BackupsUnderVolumeOperations
     :ivar backups_under_account: BackupsUnderAccountOperations operations
     :vartype backups_under_account: azure.mgmt.netapp.operations.BackupsUnderAccountOperations
+    :ivar buckets: BucketsOperations operations
+    :vartype buckets: azure.mgmt.netapp.operations.BucketsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-09-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-01-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        credential: "TokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = NetAppManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -126,7 +141,7 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -134,6 +149,9 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource = NetAppResourceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_usages = NetAppResourceUsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -154,6 +172,9 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_quota_limits_account = NetAppResourceQuotaLimitsAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups_under_backup_vault = BackupsUnderBackupVaultOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -164,6 +185,7 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.backups_under_account = BackupsUnderAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
