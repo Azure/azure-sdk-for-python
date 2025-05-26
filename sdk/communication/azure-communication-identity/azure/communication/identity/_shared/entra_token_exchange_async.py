@@ -9,6 +9,7 @@ from azure.core.credentials import AccessToken
 import aiohttp
 import asyncio
 
+
 class EntraTokenExchangeClientAsync(object):
     """Async client for exchanging a customer-provided Entra ID token for a new user access token via the TeamsExtension token exchange endpoint.
 

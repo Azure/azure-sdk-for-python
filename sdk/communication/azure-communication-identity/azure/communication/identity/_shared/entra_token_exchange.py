@@ -9,6 +9,7 @@ from azure.core.credentials import AccessToken
 import requests
 import threading
 
+
 class EntraTokenExchangeClient(object):
     """Client for exchanging a customer-provided Entra ID token for a new user access token via the TeamsExtension token exchange endpoint.
 
@@ -45,4 +46,3 @@ class EntraTokenExchangeClient(object):
             response.raise_for_status()
             token_data = response.json()
             return AccessToken(token_data["accessToken"]["token"], token_data["accessToken"]["expiresOn"])
-    

@@ -13,6 +13,35 @@ from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
 from azure.core.credentials import AccessToken
+from entra_token_exchange_async import EntraTokenExchangeClientAsync
+from entra_communication_token_credential_options import EntraCommunicationTokenCredentialOptions
+from typing import List, Optional
+from azure.core.credentials import TokenCredential
+
+class EntraCommunicationTokenCredentialOptions:
+    """Options for EntraCommunicationTokenCredential.
+
+    :param str resource_endpoint: The Azure Communication Service resource endpoint URL,
+        e.g. https://myResource.communication.azure.com.
+    :param ~azure.core.credentials.AsyncTokenCredential token_credential: The Entra ID token credential.
+    :param list[str] scopes: The scopes for retrieving the Entra ID access token.
+    """
+
+    def __init__(
+        self,
+        resource_endpoint: str,
+        token_credential: AsyncTokenCredential,
+        scopes: Optional[List[str]] = None,
+    ) -> None:
+       
+        if not resource_endpoint:
+            raise ValueError("resource_endpoint cannot be empty")
+        if not token_credential:
+            raise ValueError("token_credential cannot be None")
+            
+        self.resource_endpoint = resource_endpoint
+        self.token_credential = token_credential
+        self.scopes = scopes or ["https://communication.azure.com/clients/.default"]
 
 class EntraTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service via Entra ID.
@@ -26,10 +55,9 @@ class EntraTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
-    def __init__(self, token: str, **kwargs: Any):
-        if not isinstance(token, str):
-            raise TypeError("Token must be a string.")
-        self._original_token = token
+    def __init__(self, options: EntraCommunicationTokenCredentialOptions, **kwargs: Any):
+        if options is None:
+            raise ValueError("Options must be provided.")
         self._token_refresher = kwargs.pop("token_refresher", None)
         self._proactive_refresh = kwargs.pop("proactive_refresh", False)
         if self._proactive_refresh and self._token_refresher is None:
@@ -43,23 +71,39 @@ class EntraTokenCredential(object):
         self._some_thread_refreshing = False
         self._is_closed = Event()
         self._token: AccessToken  # This will be set after exchange
+        self._original_token: str = None
 
-    async def get_token(self, *scopes, **kwargs): # pylint: disable=unused-argument
+    async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         """Returns the exchanged token."""
         if self._proactive_refresh and self._is_closed.is_set():
             raise RuntimeError("An instance of EntraTokenCredential cannot be reused once it has been closed.")
 
         if self._token is None:
-            await self._exchange_token()
+            self._original_token = await self._get_entra_token(options.token_credential, options.scopes)
+            self._token = await self._exchange_token(self._original_token)
+
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
             return self._token
         await self._update_token_and_reschedule()
         return self._token
 
-    async def _exchange_token(self):
-        """Placeholder for exchanging the original token for a new token."""
-        # TODO: Implement token exchange logic here.
-        raise NotImplementedError("Token exchange logic not implemented yet.")
+    async def _get_entra_token(self, token_credential, scopes):
+        """
+        Helper method to get a token from the provided token_credential and scopes.
+        """
+        token = await token_credential.get_token(*scopes)
+        return token.token
+
+    async def _exchange_token(self, original_token):
+        """Exchanges the original token for a new token using EntraTokenExchangeClientAsync."""
+
+        # Instantiate the async client with the endpoint and original token
+        endpoint = ""  # TO BE DONE
+
+        client = EntraTokenExchangeClientAsync(endpoint, original_token)
+        # Optionally, you can pass additional payload via kwargs if needed
+        token = await client.exchange_token()
+        return AccessToken(token.token, token.expires_on)
 
     async def _update_token_and_reschedule(self):
         should_this_thread_refresh = False
@@ -76,10 +120,14 @@ class EntraTokenCredential(object):
 
         if should_this_thread_refresh:
             try:
-                new_token = await self._token_refresher()
+                new_options = await self._token_refresher()
+                new_entra_token = await self._get_entra_token(new_options.token_credential, new_options.scopes)
+                new_token = await self._exchange_token(new_entra_token)
+
                 if not self._is_token_valid(new_token):
                     raise ValueError("The token returned from the token_refresher is expired.")
                 async with self._lock:
+                    self._original_token = new_entra_token
                     self._token = new_token
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
@@ -142,4 +190,3 @@ class EntraTokenCredential(object):
             self._timer.cancel()
         self._timer = None
         self._is_closed.set()
-        
