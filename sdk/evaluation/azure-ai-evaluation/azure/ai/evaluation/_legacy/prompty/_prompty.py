@@ -144,11 +144,8 @@ class AsyncPrompty:
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
 
-<<<<<<< HEAD
         is_reasoning_model = kwargs.get("is_reasoning_model", False)
 
-=======
->>>>>>> upstream/main
         if is_reasoning_model:
             parameters = configs.get("model", {}).get("parameters", {})
             if "max_tokens" in parameters:
