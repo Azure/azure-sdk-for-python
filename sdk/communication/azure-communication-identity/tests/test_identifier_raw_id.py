@@ -222,19 +222,16 @@ class IdentifierRawIdTest(unittest.TestCase):
         # cspell:disable
         _assert_communication_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768", asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
+                                  raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         _assert_communication_identifier(
             "4:anonymous",
-            PhoneNumberIdentifier(value="anonymous", is_anonymous=True),
+            PhoneNumberIdentifier(value="anonymous", raw_id="4:anonymous"),
         )
         _assert_communication_identifier(
             "4:+112345556789",
-            PhoneNumberIdentifier(value="+112345556789", is_anonymous=False),
-        )
-        _assert_communication_identifier(
-            "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="+112345556789", is_anonymous=False, asserted_id="207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="+112345556789"),
         )
         _assert_communication_identifier(
             "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
