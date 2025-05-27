@@ -58,7 +58,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
                 "Illegal state: the request does not contain container information. "
                 "Circuit breaker cannot be performed.")
             return None
-        properties = self.Client._container_properties_cache[container_rid] # pylint: disable=protected-access
+        properties = self.client._container_properties_cache[container_rid] # pylint: disable=protected-access
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
@@ -68,12 +68,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
-            partition_ranges = (self.Client._routing_map_provider # pylint: disable=protected-access
+            partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
-            epk_range =(self.Client._routing_map_provider # pylint: disable=protected-access
+            epk_range =(self.client._routing_map_provider # pylint: disable=protected-access
                     .get_range_by_partition_key_range_id(container_link, pk_range_id))
             if not epk_range:
                 self.global_partition_endpoint_manager_core.log_warn_or_debug(
