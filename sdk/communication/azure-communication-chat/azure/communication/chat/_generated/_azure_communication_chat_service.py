@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -15,11 +16,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models as _models
 from ._configuration import AzureCommunicationChatServiceConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import ChatOperations, ChatThreadOperations
 
 
-class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationChatService:
     """Azure Communication Chat Service.
 
     :ivar chat_thread: ChatThreadOperations operations
@@ -28,7 +29,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :vartype chat: azure.communication.chat.operations.ChatOperations
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-03-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-03-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -38,6 +39,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureCommunicationChatServiceConfiguration(endpoint=endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -93,7 +95,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureCommunicationChatService":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
