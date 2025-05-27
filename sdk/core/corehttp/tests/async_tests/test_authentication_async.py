@@ -348,7 +348,7 @@ async def test_disable_authorization_header():
 
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     request = HttpRequest("GET", "https://localhost")
-    await pipeline.run(request, disable_auth=True)
+    await pipeline.run(request, auth_flows=[])
     assert "Authorization" not in request.headers
 
 
@@ -364,5 +364,5 @@ async def test_bearer_token_policy_no_credential():
     with pytest.raises(ValueError):
         await pipeline.run(request)
 
-    await pipeline.run(request, disable_auth=True)
+    await pipeline.run(request, auth_flows=[])
     assert "Authorization" not in request.headers

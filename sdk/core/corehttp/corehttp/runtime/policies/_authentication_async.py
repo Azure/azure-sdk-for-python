@@ -68,7 +68,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         :raises: :class:`~corehttp.exceptions.ServiceRequestError`
         """
-        if request.context.options.pop("disable_auth", False):
+        # If auth_flows is an empty list, we should not attempt to authorize the request.
+        if auth_flows is not None and len(auth_flows) == 0:
             return
         if not self._credential:
             raise ValueError("Authentication is required for this operation. Please provide a credential.")
@@ -113,7 +114,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :return: The pipeline response object
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        await await_result(self.on_request, request, auth_flows=self._auth_flows)
+        op_auth_flows = request.context.options.pop("auth_flows", None)
+        auth_flows = op_auth_flows if op_auth_flows is not None else self._auth_flows
+        await await_result(self.on_request, request, auth_flows=auth_flows)
         try:
             response = await self.next.send(request)
         except Exception:
