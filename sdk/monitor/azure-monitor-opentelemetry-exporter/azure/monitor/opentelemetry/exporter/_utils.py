@@ -251,12 +251,17 @@ def _populate_part_a_fields(resource: Resource):
 # pylint:disable=too-many-return-statements
 def _get_cloud_role(resource: Resource) -> str:
     # TODO: add "unknown_service" use case
+    cloud_role = ""
     service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
     if service_name:
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
         if service_namespace:
-            return str(service_namespace) + "." + str(service_name)
-        return service_name  # type: ignore
+            cloud_role = str(service_namespace) + "." + str(service_name)
+        else:
+            cloud_role = str(service_name)
+        # If service_name starts with "unknown_service", only use it if kubernetes attributes are not present.
+        if not service_name.startswith("unknown_service"):
+            return cloud_role
     k8s_dep_name = resource.attributes.get(ResourceAttributes.K8S_DEPLOYMENT_NAME)
     if k8s_dep_name:
         return k8s_dep_name  # type: ignore
@@ -275,7 +280,7 @@ def _get_cloud_role(resource: Resource) -> str:
     k8s_daemonset_name = resource.attributes.get(ResourceAttributes.K8S_DAEMONSET_NAME)
     if k8s_daemonset_name:
         return k8s_daemonset_name  # type: ignore
-    return ""
+    return cloud_role
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
