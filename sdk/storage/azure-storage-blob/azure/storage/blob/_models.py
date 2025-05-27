@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import Any, Callable, Dict, List, Literal, Optional, Union, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Optional, Union, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -1436,8 +1436,6 @@ class BlobProperties(DictMixin):
     has_legal_hold: Optional[bool]
     """Specified if a legal hold should be set on the blob.
         Currently this parameter of upload_blob() API is for BlockBlob only."""
-    kind: Literal["blob-properties"]
-    """Discriminator for BlobProperties class."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')  # type: ignore [assignment]
@@ -1481,7 +1479,6 @@ class BlobProperties(DictMixin):
                                                       policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
         self.has_legal_hold = kwargs.get('x-ms-legal-hold')
         self.has_versions_only = None
-        self.kind = "blob-properties"
 
 
 class BlobQueryError(object):
