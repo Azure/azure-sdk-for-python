@@ -21,7 +21,7 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_inbound_endpoints_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.inbound_endpoints.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -48,7 +48,7 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2023-07-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -57,14 +57,14 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_inbound_endpoints_begin_update(self, resource_group):
         response = await (
             await self.client.inbound_endpoints.begin_update(
                 resource_group_name=resource_group.name,
                 dns_resolver_name="str",
                 inbound_endpoint_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2023-07-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -73,13 +73,13 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_inbound_endpoints_begin_delete(self, resource_group):
         response = await (
             await self.client.inbound_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
                 dns_resolver_name="str",
                 inbound_endpoint_name="str",
-                api_version="2023-07-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,12 +88,12 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_inbound_endpoints_get(self, resource_group):
         response = await self.client.inbound_endpoints.get(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
             inbound_endpoint_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -101,11 +101,11 @@ class TestDnsResolverManagementInboundEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_inbound_endpoints_list(self, resource_group):
         response = self.client.inbound_endpoints.list(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -10,18 +10,19 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action type in requests for bulk upload or download of a DNS resolver domain list."""
+
+    UPLOAD = "Upload"
+    DOWNLOAD = "Download"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of action to take."""
 
     ALLOW = "Allow"
     ALERT = "Alert"
     BLOCK = "Block"
-
-
-class BlockResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The response code for block actions."""
-
-    SERVFAIL = "SERVFAIL"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
