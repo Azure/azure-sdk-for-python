@@ -24,7 +24,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
         response = self.client.route_filters.begin_delete(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
         response = self.client.route_filters.get(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -79,6 +79,14 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                         "ipv6PeeringConfig": {
                             "microsoftPeeringConfig": {
                                 "advertisedCommunities": ["str"],
+                                "advertisedPublicPrefixInfo": [
+                                    {
+                                        "prefix": "str",
+                                        "signature": "str",
+                                        "validationId": "str",
+                                        "validationState": "str",
+                                    }
+                                ],
                                 "advertisedPublicPrefixes": ["str"],
                                 "advertisedPublicPrefixesState": "str",
                                 "customerASN": 0,
@@ -93,6 +101,9 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                         "lastModifiedBy": "str",
                         "microsoftPeeringConfig": {
                             "advertisedCommunities": ["str"],
+                            "advertisedPublicPrefixInfo": [
+                                {"prefix": "str", "signature": "str", "validationId": "str", "validationState": "str"}
+                            ],
                             "advertisedPublicPrefixes": ["str"],
                             "advertisedPublicPrefixesState": "str",
                             "customerASN": 0,
@@ -165,6 +176,14 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                         "ipv6PeeringConfig": {
                             "microsoftPeeringConfig": {
                                 "advertisedCommunities": ["str"],
+                                "advertisedPublicPrefixInfo": [
+                                    {
+                                        "prefix": "str",
+                                        "signature": "str",
+                                        "validationId": "str",
+                                        "validationState": "str",
+                                    }
+                                ],
                                 "advertisedPublicPrefixes": ["str"],
                                 "advertisedPublicPrefixesState": "str",
                                 "customerASN": 0,
@@ -179,6 +198,9 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                         "lastModifiedBy": "str",
                         "microsoftPeeringConfig": {
                             "advertisedCommunities": ["str"],
+                            "advertisedPublicPrefixInfo": [
+                                {"prefix": "str", "signature": "str", "validationId": "str", "validationState": "str"}
+                            ],
                             "advertisedPublicPrefixes": ["str"],
                             "advertisedPublicPrefixesState": "str",
                             "customerASN": 0,
@@ -237,7 +259,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -250,7 +272,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             route_filter_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -261,7 +283,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
     def test_route_filters_list_by_resource_group(self, resource_group):
         response = self.client.route_filters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -271,7 +293,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_route_filters_list(self, resource_group):
         response = self.client.route_filters.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

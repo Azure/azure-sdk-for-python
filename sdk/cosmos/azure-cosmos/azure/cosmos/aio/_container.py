@@ -145,7 +145,10 @@ class ContainerProxy:
 
         container_properties = await self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+        partition_key = PartitionKey(
+            path=partition_key_definition["paths"],
+            kind=partition_key_definition["kind"],
+            version=partition_key_definition["version"])
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 

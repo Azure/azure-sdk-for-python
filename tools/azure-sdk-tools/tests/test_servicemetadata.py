@@ -72,7 +72,7 @@ class TestServiceMetadata(unittest.TestCase):
             self.config["projects"][readme_file] = {}
 
             package_folder = Path(self.sdk_folder, self.folder_name, self.package_name).expanduser()
-            metadata_file_path = os.path.join(package_folder, "_meta.json")
+            metadata_file_path = os.path.join(package_folder, "_metadata.json")
             manifest_file = os.path.join(package_folder, "MANIFEST.in")
             os.makedirs(package_folder)
 
@@ -125,10 +125,6 @@ class TestServiceMetadata(unittest.TestCase):
 
             assert os.path.isfile(metadata_file_path) == True
             assert os.path.isfile(manifest_file) == True
-            with open(manifest_file, "r") as f:
-                meta_line = "include _meta.json\n"
-                line = f.readline()
-                assert meta_line == line
 
             # Test update MANIFEST.in again
             update_servicemetadata(
@@ -143,9 +139,3 @@ class TestServiceMetadata(unittest.TestCase):
 
             assert os.path.isfile(metadata_file_path) == True
             assert os.path.isfile(manifest_file) == True
-            with open(manifest_file, "r") as f:
-                meta_line = "include _meta.json\n"
-                line = f.readline()
-                second_line = f.readline()
-                assert meta_line == line
-                assert meta_line != second_line

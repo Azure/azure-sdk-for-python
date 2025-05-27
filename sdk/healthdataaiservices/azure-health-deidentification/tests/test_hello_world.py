@@ -2,7 +2,6 @@ from deid_base_test_case import DeidBaseTestCase, RealtimeEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
-import pytest
 
 from azure.health.deidentification.models import *
 
@@ -15,12 +14,10 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         assert client is not None
 
         content = DeidentificationContent(
-            input_text="Hello, my name is John Smith.",
-            operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
+            input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE
         )
 
-        result: DeidentificationResult = client.deidentify(content)
+        result: DeidentificationResult = client.deidentify_text(content)
 
         assert result is not None
         assert result.output_text is not None

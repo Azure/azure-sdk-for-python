@@ -25,13 +25,6 @@ class AgentTraceConfigurator:
             print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
             exit()
         configure_azure_monitor(connection_string=application_insights_connection_string)
-        try:
-            from azure.ai.agents.telemetry import AIAgentsInstrumentor
-            agents_instrumentor = AIAgentsInstrumentor()
-            if not agents_instrumentor.is_instrumented():
-                agents_instrumentor.instrument()
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
 
     def enable_console_tracing_without_genai(self):
         exporter = ConsoleSpanExporter()
@@ -49,11 +42,12 @@ class AgentTraceConfigurator:
         tracer = trace.get_tracer(__name__)
         try:
             from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
             agents_instrumentor = AIAgentsInstrumentor()
             if not agents_instrumentor.is_instrumented():
                 agents_instrumentor.instrument()
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")        
+            print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
         print("Console tracing enabled with agent traces.")
 
     def display_menu(self):

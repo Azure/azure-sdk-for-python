@@ -2930,7 +2930,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_definition = None
         if cont_prop and partition_key is not None:
             pk_properties = cont_prop["partitionKey"]
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            partition_key_definition = PartitionKey(
+                path=pk_properties["paths"],
+                kind=pk_properties["kind"],
+                version=pk_properties["version"])
             if partition_key_definition.kind == "MultiHash" and \
                     (isinstance(partition_key, List) and \
                      len(partition_key_definition['paths']) != len(partition_key)):
@@ -3223,7 +3226,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.Top + "," +
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
-                                    documents._QueryFeature.CountIf)
+                                    documents._QueryFeature.CountIf + "," +
+                                    documents._QueryFeature.WeightedRankFusion)
         if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
                           Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +

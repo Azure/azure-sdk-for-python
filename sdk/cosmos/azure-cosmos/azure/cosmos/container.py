@@ -139,7 +139,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def _get_epk_range_for_partition_key( self, partition_key_value: PartitionKeyType) -> Range:
         container_properties = self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+        partition_key = PartitionKey(
+            path=partition_key_definition["paths"],
+            kind=partition_key_definition["kind"],
+            version=partition_key_definition["version"])
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
@@ -716,7 +719,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self, partition_key: PartitionKeyType) -> bool:
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
-        partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+        partition_key_definition = PartitionKey(
+            path=pk_properties["paths"],
+            kind=pk_properties["kind"],
+            version=pk_properties["version"])
         return partition_key_definition._is_prefix_partition_key(partition_key)
 
 

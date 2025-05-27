@@ -1084,12 +1084,7 @@ class _AIAgentsInstrumentorPreview:
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
 
-        span = start_span(
-            operation_name,
-            server_address=server_address,
-            thread_id=thread_id,
-            run_id=run_id
-        )
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
 
         if span is None:
             return function(*args, **kwargs)
@@ -1112,12 +1107,7 @@ class _AIAgentsInstrumentorPreview:
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
 
-        span = start_span(
-            operation_name,
-            server_address=server_address,
-            thread_id=thread_id,
-            run_id=run_id
-        )
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
 
         if span is None:
             return await function(*args, **kwargs)
@@ -1482,6 +1472,9 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.create_and_process"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
@@ -1553,6 +1546,9 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1700,6 +1696,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "stream",
             ),
+            (
+                "azure.ai.agents",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
+            ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside pageable class.
             (
@@ -1794,6 +1797,13 @@ class _AIAgentsInstrumentorPreview:
                 "stream",
                 TraceType.AGENTS,
                 "stream",
+            ),
+            (
+                "azure.ai.agents.aio",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
             ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside async pageable class.
@@ -1937,6 +1947,7 @@ class _AIAgentsInstrumentorPreview:
         module = module if module != "builtins" else ""
         error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
         self._set_attributes(span, ("error.type", error_type))
+
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def __init__(
