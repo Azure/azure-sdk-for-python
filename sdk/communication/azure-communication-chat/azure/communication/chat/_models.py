@@ -253,6 +253,11 @@ class ChatThreadProperties:
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
     :vartype created_by: ~azure.communication.chat.CommunicationIdentifier
+    :ivar metadata: Contextual metadata for the thread. The metadata consists of name/value pairs.
+    The total size of all metadata pairs can be up to 1KB in size.
+    :vartype metadata: dict[str, str]
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
     """
 
     # pylint:disable=protected-access
@@ -262,15 +267,38 @@ class ChatThreadProperties:
         self.topic = kwargs.get("topic", None)
         self.created_on = kwargs["created_on"]
         self.created_by = kwargs["created_by"]
-
+        self.metadata: Optional[Dict[str, str]] = kwargs.get("metadata", None)
+        self.retention_policy: Optional[ChatRetentionPolicy] = kwargs.get(
+            "retention_policy", None
+        )
+       
     @classmethod
     def _from_generated(cls, chat_thread):
 
         created_by = chat_thread.created_by_communication_identifier
         if created_by is not None:
             created_by = deserialize_identifier(chat_thread.created_by_communication_identifier)
+        metadata = getattr(chat_thread, "metadata", None)
+        gen_policy = getattr(chat_thread, "retention_policy", None)
+        if gen_policy is None:
+            retention_policy = None
+        elif gen_policy.kind == "none":
+            retention_policy = NoneRetentionPolicy()
+        elif gen_policy.kind == "threadCreationDate":
+            retention_policy = ThreadCreationDateRetentionPolicy(
+                delete_thread_after_days=gen_policy.delete_thread_after_days
+            )
+        else:
+            retention_policy = NoneRetentionPolicy()
 
-        return cls(id=chat_thread.id, topic=chat_thread.topic, created_on=chat_thread.created_on, created_by=created_by)
+        return cls(
+            id=chat_thread.id,
+            topic=chat_thread.topic,
+            created_on=chat_thread.created_on,
+            created_by=created_by,
+            metadata=metadata,
+            retention_policy=retention_policy,
+        )
 
 
 class ChatMessageReadReceipt:
@@ -313,3 +341,78 @@ class CreateChatThreadResult:
     def __init__(self, **kwargs: Any) -> None:
         self.chat_thread = kwargs["chat_thread"]
         self.errors = kwargs.get("errors", None)
+
+
+class ChatRetentionPolicy:
+    """Data retention policy for auto deletion.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    NoneRetentionPolicy, ThreadCreationDateRetentionPolicy
+    All required parameters must be populated in order to send to server.
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"none": "NoneRetentionPolicy", "threadCreationDate": "ThreadCreationDateRetentionPolicy"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+
+class NoneRetentionPolicy(ChatRetentionPolicy):
+    """No thread retention policy.
+    All required parameters must be populated in order to send to server.
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind = "none"
+
+class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
+    """Thread retention policy based on thread creation date.
+    All required parameters must be populated in order to send to server.
+    :ivar kind: Retention Policy Type. Required. Known values are: "threadCreationDate" and "none".
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    :ivar delete_thread_after_days: Indicates how many days after the thread creation the thread
+     will be deleted. Required.
+    :vartype delete_thread_after_days: int
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "delete_thread_after_days": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "delete_thread_after_days": {"key": "deleteThreadAfterDays", "type": "int"},
+    }
+
+    def __init__(self, *, delete_thread_after_days: int, **kwargs: Any) -> None:
+        """
+        :keyword delete_thread_after_days: Indicates how many days after the thread creation the thread
+         will be deleted. Required.
+        :paramtype delete_thread_after_days: int
+        """
+        super().__init__(**kwargs)
+        self.kind = "threadCreationDate"
+        self.delete_thread_after_days = delete_thread_after_days

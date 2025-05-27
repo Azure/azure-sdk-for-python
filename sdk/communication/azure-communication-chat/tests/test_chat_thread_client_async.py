@@ -9,14 +9,25 @@ from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import ChatParticipant, ChatMessageType
 from azure.communication.chat._shared.models import CommunicationUserIdentifier
 from unittest_helpers import mock_response
-from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 
 from unittest.mock import Mock, patch
 
 import pytest
-import time
 import calendar
 
+class SimpleMockTransport(AsyncHttpTransport):
+    def __init__(self, send_func):
+        self._send_func = send_func
+
+    async def send(self, request: HttpRequest, **kwargs):
+        return await self._send_func(request, **kwargs)
+
+    async def open(self): pass
+    async def close(self): pass
+
+    async def __aenter__(self): return self
+    async def __aexit__(self, exc_type, exc_val, exc_tb): pass
 
 def _convert_datetime_to_utc_int(input):
     return int(calendar.timegm(input.utctimetuple()))
@@ -37,7 +48,9 @@ async def test_update_topic():
     async def mock_send(*_, **__):
         return mock_response(status_code=204)
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient(
+        "https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send)
+    )
 
     topic = "update topic"
     try:
@@ -57,7 +70,7 @@ async def test_send_message():
     async def mock_send(*_, **__):
         return mock_response(status_code=201, json_payload={"id": message_id})
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
     create_message_result_id = None
     try:
@@ -69,12 +82,11 @@ async def test_send_message():
             content, sender_display_name=sender_display_name, metadata=metadata
         )
         create_message_result_id = create_message_result.id
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
     assert create_message_result_id == message_id
-
 
 @pytest.mark.asyncio
 async def test_send_message_w_type():
@@ -115,7 +127,7 @@ async def test_send_message_w_type():
                 },
             )
 
-        chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+        chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
         try:
             content = "hello world"
@@ -225,7 +237,7 @@ async def test_get_message():
             },
         )
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
     message = None
     try:
@@ -576,7 +588,7 @@ async def test_add_participants():
     async def mock_send(*_, **__):
         return mock_response(status_code=201)
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
     new_participant = ChatParticipant(
         identifier=CommunicationUserIdentifier(new_participant_id),
@@ -610,7 +622,7 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
             },
         )
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
     new_participant = ChatParticipant(
         identifier=CommunicationUserIdentifier(new_participant_id),
@@ -840,7 +852,7 @@ async def test_get_properties():
             },
         )
 
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=SimpleMockTransport(mock_send))
 
     get_thread_result = None
     try:
