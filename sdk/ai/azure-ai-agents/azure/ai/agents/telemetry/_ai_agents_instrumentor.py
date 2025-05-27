@@ -1472,6 +1472,9 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.create_and_process"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
@@ -1543,6 +1546,9 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1690,6 +1696,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "stream",
             ),
+            (
+                "azure.ai.agents",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
+            ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside pageable class.
             (
@@ -1784,6 +1797,13 @@ class _AIAgentsInstrumentorPreview:
                 "stream",
                 TraceType.AGENTS,
                 "stream",
+            ),
+            (
+                "azure.ai.agents.aio",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
             ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside async pageable class.

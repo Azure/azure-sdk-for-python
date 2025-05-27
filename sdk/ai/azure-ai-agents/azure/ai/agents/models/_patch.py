@@ -66,7 +66,15 @@ from ._models import (
     RunStep,
     RunStepDeltaChunk,
     BingGroundingSearchConfiguration,
-    BingGroundingSearchConfigurationList,
+    BingGroundingSearchToolParameters,
+    BingCustomSearchToolDefinition,
+    BingCustomSearchConfiguration,
+    BingCustomSearchToolParameters,
+    SharepointToolDefinition,
+    SharepointGroundingToolParameters,
+    ToolConnection,
+    MicrosoftFabricToolDefinition,
+    FabricDataAgentToolParameters,
     SubmitToolOutputsAction,
     ThreadRun,
     ToolDefinition,
@@ -604,6 +612,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
+        index_asset_id: str = "",
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -619,6 +628,8 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type filter: str
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
+        :param index_asset_id: Index asset ID to be used by tool.
+        :type filter: str
         """
         self.index_list = [
             AISearchIndexResource(
@@ -627,6 +638,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
                 query_type=query_type,
                 filter=filter,
                 top_k=top_k,
+                index_asset_id=index_asset_id,
             )
         ]
 
@@ -837,6 +849,33 @@ class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
         pass
 
 
+class ConnectionTool(Tool[ToolDefinitionT]):
+    """
+    A tool that requires connection ids.
+    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize ConnectionTool with a connection_id.
+
+        :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        """
+        self.connection_ids = [ToolConnection(connection_id=connection_id)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
 class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
@@ -844,15 +883,18 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
 
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
-        Initialize Bing Custom Search with a connection_id.
+        Initialize Bing Grounding tool with a connection_id.
 
-        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param market:
-        :param set_lang:
-        :param count:
-        :param freshness:
+        :param connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
+        
+        .. seealso:: 
+           `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
-        self.connection_ids = [
+        self._search_configurations = [
             BingGroundingSearchConfiguration(
                 connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
             )
@@ -867,7 +909,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         return [
             BingGroundingToolDefinition(
-                bing_grounding=BingGroundingSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_grounding=BingGroundingSearchToolParameters(search_configurations=self._search_configurations)
             )
         ]
 
@@ -882,6 +924,105 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
 
     def execute(self, tool_call: Any) -> Any:
         pass
+
+
+class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
+    """
+    A tool that searches for information using Bing Custom Search.
+    """
+
+    def __init__(
+        self,
+        connection_id: str,
+        instance_name: str,
+        market: str = "",
+        set_lang: str = "",
+        count: int = 5,
+        freshness: str = "",
+    ):
+        """
+        Initialize Bing Custom Search with a connection_id.
+
+        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :param instance_name: Config instance name used by tool.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
+        """
+        self._search_configurations = [
+            BingCustomSearchConfiguration(
+                connection_id=connection_id,
+                instance_name=instance_name,
+                market=market,
+                set_lang=set_lang,
+                count=count,
+                freshness=freshness,
+            )
+        ]
+
+    @property
+    def definitions(self) -> List[BingCustomSearchToolDefinition]:
+        """
+        Get the Bing Custom Search tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            BingCustomSearchToolDefinition(
+                bing_custom_search=BingCustomSearchToolParameters(search_configurations=self._search_configurations)
+            )
+        ]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            MicrosoftFabricToolDefinition(
+                fabric_dataagent=FabricDataAgentToolParameters(connection_list=self.connection_ids)
+            )
+        ]
+
+
+class SharepointTool(ConnectionTool[SharepointToolDefinition]):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[SharepointToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            SharepointToolDefinition(
+                sharepoint_grounding=SharepointGroundingToolParameters(connection_list=self.connection_ids)
+            )
+        ]
 
 
 class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
@@ -1699,6 +1840,9 @@ __all__: List[str] = [
     "FunctionTool",
     "OpenApiTool",
     "BingGroundingTool",
+    "FabricTool",
+    "SharepointTool",
+    "BingCustomSearchTool",
     "StreamEventData",
     "AzureAISearchTool",
     "Tool",

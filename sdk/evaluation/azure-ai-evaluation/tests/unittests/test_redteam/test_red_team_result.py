@@ -5,15 +5,10 @@ Unit tests for red_team_result module.
 import pytest
 import json
 from unittest.mock import patch, MagicMock
-try: 
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-if has_pyrit:
-    from azure.ai.evaluation.red_team._red_team_result import (
-        RedTeamResult,
-    )
+
+from azure.ai.evaluation.red_team._red_team_result import (
+    RedTeamResult,
+)
 
 
 @pytest.fixture(scope="function")
@@ -103,7 +98,6 @@ def mock_conversation():
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResultInitialization:
     """Test RedTeamResult initialization."""
 
@@ -122,7 +116,6 @@ class TestRedTeamResultInitialization:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResultMethods:
     """Test RedTeamResult methods."""
 
@@ -167,7 +160,6 @@ class TestRedTeamResultMethods:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResultConversion:
     """Test RedTeamResult conversion methods."""
 
@@ -223,7 +215,6 @@ class TestRedTeamResultConversion:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRedTeamResultRendering:
     """Test RedTeamResult rendering methods."""
 

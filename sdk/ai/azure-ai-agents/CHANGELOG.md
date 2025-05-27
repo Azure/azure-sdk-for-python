@@ -1,4 +1,29 @@
+
+
 # Release History
+
+## 1.1.0b1 (2025-05-20)
+
+### Features Added
+
+- API version is changed to 2025-05-15-preview.
+- Add FabricTool, SharepointTool, and BingCustomSearchTool classes along with samples.
+
+### Bugs Fixed
+
+- Adding instrumentation for create_thread_and_run
+
+## 1.0.0 (2025-05-15)
+
+### Features Added
+
+- First stable release of Azure AI Agents client library.
+
+## 1.0.0b3 (2025-05-14)
+
+### Features Added
+
+- Internal updates based on TypeSpec finalization.
 
 ## 1.0.0b2 (2025-05-13)
 
