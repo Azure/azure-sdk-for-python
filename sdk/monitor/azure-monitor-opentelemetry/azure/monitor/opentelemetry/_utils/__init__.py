@@ -28,10 +28,6 @@ logger = logging.getLogger(__name__)
 
 # --------------------Diagnostic/status logging------------------------------
 
-# TODO: Add environment variable to enable/disable diagnostics off of App Service
-def _is_diagnostics_enabled():
-    if _is_on_app_service() or _is_on_aks():
-        return _is_attach_enabled()
 _CUSTOMER_IKEY_ENV_VAR = None
 
 
@@ -45,6 +41,13 @@ def _get_customer_ikey_from_env_var():
         except ValueError as e:
             logger.error("Failed to parse Instrumentation Key: %s", e)  # pylint: disable=C
     return _CUSTOMER_IKEY_ENV_VAR
+
+
+# TODO: Add environment variable to enable/disable diagnostics off of App Service
+def _is_diagnostics_enabled():
+    if _is_on_app_service() or _is_on_aks():
+        return _is_attach_enabled()
+    return False
 
 
 def _get_log_path(status_log_path=False):
