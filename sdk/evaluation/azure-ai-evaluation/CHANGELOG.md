@@ -5,6 +5,7 @@
 ### Features Added
 
 - Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
+- Added the support of reasoning models as judge for Azure AI evaluators.
 
 ### Breaking Changes
 

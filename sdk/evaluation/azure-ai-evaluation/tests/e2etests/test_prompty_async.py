@@ -10,11 +10,8 @@ from pathlib import Path
 from typing import Any, AsyncGenerator, DefaultDict, Dict, Final, Mapping, Optional, cast
 
 from openai.types.chat import ChatCompletion
-from openai import OpenAIError
-from unittest.mock import AsyncMock
 
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
-from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 

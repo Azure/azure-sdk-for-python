@@ -390,7 +390,7 @@ class AsyncPrompty:
                         'Unsupported parameter' in error_message and
                         '400' in error_message):
                     # Apply reasoning model parameter modifications
-                    self._logger.info(
+                    self._logger.debug(
                         "Detected BadRequestError with unsupported parameters. Adapting parameters for reasoning model."
                     )
                     # Remove unsupported parameters for reasoning models
