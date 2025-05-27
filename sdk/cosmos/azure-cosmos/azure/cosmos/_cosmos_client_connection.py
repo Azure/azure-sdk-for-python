@@ -3130,12 +3130,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
-        if isPrefixPartitionQuery:
+        if isPrefixPartitionQuery and "partitionKeyDefinition" in kwargs:
             last_response_headers = CaseInsensitiveDict()
             # here get the over lapping ranges
-            partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
-            pk_properties = partition_key_definition
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
+            pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
+            partition_key_definition = PartitionKey(
+                path=pk_properties["paths"],
+                kind=pk_properties["kind"],
+                version=pk_properties["version"])
             partition_key_value = pk_properties["partition_key"]
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
                 partition_key_value

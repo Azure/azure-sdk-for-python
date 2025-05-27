@@ -23,7 +23,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_express_route_gateways_list_by_subscription(self, resource_group):
         response = await self.client.express_route_gateways.list_by_subscription(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
     async def test_express_route_gateways_list_by_resource_group(self, resource_group):
         response = await self.client.express_route_gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
                     "type": "str",
                     "virtualHub": {"id": "str"},
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +103,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
                 express_route_gateway_parameters={"tags": {"str": "str"}},
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +116,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
         response = await self.client.express_route_gateways.get(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -129,7 +129,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
             await self.client.express_route_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -2941,7 +2941,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             properties = await cont_prop(options)   # get properties with feed options
             partition_key_definition = properties["partitionKey"]
             partition_key_obj = PartitionKey(path=partition_key_definition["paths"],
-                                             kind=partition_key_definition["kind"])
+                                             kind=partition_key_definition["kind"],
+                                             version=partition_key_definition["version"])
             is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
 
         if is_prefix_partition_query and partition_key_obj:
