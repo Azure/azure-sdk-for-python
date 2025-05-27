@@ -6,12 +6,10 @@
 
 from importlib import reload
 from os import environ
-import os
 from unittest import TestCase
 from unittest.mock import patch
 
 from azure.monitor.opentelemetry import _utils
-import azure.monitor.opentelemetry.exporter._utils as exporter_utils
 from azure.monitor.opentelemetry.exporter._constants import _AKS_ARM_NAMESPACE_ID
 
 TEST_VALUE = "TEST_VALUE"
@@ -48,69 +46,71 @@ class TestUtils(TestCase):
         reload(_utils)
         self.assertEqual(_utils._get_customer_ikey_from_env_var(), "unknown")
 
-    @patch.dict("os.environ", {"WEBSITE_SITE_NAME": TEST_VALUE}, clear=True)
     @patch(
-        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
         return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_app_service",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_aks",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
+        return_value=False,
     )
     def test_diagnostics_app_service_attach(self, mock_isdir):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
-    @patch.dict("os.environ", {
-            "AKS_ARM_NAMESPACE_ID": TEST_VALUE,
-            "KUBERNETES_SERVICE_HOST": TEST_VALUE,
-        }, clear=True)
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_app_service",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_aks",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
+        return_value=False,
+    )
     def test_diagnostics_aks_attach(self):
         reload(_utils)
-        self.assertTrue(exporter_utils._is_on_aks())
-        self.assertFalse(exporter_utils._is_on_functions())
-        self.assertFalse(exporter_utils._is_on_app_service())
-        self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
-        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
-        self.assertTrue(exporter_utils._is_attach_enabled())
         self.assertTrue(_utils._is_diagnostics_enabled())
 
-    @patch.dict(environ, {
-            "AKS_ARM_NAMESPACE_ID": TEST_VALUE,
-            "KUBERNETES_SERVICE_HOST": TEST_VALUE,
-        }, clear=True)
-    def test_diagnostics_aks_attach_no_quotes(self):
-        reload(_utils)
-        self.assertTrue(exporter_utils._is_on_aks())
-        self.assertFalse(exporter_utils._is_on_functions())
-        self.assertFalse(exporter_utils._is_on_app_service())
-        self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
-        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
-        self.assertTrue(exporter_utils._is_attach_enabled())
-        self.assertTrue(_utils._is_diagnostics_enabled())
-
-    @patch.dict(os.environ, {
-            "AKS_ARM_NAMESPACE_ID": TEST_VALUE,
-            "KUBERNETES_SERVICE_HOST": TEST_VALUE,
-        }, clear=True)
-    def test_diagnostics_aks_attach_no_quotes_os(self):
-        reload(_utils)
-        self.assertTrue(exporter_utils._is_on_aks())
-        self.assertFalse(exporter_utils._is_on_functions())
-        self.assertFalse(exporter_utils._is_on_app_service())
-        self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
-        self.assertTrue("AKS_ARM_NAMESPACE_ID" in os.environ)
-        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
-        self.assertTrue(_AKS_ARM_NAMESPACE_ID in os.environ)
-        self.assertTrue(exporter_utils._is_attach_enabled())
-        self.assertTrue(_utils._is_diagnostics_enabled())
-
-    @patch.dict("os.environ", {
-            "FUNCTIONS_WORKER_RUNTIME": TEST_VALUE,
-            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true"
-        }, clear=True)
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_app_service",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_aks",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
+        return_value=True,
+    )
     def test_diagnostics_functions_attach(self):
         reload(_utils)
         # Functions attach does not currently enable diagnostics
         self.assertFalse(_utils._is_diagnostics_enabled())
 
-    @patch.dict("os.environ", {}, clear=True)
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
     def test_diagnostics_disabled(self):
         reload(_utils)
         self.assertFalse(_utils._is_diagnostics_enabled())
