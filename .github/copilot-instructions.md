@@ -29,12 +29,6 @@ are no TypeSpec project paths in the context, ask the user for the path to the t
    `curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=,path to tspconfig.yaml>&per_page=1"`
 - Ensure that node, python, tox and the required dependencies are installed in your environment
 
-### Following the steps:
-- Do follow the steps in the order they are given.
-- Do not skip any steps unless the user explicitly asks to skip a step.
-- Do explain each step to the user as you go along, so they understand what you are doing and why.
-- DO NOT REPEAT THE INSTRUCTIONS. The user should be able to follow the instructions without needing to repeat them.
-
 ## Steps to Generate:
 Here is the order of steps to follow when generating an SDK from TypeSpec: Verify Environment, Generate SDK, Static Validation, Update Documentation, Commit and Push the Changes, Manage Pull Requests, Finalize the Process.
 
@@ -123,4 +117,4 @@ If the package version is not correct, update it in _version.py and the CHANGELO
 ## Running MyPy and Fixing MyPy Warnings
 - When asked how to run mypy, or given a command to run mypy, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox) and guide the user based on the information you find there.
 - Do check this website on guidance on how to best fix MyPy issues [website link](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
-- DO use a python 3.9 environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using. 
+- DO use a python 3.9 environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using.
