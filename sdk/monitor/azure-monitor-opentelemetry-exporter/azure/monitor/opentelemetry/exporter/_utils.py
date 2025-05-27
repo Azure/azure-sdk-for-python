@@ -248,7 +248,9 @@ def _populate_part_a_fields(resource: Resource):
     return tags
 
 
+# pylint:disable=too-many-return-statements
 def _get_cloud_role(resource: Resource) -> str:
+    # TODO: add "unknown_service" use case: https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/OpenTelemetry/resource/resourceMapping.md#aicloudrole-1
     service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
     if service_name:
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
@@ -284,7 +286,7 @@ def _get_cloud_role_instance(resource: Resource) -> str:
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
     return platform.node()  # hostname default
-          
+
 
 def _is_synthetic_source(properties: Attributes) -> bool:
     # TODO: Use semconv symbol when released in upstream
