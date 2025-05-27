@@ -12,18 +12,19 @@ from azure.eventhub._eventprocessor.in_memory_checkpoint_store import (
 )
 from azure.eventhub._constants import ALL_PARTITIONS
 
+
 @pytest.mark.liveTest
 def test_receive_partition_using_fault_injector(auth_credential_senders, uamqp_transport, faultinjector_detach_after_delay, client_args):
     fault_injector_config = faultinjector_detach_after_delay
-    
-    if not fault_injector_config:
-        pytest.skip("Fault injector not enabled. See conftest.py::faultinjector for requirements.")
 
+    if not fault_injector_config:
+        pytest.skip(
+            "Fault injector not enabled. See conftest.py::faultinjector for requirements.")
 
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
 
     senders[0].send(EventData("Test EventData"))
-    
+
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE
@@ -45,7 +46,7 @@ def test_receive_partition_using_fault_injector(auth_credential_senders, uamqp_t
         **client_args,
     )
 
-    def on_event(partition_context, event):
+    def on_event(partition_context, _):
         on_event.received += 1
         on_event.partition_id = partition_context.partition_id
         on_event.consumer_group = partition_context.consumer_group
@@ -53,7 +54,7 @@ def test_receive_partition_using_fault_injector(auth_credential_senders, uamqp_t
         on_event.eventhub_name = partition_context.eventhub_name
 
     on_event.received = 0
-    
+
     with client:
         worker = threading.Thread(
             target=client.receive,
@@ -61,11 +62,10 @@ def test_receive_partition_using_fault_injector(auth_credential_senders, uamqp_t
             kwargs={"starting_position": "-1", "partition_id": "0"},
         )
         worker.start()
-
-        time.sleep(10)
+        worker.join(timeout=10)
 
         assert on_event.received == 1
         assert on_event.partition_id == "0"
         assert on_event.consumer_group == "$default"
         assert on_event.fully_qualified_namespace == fully_qualified_namespace
-        assert on_event.eventhub_name == senders[0]._client.eventhub_name
+        assert on_event.eventhub_name == eventhub_name
