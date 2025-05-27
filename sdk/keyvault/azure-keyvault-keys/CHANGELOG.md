@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
 
 ### Other Changes
 
@@ -151,7 +152,7 @@
 ## 4.6.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.6.0b1 (2022-06-07)

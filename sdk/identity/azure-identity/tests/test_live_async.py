@@ -16,11 +16,11 @@ from azure.identity.aio import (
 
 from helpers import get_token_payload_contents, GET_TOKEN_METHODS
 
-ARM_SCOPE = "https://management.azure.com/.default"
+GRAPH_SCOPE = "https://graph.microsoft.com/.default"
 
 
 async def get_token(credential, get_token_method, **kwargs):
-    token = await getattr(credential, get_token_method)(ARM_SCOPE, **kwargs)
+    token = await getattr(credential, get_token_method)(GRAPH_SCOPE, **kwargs)
     assert token
     assert token.token
     assert token.expires_on
@@ -65,7 +65,10 @@ async def test_client_secret_credential(live_service_principal, get_token_method
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
     )
-    token = await get_token(credential, get_token_method, enable_cae=True)
+    kwargs = {"enable_cae": True}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = await get_token(credential, get_token_method, **kwargs)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 

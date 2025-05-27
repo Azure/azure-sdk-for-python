@@ -1,14 +1,24 @@
 ## Release History
 
-### 4.11.0b2 (Unreleased)
+### 4.12.0b2 (Unreleased)
 
 #### Features Added
 * Added ability to set a user agent suffix for at client level See [PR 40904](https://github.com/Azure/azure-sdk-for-python/pull/40904)
-#### Breaking Changes
+* Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 
 #### Bugs Fixed
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
 
 #### Other Changes
+
+### 4.12.0b1 (2025-05-19)
+
+#### Features Added
+* Added ability to use weighted RRF (Reciprocal Rank Fusion) for Hybrid full text search queries. See [PR 40899](https://github.com/Azure/azure-sdk-for-python/pull/40899/files).
+
+#### Bugs Fixed
+* Fixed Diagnostics Error Log Formatting to handle error messages from non-CosmosHttpResponseExceptions. See [PR 40889](https://github.com/Azure/azure-sdk-for-python/pull/40889/files)
+* Fixed bug where `multiple_write_locations` option in client was not being honored. See [PR 40999](https://github.com/Azure/azure-sdk-for-python/pull/40999).
 
 ### 4.11.0b1 (2025-04-30)
 

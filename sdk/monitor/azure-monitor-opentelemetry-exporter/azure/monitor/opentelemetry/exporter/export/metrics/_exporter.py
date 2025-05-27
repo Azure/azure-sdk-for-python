@@ -116,7 +116,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def force_flush(

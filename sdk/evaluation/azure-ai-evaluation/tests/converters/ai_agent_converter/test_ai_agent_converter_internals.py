@@ -2,7 +2,7 @@ import json
 import unittest
 from datetime import datetime
 
-from azure.ai.evaluation._converters._ai_services import AIAgentConverter
+from azure.ai.evaluation import AIAgentConverter
 from azure.ai.evaluation._converters._models import (
     Message,
     AssistantMessage,
@@ -10,15 +10,30 @@ from azure.ai.evaluation._converters._models import (
     ToolCall,
     break_tool_call_into_messages,
 )
-from azure.ai.projects.models import (
-    RunStepCodeInterpreterToolCall,
-    RunStepCodeInterpreterToolCallDetails,
-    RunStepFileSearchToolCall,
-    RunStepFileSearchToolCallResults,
-    RunStepFileSearchToolCallResult,
-)
+# Breaking changes introduced in newer version of the agents SDK
+# Models have been moved, so try a few different locations
+try:
+    from azure.ai.projects.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+    )
+except ImportError:
+    pass
+try:
+    from azure.ai.agents.models import (
+        RunStepCodeInterpreterToolCall,
+        RunStepCodeInterpreterToolCallDetails,
+        RunStepFileSearchToolCall,
+        RunStepFileSearchToolCallResults,
+        RunStepFileSearchToolCallResult,
+    )
+except ImportError:
+    pass
 
-from serialization_helper import ToolDecoder
+from serialization_helper import ToolDecoder, ThreadRunDecoder
 
 
 class TestAIAgentConverter(unittest.TestCase):
@@ -183,6 +198,83 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(
             tool_call_content["arguments"] == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="}
         )
+
+    def test_extract_tool_definitions(self):
+        thread_run_data = """{
+  "id": "run_zs3USbTw61ZpRk8bwBPP8Ue7",
+  "created_at": 1746115656,
+  "assistant_id": "asst_mI8CZVyxDF0jHBFxt7xkIpgx",
+  "thread_id": "thread_gMETMuBx3bMDTIB6bREOHF6Y",
+  "status": "completed",
+  "started_at": 1746115656,
+  "expires_at": null,
+  "cancelled_at": null,
+  "failed_at": null,
+  "completed_at": 1746115660,
+  "required_action": null,
+  "last_error": null,
+  "model": "gpt-4o-2024-08-06",
+  "instructions": "You are a helpful assistant.",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "fetch_weather",
+        "description": "Fetches the weather information for the specified location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to fetch weather for."
+            }
+          },
+          "required": ["location"]
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "code_interpreter"
+    }
+  ],
+  "tool_resources": {},
+  "metadata": {},
+  "temperature": 1.0,
+  "top_p": 1.0,
+  "max_completion_tokens": null,
+  "max_prompt_tokens": null,
+  "truncation_strategy": {
+    "type": "auto",
+    "last_messages": null
+  },
+  "incomplete_details": null,
+  "usage": {
+    "prompt_tokens": 845,
+    "completion_tokens": 57,
+    "total_tokens": 902,
+    "prompt_token_details": {
+      "cached_tokens": 0
+    }
+  },
+  "response_format": "auto",
+  "tool_choice": "auto",
+  "parallel_tool_calls": true
+}"""
+        thread_run = json.loads(thread_run_data, cls=ThreadRunDecoder)
+        tool_definitions = AIAgentConverter._extract_function_tool_definitions(thread_run)
+        self.assertTrue(len(tool_definitions) == 2)
+        self.assertTrue(tool_definitions[0].name == "fetch_weather")
+        self.assertTrue(tool_definitions[0].description == "Fetches the weather information for the specified location.")
+        self.assertTrue(tool_definitions[0].parameters["properties"]["location"]["type"] == "string")
+        self.assertTrue(tool_definitions[0].parameters["properties"]["location"]["description"] == "The location to fetch weather for.")
+        self.assertTrue(tool_definitions[1].type == "code_interpreter")
+        self.assertTrue(tool_definitions[1].name == "code_interpreter")
+        self.assertTrue(tool_definitions[1].description == "Use code interpreter to read and interpret information from datasets, "
+    + "generate code, and create graphs and charts using your data. Supports "
+    + "up to 20 files.")
+        self.assertTrue(tool_definitions[1].parameters["properties"]["input"]["type"] == "string")
+        self.assertTrue(tool_definitions[1].parameters["properties"]["input"]["description"] == "Generated code to be executed.")
 
 
 if __name__ == "__main__":

@@ -1,19 +1,6 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
 # https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
-################
-# Orphaned paths
-################
-# As of 1/26/2023 these paths have no owners:
-
-# /**
-# /.devcontainer/
-# /.vscode/
-# /conda-releaselogs/
-# /doc/
-# /scripts/
-# /tools/
-
 ###########
 # SDK
 ###########
@@ -202,11 +189,11 @@
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
-/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
 
 # ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @hectorhdzg @jeremydvoss
+/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
 
 # ServiceLabel: %Consumption
 # PRLabel: %Consumption
@@ -262,6 +249,15 @@
 # ServiceLabel: %AI Model Inference %Service Attention
 /sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
 
+# PRLabel: %AI Agents
+# ServiceLabel: %AI Agents %Service Attention
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+
+# PRLabel: %AI Projects
+# ServiceLabel: %AI Projects %Service Attention
+/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin
+
+
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
 
@@ -309,6 +305,10 @@
 # PRLabel: %Mixed Reality
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
+
+# ServiceLabel: %Online Experimentation
+# PRLabel: %Online Experimentation
+/sdk/onlineexperimentation/                                          @Azure/azure-sdk-write-onlineexperimentation
 
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
@@ -828,9 +828,8 @@
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
-
 ###########
-# Eng Sys
+# Eng Sys and other
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
@@ -839,8 +838,13 @@
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
+/.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
+/.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
 /tools/                                                              @scbedd @mccoyp
+/scripts/                                                            @scbedd @mccoyp
+/doc/                                                                @scbedd @mccoyp
+/conda/                                                              @scbedd @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
@@ -851,5 +855,5 @@
 /eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
-/pylintrc                                                            @l0lawrence
+/pylintrc                                                            @l0lawrence @scbedd @mccoyp
 /sdk/**/ci.yml                                                       @msyyc @lmazuel

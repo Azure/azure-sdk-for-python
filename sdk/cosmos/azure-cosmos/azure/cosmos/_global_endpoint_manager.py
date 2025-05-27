@@ -44,7 +44,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     """
 
     def __init__(self, client):
-        self.Client = client
+        self.client = client
         self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
@@ -57,9 +57,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-
-    def get_use_multiple_write_locations(self):
-        return self.location_cache.can_use_multiple_write_locations()
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime
@@ -173,20 +170,20 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 if success_count >= 4:
                     break
                 # save current dba timeouts
-                previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
-                previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+                previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
+                previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
                 try:
                     if (endpoint in
                             self.location_cache.location_unavailability_info_by_endpoint):
                         # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
                         # health check. This helps reduce the time the health check is blocking all requests.
-                        self.Client.connection_policy.override_dba_timeouts(constants._Constants
+                        self.client.connection_policy.override_dba_timeouts(constants._Constants
                                                                             .UnavailableEndpointDBATimeouts,
                                                                             constants._Constants
                                                                             .UnavailableEndpointDBATimeouts)
-                        self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                        self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     else:
-                        self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                        self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
@@ -194,7 +191,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.mark_endpoint_unavailable_for_write(endpoint, False)
                 finally:
                     # after the health check for that endpoint setting the timeouts back to their original values
-                    self.Client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
+                    self.client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
                                                                         previous_dba_connection_timeout)
         self.location_cache.update_location_cache()
 
@@ -207,20 +204,20 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         if endpoint in self.location_cache.location_unavailability_info_by_endpoint:
-            previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
-            previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+            previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
+            previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
             try:
                 # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
                 # health check. This helps reduce the time the health check is blocking all requests.
-                self.Client.connection_policy.override_dba_timeouts(constants._Constants
+                self.client.connection_policy.override_dba_timeouts(constants._Constants
                                                                     .UnavailableEndpointDBATimeouts,
                                                                     constants._Constants
                                                                     .UnavailableEndpointDBATimeouts)
-                database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+                database_account = self.client.GetDatabaseAccount(endpoint, **kwargs)
             finally:
                 # after the health check for that endpoint setting the timeouts back to their original values
-                self.Client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
+                self.client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,
                                                                     previous_dba_connection_timeout)
         else:
-            database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+            database_account = self.client.GetDatabaseAccount(endpoint, **kwargs)
         return database_account
