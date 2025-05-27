@@ -5,9 +5,8 @@
 #### Features Added
 * Added option to enable automatic retries for write operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
 
-#### Breaking Changes
-
 #### Bugs Fixed
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
 
 #### Other Changes
 

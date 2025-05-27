@@ -24,7 +24,7 @@ class TestNetworkManagementWebCategoriesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_web_categories_get(self, resource_group):
         response = await self.client.web_categories.get(
             name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementWebCategoriesOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_web_categories_list_by_subscription(self, resource_group):
         response = self.client.web_categories.list_by_subscription(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
