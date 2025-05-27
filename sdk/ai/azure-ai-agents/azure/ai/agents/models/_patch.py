@@ -1221,10 +1221,9 @@ class AsyncToolSet(BaseToolSet):
 
     async def _execute_single_tool_call(self, tool_call: Any):
         try:
-            if tool_call.type == "function":
-                tool = self.get_tool(AsyncFunctionTool)
-                output = await tool.execute(tool_call)
-                return {"tool_call_id": tool_call.id, "output": str(output)}
+            tool = self.get_tool(AsyncFunctionTool)
+            output = await tool.execute(tool_call)
+            return {"tool_call_id": tool_call.id, "output": str(output)}
         except Exception as e:  # pylint: disable=broad-exception-caught
             return {"tool_call_id": tool_call.id, "output": str(e)}
 
@@ -1238,7 +1237,9 @@ class AsyncToolSet(BaseToolSet):
         """
 
         # Execute all tool calls concurrently
-        tool_outputs = await asyncio.gather(*[self._execute_single_tool_call(tc) for tc in tool_calls])
+        tool_outputs = await asyncio.gather(
+            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+        )
 
         return tool_outputs
 
