@@ -37,6 +37,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 from azure.cosmos.http_constants import ResourceType, HttpHeaders
+from _fault_injection_transport import ERROR_WITH_COUNTER
 
 class FaultInjectionTransportAsync(AioHttpTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport_async')
@@ -46,7 +47,18 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         self.faults: List[Dict[str, Any]] = []
         self.requestTransformations: List[Dict[str, Any]]  = []
         self.responseTransformations: List[Dict[str, Any]] = []
+        self.counters: Dict[str, int] = {
+            ERROR_WITH_COUNTER: 0
+        }
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
+
+    async def reset_counters(self):
+        for name in self.counters:
+            self.counters[name] = 0
+
+    async def error_with_counter(self, error: Exception) -> Exception:
+        self.counters[ERROR_WITH_COUNTER] += 1
+        return error
 
     def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], Awaitable[Exception]]):
         self.faults.append({"predicate": predicate, "apply": fault_factory})

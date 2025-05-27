@@ -100,9 +100,15 @@ class ContainerProxy:
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    async def _get_properties(self) -> Dict[str, Any]:
+    async def _get_properties_with_feed_options(self, feed_options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        kwargs = {}
+        if feed_options and "excludedLocations" in feed_options:
+            kwargs['excluded_locations'] = feed_options['excludedLocations']
+        return await self._get_properties(**kwargs)
+
+    async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.client_connection._container_properties_cache:
-            await self.read()
+            await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
     @property
@@ -141,9 +147,11 @@ class ContainerProxy:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
-
-        container_properties = await self._get_properties()
+    async def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: PartitionKeyType,
+            feed_options: Optional[Dict[str, Any]] = None) -> Range:
+        container_properties = await self._get_properties_with_feed_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(
             path=partition_key_definition["paths"],
@@ -173,6 +181,10 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -517,6 +529,7 @@ class ContainerProxy:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            kwargs["containerProperties"] = self._get_properties_with_feed_options
         else:
             feed_options["enableCrossPartitionQuery"] = True
         if max_integrated_cache_staleness_in_ms:
@@ -530,7 +543,7 @@ class ContainerProxy:
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        kwargs["containerProperties"] = self._get_properties
+        kwargs["containerProperties"] = self._get_properties_with_feed_options
 
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
@@ -752,16 +765,18 @@ class ContainerProxy:
         elif "start_time" in kwargs:
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
         if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
+            partition_key_value = kwargs.pop("partition_key")
+            change_feed_state_context["partitionKey"] = self._set_partition_key(
+                cast(PartitionKeyType, partition_key_value))
+            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
+                partition_key_value, feed_options)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerProperties"] = self._get_properties()
+        feed_options["containerProperties"] = self._get_properties_with_feed_options(feed_options)
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):

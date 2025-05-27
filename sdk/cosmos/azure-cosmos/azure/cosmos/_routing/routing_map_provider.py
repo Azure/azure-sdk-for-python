@@ -55,11 +55,14 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             collection_id: str,
+            feed_options: Optional[Dict[str, Any]] = None,
             **kwargs: Dict[str, Any]
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if not collection_routing_map:
-            collection_pk_ranges = list(self._documentClient._ReadPartitionKeyRanges(collection_link, **kwargs))
+            collection_pk_ranges = list(self._documentClient._ReadPartitionKeyRanges(collection_link,
+                                                                                     feed_options,
+                                                                                     **kwargs))
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
@@ -69,17 +72,18 @@ class PartitionKeyRangeCache(object):
             )
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
 
-    def get_overlapping_ranges(self, collection_link, partition_key_ranges, **kwargs):
+    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
         """Given a partition key range and a collection, return the list of
         overlapping partition key ranges.
 
         :param str collection_link: The name of the collection.
         :param list partition_key_ranges: List of partition key range.
+        :param dict feed_options: The request options.
         :return: List of overlapping partition key ranges.
         :rtype: list
         """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        self.init_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
+        self.init_collection_routing_map_if_needed(collection_link, str(collection_id), feed_options, **kwargs)
 
         return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
 
@@ -151,7 +155,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    def get_overlapping_ranges(self, collection_link, partition_key_ranges, **kwargs):
+    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
@@ -159,6 +163,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         :param str collection_link: The collection link.
         :param (list of routing_range.Range) partition_key_ranges:
             The sorted list of non-overlapping ranges.
+        :param dict feed_options: The request options.
         :return: List of partition key ranges.
         :rtype: list of dict
         :raises ValueError:
@@ -186,7 +191,12 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     queryRange = currentProvidedRange
 
                 overlappingRanges = (
-                    PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, [queryRange], **kwargs))
+                    PartitionKeyRangeCache.get_overlapping_ranges(
+                        self,
+                        collection_link,
+                        [queryRange],
+                        feed_options,
+                        **kwargs))
                 assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
                     queryRange
                 )

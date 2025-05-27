@@ -117,7 +117,7 @@
     },
     {
       "WindowsConfig": {
-        "Windows2022_38": {
+        "Windows2022_39": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
           "PythonVersion": "3.9",
