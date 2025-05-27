@@ -88,6 +88,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         else:
             await self._create_execution_context_with_query_plan()
 
+        return await self._execution_context.__anext__()
+
     async def fetch_next_block(self):
         """Returns a block of results.
 
@@ -107,6 +109,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                     raise e
         else:
             await self._create_execution_context_with_query_plan()
+
+        return await self._execution_context.fetch_next_block()
 
     async def _create_pipelined_execution_context(self, query_execution_info):
 
