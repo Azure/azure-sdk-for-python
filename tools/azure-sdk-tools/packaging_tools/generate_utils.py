@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from functools import wraps
+from typing import Optional
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -408,12 +409,21 @@ def gen_typespec(
     head_sha: str,
     rest_repo_url: str,
     run_in_pipeline: bool,
+    api_version: Optional[str] = None,
 ) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
+        tspconfig = tsp_dir / "tspconfig.yaml"
+        if api_version and tspconfig.exists():
+            with open(tspconfig, "r") as file_in:
+                content = yaml.safe_load(file_in)
+                if content.get("options", {}).get("@azure-tools/typespec-python"):
+                    content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+            with open(tspconfig, "w") as file_out:
+                yaml.dump(content, file_out)
         cmd = (
             f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         )

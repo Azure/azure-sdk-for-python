@@ -52,7 +52,6 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert len(database_list2) > 0
         database_read = await database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
-        await self.client.delete_database(database.id, session_token=str(uuid.uuid4()))
         await self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
         try:
             await database2.read()
@@ -77,13 +76,14 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         assert replace_container_read['defaultTtl'] == 30
-        await self.created_database.delete_container(container.id, session_token=str(uuid.uuid4()))
-        await self.created_database.delete_container(container2.id, session_token=str(uuid.uuid4()))
+        await self.created_database.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         try:
             await container2.read()
             pytest.fail("Container read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
+
+        await self.client.delete_database(database.id)
 
     async def test_etag_match_condition_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
@@ -93,7 +93,11 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         await self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        await self.client.delete_database(database.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        try:
+            await database2.read()
+            pytest.fail("Database read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
 
         # Container
         container = await self.created_database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
@@ -110,7 +114,12 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        await self.created_database.delete_container(container2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        await self.created_database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        try:
+            await container2.read()
+            pytest.fail("Container read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
 
         # Item
         item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
@@ -134,7 +143,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         for result in batch_results:
             assert result['statusCode'] in (200, 201)
 
-        await self.created_database.delete_container(container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        await self.client.delete_database(database.id)
 
 
 if __name__ == '__main__':

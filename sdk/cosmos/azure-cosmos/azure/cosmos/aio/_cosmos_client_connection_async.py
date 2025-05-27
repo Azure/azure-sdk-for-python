@@ -2934,7 +2934,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if cont_prop:
             cont_prop = await cont_prop()
             pk_properties = cont_prop["partitionKey"]
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            partition_key_definition = PartitionKey(
+                path=pk_properties["paths"],
+                kind=pk_properties["kind"],
+                version=pk_properties["version"])
             if partition_key_definition.kind == "MultiHash" and \
                     (isinstance(partition_key, List) and \
                      len(partition_key_definition['paths']) != len(partition_key)):

@@ -26,7 +26,7 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesFilterValuesOperationsAsy
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             parameters={"filterName": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

@@ -90,7 +90,13 @@ class TestBackwardsCompatibility(unittest.TestCase):
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         self.databaseForTest.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
-        self.databaseForTest.delete_container(container.id, session_token=str(uuid.uuid4()))
+        try:
+            container2.read()
+            pytest.fail("Container read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
+
+        self.client.delete_database(database.id)
 
     def test_etag_match_condition_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
@@ -118,6 +124,11 @@ class TestBackwardsCompatibility(unittest.TestCase):
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        try:
+            container2.read()
+            pytest.fail("Container read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
 
         # Item
         item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
