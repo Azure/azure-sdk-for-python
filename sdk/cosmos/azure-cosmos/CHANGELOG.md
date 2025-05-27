@@ -3,7 +3,7 @@
 ### 4.11.0b2 (Unreleased)
 
 #### Features Added
-
+* Added ability to set a user agent suffix for at client level See [PR 40904](https://github.com/Azure/azure-sdk-for-python/pull/40904)
 #### Breaking Changes
 
 #### Bugs Fixed
