@@ -43,7 +43,7 @@ def _get_customer_ikey_from_env_var():
     return _CUSTOMER_IKEY_ENV_VAR
 
 
-# TODO: Add environment variable to enable/disable diagnostics off of App Service
+# TODO: Add environment variable to enable/disable diagnostics
 def _is_diagnostics_enabled():
     if _is_on_app_service() or _is_on_aks():
         return _is_attach_enabled()
