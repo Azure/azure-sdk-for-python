@@ -90,6 +90,121 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
+    def test_populate_part_a_fields_aks(self):
+        resource = Resource(
+            {
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronJob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDeploymentName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_replica(self):
+        resource = Resource(
+            {
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testReplicaSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_stateful(self):
+        resource = Resource(
+            {
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testStatefulSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_job(self):
+        resource = Resource(
+            {
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testJobName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_cronjob(self):
+        resource = Resource(
+            {
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testCronJobName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_daemon(self):
+        resource = Resource(
+            {
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDaemonSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    # TODO: Add more as things are removed
+
+    def test_populate_part_a_fields_aks_with_service(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
     @patch("azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str", return_value=TEST_TIME)
     @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
     def test_create_telemetry_item(self, mock_ns_to_iso_str):
