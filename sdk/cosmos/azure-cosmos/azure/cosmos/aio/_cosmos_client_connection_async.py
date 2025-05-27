@@ -2265,7 +2265,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        resource_type = http_constants.ResourceType.Document
         if base.IsDatabaseLink(database_or_container_link):
             return AsyncItemPaged(
                 self,

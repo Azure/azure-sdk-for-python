@@ -446,7 +446,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        resource_type = http_constants.ResourceType.Database
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     "/dbs", http_constants.ResourceType.Database, "", lambda r: r["Databases"],
@@ -1086,7 +1085,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        resource_type = http_constants.ResourceType.Document
         if base.IsDatabaseLink(database_or_container_link):
             return ItemPaged(
                 self,
@@ -2552,7 +2550,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        resource_type = http_constants.ResourceType.Offer
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     "/offers", http_constants.ResourceType.Offer, "", lambda r: r["Offers"],

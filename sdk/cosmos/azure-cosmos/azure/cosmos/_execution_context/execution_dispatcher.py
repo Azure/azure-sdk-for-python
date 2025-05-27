@@ -117,8 +117,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         else:
             self._create_execution_context_with_query_plan()
 
-        return next(self._execution_context)
-
     def fetch_next_block(self):
         """Returns a block of results.
 
@@ -138,8 +136,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                     raise e
         else:
             self._create_execution_context_with_query_plan()
-
-        return self._execution_context.fetch_next_block()
 
     def _create_pipelined_execution_context(self, query_execution_info):
         assert self._resource_link, "code bug, resource_link is required."
