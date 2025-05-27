@@ -56,6 +56,10 @@ Create a client with the endpoint and credential:
 <!-- SNIPPET: examples.create_client -->
 
 ```python
+from azure.health.deidentification import * 
+from azure.health.deidentification.models import * 
+from azure.identity import DefaultAzureCredential   
+
 endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
