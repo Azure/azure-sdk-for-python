@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Callable, cast, List, Optional, Tuple, Union
+from typing import Any, Callable, cast, List, Literal, Optional, Tuple, Union
 from urllib.parse import unquote
 
 from azure.core.exceptions import HttpResponseError
@@ -247,6 +247,8 @@ class BlobPrefix(ItemPaged, DictMixin):
     """Function to retrieve the next page of items."""
     container: str
     """The name of the container."""
+    kind: Literal["blob-prefix"]
+    """Discriminator for BlobPrefix class."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
@@ -256,6 +258,7 @@ class BlobPrefix(ItemPaged, DictMixin):
         self.container = kwargs.get('container')  # type: ignore [assignment]
         self.delimiter = kwargs.get('delimiter')  # type: ignore [assignment]
         self.location_mode = kwargs.get('location_mode')  # type: ignore [assignment]
+        self.kind = "blob-prefix"
 
 
 class FilteredBlobPaged(PageIterator):
