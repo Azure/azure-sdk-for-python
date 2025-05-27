@@ -1,5 +1,15 @@
 # Release History
 
+## 3.1.0 (2025-06-15)
+
+### Features Added
+
+  - Model `SecuritySettings` added property `source_scan_configuration`
+  - Added model `AssociatedIdentity`
+  - Added enum `IdentityType`
+  - Added model `SourceScanConfiguration`
+  - Added enum `State`
+
 ## 3.0.0 (2024-04-22)
 
 ### Features Added
