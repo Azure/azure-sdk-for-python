@@ -85,7 +85,7 @@ def generate_account_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Callable[[str], None] or None
+    :paramtype sts_hook: callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -196,7 +196,7 @@ def generate_file_system_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Callable[[str], None] or None
+    :paramtype sts_hook: callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -310,7 +310,7 @@ def generate_directory_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Callable[[str], None] or None
+    :paramtype sts_hook: callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -431,7 +431,7 @@ def generate_file_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Callable[[str], None] or None
+    :paramtype sts_hook: callable[[str], None] or None
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
