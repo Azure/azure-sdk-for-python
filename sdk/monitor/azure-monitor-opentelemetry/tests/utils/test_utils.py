@@ -6,11 +6,13 @@
 
 from importlib import reload
 from os import environ
+import os
 from unittest import TestCase
 from unittest.mock import patch
 
 from azure.monitor.opentelemetry import _utils
 import azure.monitor.opentelemetry.exporter._utils as exporter_utils
+from azure.monitor.opentelemetry.exporter._constants import _AKS_ARM_NAMESPACE_ID
 
 TEST_VALUE = "TEST_VALUE"
 TEST_IKEY = "1234abcd-ab12-34cd-ab12-a23456abcdef"
@@ -65,6 +67,7 @@ class TestUtils(TestCase):
         self.assertFalse(exporter_utils._is_on_functions())
         self.assertFalse(exporter_utils._is_on_app_service())
         self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
+        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
         self.assertTrue(exporter_utils._is_attach_enabled())
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -78,6 +81,23 @@ class TestUtils(TestCase):
         self.assertFalse(exporter_utils._is_on_functions())
         self.assertFalse(exporter_utils._is_on_app_service())
         self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
+        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
+        self.assertTrue(exporter_utils._is_attach_enabled())
+        self.assertTrue(_utils._is_diagnostics_enabled())
+
+    @patch.dict(os.environ, {
+            "AKS_ARM_NAMESPACE_ID": TEST_VALUE,
+            "KUBERNETES_SERVICE_HOST": TEST_VALUE,
+        }, clear=True)
+    def test_diagnostics_aks_attach_no_quotes_os(self):
+        reload(_utils)
+        self.assertTrue(exporter_utils._is_on_aks())
+        self.assertFalse(exporter_utils._is_on_functions())
+        self.assertFalse(exporter_utils._is_on_app_service())
+        self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
+        self.assertTrue("AKS_ARM_NAMESPACE_ID" in os.environ)
+        self.assertTrue(_AKS_ARM_NAMESPACE_ID in environ)
+        self.assertTrue(_AKS_ARM_NAMESPACE_ID in os.environ)
         self.assertTrue(exporter_utils._is_attach_enabled())
         self.assertTrue(_utils._is_diagnostics_enabled())
 
