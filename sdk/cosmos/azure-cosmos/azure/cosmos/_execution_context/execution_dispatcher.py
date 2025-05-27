@@ -95,7 +95,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
         query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-        (query_to_use, self._resource_link))
+        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
         self._execution_context = self._create_pipelined_execution_context(query_execution_info)
 
     def __next__(self):
@@ -106,16 +106,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        try:
-            return next(self._execution_context)
-        except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                      (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
-            else:
-                raise e
+        if self._fetched_query_plan or "enableCrossPartitionQuery" not in self._options:
+            try:
+                return next(self._execution_context)
+            except CosmosHttpResponseError as e:
+                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                    self._create_execution_context_with_query_plan()
+                else:
+                    raise e
+        else:
+            self._create_execution_context_with_query_plan()
 
         return next(self._execution_context)
 
@@ -128,13 +128,14 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-
         if self._fetched_query_plan or "enableCrossPartitionQuery" not in self._options:
             try:
                 return self._execution_context.fetch_next_block()
             except CosmosHttpResponseError as e:
                 if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
                     self._create_execution_context_with_query_plan()
+                else:
+                    raise e
         else:
             self._create_execution_context_with_query_plan()
 

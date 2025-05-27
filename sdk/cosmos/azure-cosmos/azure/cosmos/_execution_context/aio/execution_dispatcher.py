@@ -66,7 +66,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
         query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
-        (query_to_use, self._resource_link))
+        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
         self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
 
     async def __anext__(self):
@@ -77,16 +77,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        try:
-            return await self._execution_context.__anext__()
-        except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
-                                                                      (query_to_use, self._resource_link))
-                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
-            else:
-                raise e
+        if self._fetched_query_plan or "enableCrossPartitionQuery" not in self._options:
+            try:
+                return await self._execution_context.__anext__()
+            except CosmosHttpResponseError as e:
+                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                    await self._create_execution_context_with_query_plan()
+                else:
+                    raise e
+        else:
+            await self._create_execution_context_with_query_plan()
 
         return await self._execution_context.__anext__()
 
@@ -105,10 +105,12 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             except CosmosHttpResponseError as e:
                 if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
                     await self._create_execution_context_with_query_plan()
+                else:
+                    raise e
         else:
             await self._create_execution_context_with_query_plan()
 
-        return await self._execution_context.fetch_next_block()
+        return await self._execution_context.fetch_next_block() return await self._execution_context.__anext__()
 
     async def _create_pipelined_execution_context(self, query_execution_info):
 

@@ -197,7 +197,9 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )
 
     next = __next__  # Python 2 compatibility.

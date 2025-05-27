@@ -61,8 +61,12 @@ class TestConfig(object):
 
     TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
     TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "SinglePartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "MultiPartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
+    TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
+    TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
 
     @classmethod
     def create_database_if_not_exist(cls, client):
@@ -88,6 +92,26 @@ class TestConfig(object):
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+        return document_collection
+
+    @classmethod
+    def create_single_partition_prefix_pk_container_if_not_exist(cls, client):
+        # type: (CosmosClient) -> ContainerProxy
+        database = cls.create_database_if_not_exist(client)
+        document_collection = database.create_container_if_not_exists(
+            id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
+            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+        return document_collection
+
+    @classmethod
+    def create_multi_partition_prefix_pk_container_if_not_exist(cls, client):
+        # type: (CosmosClient) -> ContainerProxy
+        database = cls.create_database_if_not_exist(client)
+        document_collection = database.create_container_if_not_exists(
+            id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
+            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
             offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
         return document_collection
 
