@@ -61,6 +61,9 @@ class TestUtils(TestCase):
     def test_diagnostics_aks_attach(self):
         reload(_utils)
         self.assertTrue(_utils._is_on_aks())
+        self.assertFalse(_utils._is_on_functions())
+        self.assertFalse(_utils._is_on_app_service())
+        self.assertTrue("AKS_ARM_NAMESPACE_ID" in environ)
         self.assertTrue(_utils._is_attach_enabled())
         self.assertTrue(_utils._is_diagnostics_enabled())
 
