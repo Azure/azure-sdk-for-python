@@ -385,10 +385,12 @@ class AsyncPrompty:
                 return response
             except OpenAIError as error:
                 error_message = str(error)
+                BAD_REQUEST_ERROR_CODE = "400"
+
                 # Check for BadRequestError with unsupported parameter message
                 if (not self._is_reasoning_model and
                         'Unsupported parameter' in error_message and
-                        '400' in error_message):
+                        BAD_REQUEST_ERROR_CODE in error_message):
                     # Apply reasoning model parameter modifications
                     self._logger.debug(
                         "Detected BadRequestError with unsupported parameters. Adapting parameters for reasoning model."
