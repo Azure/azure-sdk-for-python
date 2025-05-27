@@ -22,7 +22,7 @@ from .models import get_enum_value, StorageErrorCode, UserDelegationKey
 from .parser import _to_utc_datetime
 
 
-SV_DOCS_URL = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-service"
+SV_DOCS_URL = "https://learn.microsoft.com/en-us/rest/api/storageservices/versioning-for-the-azure-storage-services"
 _LOGGER = logging.getLogger(__name__)
 
 
