@@ -70,6 +70,7 @@ class FaultInjectorConfig(TypedDict):
     custom_endpoint_address: str
     transport_type: TransportType
     logs_dir: str
+    sslcontext: ssl.SSLContext
 
 
 def setup_faultinjector(test_name: str) -> Union[FaultInjectorConfig, None]:
@@ -83,7 +84,6 @@ def setup_faultinjector(test_name: str) -> Union[FaultInjectorConfig, None]:
     env_path = os.environ.get("FAULTINJECTOR_PATH")
     faultinjector_path = os.path.abspath(env_path) if env_path else None
 
-    # TODO: is test_name always a safe directory/filename?
     logs_dir = os.path.join(os.path.dirname(__file__), "faultinjector_logs", test_name)
 
     os.makedirs(logs_dir, exist_ok=True)
@@ -94,6 +94,7 @@ def setup_faultinjector(test_name: str) -> Union[FaultInjectorConfig, None]:
         "custom_endpoint_address": "sb://localhost:5671",
         "transport_type": TransportType.Amqp,
         "logs_dir": logs_dir,
+        "sslcontext": AMQPPROXY_SSL_CONTEXT,
     }
 
 
@@ -126,64 +127,54 @@ def faultinjector(fi_type: Literal["detach_after_delay"], live_eventhub, request
 
     print("Setting up fault injector")
 
-    # Create a temporary file for the faultinjector log
-    with tempfile.NamedTemporaryFile(
-        prefix="faultinjector_", suffix=".log", mode="w"
-    ) as log_file:
-        # Optionally kill any existing process if needed, similar to amqpproxy logic
-        # Start the faultinjector process
-        log_file.write(f"####### Starting faultinjector for test: {test_name}\n")
-        log_file.write("Starting faultinjector process...\n")
-        log_file.flush()
+    # Start the faultinjector process
+    print(f"####### Starting faultinjector for test: {test_name}")
+    print("Starting faultinjector process...")
 
-        args = []
+    args = []
 
-        if fi_type == "detach_after_delay":
-            args = ["detach_after_delay", "--desc", "DETACHED FOR FAULT INJECTOR TEST"]
-        else:
-            # Default case or unknown fault type
-            log_file.write(f"Unknown fault type: {fi_type}\n")
-            log_file.flush()
-            yield None
-            return
+    if fi_type == "detach_after_delay":
+        args = ["detach_after_delay", "--desc", "DETACHED FOR FAULT INJECTOR TEST"]
+    else:
+        # Default case or unknown fault type
+        print(f"Unknown fault type: {fi_type}")
+        yield None
+        return
 
-        args.extend(["--host", live_eventhub["hostname"], "--logs", config["logs_dir"]])
+    args.extend(["--host", live_eventhub["hostname"], "--logs", config["logs_dir"]])
 
-        process = subprocess.Popen(
-            [
-                config["path"],  # faultinjector path
-                *args,
-            ],
-            # stdout=log_file,
-            # stderr=log_file,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            preexec_fn=os.setsid,
+    process = subprocess.Popen(
+        [
+            config["path"],  # faultinjector path
+            *args,
+        ],
+        # stdout=log_file,
+        # stderr=log_file,
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+        preexec_fn=os.setsid,
+    )
+
+    if not process:
+        log_file.write("Failed to start faultinjector.\n")
+        # just dump the entire log to the console if we can't start it.
+        log_file.seek(0)
+        print(log_file.read())
+        raise RuntimeError(
+            f"Failed to start faultinjector. See output for details."
         )
 
-        if not process:
-            log_file.write("Failed to start faultinjector.\n")
-            # just dump the entire log to the console if we can't start it.
-            log_file.seek(0)
-            print(log_file.read())
-            raise RuntimeError(
-                f"Failed to start faultinjector. See output for details."
-            )
+    try:
+        time.sleep(1)
+        yield config
 
-        try:
-            time.sleep(1)
-            # Add proxy args to test context
-            # TODO: Um..not sure if I actually have 'request' here or not.
-            # request.node.user_properties.append(("client_args", config))
-            yield config
+        # this is after the test has completed.
 
-            # this is after the test has completed.
+        print(f"===> Fault injector logs are in '{config['logs_dir']}'")
 
-            print(f"===> Fault injector logs are in '{config['logs_dir']}'")
-
-        finally:
-            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-            process.wait()
+    finally:
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        process.wait()
 
 
 # Set up the amqpproxy environment variables

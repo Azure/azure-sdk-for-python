@@ -40,7 +40,7 @@ def test_receive_partition_using_fault_injector_detach_after_delay(
         consumer_group="$default",
         transport_type=fault_injector_config["transport_type"],
         custom_endpoint_address=fault_injector_config["custom_endpoint_address"],
-        ssl_context=context,
+        ssl_context=fault_injector_config["sslcontext"],
         retry_total=0,
     )
 
