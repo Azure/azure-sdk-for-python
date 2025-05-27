@@ -260,7 +260,7 @@ def _get_cloud_role(resource: Resource) -> str:
         else:
             cloud_role = str(service_name)
         # If service_name starts with "unknown_service", only use it if kubernetes attributes are not present.
-        if not service_name.startswith("unknown_service"):
+        if not str(service_name).startswith("unknown_service"):
             return cloud_role
     k8s_dep_name = resource.attributes.get(ResourceAttributes.K8S_DEPLOYMENT_NAME)
     if k8s_dep_name:
