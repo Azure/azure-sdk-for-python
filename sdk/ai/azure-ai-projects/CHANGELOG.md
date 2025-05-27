@@ -15,7 +15,7 @@ Please see new samples and package README.md file.
 
 * Azure AI Foundry Project endpoint is now required to construct the `AIProjectClient`. It has the form
 `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. Find it in your AI Foundry Project
-Overview page. The factory method `from_connection_string` was removed.
+Overview page. The factory method `from_connection_string` was removed. The support of connection strings and hub based projects was dropped. Please create a new project, which uses endpoints (recommended), or pin the version of `azure-ai-projects` to `1.0.0b10` if it is not possible.
 * Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
 `AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
 See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.

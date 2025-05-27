@@ -89,6 +89,8 @@ project_client = AIProjectClient.from_connection_string(
 )
 ```
 
+**Note:** The support of connection strings as the project endpoints and hub-based projects was dropped. Please create a new project, which uses endpoints (recommended), or pin the version of `azure-ai-projects` to `1.0.0b10` if it is not possible.
+
 ## Examples
 
 ### Performing Agent operations
