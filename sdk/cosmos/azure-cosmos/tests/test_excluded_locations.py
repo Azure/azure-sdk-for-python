@@ -51,11 +51,6 @@ L1 = "West US 3"
 L2 = "West US"
 L3 = "East US 2"
 
-# L0 = "Default"
-# L1 = "East US 2"
-# L2 = "East US"
-# L3 = "West US 2"
-
 CLIENT_ONLY_TEST_DATA = [
     # preferred_locations, client_excluded_locations, excluded_locations_request
     # 0. No excluded location
@@ -115,12 +110,12 @@ def read_item_test_data():
         [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2],  # 0
+        [L2, L1],  # 0
         [L2],  # 1
-        [L2],  # 2
-        [L1],  # 3
+        [L2, L1],  # 2
+        [L1, L2],  # 3
         [L1],  # 4
-        [L1],  # 5
+        [L1, L2],  # 5
         [L1],  # 6
         [L1],  # 7
     ]
@@ -188,20 +183,14 @@ def verify_endpoint(messages, client, expected_locations, multiple_write_locatio
     # get location
     actual_locations = set()
     for req_url in req_urls:
-        match = re.search(r"x\-ms\-thinclient\-proxy\-resource\-type': '([^']+)'", req_url)
-        if match:
-            resource_type = match.group(1)
-            # only check the document and partition key requests because that is where excluded locations
-            # is applicable
-            if resource_type in (ResourceType.Document, ResourceType.PartitionKey):
-                if req_url.startswith(default_endpoint):
-                    actual_locations.add(L0)
-                else:
-                    for endpoint in location_mapping:
-                        if req_url.startswith(endpoint):
-                            location = location_mapping[endpoint]
-                            actual_locations.add(location)
-                            break
+        if req_url.startswith(default_endpoint):
+            actual_locations.add(L0)
+        else:
+            for endpoint in location_mapping:
+                if req_url.startswith(endpoint):
+                    location = location_mapping[endpoint]
+                    actual_locations.add(location)
+                    break
 
     assert actual_locations == set(expected_locations)
 

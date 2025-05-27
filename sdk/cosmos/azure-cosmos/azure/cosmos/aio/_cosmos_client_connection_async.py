@@ -2899,7 +2899,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         cont_prop_func = kwargs.pop("containerProperties", None)
         cont_prop = None
         if cont_prop_func:
-            cont_prop = await cont_prop_func(options)
+            cont_prop = await cont_prop_func(options) # get properties with feed options
 
         # Copy to make sure that default_headers won't be changed.
         if query is None:
@@ -2950,13 +2950,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
 
         # check if query has prefix partition key
-        cont_prop = kwargs.pop("containerProperties", None)
         partition_key_value = options.get("partitionKey", None)
         is_prefix_partition_query = False
         partition_key_obj = None
         if cont_prop and partition_key_value is not None:
-            properties = await cont_prop(options)   # get properties with feed options
-            partition_key_definition = properties["partitionKey"]
+            partition_key_definition = cont_prop["partitionKey"]
             partition_key_obj = PartitionKey(path=partition_key_definition["paths"],
                                              kind=partition_key_definition["kind"],
                                              version=partition_key_definition["version"])
@@ -2965,9 +2963,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if is_prefix_partition_query and partition_key_obj:
             # here get the overlapping ranges
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-            feedrangeEPK = partition_key_obj._get_epk_range_for_prefix_partition_key(
+            feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(
                 partition_key_value)  # cspell:disable-line
-            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK], options)
+            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk], options)
             results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
@@ -2982,8 +2980,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
                 # Since the range min and max are all Upper Cased string Hex Values,
                 # we can compare the values lexicographically
-                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feedrangeEPK.min),
-                                                    range_max=min(single_range.max, feedrangeEPK.max),
+                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feed_range_epk.min),
+                                                    range_max=min(single_range.max, feed_range_epk.max),
                                                     isMinInclusive=True, isMaxInclusive=False)
                 if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                     # The Epk Sub Range spans exactly one physical partition

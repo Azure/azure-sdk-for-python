@@ -349,7 +349,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                     raise err
                 # This logic is based on the _retry.py file from azure-core
                 if retry_settings['read'] > 0:
-                    # record the failure for circuit breaker tracking for retrys in connection retry policy
+                    # record the failure for circuit breaker tracking for retries in connection retry policy
                     # retries in the execute function will mark those failures
                     global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)

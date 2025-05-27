@@ -446,7 +446,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
-        # ppcb should not regress connection timeouts marking the region as unavailable
+        # per partition circuit breaker should not regress connection timeouts marking the region as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
         custom_transport.add_fault(predicate,
