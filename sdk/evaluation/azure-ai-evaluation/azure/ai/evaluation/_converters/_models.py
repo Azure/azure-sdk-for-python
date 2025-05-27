@@ -3,9 +3,17 @@ import json
 
 from pydantic import BaseModel
 
-from azure.ai.projects.models import RunStepFunctionToolCall
-
 from typing import List, Optional, Union
+
+# Models moved in a later version of agents SDK, so try a few different locations
+try:
+    from azure.ai.projects.models import RunStepFunctionToolCall
+except ImportError:
+    pass
+try:
+    from azure.ai.agents.models import RunStepFunctionToolCall
+except ImportError:
+    pass
 
 # Message roles constants.
 _SYSTEM = "system"
@@ -21,6 +29,57 @@ _FUNCTION = "function"
 # This is returned by AI services in the API to filter against tool invocations.
 _TOOL_CALLS = "tool_calls"
 
+# Constants to only be used internally in this file for the built-in tools.
+_CODE_INTERPRETER = "code_interpreter"
+_BING_GROUNDING = "bing_grounding"
+_FILE_SEARCH = "file_search"
+_AZURE_AI_SEARCH = "azure_ai_search"
+_FABRIC_DATAAGENT = "fabric_dataagent"
+
+# Built-in tool descriptions and parameters are hidden, but we include basic descriptions
+# for evaluation purposes.
+_BUILT_IN_DESCRIPTIONS = {
+    _CODE_INTERPRETER: "Use code interpreter to read and interpret information from datasets, "
+    + "generate code, and create graphs and charts using your data. Supports "
+    + "up to 20 files.",
+    _BING_GROUNDING: "Enhance model output with web data.",
+    _FILE_SEARCH: "Search for data across uploaded files.",
+    _AZURE_AI_SEARCH: "Search an Azure AI Search index for relevant data.",
+    _FABRIC_DATAAGENT: "Connect to Microsoft Fabric data agents to retrieve data across different data sources.",
+}
+
+# Built-in tool parameters are hidden, but we include basic parameters for evaluation purposes.
+_BUILT_IN_PARAMS = {
+    _CODE_INTERPRETER: {
+        "type": "object",
+        "properties": {"input": {"type": "string", "description": "Generated code to be executed."}},
+    },
+    _BING_GROUNDING: {
+        "type": "object",
+        "properties": {"requesturl": {"type": "string", "description": "URL used in Bing Search API."}},
+    },
+    _FILE_SEARCH: {
+        "type": "object",
+        "properties": {
+            "ranking_options": {
+                "type": "object",
+                "properties": {
+                    "ranker": {"type": "string", "description": "Ranking algorithm to use."},
+                    "score_threshold": {"type": "number", "description": "Threshold for search results."},
+                },
+                "description": "Ranking options for search results.",
+            }
+        },
+    },
+    _AZURE_AI_SEARCH: {
+        "type": "object",
+        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
+    },
+    _FABRIC_DATAAGENT: {
+        "type": "object",
+        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
+    },
+}
 
 class Message(BaseModel):
     """Represents a message in a conversation with agents, assistants, and tools. We need to export these structures
@@ -98,6 +157,8 @@ class ToolDefinition(BaseModel):
 
     :param name: The name of the tool.
     :type name: str
+    :param type: The type of the tool.
+    :type type: str
     :param description: A description of the tool.
     :type description: str
     :param parameters: The parameters required by the tool.
@@ -105,6 +166,7 @@ class ToolDefinition(BaseModel):
     """
 
     name: str
+    type: str
     description: Optional[str] = None
     parameters: dict
 
@@ -191,6 +253,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             arguments = {
                 "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
             }
+        elif tool_call.details["type"] == "azure_ai_search":
+            arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
+        elif tool_call.details["type"] == "fabric_dataagent":
+            arguments = {"input": tool_call.details["fabric_dataagent"]["input"]}
         else:
             # unsupported tool type, skip
             return messages
@@ -211,17 +277,17 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
     if hasattr(tool_call.details, _FUNCTION):
-        output = safe_loads(tool_call.details.function.output)
+        output = safe_loads(tool_call.details.function["output"])
     else:
         try:
             # Some built-ins may have output, others may not
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
-            if tool_call.details.type == "code_interpreter":
+            if tool_call.details.type == _CODE_INTERPRETER:
                 output = tool_call.details.code_interpreter.outputs
-            elif tool_call.details.type == "bing_grounding":
+            elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
-            elif tool_call.details.type == "file_search":
+            elif tool_call.details.type == _FILE_SEARCH:
                 output = [
                     {
                         "file_id": result.file_id,
@@ -231,6 +297,10 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                     }
                     for result in tool_call.details.file_search.results
                 ]
+            elif tool_call.details.type == _AZURE_AI_SEARCH:
+                output = tool_call.details.azure_ai_search["output"]
+            elif tool_call.details.type == _FABRIC_DATAAGENT:
+                output = tool_call.details.fabric_dataagent["output"]
         except:
             return messages
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,26 +48,22 @@ def main():
                     "periodicModeProperties": {
                         "backupIntervalInMinutes": 240,
                         "backupRetentionIntervalInHours": 720,
-                        "backupStorageRedundancy": "Geo",
+                        "backupStorageRedundancy": "Local",
                     },
                     "type": "Periodic",
                 },
                 "capacity": {"totalThroughputLimit": 2000},
-                "capacityMode": "Provisioned",
                 "consistencyPolicy": {
                     "defaultConsistencyLevel": "BoundedStaleness",
                     "maxIntervalInSeconds": 10,
                     "maxStalenessPrefix": 200,
                 },
                 "defaultIdentity": "FirstPartyIdentity",
-                "defaultPriorityLevel": "Low",
-                "diagnosticLogSettings": {"enableFullTextQuery": "True"},
                 "enableAnalyticalStorage": True,
                 "enableBurstCapacity": True,
                 "enableFreeTier": False,
                 "enablePartitionMerge": True,
                 "enablePerRegionPerPartitionAutoscale": True,
-                "enablePriorityBasedExecution": True,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "minimalTlsVersion": "Tls",
@@ -87,6 +84,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-12-01-preview/examples/CosmosDBDatabaseAccountPatch.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBDatabaseAccountPatch.json
 if __name__ == "__main__":
     main()

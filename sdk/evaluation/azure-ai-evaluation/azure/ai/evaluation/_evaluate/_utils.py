@@ -180,7 +180,7 @@ def _log_metrics_and_instance_results_onedp(
 
         create_evaluation_result_response = client.create_evaluation_result(
             name=uuid.uuid4(),
-            path=tmp_path,
+            path=tmpdir,
             metrics=metrics
         )
 

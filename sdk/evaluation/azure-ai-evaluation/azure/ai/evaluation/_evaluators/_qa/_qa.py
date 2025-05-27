@@ -48,6 +48,16 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a QAEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START qa_evaluator]
+            :end-before: [END qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call QAEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. admonition:: Example with Threshold:
     
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

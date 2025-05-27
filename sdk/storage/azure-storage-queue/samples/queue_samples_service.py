@@ -35,6 +35,7 @@ class QueueServiceSamples(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START set_queue_service_properties]
@@ -42,16 +43,20 @@ class QueueServiceSamples(object):
         from azure.storage.queue import QueueAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
-        logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = QueueAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-        minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Create CORS rules
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -60,7 +65,7 @@ class QueueServiceSamples(object):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers
+            allowed_headers=allowed_headers,
         )
 
         cors = [cors_rule1, cors_rule2]
@@ -80,6 +85,7 @@ class QueueServiceSamples(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START qsc_create_queue]
@@ -111,6 +117,7 @@ class QueueServiceSamples(object):
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient, QueueClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START get_queue_client]
@@ -119,7 +126,7 @@ class QueueServiceSamples(object):
         # [END get_queue_client]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = QueueServiceSamples()
     sample.queue_service_properties()
     sample.queues_in_account()

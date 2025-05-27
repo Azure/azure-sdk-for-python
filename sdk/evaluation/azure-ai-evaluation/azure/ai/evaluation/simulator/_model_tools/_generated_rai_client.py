@@ -12,6 +12,7 @@ from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._common.onedp import AIProjectClient
+from azure.ai.evaluation._common import EvaluationServiceOneDPClient
 import jwt
 import time
 import ast
@@ -46,6 +47,8 @@ class GeneratedRAIClient:
             ).rai_svc
         else:
             self._client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).red_teams
+            self._operations_client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).evaluations
+            self._evaluation_onedp_client = EvaluationServiceOneDPClient(endpoint=azure_ai_project, credential=token_manager)
         
     def _get_service_discovery_url(self):
         """Get the service discovery URL.

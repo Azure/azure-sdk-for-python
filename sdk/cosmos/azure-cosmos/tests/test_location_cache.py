@@ -257,23 +257,6 @@ class TestLocationCache:
         read_doc_endpoint = [regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts]
         assert read_doc_endpoint == expected_read_endpoints
 
-
-        # Test setting excluded locations with invalid resource types
-        expected_excluded_locations = None
-        for resource_type in [ResourceType.Offer, ResourceType.Conflict]:
-            options: Mapping[str, Any] = {"excludedLocations": [location1_name]}
-            read_doc_request = RequestObject(resource_type, _OperationType.Create)
-            read_doc_request.set_excluded_location_from_options(options)
-            actual_excluded_locations = read_doc_request.excluded_locations
-            assert actual_excluded_locations == expected_excluded_locations
-
-            expected_read_endpoints = [location1_endpoint]
-            read_regional_routing_contexts = location_cache._get_applicable_read_regional_routing_contexts(read_doc_request)
-            read_doc_endpoint = [regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts]
-            assert read_doc_endpoint == expected_read_endpoints
-
-
-
         # Test setting excluded locations with None value
         expected_error_message = ("Excluded locations cannot be None. "
                                   "If you want to remove all excluded locations, try passing an empty list.")

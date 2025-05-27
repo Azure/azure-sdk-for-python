@@ -2101,8 +2101,10 @@ class EvaluationsOperations:
 
         if _stream:
             deserialized = response.iter_bytes()
-        else:
+        elif type(response.json()) == list:
             deserialized = _deserialize(List[Dict[str, Any]], response.json())
+        else: 
+            deserialized = _deserialize(Dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4267,7 +4269,7 @@ class RedTeamsOperations:
         if isinstance(redteam, (IOBase, bytes)):
             _content = redteam
         else:
-            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=False)  # type: ignore
 
         _request = build_red_teams_upload_update_run_request(
             name=name,
