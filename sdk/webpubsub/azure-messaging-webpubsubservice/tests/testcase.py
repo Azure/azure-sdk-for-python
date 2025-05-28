@@ -5,10 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+import pytest
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-
-
+import asyncio
+from websockets import connect as ws_connect
 class WebpubsubTest(AzureRecordedTestCase):
     def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
         if kwargs.get("connection_string"):
