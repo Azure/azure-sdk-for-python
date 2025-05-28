@@ -12,7 +12,7 @@ This MCP server provides the following validation tools:
 
 ### verify_setup
 
-Verifies Node, tox, and Python are installed in your enviornment.
+Verifies Node, tox, and Python are installed in your environment.
 
 ### tox
 

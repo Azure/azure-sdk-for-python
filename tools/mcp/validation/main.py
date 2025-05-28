@@ -19,7 +19,7 @@ logger.info(f"Working directory: {os.getcwd()}")
 _REPO_ROOT = Path(__file__).parents[3]
 _TOX_INI_PATH = os.path.abspath(_REPO_ROOT / "eng" / "tox" / "tox.ini")
 
-# Initialize FastMCP server
+# Initialize server
 mcp = FastMCP("validation")
 
 def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]:

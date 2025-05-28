@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 hander = logging.StreamHandler(sys.stderr)
 logger.addHandler(hander)
 
-# Initialize FastMCP server
+# Initialize server
 mcp = FastMCP("typespec")
 
 def get_latest_commit(tspurl: str) -> Union[Match[str], None]:

@@ -12,7 +12,7 @@ Before generating an SDK with TypeSpec, please ensure you have met the following
     git checkout -b <your-new-branch-name>
     ```
     Replace `<your-new-branch-name>` with a descriptive name for your branch.
-3. Have `uv` package manager installed in your enviornment.
+3. Have `uv` package manager installed in your environment.
 
 ## Interacting with Copilot for SDK Generation
 
