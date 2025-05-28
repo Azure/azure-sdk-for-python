@@ -1,13 +1,15 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, IO, Optional, Union, overload
+from typing import Any, List, IO, Optional, Union, overload, Iterable
 from datetime import datetime, timedelta, tzinfo
 import jwt
 from azure.core.credentials import AzureKeyCredential
@@ -127,15 +129,18 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         # Example URL for Default Client Type: https://<service-name>.webpubsub.azure.com/client/hubs/<hub>
         #                 MQTT Client Type: https://<service-name>.webpubsub.azure.com/clients/mqtt/hubs/<hub>
         #                 SocketIO Client Type: https://<service-name>.webpubsub.azure.com/clients/socketio/hubs/<hub>
+
         path = "/client/hubs/"
         if client_protocol.lower() == "mqtt":
-            path = "/clients/mqtt/hubs/" 
+            path = "/clients/mqtt/hubs/"
         elif client_protocol.lower() == "socketio":
             path = "/clients/socketio/hubs/"
         client_url = client_endpoint + path + hub
         jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
+            token = get_token_by_key(
+                endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs
+            )
         else:
             token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {

@@ -1,7 +1,9 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 
 """Customize generated code here.
 
@@ -89,7 +91,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         hub = self._config.hub
         path = "/client/hubs/"
         if client_protocol.lower() == "mqtt":
-            path = "/clients/mqtt/hubs/" 
+            path = "/clients/mqtt/hubs/"
         elif client_protocol.lower() == "socketio":
             path = "/clients/socketio/hubs/"
         client_url = client_endpoint + path + hub
