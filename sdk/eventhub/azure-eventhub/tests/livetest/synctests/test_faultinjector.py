@@ -38,9 +38,9 @@ def test_receive_partition_using_fault_injector_detach_after_delay(
     # Uncomment to enable DEBUG logging to get more information on frames so you can actually see the DETACH message we're using.
     # You'll see lines like this one (where I customized the AMQP status code as well as the message):
     # 2025-05-27 19:35:21,448 azure.eventhub._pyamqp.link DEBUG    <- DetachFrame(handle=1, closed=True, error=[b'amqp:link:ohno', b'DETACHED FOR FAULT INJECTOR TEST'])
-    logger = logging.getLogger("azure.eventhub")
-    logger.setLevel(logging.DEBUG)
-    client_args["logging_enable"] = True
+    # logger = logging.getLogger("azure.eventhub")
+    # logger.setLevel(logging.DEBUG)
+    # client_args["logging_enable"] = True
 
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
