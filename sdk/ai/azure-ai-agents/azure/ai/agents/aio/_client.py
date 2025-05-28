@@ -15,7 +15,6 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ..servicepatterns.aio.operations import ServicePatternsOperations
 from ._configuration import AgentsClientConfiguration
 from .operations import (
     AgentsClientOperationsMixin,
@@ -36,8 +35,6 @@ if TYPE_CHECKING:
 class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """AgentsClient.
 
-    :ivar service_patterns: ServicePatternsOperations operations
-    :vartype service_patterns: azure.ai.agents.aio.operations.ServicePatternsOperations
     :ivar threads: ThreadsOperations operations
     :vartype threads: azure.ai.agents.aio.operations.ThreadsOperations
     :ivar messages: MessagesOperations operations
@@ -60,8 +57,9 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -91,9 +89,6 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service_patterns = ServicePatternsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.threads = ThreadsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)

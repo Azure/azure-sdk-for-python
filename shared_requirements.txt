@@ -1,5 +1,6 @@
 msrest
 anyio
+azure-ai-agents
 azure-ai-ml
 azure-ai-resources
 azure-common

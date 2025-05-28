@@ -7,7 +7,7 @@ import os
 import yaml  # type: ignore
 
 from opentelemetry import trace
-from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
+from opentelemetry.trace import Span  # noqa: F401 # pylint: disable=unused-import
 from typing import Any, Dict, Optional, Set, List
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import FunctionTool, ToolSet, MessageRole, Agent, AgentThread

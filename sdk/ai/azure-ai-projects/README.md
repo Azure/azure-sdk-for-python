@@ -1,94 +1,48 @@
-<!-- PIPY LONG DESCRIPTION BEGIN -->
 # Azure AI Projects client library for Python
 
-Use the AI Projects client library (in preview) to:
+The AI Projects client library (in preview) is part of the Azure AI Foundry SDK, and provides easy access to
+resources in your Azure AI Foundry Project. Use it to:
 
-* **Enumerate connections** in your Azure AI Foundry project and get connection properties.
-For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
-* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Foundry project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
-* **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
-* **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
-* **Enable OpenTelemetry tracing**.
+* **Create and run Agents** using the `.agents` property on the client.
+* **Get an AzureOpenAI client** using the `.inference.get_azure_openai_client` method.
+* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
+* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
+* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
+* **Create and enumerate Search Indexes** using the `.indexes` operations.
+* **Get an Azure AI Inference client** for chat completions, text or image embeddings using the `.inference` operations.
+* **Read a Prompty file or string** and render messages for inference clients, using the `PromptTemplate` class.
+* **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
+* **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
+
+> **Note:** There have been significant updates with the release of version 1.0.0b11, including breaking changes.
+please see new code snippets below and the samples folder. Agents are now implemented in a separate package `azure-ai-agents`
+which will get installed automatically when you install `azure-ai-projects`. You can continue using ".agents"
+operations on the `AIProjectsClient` to create, run and delete agents, as before.
+See [full set of Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples)
+in their new location. Also see the [change log for the 1.0.0b11 release](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/CHANGELOG.md).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
 
 ## Reporting issues
 
 To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
-## Table of contents
-
-- [Getting started](#getting-started)
-  - [Prerequisite](#prerequisite)
-  - [Install the package](#install-the-package)
-- [Key concepts](#key-concepts)
-  - [Create and authenticate the client](#create-and-authenticate-the-client)
-- [Examples](#examples)
-  - [Enumerate connections](#enumerate-connections)
-    - [Get properties of all connections](#get-properties-of-all-connections)
-    - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
-    - [Get properties of a default connection](#get-properties-of-a-default-connection)
-    - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
-  - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
-  - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-  - [Agents (Preview)](#agents-preview)
-    - [Create an Agent](#create-agent) with:
-      - [File Search](#create-agent-with-file-search)
-      - [Enterprise File Search](#create-agent-with-enterprise-file-search)
-      - [Code interpreter](#create-agent-with-code-interpreter)
-      - [Bing grounding](#create-agent-with-bing-grounding)
-      - [Azure AI Search](#create-agent-with-azure-ai-search)
-      - [Function call](#create-agent-with-function-call)
-      - [Azure Function Call](#create-agent-with-azure-function-call)
-      - [OpenAPI](#create-agent-with-openapi)
-      - [Fabric data](#create-an-agent-with-fabric)
-    - [Create thread](#create-thread) with
-      - [Tool resource](#create-thread-with-tool-resource)
-    - [Create message](#create-message) with:
-      - [File search attachment](#create-message-with-file-search-attachment)
-      - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
-      - [Create Message with Image Inputs](#create-message-with-image-inputs)
-    - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
-    - [Retrieve message](#retrieve-message)
-    - [Retrieve file](#retrieve-file)
-    - [Tear down by deleting resource](#teardown)
-    - [Tracing](#tracing)
-  - [Evaluation](#evaluation)
-    - [Evaluator](#evaluator)
-    - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
-      - [Evaluators](#evaluators)
-      - [Data to be evaluated](#data-to-be-evaluated)
-        - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
-        - [Example Remote Evaluation](#example-remote-evaluation)
-  - [Tracing](#tracing)
-    - [Installation](#installation)
-    - [How to enable tracing](#how-to-enable-tracing)
-    - [How to trace your own functions](#how-to-trace-your-own-functions)
-- [Troubleshooting](#troubleshooting)
-  - [Exceptions](#exceptions)
-  - [Logging](#logging)
-  - [Reporting issues](#reporting-issues)
-- [Next steps](#next-steps)
-- [Contributing](#contributing)
-<!-- PIPY LONG DESCRIPTION END -->
 ## Getting started
 
 ### Prerequisite
 
-- Python 3.8 or later.
+- Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project connection string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
-- Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+- The project endpoint URL of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
+- An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
-  * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
 
 ### Install the package
 
@@ -98,18 +52,20 @@ pip install azure-ai-projects
 
 ## Key concepts
 
-### Create and authenticate the client
+### Create and authenticate the client with Entra ID
 
-The class factory method `from_connection_string` is used to construct the client. To construct a synchronous client:
+Entra ID is the only authentication method supported at the moment by the client.
+
+To construct a synchronous client:
 
 ```python
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 ```
 
@@ -129,72 +85,92 @@ from azure.core.credentials import AzureKeyCredential
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 ```
 
 ## Examples
 
-### Enumerate connections
+### Performing Agent operations
 
-Your Azure AI Foundry project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the `agent` you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) associated with the `azure-ai-agents` package.
 
-Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
+The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
-#### Get properties of all connections
-
-To list the properties of all the connections in the Azure AI Foundry project:
+<!-- SNIPPET:sample_agents.agents_sample -->
 
 ```python
-connections = project_client.connections.list()
-for connection in connections:
-    print(connection)
-```
-
-#### Get properties of all connections of a particular type
-
-To list the properties of connections of a certain type (here Azure OpenAI):
-
-```python
-connections = project_client.connections.list(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
+agent = project_client.agents.create_agent(
+    model=model_deployment_name,
+    name="my-agent",
+    instructions="You are helpful agent",
 )
-for connection in connections:
-    print(connection)
+print(f"Created agent, agent ID: {agent.id}")
 
+# Do something with your Agent!
+# See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
+
+project_client.agents.delete_agent(agent.id)
+print("Deleted agent")
 ```
 
-#### Get properties of a default connection
+<!-- END SNIPPET -->
 
-To get the properties of the default connection of a certain type (here Azure OpenAI),
-with its authentication credentials:
+### Get an authenticated AzureOpenAI client
+
+Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+
+The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, or a connected Azure OpenAI resource. As shown in the "Models + endpoints" tab, under the "Name" column.
+
+Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
+
+<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
 ```python
-connection = project_client.connections.get_default(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
-    include_credentials=True,  # Optional. Defaults to "False".
+print(
+    "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
 )
-print(connection)
+with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+
+    response = client.chat.completions.create(
+        model=model_deployment_name,
+        messages=[
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ],
+    )
+
+    print(response.choices[0].message.content)
+
+print(
+    "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
+)
+with project_client.inference.get_azure_openai_client(
+    api_version="2024-10-21", connection_name=connection_name
+) as client:
+
+    response = client.chat.completions.create(
+        model=model_deployment_name,
+        messages=[
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ],
+    )
+
+    print(response.choices[0].message.content)
 ```
 
-If the call was made with `include_credentials=True`, depending on the value of `connection.authentication_type`, either `connection.key` or `connection.token_credential`
-will be populated. Otherwise both will be `None`.
+<!-- END SNIPPET -->
 
-#### Get properties of a connection by its connection name
-
-To get the connection properties of a connection named `connection_name`:
-
-```python
-connection = project_client.connections.get(
-    connection_name=connection_name,
-    include_credentials=True  # Optional. Defaults to "False"
-)
-print(connection)
-```
+See the "inference" folder in the [package samples][samples] for additional samples.
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -202,1286 +178,244 @@ First, install the package:
 pip install azure-ai-inference
 ```
 
-Then run this code (replace "gpt-4o" with your model deployment name):
+Then run the code below. Here we assume `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+
+<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.inference_sample-->
 
 ```python
-inference_client = project_client.inference.get_chat_completions_client()
+with project_client.inference.get_chat_completions_client() as client:
 
-response = inference_client.complete(
-    model="gpt-4o", # Model deployment name
-    messages=[UserMessage(content="How many feet are in a mile?")]
-)
+    response = client.complete(
+        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+    )
 
-print(response.choices[0].message.content)
+    print(response.choices[0].message.content)
 ```
+
+<!-- END SNIPPET -->
 
 See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
 
-### Get an authenticated AzureOpenAI client
+### Deployments operations
 
-Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your AI Foundry Projects. These models can be seen in the "Models + endpoints" tab in your AI Foundry Project. Full samples can be found under the "deployment" folder in the [package samples][samples].
 
-First, install the package:
-
-```bash
-pip install openai
-```
-
-Then run the code below. Replace `gpt-4o` with your model deployment name, and update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
+<!-- SNIPPET:sample_deployments.deployments_sample-->
 
 ```python
-aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")
+print("List all deployments:")
+for deployment in project_client.deployments.list():
+    print(deployment)
 
-response = aoai_client.chat.completions.create(
-    model="gpt-4o", # Model deployment name
-    messages=[
-        {
-            "role": "user",
-            "content": "How many feet are in a mile?",
-        },
-    ],
+print(f"List all deployments by the model publisher `{model_publisher}`:")
+for deployment in project_client.deployments.list(model_publisher=model_publisher):
+    print(deployment)
+
+print(f"List all deployments of model `{model_name}`:")
+for deployment in project_client.deployments.list(model_name=model_name):
+    print(deployment)
+
+print(f"Get a single deployment named `{model_deployment_name}`:")
+deployment = project_client.deployments.get(model_deployment_name)
+print(deployment)
+```
+
+<!-- END SNIPPET -->
+
+### Connections operations
+
+The code below shows some Connection operations, which allow you to enumerate the Azure Resources connected to your AI Foundry Projects. These connections can be seen in the "Management Center", in the "Connected resources" tab in your AI Foundry Project. Full samples can be found under the "connections" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_connections.connections_sample-->
+
+```python
+print("List all connections:")
+for connection in project_client.connections.list():
+    print(connection)
+
+print("List all connections of a particular type:")
+for connection in project_client.connections.list(
+    connection_type=ConnectionType.AZURE_OPEN_AI,
+):
+    print(connection)
+
+print("Get the default connection of a particular type, without its credentials:")
+connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+print(connection)
+
+print("Get the default connection of a particular type, with its credentials:")
+connection = project_client.connections.get_default(
+    connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True
 )
+print(connection)
 
-print(response.choices[0].message.content)
+print(f"Get the connection named `{connection_name}`, without its credentials:")
+connection = project_client.connections.get(connection_name)
+print(connection)
+
+print(f"Get the connection named `{connection_name}`, with its credentials:")
+connection = project_client.connections.get(connection_name, include_credentials=True)
+print(connection)
 ```
 
-See the "inference" folder in the [package samples][samples] for additional samples.
+<!-- END SNIPPET -->
 
-### Agents (Preview)
+### Dataset operations
 
-Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents. See the "agents" folder in the [package samples][samples] for additional Agent samples.
+The code below shows some Dataset operations. Full samples can be found under the "datasets"
+folder in the [package samples][samples].
 
-#### Create Agent
-
-Before creating an Agent, you need to set up Azure resources to deploy your model. [Create a New Agent Quickstart](https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure) details selecting and deploying your Agent Setup.
-
-Here is an example of how to create an Agent:
-<!-- SNIPPET:sample_agents_basics.create_agent -->
+<!-- SNIPPET:sample_datasets.datasets_sample-->
 
 ```python
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are helpful assistant",
+print(
+    f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
 )
-```
-
-<!-- END SNIPPET -->
-
-To allow Agents to access your resources or custom functions, you need tools. You can pass tools to `create_agent` by either `toolset` or combination of `tools` and `tool_resources`.
-
-Here is an example of `toolset`:
-<!-- SNIPPET:sample_agents_run_with_toolset.create_agent_toolset -->
-
-```python
-functions = FunctionTool(user_functions)
-code_interpreter = CodeInterpreterTool()
-
-toolset = ToolSet()
-toolset.add(functions)
-toolset.add(code_interpreter)
-
-# To enable tool calls executed automatically
-project_client.agents.enable_auto_function_calls(toolset=toolset)
-
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    toolset=toolset,
+dataset: DatasetVersion = project_client.datasets.upload_file(
+    name=dataset_name,
+    version=dataset_version_1,
+    file_path=data_file,
+    connection_name=connection_name,
 )
-```
+print(dataset)
 
-<!-- END SNIPPET -->
-
-Also notice that if you use the asynchronous client, use `AsyncToolSet` instead. Additional information related to `AsyncFunctionTool` be discussed in the later sections.
-
-Here is an example to use `tools` and `tool_resources`:
-<!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
-
-```python
-file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-
-# Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=file_search_tool.definitions,
-    tool_resources=file_search_tool.resources,
+print(
+    f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
 )
-```
-
-<!-- END SNIPPET -->
-
-In the following sections, we show you sample code in either `toolset` or combination of `tools` and `tool_resources`.
-
-#### Create Agent with File Search
-
-To perform file search by an Agent, we first need to upload a file, create a vector store, and associate the file to the vector store. Here is an example:
-
-<!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
-
-```python
-file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-print(f"Uploaded file, file ID: {file.id}")
-
-vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
-print(f"Created vector store, vector store ID: {vector_store.id}")
-
-# Create file search tool with resources followed by creating agent
-file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="Hello, you are helpful assistant and can search information from uploaded files",
-    tools=file_search.definitions,
-    tool_resources=file_search.resources,
+dataset = project_client.datasets.upload_folder(
+    name=dataset_name,
+    version=dataset_version_2,
+    folder=data_folder,
+    connection_name=connection_name,
+    file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
 )
+print(dataset)
+
+print(f"Get an existing Dataset version `{dataset_version_1}`:")
+dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
+print(dataset)
+
+print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
+asset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
+print(asset_credential)
+
+print("List latest versions of all Datasets:")
+for dataset in project_client.datasets.list():
+    print(dataset)
+
+print(f"Listing all versions of the Dataset named `{dataset_name}`:")
+for dataset in project_client.datasets.list_versions(name=dataset_name):
+    print(dataset)
+
+print("Delete all Dataset versions created above:")
+project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 ```
 
 <!-- END SNIPPET -->
 
-#### Create Agent with Enterprise File Search
+### Indexes operations
 
-We can upload file to Azure as it is shown in the example, or use the existing Azure blob storage. In the code below we demonstrate how this can be achieved. First we upload file to azure and create `VectorStoreDataSource`, which then is used to create vector store. This vector store is then given to the `FileSearchTool` constructor.
+The code below shows some Indexes operations. Full samples can be found under the "indexes"
+folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
+<!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-
-# Create a vector store with no file and wait for it to be processed
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
-print(f"Created vector store, vector store ID: {vector_store.id}")
-
-# Create a file search tool
-file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-
-# Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=file_search_tool.definitions,
-    tool_resources=file_search_tool.resources,
+print(
+    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
 )
-```
-
-<!-- END SNIPPET -->
-
-We also can attach files to the existing vector store. In the code snippet below, we first create an empty vector store and add file to it.
-
-<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.attach_files_to_store -->
-
-```python
-# Create a vector store with no file and wait for it to be processed
-vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
-print(f"Created vector store, vector store ID: {vector_store.id}")
-
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-# Add the file to the vector store or you can supply data sources in the vector store creation
-vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
-    vector_store_id=vector_store.id, data_sources=[ds]
+index = project_client.indexes.create_or_update(
+    name=index_name,
+    version=index_version,
+    body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
 )
-print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
+print(index)
 
-# Create a file search tool
-file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-```
+print(f"Get Index `{index_name}` version `{index_version}`:")
+index = project_client.indexes.get(name=index_name, version=index_version)
+print(index)
 
-<!-- END SNIPPET -->
+print("List latest versions of all Indexes:")
+for index in project_client.indexes.list():
+    print(index)
 
-#### Create Agent with Code Interpreter
+print(f"Listing all versions of the Index named `{index_name}`:")
+for index in project_client.indexes.list_versions(name=index_name):
+    print(index)
 
-Here is an example to upload a file and use it for code interpreter by an Agent:
-
-<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
-
-```python
-file = project_client.agents.upload_file_and_poll(
-    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-)
-print(f"Uploaded file, file ID: {file.id}")
-
-code_interpreter = CodeInterpreterTool(file_ids=[file.id])
-
-# Create agent with code interpreter tool and tools_resources
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=code_interpreter.definitions,
-    tool_resources=code_interpreter.resources,
-)
-```
-
-<!-- END SNIPPET -->
-
-#### Create Agent with Bing Grounding
-
-To enable your Agent to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
-
-Here is an example:
-
-<!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
-
-```python
-bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
-conn_id = bing_connection.id
-
-print(conn_id)
-
-# Initialize agent bing tool and add the connection id
-bing = BingGroundingTool(connection_id=conn_id)
-
-# Create agent with the bing tool and process assistant run
-with project_client:
-    agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=bing.definitions,
-        headers={"x-ms-enable-preview": "true"},
-    )
-```
-
-<!-- END SNIPPET -->
-
-#### Create Agent with Azure AI Search
-
-Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
-
-Here is an example to integrate Azure AI Search:
-
-<!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
-
-```python
-connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
-conn_id = connection.id
-
-print(conn_id)
-
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
-)
-
-# Create agent with AI search tool and process assistant run
-with project_client:
-    agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-    )
-```
-
-<!-- END SNIPPET -->
-
-If the agent has found the relevant information in the index, the reference
-and annotation will be provided in the message response. In the example above, we replace
-the reference placeholder by the actual reference and url. Please note, that to
-get sensible result, the index needs to have fields "title" and "url".
-
-<!-- SNIPPET:sample_agents_azure_ai_search.populate_references_agent_with_azure_ai_search_tool -->
-
-```python
-# Fetch and log all messages
-messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-for message in messages.data:
-    if message.role == MessageRole.AGENT and message.url_citation_annotations:
-        placeholder_annotations = {
-            annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
-            for annotation in message.url_citation_annotations
-        }
-        for message_text in message.text_messages:
-            message_str = message_text.text.value
-            for k, v in placeholder_annotations.items():
-                message_str = message_str.replace(k, v)
-            print(f"{message.role}: {message_str}")
-    else:
-        for message_text in message.text_messages:
-            print(f"{message.role}: {message_text.text.value}")
-```
-
-<!-- END SNIPPET -->
-
-#### Create Agent with Function Call
-
-You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`.
-
-For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/FunctionTool.md)
-
-Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_functions.py) in `toolset`:
-<!-- SNIPPET:sample_agents_stream_eventhandler_with_toolset.create_agent_with_function_tool -->
-
-```python
-functions = FunctionTool(user_functions)
-toolset = ToolSet()
-toolset.add(functions)
-project_client.agents.enable_auto_function_calls(toolset=toolset)
-
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    toolset=toolset,
-)
-```
-
-<!-- END SNIPPET -->
-
-For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
-
-```python
-from azure.ai.projects.aio import AIProjectClient
-```
-
-<!-- SNIPPET:sample_agents_run_with_toolset_async.create_agent_with_async_function_tool -->
-
-```python
-functions = AsyncFunctionTool(user_async_functions)
-
-toolset = AsyncToolSet()
-toolset.add(functions)
-project_client.agents.enable_auto_function_calls(toolset=toolset)
-
-agent = await project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    toolset=toolset,
-)
-```
-
-<!-- END SNIPPET -->
-
-Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process_run` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
-[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py)
-
-#### Create Agent With Azure Function Call
-
-The AI agent leverages Azure Functions triggered asynchronously via Azure Storage Queues. To enable the agent to perform Azure Function calls, you must set up the corresponding `AzureFunctionTool`, specifying input and output queues as well as parameter definitions.
-
-Example Python snippet illustrating how you create an agent utilizing the Azure Function Tool:
-
-<!-- SNIPPET sample_agents_azure_functions.create_agent_with_azure_function_tool -->
-
-```python
-storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
-
-azure_function_tool = AzureFunctionTool(
-    name="get_weather",
-    description="Get weather information using Azure Function",
-    parameters={
-            "type": "object",
-            "properties": {
-                "location": {"type": "string", "description": "The location of the weather."},
-            },
-            "required": ["location"],
-        },
-    input_queue=AzureFunctionStorageQueue(
-        queue_name="input",
-        storage_service_endpoint=storage_service_endpoint,
-    ),
-    output_queue=AzureFunctionStorageQueue(
-        queue_name="output",
-        storage_service_endpoint=storage_service_endpoint,
-    ),
-)
-
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are a helpful assistant",
-    tools=azure_function_tool.definitions,
-)
-```
-<!-- END SNIPPET -->
-
----
-
-**Limitations**
-
-Currently, the Azure Function integration for the AI Agent has the following limitations:
-
-- Supported trigger for Azure Function is currently limited to **Queue triggers** only.
-  HTTP or other trigger types and streaming responses are not supported at this time.
-
----
-
-**Create and Deploy Azure Function**
-
-Before you can use the agent with AzureFunctionTool, you need to create and deploy Azure Function.
-
-Below is an example Python Azure Function responding to queue-triggered messages and placing responses on the output queue:
-
-```python
-import azure.functions as func
-import logging
-import json
-
-app = func.FunctionApp()
-
-@app.get_weather(arg_name="inputQueue",
-                   queue_name="input",
-                   connection="AzureWebJobsStorage")
-@app.queue_output(arg_name="outputQueue",
-                  queue_name="output",
-                  connection="AzureWebJobsStorage")
-def get_weather(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
-    try:
-        messagepayload = json.loads(inputQueue.get_body().decode("utf-8"))
-        location = messagepayload["location"]
-        weather_result = f"Weather is 82 degrees and sunny in {location}."
-
-        response_message = {
-            "Value": weather_result,
-            "CorrelationId": messagepayload["CorrelationId"]
-        }
-
-        outputQueue.set(json.dumps(response_message))
-
-        logging.info(f"Sent message to output queue with message {response_message}")
-    except Exception as e:
-        logging.error(f"Error processing message: {e}")
-        return
-```
-
-> **Important:** Both input and output payloads must contain the `CorrelationId`, which must match in request and response.
-
----
-
-**Azure Function Project Creation and Deployment**
-
-To deploy your function to Azure properly, follow Microsoft's official documentation step by step:
-
-[Azure Functions Python Developer Guide](https://learn.microsoft.com/azure/azure-functions/create-first-function-cli-python?tabs=windows%2Cbash%2Cazure-cli%2Cbrowser)
-
-**Summary of required steps:**
-
-- Use the Azure CLI or Azure Portal to create an Azure Function App.
-- Enable System Managed Identity for your Azure Function App.
-- Assign appropriate permissions to your Azure Function App identity as outlined in the Role Assignments section below
-- Create input and output queues in Azure Storage.
-- Deploy your Function code.
-
----
-
-**Verification and Testing Azure Function**
-
-To ensure that your Azure Function deployment functions correctly:
-
-1. Place the following style message manually into the input queue (`input`):
-
-{
-  "location": "Seattle",
-  "CorrelationId": "42"
-}
-
-Check the output queue (`output`) and validate the structured message response:
-
-{
-  "Value": "The weather in Seattle is sunny and warm.",
-  "CorrelationId": "42"
-}
-
----
-
-**Required Role Assignments (IAM Configuration)**
-
-Clearly assign the following Azure IAM roles to ensure correct permissions:
-
-1. **Azure Function App's identity:**
-   - Enable system managed identity through Azure Function App > Settings > Identity.
-   - Add permission to storage account:
-     - Go to **Storage Account > Access control (IAM)** and add role assignment:
-       - `Storage Queue Data Contributor` assigned to Azure Function managed identity
-
-2. **Azure AI Project Identity:**
-
-Ensure your Azure AI Project identity has the following storage account permissions:
-- `Storage Account Contributor`
-- `Storage Blob Data Contributor`
-- `Storage File Data Privileged Contributor`
-- `Storage Queue Data Contributor`
-- `Storage Table Data Contributor`
-
----
-
-**Additional Important Configuration Notes**
-
-- The Azure Function configured above uses the `AzureWebJobsStorage` connection string for queue connectivity. You may alternatively use managed identity-based connections as described in the official Azure Functions Managed Identity documentation.
-- Storage queues you specify (`input` & `output`) should already exist in the storage account before the Function deployment or invocation, created manually via Azure portal or CLI.
-- When using Azure storage account connection strings, make sure the account has enabled storage account key access (`Storage Account > Settings > Configuration`).
-
----
-
-With the above steps complete, your Azure Function integration with your AI Agent is ready for use.
-
-
-#### Create Agent With Logic Apps
-
-Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
-
-Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions.
-
-Below is an example of how to create an Azure Logic App utility tool and register a function with it.
-
-<!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
-
-```python
-
-# Create the project client
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-)
-
-# Extract subscription and resource group from the project scope
-subscription_id = project_client.scope["subscription_id"]
-resource_group = project_client.scope["resource_group_name"]
-
-# Logic App details
-logic_app_name = "<LOGIC_APP_NAME>"
-trigger_name = "<TRIGGER_NAME>"
-
-# Create and initialize AzureLogicAppTool utility
-logic_app_tool = AzureLogicAppTool(subscription_id, resource_group)
-logic_app_tool.register_logic_app(logic_app_name, trigger_name)
-print(f"Registered logic app '{logic_app_name}' with trigger '{trigger_name}'.")
-
-# Create the specialized "send_email_via_logic_app" function for your agent tools
-send_email_func = create_send_email_function(logic_app_tool, logic_app_name)
-
-# Prepare the function tools for the agent
-functions_to_use: Set = {
-    fetch_current_datetime,
-    send_email_func,  # This references the AzureLogicAppTool instance via closure
-}
-```
-
-<!-- END SNIPPET -->
-
-After this the functions can be incorporated normally into code using `FunctionTool`.
-
-
-#### Create Agent With OpenAPI
-
-OpenAPI specifications describe REST operations against a specific endpoint. Agents SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
-
-Here is an example creating an OpenAPI tool (using anonymous authentication):
-
-<!-- SNIPPET:sample_agents_openapi.create_agent_with_openapi -->
-
-```python
-
-with open("./weather_openapi.json", "r") as f:
-    openapi_weather = jsonref.loads(f.read())
-
-with open("./countries.json", "r") as f:
-    openapi_countries = jsonref.loads(f.read())
-
-# Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
-auth = OpenApiAnonymousAuthDetails()
-
-# Initialize agent OpenApi tool using the read in OpenAPI spec
-openapi_tool = OpenApiTool(
-    name="get_weather",
-    spec=openapi_weather,
-    description="Retrieve weather information for a location",
-    auth=auth,
-    default_parameters=["format"],
-)
-openapi_tool.add_definition(
-    name="get_countries",
-    spec=openapi_countries,
-    description="Retrieve a list of countries",
-    auth=auth,
-)
-
-# Create agent with OpenApi tool and process assistant run
-with project_client:
-    agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=openapi_tool.definitions,
-    )
-```
-
-<!-- END SNIPPET -->
-
-#### Create an Agent with Fabric
-
-To enable your Agent to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
-
-Here is an example:
-
-<!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
-
-```python
-fabric_connection = project_client.connections.get(connection_name=os.environ["FABRIC_CONNECTION_NAME"])
-conn_id = fabric_connection.id
-
-print(conn_id)
-
-# Initialize an Agent Fabric tool and add the connection id
-fabric = FabricTool(connection_id=conn_id)
-
-# Create an Agent with the Fabric tool and process an Agent run
-with project_client:
-    agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=fabric.definitions,
-        headers={"x-ms-enable-preview": "true"},
-    )
-```
-
-<!-- END SNIPPET -->
-
-
-#### Create Thread
-
-For each session or conversation, a thread is required.   Here is an example:
-
-<!-- SNIPPET:sample_agents_basics.create_thread -->
-
-```python
-thread = project_client.agents.create_thread()
-```
-
-<!-- END SNIPPET -->
-
-#### Create Thread with Tool Resource
-
-In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector store and upload a file, enable an Agent for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
-
-<!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
-
-```python
-file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-print(f"Uploaded file, file ID: {file.id}")
-
-vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
-print(f"Created vector store, vector store ID: {vector_store.id}")
-
-# Create file search tool with resources followed by creating agent
-file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="Hello, you are helpful assistant and can search information from uploaded files",
-    tools=file_search.definitions,
-)
-
-print(f"Created agent, ID: {agent.id}")
-
-# Create thread with file resources.
-# If the agent has multiple threads, only this thread can search this file.
-thread = project_client.agents.create_thread(tool_resources=file_search.resources)
-```
-
-<!-- END SNIPPET -->
-
-#### List Threads
-
-To list all threads attached to a given agent, use the list_threads API:
-
-<!-- SNIPPET:sample_agents_basics.list_threads -->
-
-```python
-threads = project_client.agents.list_threads()
-```
-
-<!-- END SNIPPET -->
-
-#### Create Message
-
-To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
-
-<!-- SNIPPET:sample_agents_basics.create_message -->
-
-```python
-message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-```
-
-<!-- END SNIPPET -->
-
-#### Create Message with File Search Attachment
-
-To attach a file to a message for content searching, you use `MessageAttachment` and `FileSearchTool`:
-
-<!-- SNIPPET:sample_agents_with_file_search_attachment.create_message_with_attachment -->
-
-```python
-attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
-message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
-)
-```
-
-<!-- END SNIPPET -->
-
-#### Create Message with Code Interpreter Attachment
-
-To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.
-
-Here is an example to pass `CodeInterpreterTool` as tool:
-
-<!-- SNIPPET:sample_agents_with_code_interpreter_file_attachment.create_agent_and_message_with_code_interpreter_file_attachment -->
-
-```python
-# Notice that CodeInterpreter must be enabled in the agent creation,
-# otherwise the agent will not be able to see the file attachment for code interpretation
-agent = project_client.agents.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=CodeInterpreterTool().definitions,
-)
-print(f"Created agent, agent ID: {agent.id}")
-
-thread = project_client.agents.create_thread()
-print(f"Created thread, thread ID: {thread.id}")
-
-# Create an attachment
-attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
-
-# Create a message
-message = project_client.agents.create_message(
-    thread_id=thread.id,
-    role="user",
-    content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-    attachments=[attachment],
-)
-```
-
-<!-- END SNIPPET -->
-
-Azure blob storage can be used as a message attachment. In this case, use `VectorStoreDataSource` as a data source:
-
-<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.upload_file_and_create_message_with_code_interpreter -->
-
-```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-
-# Create a message with the attachment
-attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
-message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-)
-```
-
-<!-- END SNIPPET -->
-
-#### Create Message with Image Inputs
-
-You can send messages to Azure agents with image inputs in following ways:
-
-- **Using an image stored as a uploaded file**
-- **Using a public image accessible via URL**
-- **Using a base64 encoded image string**
-
-The following examples demonstrate each method:
-
-##### Create message using uploaded image file
-
-```python
-# Upload the local image file
-image_file = project_client.agents.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
-
-# Construct content using uploaded image
-file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
-content_blocks = [
-    MessageInputTextBlock(text="Hello, what is in the image?"),
-    MessageInputImageFileBlock(image_file=file_param),
-]
-
-# Create the message
-message = project_client.agents.create_message(
-    thread_id=thread.id,
-    role="user",
-    content=content_blocks
-)
-```
-
-##### Create message with an image URL input
-
-```python
-# Specify the public image URL
-image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-
-# Create content directly referencing image URL
-url_param = MessageImageUrlParam(url=image_url, detail="high")
-content_blocks = [
-    MessageInputTextBlock(text="Hello, what is in the image?"),
-    MessageInputImageUrlBlock(image_url=url_param),
-]
-
-# Create the message
-message = project_client.agents.create_message(
-    thread_id=thread.id,
-    role="user",
-    content=content_blocks
-)
-```
-
-##### Create message with base64-encoded image input
-
-```python
-import base64
-
-def image_file_to_base64(path: str) -> str:
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
-
-# Convert your image file to base64 format
-image_base64 = image_file_to_base64("image_file.png")
-
-# Prepare the data URL
-img_data_url = f"data:image/png;base64,{image_base64}"
-
-# Use base64 encoded string as image URL parameter
-url_param = MessageImageUrlParam(url=img_data_url, detail="high")
-content_blocks = [
-    MessageInputTextBlock(text="Hello, what is in the image?"),
-    MessageInputImageUrlBlock(image_url=url_param),
-]
-
-# Create the message
-message = project_client.agents.create_message(
-    thread_id=thread.id,
-    role="user",
-    content=content_blocks
-)
-```
-
-#### Create Run, Run_and_Process, or Stream
-
-To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
-
-`create_run` requests the Agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
-
-Here is an example of `create_run` and poll until the run is completed:
-
-<!-- SNIPPET:sample_agents_basics.create_run -->
-
-```python
-run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
-
-# Poll the run as long as run status is queued or in progress
-while run.status in ["queued", "in_progress", "requires_action"]:
-    # Wait for a second
-    time.sleep(1)
-    run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
-```
-
-<!-- END SNIPPET -->
-
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method.
-
-Here is an example:
-
-<!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
-
-```python
-run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
-```
-
-<!-- END SNIPPET -->
-
-With streaming, polling need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
-
-Here is an example of streaming:
-
-<!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
-
-```python
-with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
-
-    for event_type, event_data, _ in stream:
-
-        if isinstance(event_data, MessageDeltaChunk):
-            print(f"Text delta received: {event_data.text}")
-
-        elif isinstance(event_data, ThreadMessage):
-            print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
-
-        elif isinstance(event_data, ThreadRun):
-            print(f"ThreadRun status: {event_data.status}")
-
-        elif isinstance(event_data, RunStep):
-            print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
-
-        elif event_type == AgentStreamEvent.ERROR:
-            print(f"An error occurred. Data: {event_data}")
-
-        elif event_type == AgentStreamEvent.DONE:
-            print("Stream completed.")
-            break
-
-        else:
-            print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
-```
-
-<!-- END SNIPPET -->
-
-In the code above, because an `event_handler` object is not passed to the `create_stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
-
-<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
-
-```python
-# With AgentEventHandler[str], the return type for each event functions is optional string.
-class MyEventHandler(AgentEventHandler[str]):
-
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
-        return f"Text delta received: {delta.text}"
-
-    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
-        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
-
-    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
-        return f"ThreadRun status: {run.status}"
-
-    def on_run_step(self, step: "RunStep") -> Optional[str]:
-        return f"RunStep type: {step.type}, Status: {step.status}"
-
-    def on_error(self, data: str) -> Optional[str]:
-        return f"An error occurred. Data: {data}"
-
-    def on_done(self) -> Optional[str]:
-        return "Stream completed."
-
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
-        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
-```
-
-<!-- END SNIPPET -->
-
-
-<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
-
-```python
-with project_client.agents.create_stream(
-    thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-) as stream:
-    for event_type, event_data, func_return in stream:
-        print(f"Received data.")
-        print(f"Streaming receive Event Type: {event_type}")
-        print(f"Event Data: {str(event_data)[:100]}...")
-        print(f"Event Function return: {func_return}\n")
-```
-
-<!-- END SNIPPET -->
-
-As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
-
-```
-Note: Multiple streaming processes may be chained behind the scenes.
-
-When the SDK receives a `ThreadRun` event with the status `requires_action`, the next event will be `Done`, followed by termination. The SDK will submit the tool calls using the same event handler. The event handler will then chain the main stream with the tool stream.
-
-Consequently, when you iterate over the streaming using a for loop similar to the example above, the for loop will receive events from the main stream followed by events from the tool stream.
-```
-
-
-#### Retrieve Message
-
-To retrieve messages from agents, use the following example:
-
-<!-- SNIPPET:sample_agents_basics.list_messages -->
-
-```python
-messages = project_client.agents.list_messages(thread_id=thread.id)
-
-# The messages are following in the reverse order,
-# we will iterate them and output only text contents.
-for data_point in reversed(messages.data):
-    last_message_content = data_point.content[-1]
-    if isinstance(last_message_content, MessageTextContent):
-        print(f"{data_point.role}: {last_message_content.text.value}")
-```
-
-<!-- END SNIPPET -->
-
-In addition, `messages` and `messages.data[]` offer helper properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations` to quickly retrieve content from one message or all messages.
-
-### Retrieve File
-
-Files uploaded by Agents cannot be retrieved back. If your use case need to access the file content uploaded by the Agents, you are advised to keep an additional copy accessible by your application. However, files generated by Agents are retrievable by `save_file` or `get_file_content`.
-
-Here is an example retrieving file ids from messages and save to the local drive:
-
-<!-- SNIPPET:sample_agents_code_interpreter.get_messages_and_save_files -->
-
-```python
-messages = project_client.agents.list_messages(thread_id=thread.id)
-print(f"Messages: {messages}")
-
-for image_content in messages.image_contents:
-    file_id = image_content.image_file.file_id
-    print(f"Image File ID: {file_id}")
-    file_name = f"{file_id}_image_file.png"
-    project_client.agents.save_file(file_id=file_id, file_name=file_name)
-    print(f"Saved image file to: {Path.cwd() / file_name}")
-
-for file_path_annotation in messages.file_path_annotations:
-    print(f"File Paths:")
-    print(f"Type: {file_path_annotation.type}")
-    print(f"Text: {file_path_annotation.text}")
-    print(f"File ID: {file_path_annotation.file_path.file_id}")
-    print(f"Start Index: {file_path_annotation.start_index}")
-    print(f"End Index: {file_path_annotation.end_index}")
-```
-
-<!-- END SNIPPET -->
-
-Here is an example to use `get_file_content`:
-
-```python
-from pathlib import Path
-
-async def save_file_content(client, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None):
-    # Determine the target directory
-    path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
-    path.mkdir(parents=True, exist_ok=True)
-
-    # Retrieve the file content
-    file_content_stream = await client.get_file_content(file_id)
-    if not file_content_stream:
-        raise RuntimeError(f"No content retrievable for file ID '{file_id}'.")
-
-    # Collect all chunks asynchronously
-    chunks = []
-    async for chunk in file_content_stream:
-        if isinstance(chunk, (bytes, bytearray)):
-            chunks.append(chunk)
-        else:
-            raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
-
-    target_file_path = path / file_name
-
-    # Write the collected content to the file synchronously
-    with open(target_file_path, "wb") as file:
-        for chunk in chunks:
-            file.write(chunk)
-```
-
-#### Teardown
-
-To remove resources after completing tasks, use the following functions:
-
-<!-- SNIPPET:sample_agents_file_search.teardown -->
-
-```python
-# Delete the file when done
-project_client.agents.delete_vector_store(vector_store.id)
-print("Deleted vector store")
-
-project_client.agents.delete_file(file_id=file.id)
-print("Deleted file")
-
-# Delete the agent when done
-project_client.agents.delete_agent(agent.id)
-print("Deleted agent")
+print(f"Delete Index `{index_name}` version `{index_version}`:")
+project_client.indexes.delete(name=index_name, version=index_version)
 ```
 
 <!-- END SNIPPET -->
 
 ### Evaluation
 
-Evaluation in Azure AI Project client library is designed to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
-#### Evaluator
+The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
-Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
-
-Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Foundry for using them in the cloud.
-
-More details on built-in and custom evaluators can be found [here][evaluators].
-
-#### Run Evaluation in the cloud
-
-To run evaluation in the cloud the following are needed:
-
-- Evaluators
-- Data to be evaluated
-- [Optional] Azure Open AI model.
-
-##### Evaluators
-
-For running evaluator in the cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
+<!-- SNIPPET:sample_evaluations.evaluations_sample-->
 
 ```python
-# pip install azure-ai-evaluation
-
-from azure.ai.evaluation import RelevanceEvaluator
-
-evaluator_id = RelevanceEvaluator.id
-```
-
-##### Data to be evaluated
-
-Evaluation in the cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
-
-```python
-# Upload data for evaluation and get dataset id
-data_id, _ = project_client.upload_file("<data_file.jsonl>")
-```
-
-##### [Optional] Azure OpenAI Model
-
-Azure AI Foundry project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
-
-```python
-default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-```
-
-##### Example Remote Evaluation
-
-```python
-import os
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
-
-
-# Create project client
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+print("Upload a single file and create a new Dataset to reference the file.")
+dataset: DatasetVersion = project_client.datasets.upload_file(
+    name=dataset_name,
+    version=dataset_version,
+    file_path=data_file,
 )
+print(dataset)
 
-# Upload data for evaluation and get dataset id
-data_id, _ = project_client.upload_file("<data_file.jsonl>")
-
-deployment_name = "<deployment_name>"
-api_version = "<api_version>"
-
-# Create an evaluation
-evaluation = Evaluation(
-    display_name="Remote Evaluation",
-    description="Evaluation of dataset",
-    data=Dataset(id=data_id),
+print("Create an evaluation")
+evaluation: Evaluation = Evaluation(
+    display_name="Sample Evaluation Test",
+    description="Sample evaluation for testing",
+    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+    data=InputDataset(id=dataset.id if dataset.id else ""),
     evaluators={
-        "f1_score": EvaluatorConfiguration(
-            id=F1ScoreEvaluator.id,
-        ),
         "relevance": EvaluatorConfiguration(
-            id=RelevanceEvaluator.id,
+            id=EvaluatorIds.RELEVANCE.value,
             init_params={
-                "model_config": default_connection.to_evaluator_model_config(
-                    deployment_name=deployment_name, api_version=api_version
-                )
+                "deployment_name": model_deployment_name,
+            },
+            data_mapping={
+                "query": "${data.query}",
+                "response": "${data.response}",
             },
         ),
         "violence": EvaluatorConfiguration(
-            id=ViolenceEvaluator.id,
-            init_params={"azure_ai_project": project_client.scope},
+            id=EvaluatorIds.VIOLENCE.value,
+            init_params={
+                "azure_ai_project": endpoint,
+            },
+        ),
+        "bleu_score": EvaluatorConfiguration(
+            id=EvaluatorIds.BLEU_SCORE.value,
         ),
     },
 )
 
-
-evaluation_response = project_client.evaluations.create(
-    evaluation=evaluation,
+evaluation_response: Evaluation = project_client.evaluations.create(
+    evaluation,
+    headers={
+        "model-endpoint": model_endpoint,
+        "api-key": model_api_key,
+    },
 )
+print(evaluation_response)
 
-# Get evaluation
-get_evaluation_response = project_client.evaluations.get(evaluation_response.id)
+print("Get evaluation")
+get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
 
-print("----------------------------------------------------------------")
-print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
-print("Evaluation status: ", get_evaluation_response.status)
-if isinstance(get_evaluation_response.properties, dict):
-    print("AI Foundry URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
-print("----------------------------------------------------------------")
-```
+print(get_evaluation_response)
 
-NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
-
-### Tracing
-
-You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
-
-#### Installation
-
-Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
-
-```bash
-pip install opentelemetry
-pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
-```
-
-You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
-
-To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
-
-```bash
-pip install opentelemetry-exporter-otlp
-```
-
-#### How to enable tracing
-
-Here is a code sample that shows how to enable Azure Monitor tracing:
-
-<!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
-
-```python
-from opentelemetry import trace
-from azure.monitor.opentelemetry import configure_azure_monitor
-
-# Enable Azure Monitor tracing
-application_insights_connection_string = project_client.telemetry.get_connection_string()
-if not application_insights_connection_string:
-    print("Application Insights was not enabled for this project.")
-    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
-    exit()
-configure_azure_monitor(connection_string=application_insights_connection_string)
-
-# enable additional instrumentations
-project_client.telemetry.enable()
-
-scenario = os.path.basename(__file__)
-tracer = trace.get_tracer(__name__)
-
-with tracer.start_as_current_span(scenario):
-    with project_client:
+print("List evaluations")
+for evaluation in project_client.evaluations.list():
+    print(evaluation)
 ```
 
 <!-- END SNIPPET -->
-
-In addition, you might find helpful to see the tracing logs in console. You can achieve by the following code:
-
-```python
-project_client.telemetry.enable(destination=sys.stdout)
-```
-#### How to trace your own functions
-
-The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
-
-This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
-* Basic data types: str, int, float, bool
-* Collections: list, dict, tuple, set
-    * Special handling for collections:
-      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
-      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
-
-Object types are omitted, and the corresponding parameter is not traced.
-
-The parameters are recorded in attributes `code.function.parameter.<parameter_name>` and the return value is recorder in attribute `code.function.return.value`
 
 ## Troubleshooting
 
@@ -1510,7 +444,7 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following:
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following at the top of your Python script:
 
 ```python
 import sys
@@ -1534,12 +468,12 @@ logger.addHandler(handler)
 #handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable = True` to the client constructor:
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     logging_enable = True
 )
 ```
@@ -1554,12 +488,9 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
-
 ## Next steps
 
 Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
-
-Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Foundry hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
 
 ## Contributing
 
@@ -1581,11 +512,6 @@ additional questions or comments.
 <!-- LINKS -->
 [samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
 [azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme

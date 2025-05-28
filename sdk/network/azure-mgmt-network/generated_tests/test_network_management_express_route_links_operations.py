@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteLinksOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             express_route_port_name="str",
             link_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementExpressRouteLinksOperations(AzureMgmtRecordedTestCase
         response = self.client.express_route_links.list(
             resource_group_name=resource_group.name,
             express_route_port_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
