@@ -8,6 +8,7 @@ from .._serialize import _SUPPORTED_API_VERSIONS
 
 
 X_MS_VERSION = _SUPPORTED_API_VERSIONS[-1]
+INVALID_X_MS_VERSION = "2099-11-05"
 
 # Default socket timeouts, in seconds
 CONNECTION_TIMEOUT = 20
