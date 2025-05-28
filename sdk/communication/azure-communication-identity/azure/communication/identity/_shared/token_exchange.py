@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 
 import json
-from datetime import datetime, timezone
-from dateutil.parser import isoparse
 from typing import Tuple, Any
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline, PipelineResponse
