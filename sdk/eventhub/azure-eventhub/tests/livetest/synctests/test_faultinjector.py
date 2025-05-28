@@ -7,23 +7,27 @@ from azure.eventhub import EventHubConsumerClient
 
 
 @pytest.mark.liveTest
-@pytest.mark.parametrize("faultinjector", [
-    { "faultinjector_args": ["detach_after_delay", "--desc", "DETACHED FOR FAULT INJECTOR TEST"] }
-    ], indirect=True)
+@pytest.mark.parametrize(
+    "faultinjector",
+    [
+        {
+            "faultinjector_args": [
+                "detach_after_delay",
+                "--desc",
+                "DETACHED FOR FAULT INJECTOR TEST",
+            ]
+        }
+    ],
+    indirect=True,
+)
 def test_receive_partition_using_fault_injector_detach_after_delay(
-    auth_credential_senders,
-    faultinjector,
-    client_args
+    auth_credential_senders, faultinjector, client_args
 ):
     fully_qualified_namespace, eventhub_name, credential, senders = (
         auth_credential_senders
     )
 
     senders[0].send(EventData("Test EventData"))
-
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
 
     # Uncomment to enable DEBUG logging to get more information on frames.
     # logger = logging.getLogger('azure.eventhub')
