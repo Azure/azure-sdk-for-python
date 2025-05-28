@@ -12,6 +12,7 @@
 
 - A timeout error when using the `aiohttp` transport (the default for async SDKs) will now be raised as a `azure.core.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.
 - When using with `aiohttp` 3.10 or later, a connection timeout error will now be raised as a `azure.core.exceptions.ServiceRequestTimeoutError`, which can be retried.
+- Removed `six` as a dependency since it was unused.
 
 ## 1.34.0 (2025-05-01)
 
@@ -57,7 +58,7 @@
 ### Other Changes
 
 - Added `opentelemetry-api` as an optional dependency for tracing. This can be installed with `pip install azure-core[tracing]`. #39563
-- Removed `six` as a dependency since it was unused.
+
 ## 1.32.0 (2024-10-31)
 
 ### Features Added
