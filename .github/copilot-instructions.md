@@ -99,7 +99,7 @@ IF commands fail:
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
 ```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes total across all steps."
+TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
     RUN validation
     IF errors/warnings found:
