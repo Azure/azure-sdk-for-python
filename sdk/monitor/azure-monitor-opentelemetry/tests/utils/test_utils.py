@@ -94,7 +94,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
         return_value=True,
     )
-    # Functions have the WESBITE_SITENAME environment variable.
+    # Functions have the WEBSITE_SITE_NAME environment variable.
     # This causes them to appear as App Service resources
     @patch(
         "azure.monitor.opentelemetry.exporter._utils._is_on_app_service",
