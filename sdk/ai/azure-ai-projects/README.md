@@ -89,7 +89,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 ```
 
-**Note:** The support of connection strings as the project endpoints and hub-based projects was dropped. Please create a new Azure AI Foundry resource, which uses endpoints (recommended), or pin the version of `azure-ai-projects` to `1.0.0b10` if it is not possible.
+**Note:** Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of or pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
 
 ## Examples
 
