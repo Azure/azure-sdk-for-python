@@ -133,7 +133,7 @@ def _as_json(response: AllHttpResponseType) -> Dict[str, Any]:
     :type response: any
     :return: The content of this response as dict.
     :rtype: dict
-    :raises: DecodeError if response body contains invalid json data.
+    :raises DecodeError: If response body contains invalid json data.
     """
     try:
         return json.loads(response.text())
@@ -148,7 +148,7 @@ def _raise_if_bad_http_status_and_method(response: AllHttpResponseType) -> None:
 
     :param response: The response object.
     :type response: any
-    :raises: BadStatus if invalid status.
+    :raises ~azure.core.polling.base_polling.BadStatus: If invalid status.
     """
     code = response.status_code
     if code in {200, 201, 202, 204}:
@@ -382,7 +382,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpR
         :type pipeline_response: ~azure.core.pipeline.PipelineResponse
         :return: The status string.
         :rtype: str
-        :raises azure.core.polling.base_polling.BadResponse: if response has no body, or body does not contain status.
+        :raises ~azure.core.polling.base_polling.BadResponse: if response has no body, or body does not contain status.
         """
         response = pipeline_response.http_response
         if _is_empty(response):
@@ -617,7 +617,7 @@ class _SansIOLROBasePolling(
         :type initial_response: ~azure.core.pipeline.PipelineResponse
         :param deserialization_callback: A callback function to deserialize the final response.
         :type deserialization_callback: callable
-        :raises: HttpResponseError if initial status is incorrect LRO state
+        :raises ~azure.core.HttpResponseError: If initial status is incorrect LRO state
         """
         self._client = client
         self._pipeline_response = (  # pylint: disable=attribute-defined-outside-init
@@ -652,7 +652,7 @@ class _SansIOLROBasePolling(
 
         :rtype: str
         :return: The continuation token.
-        :raises: ValueError if the initial response is not set.
+        :raises ValueError: If the initial response is not set.
         """
         import pickle
 
@@ -668,7 +668,7 @@ class _SansIOLROBasePolling(
         :type continuation_token: str
         :return: A tuple containing the client, the initial response, and the deserialization callback.
         :rtype: tuple[~azure.core.PipelineClient, ~azure.core.pipeline.PipelineResponse, callable]
-        :raises: ValueError if the continuation token is invalid or if 'client' or 'deserialization_callback' are not provided.
+        :raises ValueError: If the continuation token is invalid or if 'client' or 'deserialization_callback' are not provided.
         """
         try:
             client = kwargs["client"]
@@ -822,9 +822,9 @@ class LROBasePolling(
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
-        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
-        :raises: BadStatus if response status invalid.
-        :raises: BadResponse if response invalid.
+        :raises ~azure.core.polling.base_polling.OperationFailed: If operation status 'Failed' or 'Canceled'.
+        :raises ~azure.core.polling.base_polling.BadStatus: If response status invalid.
+        :raises ~azure.core.polling.base_polling.BadResponse: If response invalid.
         """
         if not self.finished():
             self.update_status()
