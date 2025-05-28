@@ -518,6 +518,13 @@ class HttpLoggingPolicy(
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
+        """Logs HTTP response status and headers.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
         http_response = response.http_response
 
         # Get logger in my context first (request has been retried)
@@ -683,6 +690,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Set the response encoding in the request context.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
@@ -743,6 +755,11 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         self.proxies = proxies
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Adds the proxy information to the request context.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         ctxt = request.context.options
         if self.proxies and "proxies" not in ctxt:
             ctxt["proxies"] = self.proxies

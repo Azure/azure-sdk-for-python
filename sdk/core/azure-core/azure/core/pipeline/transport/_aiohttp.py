@@ -141,6 +141,7 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.close()
 
     async def open(self):
+        """Opens the connection."""
         if self._has_been_opened and not self.session:
             raise ValueError(
                 "HTTP transport has already been closed. "

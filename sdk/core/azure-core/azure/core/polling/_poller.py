@@ -51,24 +51,54 @@ class PollingMethod(Generic[PollingReturnType_co]):
         raise NotImplementedError("This method needs to be implemented")
 
     def run(self) -> None:
+        """Run the polling method.
+        This method should be implemented to perform the actual polling logic.
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def status(self) -> str:
+        """Return the current status of the polling operation.
+
+        :rtype: str
+        :return: The current status of the polling operation.
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def finished(self) -> bool:
+        """Check if the polling operation is finished.
+
+        :rtype: bool
+        :return: True if the polling operation is finished, False otherwise.
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def resource(self) -> PollingReturnType_co:
+        """Return the resource built by the polling operation.
+
+        :rtype: any
+        :return: The resource built by the polling operation.
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
+        """Return a continuation token that allows to restart the poller later.
+
+        :rtype: str
+        :return: An opaque continuation token.
+        """
         raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, DeserializationCallbackType]:
+        """Recreate the poller from a continuation token.
+
+        :param continuation_token: The continuation token to recreate the poller from.
+        :type continuation_token: str
+        :rtype: Tuple[Any, Any, DeserializationCallbackType]
+        :return: A tuple containing the client, initial response, and deserialization callback.
+        """
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
@@ -85,6 +115,13 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         initial_response: Any,
         deserialization_callback: Callable[[Any], PollingReturnType_co],
     ) -> None:
+        """Initialize the poller with the initial response and deserialization callback.
+
+        :param initial_response: The initial response from the long-running operation.
+        :type initial_response: Any
+        :param deserialization_callback: A callback that takes a response and returns a deserialized object.
+        :type deserialization_callback: Callable[[Any], PollingReturnType_co]
+        """
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -105,9 +142,19 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         return True
 
     def resource(self) -> PollingReturnType_co:
+        """Return the built resource.
+
+        :rtype: any
+        :return: The built resource.
+        """
         return self._deserialization_callback(self._initial_response)
 
     def get_continuation_token(self) -> str:
+        """Return a continuation token that allows to restart the poller later.
+
+        :rtype: str
+        :return: An opaque continuation token
+        """
         import pickle
 
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
@@ -116,6 +163,14 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+        """Recreate the poller from a continuation token.
+
+        :param continuation_token: The continuation token to recreate the poller from.
+        :type continuation_token: str
+        :rtype: Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]
+        :return: A tuple containing the client, initial response, and deserialization callback.
+        :raises ValueError: If 'deserialization_callback' is not provided in kwargs.
+        """
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
@@ -232,6 +287,16 @@ class LROPoller(Generic[PollingReturnType_co]):
             initial_response,
             deserialization_callback,
         ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: An instance of LROPoller
+        :rtype: ~azure.core.polling.LROPoller
+        :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
+        """
         return cls(client, initial_response, deserialization_callback, polling_method)
 
     def status(self) -> str:

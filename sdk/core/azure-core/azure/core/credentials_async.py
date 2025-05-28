@@ -39,6 +39,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         ...
 
     async def close(self) -> None:
+        """Close the credential, releasing any resources."""
         pass
 
     async def __aexit__(
@@ -70,6 +71,7 @@ class AsyncSupportsTokenInfo(Protocol, AsyncContextManager["AsyncSupportsTokenIn
         ...
 
     async def close(self) -> None:
+        """Close the credential, releasing any resources."""
         pass
 
     async def __aexit__(

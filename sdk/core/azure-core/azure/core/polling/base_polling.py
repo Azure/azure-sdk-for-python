@@ -382,7 +382,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpR
         :type pipeline_response: ~azure.core.pipeline.PipelineResponse
         :return: The status string.
         :rtype: str
-        :raises: BadResponse if response has no body, or body does not contain status.
+        :raises azure.core.polling.base_polling.BadResponse: if response has no body, or body does not contain status.
         """
         response = pipeline_response.http_response
         if _is_empty(response):
@@ -646,6 +646,14 @@ class _SansIOLROBasePolling(
             raise HttpResponseError(response=initial_response.http_response, error=err) from err
 
     def get_continuation_token(self) -> str:
+        """Get a continuation token that can be used to recreate this poller.
+        The continuation token is a base64 encoded string that contains the initial response
+        serialized with pickle.
+
+        :rtype: str
+        :return: The continuation token.
+        :raises: ValueError if the initial response is not set.
+        """
         import pickle
 
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
@@ -654,6 +662,14 @@ class _SansIOLROBasePolling(
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+        """Recreate the poller from a continuation token.
+
+        :param continuation_token: The continuation token to recreate the poller.
+        :type continuation_token: str
+        :return: A tuple containing the client, the initial response, and the deserialization callback.
+        :rtype: tuple[~azure.core.PipelineClient, ~azure.core.pipeline.PipelineResponse, callable]
+        :raises: ValueError if the continuation token is invalid or if 'client' or 'deserialization_callback' are not provided.
+        """
         try:
             client = kwargs["client"]
         except KeyError:
