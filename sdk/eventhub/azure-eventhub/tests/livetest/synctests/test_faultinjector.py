@@ -7,17 +7,14 @@ from azure.eventhub import EventHubConsumerClient
 
 
 @pytest.mark.liveTest
+@pytest.mark.parametrize("faultinjector", [
+    { "faultinjector_args": ["detach_after_delay", "--desc", "DETACHED FOR FAULT INJECTOR TEST"] }
+    ], indirect=True)
 def test_receive_partition_using_fault_injector_detach_after_delay(
     auth_credential_senders,
-    faultinjector_detach_after_delay,
+    faultinjector,
+    client_args
 ):
-    fault_injector_config = faultinjector_detach_after_delay
-
-    if not fault_injector_config:
-        pytest.skip(
-            "Fault injector not enabled. See conftest.py::faultinjector for requirements."
-        )
-
     fully_qualified_namespace, eventhub_name, credential, senders = (
         auth_credential_senders
     )
@@ -38,10 +35,7 @@ def test_receive_partition_using_fault_injector_detach_after_delay(
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        transport_type=fault_injector_config["transport_type"],
-        custom_endpoint_address=fault_injector_config["custom_endpoint_address"],
-        ssl_context=fault_injector_config["sslcontext"],
-        retry_total=0,
+        *client_args
     )
 
     def on_event(partition_context, _):

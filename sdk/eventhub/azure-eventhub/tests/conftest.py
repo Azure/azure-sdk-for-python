@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TypedDict, Union
+from typing import List, TypedDict, Union, cast
 from typing import Dict, Any
 from tracing_common import FakeSpan
 from devtools_testutils import (
@@ -65,112 +65,53 @@ EVENTHUB_DEFAULT_AUTH_RULE_NAME = "RootManageSharedAccessKey"
 LOCATION = get_region_override("westus")
 
 
-class FaultInjectorConfig(TypedDict):
-    path: None
-    custom_endpoint_address: str
-    transport_type: TransportType
-    logs_dir: str
-    sslcontext: ssl.SSLContext
+@pytest.fixture(scope="function")
+def faultinjector(live_eventhub, request: pytest.FixtureRequest):
+    test_name = request.node.name
+    faultinjector_params = cast(List[str], request.param["faultinjector_args"])
 
-
-def setup_faultinjector(test_name: str) -> Union[FaultInjectorConfig, None]:
     if os.environ.get("USE_FAULTINJECTOR") != "true":
-        print(
-            "USE_FAULTINJECTOR is not enabled. See conftest.py::setup_faultinjector for requirements."
+        pytest.skip(
+            "Fault injector not enabled. See conftest.py::faultinjector for requirements."
         )
+        yield None
         return
 
-    # Set up the faultinjector environment variables
     env_path = os.environ.get("FAULTINJECTOR_PATH")
     faultinjector_path = os.path.abspath(env_path) if env_path else None
 
     logs_dir = os.path.join(os.path.dirname(__file__), "faultinjector_logs", test_name)
-
     os.makedirs(logs_dir, exist_ok=True)
-
-    return {
-        "path": faultinjector_path,
-        # TODO: we can fix this up later to use a dynamic address
-        "custom_endpoint_address": "sb://localhost:5671",
-        "transport_type": TransportType.Amqp,
-        "logs_dir": logs_dir,
-        "sslcontext": AMQPPROXY_SSL_CONTEXT,
-    }
-
-
-@pytest.fixture(scope="function")
-def faultinjector_detach_after_delay(live_eventhub, request):
-    yield from faultinjector("detach_after_delay", live_eventhub, request)
-
-
-def faultinjector(fi_type: Literal["detach_after_delay"], live_eventhub, request):
-    test_name = request.node.name
-
-    # make testname safe for a directory name
-    test_name = test_name.replace("[", "_").replace("]", "_")
-
-    config = setup_faultinjector(test_name)
-
-    if not config:
-        print(
-            "Fault injector not enabled. See conftest.py::setup_faultinjector for requirements."
-        )
-        yield None
-        return
-
-    if not fi_type:
-        print(
-            "Do not use faultinjector directly, choose a specific fault injector (ie: faultinjector_detach_after_delay)"
-        )
-        yield None
-        return
 
     print("Setting up fault injector")
 
     # Start the faultinjector process
-    print(f"####### Starting faultinjector for test: {test_name}")
-    print("Starting faultinjector process...")
+    faultinjector_params.extend(
+        ["--host", live_eventhub["hostname"], "--logs", logs_dir, "--cert", logs_dir]
+    )
 
-    args = []
-
-    if fi_type == "detach_after_delay":
-        args = ["detach_after_delay", "--desc", "DETACHED FOR FAULT INJECTOR TEST"]
-    else:
-        # Default case or unknown fault type
-        print(f"Unknown fault type: {fi_type}")
-        yield None
-        return
-
-    args.extend(["--host", live_eventhub["hostname"], "--logs", config["logs_dir"]])
+    print("fault injector arguments", *faultinjector_params)
 
     process = subprocess.Popen(
         [
-            config["path"],  # faultinjector path
-            *args,
+            faultinjector_path,
+            *faultinjector_params,
         ],
-        # stdout=log_file,
-        # stderr=log_file,
         stdout=sys.stdout,
         stderr=sys.stderr,
         preexec_fn=os.setsid,
     )
 
     if not process:
-        log_file.write("Failed to start faultinjector.\n")
-        # just dump the entire log to the console if we can't start it.
-        log_file.seek(0)
-        print(log_file.read())
-        raise RuntimeError(
-            f"Failed to start faultinjector. See output for details."
-        )
+        raise RuntimeError(f"Failed to start faultinjector. See output for details.")
 
     try:
         time.sleep(1)
-        yield config
+        request.node.user_properties.append(("client_args", AMQPPROXY_CLIENT_ARGS))
 
-        # this is after the test has completed.
+        yield
 
-        print(f"===> Fault injector logs are in '{config['logs_dir']}'")
+        print(f"===> Fault injector logs are in '{logs_dir}'")
 
     finally:
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)
