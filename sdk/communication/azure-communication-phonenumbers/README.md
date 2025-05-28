@@ -124,7 +124,7 @@ print(result.country_code)
 print(result.phone_number)
 ```
 
-#### Broswing and Reserving Available Phone Numbers
+#### Browsing and Reserving Available Phone Numbers
 
 Use the Browse and Reservations API to reserve a phone number
 
