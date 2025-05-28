@@ -465,7 +465,7 @@ class PhoneNumbersClient:
 
         
         :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation, 
-         with that ID exists it will be updated; ortherwise a new reservation will be created.
+         with that ID exists it will be updated; otherwise a new reservation will be created.
         :paramtype reservation_id: str
         :keyword numbers_to_add: List of phone numbers to add to the reservation.
         :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
