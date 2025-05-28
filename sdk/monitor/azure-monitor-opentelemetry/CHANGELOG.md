@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enabled diagnostics for AKS Attach
+    ([#40988](https://github.com/Azure/azure-sdk-for-python/pull/40988))
+
 ### Breaking Changes
 
 ### Bugs Fixed
