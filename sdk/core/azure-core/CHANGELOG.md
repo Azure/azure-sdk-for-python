@@ -28,8 +28,7 @@
 ### Other Changes
 
 - Added `opentelemetry-api` as an optional dependency for tracing. This can be installed with `pip install azure-core[tracing]`. #39563
-- Remove `six` as a dependency as unused.
-
+- Removed `six` as a dependency since it was unused.
 ## 1.32.0 (2024-10-31)
 
 ### Features Added
