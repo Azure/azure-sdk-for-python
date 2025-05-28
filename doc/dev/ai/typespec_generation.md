@@ -30,7 +30,7 @@ This guide outlines how to interact with GitHub Copilot to streamline the Azure 
 To start the SDK generation process, you should clearly state your intention to Copilot. Here are a few examples of effective initial prompts:
 
 *   "I need to generate a new Python SDK using TypeSpec."
-*   "Can you help me generate an Azure SDK for Python from a TypeSpec definition?"
+*   "Can you help me generate an Azure SDK for Python SDK from a TypeSpec definition?"
 *   "Let's start the TypeSpec SDK generation workflow for Python."
 *   If you already know the path to your `tspconfig.yaml`, you can include it: "I want to generate a Python SDK. My `tspconfig.yaml` is located at `<path/to/your/tspconfig.yaml>`."
 *   If your TypeSpec project is in a remote repository: "I need to generate a Python SDK from a TypeSpec definition located at the following URL: `<URL_to_tspconfig.yaml_in_remote_repo>`."
