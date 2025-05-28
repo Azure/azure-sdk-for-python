@@ -6,6 +6,9 @@
 
 ### Features Added
 
+- Implement spec for k8s attribute logic.
+  ([#41130](https://github.com/Azure/azure-sdk-for-python/pull/41130))
+
 ### Breaking Changes
 
 ### Bugs Fixed
