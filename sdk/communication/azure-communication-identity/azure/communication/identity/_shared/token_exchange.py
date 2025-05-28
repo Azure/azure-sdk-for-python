@@ -6,9 +6,10 @@
 
 import json
 from datetime import datetime, timezone
+from dateutil.parser import isoparse
 from typing import Tuple, Any
 from azure.core.credentials import AccessToken
-from azure.core.pipeline import Pipeline, PipelineRequest, PipelineResponse
+from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
@@ -82,16 +83,8 @@ class TokenExchangeClient:
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
                 expires_on = access_token_json["expiresOn"]
-                if isinstance(expires_on, str):
-                    # Try to parse ISO8601 string
-                    try:
-                        expires_on_dt = datetime.fromisoformat(expires_on)
-                        expires_on_epoch = int(expires_on_dt.replace(tzinfo=timezone.utc).timestamp())
-                    except Exception:
-                        expires_on_epoch = int(expires_on)
-                else:
-                    expires_on_epoch = int(expires_on)
-                return AccessToken(token, expires_on_epoch)
+
+                return AccessToken(token, expires_on)
             except Exception as ex:
                 raise ClientAuthenticationError("Failed to parse access token from response") from ex
         else:
