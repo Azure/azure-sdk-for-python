@@ -8,10 +8,11 @@ from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
 import sys
-
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
+from .entra_token_exchange import EntraTokenExchangeClient
+from .entra_token_credential_options import EntraCommunicationTokenCredentialOptions
 
 
 class CommunicationTokenCredential(object):
@@ -33,14 +34,19 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
-    def __init__(self, token: str, **kwargs: Any):
-        if not isinstance(token, str):
-            raise TypeError("Token must be a string.")
-        self._token = create_access_token(token)
-        self._token_refresher = kwargs.pop("token_refresher", None)
-        self._proactive_refresh = kwargs.pop("proactive_refresh", False)
-        if self._proactive_refresh and self._token_refresher is None:
-            raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
+    def __init__(self, token: str = None, **kwargs: Any):
+        options = kwargs.pop("options", None)
+        if options and isinstance(options, EntraCommunicationTokenCredentialOptions):
+            self._token_refresher = lambda: EntraTokenExchangeClient.exchange_token(self._token_credential, self._scopes, self._resource_endpoint)
+        else:
+            if not isinstance(token, str):
+                raise TypeError("Token must be a string.")
+            self._token = create_access_token(token)
+            self._token_refresher = kwargs.pop("token_refresher", None)
+            self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+            if self._proactive_refresh and self._token_refresher is None:
+                raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
+        
         self._timer = None
         self._async_mutex = Lock()
         if sys.version_info[:3] == (3, 10, 0):

@@ -43,7 +43,6 @@ class TokenExchangeClient:
 
     def _exchange_entra_token(self) -> AccessToken:
         message = self._create_request_message()
-        #message.multipart_mixed_info = None
         response = self._pipeline.run(message)
         return self._parse_access_token_from_response(response)
 
