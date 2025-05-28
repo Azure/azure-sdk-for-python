@@ -13,6 +13,9 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
 from entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuardPolicy
 from entra_token_credential_options import EntraCommunicationTokenCredentialOptions, AsyncEntraCommunicationTokenCredentialOptions
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import TokenCredential
+from typing import List, Optional
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
 COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
@@ -24,15 +27,14 @@ COMMUNICATION_CLIENTS_API_VERSION = "2024-04-01-preview"
 class TokenExchangeClient:
     """Represents a client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
 
-    def __init__(self, options: EntraCommunicationTokenCredentialOptions, pipeline_transport: Any = None):
-        self._resource_endpoint = options.resource_endpoint
-        self._scopes = options.scopes
-        self._token_credential = options.token_credential
-        self._pipeline = self._create_pipeline_from_options(options, pipeline_transport)
-        #self._access_token_cache = None  # Could be implemented as a custom cache if needed
+    def __init__(self, resource_endpoint: str, token_credential: TokenCredential, scopes: Optional[List[str]] = None, pipeline_transport: Any = None):
+        self._resource_endpoint = resource_endpoint
+        self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
+        self._token_credential = token_credential
+        self._pipeline = self._create_pipeline_from_options(token_credential, scopes, pipeline_transport)
 
-    def _create_pipeline_from_options(self, options, pipeline_transport):
-        auth_policy = BearerTokenCredentialPolicy(options.token_credential, options.scopes)
+    def _create_pipeline_from_options(self, token_credential, scopes, pipeline_transport):
+        auth_policy = BearerTokenCredentialPolicy(token_credential, scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
