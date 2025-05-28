@@ -522,9 +522,8 @@ class PhoneNumbersClient:
         """Starts the purchase of all phone numbers in the reservation.
 
         Starts a long running operation to purchase all of the phone numbers in the reservation.
-        Purchase can only be started for active reservations that at least one phone number. If any of
-        the phone numbers in the reservation is from a country where reselling is not permitted, do not
-        resell agreement is required. 
+        Purchase can only be started for active reservations that have at least one phone number. 
+        If any number requires a do-not-resell agreement, that agreement must be provided.
 
         The agreement to not resell is a legal requirement in some countries in order to purchase phone numbers.
         For more information on which countries require this agreement, please refer to this documentation:
