@@ -26,7 +26,6 @@
 import os
 import urllib.parse
 import uuid
-import warnings
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry

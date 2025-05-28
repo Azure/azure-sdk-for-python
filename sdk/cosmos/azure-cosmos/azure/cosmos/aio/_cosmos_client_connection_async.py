@@ -26,7 +26,6 @@
 import os
 from urllib.parse import urlparse
 import uuid
-import warnings
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
