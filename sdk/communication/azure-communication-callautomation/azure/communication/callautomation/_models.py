@@ -359,7 +359,7 @@ class MediaStreamingOptions:
     :param transport_url: Transport URL for media streaming.
     :type transport_url: str
     :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.StramingTransport
+    :type transport_type: str or ~azure.communication.callautomation.StreamingTransport
     :param content_type: Content type to stream, eg. audio, audio/video.
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
