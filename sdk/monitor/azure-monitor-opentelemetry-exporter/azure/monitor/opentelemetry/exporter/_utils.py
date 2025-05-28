@@ -280,6 +280,7 @@ def _get_cloud_role(resource: Resource) -> str:
     k8s_daemonset_name = resource.attributes.get(ResourceAttributes.K8S_DAEMONSET_NAME)
     if k8s_daemonset_name:
         return k8s_daemonset_name  # type: ignore
+    # If service_name starts with "unknown_service", only use it if kubernetes attributes are not present.
     return cloud_role
 
 
