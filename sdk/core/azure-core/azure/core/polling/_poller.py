@@ -53,6 +53,9 @@ class PollingMethod(Generic[PollingReturnType_co]):
     def run(self) -> None:
         """Run the polling method.
         This method should be implemented to perform the actual polling logic.
+
+        :return: None
+        :rtype: None
         """
         raise NotImplementedError("This method needs to be implemented")
 
@@ -121,6 +124,8 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         :type initial_response: Any
         :param deserialization_callback: A callback that takes a response and returns a deserialized object.
         :type deserialization_callback: Callable[[Any], PollingReturnType_co]
+        :return: None
+        :rtype: None
         """
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback

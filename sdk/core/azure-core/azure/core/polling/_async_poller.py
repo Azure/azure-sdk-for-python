@@ -54,12 +54,17 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
         :param deserialization_callback: A callback that takes a Response and returns a deserialized object.
                                          If a subclass of Model is given, this passes "deserialize" as callback.
         :type deserialization_callback: callable or msrest.serialization.Model
+        :return: None
+        :rtype: None
         """
         raise NotImplementedError("This method needs to be implemented")
 
     async def run(self) -> None:
         """Run the polling method.
         This method should be overridden to implement the polling logic.
+
+        :return: None
+        :rtype: None
         """
         raise NotImplementedError("This method needs to be implemented")
 

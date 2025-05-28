@@ -668,7 +668,8 @@ class _SansIOLROBasePolling(
         :type continuation_token: str
         :return: A tuple containing the client, the initial response, and the deserialization callback.
         :rtype: tuple[~azure.core.PipelineClient, ~azure.core.pipeline.PipelineResponse, callable]
-        :raises ValueError: If the continuation token is invalid or if 'client' or 'deserialization_callback' are not provided.
+        :raises ValueError: If the continuation token is invalid or if 'client' or
+            'deserialization_callback' are not provided.
         """
         try:
             client = kwargs["client"]

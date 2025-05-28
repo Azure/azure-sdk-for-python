@@ -70,6 +70,9 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
     def __next__(self) -> Iterator[ReturnType]:
         """Get the next page in the iterator.
+
+        :returns: An iterator of objects in the next page.
+        :rtype: iterator[ReturnType]
         :raises StopIteration: If there are no more pages to return.
         :raises AzureError: If the request fails.
         """
@@ -123,6 +126,9 @@ class ItemPaged(Iterator[ReturnType]):
 
     def __next__(self) -> ReturnType:
         """Get the next item in the iterator.
+
+        :returns: The next item in the iterator.
+        :rtype: ReturnType
         :raises StopIteration: If there are no more items to return.
         """
         if self._page_iterator is None:

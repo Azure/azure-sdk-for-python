@@ -117,10 +117,10 @@ class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
 
     def close(self) -> None:
         """Close the credential, releasing any resources it holds.
-        This method is called when the credential is no longer needed, such as when the client using it is closed.
-        This method is optional and may not be implemented by all credential types.
+
+        :return: None
+        :rtype: None
         """
-        pass
 
 
 TokenProvider = Union[TokenCredential, SupportsTokenInfo]
