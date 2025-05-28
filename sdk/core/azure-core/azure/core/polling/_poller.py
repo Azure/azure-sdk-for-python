@@ -252,8 +252,8 @@ class LROPoller(Generic[PollingReturnType_co]):
             if not error.continuation_token:
                 try:
                     error.continuation_token = self.continuation_token()
-                except Exception as err:  # pylint: disable=broad-except
-                    _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.warning("Unable to retrieve continuation token.")
                     error.continuation_token = None
 
             self._exception = error
@@ -289,11 +289,6 @@ class LROPoller(Generic[PollingReturnType_co]):
     def from_continuation_token(
         cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "LROPoller[PollingReturnType_co]":
-        (
-            client,
-            initial_response,
-            deserialization_callback,
-        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
         """Create a poller from a continuation token.
 
         :param polling_method: The polling strategy to adopt
@@ -304,6 +299,11 @@ class LROPoller(Generic[PollingReturnType_co]):
         :rtype: ~azure.core.polling.LROPoller
         :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
         """
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
         return cls(client, initial_response, deserialization_callback, polling_method)
 
     def status(self) -> str:

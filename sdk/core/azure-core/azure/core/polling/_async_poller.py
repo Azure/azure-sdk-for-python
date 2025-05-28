@@ -251,8 +251,8 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_
             if not error.continuation_token:
                 try:
                     error.continuation_token = self.continuation_token()
-                except Exception as err:  # pylint: disable=broad-except
-                    _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.warning("Unable to retrieve continuation token.")
                     error.continuation_token = None
             raise
         self._done = True

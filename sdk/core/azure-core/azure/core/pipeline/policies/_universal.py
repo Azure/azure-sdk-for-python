@@ -510,8 +510,8 @@ class HttpLoggingPolicy(
             log_string += "\nNo body was attached to the request"
             logger.info(log_string)
 
-        except Exception as err:  # pylint: disable=broad-except
-            logger.warning("Failed to log request: %s", repr(err))
+        except Exception:  # pylint: disable=broad-except
+            logger.warning("Failed to log request.")
 
     def on_response(
         self,
@@ -552,8 +552,8 @@ class HttpLoggingPolicy(
                 value = self._redact_header(res_header, value)
                 log_string += "\n    '{}': '{}'".format(res_header, value)
             logger.info(log_string)
-        except Exception as err:  # pylint: disable=broad-except
-            logger.warning("Failed to log response: %s", repr(err))
+        except Exception:  # pylint: disable=broad-except
+            logger.warning("Failed to log response.")
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):

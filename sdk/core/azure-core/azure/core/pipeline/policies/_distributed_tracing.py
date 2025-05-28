@@ -166,8 +166,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
                 request.context[self._SUPPRESSION_TOKEN] = token
 
-        except Exception as err:  # pylint: disable=broad-except
-            _LOGGER.warning("Unable to start network span: %s", err)
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.warning("Unable to start network span.")
 
     def end_span(
         self,
