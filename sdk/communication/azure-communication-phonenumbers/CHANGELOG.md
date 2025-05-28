@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.0b (2025-06-20)
+## 1.3.0 (2025-06-20)
 
 ### Features Added
 - GA release of the reservations functionality.
