@@ -320,7 +320,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 def _is_session_token_request(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         headers: dict,
-        request_object) -> bool:
+        request_object: "RequestObject") -> bool:
     consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
     # Figure out if consistency level for this request is session
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
