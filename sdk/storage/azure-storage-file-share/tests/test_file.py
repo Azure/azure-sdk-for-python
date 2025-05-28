@@ -3901,4 +3901,30 @@ class TestStorageFile(StorageRecordedTestCase):
         file_data = file_client.download_file(validate_content=True).readall()
         assert file_data == b"Hello World!"  # data is fixed by mock transport
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_upload_range_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        try:
+            source_file_client = self._create_file(file_name='sourcefile')
+            source_file_client.upload_range(b'abcdefghijklmnop' * 32, offset=0, length=512)
+            target_file_client = self._create_empty_file(file_name='targetfile')
+
+            with pytest.raises(HttpResponseError) as e:
+                target_file_client.upload_range_from_url(
+                    source_file_client.url,
+                    offset=0,
+                    length=512,
+                    source_offset=0
+                )
+
+            assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
+            assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
+        finally:
+            self.fsc.delete_share(self.share_name)
+
 # ------------------------------------------------------------------------------
