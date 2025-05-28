@@ -21,11 +21,11 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_configuration_store(self, resource_group):
+    async def test_replicas_list_by_configuration_store(self, resource_group):
         response = self.client.replicas.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_replicas_get(self, resource_group):
         response = await self.client.replicas.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
             replica_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_replicas_begin_create(self, resource_group):
         response = await (
             await self.client.replicas.begin_create(
                 resource_group_name=resource_group.name,
@@ -68,7 +68,7 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
                     },
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,13 +77,13 @@ class TestAppConfigurationManagementReplicasOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_replicas_begin_delete(self, resource_group):
         response = await (
             await self.client.replicas.begin_delete(
                 resource_group_name=resource_group.name,
                 config_store_name="str",
                 replica_name="str",
-                api_version="2024-05-01",
+                api_version="2024-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

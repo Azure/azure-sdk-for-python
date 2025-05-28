@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,10 +35,11 @@ def main():
         resource_group_name="myResourceGroup",
         config_store_name="contoso",
         key_value_name="myKey$myLabel",
+        key_value_parameters={"properties": {"tags": {"tag1": "tagValue1", "tag2": "tagValue2"}, "value": "myValue"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2024-05-01/examples/ConfigurationStoresCreateKeyValue.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2024-06-01/examples/ConfigurationStoresCreateKeyValue.json
 if __name__ == "__main__":
     main()
