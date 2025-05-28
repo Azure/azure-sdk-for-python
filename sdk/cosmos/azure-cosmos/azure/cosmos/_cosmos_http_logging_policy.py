@@ -127,14 +127,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             filter_applied = bool(logger.filters) or any(bool(h.filters) for h in logger.handlers)
             if filter_applied and 'logger_attributes' not in request.context:
                 return
-            operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
+            operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type', "")
             try:
                 url = request.http_request.url
             except AttributeError:
                 url = None
             database_name = None
             collection_name = None
-            resource_type = http_request.headers.get('x-ms-thinclient-proxy-resource-type')
+            resource_type = http_request.headers.get('x-ms-thinclient-proxy-resource-type', "")
             if url:
                 url_parts = url.split('/')
                 if 'dbs' in url_parts:
@@ -160,9 +160,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
                 if filter_applied and 'logger_attributes' in request.context:
                     cosmos_logger_attributes = request.context['logger_attributes']
+                    cosmos_logger_attributes['activity_id'] = http_request.headers.get(HttpHeaders.ActivityId, "")
                     cosmos_logger_attributes['is_request'] = True
                 else:
                     cosmos_logger_attributes = {
+                        'activity_id': http_request.headers.get(HttpHeaders.ActivityId, ""),
                         'duration': None,
                         'status_code': None,
                         'sub_status_code': None,
@@ -254,12 +256,13 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 duration = (time.time() - context["start_time"]) * 1000 \
                     if "start_time" in context else None  # type: ignore[union-attr, arg-type]
 
-            log_data = {"duration": duration,
+            log_data = {"activity_id": http_response.headers.get(HttpHeaders.ActivityId, ""),
+                        "duration": duration,
                         "status_code": http_response.status_code, "sub_status_code": sub_status_code,
                         "verb": request.http_request.method,
-                        "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
+                        "operation_type": headers.get('x-ms-thinclient-proxy-operation-type', ""),
                         "url": str(url_obj), "database_name": "", "collection_name": "",
-                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type'), "is_request": False}  # type: ignore[assignment]  # pylint: disable=line-too-long
+                        "resource_type": headers.get('x-ms-thinclient-proxy-resource-type', ""), "is_request": False}  # type: ignore[assignment]  # pylint: disable=line-too-long
 
             if log_data["url"]:
                 url_parts: List[str] = log_data["url"].split('/')  # type: ignore[union-attr]

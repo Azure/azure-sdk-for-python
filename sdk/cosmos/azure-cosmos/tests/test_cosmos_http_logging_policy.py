@@ -122,7 +122,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[14] == 'No body was attached to the request'
+        assert messages_request[-1] == 'No body was attached to the request'
         assert messages_response[0] == 'Response status: 200'
         assert 'Response headers:' in messages_response[1]
 
@@ -285,6 +285,60 @@ class TestCosmosHttpLogger(unittest.TestCase):
             elif "Account Write Regions:" in message:
                 locations = get_locations_list(message)
                 assert all_locations == locations
+
+    def test_activity_id_logging_policy(self):
+        # Create a mock handler and logger for the new client
+        self.mock_handler_activity_id = MockHandler()
+        self.logger_activity_id = create_logger("testloggeractivityid", self.mock_handler_activity_id)
+
+        # Create a new client with the logger and enable diagnostics logging
+        self.client_activity_id = cosmos_client.CosmosClient(
+            self.host,
+            self.masterKey,
+            consistency_level="Session",
+            connection_policy=self.connectionPolicy,
+            logger=self.logger_activity_id,
+            enable_diagnostics_logging=True
+        )
+
+        # Generate a custom activity ID
+        custom_activity_id = str(uuid.uuid4())
+
+        # Create a database and container for the test
+        database_id = "database_test_activity_id_" + str(uuid.uuid4())
+        container_id = "container_test_activity_id_" + str(uuid.uuid4())
+        database = self.client_activity_id.create_database(id=database_id)
+        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        # Reset the mock handler to clear previous messages
+        self.mock_handler_activity_id.reset()
+
+        # Upsert an item and verify the request and response activity IDs match
+        item_id = str(uuid.uuid4())
+        item_body = {"id": item_id, "pk": item_id}
+        container.upsert_item(body=item_body)
+
+        # Verify that the request activity ID matches the response activity ID
+        # Having the Request Activity confirms we generated one from SDK
+        # Having it match the response means it was passed successfully
+        log_record_request = self.mock_handler_activity_id.messages[0]
+        log_record_response = self.mock_handler_activity_id.messages[1]
+        assert log_record_request.activity_id == log_record_response.activity_id
+
+        # Upsert another item with the custom activity ID in the initial headers
+        headers = {"x-ms-activity-id": custom_activity_id}
+        item_id_2 = str(uuid.uuid4())
+        item_body_2 = {"id": item_id_2, "pk": item_id_2}
+        container.upsert_item(body=item_body_2, initial_headers=headers)
+
+        # Verify that the custom activity ID does not match the request activity ID from the log record
+        # Users should not be able to pass in their own activity ID.
+        log_record_request_2 = self.mock_handler_activity_id.messages[2]
+        assert log_record_request_2.activity_id != custom_activity_id
+
+        # Clean up by deleting the database
+        self.client_activity_id.delete_database(database_id)
+        self.mock_handler_activity_id.reset()
+
 
 if __name__ == "__main__":
     unittest.main()

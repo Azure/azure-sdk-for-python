@@ -27,8 +27,6 @@ except ImportError:  # python < 3.3
 class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
     mock_handler_diagnostic = None
     mock_handler_default = None
-    logger_diagnostic = None
-    logger_default = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
@@ -47,6 +45,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.mock_handler_default = MockHandler()
         self.mock_handler_diagnostic = MockHandler()
         self.mock_handler_filtered_diagnostic = MockHandler()
+        self.mock_handler_activity_id = MockHandler()
         # Add filter to the filtered diagnostics handler
 
         self.mock_handler_filtered_diagnostic.addFilter(FilterStatusCode())
@@ -57,6 +56,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.client_default = None
         self.client_diagnostic = None
         self.client_filtered_diagnostic = None
+        self.client_activity_id = None
 
     async def asyncTearDown(self):
         if self.client_default:
@@ -65,6 +65,8 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             await self.client_diagnostic.close()
         if self.client_filtered_diagnostic:
             await self.client_filtered_diagnostic.close()
+        if self.client_activity_id:
+            await self.client_activity_id.close()
 
     async def test_default_http_logging_policy_async(self):
         self.logger.addHandler(self.mock_handler_default)
@@ -81,7 +83,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[15] == 'No body was attached to the request'
+        assert messages_request[-1] == 'No body was attached to the request'
         assert messages_response[0] == 'Response status: 200'
         assert 'Response headers:' in messages_response[1]
 
@@ -256,6 +258,59 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
                 locations = get_locations_list(message)
                 assert all_locations == locations
         await initialized_objects["client"].close()
+
+    async def test_activity_id_logging_policy_async(self):
+        # Create a mock handler and logger for the new client
+        self.logger.addHandler(self.mock_handler_activity_id)
+
+        # Create a new client with the logger and enable diagnostics logging
+        self.client_activity_id = cosmos_client.CosmosClient(
+            self.host,
+            self.masterKey,
+            consistency_level="Session",
+            connection_policy=self.connectionPolicy,
+            logger=self.logger,
+            enable_diagnostics_logging=True
+        )
+        # Generate a custom activity ID
+        custom_activity_id = str(uuid.uuid4())
+
+        # Create a database and container for the test
+        database_id = "database_test_activity_id_" + str(uuid.uuid4())
+        container_id = "container_test_activity_id_" + str(uuid.uuid4())
+        try:
+
+            database = await self.client_activity_id.create_database(id=database_id)
+            container = await database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+            # Reset the mock handler to clear previous messages
+            self.mock_handler_activity_id.reset()
+
+            # Upsert an item and verify the request and response activity IDs match
+            item_id = str(uuid.uuid4())
+            item_body = {"id": item_id, "pk": item_id}
+            await container.upsert_item(body=item_body)
+
+            # Verify that the request activity ID matches the response activity ID
+            log_record_request = self.mock_handler_activity_id.messages[0]
+            log_record_response = self.mock_handler_activity_id.messages[1]
+            assert log_record_request.activity_id == log_record_response.activity_id
+
+            # Upsert another item with the custom activity ID in the initial headers
+            headers = {"x-ms-activity-id": custom_activity_id}
+            item_id_2 = str(uuid.uuid4())
+            item_body_2 = {"id": item_id_2, "pk": item_id_2}
+            await container.upsert_item(body=item_body_2, initial_headers=headers)
+
+            # Verify that the custom activity ID does not match the request activity ID from the log record
+            log_record_request_2 = self.mock_handler_activity_id.messages[2]
+            assert log_record_request_2.activity_id != custom_activity_id
+
+        finally:
+            # Clean up by deleting the database
+            await self.client_activity_id.delete_database(database_id)
+            self.mock_handler_activity_id.reset()
+            self.logger.removeHandler(self.mock_handler_activity_id)
 
 
 if __name__ == "__main__":
