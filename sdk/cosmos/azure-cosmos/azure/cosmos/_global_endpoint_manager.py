@@ -32,7 +32,8 @@ from . import _constants as constants
 from . import exceptions
 from ._request_object import RequestObject
 from .documents import DatabaseAccount
-from ._location_cache import LocationCache, current_time_millis
+from ._location_cache import LocationCache
+from ._utils import current_time_millis
 
 
 # pylint: disable=protected-access

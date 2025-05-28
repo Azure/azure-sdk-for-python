@@ -57,7 +57,7 @@ from . import _utils
 from . import documents
 from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
-from ._base import _set_properties_cache
+from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
 from ._constants import _Constants as Constants
@@ -3393,7 +3393,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # If container properties cache is stale, refresh it by reading the container.
         container = self.ReadContainer(container_link, options=None)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self._set_container_properties_cache(container_link, _set_properties_cache(container, container_link))
+        self._set_container_properties_cache(container_link, _build_properties_cache(container, container_link))
 
     def _UpdateSessionIfRequired(
         self,
@@ -3436,5 +3436,5 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             container = self.ReadContainer(collection_link, options)
             partition_key_definition = container.get("partitionKey")
-            self._set_container_properties_cache(collection_link, _set_properties_cache(container, collection_link))
+            self._set_container_properties_cache(collection_link, _build_properties_cache(container, collection_link))
         return partition_key_definition

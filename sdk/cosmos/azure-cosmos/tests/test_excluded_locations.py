@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
-import re
 import unittest
 import uuid
 import test_config
@@ -10,7 +9,6 @@ import pytest
 import time
 
 from azure.cosmos import CosmosClient
-from azure.cosmos.http_constants import ResourceType
 
 
 class MockHandler(logging.Handler):
@@ -110,12 +108,12 @@ def read_item_test_data():
         [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2, L1],  # 0
+        [L2],  # 0
         [L2],  # 1
-        [L2, L1],  # 2
-        [L1, L2],  # 3
+        [L2],  # 2
+        [L1],  # 3
         [L1],  # 4
-        [L1, L2],  # 5
+        [L1],  # 5
         [L1],  # 6
         [L1],  # 7
     ]
@@ -354,7 +352,7 @@ class TestExcludedLocations:
             # Single write
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -379,7 +377,7 @@ class TestExcludedLocations:
             # get location from mock_handler
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data

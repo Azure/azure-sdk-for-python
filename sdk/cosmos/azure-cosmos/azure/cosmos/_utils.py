@@ -26,6 +26,7 @@ import platform
 import re
 import base64
 import json
+import time
 from typing import Any, Dict, Optional
 
 from ._version import VERSION
@@ -36,7 +37,6 @@ def get_user_agent() -> str:
     python_version = safe_user_agent_header(platform.python_version())
     user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(VERSION, python_version, os_name)
     return user_agent
-
 
 def get_user_agent_async() -> str:
     os_name = safe_user_agent_header(platform.platform())
@@ -69,3 +69,6 @@ def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
         return result
     except (json.JSONDecodeError, ValueError):
         return {}
+
+def current_time_millis() -> int:
+    return int(round(time.time() * 1000))

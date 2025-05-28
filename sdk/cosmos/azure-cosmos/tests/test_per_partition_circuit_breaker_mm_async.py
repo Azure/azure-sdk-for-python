@@ -191,6 +191,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+        os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
         client = CosmosClient(default_endpoint, self.master_key,
                               preferred_locations=[REGION_1, REGION_2],
                               multiple_write_locations=True,

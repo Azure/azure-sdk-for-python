@@ -26,8 +26,9 @@ import threading
 import os
 from typing import Dict, Any, List
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
-from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
+from azure.cosmos._location_cache import EndpointOperationType
 from azure.cosmos._request_object import RequestObject
+from ._utils import current_time_millis
 from ._constants import _Constants as Constants
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100

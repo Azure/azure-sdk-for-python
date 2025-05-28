@@ -24,7 +24,6 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
-import time
 from typing import Set, Mapping, List
 from urllib.parse import urlparse
 
@@ -151,9 +150,6 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[Re
 
     return applicable_regional_routing_contexts
 
-def current_time_millis() -> int:
-    return int(round(time.time() * 1000))
-
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
 
     def __init__(
@@ -183,7 +179,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_location_from_endpoint(self, endpoint: str) -> str:
         if endpoint in self.account_locations_by_read_endpoints:
-            return self.account_locations_by_write_endpoints[endpoint]
+            return self.account_locations_by_read_endpoints[endpoint]
         return self.account_write_locations[0]
 
     def get_write_regional_routing_context(self):

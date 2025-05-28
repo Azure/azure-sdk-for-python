@@ -32,7 +32,8 @@ from azure.cosmos import DatabaseAccount
 
 from .. import _constants as constants
 from .. import exceptions
-from .._location_cache import LocationCache, current_time_millis
+from .._location_cache import LocationCache
+from .._utils import current_time_millis
 from .._request_object import RequestObject
 
 # pylint: disable=protected-access

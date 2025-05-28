@@ -52,7 +52,7 @@ from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async i
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
 
 from .. import _base as base
-from .._base import _set_properties_cache
+from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
@@ -2282,7 +2282,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
-            await kwargs["containerProperties"]()
+            await kwargs["containerProperties"](options)
             new_options = dict(options)
             new_options["containerRID"] = self.__container_properties_cache[database_or_container_link]["_rid"]
             return (
@@ -2965,7 +2965,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
             feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(
                 partition_key_value)  # cspell:disable-line
-            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk], options)
+            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_,
+                                                                                          [feed_range_epk],
+                                                                                          options)
             results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
@@ -3235,7 +3237,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # If container properties cache is stale, refresh it by reading the container.
         container = await self.ReadContainer(container_link, options=None)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self._set_container_properties_cache(container_link, _set_properties_cache(container, container_link))
+        self._set_container_properties_cache(container_link, _build_properties_cache(container, container_link))
 
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str,
                                           excluded_locations: Optional[str] = None,
@@ -3339,5 +3341,5 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             container = await self.ReadContainer(collection_link, options)
             partition_key_definition = container.get("partitionKey")
-            self._set_container_properties_cache(collection_link, _set_properties_cache(container, collection_link))
+            self._set_container_properties_cache(collection_link, _build_properties_cache(container, collection_link))
         return partition_key_definition
