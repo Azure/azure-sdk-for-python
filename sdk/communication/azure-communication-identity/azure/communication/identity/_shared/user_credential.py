@@ -38,9 +38,10 @@ class CommunicationTokenCredential(object):
         self._scopes = kwargs.pop("scopes", None)
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_refresher = lambda: TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+            self._token_exchange_client = TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
-            self._token = TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+            self._token = self._token_exchange_client.exchange_entra_token()
         else:
             if not isinstance(token, str):
                 raise TypeError("Token must be a string.")

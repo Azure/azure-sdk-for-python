@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from azure.core.pipeline.policies import HTTPPolicy, AsyncHTTPPolicy
 from azure.core.pipeline import PipelineRequest
 
+from dateutil import parser as dateutil_parser
 
 class EntraTokenGuardPolicy(HTTPPolicy):
     """A pipeline policy that caches the response for a given Entra token and reuses it if valid."""
@@ -78,10 +79,8 @@ class _EntraTokenGuardUtils:
                 content = response_cache.http_response.text()
                 data = json.loads(content)
                 expires_on = data["accessToken"]["expiresOn"]
-                if isinstance(expires_on, int):
-                    expires_on_dt = datetime.fromtimestamp(expires_on, tz=timezone.utc)
-                else:
-                    expires_on_dt = datetime.fromisoformat(expires_on)
+                
+                expires_on_dt = dateutil_parser.parse(expires_on)
                 return datetime.now(timezone.utc) < expires_on_dt
             except Exception:
                 return False

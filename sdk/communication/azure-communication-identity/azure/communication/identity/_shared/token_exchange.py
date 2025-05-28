@@ -103,7 +103,7 @@ class AsyncTokenExchangeClient:
     async def _parse_access_token_from_response(self, response: PipelineResponse) -> AccessToken:
         if response.http_response.status_code == 200:
             try:
-                content = await response.http_response.text()
+                content = response.http_response.text()
                 data = json.loads(content)
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
@@ -155,11 +155,9 @@ class _TokenExchangeUtils:
         @staticmethod
         def parse_expires_on(expires_on, response):
             if isinstance(expires_on, str):
-                    # Try to parse ISO8601 string
                 try:
                     expires_on_dt = dateutil_parser.parse(expires_on)
-                    expires_on_epoch = int(expires_on_dt.astimezone(timezone.utc).timestamp())
-                    expires_on_epoch = int(expires_on_dt.replace(tzinfo=timezone.utc).timestamp())
+                    expires_on_epoch = int(expires_on_dt.timestamp())
                     return expires_on_epoch
                 except Exception as ex:
                     expires_on_epoch = int(expires_on)

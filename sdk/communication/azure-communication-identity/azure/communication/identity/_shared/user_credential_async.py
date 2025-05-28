@@ -41,10 +41,13 @@ class CommunicationTokenCredential(object):
         self._scopes = kwargs.pop("scopes", None)
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_refresher = lambda: AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+            self._token_exchange_client = AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+
             async def _initialize_token():
-                self._token = await AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+                self._token = await self._token_exchange_client.exchange_entra_token()
+
             asyncio.get_event_loop().run_until_complete(_initialize_token())
         else:
             if not isinstance(token, str):
@@ -54,7 +57,7 @@ class CommunicationTokenCredential(object):
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
             if self._proactive_refresh and self._token_refresher is None:
                 raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
-        
+
         self._timer = None
         self._async_mutex = Lock()
         if sys.version_info[:3] == (3, 10, 0):
