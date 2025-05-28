@@ -78,6 +78,9 @@ Once you've initialized a 'RadiologyInsightsClient', you can use it to analyse d
 * Follow-up Recommendation
 * Communication
 * Radiology Procedure
+* Guidance
+* Quality Measure
+* Scoring and Assessment
 
 Radiology Insights currently supports one document from one patient. Please take a look [here][inferences] for more detailed information about the inferences this service produces.
 
@@ -96,6 +99,10 @@ For an example how to create a client, a request and get the result see the exam
 * [Limited Order Discrepancy](#get-limited-order-discrepancy-information)
 * [Radiology Procedure](#get-radiology-procedure-information)
 * [Sex Mismatch](#get-sex-mismatch-information)
+* [Guidance](#get-guidance-information)
+* [Quality Measure](#get-quality-measure-information)
+* [Scoring Assessment](#get-scoring-and-assessment-information)
+
 
 ### Running the samples
 
@@ -286,6 +293,13 @@ for patient_result in radiology_insights_result.patient_results:
             print(f"Sex Mismatch Inference found")
 ```
 <!-- SNIPPET:sample_sex_mismatch_inference_async.display_sex_mismatch-->
+
+### Get Guidance information
+
+### Get Quality Measure information
+
+### Get Scoring and Assessment information 
+
 
 For detailed conceptual information of this and other inferences please read more [here][inferences].
 
