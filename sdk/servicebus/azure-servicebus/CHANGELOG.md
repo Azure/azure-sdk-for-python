@@ -1,11 +1,34 @@
 # Release History
 
-## 7.14.1 (Unreleased)
+## 7.14.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
-- Fixed a bug in where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
+### Other Changes
+
+## 7.14.2 (2025-04-09)
+
+### Bugs Fixed
+
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
+- 
+### Other Changes
+
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Fixed aiohttp websocket library showing a deprecation warning due to an incorrect timeout type ([#40429](https://github.com/Azure/azure-sdk-for-python/issues/40429))
+- Dropped support for Python 3.8
+
+## 7.14.1 (2025-03-12)
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly expected to have info/description fields set in all cases.
+- Fixed a bug where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
 
 ## 7.14.0 (2025-02-13)
 

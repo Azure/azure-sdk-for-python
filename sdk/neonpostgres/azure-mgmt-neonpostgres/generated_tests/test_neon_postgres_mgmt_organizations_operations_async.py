@@ -79,6 +79,99 @@ class TestNeonPostgresMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
                                 "singleSignOnUrl": "str",
                             },
                         },
+                        "projectProperties": {
+                            "attributes": [{"name": "str", "value": "str"}],
+                            "branch": {
+                                "attributes": [{"name": "str", "value": "str"}],
+                                "createdAt": "str",
+                                "databaseName": "str",
+                                "databases": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "ownerName": "str",
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                                "endpoints": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "endpointType": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "projectId": "str",
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                                "entityId": "str",
+                                "entityName": "str",
+                                "parentId": "str",
+                                "projectId": "str",
+                                "provisioningState": "str",
+                                "roleName": "str",
+                                "roles": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "isSuperUser": bool,
+                                        "permissions": ["str"],
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                            },
+                            "createdAt": "str",
+                            "databases": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "ownerName": "str",
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "defaultEndpointSettings": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                            "endpoints": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "endpointType": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "projectId": "str",
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "entityId": "str",
+                            "entityName": "str",
+                            "historyRetention": 0,
+                            "pgVersion": 0,
+                            "provisioningState": "str",
+                            "regionId": "str",
+                            "roles": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "isSuperUser": bool,
+                                    "permissions": ["str"],
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "storage": 0,
+                        },
                         "provisioningState": "str",
                     },
                     "systemData": {
@@ -147,6 +240,99 @@ class TestNeonPostgresMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
                                 "singleSignOnUrl": "str",
                             },
                         },
+                        "projectProperties": {
+                            "attributes": [{"name": "str", "value": "str"}],
+                            "branch": {
+                                "attributes": [{"name": "str", "value": "str"}],
+                                "createdAt": "str",
+                                "databaseName": "str",
+                                "databases": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "ownerName": "str",
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                                "endpoints": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "endpointType": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "projectId": "str",
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                                "entityId": "str",
+                                "entityName": "str",
+                                "parentId": "str",
+                                "projectId": "str",
+                                "provisioningState": "str",
+                                "roleName": "str",
+                                "roles": [
+                                    {
+                                        "attributes": [{"name": "str", "value": "str"}],
+                                        "branchId": "str",
+                                        "createdAt": "str",
+                                        "entityId": "str",
+                                        "entityName": "str",
+                                        "isSuperUser": bool,
+                                        "permissions": ["str"],
+                                        "provisioningState": "str",
+                                    }
+                                ],
+                            },
+                            "createdAt": "str",
+                            "databases": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "ownerName": "str",
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "defaultEndpointSettings": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                            "endpoints": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "endpointType": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "projectId": "str",
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "entityId": "str",
+                            "entityName": "str",
+                            "historyRetention": 0,
+                            "pgVersion": 0,
+                            "provisioningState": "str",
+                            "regionId": "str",
+                            "roles": [
+                                {
+                                    "attributes": [{"name": "str", "value": "str"}],
+                                    "branchId": "str",
+                                    "createdAt": "str",
+                                    "entityId": "str",
+                                    "entityName": "str",
+                                    "isSuperUser": bool,
+                                    "permissions": ["str"],
+                                    "provisioningState": "str",
+                                }
+                            ],
+                            "storage": 0,
+                        },
                         "provisioningState": "str",
                     },
                     "systemData": {
@@ -194,5 +380,15 @@ class TestNeonPostgresMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
     async def test_organizations_list_by_subscription(self, resource_group):
         response = self.client.organizations.list_by_subscription()
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_organizations_get_postgres_versions(self, resource_group):
+        response = await self.client.organizations.get_postgres_versions(
+            resource_group_name=resource_group.name,
+        )
+
         # please add some check logic here by yourself
         # ...

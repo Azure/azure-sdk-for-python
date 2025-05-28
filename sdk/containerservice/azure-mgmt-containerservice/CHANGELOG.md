@@ -1,5 +1,58 @@
 # Release History
 
+## 36.0.0 (2025-05-15)
+
+### Features Added
+
+  - Added operation group NamespacesOperations
+  - Model AgentPoolUpgradeSettings has a new parameter max_unavailable
+  - Model AgentPoolUpgradeSettings has a new parameter undrainable_node_behavior
+  - Model AutoScaleProfile has a new parameter size
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManualScaleProfile has a new parameter size
+
+### Breaking Changes
+
+  - Model AutoScaleProfile no longer has parameter os_disk_size_gb
+  - Model AutoScaleProfile no longer has parameter os_disk_type
+  - Model AutoScaleProfile no longer has parameter sizes
+  - Model ManagedCluster no longer has parameter enable_pod_security_policy
+  - Model ManualScaleProfile no longer has parameter os_disk_size_gb
+  - Model ManualScaleProfile no longer has parameter os_disk_type
+  - Model ManualScaleProfile no longer has parameter sizes
+
+## 35.0.0 (2025-04-14)
+
+### Features Added
+
+  - Model ManagedClusterIngressProfileWebAppRouting has a new parameter nginx
+
+### Breaking Changes
+
+  - Model LoadBalancer no longer has parameter name_properties_name
+  - Operation LoadBalancersOperations.create_or_update has a new required parameter parameters
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter allow_service_placement
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter name
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter node_selector
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter primary_agent_pool_name
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter service_label_selector
+  - Operation LoadBalancersOperations.create_or_update no longer has parameter service_namespace_selector
+
+## 34.2.0 (2025-03-18)
+
+### Features Added
+
+  - Added operation group ContainerServiceOperations
+  - Added operation group LoadBalancersOperations
+  - Added operation group ManagedClusterSnapshotsOperations
+  - Added operation group OperationStatusResultOperations
+  - Model AgentPool has a new parameter gpu_profile
+  - Model ManagedCluster has a new parameter bootstrap_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter gpu_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gpu_profile
+  - Model ManagedClusterSecurityProfile has a new parameter custom_ca_trust_certificates
+
 ## 34.1.0 (2025-02-19)
 
 ### Features Added

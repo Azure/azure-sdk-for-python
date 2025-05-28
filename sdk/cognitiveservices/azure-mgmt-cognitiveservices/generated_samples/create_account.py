@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +28,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
     response = client.accounts.begin_create(
@@ -48,7 +49,7 @@ def main():
                 },
                 "userOwnedStorage": [
                     {
-                        "resourceId": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount"
+                        "resourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount"
                     }
                 ],
             },
@@ -58,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2024-10-01/examples/CreateAccount.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2025-04-01-preview/examples/CreateAccount.json
 if __name__ == "__main__":
     main()

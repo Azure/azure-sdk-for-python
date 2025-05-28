@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-07-01/examples/deleteVault.json
+# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2024-11-01/examples/deleteVault.json
 if __name__ == "__main__":
     main()

@@ -21,7 +21,7 @@ class TestSqlManagementRecommendedSensitivityLabelsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_recommended_sensitivity_labels_update(self, resource_group):
         response = await self.client.recommended_sensitivity_labels.update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -39,7 +39,7 @@ class TestSqlManagementRecommendedSensitivityLabelsOperationsAsync(AzureMgmtReco
                     }
                 ]
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

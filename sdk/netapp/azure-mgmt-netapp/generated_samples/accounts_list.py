@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,6 +10,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.netapp import NetAppManagementClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,19 +23,21 @@ from azure.mgmt.netapp import NetAppManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.accounts.list_by_subscription(
+    response = client.accounts.list(
+        resource_group_name="myRG",
     )
     for item in response:
         print(item)
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-09-01/examples/Accounts_List.json
+
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-01-01-preview/examples/Accounts_List.json
 if __name__ == "__main__":
-    main()
-main__":
     main()

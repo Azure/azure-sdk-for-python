@@ -189,6 +189,7 @@ class HttpHeaders:
     DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"
     IsRUPerMinuteUsed = "x-ms-documentdb-is-ru-per-minute-used"
     OfferIsRUPerMinuteThroughputEnabled = "x-ms-offer-is-ru-per-minute-throughput-enabled"
+    ThroughputBucket = "x-ms-cosmos-throughput-bucket"
 
     # Partitioned collection headers
     PartitionKey = "x-ms-documentdb-partitionkey"
@@ -466,16 +467,3 @@ class ResourceType:
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
     PartitionKey = "partitionkey"
-
-    @staticmethod
-    def IsCollectionChild(resourceType: str) -> bool:
-        return resourceType in (
-            ResourceType.Document,
-            ResourceType.Attachment,
-            ResourceType.Conflict,
-            ResourceType.Schema,
-            ResourceType.UserDefinedFunction,
-            ResourceType.Trigger,
-            ResourceType.StoredProcedure,
-            ResourceType.PartitionKey,
-        )

@@ -171,6 +171,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         point = NumberDataPoint(
             attributes={
                 "test": "attribute",
+                "user_agent.synthetic.type": "bot",
             },
             start_time_unix_nano=1646865018558419456,
             time_unix_nano=1646865018558419457,
@@ -197,7 +198,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
             azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
         )
-
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")

@@ -1,12 +1,23 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
+
+### Other Changes
+
+## 4.11.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
+- `KeyClient` has a `get_key_attestation` method that can be used to retrieve a key along with its attestation blob
+  (stored in a new `KeyProperties.attestation` property) from a managed HSM
+  [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Other Changes
 - Updated minimum `typing-extensions` version to 4.6.0
@@ -141,7 +152,7 @@
 ## 4.6.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.6.0b1 (2022-06-07)

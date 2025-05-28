@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from typing import Any, Dict, Optional, Union
+from urllib.parse import unquote
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -181,7 +182,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         )
         copy = new_client_source_copy.start_copy_from_url(
             file_client.url,
-            mode_copy_mode='source',
+            file_mode_copy_mode='source',
             owner_copy_mode='source'
         )
         self._assert_copy(copy)
@@ -212,7 +213,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
             owner=override_owner,
             group=override_group,
             file_mode=override_file_mode,
-            mode_copy_mode='override',
+            file_mode_copy_mode='override',
             owner_copy_mode='override'
         )
         self._assert_copy(copy)
@@ -221,7 +222,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_hard_link(self, **kwargs: Any):
+    def test_create_hardlink(self, **kwargs: Any):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -235,7 +236,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         hard_link_file_name = self._get_file_name('file2')
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
-        resp = hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
+        resp = hard_link_file_client.create_hardlink(target=f"{directory_name}/{source_file_name}")
 
         assert resp is not None
         assert resp['file_file_type'] == 'Regular'
@@ -255,7 +256,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_hard_link_error(self, **kwargs: Any):
+    def test_create_hardlink_error(self, **kwargs: Any):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -269,6 +270,72 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
         with pytest.raises(ResourceNotFoundError) as e:
-            hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
+            hard_link_file_client.create_hardlink(target=f"{directory_name}/{source_file_name}")
 
+        assert 'ParentNotFound' in e.value.args[0]
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_and_get_symlink(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+
+        self._setup(premium_storage_file_account_name)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = self._get_directory_name()
+        directory_client = share_client.create_directory(directory_name)
+        source_file_name = self._get_file_name('file1')
+        source_file_client = directory_client.get_file_client(source_file_name)
+        source_file_client.create_file(size=1024)
+        symbolic_link_file_name = self._get_file_name('file2')
+        symbolic_link_file_client = directory_client.get_file_client(symbolic_link_file_name)
+        metadata = {"test1": "foo", "test2": "bar"}
+        owner, group = "345", "123"
+        target = f"{directory_name}/{source_file_name}"
+
+        resp = symbolic_link_file_client.create_symlink(
+            target=target,
+            metadata=metadata,
+            owner=owner,
+            group=group
+        )
+        assert resp is not None
+        assert resp['file_file_type'] == 'SymLink'
+        assert resp['owner'] == owner
+        assert resp['group'] == group
+        assert resp['file_creation_time'] is not None
+        assert resp['file_last_write_time'] is not None
+        assert resp['file_id'] is not None
+        assert resp['file_parent_id'] is not None
+        assert 'file_attributes' not in resp
+        assert 'file_permission_key' not in resp
+
+        resp = symbolic_link_file_client.get_symlink()
+        assert resp is not None
+        assert resp['etag'] is not None
+        assert resp['last_modified'] is not None
+        assert unquote(resp['link_text']) == target
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_and_get_symlink_error(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+
+        self._setup(premium_storage_file_account_name)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = self._get_directory_name()
+        directory_client = share_client.get_directory_client(directory_name)
+        source_file_name = self._get_file_name('file1')
+        source_file_client = directory_client.get_file_client(source_file_name)
+        symbolic_link_file_name = self._get_file_name('file2')
+        symbolic_link_file_client = directory_client.get_file_client(symbolic_link_file_name)
+        target = f"{directory_name}/{source_file_name}"
+
+        with pytest.raises(ResourceNotFoundError) as e:
+            symbolic_link_file_client.create_symlink(target=target)
+        assert 'ParentNotFound' in e.value.args[0]
+
+        with pytest.raises(ResourceNotFoundError) as e:
+            symbolic_link_file_client.get_symlink()
         assert 'ParentNotFound' in e.value.args[0]

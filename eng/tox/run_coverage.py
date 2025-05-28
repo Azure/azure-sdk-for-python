@@ -13,7 +13,7 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.functions import get_total_coverage
 
 logging.basicConfig(level=logging.INFO)
-coveragerc_file = os.path.join(os.path.dirname(__file__), "tox.ini")
+coveragerc_file = os.path.join(os.path.dirname(__file__), "..", "..", ".coveragerc")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 metric_obj = {}
                 metric_obj["value"] = total_coverage / 100
                 metric_obj["name"] = "test_coverage_ratio"
-                metric_obj["labels"] = { "package": pkg_details.name }
+                metric_obj["labels"] = { "package": pkg_details.name, "repo": "Azure/azure-sdk-for-python" }
                 metric_obj["timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 # normally we logging.info anywhere we need to output, but these logmetric statements
                 # need to be the sole value on the line, as the logmetric log parsing doesn't allow prefixes

@@ -64,7 +64,6 @@ class ReceiverLink(Link):
         if not frame[5]:
             self.delivery_count += 1
             self.current_link_credit -= 1
-            self.total_link_credit -= 1
         if self.received_delivery_id is not None:
             self._first_frame = frame
         if not self.received_delivery_id and not self._received_payload:

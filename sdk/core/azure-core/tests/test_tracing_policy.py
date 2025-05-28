@@ -15,6 +15,7 @@ from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
 from azure.core.tracing._abstract_span import HttpSpanMixin
 import pytest
+from opentelemetry.trace import format_span_id, format_trace_id
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
@@ -40,7 +41,7 @@ class TestTracingPolicyPluginImplementation:
             response.status_code = 202
             response.headers[policy._RESPONSE_ID] = "some request id"
 
-            assert request.headers.get("traceparent") == "123456789"
+            assert request.headers.get("traceparent") == "00-12345-GET-01"
 
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
             time.sleep(0.001)
@@ -52,24 +53,24 @@ class TestTracingPolicyPluginImplementation:
 
         # Check on_response
         network_span = root_span.children[0]
-        assert network_span.name == "/temp"
+        assert network_span.name == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
         assert network_span.attributes.get(HttpSpanMixin._NET_PEER_NAME) == "localhost"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
-        assert network_span.attributes.get(policy._RESPONSE_ID) == "some request id"
-        assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+        assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == "some request id"
+        assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 202
         assert policy._ERROR_TYPE not in network_span.attributes
 
         # Check on_exception
         network_span = root_span.children[1]
-        assert network_span.name == "/temp"
+        assert network_span.name == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
-        assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+        assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
-        assert network_span.attributes.get(policy._RESPONSE_ID) == None
+        assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == None
         assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 504
         assert network_span.attributes.get(policy._ERROR_TYPE)
 
@@ -90,7 +91,7 @@ class TestTracingPolicyPluginImplementation:
 
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
             network_span = root_span.children[0]
-            assert network_span.name == "/temp"
+            assert network_span.name == "GET"
             assert network_span.attributes.get(policy._ERROR_TYPE) == "403"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -197,7 +198,7 @@ class TestTracingPolicyPluginImplementation:
                 response.headers[policy._RESPONSE_ID] = "some request id"
                 pipeline_response = PipelineResponse(request, response, PipelineContext(None))
 
-                assert request.headers.get("traceparent") == "123456789"
+                assert request.headers.get("traceparent") == "00-12345-GET-01"
 
                 policy.on_response(pipeline_request, pipeline_response)
 
@@ -211,21 +212,21 @@ class TestTracingPolicyPluginImplementation:
                 user_agent.on_response(pipeline_request, pipeline_response)
 
             network_span = root_span.children[0]
-            assert network_span.name == "/"
+            assert network_span.name == "GET"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT).endswith("mytools")
-            assert network_span.attributes.get(policy._RESPONSE_ID) == "some request id"
-            assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+            assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == "some request id"
+            assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 202
 
             network_span = root_span.children[1]
-            assert network_span.name == "/"
+            assert network_span.name == "GET"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost"
             assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT).endswith("mytools")
-            assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
-            assert network_span.attributes.get(policy._RESPONSE_ID) is None
+            assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
+            assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) is None
             assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 504
             # Exception should propagate status for Opencensus
             assert network_span.status == "Transport trouble"
@@ -378,8 +379,12 @@ class TestTracingPolicyNativeTracing:
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
-        assert finished_spans[0].name == "/temp"
+        assert finished_spans[0].name == "GET"
         assert finished_spans[0].parent is root_span.get_span_context()
+
+        span_context = finished_spans[0].get_span_context()
+        assert traceparent.split("-")[1] == format_trace_id(span_context.trace_id)
+        assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
         assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
@@ -405,7 +410,7 @@ class TestTracingPolicyNativeTracing:
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert finished_spans[0].name == "/temp"
+        assert finished_spans[0].name == "GET"
         assert finished_spans[0].attributes.get("error.type") == "403"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -433,7 +438,7 @@ class TestTracingPolicyNativeTracing:
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert finished_spans[0].name == "/temp"
+        assert finished_spans[0].name == "GET"
         assert finished_spans[0].attributes.get(policy._ERROR_TYPE) == "403"
         assert finished_spans[0].instrumentation_scope.name == "my-library"
         assert finished_spans[0].instrumentation_scope.version == "1.0.0"
@@ -495,8 +500,12 @@ class TestTracingPolicyNativeTracing:
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
-        assert finished_spans[0].name == "/temp"
+        assert finished_spans[0].name == "GET"
         assert finished_spans[0].parent is root_span.get_span_context()
+
+        span_context = finished_spans[0].get_span_context()
+        assert traceparent.split("-")[1] == format_trace_id(span_context.trace_id)
+        assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
         assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
@@ -579,7 +588,7 @@ class TestTracingPolicyNativeTracing:
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
 
-        assert finished_spans[0].name == "/temp"
+        assert finished_spans[0].name == "GET"
         assert finished_spans[0].parent is root_span.get_span_context()
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -655,5 +664,5 @@ class TestTracingPolicyNativeTracing:
 
         assert len(root_span.children) == 1
         network_span = root_span.children[0]
-        assert network_span.name == "/temp"
+        assert network_span.name == "GET"
         assert network_span.kind == SpanKind.CLIENT

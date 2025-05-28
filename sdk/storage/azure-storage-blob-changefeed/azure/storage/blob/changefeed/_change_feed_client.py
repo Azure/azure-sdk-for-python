@@ -9,10 +9,11 @@ from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
+from azure.storage.blob._blob_service_client import BlobServiceClient
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
 
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
-class ChangeFeedClient(object):
+class ChangeFeedClient:
     """A client to interact with a specific account change feed.
 
     :param str account_url:
@@ -60,18 +61,18 @@ class ChangeFeedClient(object):
             :caption: Creating the ChangeFeedClient from a URL to a public blob (no auth needed).
     """
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> "ChangeFeedClient":
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ChangeFeedClient from a Connection String.
 
         :param str conn_str:
@@ -99,7 +100,7 @@ class ChangeFeedClient(object):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def list_changes(self, **kwargs: Any) -> ItemPaged[Dict]:
+    def list_changes(self, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -135,4 +136,5 @@ class ChangeFeedClient(object):
             container_client,
             results_per_page=results_per_page,
             page_iterator_class=ChangeFeedPaged,
-            **kwargs)
+            **kwargs
+        )

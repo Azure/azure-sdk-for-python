@@ -21,11 +21,10 @@ from ._configuration import KeyVaultManagementClientConfiguration
 from .operations import Operations, VaultsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class KeyVaultManagementClient:
     """The Azure management API provides a RESTful set of web services that interact with Azure Key
     Vault.
 

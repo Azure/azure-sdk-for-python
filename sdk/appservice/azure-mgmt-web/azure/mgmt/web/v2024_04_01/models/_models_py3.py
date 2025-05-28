@@ -3523,7 +3523,7 @@ class AzureActiveDirectoryRegistration(_serialization.Model):
     :ivar open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
      access tokens for this application.
      When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-     https://login.microsoftonline.com/v2.0/{tenant-guid}/.
+     ``https://login.microsoftonline.com/v2.0/{tenant-guid}/``.
      This URI is a case-sensitive identifier for the token issuer.
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html.
@@ -3579,7 +3579,7 @@ class AzureActiveDirectoryRegistration(_serialization.Model):
         :keyword open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
          access tokens for this application.
          When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-         https://login.microsoftonline.com/v2.0/{tenant-guid}/.
+         ``https://login.microsoftonline.com/v2.0/{tenant-guid}/``.
          This URI is a case-sensitive identifier for the token issuer.
          More information on OpenID Connect Discovery:
          http://openid.net/specs/openid-connect-discovery-1_0.html.
@@ -5260,71 +5260,6 @@ class CloningInfo(_serialization.Model):
         self.traffic_manager_profile_name = traffic_manager_profile_name
 
 
-class Configuration(_serialization.Model):
-    """Non versioned Container App configuration properties that define the mutable settings of a
-    Container app.
-
-    :ivar secrets: Collection of secrets used by a Container app.
-    :vartype secrets: list[~azure.mgmt.web.v2024_04_01.models.Secret]
-    :ivar active_revisions_mode: ActiveRevisionsMode controls how active revisions are handled for
-     the Container app:
-
-
-     .. raw:: html
-
-        <list><item>Multiple: multiple revisions can be active. If no value if provided, this is
-     the default</item><item>Single: Only one revision can be active at a time. Revision weights can
-     not be used in this mode</item></list>. Known values are: "multiple" and "single".
-    :vartype active_revisions_mode: str or ~azure.mgmt.web.v2024_04_01.models.ActiveRevisionsMode
-    :ivar ingress: Ingress configurations.
-    :vartype ingress: ~azure.mgmt.web.v2024_04_01.models.Ingress
-    :ivar registries: Collection of private container registry credentials for containers used by
-     the Container app.
-    :vartype registries: list[~azure.mgmt.web.v2024_04_01.models.RegistryCredentials]
-    """
-
-    _attribute_map = {
-        "secrets": {"key": "secrets", "type": "[Secret]"},
-        "active_revisions_mode": {"key": "activeRevisionsMode", "type": "str"},
-        "ingress": {"key": "ingress", "type": "Ingress"},
-        "registries": {"key": "registries", "type": "[RegistryCredentials]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        secrets: Optional[List["_models.Secret"]] = None,
-        active_revisions_mode: Optional[Union[str, "_models.ActiveRevisionsMode"]] = None,
-        ingress: Optional["_models.Ingress"] = None,
-        registries: Optional[List["_models.RegistryCredentials"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword secrets: Collection of secrets used by a Container app.
-        :paramtype secrets: list[~azure.mgmt.web.v2024_04_01.models.Secret]
-        :keyword active_revisions_mode: ActiveRevisionsMode controls how active revisions are handled
-         for the Container app:
-
-
-         .. raw:: html
-
-            <list><item>Multiple: multiple revisions can be active. If no value if provided, this is
-         the default</item><item>Single: Only one revision can be active at a time. Revision weights can
-         not be used in this mode</item></list>. Known values are: "multiple" and "single".
-        :paramtype active_revisions_mode: str or ~azure.mgmt.web.v2024_04_01.models.ActiveRevisionsMode
-        :keyword ingress: Ingress configurations.
-        :paramtype ingress: ~azure.mgmt.web.v2024_04_01.models.Ingress
-        :keyword registries: Collection of private container registry credentials for containers used
-         by the Container app.
-        :paramtype registries: list[~azure.mgmt.web.v2024_04_01.models.RegistryCredentials]
-        """
-        super().__init__(**kwargs)
-        self.secrets = secrets
-        self.active_revisions_mode = active_revisions_mode
-        self.ingress = ingress
-        self.registries = registries
-
-
 class ConnectionStringDictionary(ProxyOnlyResource):
     """String dictionary resource.
 
@@ -5603,138 +5538,6 @@ class Container(_serialization.Model):
         self.resources = resources
 
 
-class ContainerApp(Resource):
-    """Container App.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference  # pylint: disable=line-too-long
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar provisioning_state: Provisioning state of the Container App. Known values are:
-     "InProgress", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2024_04_01.models.ContainerAppProvisioningState
-    :ivar kube_environment_id: Resource ID of the Container App's KubeEnvironment.
-    :vartype kube_environment_id: str
-    :ivar latest_revision_name: Name of the latest revision of the Container App.
-    :vartype latest_revision_name: str
-    :ivar latest_revision_fqdn: Fully Qualified Domain Name of the latest revision of the Container
-     App.
-    :vartype latest_revision_fqdn: str
-    :ivar configuration: Non versioned Container App configuration properties.
-    :vartype configuration: ~azure.mgmt.web.v2024_04_01.models.Configuration
-    :ivar template: Container App versioned application definition.
-    :vartype template: ~azure.mgmt.web.v2024_04_01.models.Template
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "latest_revision_name": {"readonly": True},
-        "latest_revision_fqdn": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "kube_environment_id": {"key": "properties.kubeEnvironmentId", "type": "str"},
-        "latest_revision_name": {"key": "properties.latestRevisionName", "type": "str"},
-        "latest_revision_fqdn": {"key": "properties.latestRevisionFqdn", "type": "str"},
-        "configuration": {"key": "properties.configuration", "type": "Configuration"},
-        "template": {"key": "properties.template", "type": "Template"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        kube_environment_id: Optional[str] = None,
-        configuration: Optional["_models.Configuration"] = None,
-        template: Optional["_models.Template"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference  # pylint: disable=line-too-long
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword kube_environment_id: Resource ID of the Container App's KubeEnvironment.
-        :paramtype kube_environment_id: str
-        :keyword configuration: Non versioned Container App configuration properties.
-        :paramtype configuration: ~azure.mgmt.web.v2024_04_01.models.Configuration
-        :keyword template: Container App versioned application definition.
-        :paramtype template: ~azure.mgmt.web.v2024_04_01.models.Template
-        """
-        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
-        self.provisioning_state = None
-        self.kube_environment_id = kube_environment_id
-        self.latest_revision_name = None
-        self.latest_revision_fqdn = None
-        self.configuration = configuration
-        self.template = template
-
-
-class ContainerAppCollection(_serialization.Model):
-    """Container App collection ARM resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.v2024_04_01.models.ContainerApp]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ContainerApp]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.ContainerApp"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.v2024_04_01.models.ContainerApp]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
 class ContainerAppsConfiguration(_serialization.Model):
     """ContainerAppsConfiguration.
 
@@ -5813,34 +5616,6 @@ class ContainerAppsConfiguration(_serialization.Model):
         self.control_plane_subnet_resource_id = control_plane_subnet_resource_id
         self.app_subnet_resource_id = app_subnet_resource_id
         self.docker_bridge_cidr = docker_bridge_cidr
-
-
-class ContainerAppSecret(_serialization.Model):
-    """Container App Secret.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Secret Name.
-    :vartype name: str
-    :ivar value: Secret Value.
-    :vartype value: str
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "value": {"key": "value", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.name = None
-        self.value = None
 
 
 class ContainerCpuStatistics(_serialization.Model):
@@ -11441,8 +11216,8 @@ class FunctionsDeploymentStorage(_serialization.Model):
      "blobContainer"
     :vartype type: str or ~azure.mgmt.web.v2024_04_01.models.FunctionsDeploymentStorageType
     :ivar value: Property to set the URL for the selected Azure Storage type. Example: For
-     blobContainer, the value could be
-     https://:code:`<storageAccountName>`.blob.core.windows.net/:code:`<containerName>`.
+     blobContainer, the value could be https://\\
+     :code:`<storageAccountName>`.blob.core.windows.net/\\ :code:`<containerName>`.
     :vartype value: str
     :ivar authentication: Authentication method to access the storage account for deployment.
     :vartype authentication:
@@ -11468,8 +11243,8 @@ class FunctionsDeploymentStorage(_serialization.Model):
          "blobContainer"
         :paramtype type: str or ~azure.mgmt.web.v2024_04_01.models.FunctionsDeploymentStorageType
         :keyword value: Property to set the URL for the selected Azure Storage type. Example: For
-         blobContainer, the value could be
-         https://:code:`<storageAccountName>`.blob.core.windows.net/:code:`<containerName>`.
+         blobContainer, the value could be https://\\
+         :code:`<storageAccountName>`.blob.core.windows.net/\\ :code:`<containerName>`.
         :paramtype value: str
         :keyword authentication: Authentication method to access the storage account for deployment.
         :paramtype authentication:
@@ -13196,71 +12971,6 @@ class InboundEnvironmentEndpointCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = None
-
-
-class Ingress(_serialization.Model):
-    """Container App Ingress configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar fqdn: Hostname.
-    :vartype fqdn: str
-    :ivar external: Bool indicating if app exposes an external http endpoint.
-    :vartype external: bool
-    :ivar target_port: Target Port in containers for traffic from ingress.
-    :vartype target_port: int
-    :ivar transport: Ingress transport protocol. Known values are: "auto", "http", and "http2".
-    :vartype transport: str or ~azure.mgmt.web.v2024_04_01.models.IngressTransportMethod
-    :ivar traffic:
-    :vartype traffic: list[~azure.mgmt.web.v2024_04_01.models.TrafficWeight]
-    :ivar allow_insecure: Bool indicating if HTTP connections to is allowed. If set to false HTTP
-     connections are automatically redirected to HTTPS connections.
-    :vartype allow_insecure: bool
-    """
-
-    _validation = {
-        "fqdn": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "fqdn": {"key": "fqdn", "type": "str"},
-        "external": {"key": "external", "type": "bool"},
-        "target_port": {"key": "targetPort", "type": "int"},
-        "transport": {"key": "transport", "type": "str"},
-        "traffic": {"key": "traffic", "type": "[TrafficWeight]"},
-        "allow_insecure": {"key": "allowInsecure", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        external: bool = False,
-        target_port: Optional[int] = None,
-        transport: Optional[Union[str, "_models.IngressTransportMethod"]] = None,
-        traffic: Optional[List["_models.TrafficWeight"]] = None,
-        allow_insecure: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword external: Bool indicating if app exposes an external http endpoint.
-        :paramtype external: bool
-        :keyword target_port: Target Port in containers for traffic from ingress.
-        :paramtype target_port: int
-        :keyword transport: Ingress transport protocol. Known values are: "auto", "http", and "http2".
-        :paramtype transport: str or ~azure.mgmt.web.v2024_04_01.models.IngressTransportMethod
-        :keyword traffic:
-        :paramtype traffic: list[~azure.mgmt.web.v2024_04_01.models.TrafficWeight]
-        :keyword allow_insecure: Bool indicating if HTTP connections to is allowed. If set to false
-         HTTP connections are automatically redirected to HTTPS connections.
-        :paramtype allow_insecure: bool
-        """
-        super().__init__(**kwargs)
-        self.fqdn = None
-        self.external = external
-        self.target_port = target_port
-        self.transport = transport
-        self.traffic = traffic
-        self.allow_insecure = allow_insecure
 
 
 class IpAddress(_serialization.Model):
@@ -17380,8 +17090,8 @@ class RampUpRule(_serialization.Model):
      :code:`<code>ActionHostName</code>`.
     :vartype reroute_percentage: float
     :ivar change_step: In auto ramp up scenario this is the step to add/remove from
-     :code:`<code>ReroutePercentage</code>` until it reaches
-     \\n:code:`<code>MinReroutePercentage</code>` or
+     :code:`<code>ReroutePercentage</code>` until it reaches \\n\\
+     :code:`<code>MinReroutePercentage</code>` or
      :code:`<code>MaxReroutePercentage</code>`. Site metrics are checked every N minutes specified
      in :code:`<code>ChangeIntervalInMinutes</code>`.\\nCustom decision algorithm
      can be provided in TiPCallback site extension which URL can be specified in
@@ -17395,9 +17105,7 @@ class RampUpRule(_serialization.Model):
     :ivar max_reroute_percentage: Specifies upper boundary below which ReroutePercentage will stay.
     :vartype max_reroute_percentage: float
     :ivar change_decision_callback_url: Custom decision algorithm can be provided in TiPCallback
-     site extension which URL can be specified. See TiPCallback site extension for the scaffold and
-     contracts.
-     https://www.siteextensions.net/packages/TiPCallback/.
+     site extension which URL can be specified.
     :vartype change_decision_callback_url: str
     :ivar name: Name of the routing rule. The recommended name would be to point to the slot which
      will receive the traffic in the experiment.
@@ -17436,8 +17144,8 @@ class RampUpRule(_serialization.Model):
          :code:`<code>ActionHostName</code>`.
         :paramtype reroute_percentage: float
         :keyword change_step: In auto ramp up scenario this is the step to add/remove from
-         :code:`<code>ReroutePercentage</code>` until it reaches
-         \\n:code:`<code>MinReroutePercentage</code>` or
+         :code:`<code>ReroutePercentage</code>` until it reaches \\n\\
+         :code:`<code>MinReroutePercentage</code>` or
          :code:`<code>MaxReroutePercentage</code>`. Site metrics are checked every N minutes specified
          in :code:`<code>ChangeIntervalInMinutes</code>`.\\nCustom decision algorithm
          can be provided in TiPCallback site extension which URL can be specified in
@@ -17453,9 +17161,7 @@ class RampUpRule(_serialization.Model):
          stay.
         :paramtype max_reroute_percentage: float
         :keyword change_decision_callback_url: Custom decision algorithm can be provided in TiPCallback
-         site extension which URL can be specified. See TiPCallback site extension for the scaffold and
-         contracts.
-         https://www.siteextensions.net/packages/TiPCallback/.
+         site extension which URL can be specified.
         :paramtype change_decision_callback_url: str
         :keyword name: Name of the routing rule. The recommended name would be to point to the slot
          which will receive the traffic in the experiment.
@@ -17965,45 +17671,6 @@ class RegenerateActionParameter(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_type = key_type
-
-
-class RegistryCredentials(_serialization.Model):
-    """Container App Private Registry.
-
-    :ivar server: Container Registry Server.
-    :vartype server: str
-    :ivar username: Container Registry Username.
-    :vartype username: str
-    :ivar password_secret_ref: The name of the Secret that contains the registry login password.
-    :vartype password_secret_ref: str
-    """
-
-    _attribute_map = {
-        "server": {"key": "server", "type": "str"},
-        "username": {"key": "username", "type": "str"},
-        "password_secret_ref": {"key": "passwordSecretRef", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        server: Optional[str] = None,
-        username: Optional[str] = None,
-        password_secret_ref: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword server: Container Registry Server.
-        :paramtype server: str
-        :keyword username: Container Registry Username.
-        :paramtype username: str
-        :keyword password_secret_ref: The name of the Secret that contains the registry login password.
-        :paramtype password_secret_ref: str
-        """
-        super().__init__(**kwargs)
-        self.server = server
-        self.username = username
-        self.password_secret_ref = password_secret_ref
 
 
 class ReissueCertificateOrderRequest(ProxyOnlyResource):
@@ -19476,145 +19143,6 @@ class RetryHistory(_serialization.Model):
         self.error = error
 
 
-class Revision(Resource):
-    """Container App Revision.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference  # pylint: disable=line-too-long
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar created_time: Timestamp describing when the revision was created
-     by controller.
-    :vartype created_time: ~datetime.datetime
-    :ivar fqdn: Fully qualified domain name of the revision.
-    :vartype fqdn: str
-    :ivar template: Container App Revision Template with all possible settings and the
-     defaults if user did not provide them. The defaults are populated
-     as they were at the creation time.
-    :vartype template: ~azure.mgmt.web.v2024_04_01.models.Template
-    :ivar active: Boolean describing if the Revision is Active.
-    :vartype active: bool
-    :ivar replicas: Number of pods currently running for this revision.
-    :vartype replicas: int
-    :ivar traffic_weight: Traffic weight assigned to this revision.
-    :vartype traffic_weight: int
-    :ivar provisioning_error: Optional Field - Platform Error Message.
-    :vartype provisioning_error: str
-    :ivar health_state: Current health State of the revision. Known values are: "Healthy",
-     "Unhealthy", and "None".
-    :vartype health_state: str or ~azure.mgmt.web.v2024_04_01.models.RevisionHealthState
-    :ivar provisioning_state: Current provisioning State of the revision. Known values are:
-     "Provisioning", "Provisioned", "Failed", "Deprovisioning", and "Deprovisioned".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2024_04_01.models.RevisionProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-        "created_time": {"readonly": True},
-        "fqdn": {"readonly": True},
-        "template": {"readonly": True},
-        "active": {"readonly": True},
-        "replicas": {"readonly": True},
-        "traffic_weight": {"readonly": True},
-        "provisioning_error": {"readonly": True},
-        "health_state": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
-        "fqdn": {"key": "properties.fqdn", "type": "str"},
-        "template": {"key": "properties.template", "type": "Template"},
-        "active": {"key": "properties.active", "type": "bool"},
-        "replicas": {"key": "properties.replicas", "type": "int"},
-        "traffic_weight": {"key": "properties.trafficWeight", "type": "int"},
-        "provisioning_error": {"key": "properties.provisioningError", "type": "str"},
-        "health_state": {"key": "properties.healthState", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self, *, location: str, kind: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference  # pylint: disable=line-too-long
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
-        self.created_time = None
-        self.fqdn = None
-        self.template = None
-        self.active = None
-        self.replicas = None
-        self.traffic_weight = None
-        self.provisioning_error = None
-        self.health_state = None
-        self.provisioning_state = None
-
-
-class RevisionCollection(_serialization.Model):
-    """Container App Revisions collection ARM resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.v2024_04_01.models.Revision]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Revision]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.Revision"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.v2024_04_01.models.Revision]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
 class RunCorrelation(_serialization.Model):
     """The correlation properties.
 
@@ -19826,58 +19354,6 @@ class ScaleRuleAuth(_serialization.Model):
         super().__init__(**kwargs)
         self.secret_ref = secret_ref
         self.trigger_parameter = trigger_parameter
-
-
-class Secret(_serialization.Model):
-    """Container App Secret.
-
-    :ivar name: Secret Name.
-    :vartype name: str
-    :ivar value: Secret Value.
-    :vartype value: str
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "value": {"key": "value", "type": "str"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: Secret Name.
-        :paramtype name: str
-        :keyword value: Secret Value.
-        :paramtype value: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class SecretsCollection(_serialization.Model):
-    """Container App Secrets Collection ARM resource.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.v2024_04_01.models.ContainerAppSecret]
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ContainerAppSecret]"},
-    }
-
-    def __init__(self, *, value: List["_models.ContainerAppSecret"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.v2024_04_01.models.ContainerAppSecret]
-        """
-        super().__init__(**kwargs)
-        self.value = value
 
 
 class ServiceSpecification(_serialization.Model):
@@ -20505,7 +19981,7 @@ class SiteAuthSettings(ProxyOnlyResource):
     :ivar issuer: The OpenID Connect Issuer URI that represents the entity which issues access
      tokens for this application.
      When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-     https://sts.windows.net/{tenant-guid}/.
+     ``https://sts.windows.net/{tenant-guid}/``.
      This URI is a case-sensitive identifier for the token issuer.
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html.
@@ -20777,7 +20253,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         :keyword issuer: The OpenID Connect Issuer URI that represents the entity which issues access
          tokens for this application.
          When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-         https://sts.windows.net/{tenant-guid}/.
+         ``https://sts.windows.net/{tenant-guid}/``.
          This URI is a case-sensitive identifier for the token issuer.
          More information on OpenID Connect Discovery:
          http://openid.net/specs/openid-connect-discovery-1_0.html.
@@ -27472,46 +26948,6 @@ class TopLevelDomainCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = None
-
-
-class TrafficWeight(_serialization.Model):
-    """Traffic weight assigned to a revision.
-
-    :ivar revision_name: Name of a revision.
-    :vartype revision_name: str
-    :ivar weight: Traffic weight assigned to a revision.
-    :vartype weight: int
-    :ivar latest_revision: Indicates that the traffic weight belongs to a latest stable revision.
-    :vartype latest_revision: bool
-    """
-
-    _attribute_map = {
-        "revision_name": {"key": "revisionName", "type": "str"},
-        "weight": {"key": "weight", "type": "int"},
-        "latest_revision": {"key": "latestRevision", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        revision_name: Optional[str] = None,
-        weight: Optional[int] = None,
-        latest_revision: bool = False,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword revision_name: Name of a revision.
-        :paramtype revision_name: str
-        :keyword weight: Traffic weight assigned to a revision.
-        :paramtype weight: int
-        :keyword latest_revision: Indicates that the traffic weight belongs to a latest stable
-         revision.
-        :paramtype latest_revision: bool
-        """
-        super().__init__(**kwargs)
-        self.revision_name = revision_name
-        self.weight = weight
-        self.latest_revision = latest_revision
 
 
 class TriggeredJobHistory(ProxyOnlyResource):

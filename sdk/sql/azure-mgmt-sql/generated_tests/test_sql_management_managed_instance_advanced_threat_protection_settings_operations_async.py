@@ -21,11 +21,11 @@ class TestSqlManagementManagedInstanceAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_instance(self, resource_group):
+    async def test_managed_instance_advanced_threat_protection_settings_list_by_instance(self, resource_group):
         response = self.client.managed_instance_advanced_threat_protection_settings.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2022-02-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestSqlManagementManagedInstanceAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_instance_advanced_threat_protection_settings_get(self, resource_group):
         response = await self.client.managed_instance_advanced_threat_protection_settings.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             advanced_threat_protection_name="str",
-            api_version="2022-02-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestSqlManagementManagedInstanceAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_managed_instance_advanced_threat_protection_settings_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.managed_instance_advanced_threat_protection_settings.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -67,7 +67,7 @@ class TestSqlManagementManagedInstanceAdvancedThreatProtectionSettingsOperations
                     },
                     "type": "str",
                 },
-                api_version="2022-02-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

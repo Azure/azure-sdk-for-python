@@ -55,7 +55,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.dedicated_host_groups.delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.dedicated_host_groups.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
     async def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -138,7 +138,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_dedicated_host_groups_list_by_subscription(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

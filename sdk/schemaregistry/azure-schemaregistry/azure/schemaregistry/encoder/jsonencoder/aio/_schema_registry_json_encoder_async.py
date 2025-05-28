@@ -325,9 +325,7 @@ class JsonSchemaEncoder(object):
             schema_fullname, schema_str, schema_dict = get_loaded_schema(schema, content)
             cache_misses = self._get_schema_id.cache_info().misses
             schema_id = await self._get_schema_id(schema_fullname, schema_str, **request_options)
-            new_cache_misses = (
-                self._get_schema_id.cache_info().misses
-            )
+            new_cache_misses = self._get_schema_id.cache_info().misses
             if new_cache_misses > cache_misses:
                 cache_info = self._get_schema_id.cache_info()
                 _LOGGER.info(

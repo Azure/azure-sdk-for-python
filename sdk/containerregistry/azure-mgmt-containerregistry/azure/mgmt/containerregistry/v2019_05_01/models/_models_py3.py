@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -930,9 +930,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1042,10 +1042,10 @@ class Registry(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
-        self.login_server = None
-        self.creation_date = None
-        self.provisioning_state = None
-        self.status = None
+        self.login_server: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
         self.admin_user_enabled = admin_user_enabled
         self.storage_account = storage_account
         self.network_rule_set = network_rule_set
@@ -1393,8 +1393,8 @@ class Replication(Resource):
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.provisioning_state = None
-        self.status = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
 
 
 class ReplicationListResult(_serialization.Model):
@@ -1540,7 +1540,7 @@ class RetentionPolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.days = days
-        self.last_updated_time = None
+        self.last_updated_time: Optional[datetime.datetime] = None
         self.status = status
 
 
@@ -1577,7 +1577,7 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
 
 
 class Source(_serialization.Model):
@@ -1637,9 +1637,9 @@ class Status(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.display_status = None
-        self.message = None
-        self.timestamp = None
+        self.display_status: Optional[str] = None
+        self.message: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
 
 
 class StorageAccountProperties(_serialization.Model):
@@ -1792,7 +1792,7 @@ class VirtualNetworkRule(_serialization.Model):
     :ivar action: The action of virtual network rule. "Allow"
     :vartype action: str or ~azure.mgmt.containerregistry.v2019_05_01.models.Action
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
      Required.
     :vartype virtual_network_resource_id: str
     """
@@ -1813,7 +1813,7 @@ class VirtualNetworkRule(_serialization.Model):
         :keyword action: The action of virtual network rule. "Allow"
         :paramtype action: str or ~azure.mgmt.containerregistry.v2019_05_01.models.Action
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
          Required.
         :paramtype virtual_network_resource_id: str
         """
@@ -1906,7 +1906,7 @@ class Webhook(Resource):
         self.status = status
         self.scope = scope
         self.actions = actions
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class WebhookCreateParameters(_serialization.Model):

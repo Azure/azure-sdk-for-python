@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 from pathlib import Path
 
+
 def all_api_versions():
     sdk_folder = Path(__file__).resolve().parent.parent / "azure/mgmt/keyvault"
     return [(f.name[1:]).replace("_", "-") for f in sdk_folder.iterdir() if f.is_dir() and f.name.startswith("v")]

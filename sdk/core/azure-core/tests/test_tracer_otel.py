@@ -94,6 +94,21 @@ def test_start_span_with_attributes(tracing_helper):
     assert finished_spans[0].attributes["biz"] == 123
 
 
+def test_start_as_current_span_no_exit(tracing_helper):
+    tracer = get_tracer()
+    assert tracer
+
+    with tracer.start_as_current_span(name="foo-span", kind=SpanKind.INTERNAL, end_on_exit=False) as span:
+        assert span.is_recording()
+        assert tracer.get_current_span() == span
+
+    assert span.is_recording()
+    span.end()
+    assert not span.is_recording()
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 1
+
+
 def test_tracer_get_current_span():
     """Test that the tracer can get the current OpenTelemetry span instance."""
     tracer = get_tracer()
@@ -127,6 +142,37 @@ def test_end_span(tracing_helper):
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 1
     assert finished_spans[0].name == "foo-span"
+
+
+def test_use_span(tracing_helper):
+    tracer = get_tracer()
+    assert tracer
+
+    assert isinstance(tracer.get_current_span(), NonRecordingSpan)
+    with tracer.start_as_current_span(name="root", kind=SpanKind.INTERNAL) as root:
+        span = tracer.start_span(name="foo-span", kind=SpanKind.INTERNAL)
+        assert span.is_recording()
+        assert tracer.get_current_span() == root
+
+        with tracer.use_span(span):
+            assert tracer.get_current_span() == span
+
+        assert not span.is_recording()
+
+        span2 = tracer.start_span(name="bar-span", kind=SpanKind.INTERNAL)
+        assert span2.is_recording()
+        assert tracer.get_current_span() == root
+        with tracer.use_span(span2, end_on_exit=False):
+            assert tracer.get_current_span() == span2
+            assert span2.is_recording()
+
+        assert span2.is_recording()
+        span2.end()
+        assert not span2.is_recording()
+        assert tracer.get_current_span() == root
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 3
 
 
 def test_get_trace_context():
@@ -308,3 +354,25 @@ def test_tracer_caching_different_args():
 
     assert tracer1 is tracer2
     assert tracer1 is not tracer3
+
+
+def test_tracer_set_span_error(tracing_helper):
+    """Test that the tracer's set_span_status method works correctly."""
+    tracer = get_tracer()
+    assert tracer
+
+    with tracer.start_as_current_span(name="ok-span") as span:
+        tracer.set_span_error_status(span)
+
+    with tracer.start_as_current_span(name="ok-span") as span:
+        tracer.set_span_error_status(span, "This is an error")
+
+    # Verify status on finished spans
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 2
+
+    assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+    assert finished_spans[0].status.description is None
+
+    assert finished_spans[1].status.status_code == OtelStatusCode.ERROR
+    assert finished_spans[1].status.description == "This is an error"

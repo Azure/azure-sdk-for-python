@@ -27,7 +27,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
             pool_name="str",
             volume_name="str",
             subvolume_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -93,7 +93,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 volume_name="str",
                 subvolume_name="str",
                 body={"path": "str", "size": 0},
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -110,7 +110,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 subvolume_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -127,7 +127,7 @@ class TestNetAppManagementSubvolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 subvolume_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

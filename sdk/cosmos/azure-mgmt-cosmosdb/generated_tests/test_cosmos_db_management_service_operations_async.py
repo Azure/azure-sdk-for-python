@@ -25,7 +25,7 @@ class TestCosmosDBManagementServiceOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.service.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestCosmosDBManagementServiceOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 service_name="str",
                 create_update_parameters={"properties": "service_resource_create_update_properties"},
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -54,7 +54,7 @@ class TestCosmosDBManagementServiceOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             service_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestCosmosDBManagementServiceOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 account_name="str",
                 service_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

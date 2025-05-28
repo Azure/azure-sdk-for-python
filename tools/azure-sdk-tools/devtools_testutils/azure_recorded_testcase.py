@@ -198,7 +198,6 @@ def get_credential(**kwargs):
 
     use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
     use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
-    use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
     use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
     is_async = kwargs.pop("is_async", False)
 
@@ -222,16 +221,6 @@ def get_credential(**kwargs):
             if is_async:
                 from azure.identity.aio import AzureCliCredential
             return AzureCliCredential(**kwargs)
-        # User-based authentication through Visual Studio Code, if requested
-        if use_vscode.lower() == "true":
-            _LOGGER.info(
-                "Environment variable AZURE_TEST_USE_VSCODE_AUTH set to 'true'. Using VisualStudioCodeCredential."
-            )
-            from azure.identity import VisualStudioCodeCredential
-
-            if is_async:
-                from azure.identity.aio import VisualStudioCodeCredential
-            return VisualStudioCodeCredential(**kwargs)
         # User-based authentication through Azure Developer CLI (azd), if requested
         if use_azd.lower() == "true":
             _LOGGER.info(

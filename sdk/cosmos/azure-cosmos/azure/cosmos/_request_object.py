@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-from typing import Optional
+from typing import Optional, Mapping, Any
 
 class RequestObject(object):
     def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
@@ -33,6 +33,7 @@ class RequestObject(object):
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
+        self.excluded_locations = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -52,3 +53,20 @@ class RequestObject(object):
         self.location_index_to_route = None
         self.use_preferred_locations = None
         self.location_endpoint_to_route = None
+
+    def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
+        # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
+        if (options is None
+            or 'excludedLocations' not in options):
+            return False
+
+        # The 'excludedLocations' cannot be None
+        if options['excludedLocations'] is None:
+            raise ValueError("Excluded locations cannot be None. "
+                             "If you want to remove all excluded locations, try passing an empty list.")
+
+        return True
+
+    def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
+        if self._can_set_excluded_location(options):
+            self.excluded_locations = options['excludedLocations']
