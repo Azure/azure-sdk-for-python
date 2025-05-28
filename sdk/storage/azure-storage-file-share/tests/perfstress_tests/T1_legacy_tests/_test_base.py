@@ -10,6 +10,7 @@ from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.storage.file import FileService
 
+
 class _LegacyServiceTest(PerfStressTest):
     service_client = None
     async_service_client = None
@@ -27,10 +28,31 @@ class _LegacyServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_LegacyServiceTest, _LegacyServiceTest).add_arguments(parser)
-        parser.add_argument('-r', '--max-range-size', nargs='?', type=int, help='Maximum size of data uploading in single HTTP PUT. Defaults to 4*1024*1024', default=4*1024*1024)
-        parser.add_argument('-c', '--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
-        parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument(
+            "-r",
+            "--max-range-size",
+            nargs="?",
+            type=int,
+            help="Maximum size of data uploading in single HTTP PUT. Defaults to 4*1024*1024",
+            default=4 * 1024 * 1024,
+        )
+        parser.add_argument(
+            "-c",
+            "--max-concurrency",
+            nargs="?",
+            type=int,
+            help="Maximum number of concurrent threads used for data transfer. Defaults to 1",
+            default=1,
+        )
+        parser.add_argument(
+            "-s", "--size", nargs="?", type=int, help="Size of data to transfer.  Default is 10240.", default=10240
+        )
+        parser.add_argument(
+            "--no-client-share",
+            action="store_true",
+            help="Create one ServiceClient per test instance.  Default is to share a single ServiceClient.",
+            default=False,
+        )
 
 
 class _LegacyShareTest(_LegacyServiceTest):

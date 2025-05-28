@@ -110,12 +110,26 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
     """
 
     async def sleep(self, settings, transport):
+        """
+        Sleep for the backoff time specified in the settings.
+        :param settings: The retry settings containing the backoff time.
+        :type settings: Dict[str, Any]
+        :param transport: The transport to use for sleeping.
+        :type transport: ~azure.core.pipeline.transport.AsyncioBaseTransport
+        """
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
         await transport.sleep(backoff)
 
     async def send(self, request):
+        """
+        Send the request and handle retries.
+        :param request: The request to send.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The response from the request.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)
@@ -272,6 +286,16 @@ class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """
+        Handle the challenge response from the service, which may include a
+        WWW-Authenticate header with a Bearer challenge.
+        :param request: The request that received the challenge.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The response that contains the challenge.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: True if the challenge was handled and the request should be retried, False otherwise.
+        :rtype: bool
+        """
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

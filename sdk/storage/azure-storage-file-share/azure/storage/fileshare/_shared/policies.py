@@ -428,6 +428,13 @@ class StorageRetryPolicy(HTTPPolicy):
             request.url = updated.geturl()
 
     def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
+        """
+        Configure the retry settings for the request.
+
+        :param PipelineRequest request: A pipeline request object.
+        :returns: A dictionary containing the retry settings.
+        :rtype: Dict[str, Any]
+        """
         body_position = None
         if hasattr(request.http_request.body, "read"):
             try:
@@ -461,6 +468,11 @@ class StorageRetryPolicy(HTTPPolicy):
         return 0
 
     def sleep(self, settings, transport):
+        """Sleep for the backoff time.
+
+        :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
+        :param transport: The transport to use for sleeping.
+        """
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
@@ -476,10 +488,13 @@ class StorageRetryPolicy(HTTPPolicy):
         """Increment the retry counters.
 
         :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
-        :param PipelineRequest request: A pipeline request object.
-        :param Optional[PipelineResponse] response: A pipeline response object.
-        :param Optional[AzureError] error: An error encountered during the request, or
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: A pipeline response object.
+        :type response: ~azure.core.pipeline.PipelineResponse or None
+        :param error: An error encountered during the request, or
             None if the response was received successfully.
+        :type error: ~azure.core.exceptions.AzureError or None
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -524,6 +539,12 @@ class StorageRetryPolicy(HTTPPolicy):
         return False
 
     def send(self, request):
+        """Send the request with retry logic.
+
+        :param PipelineRequest request: A pipeline request object.
+        :returns: A pipeline response object.
+        :rtype: PipelineResponse
+        """
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)
@@ -678,6 +699,13 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         super(StorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """Handle the challenge from the service and authorize the request.
+
+        :param PipelineRequest request: The request object.
+        :param PipelineResponse response: The response object.
+        :returns: True if the request was authorized, False otherwise.
+        :rtype: bool
+        """
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

@@ -21,12 +21,16 @@ class _ServiceTest(PerfStressTest):
         connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
         kwargs = {}
         if self.args.max_range_size:
-            kwargs['max_range_size'] = self.args.max_range_size
+            kwargs["max_range_size"] = self.args.max_range_size
         if not _ServiceTest.service_client or self.args.no_client_share:
-            _ServiceTest.service_client = SyncShareServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
-            _ServiceTest.async_service_client = AsyncShareServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
+            _ServiceTest.service_client = SyncShareServiceClient.from_connection_string(
+                conn_str=connection_string, **kwargs
+            )
+            _ServiceTest.async_service_client = AsyncShareServiceClient.from_connection_string(
+                conn_str=connection_string, **kwargs
+            )
         self.service_client = _ServiceTest.service_client
-        self.async_service_client =_ServiceTest.async_service_client
+        self.async_service_client = _ServiceTest.async_service_client
 
     async def close(self):
         await self.async_service_client.close()
@@ -35,10 +39,31 @@ class _ServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
-        parser.add_argument('-r', '--max-range-size', nargs='?', type=int, help='Maximum size of data uploading in single HTTP PUT. Defaults to 4*1024*1024', default=4*1024*1024)
-        parser.add_argument('-c', '--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
-        parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument(
+            "-r",
+            "--max-range-size",
+            nargs="?",
+            type=int,
+            help="Maximum size of data uploading in single HTTP PUT. Defaults to 4*1024*1024",
+            default=4 * 1024 * 1024,
+        )
+        parser.add_argument(
+            "-c",
+            "--max-concurrency",
+            nargs="?",
+            type=int,
+            help="Maximum number of concurrent threads used for data transfer. Defaults to 1",
+            default=1,
+        )
+        parser.add_argument(
+            "-s", "--size", nargs="?", type=int, help="Size of data to transfer.  Default is 10240.", default=10240
+        )
+        parser.add_argument(
+            "--no-client-share",
+            action="store_true",
+            help="Create one ServiceClient per test instance.  Default is to share a single ServiceClient.",
+            default=False,
+        )
 
 
 class _ShareTest(_ServiceTest):
