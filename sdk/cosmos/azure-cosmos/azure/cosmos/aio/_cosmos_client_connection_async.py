@@ -203,7 +203,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
-        self._user_agent = _utils.get_user_agent_async()
+        suffix = kwargs.pop('user_agent_suffix', None)
+        self._user_agent = _utils.get_user_agent_async(suffix)
 
         credentials_policy = None
         if self.aad_credentials:

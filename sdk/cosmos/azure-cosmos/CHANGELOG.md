@@ -3,6 +3,7 @@
 ### 4.12.0b2 (Unreleased)
 
 #### Features Added
+* Added ability to set a user agent suffix at the client level. See [PR 40904](https://github.com/Azure/azure-sdk-for-python/pull/40904)
 * Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 * Per partition circuit breaker support. It can be enabled through the environment variable `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 
