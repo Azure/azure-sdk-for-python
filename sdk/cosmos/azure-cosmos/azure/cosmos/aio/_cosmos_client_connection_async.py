@@ -3270,7 +3270,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         }
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations
-        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
         path = base.GetPathFromLink(resource_link, http_constants.ResourceType.Document)
         resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
 
