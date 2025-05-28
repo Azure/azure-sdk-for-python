@@ -1,22 +1,31 @@
 - [Summary](#summary)
-- [Setup authentication with AI Foundry Projects client](#setup-authentication-with-ai-foundry-projects-client)
-- [Configure evaluations](#configure-evaluations)
-- [Create evaluation runs](#create-evaluation-runs)
-  - [Options for input data](#options-for-input-data)
-    - [Input with batch data (dataset)](#input-with-batch-data-dataset)
-    - [Input with single row](#input-with-single-row)
-    - [Input with agentic data](#input-with-agentic-data)
-  - [Create evaluation](#create-evaluation)
-    - [Create evaluation without config](#create-evaluation-without-config)
+- [Prerequisite](#prerequisite)
+- [Evaluation](#evaluation)
+  - [Configure evaluations](#configure-evaluations)
+  - [Create evaluation runs](#create-evaluation-runs)
+    - [Options for input data](#options-for-input-data)
+      - [Input with batch data (dataset)](#input-with-batch-data-dataset)
+      - [Input with single row](#input-with-single-row)
+      - [Input with agentic data](#input-with-agentic-data)
+    - [Create evaluation](#create-evaluation)
+  - [Get evaluation results](#get-evaluation-results)
+    - [List evaluation metadata](#list-evaluation-metadata)
+    - [Get evaluation metadata](#get-evaluation-metadata)
+    - [Get evaluation result data](#get-evaluation-result-data)
+      - [Get evaluation result in data blob](#get-evaluation-result-in-data-blob)
+      - [Get evaluation result in plain text](#get-evaluation-result-in-plain-text)
+- [Red Team](#red-team)
+  - [Options for Red Team target](#options-for-red-team-target)
+    - [LLM model as target](#llm-model-as-target)
+    - [Inline callback function as target](#inline-callback-function-as-target)
+    - [Callback function from file as target](#callback-function-from-file-as-target)
+  - [Create and run a Red Team scan](#create-and-run-a-red-team-scan)
+  - [Get Red Team scan details](#get-red-team-scan-details)
+  - [List all Red Team scans](#list-all-red-team-scans)
+- [Appendix](#appendix)
+  - [Code sample for creating evaluation](#code-sample-for-creating-evaluation)
     - [Create evaluation with config](#create-evaluation-with-config)
     - [Create evaluation with custom evaluators](#create-evaluation-with-custom-evaluators)
-- [Get evaluation results](#get-evaluation-results)
-  - [List evaluation metadata](#list-evaluation-metadata)
-  - [Get evaluation metadata](#get-evaluation-metadata)
-  - [Get evaluation result data](#get-evaluation-result-data)
-    - [Get evaluation result in data blob](#get-evaluation-result-in-data-blob)
-    - [Get evaluation result in plain text](#get-evaluation-result-in-plain-text)
-- [Appendix](#appendix)
   - [Agentic data sample](#agentic-data-sample)
   - [Semantic Kernel as input data](#semantic-kernel-as-input-data)
   - [LangChain as input data](#langchain-as-input-data)
@@ -27,15 +36,16 @@
 
 This document describes the setups and options to create evaluation and get evaluation results, with sample code and sample data in appendix.
 
-# Setup authentication with AI Foundry Projects client
+# Prerequisite
+Setup authentication for AI Foundry Projects client, e.g. with Entra ID
 ```python
 endpoint = "https://<account_name>.services.ai.azure.com/api/projects/<project_name>"
 credential = DefaultAzureCredential()
-# Entra ID based AI Foundry Projects client
 project_client = AIProjectClient(endpoint=endpoint, credential=credential)
 ```
 
-# Configure evaluations
+# Evaluation
+## Configure evaluations
 There are many different evaluation configuration types, we will only use agent continuous evaluation as an example. 
 ```python
 project_client.evaluations.create_or_update_config(
@@ -48,12 +58,12 @@ project_client.evaluations.create_or_update_config(
 )
 ```
 
-# Create evaluation runs
+## Create evaluation runs
 
-## Options for input data
+### Options for input data
 For large batch data evaluation, the user should upload the data as a dataset before running evaluation; for non-batch data evaluation, the user can send the data directly.
 
-### Input with batch data (dataset)
+#### Input with batch data (dataset)
 
 ```python
 # Create dataset from a single file.
@@ -65,7 +75,7 @@ dataset = project_client.datasets.upload_file(
 data = InputDataset(id=dataset.id)
 ```
 
-### Input with single row
+#### Input with single row
 
 ```python
 raw_data = {
@@ -77,7 +87,7 @@ raw_data = {
 data = InputData(data=raw_data)
 ```
 
-### Input with agentic data
+#### Input with agentic data
 
 Refer to appendix for more details:
 * [Agentic data sample](#agentic-data-sample) for agent data sample
@@ -91,9 +101,7 @@ tool_definitions = [...]
 data = InputAgentData(query=query, response=response, tool_definitions=tool_definitions)
 ```
 
-## Create evaluation
-
-### Create evaluation without config
+### Create evaluation
 
 Both display name and description will be inferred from evaluator names
 
@@ -109,6 +117,111 @@ evaluation = Evaluation(
 evaluation_response = project_client.evaluations.create(evaluation)
 ```
 
+## Get evaluation results
+
+### List evaluation metadata
+
+```python
+# List all evaluations
+for evaluation in project_client.evaluations.list():
+    print(evaluation)
+
+# Find evaluations for an agent run, a single agent run may have multiple evaluation runs because of re-run
+for evaluation in project_client.evaluations.list(agent_run_id=agent_run_id):
+    print(evaluation)
+```
+
+### Get evaluation metadata
+
+```python
+get_evaluation_response = project_client.evaluations.get(evaluation_response.name)
+```
+
+### Get evaluation result data
+
+#### Get evaluation result in data blob
+
+When the input data is batch data (in dataset), the evaluation result will be stored in blob because it could be as large as couple of GB.
+
+```python
+# Get evaluation results with blob information as well as credentials
+get_evaluation_results = project_client.evaluations.get_results(evaluation_response.name, with_credentials=True)
+
+# Download evaluation results from Azure Blob Storage
+sas_uri = get_evaluation_results.result.blob_reference.credentials.sas_uri
+with urlopen(sas_uri) as response:
+    content = response.read().decode('utf-8')
+```
+
+#### Get evaluation result in plain text
+
+For non-dataset input, the evaluation result will be stored in blob storage as well, but get evaluation results API will get it as plain text.
+
+```python
+get_evaluation_results = project_client.evaluations.get_results(evaluation_response.name)
+```
+
+# Red Team
+
+## Options for Red Team target
+
+### LLM model as target
+
+```python
+target_config = AzureOpenAIModelConfiguration(model_deployment_name=model_deployment_name)
+```
+
+### Inline callback function as target
+
+```python
+target_config = InLineCallbackConfiguration(callback={
+     "type": "InLineCallback",
+     "function": "print('Red Team inline scan')",
+})
+```
+
+### Callback function from file as target
+
+```python
+callback = project_client.datasets.upload_file(
+    name=callback_name,
+    version="1",
+    file="./samples_folder/callback.py",
+)
+target_config = CallbackConfiguration(callback_id=callback.id)
+```
+
+## Create and run a Red Team scan
+
+```python
+red_team = RedTeam(
+    attack_strategies=[AttackStrategy.BASE64],
+    risk_categories=[RiskCategory.VIOLENCE],
+    display_name="redteamtest1",  # Use a simpler name
+    target=target_config,
+)
+
+red_team_response = project_client.red_teams.create(red_team=red_team)
+```
+
+## Get Red Team scan details
+
+```python
+get_red_team_response = project_client.red_teams.get(name=red_team_response.name)
+```
+
+---
+
+## List all Red Team scans
+
+```python
+for scan in project_client.red_teams.list():
+    print(f"Found scan: {scan.name}, Status: {scan.status}")
+```
+
+# Appendix
+
+## Code sample for creating evaluation
 ### Create evaluation with config
 
 ```python
@@ -164,56 +277,6 @@ evaluation = Evaluation(
 
 evaluation_response = project_client.evaluations.create(evaluation)
 ```
-
-# Get evaluation results
-
-## List evaluation metadata
-
-```python
-# List all evaluations
-for evaluation in project_client.evaluations.list():
-    print(evaluation)
-
-# Find evaluations for an agent run, a single agent run may have multiple evaluation runs because of re-run
-for evaluation in project_client.evaluations.list(agent_run_id=agent_run_id):
-    print(evaluation)
-```
-
-## Get evaluation metadata
-
-```python
-get_evaluation_response = project_client.evaluations.get(evaluation_response.name)
-```
-
-## Get evaluation result data
-
-### Get evaluation result in data blob
-
-When the input data is batch data (in dataset), the evaluation result will be stored in blob because it could be as large as couple of GB.
-
-Refer to appendix [Evaluation results blob example](#evaluation-results-blob-example) for JSON sample data.
-
-```python
-# Get evaluation results with blob information as well as credentials
-get_evaluation_results = project_client.evaluations.get_results(evaluation_response.name, with_credentials=True)
-
-# Download evaluation results from Azure Blob Storage
-sas_uri = get_evaluation_results.result.blob_reference.credentials.sas_uri
-with urlopen(sas_uri) as response:
-    content = response.read().decode('utf-8')
-```
-
-### Get evaluation result in plain text
-
-For non-dataset input, the evaluation result will be stored in blob storage as well, but get evaluation results API will get it as plain text.
-
-Refer to appendix [Evaluation results plain text example](#evaluation-results-plain-text-example) for JSON sample data.
-
-```python
-get_evaluation_results = project_client.evaluations.get_results(evaluation_response.name)
-```
-
-# Appendix
 
 ## Agentic data sample
 
