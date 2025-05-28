@@ -46,6 +46,10 @@ from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
+# args [0] is the request object
+# args [1] is the connection policy
+# args [2] is the pipeline client
+# args [3] is the http request
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs): # pylint: disable=too-many-locals
     """Executes the function with passed parameters applying all retry policies
 
