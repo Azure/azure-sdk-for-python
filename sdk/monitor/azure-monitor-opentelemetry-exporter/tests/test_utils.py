@@ -377,7 +377,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
@@ -387,7 +390,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
@@ -397,7 +403,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
@@ -409,6 +418,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -422,6 +432,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -435,6 +446,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
