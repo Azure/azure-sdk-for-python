@@ -71,6 +71,13 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 
 ## EXECUTION SEQUENCE - 7 MANDATORY STEPS
 
+**ESTIMATED TOTAL TIME: 10-15 minutes**
+- SDK Generation: 5-6 minutes
+- Static Validation: 3-5 minutes  
+- Documentation & Commit: 2-4 minutes
+
+**ALWAYS inform users of time expectations before starting any long-running operations.**
+
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
 ACTION: Run verify_setup tool
@@ -82,6 +89,7 @@ IF missing dependencies:
 ### STEP 2: SDK GENERATION
 ```
 ACTION: Use typespec-python mcp server tools
+TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
 IF commands fail:
@@ -91,10 +99,14 @@ IF commands fail:
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
 ```
+TIMING: Inform user: "Static validation will take approximately 3-5 minutes total across all steps."
 FOR EACH validation step:
     RUN validation
     IF errors/warnings found:
         FIX issues
+        RERUN same step
+    ONLY proceed to next step when current step passes
+```
         RERUN same step
     ONLY proceed to next step when current step passes
 ```
