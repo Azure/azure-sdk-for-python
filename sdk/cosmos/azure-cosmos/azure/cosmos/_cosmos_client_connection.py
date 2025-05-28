@@ -26,6 +26,7 @@
 import os
 import urllib.parse
 import uuid
+import warnings
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -62,7 +63,10 @@ from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
+from ._cosmos_regions import CosmosRegion
 from ._cosmos_responses import CosmosDict, CosmosList
+from ._latency_util import _rank_regions_by_latency
+from ._preferred_locations_util import _adjust_preferred_locations
 from ._range_partition_resolver import RangePartitionResolver
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
@@ -150,6 +154,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     self.resource_tokens[id_] = permission_feed["_token"]
 
         self.connection_policy = connection_policy or ConnectionPolicy()
+        application_region = kwargs.pop('application_region', None)
+
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: Dict[str, Dict[str, Any]] = {}
         self.default_headers: Dict[str, Any] = {
@@ -239,6 +245,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
         database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        
+        # When the user supplies application_region but has not manually set
+        # preferred_locations, build the preferred_locations list dynamically.
+        if application_region and not self.connection_policy.PreferredLocations:
+            region_endpoint_map = {
+                CosmosRegion(loc['name']): loc['databaseAccountEndpoint'] 
+                for loc in self.GetDatabaseAccount().ReadableLocations
+            }
+
+            regions_by_latency = _rank_regions_by_latency(region_endpoint_map)
+            
+            self.connection_policy.PreferredLocations = _adjust_preferred_locations(
+                application_region=application_region,
+                regions_by_latency=regions_by_latency
+            )
+
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used

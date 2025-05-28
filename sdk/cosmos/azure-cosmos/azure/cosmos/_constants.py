@@ -52,6 +52,12 @@ class _Constants:
     MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
     MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
 
+    # Application region related constants
+    LATENCY_PROBE_COUNT: int = 3 # Number of probes to send to each region
+    LATENCY_PROBE_TIMEOUT_SEC: float = 0.5 # Timeout for a single probe (seconds)
+    LATENCY_PROBE_TOTAL_TIMEOUT_SEC: float = 1.5 # Total timeout for all probes to all regions (seconds)
+    LATENCY_PROBE_MAX_WORKERS: int = 9 # Maximum number of concurrent workers for latency probes    
+
     # Error code translations
     ERROR_TRANSLATIONS: Dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",

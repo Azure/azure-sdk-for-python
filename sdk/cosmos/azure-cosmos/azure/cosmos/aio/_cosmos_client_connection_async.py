@@ -26,6 +26,7 @@
 import os
 from urllib.parse import urlparse
 import uuid
+import warnings
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
@@ -59,7 +60,10 @@ from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosList
 from .. import http_constants, exceptions
+from .._cosmos_regions import CosmosRegion
 from . import _query_iterable_async as query_iterable
+from .._latency_util import _rank_regions_by_latency_async
+from .._preferred_locations_util import _adjust_preferred_locations
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
@@ -299,10 +303,28 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
+        application_region = self._setup_kwargs.pop('application_region', None)
+
         if 'database_account' not in self._setup_kwargs:
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
             )
+
+            # When the user supplies application_region but has not manually set
+            # preferred_locations, build the preferred_locations list dynamically.
+            if application_region and not self.connection_policy.PreferredLocations:
+                region_endpoint_map = {
+                    CosmosRegion(loc['name']): loc['databaseAccountEndpoint'] 
+                    for loc in database_account.ReadableLocations
+                }
+
+                regions_by_latency = await _rank_regions_by_latency_async(region_endpoint_map)
+                
+                self.connection_policy.PreferredLocations = _adjust_preferred_locations(
+                    application_region=application_region,
+                    regions_by_latency=regions_by_latency
+                )
+
             self._setup_kwargs['database_account'] = database_account
             await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
         else:

@@ -183,6 +183,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword CosmosRegion | str application_region: Azure region where the application 
+        is running, e.g. ``"East US"`` or ``CosmosRegion.EAST_US``.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         If all preferred locations were excluded, primary/hub location will be used.
