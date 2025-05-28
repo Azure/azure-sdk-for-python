@@ -51,6 +51,7 @@ def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]
                 capture_output=True,
                 text=True,
                 cwd=cwd,
+                stdin=subprocess.DEVNULL,
             )
         
         return {
