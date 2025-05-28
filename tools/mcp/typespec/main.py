@@ -91,36 +91,18 @@ def run_typespec_cli_command(command: str, args: Dict[str, Any], root_dir: Optio
     try:
         # Run the command and capture the output
         if root_dir:
-            if os.name == "nt":  # Windows
-                result = subprocess.Popen(
-                    cli_args,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
-                    text=True,
-                    cwd=root_dir,
-                )
-                result.wait()  # Wait for it to complete
-            else:
-                result = subprocess.run(
-                    cli_args,
-                    capture_output=True,
-                    text=True,
-                    cwd=root_dir,
-                )
-        else:
-            if os.name == "nt":
-                result = subprocess.Popen(
-                    cli_args,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    stdin=subprocess.DEVNULL,  # Explicitly close stdin
-                    text=True
-                )
-                result.wait()
             result = subprocess.run(
                 cli_args,
                 capture_output=True,
+                text=True,
+                stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                cwd=root_dir,
+            )
+        else:
+            result = subprocess.run(
+                cli_args,
+                capture_output=True,
+                stdin=subprocess.DEVNULL,  # Explicitly close stdin
                 text=True,
             )
         logger.info(f"Command output: {result.stdout}")
