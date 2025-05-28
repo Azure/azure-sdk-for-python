@@ -96,8 +96,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        self.client.delete_database(database.id)
-
     def test_etag_match_condition_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
         # Database
