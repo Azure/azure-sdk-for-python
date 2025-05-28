@@ -852,7 +852,7 @@ class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
 class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
-    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    Used as base class for Sharepoint and Microsoft Fabric
     """
 
     def __init__(self, connection_id: str):
@@ -860,7 +860,15 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        :raises ValueError: If the connection id is invalid.
         """
+        if not is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '" + connection_id + "' does not fit the format:" +
+                "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/" +
+                "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self.connection_ids = [ToolConnection(connection_id=connection_id)]
 
     @property
@@ -890,10 +898,19 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
+        :raises ValueError: If the connection id is invalid.
         
         .. seealso:: 
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
+
+        if not is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '" + connection_id + "' does not fit the format:" +
+                "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/" +
+                "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self._search_configurations = [
             BingGroundingSearchConfiguration(
                 connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
@@ -1821,6 +1838,27 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
+
+def is_valid_connection_id(connection_id: str) -> bool:
+    """
+    Validates if a string matches the Azure connection resource ID format.
+    
+    The expected format is:
+    "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/
+    providers/<AZURE_PROVIDER>/accounts/<ACCOUNT_NAME>/projects/<PROJECT_NAME>/
+    connections/<CONNECTION_NAME>"
+    
+    :param connection_id: The connection ID string to validate
+    :type connection_id: str
+    :return: True if the string matches the expected format, False otherwise
+    :rtype: bool
+    """
+    pattern = r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
+    
+    # Check if the string matches the pattern
+    if re.match(pattern, connection_id):
+        return True
+    return False
 
 
 __all__: List[str] = [
