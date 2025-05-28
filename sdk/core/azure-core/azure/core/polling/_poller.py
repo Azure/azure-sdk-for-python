@@ -120,6 +120,8 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
     ) -> None:
         """Initialize the poller with the initial response and deserialization callback.
 
+        :param _: The client, not used in this polling method.
+        :type _: Any
         :param initial_response: The initial response from the long-running operation.
         :type initial_response: Any
         :param deserialization_callback: A callback that takes a response and returns a deserialized object.
