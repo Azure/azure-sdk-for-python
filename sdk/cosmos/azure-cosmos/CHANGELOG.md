@@ -1,14 +1,17 @@
 ## Release History
 
 ### 4.12.0b2 (Unreleased)
-* Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 
 #### Features Added
+* Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 
 #### Bugs Fixed
 * Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
+* Fixed session container compound session token logic. The SDK will now only send the relevant tokens for each read request, as opposed to the entire compound session token for the container. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
+* Write requests will no longer send session tokens when using session consistency. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 
 #### Other Changes
+* Cross-partition queries will now always send a query plan before attempting to execute. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 
 ### 4.12.0b1 (2025-05-19)
 
