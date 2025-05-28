@@ -227,7 +227,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         # This could possibly be due to breaking change in upstream OpenTelemetry
         # Advise user to upgrade to latest OpenTelemetry version
         _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-            "Exception occured when setting up Logging. Please upgrade to the latest OpenTelemetry version: %s.",
+            "Exception occurred when setting up Logging. Please upgrade to the latest OpenTelemetry version: %s.",
             ex,
         )
 
