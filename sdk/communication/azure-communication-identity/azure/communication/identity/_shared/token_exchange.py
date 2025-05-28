@@ -29,7 +29,6 @@ class TokenExchangeClient:
         self._resource_endpoint = options.resource_endpoint
         self._scopes = options.scopes
         self._token_credential = options.token_credential
-        self._pipeline_transport = pipeline_transport
         self._pipeline = self._create_pipeline_from_options(options, pipeline_transport)
         #self._access_token_cache = None  # Could be implemented as a custom cache if needed
 
