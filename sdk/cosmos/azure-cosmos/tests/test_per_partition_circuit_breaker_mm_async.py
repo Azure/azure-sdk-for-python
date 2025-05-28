@@ -468,7 +468,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         await cleanup_method([custom_setup, setup])
 
 
-    # send 5 write concurrent requests when trying to recover
+    # send 15 write concurrent requests when trying to recover
     # verify that only one failed
     async def test_recovering_only_fails_one_requests_async(self):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
@@ -500,15 +500,13 @@ class TestPerPartitionCircuitBreakerMMAsync:
         _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
         try:
             tasks = []
-            for i in range(10):
+            for i in range(15):
                 tasks.append(concurrent_upsert())
             await asyncio.gather(*tasks)
             assert number_of_errors == 1
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
             await cleanup_method([custom_setup, setup])
-
-    # test cosmos client timeout
 
 if __name__ == '__main__':
     unittest.main()

@@ -10,6 +10,7 @@ import time
 import unittest
 import urllib.parse as urllib
 import uuid
+from asyncio import sleep
 
 import pytest
 import requests
@@ -1130,6 +1131,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert read_container.id == created_container.id
 
         created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
+        await sleep(5)
 
         # read item with id
         read_item = await created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
