@@ -23,7 +23,7 @@ class TestNetworkManagementExpressRouteServiceProvidersOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_express_route_service_providers_list(self, resource_group):
         response = self.client.express_route_service_providers.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

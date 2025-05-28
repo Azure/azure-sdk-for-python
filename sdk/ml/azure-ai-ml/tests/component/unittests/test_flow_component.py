@@ -49,7 +49,7 @@ class TestFlowComponent:
                 "is_anonymous": False,
                 "is_archived": False,
                 "properties": {
-                    "client_component_hash": "19278001-3d52-0e43-dc43-4082128d8243",
+                    "client_component_hash": "a32d6c66-9253-d3b2-d068-b6a409ab6770",
                 },
                 "tags": {},
             },
@@ -115,7 +115,7 @@ class TestFlowComponent:
                 "description": "A run of the basic flow",
                 "is_anonymous": False,
                 "is_archived": False,
-                "properties": {"client_component_hash": "bc6d5b98-1aef-0d5a-96ff-5803f1a906c8"},
+                "properties": {"client_component_hash": "f060820c-7fb3-56a8-790c-ae2969a7b544"},
                 "tags": {},
             },
         }
@@ -199,7 +199,7 @@ class TestFlowComponent:
                 "is_anonymous": False,
                 "is_archived": False,
                 # note that this won't take effect actually
-                "properties": {"client_component_hash": "0eec0297-5f6d-e333-780d-c76871ad9c57"},
+                "properties": {"client_component_hash": "07cdc416-c6ee-0beb-3d1b-4e5a5c4b44ec"},
                 "tags": {},
             },
         }
