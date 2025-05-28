@@ -250,7 +250,6 @@ def _populate_part_a_fields(resource: Resource):
 
 # pylint:disable=too-many-return-statements
 def _get_cloud_role(resource: Resource) -> str:
-    # TODO: add "unknown_service" use case
     cloud_role = ""
     service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
     if service_name:
