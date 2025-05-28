@@ -77,6 +77,13 @@ class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALWAYS_ON = "AlwaysON"
 
 
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity type that should be used for an operation."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
 class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImmutabilityState."""
 
@@ -187,6 +194,14 @@ class StandardTierStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta
     LOCALLY_REDUNDANT = "LocallyRedundant"
     GEO_REDUNDANT = "GeoRedundant"
     ZONE_REDUNDANT = "ZoneRedundant"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State."""
+
+    INVALID = "Invalid"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
