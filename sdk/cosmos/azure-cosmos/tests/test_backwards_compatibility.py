@@ -71,7 +71,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
         database_read = database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
         self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
-        self.client.delete_database(database.id, session_token=str(uuid.uuid4()))
 
         # Container
         container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
@@ -95,6 +94,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
             pytest.fail("Container read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
+
+        self.client.delete_database(database.id)
 
     def test_etag_match_condition_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
