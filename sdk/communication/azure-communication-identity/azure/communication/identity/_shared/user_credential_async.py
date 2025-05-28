@@ -8,11 +8,12 @@ from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
 import sys
-from .utils import get_current_utc_as_int
-from .utils import create_access_token
-from .utils_async import AsyncTimer
-from .entra_token_exchange import EntraTokenExchangeClient
-from .entra_token_credential_options import EntraCommunicationTokenCredentialOptions
+from utils import get_current_utc_as_int
+from utils import create_access_token
+from utils_async import AsyncTimer
+from token_exchange import AsyncTokenExchangeClient
+import asyncio
+from token_exchange import TokenExchangeClient
 
 
 class CommunicationTokenCredential(object):
@@ -35,9 +36,16 @@ class CommunicationTokenCredential(object):
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: str = None, **kwargs: Any):
-        options = kwargs.pop("options", None)
-        if options and isinstance(options, EntraCommunicationTokenCredentialOptions):
-            self._token_refresher = lambda: EntraTokenExchangeClient.exchange_token(self._token_credential, self._scopes, self._resource_endpoint)
+        self._resource_endpoint = kwargs.pop("resource_endpoint", None)
+        self._token_credential = kwargs.pop("token_credential", None)
+        self._scopes = kwargs.pop("scopes", None)
+
+        if self._resource_endpoint and self._token_credential and self._scopes:
+            self._token_refresher = lambda: AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+            self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+            async def _initialize_token():
+                self._token = await AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes).exchange_entra_token()
+            asyncio.get_event_loop().run_until_complete(_initialize_token())
         else:
             if not isinstance(token, str):
                 raise TypeError("Token must be a string.")

@@ -14,6 +14,8 @@ from entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuard
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from typing import List, Optional
+from datetime import datetime, timezone
+from dateutil import parser as dateutil_parser
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
@@ -44,7 +46,7 @@ class TokenExchangeClient:
         from azure.core.pipeline.transport import RequestsTransport
         return Pipeline(policies=policies, transport=RequestsTransport())
 
-    def _exchange_entra_token(self) -> AccessToken:
+    def exchange_entra_token(self) -> AccessToken:
         message = _TokenExchangeUtils.create_request_message(self._resource_endpoint, self._scopes)
         response = self._pipeline.run(message)
         return self._parse_access_token_from_response(response)
@@ -57,8 +59,10 @@ class TokenExchangeClient:
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
                 expires_on = access_token_json["expiresOn"]
-
-                return AccessToken(token, expires_on)
+                expires_on_epoch = _TokenExchangeUtils.parse_expires_on(expires_on, response)
+                if expires_on_epoch is None:
+                    raise ClientAuthenticationError("Failed to parse 'expiresOn' value from access token response")
+                return AccessToken(token, expires_on_epoch)
             except Exception as ex:
                 raise ClientAuthenticationError("Failed to parse access token from response") from ex
         else:
@@ -91,7 +95,7 @@ class AsyncTokenExchangeClient:
         from azure.core.pipeline.transport import AioHttpTransport
         return AsyncPipeline(policies=policies, transport=AioHttpTransport())
 
-    async def _exchange_entra_token(self) -> AccessToken:
+    async def exchange_entra_token(self) -> AccessToken:
         message = _TokenExchangeUtils.create_request_message(self._resource_endpoint, self._scopes)
         response = await self._pipeline.run(message)
         return await self._parse_access_token_from_response(response)
@@ -104,7 +108,10 @@ class AsyncTokenExchangeClient:
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
                 expires_on = access_token_json["expiresOn"]
-                return AccessToken(token, expires_on)
+                expires_on_epoch = _TokenExchangeUtils.parse_expires_on(expires_on, response)
+                if expires_on_epoch is None:
+                    raise ClientAuthenticationError("Failed to parse 'expiresOn' value from access token response")
+                return AccessToken(token, expires_on_epoch)
             except Exception as ex:
                 raise ClientAuthenticationError("Failed to parse access token from response") from ex
         else:
@@ -144,4 +151,22 @@ class _TokenExchangeUtils:
                 raise ValueError(
                     f"Scopes validation failed. Ensure all scopes start with either {TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
                 )
+
+        @staticmethod
+        def parse_expires_on(expires_on, response):
+            if isinstance(expires_on, str):
+                    # Try to parse ISO8601 string
+                try:
+                    expires_on_dt = dateutil_parser.parse(expires_on)
+                    expires_on_epoch = int(expires_on_dt.astimezone(timezone.utc).timestamp())
+                    expires_on_epoch = int(expires_on_dt.replace(tzinfo=timezone.utc).timestamp())
+                    return expires_on_epoch
+                except Exception as ex:
+                    expires_on_epoch = int(expires_on)
+            else:
+                raise HttpResponseError(
+                    message="Missing expires_on field in access token response",
+                    response=response.http_response)
+            
+
             
