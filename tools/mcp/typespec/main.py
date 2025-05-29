@@ -9,8 +9,8 @@ from github import Github, Auth
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-hander = logging.StreamHandler(sys.stderr)
-logger.addHandler(hander)
+handler = logging.StreamHandler(sys.stderr)
+logger.addHandler(handler)
 
 # Initialize server
 mcp = FastMCP("typespec")
