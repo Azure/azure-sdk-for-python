@@ -2,14 +2,12 @@
 
 # Release History
 
-## 1.0.0b37 (Unreleased)
+## 1.0.0b37 (2025-05-29)
 
 ### Features Added
 
 - Implement spec for k8s attribute logic.
   ([#41130](https://github.com/Azure/azure-sdk-for-python/pull/41130))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
