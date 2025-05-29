@@ -36,6 +36,7 @@ To report an issue with the client library, or request additional features, plea
     - [Function call](#create-agent-with-function-call)
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
+    - [Fabric data](#create-an-agent-with-fabric)
   - [Create thread](#create-thread) with
     - [Tool resource](#create-thread-with-tool-resource)
   - [Create message](#create-message) with:
@@ -660,6 +661,35 @@ with agents_client:
         name="my-agent",
         instructions="You are a helpful agent",
         tools=openapi_tool.definitions,
+    )
+```
+
+<!-- END SNIPPET -->
+
+
+### Create an Agent with Fabric
+
+To enable your Agent to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
+
+```python
+conn_id = os.environ["FABRIC_CONNECTION_ID"]
+
+print(conn_id)
+
+# Initialize an Agent Fabric tool and add the connection id
+fabric = FabricTool(connection_id=conn_id)
+
+# Create an Agent with the Fabric tool and process an Agent run
+with agents_client:
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are a helpful agent",
+        tools=fabric.definitions,
     )
 ```
 
