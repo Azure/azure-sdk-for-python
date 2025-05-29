@@ -392,6 +392,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1128,7 +1129,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
+        option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete_blob()`
 
         :param str blob: The blob with which to interact.
         :param str delete_snapshots:
@@ -1176,6 +1177,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
         """
         if isinstance(blob, BlobProperties):
@@ -1334,7 +1336,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         and retains the blobs or snapshots for specified number of days.
         After specified number of days, blobs' data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
+        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.BlobClient.undelete_blob()`
 
         The maximum number of blobs that can be deleted in a single request is 256.
 

@@ -385,6 +385,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1122,7 +1123,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete()`
+        Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete_blob()`
 
         :param str blob: The blob with which to interact.
         :param str delete_snapshots:
@@ -1170,6 +1171,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
         """
         if isinstance(blob, BlobProperties):
@@ -1328,7 +1330,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         and retains the blobs or snapshots for specified number of days.
         After specified number of days, blobs' data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete()`
+        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete_blob()`
 
         The maximum number of blobs that can be deleted in a single request is 256.
 
@@ -1394,7 +1396,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: AsyncIterator[~azure.core.pipeline.transport.AsyncHttpResponse]
 
         .. admonition:: Example:
 
@@ -1486,7 +1488,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: AsyncIterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         if self._is_localhost:
             kwargs['url_prepend'] = self.account_name
@@ -1547,7 +1549,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False.
         :return: An async iterator of responses, one for each blob in order
-        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+        :rtype: AsyncIterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         if self._is_localhost:
             kwargs['url_prepend'] = self.account_name

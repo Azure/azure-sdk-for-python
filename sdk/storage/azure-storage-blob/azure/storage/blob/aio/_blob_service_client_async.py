@@ -379,6 +379,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -607,6 +608,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:

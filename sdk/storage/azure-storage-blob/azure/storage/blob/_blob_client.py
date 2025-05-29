@@ -874,7 +874,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         and retains the blob for a specified number of days.
         After the specified number of days, the blob's data is removed from the service during garbage collection.
         Soft deleted blob is accessible through :func:`~ContainerClient.list_blobs()` specifying `include=['deleted']`
-        option. Soft-deleted blob can be restored using :func:`undelete` operation.
+        option. Soft-deleted blob can be restored using :func:`~BlobClient.undelete_blob()` operation.
 
         :param Optional[str] delete_snapshots:
             Required if the blob has associated snapshots. Values include:
@@ -922,6 +922,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -960,6 +961,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1812,6 +1814,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The copy operation to abort. This can be either an ID string, or an
             instance of BlobProperties.
         :type copy_id: str or ~azure.storage.blob.BlobProperties
+        :returns: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1930,6 +1933,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :returns: None
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2274,6 +2278,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :returns: None
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))

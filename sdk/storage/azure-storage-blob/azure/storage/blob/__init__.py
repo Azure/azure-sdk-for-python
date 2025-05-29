@@ -153,7 +153,7 @@ def download_blob_from_url(
     :param output:
         Where the data should be downloaded to. This could be either a file path to write to,
         or an open IO handle to write to.
-    :type output: str or writable stream.
+    :type output: str or IO.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
@@ -190,6 +190,7 @@ def download_blob_from_url(
         blob. Also note that if enabled, the memory-efficient upload algorithm
         will not be used, because computing the MD5 hash requires buffering
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+    :returns: None
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
