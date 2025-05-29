@@ -253,6 +253,7 @@ class InteractiveCredential(MsalCredential, ABC):
           for these scopes.
         :keyword str claims: additional claims required in the token, such as those provided by
           :func:`AuthenticationRequiredError.claims`
+        :return: An AuthenticationRecord containing the authenticated user's information.
         :rtype: ~azure.identity.AuthenticationRecord
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.

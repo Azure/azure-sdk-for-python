@@ -104,7 +104,7 @@ class GetTokenMixin(abc.ABC):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support

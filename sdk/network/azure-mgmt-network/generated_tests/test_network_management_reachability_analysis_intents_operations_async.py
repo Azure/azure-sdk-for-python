@@ -26,7 +26,7 @@ class TestNetworkManagementReachabilityAnalysisIntentsOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             network_manager_name="str",
             workspace_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestNetworkManagementReachabilityAnalysisIntentsOperationsAsync(AzureMgmtR
             network_manager_name="str",
             workspace_name="str",
             reachability_analysis_intent_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestNetworkManagementReachabilityAnalysisIntentsOperationsAsync(AzureMgmtR
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestNetworkManagementReachabilityAnalysisIntentsOperationsAsync(AzureMgmtR
             network_manager_name="str",
             workspace_name="str",
             reachability_analysis_intent_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

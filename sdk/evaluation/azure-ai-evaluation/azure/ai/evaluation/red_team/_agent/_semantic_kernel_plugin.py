@@ -13,7 +13,7 @@ from typing import Annotated, Dict, Any, Optional, Callable
 
 from semantic_kernel.functions import kernel_function
 
-from azure.ai.evaluation.red_team._agent import RedTeamToolProvider
+from azure.ai.evaluation.red_team._agent._agent_tools import RedTeamToolProvider
 from azure.identity import DefaultAzureCredential
 
 class RedTeamPlugin:
@@ -26,16 +26,7 @@ class RedTeamPlugin:
         ```python
         # Method 1: Create a plugin with individual environment variables
         plugin = RedTeamPlugin(
-            endpoint=os.environ.get("AZURE_AI_ENDPOINT"),
-            subscription_id=os.environ.get("AZURE_SUBSCRIPTION_ID"),
-            resource_group=os.environ.get("AZURE_RESOURCE_GROUP"),
-            project_name=os.environ.get("AZURE_PROJECT_NAME"),
-            target_func=lambda x: "Target model response"
-        )
-        
-        # Method 2: Create a plugin with the Azure AI Project connection string
-        plugin = RedTeamPlugin.from_connection_string(
-            projects_connection_string=os.environ["PROJECT_CONNECTION_STRING"],
+            azure_ai_project_endpoint=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
             target_func=lambda x: "Target model response"
         )
         
@@ -49,30 +40,20 @@ class RedTeamPlugin:
         ```
     """
     
-    def __init__(self, subscription_id: str, resource_group: str, 
-                 project_name: str, target_func: Optional[Callable[[str], str]] = None, *,
+    def __init__(self, azure_ai_project_endpoint: str, target_func: Optional[Callable[[str], str]] = None, *,
                  application_scenario: str = "", **kwargs):
         """
         Initialize the RedTeamPlugin with the necessary configuration components.
-        
-        :param endpoint: The Azure AI endpoint (e.g., 'swedencentral.api.azureml.ms')
-        :param subscription_id: The Azure subscription ID
-        :param resource_group: The Azure resource group name
-        :param project_name: The Azure AI project name
+
+        :param azure_ai_project_endpoint: The Azure AI project endpoint (e.g., 'https://your-resource-name.services.ai.azure.com/api/projects/your-project-name')
         :param target_func: Optional function to call with prompts
         :param application_scenario: The application scenario for the tool provider
         """
-        # Set up project details
-        azure_ai_project = {
-            "subscription_id": subscription_id,
-            "resource_group_name": resource_group,
-            "project_name": project_name
-        }
         
         # Initialize credential and tool provider
         self.credential = DefaultAzureCredential()
         self.tool_provider = RedTeamToolProvider(
-            azure_ai_project=azure_ai_project,
+            azure_ai_project_endpoint=azure_ai_project_endpoint,
             credential=self.credential,
             application_scenario=application_scenario
         )
@@ -82,36 +63,6 @@ class RedTeamPlugin:
         
         # Dictionary to store fetched prompts for reference
         self.fetched_prompts = {}
-    
-    @classmethod
-    def from_connection_string(cls, projects_connection_string: str, 
-                               target_func: Optional[Callable[[str], str]] = None,
-                               application_scenario: str = "A customer service chatbot for a retail website"):
-        """
-        Create a RedTeamPlugin instance from a connection string.
-        
-        :param projects_connection_string: The Azure AI project connection string
-        :param target_func: Optional function to call with prompts
-        :param application_scenario: The application scenario for the tool provider
-        :return: A new RedTeamPlugin instance
-        """
-        # Parse connection string
-        parts = projects_connection_string.split(";")
-        if len(parts) < 4:
-            raise ValueError("Invalid connection string format. Expected format: 'endpoint;subscription_id;resource_group;project_name'")
-            
-        endpoint = parts[0] # type: ignore
-        subscription_id = parts[1]
-        resource_group = parts[2]
-        project_name = parts[3]
-        
-        return cls(
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-            project_name=project_name,
-            target_func=target_func,
-            application_scenario=application_scenario
-        )
     
     @kernel_function(description="Fetch a harmful prompt for a specific risk category to test content filters")
     async def fetch_harmful_prompt(

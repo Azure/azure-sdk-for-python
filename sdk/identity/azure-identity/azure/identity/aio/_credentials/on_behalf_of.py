@@ -109,6 +109,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         return self
 
     async def close(self) -> None:
+        """Close the credential's underlying HTTP client."""
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:

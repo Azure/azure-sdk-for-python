@@ -18,6 +18,13 @@ class Access(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DENY = "Deny"
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction that specifies whether the access rules is inbound/outbound."""
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the action to take on rule match."""
 
@@ -59,6 +66,21 @@ class AdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class AdvertisedPublicPrefixPropertiesValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Advertised Public Prefix State that denotes if the prefix is validated or not."""
+
+    NOT_CONFIGURED = "NotConfigured"
+    CONFIGURING = "Configuring"
+    CONFIGURED = "Configured"
+    VALIDATION_NEEDED = "ValidationNeeded"
+    VALIDATION_FAILED = "ValidationFailed"
+    MANUAL_VALIDATION_NEEDED = "ManualValidationNeeded"
+    ASN_VALIDATION_FAILED = "AsnValidationFailed"
+    CERTIFICATE_MISSING_IN_ROUTING_REGISTRY = "CertificateMissingInRoutingRegistry"
+    INVALID_SIGNATURE_ENCODING = "InvalidSignatureEncoding"
+    SIGNATURE_VERIFICATION_FAILED = "SignatureVerificationFailed"
 
 
 class ApplicationGatewayBackendHealthServerHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,6 +143,8 @@ class ApplicationGatewayFirewallUserSessionVariable(str, Enum, metaclass=CaseIns
     CLIENT_ADDR = "ClientAddr"
     GEO_LOCATION = "GeoLocation"
     NONE = "None"
+    CLIENT_ADDR_XFF_HEADER = "ClientAddrXFFHeader"
+    GEO_LOCATION_XFF_HEADER = "GeoLocationXFFHeader"
 
 
 class ApplicationGatewayLoadDistributionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -303,6 +327,14 @@ class ApplicationGatewayWafRuleStateTypes(str, Enum, metaclass=CaseInsensitiveEn
     DISABLED = "Disabled"
 
 
+class AssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode on the association."""
+
+    LEARNING = "Learning"
+    ENFORCED = "Enforced"
+    AUDIT = "Audit"
+
+
 class AssociationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The association type of the child resource to the parent resource."""
 
@@ -450,6 +482,32 @@ class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTIVITY = "Connectivity"
     SECURITY_USER = "SecurityUser"
     ROUTING = "Routing"
+
+
+class ConnectedGroupAddressOverlap(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Behavior to handle overlapped IP address space among members of the connected group of the
+    connectivity configuration.
+    """
+
+    ALLOWED = "Allowed"
+    """Default. Allows connected group members to have overlapping IP address space."""
+    DISALLOWED = "Disallowed"
+    """Strictly disallows connected group members from having overlapping IP address space. Prevents
+    the addition of a virtual network with overlapping address to the connected group, blocks
+    peering between a virtual network and a connected group member if any connected group member
+    has an overlapping range, and restricts address space modifications that would introduce
+    overlap."""
+
+
+class ConnectedGroupPrivateEndpointsScale(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Option indicating the scale of private endpoints allowed in the connected group of the
+    connectivity configuration.
+    """
+
+    STANDARD = "Standard"
+    """Default. Allows for up to 2K private endpoints in the connected group."""
+    HIGH_SCALE = "HighScale"
+    """Allows for up to 20K private endpoints in the connected group."""
 
 
 class ConnectionMonitorEndpointFilterItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1220,6 +1278,7 @@ class NatGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of Nat Gateway SKU."""
 
     STANDARD = "Standard"
+    STANDARD_V2 = "StandardV2"
 
 
 class NetworkIntentPolicyBasedService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1318,6 +1377,38 @@ class NicTypeInResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ADDITIONAL_NIC = "AdditionalNic"
 
 
+class NspLinkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of NSP Link/LinkReference."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    WAIT_FOR_REMOTE_COMPLETION = "WaitForRemoteCompletion"
+
+
+class NspLinkStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The NSP link state."""
+
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
+
+class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+
+
 class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The office traffic category."""
 
@@ -1400,6 +1491,17 @@ class PcStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPED = "Stopped"
     ERROR = "Error"
     UNKNOWN = "Unknown"
+
+
+class PeeringEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Option indicating enforcement of peerings created by the connectivity configuration."""
+
+    UNENFORCED = "Unenforced"
+    """Default. Peerings created by the connectivity configuration may be modified or deleted outside
+    of the network manager."""
+    ENFORCED = "Enforced"
+    """Peerings created by the connectivity configuration will not be modifiable or deletable outside
+    of the network manager."""
 
 
 class PfsGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1530,6 +1632,7 @@ class PublicIPAddressSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASIC = "Basic"
     STANDARD = "Standard"
+    STANDARD_V2 = "StandardV2"
 
 
 class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1544,6 +1647,7 @@ class PublicIPPrefixSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of a public IP prefix SKU."""
 
     STANDARD = "Standard"
+    STANDARD_V2 = "StandardV2"
 
 
 class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1881,6 +1985,49 @@ class VirtualNetworkGatewayConnectionType(str, Enum, metaclass=CaseInsensitiveEn
     VNET2_VNET = "Vnet2Vnet"
     EXPRESS_ROUTE = "ExpressRoute"
     VPN_CLIENT = "VPNClient"
+
+
+class VirtualNetworkGatewayMigrationPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current migration phase of gateway."""
+
+    NONE = "None"
+    """No migration phase set on gateway."""
+    PREPARE = "Prepare"
+    """Gateway is going through prepare migration or prepare has failed. Please see state and error
+    details for more information."""
+    PREPARE_SUCCEEDED = "PrepareSucceeded"
+    """Prepare succeeded on gateway."""
+    EXECUTE = "Execute"
+    """Gateway is going through execute migration or execute has failed. Please see state and error
+    details for more information."""
+    EXECUTE_SUCCEEDED = "ExecuteSucceeded"
+    """Execute succeeded on gateway."""
+    COMMIT = "Commit"
+    """Gateway is going through commit migration or commit has failed. Please see state and error
+    details for more information."""
+    COMMIT_SUCCEEDED = "CommitSucceeded"
+    """Commit succeeded, represent migration is complete for the gateway."""
+    ABORT_SUCCEEDED = "AbortSucceeded"
+    """Represent abort succeeded on gateway, start with prepare to retrigger migration."""
+    ABORT = "Abort"
+    """Gateway is going through abort migration or abort has failed. Please see state and error
+    details for more information."""
+
+
+class VirtualNetworkGatewayMigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current state of gateway migration."""
+
+    NONE = "None"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
+
+class VirtualNetworkGatewayMigrationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MigrationType for the virtual network gateway."""
+
+    UPGRADE_DEPLOYMENT_TO_STANDARD_IP = "UpgradeDeploymentToStandardIP"
+    """Indicates that it is a migration process from basic IP CSES to standard IP VMSS."""
 
 
 class VirtualNetworkGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

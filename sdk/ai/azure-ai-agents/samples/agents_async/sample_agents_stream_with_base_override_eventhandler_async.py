@@ -9,7 +9,7 @@ DESCRIPTION:
     This sample demonstrates how to override the base event handler, parse the events, and iterate through them.
     In your use case, you might not want to write the iteration code similar to sample_agents_stream_iteration_async.py.
     If you have multiple places to call stream, you might find the iteration code cumbersome.
-    This example shows how to override the base event handler, parse the events, and iterate through them, which can be 
+    This example shows how to override the base event handler, parse the events, and iterate through them, which can be
     reused in multiple stream calls to help keep the code clean.
 
 USAGE:
@@ -20,7 +20,7 @@ USAGE:
     pip install azure-ai-agents azure-identity aiohttp
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model.
 """

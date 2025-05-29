@@ -22,7 +22,7 @@ class TestNetworkManagementAzureFirewallFqdnTagsOperations(AzureMgmtRecordedTest
     @recorded_by_proxy
     def test_azure_firewall_fqdn_tags_list_all(self, resource_group):
         response = self.client.azure_firewall_fqdn_tags.list_all(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

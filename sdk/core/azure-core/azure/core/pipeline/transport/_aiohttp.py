@@ -49,7 +49,9 @@ from multidict import CIMultiDict
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
 )
 from azure.core.pipeline import AsyncPipeline
@@ -75,6 +77,15 @@ if TYPE_CHECKING:
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
+
+try:
+    # ConnectionTimeoutError was only introduced in aiohttp 3.10 so we want to keep this
+    # backwards compatible. If client is using aiohttp <3.10, the behaviour will safely
+    # fall back to treating a TimeoutError as a ServiceResponseError (that wont be retried).
+    from aiohttp.client_exceptions import ConnectionTimeoutError
+except ImportError:
+
+    class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -344,8 +355,10 @@ class AioHttpTransport(AsyncHttpTransport):
             raise
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
+        except ConnectionTimeoutError as err:
+            raise ServiceRequestTimeoutError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response

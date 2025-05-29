@@ -7,15 +7,15 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     Azure AI Search tool from the Azure agents service using a synchronous client.
 
 PREREQUISITES:
-    You will need an Azure AI Search Resource. 
+    You will need an Azure AI Search Resource.
     If you already have one, you must create an agent that can use an existing Azure AI Search index:
     https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
-    
-    If you do not already have an agent Setup with an Azure AI Search resource, follow the guide for a Standard agent setup: 
+
+    If you do not already have an agent Setup with an Azure AI Search resource, follow the guide for a Standard agent setup:
     https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure
 
 USAGE:
@@ -26,9 +26,9 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
        as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.

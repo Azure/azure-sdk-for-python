@@ -27,7 +27,7 @@ class TestNetworkManagementRoutesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 route_table_name="str",
                 route_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -41,7 +41,7 @@ class TestNetworkManagementRoutesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             route_table_name="str",
             route_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestNetworkManagementRoutesOperationsAsync(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +79,7 @@ class TestNetworkManagementRoutesOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.routes.list(
             resource_group_name=resource_group.name,
             route_table_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -246,7 +246,14 @@ def main(generate_input, generate_output):
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
                 del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"], run_in_pipeline)
+                config = gen_typespec(
+                    readme_or_tsp,
+                    spec_folder,
+                    data["headSha"],
+                    data["repoHttpsUrl"],
+                    run_in_pipeline,
+                    data.get("apiVersion"),
+                )
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")

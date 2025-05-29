@@ -26,7 +26,7 @@ class TestNetworkManagementResourceNavigationLinksOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

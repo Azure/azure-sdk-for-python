@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,7 +26,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.inbound_nat_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -39,7 +40,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 load_balancer_name="str",
                 inbound_nat_rule_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -53,7 +54,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -1099,9 +1100,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                 "name": "str",
                                 "provisioningState": "str",
                                 "publicIpAddresses": [{"id": "str"}],
+                                "publicIpAddressesV6": [{"id": "str"}],
                                 "publicIpPrefixes": [{"id": "str"}],
+                                "publicIpPrefixesV6": [{"id": "str"}],
                                 "resourceGuid": "str",
                                 "sku": {"name": "str"},
+                                "sourceVirtualNetwork": {"id": "str"},
                                 "subnets": [{"id": "str"}],
                                 "tags": {"str": "str"},
                                 "type": "str",
@@ -1192,9 +1196,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
+                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
+                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
+                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -1481,9 +1488,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
+                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
+                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
+                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -1664,9 +1674,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
+                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
+                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
+                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -2054,9 +2067,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
+                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
+                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
+                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -2168,9 +2184,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
+                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
+                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
+                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -3212,9 +3231,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
+                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
+                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
+                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -3309,9 +3331,12 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
+                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
+                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
+                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -4159,7 +4184,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

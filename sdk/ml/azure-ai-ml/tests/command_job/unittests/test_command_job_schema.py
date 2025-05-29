@@ -87,7 +87,7 @@ class TestCommandJob:
 
     def test_deserialize_inputs_dataset(self):
         test_path = "./tests/test_configs/command_job/command_job_inputs_dataset_test.yml"
-        with open("./tests/test_configs/command_job/command_job_inputs_dataset_test.yml", "r") as f:
+        with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
             cfg = yaml.safe_load(f)
@@ -96,6 +96,7 @@ class TestCommandJob:
             internal_representation: CommandJob = CommandJob(**schema.load(cfg))
         source = internal_representation._to_rest_object()
         assert source.properties.inputs["test1"].uri == target["inputs"]["test1"]["path"]
+        assert source.properties.environment_variables == target["environment_variables"]
 
     def test_deserialize_inputs_dataset_short_form(self):
         test_path = "./tests/test_configs/command_job/command_job_inputs_dataset_short_form_test.yml"
@@ -126,7 +127,10 @@ class TestCommandJob:
         assert internal_representation.environment.name != envName
         assert internal_representation.environment.name == ANONYMOUS_ENV_NAME
         assert internal_representation.environment._is_anonymous
-        assert internal_representation.environment.version == "7edecdc2427764b4606a68e5f1a95fe3"
+        assert (
+            internal_representation.environment.version
+            == "9a8126427ef71af0cdc4a56218a9b24e764524f68383d5c4b645448376a03f6b"
+        )
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted

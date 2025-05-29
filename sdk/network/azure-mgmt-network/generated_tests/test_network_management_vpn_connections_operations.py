@@ -25,7 +25,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +133,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             vpn_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -159,7 +159,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             vpn_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -171,7 +171,7 @@ class TestNetworkManagementVpnConnectionsOperations(AzureMgmtRecordedTestCase):
         response = self.client.vpn_connections.list_by_vpn_gateway(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

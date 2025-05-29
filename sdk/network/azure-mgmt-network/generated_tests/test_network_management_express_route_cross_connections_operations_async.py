@@ -23,7 +23,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_express_route_cross_connections_list(self, resource_group):
         response = self.client.express_route_cross_connections.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
     async def test_express_route_cross_connections_list_by_resource_group(self, resource_group):
         response = self.client.express_route_cross_connections.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
         response = await self.client.express_route_cross_connections.get(
             resource_group_name=resource_group.name,
             cross_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -76,6 +76,14 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                             "ipv6PeeringConfig": {
                                 "microsoftPeeringConfig": {
                                     "advertisedCommunities": ["str"],
+                                    "advertisedPublicPrefixInfo": [
+                                        {
+                                            "prefix": "str",
+                                            "signature": "str",
+                                            "validationId": "str",
+                                            "validationState": "str",
+                                        }
+                                    ],
                                     "advertisedPublicPrefixes": ["str"],
                                     "advertisedPublicPrefixesState": "str",
                                     "customerASN": 0,
@@ -90,6 +98,14 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                             "lastModifiedBy": "str",
                             "microsoftPeeringConfig": {
                                 "advertisedCommunities": ["str"],
+                                "advertisedPublicPrefixInfo": [
+                                    {
+                                        "prefix": "str",
+                                        "signature": "str",
+                                        "validationId": "str",
+                                        "validationState": "str",
+                                    }
+                                ],
                                 "advertisedPublicPrefixes": ["str"],
                                 "advertisedPublicPrefixesState": "str",
                                 "customerASN": 0,
@@ -118,7 +134,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -132,7 +148,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             cross_connection_name="str",
             cross_connection_parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -147,7 +163,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -163,7 +179,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -179,7 +195,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

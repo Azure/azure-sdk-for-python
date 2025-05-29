@@ -292,7 +292,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param analyze_request: The text and analyzer or analysis components to test.
         :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :return: AnalyzeResult
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeRequest
+        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
@@ -487,7 +487,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Get index level statistics for a search service.
 
         :return: Index statistics result.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
@@ -503,7 +503,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             properties.
         :paramtype select: list[str]
         :return: List of Aliases
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -517,7 +517,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the alias names in an Azure Search service.
 
         :return: List of alias names
-        :rtype: ~azure.core.paging.AsyncItemPaged[str]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -554,7 +554,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-         ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -733,7 +733,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the agents in an Azure Search service.
 
         :return: List of Knowledge Agents
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))

@@ -75,7 +75,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         and answers are requested in the search query via the query_answer parameter.
 
         :return: Answers.
-        :rtype: list[~azure.search.documents.QueryAnswerResult]
+        :rtype: list[~azure.search.documents.models.QueryAnswerResult]
         """
         return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_answers())
 

@@ -8,7 +8,7 @@
 
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -107,9 +107,9 @@ class ManagementLockObject(_serialization.Model):
         :paramtype owners: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.level = level
         self.notes = notes
         self.owners = owners

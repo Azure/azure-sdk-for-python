@@ -3,12 +3,14 @@
 ### 4.12.0b2 (Unreleased)
 
 #### Features Added
-
-#### Breaking Changes
+* Added ability to set a user agent suffix at the client level. See [PR 40904](https://github.com/Azure/azure-sdk-for-python/pull/40904)
+* Added ability to use request level `excluded_locations` on metadata calls, such as getting container properties. See [PR 40905](https://github.com/Azure/azure-sdk-for-python/pull/40905)
 
 #### Bugs Fixed
+* Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
 
 #### Other Changes
+* Added Client Generated Activity IDs to all Requests. Cosmos Diagnostics Logs will more clearly show the Activity ID for each request and response. [PR 41013](https://github.com/Azure/azure-sdk-for-python/pull/41013)
 
 ### 4.12.0b1 (2025-05-19)
 

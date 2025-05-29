@@ -27,7 +27,7 @@ def call_ollama(query: str) -> str:
     Call the Ollama API with a prompt and return the response.
     """
     url = "http://localhost:11434/api/generate"
-    payload = {"model": "<model_name>", "prompt": query, "stream": False}
+    payload = {"model": "gemma3:1b", "prompt": query, "stream": False}
 
     response = requests.post(url, json=payload, timeout=60)
     try:
@@ -52,9 +52,7 @@ async def main():
     api_key = os.environ.get("AZURE_OPENAI_API_KEY")
     
     # Get Azure AI Project details from environment variables
-    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
-    resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
-    project_name = os.environ.get("AZURE_PROJECT_NAME")
+    azure_ai_project_endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
     
     # Initialize the service
     service = AzureChatCompletion(
@@ -65,9 +63,7 @@ async def main():
     
     # Initialize the RedTeamPlugin with the target function
     red_team_plugin = RedTeamPlugin(
-        subscription_id=subscription_id,
-        resource_group=resource_group,
-        project_name=project_name,
+        azure_ai_project_endpoint=azure_ai_project_endpoint,
         target_func=call_ollama
     )
 

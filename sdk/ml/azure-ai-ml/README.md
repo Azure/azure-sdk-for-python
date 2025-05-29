@@ -44,6 +44,43 @@ ml_client = MLClient(
 
 ## Key concepts
 
+Refer the below high level sequence diagram illustrating the package's workflow:
+
+![azure-ai-ml sequence diagram](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ml/azure-ai-ml/azure_ai_ml_seq_diagram.png?raw=true)
+
+## SDK Architecture Components
+
+The sequence diagram above illustrates the architecture and workflow of the Azure ML Python SDK v2. Here's an explanation of the key components:
+
+- **User**: You, the developer using the SDK to interact with Azure ML.
+- **Entity**: Python classes representing Azure ML resources like Jobs, Models, Components, etc.
+- **Schema**: Validation classes that ensure entities conform to expected structures and requirements.
+- **MLClient**: The main entry point for all operations, providing access to various services.
+- **Operations**: Specialized classes handling specific resource types (jobs, models, endpoints, etc.).
+- **Telemetry**: Internal component for monitoring and collecting usage data (opt-out available).
+- **Serialization**: Converts between Python objects and REST API formats.
+- **REST Client**: Manages HTTP communications with Azure ML services.
+- **Authentication**: Handles identity and access tokens via Azure Identity libraries.
+- **AzureML Service**: The backend Azure Machine Learning service.
+
+## Workflow Description
+
+The diagram depicts two main workflows:
+
+1. **Entity Creation and Validation**:
+   - Create entities directly using Python classes or load from YAML files
+   - YAML files are validated against schemas to ensure correctness
+   - Validation errors are reported immediately if found
+
+2. **Operation Execution**:
+   - Initialize MLClient with proper credentials
+   - Request operations through the client (create, get, list, delete, etc.)
+   - Operations are routed to specialized classes for handling
+   - Entities are serialized into REST API format
+   - Authenticated HTTP requests are sent to Azure ML services
+   - Responses are deserialized back into entity objects
+   - Results are returned to the user
+
 Azure Machine Learning Python SDK v2 comes with many new features like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. The SDK v2 brings consistency and ease of use across all assets of the platform. The Python SDK v2 offers the following capabilities:
 * Run **Standalone Jobs** - run a discrete ML activity as Job. This job can be run locally or on the cloud. We currently support the following types of jobs:
   * Command - run a command (Python, R, Windows Command, Linux Shell etc.)

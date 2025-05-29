@@ -490,7 +490,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -544,7 +544,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -596,7 +596,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """

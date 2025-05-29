@@ -25,7 +25,7 @@ class TestNetworkManagementVpnSiteLinksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_link_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementVpnSiteLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.vpn_site_links.list_by_vpn_site(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -27,7 +27,7 @@ class TestNetworkManagementVpnSiteLinkConnectionsOperationsAsync(AzureMgmtRecord
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

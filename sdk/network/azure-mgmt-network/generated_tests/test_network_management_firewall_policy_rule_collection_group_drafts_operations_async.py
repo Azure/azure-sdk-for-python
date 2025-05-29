@@ -26,7 +26,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupDraftsOperationsAsyn
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             rule_collection_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupDraftsOperationsAsyn
                 "size": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupDraftsOperationsAsyn
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             rule_collection_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

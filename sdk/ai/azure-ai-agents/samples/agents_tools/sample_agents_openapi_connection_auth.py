@@ -8,7 +8,7 @@
 FILE: sample_agents_openapi_connection_auth.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     OpenAPI tool from the Azure Agents service using a synchronous client, using
     custom key authentication against the TripAdvisor API.
     To learn more about OpenAPI specs, visit https://learn.microsoft.com/openapi
@@ -28,7 +28,7 @@ USAGE:
     pip install azure-ai-agents azure-identity jsonref
 
     Set this environment variables with your own values:
-    PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                        page of your Azure AI Foundry portal.
     OPENAPI_CONNECTION_ID - the connection ID for the OpenAPI connection, taken from Azure AI Foundry.
     MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Agents against

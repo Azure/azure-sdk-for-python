@@ -1372,7 +1372,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
             Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
@@ -1512,7 +1512,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
             Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.

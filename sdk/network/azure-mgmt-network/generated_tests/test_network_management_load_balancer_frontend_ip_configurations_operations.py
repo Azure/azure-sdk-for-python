@@ -24,7 +24,7 @@ class TestNetworkManagementLoadBalancerFrontendIPConfigurationsOperations(AzureM
         response = self.client.load_balancer_frontend_ip_configurations.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementLoadBalancerFrontendIPConfigurationsOperations(AzureM
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             frontend_ip_configuration_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

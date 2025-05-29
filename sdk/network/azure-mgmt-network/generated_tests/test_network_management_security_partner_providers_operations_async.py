@@ -26,7 +26,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
             await self.client.security_partner_providers.begin_delete(
                 resource_group_name=resource_group.name,
                 security_partner_provider_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -39,7 +39,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
         response = await self.client.security_partner_providers.get(
             resource_group_name=resource_group.name,
             security_partner_provider_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "virtualHub": {"id": "str"},
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,7 +78,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             security_partner_provider_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
     async def test_security_partner_providers_list_by_resource_group(self, resource_group):
         response = self.client.security_partner_providers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperationsAsync(AzureMgmtReco
     @recorded_by_proxy_async
     async def test_security_partner_providers_list(self, resource_group):
         response = self.client.security_partner_providers.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

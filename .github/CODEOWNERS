@@ -850,6 +850,7 @@
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+/eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
 
 # Add approvers for typespec-python emitter version updates
 /eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft

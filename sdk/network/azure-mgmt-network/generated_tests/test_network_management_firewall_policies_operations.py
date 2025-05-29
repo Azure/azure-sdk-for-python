@@ -24,7 +24,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
         response = self.client.firewall_policies.begin_delete(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
         response = self.client.firewall_policies.get(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
                 "transportSecurity": {"certificateAuthority": {"keyVaultSecretId": "str", "name": "str"}},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -124,7 +124,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
     def test_firewall_policies_list(self, resource_group):
         response = self.client.firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -145,7 +145,7 @@ class TestNetworkManagementFirewallPoliciesOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_firewall_policies_list_all(self, resource_group):
         response = self.client.firewall_policies.list_all(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

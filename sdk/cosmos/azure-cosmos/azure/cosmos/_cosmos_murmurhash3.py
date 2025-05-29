@@ -30,7 +30,7 @@
 # This is public domain code with no copyrights. From home page of
 # <a href="https://github.com/aappleby/smhasher">SMHasher</a>:
 #  "All MurmurHash versions are public domain software, and the author disclaims all copyright to their code."
-from ._cosmos_integers import _UInt128, _UInt64
+from ._cosmos_integers import _UInt128, _UInt64, _UInt32
 
 
 def rotate_left_64(val: int, shift: int) -> int:
@@ -147,3 +147,47 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
     h2 += h1
 
     return _UInt128(int(h1.value), int(h2.value))
+
+
+def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
+    c1: _UInt32 = _UInt32(0xcc9e2d51)
+    c2: _UInt32 = _UInt32(0x1b873593)
+    length: _UInt32 = _UInt32(len(data))
+    h1: _UInt32 = _UInt32(seed)
+    rounded_end: _UInt32 = _UInt32(length.value & 0xfffffffc)  # round down to 4 byte block
+
+    for i in range(0, rounded_end.value, 4):
+        # little endian load order
+        k1: _UInt32 = _UInt32(
+            (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) | ((data[i + 2] & 0xff) << 16) | (data[i + 3] << 24)
+        )
+        k1 *= c1
+        k1.value = (k1.value << 15) | (k1.value >> 17)  # ROTL32(k1,15)
+        k1 *= c2
+
+        h1 ^= k1
+        h1.value = (h1.value << 13) | (h1.value >> 19)  # ROTL32(h1,13)
+        h1 = h1 * _UInt32(5) + _UInt32(0xe6546b64)
+
+    # tail
+    k1 = _UInt32(0)
+    if length.value & 0x03 == 3:
+        k1 ^= _UInt32((data[rounded_end.value + 2] & 0xff) << 16)
+    if length.value & 0x03 >= 2:
+        k1 ^= _UInt32((data[rounded_end.value + 1] & 0xff) << 8)
+    if length.value & 0x03 >= 1:
+        k1 ^= _UInt32(data[rounded_end.value] & 0xff)
+        k1 *= c1
+        k1.value = (k1.value << 15) | (k1.value >> 17)
+        k1 *= c2
+        h1 ^= k1
+
+    # finalization
+    h1 ^= length
+    h1.value ^= h1.value >> 16
+    h1 *= _UInt32(0x85ebca6b)
+    h1.value ^= h1.value >> 13
+    h1 *= _UInt32(0xc2b2ae35)
+    h1.value ^= h1.value >> 16
+
+    return h1

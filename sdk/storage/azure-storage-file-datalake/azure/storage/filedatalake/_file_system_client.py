@@ -688,7 +688,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient with new directory and metadata.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -743,7 +743,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient after deleting specified directory.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -843,7 +843,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeFileClient with new file created.
-        :rtype: ~azure.storage.file.datalake.DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -898,7 +898,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient after deleting specified file.
-        :rtype: azure.storage.file.datalake.DataLakeFileClient
+        :rtype: azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -937,7 +937,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: Returns the DataLake client for the restored soft-deleted path.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient or azure.storage.filedatalake.DataLakeFileClient
         """
         _, url, undelete_source = _undelete_path_options(deleted_path_name, deletion_id, self.url)
 

@@ -8,7 +8,7 @@
 
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -40,7 +40,7 @@ class AvailabilityZonePeers(_serialization.Model):
         :paramtype peers: list[~azure.mgmt.resource.subscriptions.v2019_06_01.models.Peers]
         """
         super().__init__(**kwargs)
-        self.availability_zone = None
+        self.availability_zone: Optional[str] = None
         self.peers = peers
 
 
@@ -155,7 +155,7 @@ class CheckZonePeersResult(_serialization.Model):
          list[~azure.mgmt.resource.subscriptions.v2019_06_01.models.AvailabilityZonePeers]
         """
         super().__init__(**kwargs)
-        self.subscription_id = None
+        self.subscription_id: Optional[str] = None
         self.location = location
         self.availability_zone_peers = availability_zone_peers
 
@@ -184,8 +184,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDefinition(_serialization.Model):
@@ -251,11 +251,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -340,12 +340,12 @@ class Location(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.subscription_id = None
-        self.name = None
-        self.display_name = None
-        self.latitude = None
-        self.longitude = None
+        self.id: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.latitude: Optional[str] = None
+        self.longitude: Optional[str] = None
 
 
 class LocationListResult(_serialization.Model):
@@ -388,7 +388,7 @@ class ManagedByTenant(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -518,8 +518,8 @@ class Peers(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.subscription_id = None
-        self.availability_zone = None
+        self.subscription_id: Optional[str] = None
+        self.availability_zone: Optional[str] = None
 
 
 class ResourceName(_serialization.Model):
@@ -624,11 +624,11 @@ class Subscription(_serialization.Model):
          list[~azure.mgmt.resource.subscriptions.v2019_06_01.models.ManagedByTenant]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.subscription_id = None
-        self.display_name = None
-        self.tenant_id = None
-        self.state = None
+        self.id: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.state: Optional[Union[str, "_models.SubscriptionState"]] = None
         self.subscription_policies = subscription_policies
         self.authorization_source = authorization_source
         self.managed_by_tenants = managed_by_tenants
@@ -698,9 +698,9 @@ class SubscriptionPolicies(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location_placement_id = None
-        self.quota_id = None
-        self.spending_limit = None
+        self.location_placement_id: Optional[str] = None
+        self.quota_id: Optional[str] = None
+        self.spending_limit: Optional[Union[str, "_models.SpendingLimit"]] = None
 
 
 class TenantIdDescription(_serialization.Model):
@@ -750,13 +750,13 @@ class TenantIdDescription(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.tenant_id = None
-        self.tenant_category = None
-        self.country = None
-        self.country_code = None
-        self.display_name = None
-        self.domains = None
+        self.id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.tenant_category: Optional[Union[str, "_models.TenantCategory"]] = None
+        self.country: Optional[str] = None
+        self.country_code: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.domains: Optional[List[str]] = None
 
 
 class TenantListResult(_serialization.Model):
