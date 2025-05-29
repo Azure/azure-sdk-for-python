@@ -34,7 +34,7 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
         )
         
         commit = None
-        if res:
+        if res is not None:
             groups = res.groupdict()
             commit = groups["commit"]
             logger.info(f"Extracted commit: {commit}")
@@ -131,9 +131,7 @@ def init_tool(tsp_config_url: str) -> Dict[str, Any]:
     """Initializes and generates a typespec client library directory given the url.
     
     Args:
-        tsp_config_url: The URL to the tspconfig.yaml file.
-        root_dir: The root directory where the client library will be generated.
-    
+        tsp_config_url: The URL to the tspconfig.yaml file.    
     Returns:
         A dictionary containing the result of the command.
     """

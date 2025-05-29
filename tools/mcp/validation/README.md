@@ -7,7 +7,7 @@ This is a Model Context Protocol (MCP) server that provides access to various va
 - Python 3.10 or higher
 - uv
 - tox
-- Node
+- Node.js
 
 ## Available Tools
 
@@ -15,7 +15,7 @@ This MCP server provides the following validation tools:
 
 ### verify_setup
 
-Verifies Node, tox, and Python are installed in your environment.
+Verifies Node.js, tox, and Python are installed in your environment.
 
 ### tox
 
