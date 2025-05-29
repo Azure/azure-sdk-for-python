@@ -155,10 +155,13 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         await self._datalake_client_for_blob_operation.close()
         await super(PathClient, self).__aexit__(*args)
 
-    async def close(self) -> None:
+    async def close(self):
         """
         This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
         await self.__aexit__()
 
