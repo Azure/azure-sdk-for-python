@@ -43,15 +43,15 @@ class SimulationRequestDTO:
         headers: Dict[str, str],
         payload: Dict[str, Any],
         params: Dict[str, str],
-        template_key: str,
-        template_parameters: Optional[TemplateParameters],
+        templateKey: str,
+        templateParameters: Optional[TemplateParameters],
     ):
         self.url = url
         self.headers = headers
         self.json = json.dumps(payload)
         self.params = params
-        self.template_key = template_key
-        self.templateParameters = template_parameters
+        self.templateKey = templateKey
+        self.templateParameters = templateParameters
 
     def to_dict(self) -> Dict:
         """Convert the DTO to a dictionary.
@@ -186,8 +186,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             headers=headers,
             payload=request_data,
             params=params,
-            template_key=self.tkey,
-            template_parameters=self.tparam,
+            templateKey=self.tkey,
+            templateParameters=self.tparam,
         )
 
         time_start = time.time()
