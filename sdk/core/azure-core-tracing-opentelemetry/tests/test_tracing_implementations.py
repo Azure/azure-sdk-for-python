@@ -131,6 +131,7 @@ class TestOpentelemetryWrapper:
 
     def test_suppress_http_under_change_context(self, tracing_helper):
         from opentelemetry.context import get_value, _SUPPRESS_HTTP_INSTRUMENTATION_KEY
+
         span1 = OpenTelemetrySpan(name="span1", kind=SpanKind.INTERNAL)
 
         with OpenTelemetrySpan.change_context(span1.span_instance):
@@ -149,6 +150,7 @@ class TestOpentelemetryWrapper:
         from opentelemetry.context import get_value, _SUPPRESS_HTTP_INSTRUMENTATION_KEY
 
         settings.tracing_implementation = "opentelemetry"
+
         class ContextValidator(SansIOHTTPPolicy):
             def on_request(self, request):
                 assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY)
