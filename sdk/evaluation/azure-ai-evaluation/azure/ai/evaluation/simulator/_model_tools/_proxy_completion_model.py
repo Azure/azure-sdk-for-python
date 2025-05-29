@@ -43,15 +43,15 @@ class SimulationRequestDTO:
         headers: Dict[str, str],
         payload: Dict[str, Any],
         params: Dict[str, str],
-        templateKey: str,
-        templateParameters: Optional[TemplateParameters],
+        template_key: str,
+        template_parameters: Optional[TemplateParameters],
     ):
         self.url = url
         self.headers = headers
         self.json = json.dumps(payload)
         self.params = params
-        self.templateKey = templateKey
-        self.templateParameters = templateParameters
+        self.template_key = template_key
+        self.templateParameters = template_parameters
 
     def to_dict(self) -> Dict:
         """Convert the DTO to a dictionary.
@@ -186,8 +186,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             headers=headers,
             payload=request_data,
             params=params,
-            templateKey=self.tkey,
-            templateParameters=self.tparam,
+            template_key=self.tkey,
+            template_parameters=self.tparam,
         )
 
         time_start = time.time()
@@ -207,7 +207,15 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             request_count = 0
             flag = True
             while flag:
-                response = session.evaluations.operation_results(operation_id, headers=headers)
+                try:
+                    response = session.evaluations.operation_results(operation_id, headers=headers)
+                except Exception as e:
+                    from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
+                    response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
+                if isinstance(response, dict):
+                    response_data = response
+                    flag = False
+                    break
                 if response.status_code == 200:
                     response_data = cast(List[Dict], response.json())
                     flag = False
