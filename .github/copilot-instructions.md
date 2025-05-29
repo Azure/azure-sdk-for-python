@@ -107,9 +107,6 @@ FOR EACH validation step:
         RERUN same step
     ONLY proceed to next step when current step passes
 ```
-        RERUN same step
-    ONLY proceed to next step when current step passes
-```
 
 **Validation Commands:**
 ```bash
