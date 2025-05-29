@@ -1219,29 +1219,27 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
+    async def _execute_single_tool_call(self, tool_call: Any):
+        try:
+            tool = self.get_tool(AsyncFunctionTool)
+            output = await tool.execute(tool_call)
+            return {"tool_call_id": tool_call.id, "output": str(output)}
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            return {"tool_call_id": tool_call.id, "output": str(e)}
+
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
-        Execute a tool of the specified type with the provided tool calls.
+        Execute a tool of the specified type with the provided tool calls concurrently.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         :rtype: Any
         """
-        tool_outputs = []
 
-        for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(AsyncFunctionTool)
-                    output = await tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": str(output),
-                    }
-                    tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+        # Execute all tool calls concurrently
+        tool_outputs = await asyncio.gather(
+            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+        )
 
         return tool_outputs
 
