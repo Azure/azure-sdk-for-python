@@ -15,7 +15,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_firewall_rule_delete.py
+    python mongo_clusters_patch_data_api.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.firewall_rules.begin_delete(
-        resource_group_name="TestGroup",
+    response = client.mongo_clusters.begin_update(
+        resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        firewall_rule_name="rule1",
+        properties={"properties": {"dataApi": {"mode": "Enabled"}}},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/MongoClusters_FirewallRuleDelete.json
+# x-ms-original-file: 2025-04-01-preview/MongoClusters_PatchDataApi.json
 if __name__ == "__main__":
     main()
