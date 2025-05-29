@@ -64,9 +64,12 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
         await self._client.close()
 
