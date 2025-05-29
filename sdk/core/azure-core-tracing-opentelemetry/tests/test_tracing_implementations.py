@@ -132,21 +132,29 @@ class TestOpentelemetryWrapper:
     def test_suppress_http_auto_instrumentation_policy(self, tracing_helper):
         from azure.core.rest import HttpRequest
         from azure.core.pipeline.transport import RequestsTransport
-        from azure.core.pipeline.policies import DistributedTracingPolicy
+        from azure.core.pipeline.policies import DistributedTracingPolicy, SansIOHTTPPolicy
         from azure.core.settings import settings
+        from opentelemetry.context import get_value, _SUPPRESS_HTTP_INSTRUMENTATION_KEY
 
         settings.tracing_implementation = "opentelemetry"
+        class ContextValidator(SansIOHTTPPolicy):
+            def on_request(self, request):
+                assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY)
 
         class FooClient:
             def __init__(self, endpoint: str):
-                policies = [DistributedTracingPolicy()]
+                policies = [DistributedTracingPolicy(), ContextValidator()]
                 self._client = PipelineClient(endpoint, policies=policies, transport=RequestsTransport())
 
-            @distributed_trace
             def foo(self):
-                request = HttpRequest("GET", "https://foo.bar")
-                response = self._client.send_request(request)
-                return response
+                span1 = OpenTelemetrySpan(name="span1", kind=SpanKind.CLIENT)
+                with span1.change_context(span1):
+                    request = HttpRequest("GET", "https://foo.bar")
+                    response = self._client.send_request(request)
+                    span1.span_instance.end()
+                    return response
+
+
 
         requests_instrumentor = RequestsInstrumentor()
         requests_instrumentor.instrument()

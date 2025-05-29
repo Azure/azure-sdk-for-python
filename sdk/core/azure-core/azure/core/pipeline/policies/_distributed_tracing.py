@@ -128,7 +128,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 for attr, value in span_attributes.items():
                     span.add_attribute(attr, value)  # type: ignore
 
-                with change_context(span.span_instance):
+                with change_context(span):
                     headers = span.to_header()
                     request.http_request.headers.update(headers)
                 request.context[self.TRACING_CONTEXT] = span
