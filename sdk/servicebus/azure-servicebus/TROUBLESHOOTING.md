@@ -57,8 +57,10 @@ logger.addHandler(handler)
 
 # Enable AMQP frame level trace
 from azure.servicebus import ServiceBusClient
+from azure.identity import DefaultAzureCredential
 
-client = ServiceBusClient(connection_string, logging_enable=True)
+credential = DefaultAzureCredential()
+client = ServiceBusClient(fully_qualified_namespace, credential, logging_enable=True)
 ```
 
 See full Python SDK logging documentation with examples [here](https://learn.microsoft.com/azure/developer/python/azure-sdk-logging).
