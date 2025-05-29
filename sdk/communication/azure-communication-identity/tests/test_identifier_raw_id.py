@@ -9,7 +9,6 @@ import pytest
 import unittest
 from azure.communication.identity import *
 
-
 class IdentifierRawIdTest(unittest.TestCase):
     def test_raw_id(self):
         _assert_raw_id(
@@ -97,7 +96,44 @@ class IdentifierRawIdTest(unittest.TestCase):
             ),
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
         )
-
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+            ),
+            "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD"
+            ),
+            "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH"
+            ),
+            "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC",
+            raw_id="8:extension:legacyFormat"
+            ),
+            "8:extension:legacyFormat",
+        )
+        
     def test_identifier_from_raw_id(self):
         _assert_communication_identifier(
             "8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130",
@@ -186,11 +222,43 @@ class IdentifierRawIdTest(unittest.TestCase):
         # cspell:disable
         _assert_communication_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
+                                  raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         _assert_communication_identifier(
-            "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            "4:anonymous",
+            PhoneNumberIdentifier(value="anonymous", raw_id="4:anonymous"),
+        )
+        _assert_communication_identifier(
+            "4:+112345556789",
+            PhoneNumberIdentifier(value="+112345556789"),
+        )
+        _assert_communication_identifier(
+            "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC",
+            ),
+        )
+        _assert_communication_identifier(
+            "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD",
+            ),
+        )
+        _assert_communication_identifier(
+            "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
+            TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH",
+            ),
         )
         # cspell:enable
         _assert_communication_identifier(
@@ -215,6 +283,7 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip("4:+112345556789")
         _assert_roundtrip("4:112345556789")
         _assert_roundtrip("4:otherFormat")
+        _assert_roundtrip("4:anonymous")
         _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768")
         # cspell:disable
         _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768")
@@ -228,6 +297,10 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip("28:dod:01234567-89ab-cdef-0123-456789abcdef")
         _assert_roundtrip("28:dod:01234567-89ab-cdef-0123-456789abcdef")
         _assert_roundtrip("")
+
+        _assert_roundtrip("8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130")
+        _assert_roundtrip("8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130")
+        _assert_roundtrip("8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130")
 
     def test_equality_based_on_raw_id(self):
         # CommunicationUserIdentifiers are equal.
@@ -327,6 +400,137 @@ class IdentifierRawIdTest(unittest.TestCase):
         # PhoneNumberIdentifiers are not equal.
         assert PhoneNumberIdentifier(value="+112345556789") != PhoneNumberIdentifier(value="+512345556789")
 
+        # PhoneNumberIdentifiers with asserted_id are equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="20eacaae2768"
+        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768")
+
+        # PhoneNumberIdentifiers with anonymous_type are equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", is_anonymous=True
+        ) == PhoneNumberIdentifier(value="+112345556789", is_anonymous=True)
+
+        # PhoneNumberIdentifiers with anonymous_type are equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", is_anonymous=False
+        ) == PhoneNumberIdentifier(value="+112345556789", is_anonymous=False)
+
+        # PhoneNumberIdentifiers with anonymous_type are not equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", is_anonymous=True
+        ) != PhoneNumberIdentifier(value="+112345556789", is_anonymous=False)
+
+        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True
+        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True)
+
+        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False
+        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False)
+
+        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are not equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="30eacaae2768", is_anonymous=False
+        ) != PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=True)
+
+        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are not equal.
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False
+        ) != PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=False)
+
+        # PhoneNumberIdentifiers with different asserted_id and anonymous_type=true are equal as raw_id=4:anonymous
+        assert PhoneNumberIdentifier(
+            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True
+        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=True)
+
+        # TeamsExtensionUserIdentifiers are equal.
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        ) == TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        )
+
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD"
+        ) == TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD"
+        )
+
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH"
+        ) == TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="GCCH"
+        )
+
+        # TeamsExtensionUserIdentifiers are not equal.
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        ) != TeamsExtensionUserIdentifier(
+            user_id="55ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        )
+
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        ) != TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant456",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        )
+
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        ) != TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource456",
+            cloud="PUBLIC"
+        )
+
+        assert TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="PUBLIC"
+        ) != TeamsExtensionUserIdentifier(
+            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            tenant_id="tenant123",
+            resource_id="resource123",
+            cloud="DOD"
+        )
+        
         # UnknownIdentifiers are equal.
         assert UnknownIdentifier(identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef") == UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
