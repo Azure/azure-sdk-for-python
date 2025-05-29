@@ -159,7 +159,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             # This could possibly be due to breaking change in upstream OpenTelemetry
             # Advise user to upgrade to latest OpenTelemetry version
             _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when importing Azure SDK Tracing. Please upgrade to the latest OpenTelemetry version: %s.",
+                "Exception occurred when importing Azure SDK Tracing." \
+                "Please upgrade to the latest OpenTelemetry version: %s.",
                 ex,
             )
         except Exception as ex:  # pylint: disable=broad-except
@@ -221,7 +222,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
             # This could possibly be due to breaking change in upstream OpenTelemetry
             # Advise user to upgrade to latest OpenTelemetry version
             _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occured when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
+                "Exception occurred when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
                 ex,
             )
     except ImportError as ex:
