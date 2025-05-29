@@ -923,8 +923,8 @@ def _format_batch_operations(
     return final_operations
 
 
-def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, Any]:
+def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> Dict[str, Any]:
     return {
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
-        "partitionKey": properties.get("partitionKey", None)
+        "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
