@@ -126,8 +126,8 @@ class TestLocationCache:
         lc = refresh_location_cache([location1_name, location3_name, location4_name], True)
         db_acc = create_database_account(True)
         lc.perform_on_database_account_read(db_acc)
-        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
 
         # resolve both document requests with all regions available
         write_doc_resolved = lc.resolve_service_endpoint(write_doc_request)
@@ -215,9 +215,9 @@ class TestLocationCache:
             location_cache.perform_on_database_account_read(database_account)
 
             # Init requests and set excluded regions on requests
-            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
             write_doc_request.excluded_locations = excluded_locations_on_requests
-            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
@@ -247,7 +247,7 @@ class TestLocationCache:
         options: Mapping[str, Any] = {"excludedLocations": excluded_locations}
 
         expected_excluded_locations = excluded_locations
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
         read_doc_request.set_excluded_location_from_options(options)
         actual_excluded_locations = read_doc_request.excluded_locations
         assert actual_excluded_locations == expected_excluded_locations
@@ -262,7 +262,7 @@ class TestLocationCache:
                                   "If you want to remove all excluded locations, try passing an empty list.")
         with pytest.raises(ValueError) as e:
             options: Mapping[str, Any] = {"excludedLocations": None}
-            doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+            doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
             doc_request.set_excluded_location_from_options(options)
         assert str(
             e.value) == expected_error_message
