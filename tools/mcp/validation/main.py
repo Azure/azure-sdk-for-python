@@ -88,7 +88,7 @@ def verify_setup_tool(venv: Optional[str] = None) -> Dict[str, Any]:
                 "success": False,
                 "message": f"{name} is not installed or not available in PATH.",
                 "details": {
-                    "stdout": result["stdout"].split(f"{name}: commands")[1],
+                    "stdout": result["stdout"].split(f"{name}: commands")[1] if f"{name}: commands" in result["stdout"] else result["stdout"],
                     "stderr": result["stderr"],
                     "exit_code": result["code"]
                 }
