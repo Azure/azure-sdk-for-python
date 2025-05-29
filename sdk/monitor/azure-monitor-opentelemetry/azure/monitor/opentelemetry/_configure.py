@@ -177,7 +177,9 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
-        from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter # pylint: disable=import-error,no-name-in-module
+        from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
+            AzureMonitorLogExporter
+        )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
         logger_provider = LoggerProvider(resource=resource)

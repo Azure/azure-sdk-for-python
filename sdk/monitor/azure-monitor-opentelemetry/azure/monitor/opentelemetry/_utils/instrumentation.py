@@ -53,7 +53,7 @@ def get_dist_dependency_conflicts(
                 continue
 
             req = Requirement(dep)
-            if req.marker.evaluate(instruments_marker):
+            if req.marker.evaluate(instruments_marker):  # type: ignore
                 instrumentation_deps.append(req)
 
     return get_dependency_conflicts(instrumentation_deps)
@@ -79,8 +79,8 @@ def get_dependency_conflicts(
         try:
             dist_version = version(req.name)
         except PackageNotFoundError:
-            return DependencyConflict(dep)
+            return DependencyConflict(dep)  # type: ignore
 
         if not req.specifier.contains(dist_version):
-            return DependencyConflict(dep, f"{req.name} {dist_version}")
+            return DependencyConflict(dep, f"{req.name} {dist_version}")  # type: ignore
     return None
