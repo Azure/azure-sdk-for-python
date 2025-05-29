@@ -35,10 +35,10 @@ async def run_session_token_query(container, split):
     else:
         query_iterable = container.query_items(query=query, enable_cross_partition_query=True,
                                                raw_response_hook=test_config.pre_split_hook)
-    [item async for item in query_iterable]
+    item_list = [item async for item in query_iterable]
 
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosQuery
 class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None

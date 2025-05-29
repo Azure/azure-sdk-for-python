@@ -41,7 +41,7 @@ def run_session_token_query(container, split):
     list(query_iterable)
 
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosQuery
 class TestPartitionSplitQuery(unittest.TestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None
